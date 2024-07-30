@@ -17,11 +17,12 @@ Currently pigeon supports generating:
 * Kotlin and Java code for Android
 * Swift and Objective-C code for iOS and macOS
 * C++ code for Windows
+* GObject code for Linux
 
 ### Supported Datatypes
 
 Pigeon uses the `StandardMessageCodec` so it supports 
-[any datatype platform channels support](https://flutter.dev/docs/development/platform-integration/platform-channels#codec).
+[any datatype platform channels support](https://flutter.dev/to/platform-channels-codec).
 
 Custom classes, nested datatypes, and enums are also supported. 
 
@@ -53,8 +54,7 @@ should be returned via the provided callback.
 To pass custom details into `PlatformException` for error handling, 
 use `FlutterError` in your Host API. [Example](./example/README.md#HostApi_Example).
 
-To use `FlutterError` in Swift you must first extend a standard error.
-[Example](./example/README.md#AppDelegate.swift).
+For swift, use `PigeonError` instead of `FlutterError` when throwing an error. See [Example#Swift](./example/README.md#Swift) for more details.
 
 #### Objective-C and C++
 
@@ -74,6 +74,11 @@ When targeting a Flutter version that supports the
 [TaskQueue API](https://docs.flutter.dev/development/platform-integration/platform-channels?tab=type-mappings-kotlin-tab#channels-and-platform-threading)
 the threading model for handling HostApi methods can be selected with the
 `TaskQueue` annotation.
+
+### Multi-Instance Support
+
+Host and Flutter APIs now support the ability to provide a unique message channel suffix string 
+to the api to allow for multiple instances to be created and operate in parallel. 
 
 ## Usage
 
@@ -131,6 +136,13 @@ the threading model for handling HostApi methods can be selected with the
    (e.g. `macos/Runner.xcworkspace` or `.podspec`).
 1) Implement the generated protocol for handling the calls on macOS, set it up
    as the handler for the messages.
+
+### Flutter calling into Linux steps
+
+1) Add the generated GObject code to your `./linux` directory for compilation, and
+   to your `linux/CMakeLists.txt` file.
+1) Implement the generated protocol for handling the calls on Linux, set it up
+   as the vtable for the API object.
 
 ### Calling into Flutter from the host platform
 

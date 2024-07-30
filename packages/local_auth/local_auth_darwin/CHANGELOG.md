@@ -1,3 +1,11 @@
+## 1.3.1
+
+* Adjusts implementation for improved testability, and removes use of OCMock.
+
+## 1.3.0
+
+* Adds Swift Package Manager compatibility.
+
 ## 1.2.2
 
 * Adds compatibility with `intl` 0.19.0.

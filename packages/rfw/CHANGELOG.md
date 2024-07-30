@@ -1,3 +1,14 @@
+## 1.0.29
+
+* Adds support for the `Slider` Material widget.
+
+## 1.0.28
+
+* Updates documentation to WidgetStateProperty and ButtonBar.
+
+## 1.0.27
+* Adds support for `DecorationImage.filterQuality`.
+
 ## 1.0.26
 * Supports overriding the error widget builder.
 

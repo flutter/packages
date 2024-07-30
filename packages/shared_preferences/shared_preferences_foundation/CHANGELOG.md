@@ -1,5 +1,10 @@
-## NEXT
+## 2.5.0
 
+* Adds new `SharedPreferencesAsyncFoundation` API.
+
+## 2.4.0
+
+* Adds Swift Package Manager compatibility.
 * Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
 
 ## 2.3.5

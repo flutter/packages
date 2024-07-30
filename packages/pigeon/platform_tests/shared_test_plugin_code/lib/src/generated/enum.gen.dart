@@ -56,25 +56,28 @@ class DataWithEnum {
 
   Object encode() {
     return <Object?>[
-      state?.index,
+      state,
     ];
   }
 
   static DataWithEnum decode(Object result) {
     result as List<Object?>;
     return DataWithEnum(
-      state: result[0] != null ? EnumState.values[result[0]! as int] : null,
+      state: result[0] as EnumState?,
     );
   }
 }
 
-class _EnumApi2HostCodec extends StandardMessageCodec {
-  const _EnumApi2HostCodec();
+class _PigeonCodec extends StandardMessageCodec {
+  const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is DataWithEnum) {
-      buffer.putUint8(128);
+      buffer.putUint8(129);
       writeValue(buffer, value.encode());
+    } else if (value is EnumState) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
     }
@@ -83,8 +86,11 @@ class _EnumApi2HostCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 129:
         return DataWithEnum.decode(readValue(buffer)!);
+      case 130:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : EnumState.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -96,16 +102,21 @@ class EnumApi2Host {
   /// Constructor for [EnumApi2Host].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  EnumApi2Host({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  EnumApi2Host(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec = _EnumApi2HostCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String __pigeon_messageChannelSuffix;
 
   /// This comment is to test method documentation comments.
   Future<DataWithEnum> echo(DataWithEnum data) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Host.echo';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Host.echo$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -133,42 +144,24 @@ class EnumApi2Host {
   }
 }
 
-class _EnumApi2FlutterCodec extends StandardMessageCodec {
-  const _EnumApi2FlutterCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is DataWithEnum) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return DataWithEnum.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 /// This comment is to test api documentation comments.
 abstract class EnumApi2Flutter {
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _EnumApi2FlutterCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   /// This comment is to test method documentation comments.
   DataWithEnum echo(DataWithEnum data);
 
-  static void setup(EnumApi2Flutter? api, {BinaryMessenger? binaryMessenger}) {
+  static void setUp(
+    EnumApi2Flutter? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo',
+          'dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {

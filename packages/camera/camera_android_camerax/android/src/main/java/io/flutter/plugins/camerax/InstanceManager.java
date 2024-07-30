@@ -36,8 +36,24 @@ public class InstanceManager {
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
   // 0 <= n < 2^16.
   private static final long MIN_HOST_CREATED_IDENTIFIER = 65536;
-  private static final long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL = 30000;
   private static final String TAG = "InstanceManager";
+
+  /**
+   * The default time interval used to define how often this instance removes garbage collected weak
+   * references to native Android objects that this instance manages.
+   */
+  public static final long DEFAULT_CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL = 3000;
+
+  /**
+   * The time interval used to define how often this instance removes garbage collected weak
+   * references to native Android objects that this instance manages, specifically when an {@code
+   * ImageAnalysis.Analyzer} is set on an {@code ImageAnalysis} instance to support image streaming.
+   *
+   * <p>Streaming images with an {@code ImageAnalysis.Analyzer} involves increased memory usage, so
+   * this interval, which is lower than the default {@link
+   * DEFAULT_CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL} interval, accommodates this fact.
+   */
+  public static final long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL_FOR_IMAGE_ANALYSIS = 1000;
 
   /** Interface for listening when a weak reference of an instance is removed from the manager. */
   public interface FinalizationListener {
@@ -58,6 +74,9 @@ public class InstanceManager {
   private long nextIdentifier = MIN_HOST_CREATED_IDENTIFIER;
   private boolean hasFinalizationListenerStopped = false;
 
+  private long clearFinalizedWeakReferencesInterval =
+      DEFAULT_CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL;
+
   /**
    * Instantiate a new manager.
    *
@@ -73,8 +92,7 @@ public class InstanceManager {
 
   private InstanceManager(FinalizationListener finalizationListener) {
     this.finalizationListener = finalizationListener;
-    handler.postDelayed(
-        this::releaseAllFinalizedInstances, CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL);
+    handler.postDelayed(this::releaseAllFinalizedInstances, clearFinalizedWeakReferencesInterval);
   }
 
   /**
@@ -217,7 +235,19 @@ public class InstanceManager {
     return hasFinalizationListenerStopped;
   }
 
-  private void releaseAllFinalizedInstances() {
+  /**
+   * Modifies the time interval used to define how often this instance removes garbage collected
+   * weak references to native Android objects that this instance was managing.
+   */
+  public void setClearFinalizedWeakReferencesInterval(long interval) {
+    clearFinalizedWeakReferencesInterval = interval;
+  }
+
+  /**
+   * Releases garbage collected weak references to native Android objects that this instance was
+   * managing.
+   */
+  public void releaseAllFinalizedInstances() {
     if (hasFinalizationListenerStopped()) {
       return;
     }
@@ -231,8 +261,7 @@ public class InstanceManager {
         finalizationListener.onFinalize(identifier);
       }
     }
-    handler.postDelayed(
-        this::releaseAllFinalizedInstances, CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL);
+    handler.postDelayed(this::releaseAllFinalizedInstances, clearFinalizedWeakReferencesInterval);
   }
 
   private void addInstance(Object instance, long identifier) {

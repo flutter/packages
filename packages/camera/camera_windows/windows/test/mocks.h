@@ -13,6 +13,8 @@
 #include <gtest/gtest.h>
 #include <mfcaptureengine.h>
 
+#include <functional>
+
 #include "camera.h"
 #include "camera_plugin.h"
 #include "capture_controller.h"
@@ -27,19 +29,6 @@ namespace {
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 using ::testing::_;
-
-class MockMethodResult : public flutter::MethodResult<> {
- public:
-  ~MockMethodResult() = default;
-
-  MOCK_METHOD(void, SuccessInternal, (const EncodableValue* result),
-              (override));
-  MOCK_METHOD(void, ErrorInternal,
-              (const std::string& error_code, const std::string& error_message,
-               const EncodableValue* details),
-              (override));
-  MOCK_METHOD(void, NotImplementedInternal, (), (override));
-};
 
 class MockBinaryMessenger : public flutter::BinaryMessenger {
  public:
@@ -183,19 +172,27 @@ class MockCamera : public Camera {
   MOCK_METHOD(void, OnTakePictureFailed,
               (CameraResult result, const std::string& error), (override));
 
-  MOCK_METHOD(void, OnVideoRecordSucceeded,
-              (const std::string& file_path, int64_t video_duration),
-              (override));
-  MOCK_METHOD(void, OnVideoRecordFailed,
-              (CameraResult result, const std::string& error), (override));
   MOCK_METHOD(void, OnCaptureError,
               (CameraResult result, const std::string& error), (override));
 
   MOCK_METHOD(bool, HasDeviceId, (std::string & device_id), (const override));
   MOCK_METHOD(bool, HasCameraId, (int64_t camera_id), (const override));
 
-  MOCK_METHOD(bool, AddPendingResult,
-              (PendingResultType type, std::unique_ptr<MethodResult<>> result),
+  MOCK_METHOD(bool, AddPendingVoidResult,
+              (PendingResultType type,
+               std::function<void(std::optional<FlutterError> reply)> result),
+              (override));
+  MOCK_METHOD(bool, AddPendingIntResult,
+              (PendingResultType type,
+               std::function<void(ErrorOr<int64_t> reply)> result),
+              (override));
+  MOCK_METHOD(bool, AddPendingStringResult,
+              (PendingResultType type,
+               std::function<void(ErrorOr<std::string> reply)> result),
+              (override));
+  MOCK_METHOD(bool, AddPendingSizeResult,
+              (PendingResultType type,
+               std::function<void(ErrorOr<PlatformSize> reply)> result),
               (override));
   MOCK_METHOD(bool, HasPendingResultByType, (PendingResultType type),
               (const override));
@@ -205,12 +202,15 @@ class MockCamera : public Camera {
 
   MOCK_METHOD(bool, InitCamera,
               (flutter::TextureRegistrar * texture_registrar,
-               flutter::BinaryMessenger* messenger, bool record_audio,
-               ResolutionPreset resolution_preset),
+               flutter::BinaryMessenger* messenger,
+               const PlatformMediaSettings& media_settings),
               (override));
 
   std::unique_ptr<CaptureController> capture_controller_;
-  std::unique_ptr<MethodResult<>> pending_result_;
+  std::function<void(std::optional<FlutterError> reply)> pending_void_result_;
+  std::function<void(ErrorOr<int64_t> reply)> pending_int_result_;
+  std::function<void(ErrorOr<std::string> reply)> pending_string_result_;
+  std::function<void(ErrorOr<PlatformSize> reply)> pending_size_result_;
   std::string device_id_;
   int64_t camera_id_ = -1;
 };
@@ -235,8 +235,8 @@ class MockCaptureController : public CaptureController {
 
   MOCK_METHOD(bool, InitCaptureDevice,
               (flutter::TextureRegistrar * texture_registrar,
-               const std::string& device_id, bool record_audio,
-               ResolutionPreset resolution_preset),
+               const std::string& device_id,
+               const PlatformMediaSettings& media_settings),
               (override));
 
   MOCK_METHOD(uint32_t, GetPreviewWidth, (), (const override));
@@ -246,10 +246,13 @@ class MockCaptureController : public CaptureController {
   MOCK_METHOD(void, StartPreview, (), (override));
   MOCK_METHOD(void, ResumePreview, (), (override));
   MOCK_METHOD(void, PausePreview, (), (override));
-  MOCK_METHOD(void, StartRecord,
-              (const std::string& file_path, int64_t max_video_duration_ms),
-              (override));
+  MOCK_METHOD(void, StartRecord, (const std::string& file_path), (override));
   MOCK_METHOD(void, StopRecord, (), (override));
+  MOCK_METHOD(
+      void, StartImageStream,
+      (std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink),
+      (override));
+  MOCK_METHOD(void, StopImageStream, (), (override));
   MOCK_METHOD(void, TakePicture, (const std::string& file_path), (override));
 };
 
@@ -858,7 +861,20 @@ class FakeMediaType : public FakeIMFAttributesBase<IMFMediaType> {
       *value = (int64_t)width_ << 32 | (int64_t)height_;
       return S_OK;
     } else if (key == MF_MT_FRAME_RATE) {
-      *value = (int64_t)frame_rate_ << 32 | 1;
+      *value = frame_rate_;
+      return S_OK;
+    }
+    return E_FAIL;
+  };
+
+  // IMFAttributes
+  HRESULT GetUINT32(REFGUID key, UINT32* value) override {
+    if (key == MF_MT_AVG_BITRATE && video_bitrate_.has_value()) {
+      *value = video_bitrate_.value();
+      return S_OK;
+    } else if (key == MF_MT_AUDIO_AVG_BYTES_PER_SECOND &&
+               audio_bitrate_.has_value()) {
+      *value = audio_bitrate_.value();
       return S_OK;
     }
     return E_FAIL;
@@ -876,11 +892,42 @@ class FakeMediaType : public FakeIMFAttributesBase<IMFMediaType> {
     return E_FAIL;
   }
 
+  HRESULT SetUINT64(REFGUID key, UINT64 unValue) override {
+    if (key == MF_MT_FRAME_RATE) {
+      frame_rate_ = unValue;
+      return S_OK;
+    }
+
+    return S_OK;
+  }
+
+  HRESULT SetUINT32(REFGUID key, UINT32 unValue) override {
+    if (key == MF_MT_AVG_BITRATE) {
+      video_bitrate_ = unValue;
+      return S_OK;
+    } else if (key == MF_MT_AUDIO_AVG_BYTES_PER_SECOND) {
+      audio_bitrate_ = unValue;
+      return S_OK;
+    }
+
+    return S_OK;
+  }
+
   // IIMFAttributes
   HRESULT CopyAllItems(IMFAttributes* pDest) override {
     pDest->SetUINT64(MF_MT_FRAME_SIZE,
                      (int64_t)width_ << 32 | (int64_t)height_);
-    pDest->SetUINT64(MF_MT_FRAME_RATE, (int64_t)frame_rate_ << 32 | 1);
+    pDest->SetUINT64(MF_MT_FRAME_RATE, frame_rate_);
+
+    if (video_bitrate_.has_value()) {
+      pDest->SetUINT32(MF_MT_AVG_BITRATE, video_bitrate_.value());
+    }
+
+    if (audio_bitrate_.has_value()) {
+      pDest->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND,
+                       audio_bitrate_.value());
+    }
+
     pDest->SetGUID(MF_MT_MAJOR_TYPE, major_type_);
     pDest->SetGUID(MF_MT_SUBTYPE, sub_type_);
     return S_OK;
@@ -946,7 +993,9 @@ class FakeMediaType : public FakeIMFAttributesBase<IMFMediaType> {
   const GUID sub_type_;
   const int width_;
   const int height_;
-  const int frame_rate_ = 30;
+  UINT64 frame_rate_ = Pack2UINT32AsUINT64(30, 1);
+  std::optional<UINT32> video_bitrate_ = std::nullopt;
+  std::optional<UINT32> audio_bitrate_ = std::nullopt;
 };
 
 class MockCaptureEngine : public IMFCaptureEngine {
@@ -977,6 +1026,9 @@ class MockCaptureEngine : public IMFCaptureEngine {
   MOCK_METHOD(HRESULT, StartPreview, ());
   MOCK_METHOD(HRESULT, StopPreview, ());
   MOCK_METHOD(HRESULT, StartRecord, ());
+  MOCK_METHOD(HRESULT, StartImageStream, ());
+  MOCK_METHOD(HRESULT, StopImageStream, ());
+
   MOCK_METHOD(HRESULT, StopRecord,
               (BOOL finalize, BOOL flushUnprocessedSamples));
   MOCK_METHOD(HRESULT, TakePhoto, ());
@@ -1023,6 +1075,17 @@ class MockCaptureEngine : public IMFCaptureEngine {
   ComPtr<IMFMediaSource> audioSource_;
   volatile ULONG ref_ = 0;
   bool initialized_ = false;
+};
+// Mock class for flutter::EventSink<flutter::EncodableValue>
+class MockEventSink : public flutter::EventSink<flutter::EncodableValue> {
+ public:
+  MOCK_METHOD(void, SuccessInternal, (const flutter::EncodableValue* event),
+              (override));
+  MOCK_METHOD(void, ErrorInternal,
+              (const std::string& error_code, const std::string& error_message,
+               const flutter::EncodableValue* error_details),
+              (override));
+  MOCK_METHOD(void, EndOfStreamInternal, (), (override));
 };
 
 #define MOCK_DEVICE_ID "mock_device_id"

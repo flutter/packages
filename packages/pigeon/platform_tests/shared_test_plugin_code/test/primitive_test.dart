@@ -53,7 +53,7 @@ void main() {
         <Object?>[true, false]
       ]));
     });
-    PrimitiveFlutterApi.setup(api, binaryMessenger: mockMessenger);
+    PrimitiveFlutterApi.setUp(api, binaryMessenger: mockMessenger);
     verify(api.aBoolList(<bool?>[true, false]));
   });
 

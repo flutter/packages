@@ -265,7 +265,7 @@ NSObject<FlutterMessageCodec> *InAppPurchaseAPIGetCodec(void);
 - (void)startProductRequestProductIdentifiers:(NSArray<NSString *> *)productIdentifiers
                                    completion:(void (^)(SKProductsResponseMessage *_Nullable,
                                                         FlutterError *_Nullable))completion;
-- (void)finishTransactionFinishMap:(NSDictionary<NSString *, NSString *> *)finishMap
+- (void)finishTransactionFinishMap:(NSDictionary<NSString *, id> *)finishMap
                              error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)restoreTransactionsApplicationUserName:(nullable NSString *)applicationUserName
                                          error:(FlutterError *_Nullable *_Nonnull)error;

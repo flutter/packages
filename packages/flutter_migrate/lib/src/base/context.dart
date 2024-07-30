@@ -118,7 +118,7 @@ class AppContext {
   T? get<T>() {
     dynamic value = _generateIfNecessary(T, _overrides);
     if (value == null && _parent != null) {
-      value = _parent!.get<T>();
+      value = _parent.get<T>();
     }
     return _unboxNull(value ?? _generateIfNecessary(T, _fallbacks)) as T?;
   }

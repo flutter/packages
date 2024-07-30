@@ -8,7 +8,7 @@ tasks:
     infra_step: true
   - name: build examples
     script: .ci/scripts/tool_runner.sh
-    args: ["build-examples", "--macos"]
+    args: ["build-examples", "--macos", "--swift-package-manager"]
   - name: xcode analyze
     script: .ci/scripts/tool_runner.sh
     args: ["xcode-analyze", "--macos"]

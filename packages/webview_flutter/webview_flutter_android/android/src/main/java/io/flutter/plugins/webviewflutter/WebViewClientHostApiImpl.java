@@ -88,7 +88,10 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     public boolean shouldOverrideUrlLoading(
         @NonNull WebView view, @NonNull WebResourceRequest request) {
       flutterApi.requestLoading(this, view, request, reply -> {});
-      return returnValueForShouldOverrideUrlLoading;
+
+      // The client is only allowed to stop navigations that target the main frame because
+      // overridden URLs are passed to `loadUrl` and `loadUrl` cannot load a subframe.
+      return request.isForMainFrame() && returnValueForShouldOverrideUrlLoading;
     }
 
     // Legacy codepath for < 24; newer versions use the variant above.
@@ -187,7 +190,10 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     public boolean shouldOverrideUrlLoading(
         @NonNull WebView view, @NonNull WebResourceRequest request) {
       flutterApi.requestLoading(this, view, request, reply -> {});
-      return returnValueForShouldOverrideUrlLoading;
+
+      // The client is only allowed to stop navigations that target the main frame because
+      // overridden URLs are passed to `loadUrl` and `loadUrl` cannot load a subframe.
+      return request.isForMainFrame() && returnValueForShouldOverrideUrlLoading;
     }
 
     // Legacy codepath for < Lollipop; newer versions use the variant above.

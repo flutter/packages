@@ -44,6 +44,7 @@ android {
         applicationId "dev.flutter.packages.interactive_media_ads_example"
         minSdk flutter.minSdkVersion
         targetSdk flutter.targetSdkVersion
+        multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

@@ -14,7 +14,6 @@ On Android the WebView widget is backed by a [WebView](https://developer.android
 | **Support** | SDK 19+ or 20+ | 12.0+ |
 
 ## Usage
-Add `webview_flutter` as a [dependency in your pubspec.yaml file](https://pub.dev/packages/webview_flutter/install).
 
 You can now display a WebView by:
 
@@ -32,6 +31,7 @@ controller = WebViewController()
       },
       onPageStarted: (String url) {},
       onPageFinished: (String url) {},
+      onHttpError: (HttpResponseError error) {},
       onWebResourceError: (WebResourceError error) {},
       onNavigationRequest: (NavigationRequest request) {
         if (request.url.startsWith('https://www.youtube.com/')) {
@@ -64,8 +64,8 @@ for more details.
 ### Android Platform Views
 
 This plugin uses
-[Platform Views](https://flutter.dev/docs/development/platform-integration/platform-views) to embed
-the Android’s WebView within the Flutter app.
+[Platform Views](https://docs.flutter.dev/platform-integration/android/platform-views) to
+embed the Android's WebView within the Flutter app.
 
 You should however make sure to set the correct `minSdkVersion` in `android/app/build.gradle` if it was previously lower than 19:
 
@@ -142,7 +142,7 @@ for more details on iOS features.
 ### Enable Material Components for Android
 
 To use Material Components when the user interacts with input elements in the WebView,
-follow the steps described in the [Enabling Material Components instructions](https://flutter.dev/docs/deployment/android#enabling-material-components).
+follow the steps described in the [Enabling Material Components instructions](https://docs.flutter.dev/deployment/android#enable-material-components).
 
 ### Setting custom headers on POST requests
 

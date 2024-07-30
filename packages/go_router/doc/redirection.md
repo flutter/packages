@@ -10,7 +10,7 @@ either the GoRouter or GoRoute constructor:
 
 ```dart
 redirect: (BuildContext context, GoRouterState state) {
-  if (AuthState.of(context).isSignedIn) {
+  if (!AuthState.of(context).isSignedIn) {
     return '/signin';
   } else {
     return null;

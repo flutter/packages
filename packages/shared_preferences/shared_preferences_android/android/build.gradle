@@ -2,6 +2,7 @@ group 'io.flutter.plugins.sharedpreferences'
 version '1.0-SNAPSHOT'
 
 buildscript {
+    ext.kotlin_version = '1.7.10'
     repositories {
         google()
         mavenCentral()
@@ -9,6 +10,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -28,6 +30,7 @@ allprojects {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     // Conditional for compatibility with AGP <4.2.
@@ -41,18 +44,32 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 19
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
         checkAllWarnings true
         warningsAsErrors true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
+        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
     dependencies {
+        implementation 'androidx.datastore:datastore:1.0.0'
+        implementation 'androidx.datastore:datastore-preferences:1.0.0'    
         testImplementation 'junit:junit:4.13.2'
-        testImplementation 'org.mockito:mockito-inline:5.0.0'
+        testImplementation 'androidx.test:core-ktx:1.5.0'
+        testImplementation 'androidx.test.ext:junit-ktx:1.1.5'
+        testImplementation 'org.robolectric:robolectric:4.12.1'
+        testImplementation 'org.mockito:mockito-inline:5.2.0'
+        testImplementation 'io.mockk:mockk:1.13.12'
     }
 
 

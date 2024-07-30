@@ -19,6 +19,9 @@ needed for your project.
   cppOptions: CppOptions(namespace: 'pigeon_example'),
   cppHeaderOut: 'windows/runner/messages.g.h',
   cppSourceOut: 'windows/runner/messages.g.cpp',
+  gobjectHeaderOut: 'linux/messages.g.h',
+  gobjectSourceOut: 'linux/messages.g.cc',
+  gobjectOptions: GObjectOptions(),
   kotlinOut:
       'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
   kotlinOptions: KotlinOptions(),
@@ -115,12 +118,9 @@ Future<bool> sendMessage(String messageText) {
 ### Swift
 
 This is the code that will use the generated Swift code to receive calls from Flutter.
-packages/pigeon/example/app/ios/Runner/AppDelegate.swift
+Unlike other languages, when throwing an error, use `PigeonError` instead of `FlutterError`, as `FlutterError` does not conform to `Swift.Error`.
 <?code-excerpt "ios/Runner/AppDelegate.swift (swift-class)"?>
 ```swift
-// This extension of Error is required to do use FlutterError in any Swift code.
-extension FlutterError: Error {}
-
 private class PigeonApiImplementation: ExampleHostApi {
   func getHostLanguage() throws -> String {
     return "Swift"
@@ -128,14 +128,14 @@ private class PigeonApiImplementation: ExampleHostApi {
 
   func add(_ a: Int64, to b: Int64) throws -> Int64 {
     if a < 0 || b < 0 {
-      throw FlutterError(code: "code", message: "message", details: "details")
+      throw PigeonError(code: "code", message: "message", details: "details")
     }
     return a + b
   }
 
   func sendMessage(message: MessageData, completion: @escaping (Result<Bool, Error>) -> Void) {
     if message.code == Code.one {
-      completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
+      completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
       return
     }
     completion(.success(true))
@@ -185,13 +185,56 @@ class PigeonApiImplementation : public ExampleHostApi {
   }
   void SendMessage(const MessageData& message,
                    std::function<void(ErrorOr<bool> reply)> result) {
-    if (message.code == Code.one) {
+    if (message.code == Code.kOne) {
       result(FlutterError("code", "message", "details"));
       return;
     }
     result(true);
   }
 };
+```
+
+### GObject
+<?code-excerpt "linux/my_application.cc (vtable)"?>
+```c++
+static PigeonExamplePackageExampleHostApiGetHostLanguageResponse*
+handle_get_host_language(gpointer user_data) {
+  return pigeon_example_package_example_host_api_get_host_language_response_new(
+      "C++");
+}
+
+static PigeonExamplePackageExampleHostApiAddResponse* handle_add(
+    int64_t a, int64_t b, gpointer user_data) {
+  if (a < 0 || b < 0) {
+    g_autoptr(FlValue) details = fl_value_new_string("details");
+    return pigeon_example_package_example_host_api_add_response_new_error(
+        "code", "message", details);
+  }
+
+  return pigeon_example_package_example_host_api_add_response_new(a + b);
+}
+
+static void handle_send_message(
+    PigeonExamplePackageMessageData* message,
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+    gpointer user_data) {
+  PigeonExamplePackageCode code =
+      pigeon_example_package_message_data_get_code(message);
+  if (code == PIGEON_EXAMPLE_PACKAGE_CODE_ONE) {
+    g_autoptr(FlValue) details = fl_value_new_string("details");
+    pigeon_example_package_example_host_api_respond_error_send_message(
+        response_handle, "code", "message", details);
+    return;
+  }
+
+  pigeon_example_package_example_host_api_respond_send_message(response_handle,
+                                                               TRUE);
+}
+
+static PigeonExamplePackageExampleHostApiVTable example_host_api_vtable = {
+    .get_host_language = handle_get_host_language,
+    .add = handle_add,
+    .send_message = handle_send_message};
 ```
 
 ## FlutterApi Example
@@ -223,7 +266,7 @@ class _ExampleFlutterApi implements MessageFlutterApi {
   }
 }
 // ···
-  MessageFlutterApi.setup(_ExampleFlutterApi());
+  MessageFlutterApi.setUp(_ExampleFlutterApi());
 ```
 
 ### Swift
@@ -275,6 +318,37 @@ void TestPlugin::CallFlutterMethod(
       aString, [result](String echo) { result(echo); },
       [result](const FlutterError& error) { result(error); });
 }
+```
+
+### GObject
+
+<?code-excerpt "linux/my_application.cc (flutter-method-callback)"?>
+```c++
+static void flutter_method_cb(GObject* object, GAsyncResult* result,
+                              gpointer user_data) {
+  g_autoptr(GError) error = nullptr;
+  g_autoptr(
+      PigeonExamplePackageMessageFlutterApiFlutterMethodResponse) response =
+      pigeon_example_package_message_flutter_api_flutter_method_finish(
+          PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API(object), result, &error);
+  if (response == nullptr) {
+    g_warning("Failed to call Flutter method: %s", error->message);
+    return;
+  }
+
+  g_printerr(
+      "Got result from Flutter method: %s\n",
+      pigeon_example_package_message_flutter_api_flutter_method_response_get_return_value(
+          response));
+}
+```
+
+<?code-excerpt "linux/my_application.cc (flutter-method)"?>
+```c++
+self->flutter_api =
+    pigeon_example_package_message_flutter_api_new(messenger, nullptr);
+pigeon_example_package_message_flutter_api_flutter_method(
+    self->flutter_api, "hello", nullptr, flutter_method_cb, self);
 ```
 
 ## Swift / Kotlin Plugin Example

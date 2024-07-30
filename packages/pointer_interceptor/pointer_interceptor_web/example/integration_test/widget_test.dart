@@ -64,68 +64,6 @@ void main() {
       expect(element.id, 'background-html-view');
     }, semanticsEnabled: false);
   });
-
-  group('With semantics', () {
-    testWidgets('finds semantics of wrapped widgets',
-        (WidgetTester tester) async {
-      await _fullyRenderApp(tester);
-
-      final web.Element element =
-          _getHtmlElementAtCenter(clickableButtonFinder, tester);
-
-      expect(element.tagName.toLowerCase(), 'flt-semantics');
-      expect(element.getAttribute('aria-label'), 'Works As Expected');
-    },
-        // TODO(bparrishMines): The semantics label is returning null.
-        // See https://github.com/flutter/flutter/issues/145238
-        skip: true);
-
-    testWidgets(
-        'finds semantics of wrapped widgets with intercepting set to false',
-        (WidgetTester tester) async {
-      await _fullyRenderApp(tester);
-
-      final web.Element element =
-          _getHtmlElementAtCenter(clickableWrappedButtonFinder, tester);
-
-      expect(element.tagName.toLowerCase(), 'flt-semantics');
-      expect(element.getAttribute('aria-label'),
-          'Never calls onPressed transparent');
-    },
-        // TODO(bparrishMines): The semantics label is returning null.
-        // See https://github.com/flutter/flutter/issues/145238
-        skip: true);
-
-    testWidgets('finds semantics of unwrapped elements',
-        (WidgetTester tester) async {
-      await _fullyRenderApp(tester);
-
-      final web.Element element =
-          _getHtmlElementAtCenter(nonClickableButtonFinder, tester);
-
-      expect(element.tagName.toLowerCase(), 'flt-semantics');
-      expect(element.getAttribute('aria-label'), 'Never calls onPressed');
-    },
-        // TODO(bparrishMines): The semantics label is returning null.
-        // See https://github.com/flutter/flutter/issues/145238
-        skip: true);
-
-    // Notice that, when hit-testing the background platform view, instead of
-    // finding a semantics node, the platform view itself is found. This is
-    // because the platform view does not add interactive semantics nodes into
-    // the framework's semantics tree. Instead, its semantics is determined by
-    // the HTML content of the platform view itself. Flutter's semantics tree
-    // simply allows the hit test to land on the platform view by making itself
-    // hit test transparent.
-    testWidgets('on background directly', (WidgetTester tester) async {
-      await _fullyRenderApp(tester);
-
-      final web.Element element =
-          _getHtmlElementAt(tester.getTopLeft(backgroundFinder));
-
-      expect(element.id, 'background-html-view');
-    });
-  });
 }
 
 Future<void> _fullyRenderApp(WidgetTester tester) async {

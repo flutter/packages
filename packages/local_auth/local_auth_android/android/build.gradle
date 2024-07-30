@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:8.5.0'
     }
 }
 
@@ -29,7 +29,7 @@ android {
     compileSdk 34
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 19
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -41,7 +41,7 @@ android {
     lintOptions {
         checkAllWarnings true
         warningsAsErrors true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
+        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 
 
@@ -59,7 +59,7 @@ android {
 }
 
 dependencies {
-    api "androidx.core:core:1.10.1"
+    api "androidx.core:core:1.13.1"
     api "androidx.biometric:biometric:1.1.0"
     api "androidx.fragment:fragment:1.6.2"
     testImplementation 'junit:junit:4.13.2'
@@ -67,7 +67,7 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.10.3'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     // TODO(camsim99): org.jetbrains.kotlin:kotlin-bom artifact purpose is to align kotlin stdlib and related code versions.
     // This should be removed when https://github.com/flutter/flutter/issues/125062 is fixed.
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.10"))

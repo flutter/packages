@@ -82,14 +82,15 @@ EncodableList MessageData::ToEncodableList() const {
   list.push_back(name_ ? EncodableValue(*name_) : EncodableValue());
   list.push_back(description_ ? EncodableValue(*description_)
                               : EncodableValue());
-  list.push_back(EncodableValue((int)code_));
+  list.push_back(CustomEncodableValue(code_));
   list.push_back(EncodableValue(data_));
   return list;
 }
 
 MessageData MessageData::FromEncodableList(const EncodableList& list) {
-  MessageData decoded((Code)(std::get<int32_t>(list[2])),
-                      std::get<EncodableMap>(list[3]));
+  MessageData decoded(
+      std::any_cast<const Code&>(std::get<CustomEncodableValue>(list[2])),
+      std::get<EncodableMap>(list[3]));
   auto& encodable_name = list[0];
   if (!encodable_name.IsNull()) {
     decoded.set_name(std::get<std::string>(encodable_name));
@@ -101,28 +102,43 @@ MessageData MessageData::FromEncodableList(const EncodableList& list) {
   return decoded;
 }
 
-ExampleHostApiCodecSerializer::ExampleHostApiCodecSerializer() {}
+PigeonCodecSerializer::PigeonCodecSerializer() {}
 
-EncodableValue ExampleHostApiCodecSerializer::ReadValueOfType(
+EncodableValue PigeonCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
-    case 128:
+    case 129:
       return CustomEncodableValue(MessageData::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
+    case 130: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<Code>(enum_arg_value));
+    }
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }
 }
 
-void ExampleHostApiCodecSerializer::WriteValue(
+void PigeonCodecSerializer::WriteValue(
     const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
     if (custom_value->type() == typeid(MessageData)) {
-      stream->WriteByte(128);
+      stream->WriteByte(129);
       WriteValue(
           EncodableValue(
               std::any_cast<MessageData>(*custom_value).ToEncodableList()),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(Code)) {
+      stream->WriteByte(130);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<Code>(*custom_value))),
           stream);
       return;
     }
@@ -133,17 +149,28 @@ void ExampleHostApiCodecSerializer::WriteValue(
 /// The codec used by ExampleHostApi.
 const flutter::StandardMessageCodec& ExampleHostApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &ExampleHostApiCodecSerializer::GetInstance());
+      &PigeonCodecSerializer::GetInstance());
 }
 
 // Sets up an instance of `ExampleHostApi` to handle messages through the
 // `binary_messenger`.
 void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                            ExampleHostApi* api) {
+  ExampleHostApi::SetUp(binary_messenger, api, "");
+}
+
+void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
+                           ExampleHostApi* api,
+                           const std::string& message_channel_suffix) {
+  const std::string prepended_suffix =
+      message_channel_suffix.length() > 0
+          ? std::string(".") + message_channel_suffix
+          : "";
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_example_package."
-                                  "ExampleHostApi.getHostLanguage",
+                                  "ExampleHostApi.getHostLanguage" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -169,7 +196,8 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(
         binary_messenger,
-        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add",
+        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -208,7 +236,8 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(
         binary_messenger,
-        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage",
+        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -258,11 +287,18 @@ EncodableValue ExampleHostApi::WrapError(const FlutterError& error) {
 // Generated class from Pigeon that represents Flutter messages that can be
 // called from C++.
 MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger)
-    : binary_messenger_(binary_messenger) {}
+    : binary_messenger_(binary_messenger), message_channel_suffix_("") {}
+
+MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger,
+                                     const std::string& message_channel_suffix)
+    : binary_messenger_(binary_messenger),
+      message_channel_suffix_(message_channel_suffix.length() > 0
+                                  ? std::string(".") + message_channel_suffix
+                                  : "") {}
 
 const flutter::StandardMessageCodec& MessageFlutterApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &flutter::StandardCodecSerializer::GetInstance());
+      &PigeonCodecSerializer::GetInstance());
 }
 
 void MessageFlutterApi::FlutterMethod(
@@ -271,7 +307,8 @@ void MessageFlutterApi::FlutterMethod(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi."
-      "flutterMethod";
+      "flutterMethod" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_string_arg ? EncodableValue(*a_string_arg) : EncodableValue(),

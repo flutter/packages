@@ -1,6 +1,12 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 1.0.8
+
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Vertically center aligns the icons.
+* Fixes overlapping / broken outlines for glyphs such as "create\_solid" and "car\_fill"
 
 ## 1.0.7
 

@@ -59,7 +59,7 @@ class ErrorOr {
   std::variant<T, FlutterError> v_;
 };
 
-enum class Code { one = 0, two = 1 };
+enum class Code { kOne = 0, kTwo = 1 };
 
 // Generated class from Pigeon that represents data sent in messages.
 class MessageData {
@@ -89,20 +89,19 @@ class MessageData {
   static MessageData FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class ExampleHostApi;
-  friend class ExampleHostApiCodecSerializer;
   friend class MessageFlutterApi;
-  friend class MessageFlutterApiCodecSerializer;
+  friend class PigeonCodecSerializer;
   std::optional<std::string> name_;
   std::optional<std::string> description_;
   Code code_;
   flutter::EncodableMap data_;
 };
 
-class ExampleHostApiCodecSerializer : public flutter::StandardCodecSerializer {
+class PigeonCodecSerializer : public flutter::StandardCodecSerializer {
  public:
-  ExampleHostApiCodecSerializer();
-  inline static ExampleHostApiCodecSerializer& GetInstance() {
-    static ExampleHostApiCodecSerializer sInstance;
+  PigeonCodecSerializer();
+  inline static PigeonCodecSerializer& GetInstance() {
+    static PigeonCodecSerializer sInstance;
     return sInstance;
   }
 
@@ -132,6 +131,9 @@ class ExampleHostApi {
   // `binary_messenger`.
   static void SetUp(flutter::BinaryMessenger* binary_messenger,
                     ExampleHostApi* api);
+  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+                    ExampleHostApi* api,
+                    const std::string& message_channel_suffix);
   static flutter::EncodableValue WrapError(std::string_view error_message);
   static flutter::EncodableValue WrapError(const FlutterError& error);
 
@@ -143,6 +145,8 @@ class ExampleHostApi {
 class MessageFlutterApi {
  public:
   MessageFlutterApi(flutter::BinaryMessenger* binary_messenger);
+  MessageFlutterApi(flutter::BinaryMessenger* binary_messenger,
+                    const std::string& message_channel_suffix);
   static const flutter::StandardMessageCodec& GetCodec();
   void FlutterMethod(const std::string* a_string,
                      std::function<void(const std::string&)>&& on_success,
@@ -150,6 +154,7 @@ class MessageFlutterApi {
 
  private:
   flutter::BinaryMessenger* binary_messenger_;
+  std::string message_channel_suffix_;
 };
 
 }  // namespace pigeon_example

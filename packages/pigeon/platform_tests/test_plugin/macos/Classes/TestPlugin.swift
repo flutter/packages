@@ -5,20 +5,26 @@
 import Cocoa
 import FlutterMacOS
 
-extension FlutterError: Error {}
-
 /// This plugin handles the native side of the integration tests in
 /// example/integration_test/.
 public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   var flutterAPI: FlutterIntegrationCoreApi
+  var flutterSmallApiOne: FlutterSmallApi
+  var flutterSmallApiTwo: FlutterSmallApi
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = TestPlugin(binaryMessenger: registrar.messenger)
     HostIntegrationCoreApiSetup.setUp(binaryMessenger: registrar.messenger, api: plugin)
+    TestPluginWithSuffix.register(with: registrar, suffix: "suffixOne")
+    TestPluginWithSuffix.register(with: registrar, suffix: "suffixTwo")
   }
 
   init(binaryMessenger: FlutterBinaryMessenger) {
     flutterAPI = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
+    flutterSmallApiOne = FlutterSmallApi(
+      binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixOne")
+    flutterSmallApiTwo = FlutterSmallApi(
+      binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
   }
 
   // MARK: HostIntegrationCoreApi implementation
@@ -41,15 +47,15 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func throwError() throws -> Any? {
-    throw FlutterError(code: "code", message: "message", details: "details")
+    throw PigeonError(code: "code", message: "message", details: "details")
   }
 
   func throwErrorFromVoid() throws {
-    throw FlutterError(code: "code", message: "message", details: "details")
+    throw PigeonError(code: "code", message: "message", details: "details")
   }
 
   func throwFlutterError() throws -> Any? {
-    throw FlutterError(code: "code", message: "message", details: "details")
+    throw PigeonError(code: "code", message: "message", details: "details")
   }
 
   func echo(_ anInt: Int64) -> Int64 {
@@ -76,8 +82,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return anObject
   }
 
-  func echo(_ aList: [Any?]) throws -> [Any?] {
-    return aList
+  func echo(_ list: [Any?]) throws -> [Any?] {
+    return list
   }
 
   func echo(_ aMap: [String?: Any?]) throws -> [String?: Any?] {
@@ -177,15 +183,15 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func throwAsyncError(completion: @escaping (Result<Any?, Error>) -> Void) {
-    completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
+    completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
   }
 
   func throwAsyncErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void) {
-    completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
+    completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
   }
 
   func throwAsyncFlutterError(completion: @escaping (Result<Any?, Error>) -> Void) {
-    completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
+    completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
   }
 
   func echoAsync(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void) {
@@ -233,8 +239,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(anObject))
   }
 
-  func echoAsync(_ aList: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void) {
-    completion(.success(aList))
+  func echoAsync(_ list: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void) {
+    completion(.success(list))
   }
 
   func echoAsync(
@@ -276,8 +282,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(anObject))
   }
 
-  func echoAsyncNullable(_ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void) {
-    completion(.success(aList))
+  func echoAsyncNullable(_ list: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void) {
+    completion(.success(list))
   }
 
   func echoAsyncNullable(
@@ -448,10 +454,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func callFlutterEcho(
-    _ aList: FlutterStandardTypedData,
+    _ list: FlutterStandardTypedData,
     completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void
   ) {
-    flutterAPI.echo(aList) { response in
+    flutterAPI.echo(list) { response in
       switch response {
       case .success(let res):
         completion(.success(res))
@@ -461,8 +467,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
-  func callFlutterEcho(_ aList: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void) {
-    flutterAPI.echo(aList) { response in
+  func callFlutterEcho(_ list: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void) {
+    flutterAPI.echo(list) { response in
       switch response {
       case .success(let res):
         completion(.success(res))
@@ -548,10 +554,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func callFlutterEchoNullable(
-    _ aList: FlutterStandardTypedData?,
+    _ list: FlutterStandardTypedData?,
     completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void
   ) {
-    flutterAPI.echoNullable(aList) { response in
+    flutterAPI.echoNullable(list) { response in
       switch response {
       case .success(let res):
         completion(.success(res))
@@ -562,9 +568,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func callFlutterEchoNullable(
-    _ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void
+    _ list: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void
   ) {
-    flutterAPI.echoNullable(aList) { response in
+    flutterAPI.echoNullable(list) { response in
       switch response {
       case .success(let res):
         completion(.success(res))
@@ -599,4 +605,50 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       }
     }
   }
+
+  func callFlutterSmallApiEcho(
+    _ aString: String, completion: @escaping (Result<String, Error>) -> Void
+  ) {
+    flutterSmallApiOne.echo(string: aString) { responseOne in
+      self.flutterSmallApiTwo.echo(string: aString) { responseTwo in
+        switch responseOne {
+        case .success(let resOne):
+          switch responseTwo {
+          case .success(let resTwo):
+            if resOne == resTwo {
+              completion(.success(resOne))
+            } else {
+              completion(
+                .failure(
+                  PigeonError(
+                    code: "",
+                    message: "Multi-instance responses were not matching: \(resOne), \(resTwo)",
+                    details: nil)))
+            }
+          case .failure(let error):
+            completion(.failure(error))
+          }
+        case .failure(let error):
+          completion(.failure(error))
+        }
+      }
+    }
+  }
+}
+
+public class TestPluginWithSuffix: HostSmallApi {
+  public static func register(with registrar: FlutterPluginRegistrar, suffix: String) {
+    let plugin = TestPluginWithSuffix()
+    HostSmallApiSetup.setUp(
+      binaryMessenger: registrar.messenger, api: plugin, messageChannelSuffix: suffix)
+  }
+
+  func echo(aString: String, completion: @escaping (Result<String, Error>) -> Void) {
+    completion(.success(aString))
+  }
+
+  func voidVoid(completion: @escaping (Result<Void, Error>) -> Void) {
+    completion(.success(Void()))
+  }
+
 }

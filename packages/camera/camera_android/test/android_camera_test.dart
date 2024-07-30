@@ -72,6 +72,54 @@ void main() {
           arguments: <String, Object?>{
             'cameraName': 'Test',
             'resolutionPreset': 'high',
+            'enableAudio': false,
+            'fps': null,
+            'videoBitrate': null,
+            'audioBitrate': null,
+          },
+        ),
+      ]);
+      expect(cameraId, 1);
+    });
+
+    test(
+        'Should send creation data and receive back a camera id using createCameraWithSettings',
+        () async {
+      // Arrange
+      final MethodChannelMock cameraMockChannel = MethodChannelMock(
+          channelName: _channelName,
+          methods: <String, dynamic>{
+            'create': <String, dynamic>{
+              'cameraId': 1,
+              'imageFormatGroup': 'unknown',
+            }
+          });
+      final AndroidCamera camera = AndroidCamera();
+
+      // Act
+      final int cameraId = await camera.createCameraWithSettings(
+        const CameraDescription(
+            name: 'Test',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 0),
+        const MediaSettings(
+          resolutionPreset: ResolutionPreset.low,
+          fps: 15,
+          videoBitrate: 200000,
+          audioBitrate: 32000,
+        ),
+      );
+
+      // Assert
+      expect(cameraMockChannel.log, <Matcher>[
+        isMethodCall(
+          'create',
+          arguments: <String, Object?>{
+            'cameraName': 'Test',
+            'resolutionPreset': 'low',
+            'fps': 15,
+            'videoBitrate': 200000,
+            'audioBitrate': 32000,
             'enableAudio': false
           },
         ),
@@ -588,31 +636,6 @@ void main() {
       expect(channel.log, <Matcher>[
         isMethodCall('startVideoRecording', arguments: <String, Object?>{
           'cameraId': cameraId,
-          'maxVideoDuration': null,
-          'enableStream': false,
-        }),
-      ]);
-    });
-
-    test('Should pass maxVideoDuration when starting recording a video',
-        () async {
-      // Arrange
-      final MethodChannelMock channel = MethodChannelMock(
-        channelName: _channelName,
-        methods: <String, dynamic>{'startVideoRecording': null},
-      );
-
-      // Act
-      await camera.startVideoRecording(
-        cameraId,
-        maxVideoDuration: const Duration(seconds: 10),
-      );
-
-      // Assert
-      expect(channel.log, <Matcher>[
-        isMethodCall('startVideoRecording', arguments: <String, Object?>{
-          'cameraId': cameraId,
-          'maxVideoDuration': 10000,
           'enableStream': false,
         }),
       ]);
@@ -637,7 +660,6 @@ void main() {
       expect(channel.log, <Matcher>[
         isMethodCall('startVideoRecording', arguments: <String, Object?>{
           'cameraId': cameraId,
-          'maxVideoDuration': null,
           'enableStream': true,
         }),
       ]);

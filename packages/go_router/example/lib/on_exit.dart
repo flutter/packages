@@ -22,7 +22,10 @@ final GoRouter _router = GoRouter(
           builder: (BuildContext context, GoRouterState state) {
             return const DetailsScreen();
           },
-          onExit: (BuildContext context) async {
+          onExit: (
+            BuildContext context,
+            GoRouterState state,
+          ) async {
             final bool? confirmed = await showDialog<bool>(
               context: context,
               builder: (_) {

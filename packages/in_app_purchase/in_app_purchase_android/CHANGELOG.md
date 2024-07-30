@@ -1,6 +1,62 @@
-## 0.3.2+1
+## 0.3.6+5
 
 * Bumps com.android.billingclient:billing from 6.1.0 to 6.2.0.
+
+## 0.3.6+4
+
+* Bumps androidx.annotation:annotation from 1.8.0 to 1.8.1.
+
+## 0.3.6+3
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 0.3.6+2
+
+* Updates Android Gradle Plugin to 8.5.1.
+
+## 0.3.6+1
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
+## 0.3.6
+
+* Introduces new `ReplacementMode` for Android's billing client as `ProrationMode` is being deprecated.
+
+## 0.3.5+2
+
+* Bumps androidx.annotation:annotation from 1.7.1 to 1.8.0.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 0.3.5+1
+
+* Updates example to use `countryCode` instead of deprecated `getCountryCode`.
+
+## 0.3.5
+
+* Replaces `getCountryCode` with `countryCode`.
+
+## 0.3.4+1
+
+* Adds documentation for UserChoice and Alternative Billing.
+
+## 0.3.4
+
+* Adds `countryCode` API.
+
+## 0.3.3+1
+
+* Moves alternative billing listener creation to BillingClientFactoryImpl.
+
+## 0.3.3
+
+* Converts data objects in internal platform communication to Pigeon.
+* Deprecates JSON serialization and deserialization for Billing Client wrapper
+  objects.
+
+## 0.3.2+1
+
+* Converts internal platform communication to Pigeon.
 
 ## 0.3.2
 

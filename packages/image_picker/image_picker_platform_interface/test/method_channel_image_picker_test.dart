@@ -247,6 +247,7 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
           ],
         );
@@ -287,42 +288,49 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': null,
               'maxHeight': 10.0,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': 20.0,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': null,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': null,
               'maxHeight': 10.0,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': 20.0,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
           ],
         );
@@ -745,6 +753,7 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
           ],
         );
@@ -785,42 +794,49 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': null,
               'maxHeight': 10.0,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': 20.0,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': null,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': null,
               'maxHeight': 10.0,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': 20.0,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
           ],
         );
@@ -865,7 +881,8 @@ void main() {
     group('#getMedia', () {
       test('calls the method correctly', () async {
         returnValue = <String>['0'];
-        await picker.getMedia(options: const MediaOptions(allowMultiple: true));
+        await picker.getMedia(
+            options: MediaOptions.createAndValidate(allowMultiple: true));
 
         expect(
           log,
@@ -875,6 +892,7 @@ void main() {
               'maxImageHeight': null,
               'imageQuality': null,
               'allowMultiple': true,
+              'limit': null,
             }),
           ],
         );
@@ -883,11 +901,12 @@ void main() {
       test('passes the selection options correctly', () async {
         // Default options
         returnValue = <String>['0'];
-        await picker.getMedia(options: const MediaOptions(allowMultiple: true));
+        await picker.getMedia(
+            options: MediaOptions.createAndValidate(allowMultiple: true));
         // Various image options
         returnValue = <String>['0'];
         await picker.getMedia(
-          options: MediaOptions(
+          options: MediaOptions.createAndValidate(
             allowMultiple: true,
             imageOptions: ImageOptions.createAndValidate(
               maxWidth: 10.0,
@@ -895,7 +914,7 @@ void main() {
           ),
         );
         await picker.getMedia(
-          options: MediaOptions(
+          options: MediaOptions.createAndValidate(
             allowMultiple: true,
             imageOptions: ImageOptions.createAndValidate(
               maxHeight: 10.0,
@@ -903,11 +922,20 @@ void main() {
           ),
         );
         await picker.getMedia(
-          options: MediaOptions(
+          options: MediaOptions.createAndValidate(
             allowMultiple: true,
             imageOptions: ImageOptions.createAndValidate(
               imageQuality: 70,
             ),
+          ),
+        );
+        await picker.getMedia(
+          options: MediaOptions.createAndValidate(
+            allowMultiple: true,
+            imageOptions: ImageOptions.createAndValidate(
+              imageQuality: 70,
+            ),
+            limit: 5,
           ),
         );
 
@@ -919,24 +947,35 @@ void main() {
               'maxImageHeight': null,
               'imageQuality': null,
               'allowMultiple': true,
+              'limit': null,
             }),
             isMethodCall('pickMedia', arguments: <String, dynamic>{
               'maxImageWidth': 10.0,
               'maxImageHeight': null,
               'imageQuality': null,
               'allowMultiple': true,
+              'limit': null,
             }),
             isMethodCall('pickMedia', arguments: <String, dynamic>{
               'maxImageWidth': null,
               'maxImageHeight': 10.0,
               'imageQuality': null,
               'allowMultiple': true,
+              'limit': null,
             }),
             isMethodCall('pickMedia', arguments: <String, dynamic>{
               'maxImageWidth': null,
               'maxImageHeight': null,
               'imageQuality': 70,
               'allowMultiple': true,
+              'limit': null,
+            }),
+            isMethodCall('pickMedia', arguments: <String, dynamic>{
+              'maxImageWidth': null,
+              'maxImageHeight': null,
+              'imageQuality': 70,
+              'allowMultiple': true,
+              'limit': 5,
             }),
           ],
         );
@@ -946,7 +985,7 @@ void main() {
         returnValue = <String>['0', '1'];
         expect(
           () => picker.getMedia(
-            options: MediaOptions(
+            options: MediaOptions.createAndValidate(
               allowMultiple: true,
               imageOptions: ImageOptions.createAndValidate(
                 maxWidth: -1.0,
@@ -958,7 +997,7 @@ void main() {
 
         expect(
           () => picker.getMedia(
-            options: MediaOptions(
+            options: MediaOptions.createAndValidate(
               allowMultiple: true,
               imageOptions: ImageOptions.createAndValidate(
                 maxHeight: -1.0,
@@ -973,7 +1012,7 @@ void main() {
         returnValue = <String>['0', '1'];
         expect(
           () => picker.getMedia(
-            options: MediaOptions(
+            options: MediaOptions.createAndValidate(
               allowMultiple: true,
               imageOptions: ImageOptions.createAndValidate(
                 imageQuality: -1,
@@ -985,12 +1024,43 @@ void main() {
 
         expect(
           () => picker.getMedia(
-            options: MediaOptions(
+            options: MediaOptions.createAndValidate(
               allowMultiple: true,
               imageOptions: ImageOptions.createAndValidate(
                 imageQuality: 101,
               ),
             ),
+          ),
+          throwsArgumentError,
+        );
+      });
+
+      test('does not accept a invalid limit argument', () {
+        returnValue = <String>['0', '1'];
+        expect(
+          () => picker.getMedia(
+            options:
+                MediaOptions.createAndValidate(allowMultiple: true, limit: -1),
+          ),
+          throwsArgumentError,
+        );
+
+        expect(
+          () => picker.getMedia(
+            options: MediaOptions.createAndValidate(
+              allowMultiple: true,
+              limit: 0,
+            ),
+          ),
+          throwsArgumentError,
+        );
+      });
+
+      test('does not accept a not null limit when allowMultiple is false', () {
+        expect(
+          () => picker.getMedia(
+            options:
+                MediaOptions.createAndValidate(allowMultiple: false, limit: 5),
           ),
           throwsArgumentError,
         );
@@ -1002,7 +1072,7 @@ void main() {
                 picker.channel, (MethodCall methodCall) => null);
         expect(
             await picker.getMedia(
-                options: const MediaOptions(allowMultiple: true)),
+                options: MediaOptions.createAndValidate(allowMultiple: true)),
             <XFile>[]);
       });
     });
@@ -1458,6 +1528,7 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
           ],
         );
@@ -1510,6 +1581,16 @@ void main() {
             ),
           ),
         );
+        await picker.getMultiImageWithOptions(
+          options: const MultiImagePickerOptions(
+            imageOptions: ImageOptions(
+              maxWidth: 10.0,
+              maxHeight: 20.0,
+              imageQuality: 70,
+            ),
+            limit: 5,
+          ),
+        );
 
         expect(
           log,
@@ -1519,42 +1600,56 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': null,
               'maxHeight': 10.0,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': 20.0,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': null,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': null,
               'maxHeight': 10.0,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': 20.0,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
+            }),
+            isMethodCall('pickMultiImage', arguments: <String, dynamic>{
+              'maxWidth': 10.0,
+              'maxHeight': 20.0,
+              'imageQuality': 70,
+              'requestFullMetadata': true,
+              'limit': 5,
             }),
           ],
         );
@@ -1602,6 +1697,36 @@ void main() {
         );
       });
 
+      test('does not accept an invalid limit argument', () {
+        returnValue = <dynamic>['0', '1'];
+        expect(
+          () => picker.getMultiImageWithOptions(
+            options: MultiImagePickerOptions.createAndValidate(
+              limit: -1,
+            ),
+          ),
+          throwsArgumentError,
+        );
+
+        expect(
+          () => picker.getMultiImageWithOptions(
+            options: MultiImagePickerOptions.createAndValidate(
+              limit: 0,
+            ),
+          ),
+          throwsArgumentError,
+        );
+
+        expect(
+          () => picker.getMultiImageWithOptions(
+            options: MultiImagePickerOptions.createAndValidate(
+              limit: 1,
+            ),
+          ),
+          throwsArgumentError,
+        );
+      });
+
       test('handles a null image path response gracefully', () async {
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(
@@ -1623,6 +1748,7 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
           ],
         );
@@ -1644,6 +1770,7 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': false,
+              'limit': null,
             }),
           ],
         );

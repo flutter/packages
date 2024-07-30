@@ -5,7 +5,8 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   input: 'pigeons/messages.dart',
-  swiftOut: 'macos/Classes/messages.g.swift',
+  swiftOut:
+      'macos/file_selector_macos/Sources/file_selector_macos/messages.g.swift',
   dartOut: 'lib/src/messages.g.dart',
   dartTestOut: 'test/messages_test.g.dart',
   copyrightHeader: 'pigeons/copyright.txt',

@@ -1,3 +1,7 @@
+## 2.4.0
+
+* Adds `SharedPreferencesAsyncWeb` API.
+
 ## 2.3.0
 
 * Updates web code to package `web: ^0.5.0`.

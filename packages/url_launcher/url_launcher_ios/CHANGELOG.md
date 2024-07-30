@@ -1,3 +1,11 @@
+## 6.3.1
+
+* Fixes a compile error when comforming UIApplication to Launcher in iOS 18 Beta 3.
+
+## 6.3.0
+
+* Adds Swift Package Manager compatibility.
+
 ## 6.2.5
 
 * Adds explicit imports for UIKit.

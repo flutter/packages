@@ -575,11 +575,7 @@ void main() {
     expect(code, contains('public static final class Outer'));
     expect(code, contains('public static final class Nested'));
     expect(code, contains('private @Nullable Nested nested;'));
-    expect(
-        code,
-        contains(
-            '(nested == null) ? null : Nested.fromList((ArrayList<Object>) nested)'));
-    expect(code, contains('add((nested == null) ? null : nested.toList());'));
+    expect(code, contains('add(nested);'));
   });
 
   test('gen one async Host Api', () {
@@ -743,12 +739,8 @@ void main() {
     expect(code, contains('private Enum1(final int index) {'));
     expect(code, contains('      this.index = index;'));
 
-    expect(code,
-        contains('toListResult.add(enum1 == null ? null : enum1.index);'));
-    expect(
-        code,
-        contains(
-            'pigeonResult.setEnum1(enum1 == null ? null : Enum1.values()[(int) enum1])'));
+    expect(code, contains('toListResult.add(enum1);'));
+    expect(code, contains('pigeonResult.setEnum1((Enum1) enum1);'));
   });
 
   test('primitive enum host', () {
@@ -786,10 +778,13 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('public enum Foo'));
+    expect(code,
+        contains('return value == null ? null : Foo.values()[(int) value];'));
     expect(
         code,
         contains(
-            'Foo fooArg = args.get(0) == null ? null : Foo.values()[(int) args.get(0)];'));
+            'writeValue(stream, value == null ? null : ((Foo) value).index);'));
+    expect(code, contains('Foo fooArg = (Foo) args.get(0);'));
   });
 
   Iterable<String> makeIterable(String string) sync* {
@@ -1371,7 +1366,7 @@ void main() {
     expect(
         code,
         contains(RegExp(
-            r'new BasicMessageChannel<>\(\s*binaryMessenger, "dev.flutter.pigeon.test_package.Api.doit", getCodec\(\), taskQueue\)')));
+            r'new BasicMessageChannel<>\(\s*binaryMessenger, "dev.flutter.pigeon.test_package.Api.doit" \+ messageChannelSuffix, getCodec\(\), taskQueue\)')));
   });
 
   test('generated annotation', () {
@@ -1516,47 +1511,7 @@ void main() {
     expect(code, isNot(contains('*//')));
   });
 
-  test("doesn't create codecs if no custom datatypes", () {
-    final Root root = Root(
-      apis: <Api>[
-        AstFlutterApi(
-          name: 'Api',
-          methods: <Method>[
-            Method(
-              name: 'method',
-              location: ApiLocation.flutter,
-              returnType: const TypeDeclaration.voidDeclaration(),
-              parameters: <Parameter>[
-                Parameter(
-                  name: 'field',
-                  type: const TypeDeclaration(
-                    baseName: 'int',
-                    isNullable: true,
-                  ),
-                ),
-              ],
-            )
-          ],
-        )
-      ],
-      classes: <Class>[],
-      enums: <Enum>[],
-    );
-    final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
-    const JavaGenerator generator = JavaGenerator();
-    generator.generate(
-      javaOptions,
-      root,
-      sink,
-      dartPackageName: DEFAULT_PACKAGE_NAME,
-    );
-    final String code = sink.toString();
-    expect(code, isNot(contains(' extends StandardMessageCodec')));
-    expect(code, contains('StandardMessageCodec'));
-  });
-
-  test('creates custom codecs if custom datatypes present', () {
+  test('creates custom codecs', () {
     final Root root = Root(apis: <Api>[
       AstFlutterApi(name: 'Api', methods: <Method>[
         Method(

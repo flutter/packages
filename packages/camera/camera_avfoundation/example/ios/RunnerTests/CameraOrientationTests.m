@@ -3,50 +3,95 @@
 // found in the LICENSE file.
 
 @import camera_avfoundation;
+#if __has_include(<camera_avfoundation/camera_avfoundation-umbrella.h>)
 @import camera_avfoundation.Test;
+#endif
 @import XCTest;
 @import Flutter;
 
 #import <OCMock/OCMock.h>
+
+@interface StubGlobalEventApi : FCPCameraGlobalEventApi
+@property(nonatomic) BOOL called;
+@property(nonatomic) FCPPlatformDeviceOrientation lastOrientation;
+@end
+
+@implementation StubGlobalEventApi
+- (void)deviceOrientationChangedOrientation:(FCPPlatformDeviceOrientation)orientation
+                                 completion:(void (^)(FlutterError *_Nullable))completion {
+  self.called = YES;
+  self.lastOrientation = orientation;
+  completion(nil);
+}
+
+- (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel
+                                          binaryMessageHandler:
+                                              (nullable FlutterBinaryMessageHandler)handler {
+  return 0;
+}
+
+@end
+
+#pragma mark -
 
 @interface CameraOrientationTests : XCTestCase
 @end
 
 @implementation CameraOrientationTests
 
+// Ensure that the given queue and then the main queue have both cycled, to wait for any pending
+// async events that may have been bounced between them.
+- (void)waitForRoundTripWithQueue:(dispatch_queue_t)queue {
+  XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"Queue flush"];
+  dispatch_async(queue, ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [expectation fulfill];
+    });
+  });
+  [self waitForExpectations:@[ expectation ]];
+}
+
+- (void)sendOrientation:(UIDeviceOrientation)orientation toCamera:(CameraPlugin *)cameraPlugin {
+  [cameraPlugin orientationChanged:[self createMockNotificationForOrientation:orientation]];
+  [self waitForRoundTripWithQueue:cameraPlugin.captureSessionQueue];
+}
+
 - (void)testOrientationNotifications {
-  id mockMessenger = OCMProtocolMock(@protocol(FlutterBinaryMessenger));
-  CameraPlugin *cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil messenger:mockMessenger];
+  StubGlobalEventApi *eventAPI = [[StubGlobalEventApi alloc] init];
+  CameraPlugin *cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
+                                                            messenger:nil
+                                                            globalAPI:eventAPI];
 
-  [mockMessenger setExpectationOrderMatters:YES];
+  [self sendOrientation:UIDeviceOrientationPortraitUpsideDown toCamera:cameraPlugin];
+  XCTAssertEqual(eventAPI.lastOrientation, FCPPlatformDeviceOrientationPortraitDown);
+  [self sendOrientation:UIDeviceOrientationPortrait toCamera:cameraPlugin];
+  XCTAssertEqual(eventAPI.lastOrientation, FCPPlatformDeviceOrientationPortraitUp);
+  [self sendOrientation:UIDeviceOrientationLandscapeLeft toCamera:cameraPlugin];
+  XCTAssertEqual(eventAPI.lastOrientation, FCPPlatformDeviceOrientationLandscapeLeft);
+  [self sendOrientation:UIDeviceOrientationLandscapeRight toCamera:cameraPlugin];
+  XCTAssertEqual(eventAPI.lastOrientation, FCPPlatformDeviceOrientationLandscapeRight);
+}
 
-  [self rotate:UIDeviceOrientationPortraitUpsideDown
-      expectedChannelOrientation:@"portraitDown"
-                    cameraPlugin:cameraPlugin
-                       messenger:mockMessenger];
-  [self rotate:UIDeviceOrientationPortrait
-      expectedChannelOrientation:@"portraitUp"
-                    cameraPlugin:cameraPlugin
-                       messenger:mockMessenger];
-  [self rotate:UIDeviceOrientationLandscapeLeft
-      expectedChannelOrientation:@"landscapeLeft"
-                    cameraPlugin:cameraPlugin
-                       messenger:mockMessenger];
-  [self rotate:UIDeviceOrientationLandscapeRight
-      expectedChannelOrientation:@"landscapeRight"
-                    cameraPlugin:cameraPlugin
-                       messenger:mockMessenger];
+- (void)testOrientationNotificationsNotCalledForFaceUp {
+  StubGlobalEventApi *eventAPI = [[StubGlobalEventApi alloc] init];
+  CameraPlugin *cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
+                                                            messenger:nil
+                                                            globalAPI:eventAPI];
 
-  OCMReject([mockMessenger sendOnChannel:[OCMArg any] message:[OCMArg any]]);
+  [self sendOrientation:UIDeviceOrientationFaceUp toCamera:cameraPlugin];
 
-  // No notification when flat.
-  [cameraPlugin
-      orientationChanged:[self createMockNotificationForOrientation:UIDeviceOrientationFaceUp]];
-  // No notification when facedown.
-  [cameraPlugin
-      orientationChanged:[self createMockNotificationForOrientation:UIDeviceOrientationFaceDown]];
+  XCTAssertFalse(eventAPI.called);
+}
 
-  OCMVerifyAll(mockMessenger);
+- (void)testOrientationNotificationsNotCalledForFaceDown {
+  StubGlobalEventApi *eventAPI = [[StubGlobalEventApi alloc] init];
+  CameraPlugin *cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
+                                                            messenger:nil
+                                                            globalAPI:eventAPI];
+
+  [self sendOrientation:UIDeviceOrientationFaceDown toCamera:cameraPlugin];
+
+  XCTAssertFalse(eventAPI.called);
 }
 
 - (void)testOrientationUpdateMustBeOnCaptureSessionQueue {
@@ -71,40 +116,20 @@
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
-- (void)rotate:(UIDeviceOrientation)deviceOrientation
-    expectedChannelOrientation:(NSString *)channelOrientation
-                  cameraPlugin:(CameraPlugin *)cameraPlugin
-                     messenger:(NSObject<FlutterBinaryMessenger> *)messenger {
-  XCTestExpectation *orientationExpectation = [self expectationWithDescription:channelOrientation];
-
-  OCMExpect([messenger
-      sendOnChannel:[OCMArg any]
-            message:[OCMArg checkWithBlock:^BOOL(NSData *data) {
-              NSObject<FlutterMethodCodec> *codec = [FlutterStandardMethodCodec sharedInstance];
-              FlutterMethodCall *methodCall = [codec decodeMethodCall:data];
-              [orientationExpectation fulfill];
-              return
-                  [methodCall.method isEqualToString:@"orientation_changed"] &&
-                  [methodCall.arguments isEqualToDictionary:@{@"orientation" : channelOrientation}];
-            }]]);
-
-  [cameraPlugin orientationChanged:[self createMockNotificationForOrientation:deviceOrientation]];
-  [self waitForExpectationsWithTimeout:30.0 handler:nil];
-}
-
 - (void)testOrientationChanged_noRetainCycle {
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
   FLTCam *mockCam = OCMClassMock([FLTCam class]);
-  FLTThreadSafeMethodChannel *mockChannel = OCMClassMock([FLTThreadSafeMethodChannel class]);
+  StubGlobalEventApi *stubAPI = [[StubGlobalEventApi alloc] init];
 
   __weak CameraPlugin *weakCamera;
 
   @autoreleasepool {
-    CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+    CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil
+                                                        messenger:nil
+                                                        globalAPI:stubAPI];
     weakCamera = camera;
     camera.captureSessionQueue = captureSessionQueue;
     camera.camera = mockCam;
-    camera.deviceEventMethodChannel = mockChannel;
 
     [camera orientationChanged:
                 [self createMockNotificationForOrientation:UIDeviceOrientationLandscapeLeft]];
@@ -118,11 +143,11 @@
       [self expectationWithDescription:@"Dispatched to capture session queue"];
   dispatch_async(captureSessionQueue, ^{
     OCMVerify(never(), [mockCam setDeviceOrientation:UIDeviceOrientationLandscapeLeft]);
-    OCMVerify(never(), [mockChannel invokeMethod:@"orientation_changed" arguments:OCMOCK_ANY]);
+    XCTAssertFalse(stubAPI.called);
     [expectation fulfill];
   });
 
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (NSNotification *)createMockNotificationForOrientation:(UIDeviceOrientation)deviceOrientation {

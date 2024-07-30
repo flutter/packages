@@ -1,9 +1,17 @@
-## NEXT
+## 2.1.4
+
+* Updates minimum required `path_provider_android` to 2.2.0 to ensure support for `getDownloadsDirectory()` on Android.
+* Updates supported platforms and paths matrix to indicate that downloads
+  are supported on Android.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.1.3
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
 * Clients on versions of Flutter that still support iOS 11 can continue to use this
   package with iOS 11, but will not receive any further updates to the iOS implementation.
+* Updates minimum iOS implementation version to include a privacy manifest.
 
 ## 2.1.2
 

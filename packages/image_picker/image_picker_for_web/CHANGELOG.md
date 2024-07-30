@@ -1,3 +1,7 @@
+## 3.0.4
+
+* Improves README example and updates it to use code excerpts.
+
 ## 3.0.3
 
 * Migrates package and tests to `package:web`.

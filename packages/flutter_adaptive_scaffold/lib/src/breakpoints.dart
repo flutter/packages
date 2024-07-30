@@ -95,7 +95,7 @@ class WidthPlatformBreakpoint extends Breakpoint {
 
     // Null boundaries are unbounded, assign the max/min of their associated
     // direction on a number line.
-    final double width = MediaQuery.of(context).size.width;
+    final double width = MediaQuery.sizeOf(context).width;
     final double lowerBound = begin ?? double.negativeInfinity;
     final double upperBound = end ?? double.infinity;
 
@@ -126,6 +126,6 @@ abstract class Breakpoint {
   const Breakpoint();
 
   /// A method that returns true based on conditions related to the context of
-  /// the screen such as MediaQuery.of(context).size.width.
+  /// the screen such as MediaQuery.sizeOf(context).width.
   bool isActive(BuildContext context);
 }

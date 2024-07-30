@@ -103,7 +103,7 @@ class MessageSearchReply {
     return <Object?>[
       result,
       error,
-      state?.index,
+      state,
     ];
   }
 
@@ -112,9 +112,7 @@ class MessageSearchReply {
     return MessageSearchReply(
       result: result[0] as String?,
       error: result[1] as String?,
-      state: result[2] != null
-          ? MessageRequestState.values[result[2]! as int]
-          : null,
+      state: result[2] as MessageRequestState?,
     );
   }
 }
@@ -130,30 +128,34 @@ class MessageNested {
 
   Object encode() {
     return <Object?>[
-      request?.encode(),
+      request,
     ];
   }
 
   static MessageNested decode(Object result) {
     result as List<Object?>;
     return MessageNested(
-      request: result[0] != null
-          ? MessageSearchRequest.decode(result[0]! as List<Object?>)
-          : null,
+      request: result[0] as MessageSearchRequest?,
     );
   }
 }
 
-class _MessageApiCodec extends StandardMessageCodec {
-  const _MessageApiCodec();
+class _PigeonCodec extends StandardMessageCodec {
+  const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is MessageSearchReply) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is MessageSearchRequest) {
+    if (value is MessageSearchRequest) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
+    } else if (value is MessageSearchReply) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is MessageNested) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is MessageRequestState) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
     }
@@ -162,10 +164,15 @@ class _MessageApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return MessageSearchReply.decode(readValue(buffer)!);
       case 129:
         return MessageSearchRequest.decode(readValue(buffer)!);
+      case 130:
+        return MessageSearchReply.decode(readValue(buffer)!);
+      case 131:
+        return MessageNested.decode(readValue(buffer)!);
+      case 132:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : MessageRequestState.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -179,18 +186,23 @@ class MessageApi {
   /// Constructor for [MessageApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MessageApi({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  MessageApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec = _MessageApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String __pigeon_messageChannelSuffix;
 
   /// This comment is to test documentation comments.
   ///
   /// This comment also tests multiple line comments.
   Future<void> initialize() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.initialize';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.initialize$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -214,8 +226,8 @@ class MessageApi {
 
   /// This comment is to test method documentation comments.
   Future<MessageSearchReply> search(MessageSearchRequest request) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -243,57 +255,28 @@ class MessageApi {
   }
 }
 
-class _MessageNestedApiCodec extends StandardMessageCodec {
-  const _MessageNestedApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is MessageNested) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is MessageSearchReply) {
-      buffer.putUint8(129);
-      writeValue(buffer, value.encode());
-    } else if (value is MessageSearchRequest) {
-      buffer.putUint8(130);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return MessageNested.decode(readValue(buffer)!);
-      case 129:
-        return MessageSearchReply.decode(readValue(buffer)!);
-      case 130:
-        return MessageSearchRequest.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 /// This comment is to test api documentation comments.
 class MessageNestedApi {
   /// Constructor for [MessageNestedApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MessageNestedApi({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  MessageNestedApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _MessageNestedApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String __pigeon_messageChannelSuffix;
 
   /// This comment is to test method documentation comments.
   ///
   /// This comment also tests multiple line comments.
   Future<MessageSearchReply> search(MessageNested nested) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -321,48 +304,24 @@ class MessageNestedApi {
   }
 }
 
-class _MessageFlutterSearchApiCodec extends StandardMessageCodec {
-  const _MessageFlutterSearchApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is MessageSearchReply) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is MessageSearchRequest) {
-      buffer.putUint8(129);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return MessageSearchReply.decode(readValue(buffer)!);
-      case 129:
-        return MessageSearchRequest.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 /// This comment is to test api documentation comments.
 abstract class MessageFlutterSearchApi {
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _MessageFlutterSearchApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   /// This comment is to test method documentation comments.
   MessageSearchReply search(MessageSearchRequest request);
 
-  static void setup(MessageFlutterSearchApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setUp(
+    MessageFlutterSearchApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.MessageFlutterSearchApi.search',
+          'dev.flutter.pigeon.pigeon_integration_tests.MessageFlutterSearchApi.search$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {

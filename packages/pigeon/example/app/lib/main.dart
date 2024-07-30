@@ -19,8 +19,9 @@ class _ExampleFlutterApi implements MessageFlutterApi {
 // #enddocregion main-dart-flutter
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
 // #docregion main-dart-flutter
-  MessageFlutterApi.setup(_ExampleFlutterApi());
+  MessageFlutterApi.setUp(_ExampleFlutterApi());
 // #enddocregion main-dart-flutter
   runApp(const MyApp());
 }
