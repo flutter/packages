@@ -28,7 +28,7 @@ void main() {
   const bool testBool2 = false;
   const int testInt2 = 1337;
   const double testDouble2 = 2.71828;
-  const List<String> testList2 = <String>['baz', 'quox'];
+  const List<String> testList2 = <String>['baz', 'qux'];
   const Map<String, dynamic> testValues2 = <String, dynamic>{
     'flutter.String': testString2,
     'flutter.bool': testBool2,
@@ -319,23 +319,25 @@ void main() {
             "Shared Preferences doesn't yet support the setPrefix method"));
   });
 
-  test('non-Unimplemented errors pass through withParameters methods correctly',
-      () async {
-    final ThrowingSharedPreferencesStore localStore =
-        ThrowingSharedPreferencesStore();
-    SharedPreferencesStorePlatform.instance = localStore;
-    SharedPreferences.resetStatic();
-    SharedPreferences.setPrefix('');
-    Object? err;
+  test(
+    'non-Unimplemented errors pass through withParameters methods correctly',
+    () async {
+      final ThrowingSharedPreferencesStore localStore =
+          ThrowingSharedPreferencesStore();
+      SharedPreferencesStorePlatform.instance = localStore;
+      SharedPreferences.resetStatic();
+      SharedPreferences.setPrefix('');
+      Object? err;
 
-    try {
-      await SharedPreferences.getInstance();
-    } catch (e) {
-      err = e;
-    }
-    expect(err, isA<StateError>());
-    expect(err.toString(), contains('State Error'));
-  });
+      try {
+        await SharedPreferences.getInstance();
+      } catch (e) {
+        err = e;
+      }
+      expect(err, isA<StateError>());
+      expect(err.toString(), contains('State Error'));
+    },
+  );
 }
 
 class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
