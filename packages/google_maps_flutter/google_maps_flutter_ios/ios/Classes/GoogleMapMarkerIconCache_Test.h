@@ -7,8 +7,8 @@
 @interface GoogleMapMarkerIconCache (Test)
 
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
-                              screenScale:(CGFloat)screenScale;
-- (UIImage*)getImage:(NSArray *)iconData;
+                      screenScale:(CGFloat)screenScale;
+- (UIImage *)getImage:(NSArray *)iconData;
 
 /// Extracts an icon image from the iconData array.
 ///

@@ -1,10 +1,10 @@
 #import "GoogleMapMarkerIconCache.h"
 
-@interface GoogleMapMarkerIconCache  ()
+@interface GoogleMapMarkerIconCache ()
 
-@property(weak, nonatomic) NSObject<FlutterPluginRegistrar>* registrar;
+@property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(assign, nonatomic) CGFloat screenScale;
-@property(strong, nonatomic) NSMutableDictionary* images;
+@property(strong, nonatomic) NSMutableDictionary *images;
 
 @end
 
@@ -21,17 +21,16 @@
   return self;
 }
 
-- (UIImage*)getImage:(NSArray *)iconData {
+- (UIImage *)getImage:(NSArray *)iconData {
   if ([self.images objectForKey:iconData]) {
     return self.images[iconData];
   }
-  
-  UIImage* image = [self extractIconFromData:iconData];
+
+  UIImage *image = [self extractIconFromData:iconData];
   self.images[iconData] = image;
-  
+
   return image;
 }
-
 
 - (UIImage *)extractIconFromData:(NSArray *)iconData {
   UIImage *image;
@@ -48,7 +47,7 @@
       image = [UIImage imageNamed:[self.registrar lookupKeyForAsset:iconData[1]]];
     } else {
       image = [UIImage imageNamed:[self.registrar lookupKeyForAsset:iconData[1]
-                                                   fromPackage:iconData[2]]];
+                                                        fromPackage:iconData[2]]];
     }
   } else if ([iconData.firstObject isEqualToString:@"fromAssetImage"]) {
     // Deprecated: This message handling for 'fromAssetImage' has been replaced by 'asset'.
@@ -112,9 +111,9 @@
       if (width || height) {
         image = [GoogleMapMarkerIconCache scaledImage:image withScale:self.screenScale];
         image = [GoogleMapMarkerIconCache scaledImage:image
-                                                withWidth:width
-                                                   height:height
-                                              screenScale:self.screenScale];
+                                            withWidth:width
+                                               height:height
+                                          screenScale:self.screenScale];
       } else {
         image = [GoogleMapMarkerIconCache scaledImage:image withScale:imagePixelRatio];
       }
@@ -144,9 +143,9 @@
           // Before scaling the image, image must be in screenScale
           image = [GoogleMapMarkerIconCache scaledImage:image withScale:self.screenScale];
           image = [GoogleMapMarkerIconCache scaledImage:image
-                                                  withWidth:width
-                                                     height:height
-                                                screenScale:self.screenScale];
+                                              withWidth:width
+                                                 height:height
+                                            screenScale:self.screenScale];
         } else {
           image = [GoogleMapMarkerIconCache scaledImage:image withScale:imagePixelRatio];
         }
@@ -225,8 +224,7 @@
 
   // Check if the aspect ratios are approximately equal.
   CGSize originalPixelSize = CGSizeMake(originalPixelWidth, originalPixelHeight);
-  if ([GoogleMapMarkerIconCache isScalableWithScaleFactorFromSize:originalPixelSize
-                                                               toSize:size]) {
+  if ([GoogleMapMarkerIconCache isScalableWithScaleFactorFromSize:originalPixelSize toSize:size]) {
     // Scaled image has close to same aspect ratio,
     // updating image scale instead of resizing image.
     CGFloat factor = originalPixelWidth / size.width;
@@ -302,49 +300,4 @@
   return widthWithinThreshold && heightWithinThreshold;
 }
 
-@end
-
-
-@interface IconData ()
-
-@property(assign, nonatomic) NSArray* iconData;
-
-@end
-
-@implementation IconData
-
-- (instancetype)init:(NSArray *)iconData {
-  self = [super init];
-  if (self) {
-    _iconData = iconData;
-  }
-  return self;
-}
-
-- (BOOL)isEqual:(nullable id)object {
-    if (object == nil) {
-        return NO;
-    }
-
-    if (self == object) {
-        return YES;
-    }
-
-    if (![object isKindOfClass:[IconData class]]) {
-        return NO;
-    }
-
-  return YES; //[self isEqualToIconData:(IconData *)object];
-}
-
-//- (BOOL)isEqualToIconData:(IconData *)iconData {
-//  
-//    return [self.red isEqualToNumber:color.red] &&
-//        [self.green isEqualToNumber:color.green] &&
-//        [self.blue isEqualToNumber:color.blue];
-//}
-//
-//- (NSUInteger)hash {
-//    return [self.red hash] ^ [self.green hash] ^ [self.blue hash];
-//}
 @end
