@@ -102,45 +102,42 @@ await prefs.remove('counter');
 ### SharedPreferencesAsync
 <?code-excerpt "readme_excerpts.dart (Async)"?>
 ```dart
-  final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
+final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
 
-  await asyncPrefs.setBool('repeat', true);
-  await asyncPrefs.setString('action', 'Start');
+await asyncPrefs.setBool('repeat', true);
+await asyncPrefs.setString('action', 'Start');
 
-  final bool? repeat = await asyncPrefs.getBool('repeat');
-  final String? action = await asyncPrefs.getString('action');
+final bool? repeat = await asyncPrefs.getBool('repeat');
+final String? action = await asyncPrefs.getString('action');
 
-  await asyncPrefs.remove('repeat');
+await asyncPrefs.remove('repeat');
 
-  // Any time a filter option is included as a method parameter, it is highly recommended
-  // that it is used to avoid potentially unwanted side effects.
-  await asyncPrefs.clear(const ClearPreferencesParameters(
-      filter: PreferencesFilters(allowList: <String>{'action', 'repeat'})));
+// Any time a filter option is included as a method parameter, strongly consider
+// using it to avoid potentially unwanted side effects.
+await asyncPrefs.clear(allowList: <String>{'action', 'repeat'});
 ```
 
 ### SharedPreferencesWithCache
 <?code-excerpt "readme_excerpts.dart (WithCache)"?>
 ```dart
-  final SharedPreferencesWithCache prefsWithCache =
-      await SharedPreferencesWithCache.create(
-    cacheOptions: const SharedPreferencesWithCacheOptions(
-      filter: PreferencesFilters(
-        // When an allowlist is included, any keys that aren't included cannot be used.
-        allowList: <String>{'repeat', 'action'},
-      ),
-    ),
-  );
+final SharedPreferencesWithCache prefsWithCache =
+    await SharedPreferencesWithCache.create(
+  cacheOptions: const SharedPreferencesWithCacheOptions(
+    // When an allowlist is included, any keys that aren't included cannot be used.
+    allowList: <String>{'repeat', 'action'},
+  ),
+);
 
-  await prefsWithCache.setBool('repeat', true);
-  await prefsWithCache.setString('action', 'Start');
+await prefsWithCache.setBool('repeat', true);
+await prefsWithCache.setString('action', 'Start');
 
-  final bool? repeat = prefsWithCache.getBool('repeat');
-  final String? action = prefsWithCache.getString('action');
+final bool? repeat = prefsWithCache.getBool('repeat');
+final String? action = prefsWithCache.getString('action');
 
-  await prefsWithCache.remove('repeat');
+await prefsWithCache.remove('repeat');
 
-  // Since the filter options are set at creation, they aren't needed during clear.
-  await prefsWithCache.clear();
+// Since the filter options are set at creation, they aren't needed during clear.
+await prefsWithCache.clear();
 ```
 
 
