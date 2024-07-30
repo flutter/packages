@@ -1,3 +1,7 @@
+## 2.4.1
+
+* Adds comments about unsupported types.
+
 ## 2.4.0
 
 * Adds `SharedPreferencesAsyncPlatform` API.
