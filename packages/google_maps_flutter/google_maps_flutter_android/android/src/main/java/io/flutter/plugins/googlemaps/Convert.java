@@ -367,8 +367,8 @@ class Convert {
     return ((Number) o).floatValue();
   }
 
-  private static Float toFloatWrapper(Object o) {
-    return (o == null) ? null : toFloat(o);
+  private static @Nullable Float nullableDoubleToFloat(@Nullable Double d) {
+    return (d == null) ? null : d.floatValue();
   }
 
   private static int toInt(Object o) {
@@ -568,10 +568,9 @@ class Convert {
     }
     final Messages.PlatformZoomRange minMaxZoomPreference = config.getMinMaxZoomPreference();
     if (minMaxZoomPreference != null) {
-      final List<?> zoomPreferenceData = toList(minMaxZoomPreference);
-      sink.setMinMaxZoomPreference( //
-          toFloatWrapper(zoomPreferenceData.get(0)), //
-          toFloatWrapper(zoomPreferenceData.get(1)));
+      sink.setMinMaxZoomPreference(
+          nullableDoubleToFloat(minMaxZoomPreference.getMin()),
+          nullableDoubleToFloat(minMaxZoomPreference.getMax()));
     }
     final Messages.PlatformEdgeInsets padding = config.getPadding();
     if (padding != null) {
