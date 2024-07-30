@@ -25,7 +25,6 @@
 		F295AD3A2C1256DD0067C78A /* Stubs.m in Sources */ = {isa = PBXBuildFile; fileRef = F295AD392C1256DD0067C78A /* Stubs.m */; };
 		F2D5272A2C583C4A00C137C7 /* TranslatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D527292C583C4A00C137C7 /* TranslatorTests.swift */; };
 		F2D5271A2C50627500C137C7 /* PaymentQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D527192C50627500C137C7 /* PaymentQueueTests.swift */; };
->>>>>>> d8b64700bcd54ab764fc78d57e80dc3261cd6ba6
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
