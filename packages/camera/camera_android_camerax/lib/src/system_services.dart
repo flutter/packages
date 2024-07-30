@@ -48,6 +48,22 @@ class SystemServices {
         SystemServicesHostApi(binaryMessenger: binaryMessenger);
     return api.getTempFilePath(prefix, suffix);
   }
+
+  /// Returns whether or not the Android Surface used to display the camera
+  /// preview is backed by a SurfaceTexture, to which the transformation to
+  /// correctly rotate the preview has been applied.
+  ///
+  /// This is used to determine the correct rotation of the camera preview
+  /// because Surfaces not backed by a SurfaceTexture are not transformed by
+  /// CameraX to the expected rotation based on that of the device and must
+  /// be corrected by the plugin.
+  static Future<bool> isPreviewPreTransformed(
+      {BinaryMessenger? binaryMessenger}) {
+    // TODO(camsim99): Make call to Java host to determine true value when
+    // Impeller support is re-landed.
+    // https://github.com/flutter/flutter/issues/149294
+    return Future<bool>.value(true);
+  }
 }
 
 /// Host API implementation of [SystemServices].

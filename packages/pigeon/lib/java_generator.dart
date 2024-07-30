@@ -141,6 +141,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.writeln('import java.util.HashMap;');
     indent.writeln('import java.util.List;');
     indent.writeln('import java.util.Map;');
+    indent.writeln('import java.util.Objects;');
     indent.newln();
   }
 
@@ -233,6 +234,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.writeln('${classDefinition.name}() {}');
         indent.newln();
       }
+      _writeEquality(indent, classDefinition);
 
       _writeClassBuilder(generatorOptions, root, indent, classDefinition);
       writeClassEncode(
@@ -280,6 +282,62 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       }
       indent.writeln('this.${field.name} = setterArg;');
     });
+  }
+
+  void _writeEquality(Indent indent, Class classDefinition) {
+    // Implement equals(...).
+    indent.writeln('@Override');
+    indent.writeScoped('public boolean equals(Object o) {', '}', () {
+      indent.writeln('if (this == o) { return true; }');
+      indent.writeln(
+          'if (o == null || getClass() != o.getClass()) { return false; }');
+      indent.writeln(
+          '${classDefinition.name} that = (${classDefinition.name}) o;');
+      final Iterable<String> checks = classDefinition.fields.map(
+        (NamedType field) {
+          // Objects.equals only does pointer equality for array types.
+          if (_javaTypeIsArray(field.type)) {
+            return 'Arrays.equals(${field.name}, that.${field.name})';
+          }
+          return field.type.isNullable
+              ? 'Objects.equals(${field.name}, that.${field.name})'
+              : '${field.name}.equals(that.${field.name})';
+        },
+      );
+      indent.writeln('return ${checks.join(' && ')};');
+    });
+    indent.newln();
+
+    // Implement hashCode().
+    indent.writeln('@Override');
+    indent.writeScoped('public int hashCode() {', '}', () {
+      // As with equalty checks, arrays need special handling.
+      final Iterable<String> arrayFieldNames = classDefinition.fields
+          .where((NamedType field) => _javaTypeIsArray(field.type))
+          .map((NamedType field) => field.name);
+      final Iterable<String> nonArrayFieldNames = classDefinition.fields
+          .where((NamedType field) => !_javaTypeIsArray(field.type))
+          .map((NamedType field) => field.name);
+      final String nonArrayHashValue = nonArrayFieldNames.isNotEmpty
+          ? 'Objects.hash(${nonArrayFieldNames.join(', ')})'
+          : '0';
+
+      if (arrayFieldNames.isEmpty) {
+        // Return directly if there are no array variables, to avoid redundant
+        // variable lint warnings.
+        indent.writeln('return $nonArrayHashValue;');
+      } else {
+        const String resultVar = '${varNamePrefix}result';
+        indent.writeln('int $resultVar = $nonArrayHashValue;');
+        // Manually mix in the Arrays.hashCode values.
+        for (final String name in arrayFieldNames) {
+          indent.writeln(
+              '$resultVar = 31 * $resultVar + Arrays.hashCode($name);');
+        }
+        indent.writeln('return $resultVar;');
+      }
+    });
+    indent.newln();
   }
 
   void _writeClassBuilder(
@@ -1020,6 +1078,10 @@ String _javaTypeForBuiltinGenericDartType(
   } else {
     return '${type.baseName}<${_flattenTypeArguments(type.typeArguments)}>';
   }
+}
+
+bool _javaTypeIsArray(TypeDeclaration type) {
+  return _javaTypeForBuiltinDartType(type)?.endsWith('[]') ?? false;
 }
 
 String? _javaTypeForBuiltinDartType(TypeDeclaration type) {

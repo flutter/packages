@@ -1,3 +1,11 @@
+## 1.0.15
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 1.0.14
+
+* Updates AGP version to 8.4.1.
+
 ## 1.0.13
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

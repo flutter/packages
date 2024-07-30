@@ -1,3 +1,23 @@
+## 2.6.0
+
+* Adds RTSP support.
+
+## 2.5.4
+
+* Updates Media3-ExoPlayer to 1.4.0.
+
+## 2.5.3
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 2.5.2
+
+* Updates Android Gradle plugin to 8.5.0.
+
+## 2.5.1
+
+* Removes additional references to the v1 Android embedding.
+
 ## 2.5.0
 
 * Migrates ExoPlayer to Media3-ExoPlayer 1.3.1.
