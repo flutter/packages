@@ -104,13 +104,9 @@
   }
 }
 
-- (void)setVisibleOption:(NSDictionary *)data {
-  NSNumber *visible = data[@"visible"];
-  if (visible && visible != (id)[NSNull null]) {
-    BOOL visibleBool = [visible boolValue];
-    if ((self.marker.map != nil) != visibleBool) {
-      self.marker.map = visibleBool ? self.mapView : nil;
-    }
+- (void)setVisible:(BOOL)visible {
+  if ((self.marker.map != nil) != visible) {
+    self.marker.map = visible ? self.mapView : nil;
   }
 }
 
@@ -157,6 +153,10 @@
   NSNumber *rotation = FGMGetValueOrNilFromDict(data, @"rotation");
   if (rotation) {
     [self setRotation:[rotation doubleValue]];
+  }
+  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
+  if (visible) {
+    [self setVisible:[visible boolValue]];
   }
   NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
   if (zIndex) {
@@ -242,17 +242,6 @@
     [controller interpretMarkerOptions:marker.json iconCache:iconCache];
 
     self.markerIdentifierToController[identifier] = controller;
-  }
-
-  for (FGMPlatformMarker *marker in markersToAdd) {
-    NSString *identifier = marker.json[@"markerId"];
-    
-    FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-    
-    if (!controller) {
-      return;
-    }
-    [controller setVisibleOption:marker.json];
   }
 }
 
