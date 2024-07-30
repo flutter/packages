@@ -2,6 +2,10 @@
 
 * Updates map configuration and platform view creation parameters to use Pigeon.
 
+## 2.12.1
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 2.12.0
 
 * Converts Java->Dart calls to Pigeon.

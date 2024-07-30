@@ -1,3 +1,7 @@
+## 0.1.0+1
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 0.1.0
 
 * Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.33.0 to 3.34.0.

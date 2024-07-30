@@ -19,14 +19,14 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
 import androidx.media3.exoplayer.source.MediaSource;
 import java.util.Map;
 
-final class RemoteVideoAsset extends VideoAsset {
+final class HttpVideoAsset extends VideoAsset {
   private static final String DEFAULT_USER_AGENT = "ExoPlayer";
   private static final String HEADER_USER_AGENT = "User-Agent";
 
   @NonNull private final StreamingFormat streamingFormat;
   @NonNull private final Map<String, String> httpHeaders;
 
-  RemoteVideoAsset(
+  HttpVideoAsset(
       @Nullable String assetUrl,
       @NonNull StreamingFormat streamingFormat,
       @NonNull Map<String, String> httpHeaders) {
@@ -79,8 +79,8 @@ final class RemoteVideoAsset extends VideoAsset {
       userAgent = httpHeaders.get(HEADER_USER_AGENT);
     }
     unstableUpdateDataSourceFactory(initialFactory, httpHeaders, userAgent);
-    DataSource.Factory dataSoruceFactory = new DefaultDataSource.Factory(context, initialFactory);
-    return new DefaultMediaSourceFactory(context).setDataSourceFactory(dataSoruceFactory);
+    DataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(context, initialFactory);
+    return new DefaultMediaSourceFactory(context).setDataSourceFactory(dataSourceFactory);
   }
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
