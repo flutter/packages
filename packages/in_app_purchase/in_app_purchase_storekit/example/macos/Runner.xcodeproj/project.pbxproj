@@ -33,7 +33,7 @@
 		F27694192C49DBE800277144 /* FIATransactionCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694182C49DBE800277144 /* FIATransactionCacheTests.swift */; };
 		F2C3A7412BD9D33D000D35F2 /* Stubs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C3A7402BD9D33D000D35F2 /* Stubs.swift */; };
 		F2D527262C583C1C00C137C7 /* TranslatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D527252C583C1C00C137C7 /* TranslatorTests.swift */; };
-		F2D5271E2C50645600C137C7 /* PaymentQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D5271D2C50645600C137C7 /* PaymentQueueTests.swift */; };ƒ
+		F2D5271E2C50645600C137C7 /* PaymentQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D5271D2C50645600C137C7 /* PaymentQueueTests.swift */; };
 		F79BDC1C2905FC3200E3999D /* Stubs.m in Sources */ = {isa = PBXBuildFile; fileRef = F79BDC1B2905FC3200E3999D /* Stubs.m */; };
 		F8270DE1AEF80A8CF2C45688 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 045C0F7D19875EDA98DF0B7F /* Pods_RunnerTests.framework */; };
 /* End PBXBuildFile section */
