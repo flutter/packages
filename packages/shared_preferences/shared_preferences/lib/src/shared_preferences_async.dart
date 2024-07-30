@@ -157,7 +157,7 @@ class SharedPreferencesWithCacheOptions {
   /// A `null` allowList will prevent filtering, allowing all items to be cached.
   /// An empty allowList will prevent all caching as well as getting and setting.
   ///
-  /// It is highly recommended to provide an allowList to prevent getting and
+  /// Setting an allowList is strongly recommended, to prevent getting and
   /// caching unneeded or unexpected data.
   final Set<String>? allowList;
 }

@@ -6,7 +6,7 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 2.3.0
 
 environment:
-  sdk: ^3.2.0
+  sdk: ^3.19.0
   flutter: ">=3.16.0"
 
 flutter:

@@ -19,17 +19,17 @@ Supported data types are `int`, `double`, `bool`, `String` and `List<String>`.
 
 ## SharedPreferences vs SharedPreferencesAsync vs SharedPreferencesWithCache
 
-As of the 2.3.0 update there are three available APIs that can be used in this package.
+Starting with version 2.3.0 there are three available APIs that can be used in this package.
 [SharedPreferences] is a legacy API that will be deprecated in the future. We highly encourage
 any new users of the plugin to use the newer [SharedPreferencesAsync] or [SharedPreferencesWithCache] 
 APIs instead.
 
-Consider migrating existing code to one of the new APIs. See  [below](#migrating-from-sharedpreferences-to-sharedpreferencesasyncwithcache) 
+Consider migrating existing code to one of the new APIs. See [below](#migrating-from-sharedpreferences-to-sharedpreferencesasyncwithcache) 
 for more information. 
 
 ### Cache and async or sync getters
 
-[SharedPreferences] and [SharedPreferencesWithCache] both utilize a local cache to store preferences.
+[SharedPreferences] and [SharedPreferencesWithCache] both use a local cache to store preferences.
 This allows for synchronous get calls after the initial setup call fetches the preferences from the platform.
 However, The cache can present issues as well:
 
