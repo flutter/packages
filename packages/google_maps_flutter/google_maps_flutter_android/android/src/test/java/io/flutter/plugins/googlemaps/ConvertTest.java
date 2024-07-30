@@ -59,7 +59,7 @@ public class ConvertTest {
   AutoCloseable mockCloseable;
 
   // A 1x1 pixel (#8080ff) PNG image encoded in base64
-  private String base64Image = generateBase64Image();
+  private final String base64Image = generateBase64Image();
 
   @Before
   public void before() {
@@ -75,7 +75,7 @@ public class ConvertTest {
   public void ConvertToPointsConvertsThePointsWithFullPrecision() {
     double latitude = 43.03725568057;
     double longitude = -87.90466904649;
-    ArrayList<Double> point = new ArrayList<Double>();
+    ArrayList<Double> point = new ArrayList<>();
     point.add(latitude);
     point.add(longitude);
     ArrayList<ArrayList<Double>> pointsList = new ArrayList<>();
@@ -239,7 +239,7 @@ public class ConvertTest {
   }
 
   @Test
-  public void GetBitmapFromBytesAuto() throws Exception {
+  public void GetBitmapFromBytesAuto() {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
     Map<String, Object> assetDetails = new HashMap<>();
@@ -256,7 +256,7 @@ public class ConvertTest {
   }
 
   @Test
-  public void GetBitmapFromBytesAutoAndWidth() throws Exception {
+  public void GetBitmapFromBytesAutoAndWidth() {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
     Map<String, Object> assetDetails = new HashMap<>();
@@ -274,7 +274,7 @@ public class ConvertTest {
   }
 
   @Test
-  public void GetBitmapFromBytesAutoAndHeight() throws Exception {
+  public void GetBitmapFromBytesAutoAndHeight() {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
     Map<String, Object> assetDetails = new HashMap<>();
@@ -292,7 +292,7 @@ public class ConvertTest {
   }
 
   @Test
-  public void GetBitmapFromBytesNoScaling() throws Exception {
+  public void GetBitmapFromBytesNoScaling() {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
     Map<String, Object> assetDetails = new HashMap<>();
@@ -309,7 +309,7 @@ public class ConvertTest {
   }
 
   @Test(expected = IllegalArgumentException.class) // Expecting an IllegalArgumentException
-  public void GetBitmapFromBytesThrowsErrorIfInvalidImageData() throws Exception {
+  public void GetBitmapFromBytesThrowsErrorIfInvalidImageData() {
     String invalidBase64Image = "not valid image data";
     byte[] bmpData = Base64.decode(invalidBase64Image, Base64.DEFAULT);
 
@@ -525,13 +525,25 @@ public class ConvertTest {
         .setPadding((float) top, (float) left, (float) bottom, (float) right);
   }
 
+  @Test
+  public void interpretMapConfiguration_handlesMinMaxZoomPreference() {
+    final double min = 1.0;
+    final double max = 2.0;
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder()
+            .setMinMaxZoomPreference(
+                new Messages.PlatformZoomRange.Builder().setMin(min).setMax(max).build())
+            .build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setMinMaxZoomPreference((float) min, (float) max);
+  }
+
   private InputStream buildImageInputStream() {
     Bitmap fakeBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     fakeBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
     byte[] byteArray = byteArrayOutputStream.toByteArray();
-    InputStream fakeStream = new ByteArrayInputStream(byteArray);
-    return fakeStream;
+    return new ByteArrayInputStream(byteArray);
   }
 
   // Helper method to generate 1x1 pixel base64 encoded png test image
@@ -552,8 +564,6 @@ public class ConvertTest {
     byte[] pngBytes = outputStream.toByteArray();
 
     // Encode the PNG bytes as a base64 string
-    String base64Image = Base64.encodeToString(pngBytes, Base64.DEFAULT);
-
-    return base64Image;
+    return Base64.encodeToString(pngBytes, Base64.DEFAULT);
   }
 }
