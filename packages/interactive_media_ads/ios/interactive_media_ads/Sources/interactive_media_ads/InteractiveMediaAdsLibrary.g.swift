@@ -463,6 +463,8 @@ open class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar {
   let binaryMessenger: FlutterBinaryMessenger
   let apiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate
   let instanceManager: InteractiveMediaAdsLibraryPigeonInstanceManager
+  /// Whether APIs should ignore calling to Dart.
+  public var ignoreCallsToDart = false
   private var _codec: FlutterStandardMessageCodec?
   var codec: FlutterStandardMessageCodec {
     if _codec == nil {
@@ -1146,6 +1148,14 @@ final class PigeonApiIMAAdDisplayContainer: PigeonApiProtocolIMAAdDisplayContain
   func pigeonNewInstance(
     pigeonInstance: IMAAdDisplayContainer, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -1199,6 +1209,14 @@ final class PigeonApiUIView: PigeonApiProtocolUIView {
   func pigeonNewInstance(
     pigeonInstance: UIView, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -1313,6 +1331,14 @@ final class PigeonApiUIViewController: PigeonApiProtocolUIViewController {
   func pigeonNewInstance(
     pigeonInstance: UIViewController, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -1345,6 +1371,14 @@ final class PigeonApiUIViewController: PigeonApiProtocolUIViewController {
     pigeonInstance pigeonInstanceArg: UIViewController, animated animatedArg: Bool,
     completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -1447,6 +1481,14 @@ final class PigeonApiIMAContentPlayhead: PigeonApiProtocolIMAContentPlayhead {
   func pigeonNewInstance(
     pigeonInstance: IMAContentPlayhead, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -1599,6 +1641,14 @@ final class PigeonApiIMAAdsLoader: PigeonApiProtocolIMAAdsLoader {
   func pigeonNewInstance(
     pigeonInstance: IMAAdsLoader, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -1652,6 +1702,14 @@ final class PigeonApiIMASettings: PigeonApiProtocolIMASettings {
   func pigeonNewInstance(
     pigeonInstance: IMASettings, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -1746,6 +1804,14 @@ final class PigeonApiIMAAdsRequest: PigeonApiProtocolIMAAdsRequest {
   func pigeonNewInstance(
     pigeonInstance: IMAAdsRequest, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -1842,6 +1908,14 @@ final class PigeonApiIMAAdsLoaderDelegate: PigeonApiProtocolIMAAdsLoaderDelegate
   func pigeonNewInstance(
     pigeonInstance: IMAAdsLoaderDelegate, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -1856,6 +1930,14 @@ final class PigeonApiIMAAdsLoaderDelegate: PigeonApiProtocolIMAAdsLoaderDelegate
     adsLoadedData adsLoadedDataArg: IMAAdsLoadedData,
     completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -1884,6 +1966,14 @@ final class PigeonApiIMAAdsLoaderDelegate: PigeonApiProtocolIMAAdsLoaderDelegate
     adErrorData adErrorDataArg: IMAAdLoadingErrorData,
     completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -1937,6 +2027,14 @@ final class PigeonApiIMAAdsLoadedData: PigeonApiProtocolIMAAdsLoadedData {
   func pigeonNewInstance(
     pigeonInstance: IMAAdsLoadedData, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -1995,6 +2093,14 @@ final class PigeonApiIMAAdLoadingErrorData: PigeonApiProtocolIMAAdLoadingErrorDa
   func pigeonNewInstance(
     pigeonInstance: IMAAdLoadingErrorData, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -2055,6 +2161,14 @@ final class PigeonApiIMAAdError: PigeonApiProtocolIMAAdError {
   func pigeonNewInstance(
     pigeonInstance: IMAAdError, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -2284,6 +2398,14 @@ final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager {
   func pigeonNewInstance(
     pigeonInstance: IMAAdsManager, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -2390,6 +2512,14 @@ final class PigeonApiIMAAdsManagerDelegate: PigeonApiProtocolIMAAdsManagerDelega
   func pigeonNewInstance(
     pigeonInstance: IMAAdsManagerDelegate, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -2404,6 +2534,14 @@ final class PigeonApiIMAAdsManagerDelegate: PigeonApiProtocolIMAAdsManagerDelega
     adsManager adsManagerArg: IMAAdsManager, event eventArg: IMAAdEvent,
     completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -2432,6 +2570,14 @@ final class PigeonApiIMAAdsManagerDelegate: PigeonApiProtocolIMAAdsManagerDelega
     adsManager adsManagerArg: IMAAdsManager, error errorArg: IMAAdError,
     completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -2460,6 +2606,14 @@ final class PigeonApiIMAAdsManagerDelegate: PigeonApiProtocolIMAAdsManagerDelega
     adsManager adsManagerArg: IMAAdsManager,
     completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -2488,6 +2642,14 @@ final class PigeonApiIMAAdsManagerDelegate: PigeonApiProtocolIMAAdsManagerDelega
     adsManager adsManagerArg: IMAAdsManager,
     completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -2540,6 +2702,14 @@ final class PigeonApiIMAAdEvent: PigeonApiProtocolIMAAdEvent {
   func pigeonNewInstance(
     pigeonInstance: IMAAdEvent, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -2630,6 +2800,14 @@ final class PigeonApiIMAAdsRenderingSettings: PigeonApiProtocolIMAAdsRenderingSe
     pigeonInstance: IMAAdsRenderingSettings,
     completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -2678,6 +2856,14 @@ final class PigeonApiNSObject: PigeonApiProtocolNSObject {
   func pigeonNewInstance(
     pigeonInstance: NSObject, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return

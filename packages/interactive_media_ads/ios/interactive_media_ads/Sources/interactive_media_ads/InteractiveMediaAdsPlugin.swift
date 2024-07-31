@@ -22,6 +22,7 @@ public class InteractiveMediaAdsPlugin: NSObject, FlutterPlugin {
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+    proxyApiRegistrar!.ignoreCallsToDart = true
     proxyApiRegistrar!.tearDown()
     proxyApiRegistrar = nil
   }
