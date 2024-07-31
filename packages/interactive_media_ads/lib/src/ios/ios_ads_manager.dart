@@ -48,4 +48,28 @@ class IOSAdsManager extends PlatformAdsManager {
   Future<void> start(AdsManagerStartParams params) {
     return _manager.start();
   }
+
+  @override
+  Future<void> discardAdBreak() {
+    // TODO: implement discardAdBreak
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> pause() {
+    // TODO: implement pause
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> resume() {
+    // TODO: implement resume
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> skip() {
+    // TODO: implement skip
+    throw UnimplementedError();
+  }
 }

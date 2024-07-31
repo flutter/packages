@@ -158,6 +158,30 @@ class AdsManager {
     return platform.setAdsManagerDelegate(delegate.platform);
   }
 
+  /// Pauses the current ad.
+  Future<void> pause() {
+    return platform.pause();
+  }
+
+  /// Resumes the current ad.
+  Future<void> resume() {
+    return platform.resume();
+  }
+
+  /// Skips the current ad.
+  ///
+  /// This only skips ads if IMA does not render the 'Skip ad' button.
+  Future<void> skip() {
+    return platform.skip();
+  }
+
+  /// Discards current ad break and resumes content.
+  ///
+  /// If there is no current ad then the next ad break is discarded.
+  Future<void> discardAdBreak() {
+    return platform.discardAdBreak();
+  }
+
   /// Stops the ad and all tracking, then releases all assets that were loaded
   /// to play the ad.
   Future<void> destroy() {

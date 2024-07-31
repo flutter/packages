@@ -339,6 +339,9 @@
 //   ),
 // )
 // abstract class AdsManager extends BaseManager {
+//   /// List of content time offsets in seconds at which ad breaks are scheduled.
+//   late final List<double> adCuePoints;
+//
 //   /// Discards current ad break and resumes content.
 //   void discardAdBreak();
 //
@@ -347,6 +350,14 @@
 //
 //   /// Starts playing the ads.
 //   void start();
+//
+//   /// Resumes the current ad.
+//   void resume();
+//
+//   /// Skips the current ad.
+//   ///
+//   /// This only skips ads if IMA does not render the 'Skip ad' button.
+//   void skip();
 // }
 //
 // /// Base interface for managing ads..
