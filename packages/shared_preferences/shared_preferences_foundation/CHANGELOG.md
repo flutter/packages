@@ -1,3 +1,7 @@
+## 2.5.0
+
+* Adds new `SharedPreferencesAsyncFoundation` API.
+
 ## 2.4.0
 
 * Adds Swift Package Manager compatibility.
