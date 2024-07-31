@@ -1,6 +1,6 @@
 ## 0.5.9+1
 
-* Updates a typo in the formatting of the CHANGELOG.
+* Fixes a typo in the formatting of the CHANGELOG.
 
 ## 0.5.9
 
