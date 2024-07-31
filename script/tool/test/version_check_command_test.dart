@@ -641,9 +641,7 @@ void main() {
       );
     });
 
-    test(
-        'fails gracefully if the first entry uses the wrong style',
-        () async {
+    test('fails gracefully if the first entry uses the wrong style', () async {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
