@@ -50,7 +50,7 @@ android {
     }
 
     dependencies {
-        implementation 'androidx.annotation:annotation:1.8.0'
+        implementation 'androidx.annotation:annotation:1.8.1'
         implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.34.0'
         testImplementation 'junit:junit:4.13.2'
         testImplementation 'org.jetbrains.kotlin:kotlin-test'
