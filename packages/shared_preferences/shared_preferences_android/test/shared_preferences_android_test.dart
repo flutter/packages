@@ -49,7 +49,7 @@ void main() {
     plugin = SharedPreferencesAndroid(api: api);
   });
 
-  test('registerWith', () {
+  test('registerWith', () async {
     SharedPreferencesAndroid.registerWith();
     expect(SharedPreferencesStorePlatform.instance,
         isA<SharedPreferencesAndroid>());
@@ -211,7 +211,7 @@ void main() {
     expect(api.items['flutter.StringList'], <String>['hi']);
   });
 
-  test('setValue with unsupported type', () {
+  test('setValue with unsupported type', () async {
     expect(() async {
       await plugin.setValue('Map', 'flutter.key', <String, String>{});
     }, throwsA(isA<PlatformException>()));
