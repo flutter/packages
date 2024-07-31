@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -232,7 +232,7 @@
 				TargetAttributes = {
 					3398D2CC26163948005A052F = {
 						CreatedOnToolsVersion = 12.4;
-						LastSwiftMigration = 1540;
+						LastSwiftMigration = 1510;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 97C146ED1CF9000F007C117D;
 					};
