@@ -45,6 +45,9 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   // AdsManager exposes methods to control ad playback and listen to ad events.
   AdsManager? _adsManager;
 
+  // Last state received in `didChangeAppLifecycleState`.
+  AppLifecycleState _lastLifecycleState = AppLifecycleState.resumed;
+
   // Whether the widget should be displaying the content video. The content
   // player is hidden while Ads are playing.
   bool _shouldShowContentVideo = true;
@@ -85,22 +88,24 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   }
   // #enddocregion ad_and_content_players
 
-  AppLifecycleState lastState = AppLifecycleState.resumed;
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
         _adsManager?.resume();
       case AppLifecycleState.inactive:
-        if (lastState == AppLifecycleState.resumed) {
+        // Pausing the Ad video player on Android can only be done in this state
+        // because it corresponds to `Activity.onPause`. This state is also
+        // triggered before resume, so this will only pause the Ad if the app is
+        // in the process of becoming backgrounded.
+        if (_lastLifecycleState == AppLifecycleState.resumed) {
           _adsManager?.pause();
         }
       case AppLifecycleState.hidden:
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:
     }
-    lastState = state;
+    _lastLifecycleState = state;
   }
 
   // #docregion request_ads
