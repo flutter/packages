@@ -155,7 +155,7 @@ void main() {
         // auth_messages_ios.dart
         expect(strings.lockOut, macOSLockOut);
         expect(strings.goToSettingsDescription, macOSGoToSettingsDescription);
-        expect(strings.cancelButton, macOSOkButton);
+        expect(strings.cancelButton, macOSCancelButton);
         expect(strings.localizedFallbackTitle, null);
       });
 
