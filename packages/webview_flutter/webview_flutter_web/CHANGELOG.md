@@ -1,6 +1,13 @@
-## NEXT
+## 0.2.3+1
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Fixes DOM timing issue with Legacy Widget build method.
+
+## 0.2.3
+
+* Migrates to `package:web`
+* Updates `HttpRequestFactory.request` to use the Fetch API.
+* Updates `index.html` in the example to use `flutter_bootstrap.js`
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.3.
 
 ## 0.2.2+4
 

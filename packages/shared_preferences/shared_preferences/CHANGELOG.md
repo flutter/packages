@@ -1,5 +1,6 @@
-## NEXT
+## 2.3.0
 
+* Adds `SharedPreferencesAsync` and `SharedPreferencesWithCache` APIs.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 2.2.3

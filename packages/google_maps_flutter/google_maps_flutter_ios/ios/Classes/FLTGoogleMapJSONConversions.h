@@ -7,10 +7,32 @@
 #import <GoogleMaps/GoogleMaps.h>
 @import GoogleMapsUtils;
 
+#import "messages.g.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 /// Returns dict[key], or nil if dict[key] is NSNull.
 extern id _Nullable FGMGetValueOrNilFromDict(NSDictionary *dict, NSString *key);
+
+/// Creates a CGPoint from its Pigeon equivalent.
+extern CGPoint FGMGetCGPointForPigeonPoint(FGMPlatformPoint *point);
+
+/// Converts a CGPoint to its Pigeon equivalent.
+extern FGMPlatformPoint *FGMGetPigeonPointForCGPoint(CGPoint point);
+
+/// Creates a CLLocationCoordinate2D from its Pigeon representation.
+extern CLLocationCoordinate2D FGMGetCoordinateForPigeonLatLng(FGMPlatformLatLng *latLng);
+
+/// Converts a CLLocationCoordinate2D to its Pigeon representation.
+extern FGMPlatformLatLng *FGMGetPigeonLatLngForCoordinate(CLLocationCoordinate2D coord);
+
+/// Converts a GMSCoordinateBounds to its Pigeon representation.
+extern FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(
+    GMSCoordinateBounds *bounds);
+
+/// Converts a GMSCameraPosition to its Pigeon representation.
+extern FGMPlatformCameraPosition *FGMGetPigeonCameraPositionForPosition(
+    GMSCameraPosition *position);
 
 @interface FLTGoogleMapJSONConversions : NSObject
 
@@ -35,15 +57,10 @@ extern NSString *const kHeatmapGradientColorMapSizeKey;
 + (NSNumber *)RGBAFromColor:(UIColor *)color;
 + (NSArray<CLLocation *> *)pointsFromLatLongs:(NSArray *)data;
 + (NSArray<NSArray<CLLocation *> *> *)holesFromPointsArray:(NSArray *)data;
-+ (nullable NSDictionary<NSString *, id> *)dictionaryFromPosition:
-    (nullable GMSCameraPosition *)position;
-+ (NSDictionary<NSString *, NSNumber *> *)dictionaryFromPoint:(CGPoint)point;
-+ (nullable NSDictionary *)dictionaryFromCoordinateBounds:(nullable GMSCoordinateBounds *)bounds;
 + (nullable GMSCameraPosition *)cameraPostionFromDictionary:(nullable NSDictionary *)channelValue;
-+ (CGPoint)pointFromDictionary:(NSDictionary *)dictionary;
 + (GMSCoordinateBounds *)coordinateBoundsFromLatLongs:(NSArray *)latlongs;
 + (GMSMapViewType)mapViewTypeFromTypeValue:(NSNumber *)value;
-+ (nullable GMSCameraUpdate *)cameraUpdateFromChannelValue:(NSArray *)channelValue;
++ (nullable GMSCameraUpdate *)cameraUpdateFromArray:(NSArray *)channelValue;
 + (nullable GMUWeightedLatLng *)weightedLatLngFromArray:(NSArray<id> *)data;
 + (NSArray<id> *)arrayFromWeightedLatLng:(GMUWeightedLatLng *)weightedLatLng;
 + (NSArray<GMUWeightedLatLng *> *)weightedDataFromArray:(NSArray<NSArray<id> *> *)data;

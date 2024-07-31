@@ -1,6 +1,18 @@
-## 2.12.0
+## 2.13.0
 
 * Adds support for heatmap layers.
+
+## 2.12.1
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 2.12.0
+
+* Converts Java->Dart calls to Pigeon.
+
+## 2.11.1
+
+* Fixes handling of Circle updates.
 
 ## 2.11.0
 

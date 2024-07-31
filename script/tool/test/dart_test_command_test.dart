@@ -331,7 +331,7 @@ test_on: vm && browser
                 'test',
                 '--color',
                 '--platform=chrome',
-                '--web-renderer=html'
+                '--web-renderer=canvaskit',
               ],
               package.path),
         ]),
@@ -360,7 +360,7 @@ test_on: vm && browser
                 'test',
                 '--color',
                 '--platform=chrome',
-                '--web-renderer=html'
+                '--web-renderer=canvaskit',
               ],
               plugin.path),
         ]),
@@ -390,7 +390,7 @@ test_on: vm && browser
                 'test',
                 '--color',
                 '--platform=chrome',
-                '--web-renderer=html'
+                '--web-renderer=canvaskit',
               ],
               plugin.path),
         ]),
@@ -420,7 +420,7 @@ test_on: vm && browser
                 'test',
                 '--color',
                 '--platform=chrome',
-                '--web-renderer=html'
+                '--web-renderer=canvaskit',
               ],
               plugin.path),
         ]),
@@ -495,7 +495,7 @@ test_on: vm && browser
                 'test',
                 '--color',
                 '--platform=chrome',
-                '--web-renderer=html'
+                '--web-renderer=canvaskit',
               ],
               plugin.path),
         ]),

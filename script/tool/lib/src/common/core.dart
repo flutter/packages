@@ -37,6 +37,9 @@ const String kEnableExperiment = 'enable-experiment';
 /// land (e.g., dependency overrides in federated plugin combination PRs).
 const String kDoNotLandWarning = 'DO NOT MERGE';
 
+/// Key for enabling web WASM compilation
+const String kWebWasmFlag = 'wasm';
+
 /// Target platforms supported by Flutter.
 // ignore: public_member_api_docs
 enum FlutterPlatform { android, ios, linux, macos, web, windows }

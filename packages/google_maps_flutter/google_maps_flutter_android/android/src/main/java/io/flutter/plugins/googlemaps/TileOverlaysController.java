@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,12 +17,12 @@ import java.util.Map;
 class TileOverlaysController {
 
   private final Map<String, TileOverlayController> tileOverlayIdToController;
-  private final MethodChannel methodChannel;
+  private final MapsCallbackApi flutterApi;
   private GoogleMap googleMap;
 
-  TileOverlaysController(MethodChannel methodChannel) {
+  TileOverlaysController(MapsCallbackApi flutterApi) {
     this.tileOverlayIdToController = new HashMap<>();
-    this.methodChannel = methodChannel;
+    this.flutterApi = flutterApi;
   }
 
   void setGoogleMap(GoogleMap googleMap) {
@@ -96,7 +96,7 @@ class TileOverlaysController {
     String tileOverlayId =
         Convert.interpretTileOverlayOptions(tileOverlayOptions, tileOverlayOptionsBuilder);
     TileProviderController tileProviderController =
-        new TileProviderController(methodChannel, tileOverlayId);
+        new TileProviderController(flutterApi, tileOverlayId);
     tileOverlayOptionsBuilder.setTileProvider(tileProviderController);
     TileOverlayOptions options = tileOverlayOptionsBuilder.build();
     TileOverlay tileOverlay = googleMap.addTileOverlay(options);

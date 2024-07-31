@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,16 +18,17 @@ class PolylinesController {
 
   private final Map<String, PolylineController> polylineIdToController;
   private final Map<String, String> googleMapsPolylineIdToDartPolylineId;
-  private final MethodChannel methodChannel;
+  private final @NonNull MapsCallbackApi flutterApi;
   private GoogleMap googleMap;
   private final float density;
   private final AssetManager assetManager;
 
-  PolylinesController(MethodChannel methodChannel, AssetManager assetManager, float density) {
+  PolylinesController(
+      @NonNull MapsCallbackApi flutterApi, AssetManager assetManager, float density) {
     this.assetManager = assetManager;
     this.polylineIdToController = new HashMap<>();
     this.googleMapsPolylineIdToDartPolylineId = new HashMap<>();
-    this.methodChannel = methodChannel;
+    this.flutterApi = flutterApi;
     this.density = density;
   }
 
@@ -38,7 +39,9 @@ class PolylinesController {
   void addJsonPolylines(List<Object> polylinesToAdd) {
     if (polylinesToAdd != null) {
       for (Object polylineToAdd : polylinesToAdd) {
-        addJsonPolyline(polylineToAdd);
+        @SuppressWarnings("unchecked")
+        Map<String, ?> polylineMap = (Map<String, ?>) polylineToAdd;
+        addJsonPolyline(polylineMap);
       }
     }
   }
@@ -70,7 +73,7 @@ class PolylinesController {
     if (polylineId == null) {
       return false;
     }
-    methodChannel.invokeMethod("polyline#onTap", Convert.polylineIdToJson(polylineId));
+    flutterApi.onPolylineTap(polylineId, new NoOpVoidResult());
     PolylineController polylineController = polylineIdToController.get(polylineId);
     if (polylineController != null) {
       return polylineController.consumeTapEvents();
@@ -78,7 +81,7 @@ class PolylinesController {
     return false;
   }
 
-  private void addJsonPolyline(Object polyline) {
+  private void addJsonPolyline(Map<String, ?> polyline) {
     if (polyline == null) {
       return;
     }
@@ -97,7 +100,7 @@ class PolylinesController {
     googleMapsPolylineIdToDartPolylineId.put(polyline.getId(), polylineId);
   }
 
-  private void changeJsonPolyline(Object polyline) {
+  private void changeJsonPolyline(Map<String, ?> polyline) {
     if (polyline == null) {
       return;
     }
@@ -108,9 +111,7 @@ class PolylinesController {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private static String getPolylineId(Object polyline) {
-    Map<String, Object> polylineMap = (Map<String, Object>) polyline;
-    return (String) polylineMap.get("polylineId");
+  private static String getPolylineId(Map<String, ?> polyline) {
+    return (String) polyline.get("polylineId");
   }
 }

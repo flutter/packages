@@ -1,3 +1,11 @@
+## 1.0.43
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 1.0.42
+
+* Updates AGP version to 8.5.0.
+
 ## 1.0.41
 
 * Updates espresso to 3.6.1.

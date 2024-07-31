@@ -1,5 +1,8 @@
-## NEXT
+## 0.3.4
 
+* Removes `maxVideoDuration`/`maxDuration`, as the feature was never exposed at
+  the app-facing package level, and is deprecated at the platform interface
+  level.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 0.3.3

@@ -15,7 +15,7 @@ import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.collections.MarkerManager;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +30,7 @@ class ClusterManagersController
         ClusterManager.OnClusterClickListener<MarkerBuilder> {
   @NonNull private final Context context;
   @NonNull private final HashMap<String, ClusterManager<MarkerBuilder>> clusterManagerIdToManager;
-  @NonNull private final MethodChannel methodChannel;
+  @NonNull private final MapsCallbackApi flutterApi;
   @Nullable private MarkerManager markerManager;
   @Nullable private GoogleMap googleMap;
 
@@ -41,10 +41,10 @@ class ClusterManagersController
   private ClusterManagersController.OnClusterItemRendered<MarkerBuilder>
       clusterItemRenderedListener;
 
-  ClusterManagersController(MethodChannel methodChannel, Context context) {
+  ClusterManagersController(@NonNull MapsCallbackApi flutterApi, Context context) {
     this.clusterManagerIdToManager = new HashMap<>();
     this.context = context;
-    this.methodChannel = methodChannel;
+    this.flutterApi = flutterApi;
   }
 
   void init(GoogleMap googleMap, MarkerManager markerManager) {
@@ -197,7 +197,8 @@ class ClusterManagersController
     if (cluster.getSize() > 0) {
       MarkerBuilder[] builders = cluster.getItems().toArray(new MarkerBuilder[0]);
       String clusterManagerId = builders[0].clusterManagerId();
-      methodChannel.invokeMethod("cluster#onTap", Convert.clusterToJson(clusterManagerId, cluster));
+      flutterApi.onClusterTap(
+          Convert.clusterToPigeon(clusterManagerId, cluster), new NoOpVoidResult());
     }
 
     // Return false to allow the default behavior of the cluster click event to occur.
