@@ -9,10 +9,10 @@ import XCTest
 @testable import in_app_purchase_storekit
 
 final class ObjectTranslatorTest: XCTestCase {
-  var periodMap: [String: Any] {
+  private var periodMap: [String: Any] {
     ["numberOfUnits": 0, "unit": 0]
   }
-  var discountMap: [String: Any] {
+  private var discountMap: [String: Any] {
     var map: [String: Any] = [
       "price": "1",
       "priceLocale": FIAObjectTranslator.getMapFrom(NSLocale.system),
@@ -28,7 +28,7 @@ final class ObjectTranslatorTest: XCTestCase {
     }
     return map
   }
-  var discountMissingIdentifierMap: [String: Any] {
+  private var discountMissingIdentifierMap: [String: Any] {
     [
       "price": "1",
       "priceLocale": FIAObjectTranslator.getMapFrom(NSLocale.system),
@@ -39,7 +39,7 @@ final class ObjectTranslatorTest: XCTestCase {
       "type": 0,
     ]
   }
-  var productMap: [String: Any] {
+  private var productMap: [String: Any] {
     var map: [String: Any] = [
       "price": "1",
       "priceLocale": FIAObjectTranslator.getMapFrom(NSLocale.system),
@@ -55,10 +55,10 @@ final class ObjectTranslatorTest: XCTestCase {
     }
     return map
   }
-  var productResponseMap: [String: Any] {
+  private var productResponseMap: [String: Any] {
     ["products": [productMap], "invalidProductIdentifiers": []]
   }
-  var paymentMap: [String: Any] {
+  private var paymentMap: [String: Any] {
     [
       "productIdentifier": "123",
       "requestData": "abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh",
@@ -67,7 +67,7 @@ final class ObjectTranslatorTest: XCTestCase {
       "simulatesAskToBuyInSandbox": false,
     ]
   }
-  var paymentDiscountMap: [String: Any] {
+  private var paymentDiscountMap: [String: Any] {
     [
       "identifier": "payment_discount_identifier",
       "keyIdentifier": "payment_discount_key_identifier",
@@ -76,7 +76,7 @@ final class ObjectTranslatorTest: XCTestCase {
       "timestamp": Int(Date().timeIntervalSince1970),
     ]
   }
-  var transactionMap: [String: Any] {
+  private var transactionMap: [String: Any] {
     [
       "transactionIdentifier": "567",
       "transactionState": SKPaymentTransactionState.purchasing.rawValue,
@@ -87,7 +87,7 @@ final class ObjectTranslatorTest: XCTestCase {
       "originalTransaction": originalTransactionMap,
     ]
   }
-  var originalTransactionMap: [String: Any] {
+  private var originalTransactionMap: [String: Any] {
     [
       "transactionIdentifier": "567",
       "transactionState": SKPaymentTransactionState.purchasing.rawValue,
@@ -98,20 +98,20 @@ final class ObjectTranslatorTest: XCTestCase {
       "originalTransaction": NSNull(),
     ]
   }
-  var errorMap: [String: Any] {
+  private var errorMap: [String: Any] {
     [
       "code": 123,
       "domain": "test_domain",
       "userInfo": ["key": "value"],
     ]
   }
-  var storefrontMap: [String: Any] {
+  private var storefrontMap: [String: Any] {
     [
       "countryCode": "USA",
       "identifier": "unique_identifier",
     ]
   }
-  var storefrontAndPaymentTransactionMap: [String: Any] {
+  private var storefrontAndPaymentTransactionMap: [String: Any] {
     [
       "storefront": storefrontMap,
       "transaction": transactionMap,
