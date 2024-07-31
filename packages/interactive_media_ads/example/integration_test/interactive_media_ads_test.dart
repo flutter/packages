@@ -17,5 +17,7 @@ void integrationTestMain() {
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('AdDisplayContain', (WidgetTester tester) async {});
+  // Since this test is lacking integration tests, this test ensures the example
+  // app can be launched on an emulator/device.
+  testWidgets('Launch Test', (WidgetTester tester) async {});
 }
