@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/** SharedPreferencesPlugin */
-public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferencesApi {
+/** LegacySharedPreferencesPlugin */
+public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPreferencesApi {
   private static final String TAG = "SharedPreferencesPlugin";
   private static final String SHARED_PREFERENCES_NAME = "FlutterSharedPreferences";
   private static final String LIST_IDENTIFIER = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu";
@@ -38,19 +38,19 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   private SharedPreferences preferences;
   private SharedPreferencesListEncoder listEncoder;
 
-  public SharedPreferencesPlugin() {
+  public LegacySharedPreferencesPlugin() {
     this(new ListEncoder());
   }
 
   @VisibleForTesting
-  SharedPreferencesPlugin(@NonNull SharedPreferencesListEncoder listEncoder) {
+  LegacySharedPreferencesPlugin(@NonNull SharedPreferencesListEncoder listEncoder) {
     this.listEncoder = listEncoder;
   }
 
   private void setUp(@NonNull BinaryMessenger messenger, @NonNull Context context) {
     preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     try {
-      SharedPreferencesApi.setup(messenger, this);
+      SharedPreferencesApi.setUp(messenger, this);
     } catch (Exception ex) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex);
     }
@@ -63,7 +63,7 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {
-    SharedPreferencesApi.setup(binding.getBinaryMessenger(), null);
+    SharedPreferencesApi.setUp(binding.getBinaryMessenger(), null);
   }
 
   @Override
