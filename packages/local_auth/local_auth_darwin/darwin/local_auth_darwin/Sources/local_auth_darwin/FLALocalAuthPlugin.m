@@ -171,6 +171,37 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 #pragma mark -
 
+/// A default view provider that wraps the FlutterPluginRegistrar.
+// TODO(stuartmorgan): When converting to Swift, eliminate this class and use an extension to make
+// FlutterPluginRegistrar declare conformance to FLAViewProvider.
+@interface FLADefaultViewProvider : NSObject <FLAViewProvider>
+/// Returns a wrapper for the given registrar.
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
+    NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+/// The wrapped registrar.
+@property(nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
+@end
+
+@implementation FLADefaultViewProvider
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  self = [super init];
+  if (self) {
+    _registrar = registrar;
+  }
+  return self;
+}
+
+#if TARGET_OS_OSX
+- (NSView *)view {
+  return self.registrar.view;
+}
+#endif
+@end
+
+#pragma mark -
+
 /// A data container for sticky auth state.
 @interface FLAStickyAuthState : NSObject
 @property(nonatomic, strong, nonnull) FLADAuthOptions *options;
@@ -209,8 +240,8 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 /// The factory to create alerts.
 @property(nonatomic, strong) NSObject<FLADAlertFactory> *alertFactory;
 
-/// The flutter plugin registrar.
-@property(nonatomic, strong) NSObject<FlutterPluginRegistrar> *registrar;
+/// The Flutter view provider.
+@property(nonatomic, strong) NSObject<FLAViewProvider> *viewProvider;
 @end
 
 @implementation FLALocalAuthPlugin
@@ -219,10 +250,10 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   NSObject<FLADAlertFactory> *alertFactory = [[FLADefaultAlertFactory alloc] init];
   NSObject<FLADAuthContextFactory> *authContextFactory =
       [[FLADefaultAuthContextFactory alloc] init];
-  FLALocalAuthPlugin *instance =
-      [[FLALocalAuthPlugin alloc] initWithContextFactory:authContextFactory
-                                            alertFactory:alertFactory
-                                               registrar:registrar];
+  FLALocalAuthPlugin *instance = [[FLALocalAuthPlugin alloc]
+      initWithContextFactory:authContextFactory
+                alertFactory:alertFactory
+                viewProvider:[[FLADefaultViewProvider alloc] initWithRegistrar:registrar]];
   [registrar addApplicationDelegate:instance];
   SetUpFLADLocalAuthApi([registrar messenger], instance);
 }
@@ -230,10 +261,10 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 /// Returns an instance that uses the given factory to create LAContexts.
 - (instancetype)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)authFactory
                           alertFactory:(NSObject<FLADAlertFactory> *)alertFactory
-                             registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                          viewProvider:(NSObject<FLAViewProvider> *)viewProvider {
   self = [super init];
   if (self) {
-    _registrar = registrar;
+    _viewProvider = viewProvider;
     _authContextFactory = authFactory;
     _alertFactory = alertFactory;
   }
@@ -330,7 +361,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   id<FLANSAlert> alert = [_alertFactory createAlert];
   alert.messageText = message;
   [alert addButtonWithTitle:dismissButtonTitle];
-  NSWindow *window = self.registrar.view.window;
+  NSWindow *window = self.viewProvider.view.window;
   [alert beginSheetModalForWindow:window
                 completionHandler:^(NSModalResponse returnCode) {
                   [self handleSucceeded:NO withCompletion:completion];

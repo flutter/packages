@@ -74,13 +74,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/// Protocol for a provider of the view containing the Flutter content, abstracted to allow using
+/// mock/fake instances in unit tests.
+@protocol FLAViewProvider <NSObject>
+@required
+#if TARGET_OS_OSX
+@property(readonly, nonatomic) NSView *view;
+#elif TARGET_OS_IOS
+// TODO(stuartmorgan): Add a view accessor once https://github.com/flutter/flutter/issues/104117
+// is resolved, and use that in 'showAlertWithMessage:...'.
+#endif
+
+@end
+
 #pragma mark -
 
 @interface FLALocalAuthPlugin ()
 /// Returns an instance that uses the given factory to create LAContexts.
 - (instancetype _Nonnull)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)authFactory
                                    alertFactory:(NSObject<FLADAlertFactory> *)alertFactory
-                                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                                   viewProvider:(NSObject<FLAViewProvider> *)viewProvider
     NS_DESIGNATED_INITIALIZER;
 @end
 
