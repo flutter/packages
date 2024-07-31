@@ -26,7 +26,12 @@ static NSArray<id> *wrapResult(id result, FlutterError *error) {
 }
 
 static FlutterError *createConnectionError(NSString *channelName) {
-  return [FlutterError errorWithCode:@"channel-error" message:[NSString stringWithFormat:@"%@/%@/%@", @"Unable to establish connection on channel: '", channelName, @"'."] details:@""];
+  return [FlutterError
+      errorWithCode:@"channel-error"
+            message:[NSString stringWithFormat:@"%@/%@/%@",
+                                               @"Unable to establish connection on channel: '",
+                                               channelName, @"'."]
+            details:@""];
 }
 
 static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
@@ -119,11 +124,11 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformCameraPosition
-+ (instancetype)makeWithBearing:(double )bearing
-    target:(FGMPlatformLatLng *)target
-    tilt:(double )tilt
-    zoom:(double )zoom {
-  FGMPlatformCameraPosition* pigeonResult = [[FGMPlatformCameraPosition alloc] init];
++ (instancetype)makeWithBearing:(double)bearing
+                         target:(FGMPlatformLatLng *)target
+                           tilt:(double)tilt
+                           zoom:(double)zoom {
+  FGMPlatformCameraPosition *pigeonResult = [[FGMPlatformCameraPosition alloc] init];
   pigeonResult.bearing = bearing;
   pigeonResult.target = target;
   pigeonResult.tilt = tilt;
@@ -152,8 +157,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformCameraUpdate
-+ (instancetype)makeWithJson:(id )json {
-  FGMPlatformCameraUpdate* pigeonResult = [[FGMPlatformCameraUpdate alloc] init];
++ (instancetype)makeWithJson:(id)json {
+  FGMPlatformCameraUpdate *pigeonResult = [[FGMPlatformCameraUpdate alloc] init];
   pigeonResult.json = json;
   return pigeonResult;
 }
@@ -173,8 +178,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformCircle
-+ (instancetype)makeWithJson:(id )json {
-  FGMPlatformCircle* pigeonResult = [[FGMPlatformCircle alloc] init];
++ (instancetype)makeWithJson:(id)json {
+  FGMPlatformCircle *pigeonResult = [[FGMPlatformCircle alloc] init];
   pigeonResult.json = json;
   return pigeonResult;
 }
@@ -194,8 +199,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformMarker
-+ (instancetype)makeWithJson:(id )json {
-  FGMPlatformMarker* pigeonResult = [[FGMPlatformMarker alloc] init];
++ (instancetype)makeWithJson:(id)json {
+  FGMPlatformMarker *pigeonResult = [[FGMPlatformMarker alloc] init];
   pigeonResult.json = json;
   return pigeonResult;
 }
@@ -215,8 +220,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformPolygon
-+ (instancetype)makeWithJson:(id )json {
-  FGMPlatformPolygon* pigeonResult = [[FGMPlatformPolygon alloc] init];
++ (instancetype)makeWithJson:(id)json {
+  FGMPlatformPolygon *pigeonResult = [[FGMPlatformPolygon alloc] init];
   pigeonResult.json = json;
   return pigeonResult;
 }
@@ -236,8 +241,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformPolyline
-+ (instancetype)makeWithJson:(id )json {
-  FGMPlatformPolyline* pigeonResult = [[FGMPlatformPolyline alloc] init];
++ (instancetype)makeWithJson:(id)json {
+  FGMPlatformPolyline *pigeonResult = [[FGMPlatformPolyline alloc] init];
   pigeonResult.json = json;
   return pigeonResult;
 }
@@ -257,10 +262,10 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformTile
-+ (instancetype)makeWithWidth:(NSInteger )width
-    height:(NSInteger )height
-    data:(nullable FlutterStandardTypedData *)data {
-  FGMPlatformTile* pigeonResult = [[FGMPlatformTile alloc] init];
++ (instancetype)makeWithWidth:(NSInteger)width
+                       height:(NSInteger)height
+                         data:(nullable FlutterStandardTypedData *)data {
+  FGMPlatformTile *pigeonResult = [[FGMPlatformTile alloc] init];
   pigeonResult.width = width;
   pigeonResult.height = height;
   pigeonResult.data = data;
@@ -286,8 +291,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformTileOverlay
-+ (instancetype)makeWithJson:(id )json {
-  FGMPlatformTileOverlay* pigeonResult = [[FGMPlatformTileOverlay alloc] init];
++ (instancetype)makeWithJson:(id)json {
+  FGMPlatformTileOverlay *pigeonResult = [[FGMPlatformTileOverlay alloc] init];
   pigeonResult.json = json;
   return pigeonResult;
 }
@@ -307,9 +312,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformLatLng
-+ (instancetype)makeWithLatitude:(double )latitude
-    longitude:(double )longitude {
-  FGMPlatformLatLng* pigeonResult = [[FGMPlatformLatLng alloc] init];
++ (instancetype)makeWithLatitude:(double)latitude longitude:(double)longitude {
+  FGMPlatformLatLng *pigeonResult = [[FGMPlatformLatLng alloc] init];
   pigeonResult.latitude = latitude;
   pigeonResult.longitude = longitude;
   return pigeonResult;
@@ -333,8 +337,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 
 @implementation FGMPlatformLatLngBounds
 + (instancetype)makeWithNortheast:(FGMPlatformLatLng *)northeast
-    southwest:(FGMPlatformLatLng *)southwest {
-  FGMPlatformLatLngBounds* pigeonResult = [[FGMPlatformLatLngBounds alloc] init];
+                        southwest:(FGMPlatformLatLng *)southwest {
+  FGMPlatformLatLngBounds *pigeonResult = [[FGMPlatformLatLngBounds alloc] init];
   pigeonResult.northeast = northeast;
   pigeonResult.southwest = southwest;
   return pigeonResult;
@@ -357,8 +361,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformMapConfiguration
-+ (instancetype)makeWithJson:(id )json {
-  FGMPlatformMapConfiguration* pigeonResult = [[FGMPlatformMapConfiguration alloc] init];
++ (instancetype)makeWithJson:(id)json {
+  FGMPlatformMapConfiguration *pigeonResult = [[FGMPlatformMapConfiguration alloc] init];
   pigeonResult.json = json;
   return pigeonResult;
 }
@@ -378,9 +382,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformPoint
-+ (instancetype)makeWithX:(double )x
-    y:(double )y {
-  FGMPlatformPoint* pigeonResult = [[FGMPlatformPoint alloc] init];
++ (instancetype)makeWithX:(double)x y:(double)y {
+  FGMPlatformPoint *pigeonResult = [[FGMPlatformPoint alloc] init];
   pigeonResult.x = x;
   pigeonResult.y = y;
   return pigeonResult;
@@ -403,11 +406,11 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformTileLayer
-+ (instancetype)makeWithVisible:(BOOL )visible
-    fadeIn:(BOOL )fadeIn
-    opacity:(double )opacity
-    zIndex:(NSInteger )zIndex {
-  FGMPlatformTileLayer* pigeonResult = [[FGMPlatformTileLayer alloc] init];
++ (instancetype)makeWithVisible:(BOOL)visible
+                         fadeIn:(BOOL)fadeIn
+                        opacity:(double)opacity
+                         zIndex:(NSInteger)zIndex {
+  FGMPlatformTileLayer *pigeonResult = [[FGMPlatformTileLayer alloc] init];
   pigeonResult.visible = visible;
   pigeonResult.fadeIn = fadeIn;
   pigeonResult.opacity = opacity;
@@ -436,9 +439,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformZoomRange
-+ (instancetype)makeWithMin:(double )min
-    max:(double )max {
-  FGMPlatformZoomRange* pigeonResult = [[FGMPlatformZoomRange alloc] init];
++ (instancetype)makeWithMin:(double)min max:(double)max {
+  FGMPlatformZoomRange *pigeonResult = [[FGMPlatformZoomRange alloc] init];
   pigeonResult.min = min;
   pigeonResult.max = max;
   return pigeonResult;
@@ -465,33 +467,33 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @implementation FGMMessagesPigeonCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 129: 
+    case 129:
       return [FGMPlatformCameraPosition fromList:[self readValue]];
-    case 130: 
+    case 130:
       return [FGMPlatformCameraUpdate fromList:[self readValue]];
-    case 131: 
+    case 131:
       return [FGMPlatformCircle fromList:[self readValue]];
-    case 132: 
+    case 132:
       return [FGMPlatformMarker fromList:[self readValue]];
-    case 133: 
+    case 133:
       return [FGMPlatformPolygon fromList:[self readValue]];
-    case 134: 
+    case 134:
       return [FGMPlatformPolyline fromList:[self readValue]];
-    case 135: 
+    case 135:
       return [FGMPlatformTile fromList:[self readValue]];
-    case 136: 
+    case 136:
       return [FGMPlatformTileOverlay fromList:[self readValue]];
-    case 137: 
+    case 137:
       return [FGMPlatformLatLng fromList:[self readValue]];
-    case 138: 
+    case 138:
       return [FGMPlatformLatLngBounds fromList:[self readValue]];
-    case 139: 
+    case 139:
       return [FGMPlatformMapConfiguration fromList:[self readValue]];
-    case 140: 
+    case 140:
       return [FGMPlatformPoint fromList:[self readValue]];
-    case 141: 
+    case 141:
       return [FGMPlatformTileLayer fromList:[self readValue]];
-    case 142: 
+    case 142:
       return [FGMPlatformZoomRange fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -566,7 +568,8 @@ NSObject<FlutterMessageCodec> *FGMGetMessagesCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FGMMessagesPigeonCodecReaderWriter *readerWriter = [[FGMMessagesPigeonCodecReaderWriter alloc] init];
+    FGMMessagesPigeonCodecReaderWriter *readerWriter =
+        [[FGMMessagesPigeonCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
@@ -575,17 +578,24 @@ void SetUpFGMMapsApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FGMMap
   SetUpFGMMapsApiWithSuffix(binaryMessenger, api, @"");
 }
 
-void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FGMMapsApi> *api, NSString *messageChannelSuffix) {
-  messageChannelSuffix = messageChannelSuffix.length > 0 ? [NSString stringWithFormat: @".%@", messageChannelSuffix] : @"";
+void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                               NSObject<FGMMapsApi> *api, NSString *messageChannelSuffix) {
+  messageChannelSuffix = messageChannelSuffix.length > 0
+                             ? [NSString stringWithFormat:@".%@", messageChannelSuffix]
+                             : @"";
   /// Returns once the map instance is available.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.waitForMap", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:
+                                @"%@%@",
+                                @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.waitForMap",
+                                messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(waitForMapWithError:)], @"FGMMapsApi api (%@) doesn't respond to @selector(waitForMapWithError:)", api);
+      NSCAssert([api respondsToSelector:@selector(waitForMapWithError:)],
+                @"FGMMapsApi api (%@) doesn't respond to @selector(waitForMapWithError:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         [api waitForMapWithError:&error];
@@ -600,13 +610,18 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   /// Only non-null configuration values will result in updates; options with
   /// null values will remain unchanged.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateMapConfiguration", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsApi.updateMapConfiguration",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(updateWithMapConfiguration:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(updateWithMapConfiguration:error:)", api);
+      NSCAssert(
+          [api respondsToSelector:@selector(updateWithMapConfiguration:error:)],
+          @"FGMMapsApi api (%@) doesn't respond to @selector(updateWithMapConfiguration:error:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         FGMPlatformMapConfiguration *arg_configuration = GetNullableObjectAtIndex(args, 0);
@@ -620,20 +635,29 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   }
   /// Updates the set of circles on the map.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateCircles", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:
+                                @"%@%@",
+                                @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateCircles",
+                                messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(updateCirclesByAdding:changing:removing:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(updateCirclesByAdding:changing:removing:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(updateCirclesByAdding:changing:removing:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to "
+                @"@selector(updateCirclesByAdding:changing:removing:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSArray<FGMPlatformCircle *> *arg_toAdd = GetNullableObjectAtIndex(args, 0);
         NSArray<FGMPlatformCircle *> *arg_toChange = GetNullableObjectAtIndex(args, 1);
         NSArray<NSString *> *arg_idsToRemove = GetNullableObjectAtIndex(args, 2);
         FlutterError *error;
-        [api updateCirclesByAdding:arg_toAdd changing:arg_toChange removing:arg_idsToRemove error:&error];
+        [api updateCirclesByAdding:arg_toAdd
+                          changing:arg_toChange
+                          removing:arg_idsToRemove
+                             error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -642,20 +666,29 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   }
   /// Updates the set of markers on the map.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateMarkers", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:
+                                @"%@%@",
+                                @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateMarkers",
+                                messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(updateMarkersByAdding:changing:removing:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(updateMarkersByAdding:changing:removing:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(updateMarkersByAdding:changing:removing:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to "
+                @"@selector(updateMarkersByAdding:changing:removing:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSArray<FGMPlatformMarker *> *arg_toAdd = GetNullableObjectAtIndex(args, 0);
         NSArray<FGMPlatformMarker *> *arg_toChange = GetNullableObjectAtIndex(args, 1);
         NSArray<NSString *> *arg_idsToRemove = GetNullableObjectAtIndex(args, 2);
         FlutterError *error;
-        [api updateMarkersByAdding:arg_toAdd changing:arg_toChange removing:arg_idsToRemove error:&error];
+        [api updateMarkersByAdding:arg_toAdd
+                          changing:arg_toChange
+                          removing:arg_idsToRemove
+                             error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -664,20 +697,28 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   }
   /// Updates the set of polygonss on the map.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updatePolygons", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsApi.updatePolygons",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(updatePolygonsByAdding:changing:removing:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(updatePolygonsByAdding:changing:removing:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(updatePolygonsByAdding:changing:removing:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to "
+                @"@selector(updatePolygonsByAdding:changing:removing:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSArray<FGMPlatformPolygon *> *arg_toAdd = GetNullableObjectAtIndex(args, 0);
         NSArray<FGMPlatformPolygon *> *arg_toChange = GetNullableObjectAtIndex(args, 1);
         NSArray<NSString *> *arg_idsToRemove = GetNullableObjectAtIndex(args, 2);
         FlutterError *error;
-        [api updatePolygonsByAdding:arg_toAdd changing:arg_toChange removing:arg_idsToRemove error:&error];
+        [api updatePolygonsByAdding:arg_toAdd
+                           changing:arg_toChange
+                           removing:arg_idsToRemove
+                              error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -686,20 +727,29 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   }
   /// Updates the set of polylines on the map.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updatePolylines", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsApi.updatePolylines",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(updatePolylinesByAdding:changing:removing:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(updatePolylinesByAdding:changing:removing:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(updatePolylinesByAdding:
+                                                                 changing:removing:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to "
+                @"@selector(updatePolylinesByAdding:changing:removing:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSArray<FGMPlatformPolyline *> *arg_toAdd = GetNullableObjectAtIndex(args, 0);
         NSArray<FGMPlatformPolyline *> *arg_toChange = GetNullableObjectAtIndex(args, 1);
         NSArray<NSString *> *arg_idsToRemove = GetNullableObjectAtIndex(args, 2);
         FlutterError *error;
-        [api updatePolylinesByAdding:arg_toAdd changing:arg_toChange removing:arg_idsToRemove error:&error];
+        [api updatePolylinesByAdding:arg_toAdd
+                            changing:arg_toChange
+                            removing:arg_idsToRemove
+                               error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -708,20 +758,29 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   }
   /// Updates the set of tile overlays on the map.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateTileOverlays", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsApi.updateTileOverlays",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(updateTileOverlaysByAdding:changing:removing:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(updateTileOverlaysByAdding:changing:removing:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(updateTileOverlaysByAdding:
+                                                                    changing:removing:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to "
+                @"@selector(updateTileOverlaysByAdding:changing:removing:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSArray<FGMPlatformTileOverlay *> *arg_toAdd = GetNullableObjectAtIndex(args, 0);
         NSArray<FGMPlatformTileOverlay *> *arg_toChange = GetNullableObjectAtIndex(args, 1);
         NSArray<NSString *> *arg_idsToRemove = GetNullableObjectAtIndex(args, 2);
         FlutterError *error;
-        [api updateTileOverlaysByAdding:arg_toAdd changing:arg_toChange removing:arg_idsToRemove error:&error];
+        [api updateTileOverlaysByAdding:arg_toAdd
+                               changing:arg_toChange
+                               removing:arg_idsToRemove
+                                  error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -730,13 +789,18 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   }
   /// Gets the screen coordinate for the given map location.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getScreenCoordinate", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsApi.getScreenCoordinate",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(screenCoordinatesForLatLng:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(screenCoordinatesForLatLng:error:)", api);
+      NSCAssert(
+          [api respondsToSelector:@selector(screenCoordinatesForLatLng:error:)],
+          @"FGMMapsApi api (%@) doesn't respond to @selector(screenCoordinatesForLatLng:error:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         FGMPlatformLatLng *arg_latLng = GetNullableObjectAtIndex(args, 0);
@@ -750,18 +814,25 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   }
   /// Gets the map location for the given screen coordinate.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getLatLng", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               [NSString
+                   stringWithFormat:@"%@%@",
+                                    @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getLatLng",
+                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(latLngForScreenCoordinate:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(latLngForScreenCoordinate:error:)", api);
+      NSCAssert(
+          [api respondsToSelector:@selector(latLngForScreenCoordinate:error:)],
+          @"FGMMapsApi api (%@) doesn't respond to @selector(latLngForScreenCoordinate:error:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         FGMPlatformPoint *arg_screenCoordinate = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        FGMPlatformLatLng *output = [api latLngForScreenCoordinate:arg_screenCoordinate error:&error];
+        FGMPlatformLatLng *output = [api latLngForScreenCoordinate:arg_screenCoordinate
+                                                             error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -770,13 +841,16 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   }
   /// Gets the map region currently displayed on the map.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getVisibleRegion", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsApi.getVisibleRegion",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(visibleMapRegion:)], @"FGMMapsApi api (%@) doesn't respond to @selector(visibleMapRegion:)", api);
+      NSCAssert([api respondsToSelector:@selector(visibleMapRegion:)],
+                @"FGMMapsApi api (%@) doesn't respond to @selector(visibleMapRegion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         FGMPlatformLatLngBounds *output = [api visibleMapRegion:&error];
@@ -789,13 +863,18 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   /// Moves the camera according to [cameraUpdate] immediately, with no
   /// animation.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.moveCamera", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:
+                                @"%@%@",
+                                @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.moveCamera",
+                                messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(moveCameraWithUpdate:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(moveCameraWithUpdate:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(moveCameraWithUpdate:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to @selector(moveCameraWithUpdate:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         FGMPlatformCameraUpdate *arg_cameraUpdate = GetNullableObjectAtIndex(args, 0);
@@ -809,13 +888,18 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   }
   /// Moves the camera according to [cameraUpdate], animating the update.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.animateCamera", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:
+                                @"%@%@",
+                                @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.animateCamera",
+                                messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(animateCameraWithUpdate:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(animateCameraWithUpdate:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(animateCameraWithUpdate:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to @selector(animateCameraWithUpdate:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         FGMPlatformCameraUpdate *arg_cameraUpdate = GetNullableObjectAtIndex(args, 0);
@@ -829,13 +913,17 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   }
   /// Gets the current map zoom level.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getZoomLevel", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:
+                                @"%@%@",
+                                @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getZoomLevel",
+                                messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(currentZoomLevel:)], @"FGMMapsApi api (%@) doesn't respond to @selector(currentZoomLevel:)", api);
+      NSCAssert([api respondsToSelector:@selector(currentZoomLevel:)],
+                @"FGMMapsApi api (%@) doesn't respond to @selector(currentZoomLevel:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSNumber *output = [api currentZoomLevel:&error];
@@ -847,13 +935,18 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   }
   /// Show the info window for the marker with the given ID.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.showInfoWindow", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsApi.showInfoWindow",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(showInfoWindowForMarkerWithIdentifier:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(showInfoWindowForMarkerWithIdentifier:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(showInfoWindowForMarkerWithIdentifier:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to "
+                @"@selector(showInfoWindowForMarkerWithIdentifier:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_markerId = GetNullableObjectAtIndex(args, 0);
@@ -867,13 +960,18 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   }
   /// Hide the info window for the marker with the given ID.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.hideInfoWindow", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsApi.hideInfoWindow",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(hideInfoWindowForMarkerWithIdentifier:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(hideInfoWindowForMarkerWithIdentifier:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(hideInfoWindowForMarkerWithIdentifier:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to "
+                @"@selector(hideInfoWindowForMarkerWithIdentifier:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_markerId = GetNullableObjectAtIndex(args, 0);
@@ -888,18 +986,25 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   /// Returns true if the marker with the given ID is currently displaying its
   /// info window.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.isInfoWindowShown", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsApi.isInfoWindowShown",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(isShowingInfoWindowForMarkerWithIdentifier:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(isShowingInfoWindowForMarkerWithIdentifier:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(isShowingInfoWindowForMarkerWithIdentifier:
+                                                                                       error:)],
+                @"FGMMapsApi api (%@) doesn't respond to "
+                @"@selector(isShowingInfoWindowForMarkerWithIdentifier:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_markerId = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        NSNumber *output = [api isShowingInfoWindowForMarkerWithIdentifier:arg_markerId error:&error];
+        NSNumber *output = [api isShowingInfoWindowForMarkerWithIdentifier:arg_markerId
+                                                                     error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -912,13 +1017,17 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   /// If there was an error setting the style, such as an invalid style string,
   /// returns the error message.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.setStyle", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               [NSString
+                   stringWithFormat:@"%@%@",
+                                    @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.setStyle",
+                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setStyle:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(setStyle:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(setStyle:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to @selector(setStyle:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_style = GetNullableObjectAtIndex(args, 0);
@@ -936,13 +1045,16 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   /// This allows checking asynchronously for initial style failures, as there
   /// is no way to return failures from map initialization.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getLastStyleError", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsApi.getLastStyleError",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(lastStyleError:)], @"FGMMapsApi api (%@) doesn't respond to @selector(lastStyleError:)", api);
+      NSCAssert([api respondsToSelector:@selector(lastStyleError:)],
+                @"FGMMapsApi api (%@) doesn't respond to @selector(lastStyleError:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSString *output = [api lastStyleError:&error];
@@ -954,13 +1066,18 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   }
   /// Clears the cache of tiles previously requseted from the tile provider.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.clearTileCache", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsApi.clearTileCache",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(clearTileCacheForOverlayWithIdentifier:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(clearTileCacheForOverlayWithIdentifier:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(clearTileCacheForOverlayWithIdentifier:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to "
+                @"@selector(clearTileCacheForOverlayWithIdentifier:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_tileOverlayId = GetNullableObjectAtIndex(args, 0);
@@ -974,13 +1091,17 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   }
   /// Takes a snapshot of the map and returns its image data.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.takeSnapshot", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:
+                                @"%@%@",
+                                @"dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.takeSnapshot",
+                                messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(takeSnapshotWithError:)], @"FGMMapsApi api (%@) doesn't respond to @selector(takeSnapshotWithError:)", api);
+      NSCAssert([api respondsToSelector:@selector(takeSnapshotWithError:)],
+                @"FGMMapsApi api (%@) doesn't respond to @selector(takeSnapshotWithError:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         FlutterStandardTypedData *output = [api takeSnapshotWithError:&error];
@@ -1001,297 +1122,400 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
 - (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
   return [self initWithBinaryMessenger:binaryMessenger messageChannelSuffix:@""];
 }
-- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger messageChannelSuffix:(nullable NSString*)messageChannelSuffix{
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix {
   self = [self init];
   if (self) {
     _binaryMessenger = binaryMessenger;
-    _messageChannelSuffix = [messageChannelSuffix length] == 0 ? @"" : [NSString stringWithFormat: @".%@", messageChannelSuffix];
+    _messageChannelSuffix = [messageChannelSuffix length] == 0
+                                ? @""
+                                : [NSString stringWithFormat:@".%@", messageChannelSuffix];
   }
   return self;
 }
 - (void)didStartCameraMoveWithCompletion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMoveStarted", _messageChannelSuffix];
+  NSString *channelName = [NSString
+      stringWithFormat:
+          @"%@%@",
+          @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMoveStarted",
+          _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:channelName
-      binaryMessenger:self.binaryMessenger
-      codec:FGMGetMessagesCodec()];
-  [channel sendMessage:nil reply:^(NSArray<id> *reply) {
-    if (reply != nil) {
-      if (reply.count > 1) {
-        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
-      } else {
-        completion(nil);
-      }
-    } else {
-      completion(createConnectionError(channelName));
-    } 
-  }];
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:nil
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
-- (void)didMoveCameraToPosition:(FGMPlatformCameraPosition *)arg_cameraPosition completion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMove", _messageChannelSuffix];
+- (void)didMoveCameraToPosition:(FGMPlatformCameraPosition *)arg_cameraPosition
+                     completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:@"%@%@",
+                       @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMove",
+                       _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:channelName
-      binaryMessenger:self.binaryMessenger
-      codec:FGMGetMessagesCodec()];
-  [channel sendMessage:@[arg_cameraPosition ?: [NSNull null]] reply:^(NSArray<id> *reply) {
-    if (reply != nil) {
-      if (reply.count > 1) {
-        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
-      } else {
-        completion(nil);
-      }
-    } else {
-      completion(createConnectionError(channelName));
-    } 
-  }];
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:@[ arg_cameraPosition ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
 - (void)didIdleCameraWithCompletion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraIdle", _messageChannelSuffix];
+  NSString *channelName = [NSString
+      stringWithFormat:@"%@%@",
+                       @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraIdle",
+                       _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:channelName
-      binaryMessenger:self.binaryMessenger
-      codec:FGMGetMessagesCodec()];
-  [channel sendMessage:nil reply:^(NSArray<id> *reply) {
-    if (reply != nil) {
-      if (reply.count > 1) {
-        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
-      } else {
-        completion(nil);
-      }
-    } else {
-      completion(createConnectionError(channelName));
-    } 
-  }];
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:nil
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
-- (void)didTapAtPosition:(FGMPlatformLatLng *)arg_position completion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onTap", _messageChannelSuffix];
+- (void)didTapAtPosition:(FGMPlatformLatLng *)arg_position
+              completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onTap",
+                       _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:channelName
-      binaryMessenger:self.binaryMessenger
-      codec:FGMGetMessagesCodec()];
-  [channel sendMessage:@[arg_position ?: [NSNull null]] reply:^(NSArray<id> *reply) {
-    if (reply != nil) {
-      if (reply.count > 1) {
-        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
-      } else {
-        completion(nil);
-      }
-    } else {
-      completion(createConnectionError(channelName));
-    } 
-  }];
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:@[ arg_position ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
-- (void)didLongPressAtPosition:(FGMPlatformLatLng *)arg_position completion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onLongPress", _messageChannelSuffix];
+- (void)didLongPressAtPosition:(FGMPlatformLatLng *)arg_position
+                    completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:@"%@%@",
+                       @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onLongPress",
+                       _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:channelName
-      binaryMessenger:self.binaryMessenger
-      codec:FGMGetMessagesCodec()];
-  [channel sendMessage:@[arg_position ?: [NSNull null]] reply:^(NSArray<id> *reply) {
-    if (reply != nil) {
-      if (reply.count > 1) {
-        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
-      } else {
-        completion(nil);
-      }
-    } else {
-      completion(createConnectionError(channelName));
-    } 
-  }];
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:@[ arg_position ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
-- (void)didTapMarkerWithIdentifier:(NSString *)arg_markerId completion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerTap", _messageChannelSuffix];
+- (void)didTapMarkerWithIdentifier:(NSString *)arg_markerId
+                        completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:@"%@%@",
+                       @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerTap",
+                       _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:channelName
-      binaryMessenger:self.binaryMessenger
-      codec:FGMGetMessagesCodec()];
-  [channel sendMessage:@[arg_markerId ?: [NSNull null]] reply:^(NSArray<id> *reply) {
-    if (reply != nil) {
-      if (reply.count > 1) {
-        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
-      } else {
-        completion(nil);
-      }
-    } else {
-      completion(createConnectionError(channelName));
-    } 
-  }];
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:@[ arg_markerId ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
-- (void)didStartDragForMarkerWithIdentifier:(NSString *)arg_markerId atPosition:(FGMPlatformLatLng *)arg_position completion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDragStart", _messageChannelSuffix];
+- (void)didStartDragForMarkerWithIdentifier:(NSString *)arg_markerId
+                                 atPosition:(FGMPlatformLatLng *)arg_position
+                                 completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:
+          @"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDragStart",
+          _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:channelName
-      binaryMessenger:self.binaryMessenger
-      codec:FGMGetMessagesCodec()];
-  [channel sendMessage:@[arg_markerId ?: [NSNull null], arg_position ?: [NSNull null]] reply:^(NSArray<id> *reply) {
-    if (reply != nil) {
-      if (reply.count > 1) {
-        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
-      } else {
-        completion(nil);
-      }
-    } else {
-      completion(createConnectionError(channelName));
-    } 
-  }];
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:@[ arg_markerId ?: [NSNull null], arg_position ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
-- (void)didDragMarkerWithIdentifier:(NSString *)arg_markerId atPosition:(FGMPlatformLatLng *)arg_position completion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDrag", _messageChannelSuffix];
+- (void)didDragMarkerWithIdentifier:(NSString *)arg_markerId
+                         atPosition:(FGMPlatformLatLng *)arg_position
+                         completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:@"%@%@",
+                       @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDrag",
+                       _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:channelName
-      binaryMessenger:self.binaryMessenger
-      codec:FGMGetMessagesCodec()];
-  [channel sendMessage:@[arg_markerId ?: [NSNull null], arg_position ?: [NSNull null]] reply:^(NSArray<id> *reply) {
-    if (reply != nil) {
-      if (reply.count > 1) {
-        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
-      } else {
-        completion(nil);
-      }
-    } else {
-      completion(createConnectionError(channelName));
-    } 
-  }];
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:@[ arg_markerId ?: [NSNull null], arg_position ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
-- (void)didEndDragForMarkerWithIdentifier:(NSString *)arg_markerId atPosition:(FGMPlatformLatLng *)arg_position completion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDragEnd", _messageChannelSuffix];
+- (void)didEndDragForMarkerWithIdentifier:(NSString *)arg_markerId
+                               atPosition:(FGMPlatformLatLng *)arg_position
+                               completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:
+          @"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDragEnd",
+          _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:channelName
-      binaryMessenger:self.binaryMessenger
-      codec:FGMGetMessagesCodec()];
-  [channel sendMessage:@[arg_markerId ?: [NSNull null], arg_position ?: [NSNull null]] reply:^(NSArray<id> *reply) {
-    if (reply != nil) {
-      if (reply.count > 1) {
-        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
-      } else {
-        completion(nil);
-      }
-    } else {
-      completion(createConnectionError(channelName));
-    } 
-  }];
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:@[ arg_markerId ?: [NSNull null], arg_position ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
-- (void)didTapInfoWindowOfMarkerWithIdentifier:(NSString *)arg_markerId completion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onInfoWindowTap", _messageChannelSuffix];
+- (void)didTapInfoWindowOfMarkerWithIdentifier:(NSString *)arg_markerId
+                                    completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:
+          @"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onInfoWindowTap",
+          _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:channelName
-      binaryMessenger:self.binaryMessenger
-      codec:FGMGetMessagesCodec()];
-  [channel sendMessage:@[arg_markerId ?: [NSNull null]] reply:^(NSArray<id> *reply) {
-    if (reply != nil) {
-      if (reply.count > 1) {
-        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
-      } else {
-        completion(nil);
-      }
-    } else {
-      completion(createConnectionError(channelName));
-    } 
-  }];
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:@[ arg_markerId ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
-- (void)didTapCircleWithIdentifier:(NSString *)arg_circleId completion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCircleTap", _messageChannelSuffix];
+- (void)didTapCircleWithIdentifier:(NSString *)arg_circleId
+                        completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:@"%@%@",
+                       @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCircleTap",
+                       _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:channelName
-      binaryMessenger:self.binaryMessenger
-      codec:FGMGetMessagesCodec()];
-  [channel sendMessage:@[arg_circleId ?: [NSNull null]] reply:^(NSArray<id> *reply) {
-    if (reply != nil) {
-      if (reply.count > 1) {
-        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
-      } else {
-        completion(nil);
-      }
-    } else {
-      completion(createConnectionError(channelName));
-    } 
-  }];
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:@[ arg_circleId ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
-- (void)didTapPolygonWithIdentifier:(NSString *)arg_polygonId completion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPolygonTap", _messageChannelSuffix];
+- (void)didTapPolygonWithIdentifier:(NSString *)arg_polygonId
+                         completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:@"%@%@",
+                       @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPolygonTap",
+                       _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:channelName
-      binaryMessenger:self.binaryMessenger
-      codec:FGMGetMessagesCodec()];
-  [channel sendMessage:@[arg_polygonId ?: [NSNull null]] reply:^(NSArray<id> *reply) {
-    if (reply != nil) {
-      if (reply.count > 1) {
-        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
-      } else {
-        completion(nil);
-      }
-    } else {
-      completion(createConnectionError(channelName));
-    } 
-  }];
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:@[ arg_polygonId ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
-- (void)didTapPolylineWithIdentifier:(NSString *)arg_polylineId completion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPolylineTap", _messageChannelSuffix];
+- (void)didTapPolylineWithIdentifier:(NSString *)arg_polylineId
+                          completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:@"%@%@",
+                       @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPolylineTap",
+                       _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:channelName
-      binaryMessenger:self.binaryMessenger
-      codec:FGMGetMessagesCodec()];
-  [channel sendMessage:@[arg_polylineId ?: [NSNull null]] reply:^(NSArray<id> *reply) {
-    if (reply != nil) {
-      if (reply.count > 1) {
-        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
-      } else {
-        completion(nil);
-      }
-    } else {
-      completion(createConnectionError(channelName));
-    } 
-  }];
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:@[ arg_polylineId ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
-- (void)tileWithOverlayIdentifier:(NSString *)arg_tileOverlayId location:(FGMPlatformPoint *)arg_location zoom:(NSInteger)arg_zoom completion:(void (^)(FGMPlatformTile *_Nullable, FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.getTileOverlayTile", _messageChannelSuffix];
+- (void)tileWithOverlayIdentifier:(NSString *)arg_tileOverlayId
+                         location:(FGMPlatformPoint *)arg_location
+                             zoom:(NSInteger)arg_zoom
+                       completion:(void (^)(FGMPlatformTile *_Nullable,
+                                            FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:
+          @"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.getTileOverlayTile",
+          _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:channelName
-      binaryMessenger:self.binaryMessenger
-      codec:FGMGetMessagesCodec()];
-  [channel sendMessage:@[arg_tileOverlayId ?: [NSNull null], arg_location ?: [NSNull null], @(arg_zoom)] reply:^(NSArray<id> *reply) {
-    if (reply != nil) {
-      if (reply.count > 1) {
-        completion(nil, [FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
-      } else {
-        FGMPlatformTile *output = reply[0] == [NSNull null] ? nil : reply[0];
-        completion(output, nil);
-      }
-    } else {
-      completion(nil, createConnectionError(channelName));
-    } 
-  }];
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:@[
+    arg_tileOverlayId ?: [NSNull null], arg_location ?: [NSNull null], @(arg_zoom)
+  ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       FGMPlatformTile *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, createConnectionError(channelName));
+                   }
+                 }];
 }
 @end
 
-void SetUpFGMMapsInspectorApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FGMMapsInspectorApi> *api) {
+void SetUpFGMMapsInspectorApi(id<FlutterBinaryMessenger> binaryMessenger,
+                              NSObject<FGMMapsInspectorApi> *api) {
   SetUpFGMMapsInspectorApiWithSuffix(binaryMessenger, api, @"");
 }
 
-void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FGMMapsInspectorApi> *api, NSString *messageChannelSuffix) {
-  messageChannelSuffix = messageChannelSuffix.length > 0 ? [NSString stringWithFormat: @".%@", messageChannelSuffix] : @"";
+void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                        NSObject<FGMMapsInspectorApi> *api,
+                                        NSString *messageChannelSuffix) {
+  messageChannelSuffix = messageChannelSuffix.length > 0
+                             ? [NSString stringWithFormat:@".%@", messageChannelSuffix]
+                             : @"";
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areBuildingsEnabled", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsInspectorApi.areBuildingsEnabled",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(areBuildingsEnabledWithError:)], @"FGMMapsInspectorApi api (%@) doesn't respond to @selector(areBuildingsEnabledWithError:)", api);
+      NSCAssert([api respondsToSelector:@selector(areBuildingsEnabledWithError:)],
+                @"FGMMapsInspectorApi api (%@) doesn't respond to "
+                @"@selector(areBuildingsEnabledWithError:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSNumber *output = [api areBuildingsEnabledWithError:&error];
@@ -1302,13 +1526,18 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
     }
   }
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areRotateGesturesEnabled", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsInspectorApi.areRotateGesturesEnabled",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(areRotateGesturesEnabledWithError:)], @"FGMMapsInspectorApi api (%@) doesn't respond to @selector(areRotateGesturesEnabledWithError:)", api);
+      NSCAssert([api respondsToSelector:@selector(areRotateGesturesEnabledWithError:)],
+                @"FGMMapsInspectorApi api (%@) doesn't respond to "
+                @"@selector(areRotateGesturesEnabledWithError:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSNumber *output = [api areRotateGesturesEnabledWithError:&error];
@@ -1319,13 +1548,18 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
     }
   }
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areScrollGesturesEnabled", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsInspectorApi.areScrollGesturesEnabled",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(areScrollGesturesEnabledWithError:)], @"FGMMapsInspectorApi api (%@) doesn't respond to @selector(areScrollGesturesEnabledWithError:)", api);
+      NSCAssert([api respondsToSelector:@selector(areScrollGesturesEnabledWithError:)],
+                @"FGMMapsInspectorApi api (%@) doesn't respond to "
+                @"@selector(areScrollGesturesEnabledWithError:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSNumber *output = [api areScrollGesturesEnabledWithError:&error];
@@ -1336,13 +1570,18 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
     }
   }
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areTiltGesturesEnabled", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsInspectorApi.areTiltGesturesEnabled",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(areTiltGesturesEnabledWithError:)], @"FGMMapsInspectorApi api (%@) doesn't respond to @selector(areTiltGesturesEnabledWithError:)", api);
+      NSCAssert([api respondsToSelector:@selector(areTiltGesturesEnabledWithError:)],
+                @"FGMMapsInspectorApi api (%@) doesn't respond to "
+                @"@selector(areTiltGesturesEnabledWithError:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSNumber *output = [api areTiltGesturesEnabledWithError:&error];
@@ -1353,13 +1592,18 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
     }
   }
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areZoomGesturesEnabled", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsInspectorApi.areZoomGesturesEnabled",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(areZoomGesturesEnabledWithError:)], @"FGMMapsInspectorApi api (%@) doesn't respond to @selector(areZoomGesturesEnabledWithError:)", api);
+      NSCAssert([api respondsToSelector:@selector(areZoomGesturesEnabledWithError:)],
+                @"FGMMapsInspectorApi api (%@) doesn't respond to "
+                @"@selector(areZoomGesturesEnabledWithError:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSNumber *output = [api areZoomGesturesEnabledWithError:&error];
@@ -1370,13 +1614,18 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
     }
   }
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.isCompassEnabled", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsInspectorApi.isCompassEnabled",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(isCompassEnabledWithError:)], @"FGMMapsInspectorApi api (%@) doesn't respond to @selector(isCompassEnabledWithError:)", api);
+      NSCAssert(
+          [api respondsToSelector:@selector(isCompassEnabledWithError:)],
+          @"FGMMapsInspectorApi api (%@) doesn't respond to @selector(isCompassEnabledWithError:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSNumber *output = [api isCompassEnabledWithError:&error];
@@ -1387,13 +1636,18 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
     }
   }
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.isMyLocationButtonEnabled", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsInspectorApi.isMyLocationButtonEnabled",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(isMyLocationButtonEnabledWithError:)], @"FGMMapsInspectorApi api (%@) doesn't respond to @selector(isMyLocationButtonEnabledWithError:)", api);
+      NSCAssert([api respondsToSelector:@selector(isMyLocationButtonEnabledWithError:)],
+                @"FGMMapsInspectorApi api (%@) doesn't respond to "
+                @"@selector(isMyLocationButtonEnabledWithError:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSNumber *output = [api isMyLocationButtonEnabledWithError:&error];
@@ -1404,13 +1658,18 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
     }
   }
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.isTrafficEnabled", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsInspectorApi.isTrafficEnabled",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(isTrafficEnabledWithError:)], @"FGMMapsInspectorApi api (%@) doesn't respond to @selector(isTrafficEnabledWithError:)", api);
+      NSCAssert(
+          [api respondsToSelector:@selector(isTrafficEnabledWithError:)],
+          @"FGMMapsInspectorApi api (%@) doesn't respond to @selector(isTrafficEnabledWithError:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSNumber *output = [api isTrafficEnabledWithError:&error];
@@ -1421,18 +1680,24 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
     }
   }
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.getTileOverlayInfo", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsInspectorApi.getTileOverlayInfo",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getInfoForTileOverlayWithIdentifier:error:)], @"FGMMapsInspectorApi api (%@) doesn't respond to @selector(getInfoForTileOverlayWithIdentifier:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(getInfoForTileOverlayWithIdentifier:error:)],
+                @"FGMMapsInspectorApi api (%@) doesn't respond to "
+                @"@selector(getInfoForTileOverlayWithIdentifier:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_tileOverlayId = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        FGMPlatformTileLayer *output = [api getInfoForTileOverlayWithIdentifier:arg_tileOverlayId error:&error];
+        FGMPlatformTileLayer *output = [api getInfoForTileOverlayWithIdentifier:arg_tileOverlayId
+                                                                          error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -1440,13 +1705,16 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
     }
   }
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.getZoomRange", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsInspectorApi.getZoomRange",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FGMGetMessagesCodec()];
+                  codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(zoomRange:)], @"FGMMapsInspectorApi api (%@) doesn't respond to @selector(zoomRange:)", api);
+      NSCAssert([api respondsToSelector:@selector(zoomRange:)],
+                @"FGMMapsInspectorApi api (%@) doesn't respond to @selector(zoomRange:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         FGMPlatformZoomRange *output = [api zoomRange:&error];
