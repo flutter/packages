@@ -44,6 +44,7 @@ class MockCirclesController extends _i1.Mock implements _i3.CirclesController {
         returnValue: <_i4.CircleId, _i3.CircleController>{},
         returnValueForMissingStub: <_i4.CircleId, _i3.CircleController>{},
       ) as Map<_i4.CircleId, _i3.CircleController>);
+
   @override
   _i2.GMap get googleMap => (super.noSuchMethod(
         Invocation.getter(#googleMap),
@@ -56,6 +57,7 @@ class MockCirclesController extends _i1.Mock implements _i3.CirclesController {
           Invocation.getter(#googleMap),
         ),
       ) as _i2.GMap);
+
   @override
   set googleMap(_i2.GMap? _googleMap) => super.noSuchMethod(
         Invocation.setter(
@@ -64,12 +66,14 @@ class MockCirclesController extends _i1.Mock implements _i3.CirclesController {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   int get mapId => (super.noSuchMethod(
         Invocation.getter(#mapId),
         returnValue: 0,
         returnValueForMissingStub: 0,
       ) as int);
+
   @override
   set mapId(int? _mapId) => super.noSuchMethod(
         Invocation.setter(
@@ -78,6 +82,7 @@ class MockCirclesController extends _i1.Mock implements _i3.CirclesController {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void addCircles(Set<_i4.Circle>? circlesToAdd) => super.noSuchMethod(
         Invocation.method(
@@ -86,6 +91,7 @@ class MockCirclesController extends _i1.Mock implements _i3.CirclesController {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void changeCircles(Set<_i4.Circle>? circlesToChange) => super.noSuchMethod(
         Invocation.method(
@@ -94,6 +100,7 @@ class MockCirclesController extends _i1.Mock implements _i3.CirclesController {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void removeCircles(Set<_i4.CircleId>? circleIdsToRemove) =>
       super.noSuchMethod(
@@ -103,6 +110,7 @@ class MockCirclesController extends _i1.Mock implements _i3.CirclesController {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void bindToMap(
     int? mapId,
@@ -131,6 +139,7 @@ class MockHeatmapsController extends _i1.Mock
         returnValue: <_i4.HeatmapId, _i3.HeatmapController>{},
         returnValueForMissingStub: <_i4.HeatmapId, _i3.HeatmapController>{},
       ) as Map<_i4.HeatmapId, _i3.HeatmapController>);
+
   @override
   _i2.GMap get googleMap => (super.noSuchMethod(
         Invocation.getter(#googleMap),
@@ -143,6 +152,7 @@ class MockHeatmapsController extends _i1.Mock
           Invocation.getter(#googleMap),
         ),
       ) as _i2.GMap);
+
   @override
   set googleMap(_i2.GMap? _googleMap) => super.noSuchMethod(
         Invocation.setter(
@@ -151,12 +161,14 @@ class MockHeatmapsController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   int get mapId => (super.noSuchMethod(
         Invocation.getter(#mapId),
         returnValue: 0,
         returnValueForMissingStub: 0,
       ) as int);
+
   @override
   set mapId(int? _mapId) => super.noSuchMethod(
         Invocation.setter(
@@ -165,6 +177,7 @@ class MockHeatmapsController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void addHeatmaps(Set<_i4.Heatmap>? heatmapsToAdd) => super.noSuchMethod(
         Invocation.method(
@@ -173,6 +186,7 @@ class MockHeatmapsController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void changeHeatmaps(Set<_i4.Heatmap>? heatmapsToChange) => super.noSuchMethod(
         Invocation.method(
@@ -181,6 +195,7 @@ class MockHeatmapsController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void removeHeatmaps(Set<_i4.HeatmapId>? heatmapIdsToRemove) =>
       super.noSuchMethod(
@@ -190,6 +205,7 @@ class MockHeatmapsController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void bindToMap(
     int? mapId,
@@ -218,6 +234,7 @@ class MockPolygonsController extends _i1.Mock
         returnValue: <_i4.PolygonId, _i3.PolygonController>{},
         returnValueForMissingStub: <_i4.PolygonId, _i3.PolygonController>{},
       ) as Map<_i4.PolygonId, _i3.PolygonController>);
+
   @override
   _i2.GMap get googleMap => (super.noSuchMethod(
         Invocation.getter(#googleMap),
@@ -230,6 +247,7 @@ class MockPolygonsController extends _i1.Mock
           Invocation.getter(#googleMap),
         ),
       ) as _i2.GMap);
+
   @override
   set googleMap(_i2.GMap? _googleMap) => super.noSuchMethod(
         Invocation.setter(
@@ -238,12 +256,14 @@ class MockPolygonsController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   int get mapId => (super.noSuchMethod(
         Invocation.getter(#mapId),
         returnValue: 0,
         returnValueForMissingStub: 0,
       ) as int);
+
   @override
   set mapId(int? _mapId) => super.noSuchMethod(
         Invocation.setter(
@@ -252,6 +272,7 @@ class MockPolygonsController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void addPolygons(Set<_i4.Polygon>? polygonsToAdd) => super.noSuchMethod(
         Invocation.method(
@@ -260,6 +281,7 @@ class MockPolygonsController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void changePolygons(Set<_i4.Polygon>? polygonsToChange) => super.noSuchMethod(
         Invocation.method(
@@ -268,6 +290,7 @@ class MockPolygonsController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void removePolygons(Set<_i4.PolygonId>? polygonIdsToRemove) =>
       super.noSuchMethod(
@@ -277,6 +300,7 @@ class MockPolygonsController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void bindToMap(
     int? mapId,
@@ -305,6 +329,7 @@ class MockPolylinesController extends _i1.Mock
         returnValue: <_i4.PolylineId, _i3.PolylineController>{},
         returnValueForMissingStub: <_i4.PolylineId, _i3.PolylineController>{},
       ) as Map<_i4.PolylineId, _i3.PolylineController>);
+
   @override
   _i2.GMap get googleMap => (super.noSuchMethod(
         Invocation.getter(#googleMap),
@@ -317,6 +342,7 @@ class MockPolylinesController extends _i1.Mock
           Invocation.getter(#googleMap),
         ),
       ) as _i2.GMap);
+
   @override
   set googleMap(_i2.GMap? _googleMap) => super.noSuchMethod(
         Invocation.setter(
@@ -325,12 +351,14 @@ class MockPolylinesController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   int get mapId => (super.noSuchMethod(
         Invocation.getter(#mapId),
         returnValue: 0,
         returnValueForMissingStub: 0,
       ) as int);
+
   @override
   set mapId(int? _mapId) => super.noSuchMethod(
         Invocation.setter(
@@ -339,6 +367,7 @@ class MockPolylinesController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void addPolylines(Set<_i4.Polyline>? polylinesToAdd) => super.noSuchMethod(
         Invocation.method(
@@ -347,6 +376,7 @@ class MockPolylinesController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void changePolylines(Set<_i4.Polyline>? polylinesToChange) =>
       super.noSuchMethod(
@@ -356,6 +386,7 @@ class MockPolylinesController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void removePolylines(Set<_i4.PolylineId>? polylineIdsToRemove) =>
       super.noSuchMethod(
@@ -365,6 +396,7 @@ class MockPolylinesController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void bindToMap(
     int? mapId,
@@ -392,6 +424,7 @@ class MockMarkersController extends _i1.Mock implements _i3.MarkersController {
         returnValue: <_i4.MarkerId, _i3.MarkerController>{},
         returnValueForMissingStub: <_i4.MarkerId, _i3.MarkerController>{},
       ) as Map<_i4.MarkerId, _i3.MarkerController>);
+
   @override
   _i2.GMap get googleMap => (super.noSuchMethod(
         Invocation.getter(#googleMap),
@@ -404,6 +437,7 @@ class MockMarkersController extends _i1.Mock implements _i3.MarkersController {
           Invocation.getter(#googleMap),
         ),
       ) as _i2.GMap);
+
   @override
   set googleMap(_i2.GMap? _googleMap) => super.noSuchMethod(
         Invocation.setter(
@@ -412,12 +446,14 @@ class MockMarkersController extends _i1.Mock implements _i3.MarkersController {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   int get mapId => (super.noSuchMethod(
         Invocation.getter(#mapId),
         returnValue: 0,
         returnValueForMissingStub: 0,
       ) as int);
+
   @override
   set mapId(int? _mapId) => super.noSuchMethod(
         Invocation.setter(
@@ -426,6 +462,7 @@ class MockMarkersController extends _i1.Mock implements _i3.MarkersController {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   _i5.Future<void> addMarkers(Set<_i4.Marker>? markersToAdd) =>
       (super.noSuchMethod(
@@ -436,6 +473,7 @@ class MockMarkersController extends _i1.Mock implements _i3.MarkersController {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> changeMarkers(Set<_i4.Marker>? markersToChange) =>
       (super.noSuchMethod(
@@ -446,6 +484,7 @@ class MockMarkersController extends _i1.Mock implements _i3.MarkersController {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   void removeMarkers(Set<_i4.MarkerId>? markerIdsToRemove) =>
       super.noSuchMethod(
@@ -455,6 +494,7 @@ class MockMarkersController extends _i1.Mock implements _i3.MarkersController {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void showMarkerInfoWindow(_i4.MarkerId? markerId) => super.noSuchMethod(
         Invocation.method(
@@ -463,6 +503,7 @@ class MockMarkersController extends _i1.Mock implements _i3.MarkersController {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void hideMarkerInfoWindow(_i4.MarkerId? markerId) => super.noSuchMethod(
         Invocation.method(
@@ -471,6 +512,7 @@ class MockMarkersController extends _i1.Mock implements _i3.MarkersController {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   bool isInfoWindowShown(_i4.MarkerId? markerId) => (super.noSuchMethod(
         Invocation.method(
@@ -480,6 +522,7 @@ class MockMarkersController extends _i1.Mock implements _i3.MarkersController {
         returnValue: false,
         returnValueForMissingStub: false,
       ) as bool);
+
   @override
   void bindToMap(
     int? mapId,
@@ -514,6 +557,7 @@ class MockTileOverlaysController extends _i1.Mock
           Invocation.getter(#googleMap),
         ),
       ) as _i2.GMap);
+
   @override
   set googleMap(_i2.GMap? _googleMap) => super.noSuchMethod(
         Invocation.setter(
@@ -522,12 +566,14 @@ class MockTileOverlaysController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   int get mapId => (super.noSuchMethod(
         Invocation.getter(#mapId),
         returnValue: 0,
         returnValueForMissingStub: 0,
       ) as int);
+
   @override
   set mapId(int? _mapId) => super.noSuchMethod(
         Invocation.setter(
@@ -536,6 +582,7 @@ class MockTileOverlaysController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void addTileOverlays(Set<_i4.TileOverlay>? tileOverlaysToAdd) =>
       super.noSuchMethod(
@@ -545,6 +592,7 @@ class MockTileOverlaysController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void changeTileOverlays(Set<_i4.TileOverlay>? tileOverlays) =>
       super.noSuchMethod(
@@ -554,6 +602,7 @@ class MockTileOverlaysController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void removeTileOverlays(Set<_i4.TileOverlayId>? tileOverlayIds) =>
       super.noSuchMethod(
@@ -563,6 +612,7 @@ class MockTileOverlaysController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void clearTileCache(_i4.TileOverlayId? tileOverlayId) => super.noSuchMethod(
         Invocation.method(
@@ -571,6 +621,7 @@ class MockTileOverlaysController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void bindToMap(
     int? mapId,

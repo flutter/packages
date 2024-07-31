@@ -18,8 +18,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -418,6 +417,7 @@ class PlatformZoomRange {
   }
 }
 
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -425,43 +425,43 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is PlatformCameraPosition) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdate) {
+    } else     if (value is PlatformCameraUpdate) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCircle) {
+    } else     if (value is PlatformCircle) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMarker) {
+    } else     if (value is PlatformMarker) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPolygon) {
+    } else     if (value is PlatformPolygon) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPolyline) {
+    } else     if (value is PlatformPolyline) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTile) {
+    } else     if (value is PlatformTile) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileOverlay) {
+    } else     if (value is PlatformTileOverlay) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLng) {
+    } else     if (value is PlatformLatLng) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLngBounds) {
+    } else     if (value is PlatformLatLngBounds) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapConfiguration) {
+    } else     if (value is PlatformMapConfiguration) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else     if (value is PlatformPoint) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileLayer) {
+    } else     if (value is PlatformTileLayer) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformZoomRange) {
+    } else     if (value is PlatformZoomRange) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
     } else {
@@ -472,33 +472,33 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129:
+      case 129: 
         return PlatformCameraPosition.decode(readValue(buffer)!);
-      case 130:
+      case 130: 
         return PlatformCameraUpdate.decode(readValue(buffer)!);
-      case 131:
+      case 131: 
         return PlatformCircle.decode(readValue(buffer)!);
-      case 132:
+      case 132: 
         return PlatformMarker.decode(readValue(buffer)!);
-      case 133:
+      case 133: 
         return PlatformPolygon.decode(readValue(buffer)!);
-      case 134:
+      case 134: 
         return PlatformPolyline.decode(readValue(buffer)!);
-      case 135:
+      case 135: 
         return PlatformTile.decode(readValue(buffer)!);
-      case 136:
+      case 136: 
         return PlatformTileOverlay.decode(readValue(buffer)!);
-      case 137:
+      case 137: 
         return PlatformLatLng.decode(readValue(buffer)!);
-      case 138:
+      case 138: 
         return PlatformLatLngBounds.decode(readValue(buffer)!);
-      case 139:
+      case 139: 
         return PlatformMapConfiguration.decode(readValue(buffer)!);
-      case 140:
+      case 140: 
         return PlatformPoint.decode(readValue(buffer)!);
-      case 141:
+      case 141: 
         return PlatformTileLayer.decode(readValue(buffer)!);
-      case 142:
+      case 142: 
         return PlatformZoomRange.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -515,8 +515,7 @@ class MapsApi {
   /// BinaryMessenger will be used which routes to the host platform.
   MapsApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : __pigeon_binaryMessenger = binaryMessenger,
-        __pigeon_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+        __pigeon_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -525,10 +524,8 @@ class MapsApi {
 
   /// Returns once the map instance is available.
   Future<void> waitForMap() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.waitForMap$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.waitForMap$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -552,12 +549,9 @@ class MapsApi {
   ///
   /// Only non-null configuration values will result in updates; options with
   /// null values will remain unchanged.
-  Future<void> updateMapConfiguration(
-      PlatformMapConfiguration configuration) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateMapConfiguration$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<void> updateMapConfiguration(PlatformMapConfiguration configuration) async {
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateMapConfiguration$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -578,18 +572,15 @@ class MapsApi {
   }
 
   /// Updates the set of circles on the map.
-  Future<void> updateCircles(List<PlatformCircle?> toAdd,
-      List<PlatformCircle?> toChange, List<String?> idsToRemove) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateCircles$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<void> updateCircles(List<PlatformCircle?> toAdd, List<PlatformCircle?> toChange, List<String?> idsToRemove) async {
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateCircles$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -604,18 +595,15 @@ class MapsApi {
   }
 
   /// Updates the set of markers on the map.
-  Future<void> updateMarkers(List<PlatformMarker?> toAdd,
-      List<PlatformMarker?> toChange, List<String?> idsToRemove) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateMarkers$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<void> updateMarkers(List<PlatformMarker?> toAdd, List<PlatformMarker?> toChange, List<String?> idsToRemove) async {
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateMarkers$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -630,18 +618,15 @@ class MapsApi {
   }
 
   /// Updates the set of polygonss on the map.
-  Future<void> updatePolygons(List<PlatformPolygon?> toAdd,
-      List<PlatformPolygon?> toChange, List<String?> idsToRemove) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updatePolygons$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<void> updatePolygons(List<PlatformPolygon?> toAdd, List<PlatformPolygon?> toChange, List<String?> idsToRemove) async {
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updatePolygons$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -656,18 +641,15 @@ class MapsApi {
   }
 
   /// Updates the set of polylines on the map.
-  Future<void> updatePolylines(List<PlatformPolyline?> toAdd,
-      List<PlatformPolyline?> toChange, List<String?> idsToRemove) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updatePolylines$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<void> updatePolylines(List<PlatformPolyline?> toAdd, List<PlatformPolyline?> toChange, List<String?> idsToRemove) async {
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updatePolylines$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -682,18 +664,15 @@ class MapsApi {
   }
 
   /// Updates the set of tile overlays on the map.
-  Future<void> updateTileOverlays(List<PlatformTileOverlay?> toAdd,
-      List<PlatformTileOverlay?> toChange, List<String?> idsToRemove) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateTileOverlays$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<void> updateTileOverlays(List<PlatformTileOverlay?> toAdd, List<PlatformTileOverlay?> toChange, List<String?> idsToRemove) async {
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateTileOverlays$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -709,10 +688,8 @@ class MapsApi {
 
   /// Gets the screen coordinate for the given map location.
   Future<PlatformPoint> getScreenCoordinate(PlatformLatLng latLng) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getScreenCoordinate$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getScreenCoordinate$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -739,16 +716,14 @@ class MapsApi {
 
   /// Gets the map location for the given screen coordinate.
   Future<PlatformLatLng> getLatLng(PlatformPoint screenCoordinate) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getLatLng$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getLatLng$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[screenCoordinate]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[screenCoordinate]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -769,10 +744,8 @@ class MapsApi {
 
   /// Gets the map region currently displayed on the map.
   Future<PlatformLatLngBounds> getVisibleRegion() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getVisibleRegion$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getVisibleRegion$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -800,10 +773,8 @@ class MapsApi {
   /// Moves the camera according to [cameraUpdate] immediately, with no
   /// animation.
   Future<void> moveCamera(PlatformCameraUpdate cameraUpdate) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.moveCamera$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.moveCamera$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -825,10 +796,8 @@ class MapsApi {
 
   /// Moves the camera according to [cameraUpdate], animating the update.
   Future<void> animateCamera(PlatformCameraUpdate cameraUpdate) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.animateCamera$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.animateCamera$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -850,10 +819,8 @@ class MapsApi {
 
   /// Gets the current map zoom level.
   Future<double> getZoomLevel() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getZoomLevel$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getZoomLevel$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -880,10 +847,8 @@ class MapsApi {
 
   /// Show the info window for the marker with the given ID.
   Future<void> showInfoWindow(String markerId) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.showInfoWindow$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.showInfoWindow$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -905,10 +870,8 @@ class MapsApi {
 
   /// Hide the info window for the marker with the given ID.
   Future<void> hideInfoWindow(String markerId) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.hideInfoWindow$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.hideInfoWindow$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -931,10 +894,8 @@ class MapsApi {
   /// Returns true if the marker with the given ID is currently displaying its
   /// info window.
   Future<bool> isInfoWindowShown(String markerId) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.isInfoWindowShown$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.isInfoWindowShown$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -965,10 +926,8 @@ class MapsApi {
   /// If there was an error setting the style, such as an invalid style string,
   /// returns the error message.
   Future<String?> setStyle(String style) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.setStyle$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.setStyle$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -994,10 +953,8 @@ class MapsApi {
   /// This allows checking asynchronously for initial style failures, as there
   /// is no way to return failures from map initialization.
   Future<String?> getLastStyleError() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getLastStyleError$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.getLastStyleError$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1019,10 +976,8 @@ class MapsApi {
 
   /// Clears the cache of tiles previously requseted from the tile provider.
   Future<void> clearTileCache(String tileOverlayId) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.clearTileCache$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.clearTileCache$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1044,10 +999,8 @@ class MapsApi {
 
   /// Takes a snapshot of the map and returns its image data.
   Future<Uint8List?> takeSnapshot() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.takeSnapshot$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.takeSnapshot$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1112,21 +1065,13 @@ abstract class MapsCallbackApi {
   void onPolylineTap(String polylineId);
 
   /// Called to get data for a map tile.
-  Future<PlatformTile> getTileOverlayTile(
-      String tileOverlayId, PlatformPoint location, int zoom);
+  Future<PlatformTile> getTileOverlayTile(String tileOverlayId, PlatformPoint location, int zoom);
 
-  static void setUp(
-    MapsCallbackApi? api, {
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  static void setUp(MapsCallbackApi? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMoveStarted$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMoveStarted$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
@@ -1137,28 +1082,24 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMove$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMove$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMove was null.');
+          'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMove was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final PlatformCameraPosition? arg_cameraPosition =
-              (args[0] as PlatformCameraPosition?);
+          final PlatformCameraPosition? arg_cameraPosition = (args[0] as PlatformCameraPosition?);
           assert(arg_cameraPosition != null,
               'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMove was null, expected non-null PlatformCameraPosition.');
           try {
@@ -1166,18 +1107,15 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraIdle$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraIdle$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
@@ -1188,25 +1126,22 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onTap$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onTap$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onTap was null.');
+          'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onTap was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final PlatformLatLng? arg_position = (args[0] as PlatformLatLng?);
           assert(arg_position != null,
@@ -1216,25 +1151,22 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onLongPress$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onLongPress$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onLongPress was null.');
+          'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onLongPress was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final PlatformLatLng? arg_position = (args[0] as PlatformLatLng?);
           assert(arg_position != null,
@@ -1244,25 +1176,22 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerTap$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerTap$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerTap was null.');
+          'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerTap was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_markerId = (args[0] as String?);
           assert(arg_markerId != null,
@@ -1272,25 +1201,22 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDragStart$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDragStart$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDragStart was null.');
+          'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDragStart was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_markerId = (args[0] as String?);
           assert(arg_markerId != null,
@@ -1303,25 +1229,22 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDrag$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDrag$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDrag was null.');
+          'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDrag was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_markerId = (args[0] as String?);
           assert(arg_markerId != null,
@@ -1334,25 +1257,22 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDragEnd$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDragEnd$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDragEnd was null.');
+          'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDragEnd was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_markerId = (args[0] as String?);
           assert(arg_markerId != null,
@@ -1365,25 +1285,22 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onInfoWindowTap$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onInfoWindowTap$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onInfoWindowTap was null.');
+          'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onInfoWindowTap was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_markerId = (args[0] as String?);
           assert(arg_markerId != null,
@@ -1393,25 +1310,22 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCircleTap$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCircleTap$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCircleTap was null.');
+          'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCircleTap was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_circleId = (args[0] as String?);
           assert(arg_circleId != null,
@@ -1421,25 +1335,22 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPolygonTap$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPolygonTap$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPolygonTap was null.');
+          'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPolygonTap was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_polygonId = (args[0] as String?);
           assert(arg_polygonId != null,
@@ -1449,25 +1360,22 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPolylineTap$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPolylineTap$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPolylineTap was null.');
+          'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPolylineTap was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_polylineId = (args[0] as String?);
           assert(arg_polylineId != null,
@@ -1477,25 +1385,22 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.getTileOverlayTile$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.getTileOverlayTile$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.getTileOverlayTile was null.');
+          'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.getTileOverlayTile was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_tileOverlayId = (args[0] as String?);
           assert(arg_tileOverlayId != null,
@@ -1507,14 +1412,12 @@ abstract class MapsCallbackApi {
           assert(arg_zoom != null,
               'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.getTileOverlayTile was null, expected non-null int.');
           try {
-            final PlatformTile output = await api.getTileOverlayTile(
-                arg_tileOverlayId!, arg_location!, arg_zoom!);
+            final PlatformTile output = await api.getTileOverlayTile(arg_tileOverlayId!, arg_location!, arg_zoom!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -1527,11 +1430,9 @@ class MapsInspectorApi {
   /// Constructor for [MapsInspectorApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MapsInspectorApi(
-      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  MapsInspectorApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : __pigeon_binaryMessenger = binaryMessenger,
-        __pigeon_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+        __pigeon_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -1539,10 +1440,8 @@ class MapsInspectorApi {
   final String __pigeon_messageChannelSuffix;
 
   Future<bool> areBuildingsEnabled() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areBuildingsEnabled$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areBuildingsEnabled$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1568,10 +1467,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> areRotateGesturesEnabled() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areRotateGesturesEnabled$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areRotateGesturesEnabled$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1597,10 +1494,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> areScrollGesturesEnabled() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areScrollGesturesEnabled$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areScrollGesturesEnabled$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1626,10 +1521,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> areTiltGesturesEnabled() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areTiltGesturesEnabled$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areTiltGesturesEnabled$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1655,10 +1548,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> areZoomGesturesEnabled() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areZoomGesturesEnabled$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.areZoomGesturesEnabled$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1684,10 +1575,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> isCompassEnabled() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.isCompassEnabled$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.isCompassEnabled$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1713,10 +1602,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> isMyLocationButtonEnabled() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.isMyLocationButtonEnabled$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.isMyLocationButtonEnabled$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1742,10 +1629,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> isTrafficEnabled() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.isTrafficEnabled$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.isTrafficEnabled$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1771,10 +1656,8 @@ class MapsInspectorApi {
   }
 
   Future<PlatformTileLayer?> getTileOverlayInfo(String tileOverlayId) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.getTileOverlayInfo$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.getTileOverlayInfo$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1795,10 +1678,8 @@ class MapsInspectorApi {
   }
 
   Future<PlatformZoomRange> getZoomRange() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.getZoomRange$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.getZoomRange$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,

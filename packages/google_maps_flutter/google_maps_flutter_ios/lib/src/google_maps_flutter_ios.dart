@@ -279,7 +279,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     HeatmapUpdates heatmapUpdates, {
     required int mapId,
   }) {
-    return _channel(mapId).invokeMethod<void>(
+    return _hostApi(mapId).invokeMethod<void>(
       'heatmaps#update',
       serializeMapsObjectUpdates(heatmapUpdates, serializeHeatmap),
     );
