@@ -1,7 +1,9 @@
 # 0.2.0
 
-* **Breaking Change** To keep platform parity, Android no longer starts playing the Ad whenever it
-  returns from a click. Call `AdsManager.resume` to resume Ad playback.
+* Adds support for pausing and resuming Ad playback. See `AdsManager.pause` and `AdsManager.resume`.
+* Adds support to skip an Ad. See `AdsManager.skip` and `AdsManager.discardAdBreak`.
+* **Breaking Change** To keep platform consistency, Android no longer continues playing an Ad 
+  whenever it returns from an Ad click. Call `AdsManager.resume` to resume Ad playback.
 
 # 0.1.1
 
