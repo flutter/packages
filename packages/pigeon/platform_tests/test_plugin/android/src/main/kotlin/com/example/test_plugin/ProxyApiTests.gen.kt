@@ -344,6 +344,8 @@ private class ProxyApiTestsPigeonInstanceManagerApi(val binaryMessenger: BinaryM
  * by any implementation.
  */
 abstract class ProxyApiTestsPigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
+  /** Whether APIs should ignore calling to Dart. */
+  public var ignoreCallsToDart = false
   val instanceManager: ProxyApiTestsPigeonInstanceManager
   private var _codec: StandardMessageCodec? = null
   val codec: StandardMessageCodec
@@ -3008,6 +3010,12 @@ abstract class PigeonApiProxyApiTestClass(
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ProxyApiTestClass and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: ProxyApiTestClass, callback: (Result<Unit>) -> Unit) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       Result.success(Unit)
       return
@@ -3074,6 +3082,12 @@ abstract class PigeonApiProxyApiTestClass(
 
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   fun flutterNoop(pigeon_instanceArg: ProxyApiTestClass, callback: (Result<Unit>) -> Unit) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoop"
@@ -3095,6 +3109,12 @@ abstract class PigeonApiProxyApiTestClass(
 
   /** Responds with an error from an async function returning a value. */
   fun flutterThrowError(pigeon_instanceArg: ProxyApiTestClass, callback: (Result<Any?>) -> Unit) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3121,6 +3141,12 @@ abstract class PigeonApiProxyApiTestClass(
       pigeon_instanceArg: ProxyApiTestClass,
       callback: (Result<Unit>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3147,6 +3173,12 @@ abstract class PigeonApiProxyApiTestClass(
       aBoolArg: Boolean,
       callback: (Result<Boolean>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3181,6 +3213,12 @@ abstract class PigeonApiProxyApiTestClass(
       anIntArg: Long,
       callback: (Result<Long>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoInt"
@@ -3214,6 +3252,12 @@ abstract class PigeonApiProxyApiTestClass(
       aDoubleArg: Double,
       callback: (Result<Double>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3248,6 +3292,12 @@ abstract class PigeonApiProxyApiTestClass(
       aStringArg: String,
       callback: (Result<String>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3282,6 +3332,12 @@ abstract class PigeonApiProxyApiTestClass(
       aListArg: ByteArray,
       callback: (Result<ByteArray>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3316,6 +3372,12 @@ abstract class PigeonApiProxyApiTestClass(
       aListArg: List<Any?>,
       callback: (Result<List<Any?>>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3350,6 +3412,12 @@ abstract class PigeonApiProxyApiTestClass(
       aListArg: List<ProxyApiTestClass?>,
       callback: (Result<List<ProxyApiTestClass?>>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3384,6 +3452,12 @@ abstract class PigeonApiProxyApiTestClass(
       aMapArg: Map<String?, Any?>,
       callback: (Result<Map<String?, Any?>>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoMap"
@@ -3417,6 +3491,12 @@ abstract class PigeonApiProxyApiTestClass(
       aMapArg: Map<String?, ProxyApiTestClass?>,
       callback: (Result<Map<String?, ProxyApiTestClass?>>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3451,6 +3531,12 @@ abstract class PigeonApiProxyApiTestClass(
       anEnumArg: ProxyApiTestEnum,
       callback: (Result<ProxyApiTestEnum>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3485,6 +3571,12 @@ abstract class PigeonApiProxyApiTestClass(
       aProxyApiArg: com.example.test_plugin.ProxyApiSuperClass,
       callback: (Result<com.example.test_plugin.ProxyApiSuperClass>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3519,6 +3611,12 @@ abstract class PigeonApiProxyApiTestClass(
       aBoolArg: Boolean?,
       callback: (Result<Boolean?>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3546,6 +3644,12 @@ abstract class PigeonApiProxyApiTestClass(
       anIntArg: Long?,
       callback: (Result<Long?>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3573,6 +3677,12 @@ abstract class PigeonApiProxyApiTestClass(
       aDoubleArg: Double?,
       callback: (Result<Double?>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3600,6 +3710,12 @@ abstract class PigeonApiProxyApiTestClass(
       aStringArg: String?,
       callback: (Result<String?>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3627,6 +3743,12 @@ abstract class PigeonApiProxyApiTestClass(
       aListArg: ByteArray?,
       callback: (Result<ByteArray?>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3654,6 +3776,12 @@ abstract class PigeonApiProxyApiTestClass(
       aListArg: List<Any?>?,
       callback: (Result<List<Any?>?>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3681,6 +3809,12 @@ abstract class PigeonApiProxyApiTestClass(
       aMapArg: Map<String?, Any?>?,
       callback: (Result<Map<String?, Any?>?>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3708,6 +3842,12 @@ abstract class PigeonApiProxyApiTestClass(
       anEnumArg: ProxyApiTestEnum?,
       callback: (Result<ProxyApiTestEnum?>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3735,6 +3875,12 @@ abstract class PigeonApiProxyApiTestClass(
       aProxyApiArg: com.example.test_plugin.ProxyApiSuperClass?,
       callback: (Result<com.example.test_plugin.ProxyApiSuperClass?>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3761,6 +3907,12 @@ abstract class PigeonApiProxyApiTestClass(
    * calling.
    */
   fun flutterNoopAsync(pigeon_instanceArg: ProxyApiTestClass, callback: (Result<Unit>) -> Unit) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3787,6 +3939,12 @@ abstract class PigeonApiProxyApiTestClass(
       aStringArg: String,
       callback: (Result<String>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -3897,6 +4055,12 @@ abstract class PigeonApiProxyApiSuperClass(
       pigeon_instanceArg: com.example.test_plugin.ProxyApiSuperClass,
       callback: (Result<Unit>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       Result.success(Unit)
       return
@@ -3931,6 +4095,12 @@ open class PigeonApiProxyApiInterface(
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ProxyApiInterface and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       Result.success(Unit)
       return
@@ -3958,6 +4128,12 @@ open class PigeonApiProxyApiInterface(
   }
 
   fun anInterfaceMethod(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
@@ -4090,6 +4266,12 @@ abstract class PigeonApiClassWithApiRequirement(
       pigeon_instanceArg: ClassWithApiRequirement,
       callback: (Result<Unit>) -> Unit
   ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       Result.success(Unit)
       return

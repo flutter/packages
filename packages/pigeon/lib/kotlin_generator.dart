@@ -1245,6 +1245,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       'abstract class $registrarName(val binaryMessenger: BinaryMessenger) {',
       '}',
       () {
+        addDocumentationComments(
+          indent,
+          <String>[' Whether APIs should ignore calling to Dart.'],
+          _docCommentSpec,
+        );
+        indent.writeln('public var ignoreCallsToDart = false');
         indent.format(
           '''
           val instanceManager: $instanceManagerName
@@ -1702,6 +1708,20 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         required String errorClassName,
       }) {
         indent.writeScoped(
+          'if (pigeonRegistrar.ignoreCallsToDart) {',
+          '}',
+          () {
+            indent.format(
+              '''
+              callback(
+                  Result.failure(
+                      $errorClassName("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+              return''',
+              trimIndentation: true,
+            );
+          },
+        );
+        indent.writeScoped(
           'if (pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
           '}',
           () {
@@ -1793,6 +1813,20 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           required String channelName,
           required String errorClassName,
         }) {
+          indent.writeScoped(
+            'if (pigeonRegistrar.ignoreCallsToDart) {',
+            '}',
+            () {
+              indent.format(
+                '''
+                callback(
+                    Result.failure(
+                        $errorClassName("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+                return''',
+                trimIndentation: true,
+              );
+            },
+          );
           indent
               .writeln('val binaryMessenger = pigeonRegistrar.binaryMessenger');
           indent.writeln('val codec = pigeonRegistrar.codec');
