@@ -4,7 +4,7 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences_foundation/shared_preferences_foundation.dart';
+import 'package:shared_preferences_foundation/src/shared_preferences_foundation.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
@@ -101,7 +101,7 @@ void main() {
     TestUserDefaultsApi.setup(api);
   });
 
-  test('registerWith', () {
+  test('registerWith', () async {
     SharedPreferencesFoundation.registerWith();
     expect(SharedPreferencesStorePlatform.instance,
         isA<SharedPreferencesFoundation>());
@@ -261,7 +261,7 @@ void main() {
     expect(api.items['flutter.StringList'], <String>['hi']);
   });
 
-  test('setValue with unsupported type', () {
+  test('setValue with unsupported type', () async {
     final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
     expect(() async {
       await plugin.setValue('Map', 'flutter.key', <String, String>{});
