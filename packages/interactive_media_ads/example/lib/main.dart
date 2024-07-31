@@ -4,7 +4,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_driver/driver_extension.dart';
 // #docregion imports
@@ -20,15 +19,7 @@ void integrationTestMain() {
 }
 
 void main() {
-  runApp(
-    MaterialApp(
-      // TODO(bparrishMines): Remove this check once the iOS implementation
-      // is added.
-      home: defaultTargetPlatform == TargetPlatform.android
-          ? const AdExampleWidget()
-          : Container(),
-    ),
-  );
+  runApp(const MaterialApp(home: AdExampleWidget()));
 }
 
 // #docregion example_widget
