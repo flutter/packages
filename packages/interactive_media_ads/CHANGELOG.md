@@ -1,3 +1,8 @@
+# 0.2.0
+
+* **Breaking Change** To keep platform parity, Android no longer starts playing the Ad whenever it
+  returns from a click. Call `AdsManager.resume` to resume Ad playback.
+
 # 0.1.1
 
 * Adds iOS implementation.

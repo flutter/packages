@@ -32,7 +32,8 @@ class AdExampleWidget extends StatefulWidget {
   State<AdExampleWidget> createState() => _AdExampleWidgetState();
 }
 
-class _AdExampleWidgetState extends State<AdExampleWidget> {
+class _AdExampleWidgetState extends State<AdExampleWidget>
+    with WidgetsBindingObserver {
   // IMA sample tag for a single skippable inline video ad. See more IMA sample
   // tags at https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags
   static const String _adTagUrl =
@@ -64,6 +65,8 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
     _contentVideoController = VideoPlayerController.networkUrl(
       Uri.parse(
         'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
@@ -81,6 +84,24 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
       });
   }
   // #enddocregion ad_and_content_players
+
+  AppLifecycleState lastState = AppLifecycleState.resumed;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _adsManager?.resume();
+      case AppLifecycleState.inactive:
+        if (lastState == AppLifecycleState.resumed) {
+          _adsManager?.pause();
+        }
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+    }
+    lastState = state;
+  }
 
   // #docregion request_ads
   Future<void> _requestAds(AdDisplayContainer container) {
@@ -143,6 +164,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
   @override
   void dispose() {
     super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     _contentVideoController.dispose();
     _adsManager?.destroy();
   }

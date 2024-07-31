@@ -120,6 +120,11 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
 
   int? _adDuration;
 
+  // Whether MediaPlayer.start() should be called whenever the VideoView
+  // `onPrepared` callback is triggered. `onPrepared` is triggered whenever the
+  // app comes back on screen.
+  bool _playAdWhenVideoIsPrepared = true;
+
   late final AndroidAdDisplayContainerCreationParams _androidParams =
       params is AndroidAdDisplayContainerCreationParams
           ? params as AndroidAdDisplayContainerCreationParams
@@ -217,10 +222,12 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           if (container._savedAdPosition > 0) {
             await player.seekTo(container._savedAdPosition);
           }
-        }
 
-        await player.start();
-        container?._startAdProgressTracking();
+          if (container._playAdWhenVideoIsPrepared) {
+            await player.start();
+            container._startAdProgressTracking();
+          }
+        }
       },
       onError: (_, __, ___, ____) {
         final AndroidAdDisplayContainer? container = weakThis.target;
@@ -256,6 +263,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       pauseAd: (_, __) async {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
+          container._playAdWhenVideoIsPrepared = false;
           await container._mediaPlayer!.pause();
           container._savedAdPosition =
               await container._videoView.getCurrentPosition();
@@ -263,7 +271,11 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         }
       },
       playAd: (_, ima.AdMediaInfo adMediaInfo) {
-        weakThis.target?._videoView.setVideoUri(adMediaInfo.url);
+        final AndroidAdDisplayContainer? container = weakThis.target;
+        if (container != null) {
+          container._playAdWhenVideoIsPrepared = true;
+          container._videoView.setVideoUri(adMediaInfo.url);
+        }
       },
       release: (_) {},
       stopAd: (_, __) {
