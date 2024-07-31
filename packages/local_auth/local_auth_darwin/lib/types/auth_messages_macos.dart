@@ -38,7 +38,7 @@ class MacOSAuthMessages extends AuthMessages {
   Map<String, String> get args {
     return <String, String>{
       'lockOut': lockOut ?? macOSLockOut,
-      'okButton': cancelButton ?? macOSOkButton,
+      'okButton': cancelButton ?? macOSCancelButton,
       if (localizedFallbackTitle != null)
         'localizedFallbackTitle': localizedFallbackTitle!,
     };
@@ -82,6 +82,6 @@ String get macOSGoToSettingsDescription => Intl.message(
 
 /// Message shown on a button that the user can click to leave the current
 /// dialog.
-String get macOSOkButton => Intl.message('OK',
+String get macOSCancelButton => Intl.message('OK',
     desc: 'Message showed on a button that the user can click to leave the '
         'current dialog. Maximum 30 characters.');

@@ -121,6 +121,8 @@ class LocalAuthDarwin extends LocalAuthPlatform {
       goToSettingsButton: messages?.goToSettingsButton ?? goToSettings,
       goToSettingsDescription:
           messages?.goToSettingsDescription ?? iOSGoToSettingsDescription,
+      // TODO(stuartmorgan): The default's name is confusing here for legacy
+      // reasons; this should be fixed as part of some future breaking change.
       cancelButton: messages?.cancelButton ?? iOSOkButton,
       localizedFallbackTitle: messages?.localizedFallbackTitle,
     );
@@ -140,7 +142,7 @@ class LocalAuthDarwin extends LocalAuthPlatform {
       lockOut: messages?.lockOut ?? macOSLockOut,
       goToSettingsDescription:
           messages?.goToSettingsDescription ?? macOSGoToSettingsDescription,
-      cancelButton: messages?.cancelButton ?? macOSOkButton,
+      cancelButton: messages?.cancelButton ?? macOSCancelButton,
       localizedFallbackTitle: messages?.localizedFallbackTitle,
     );
   }
