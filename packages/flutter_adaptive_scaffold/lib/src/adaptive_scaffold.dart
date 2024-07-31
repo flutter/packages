@@ -338,8 +338,8 @@ class AdaptiveScaffold extends StatefulWidget {
             NavigationBarTheme.of(context);
         return NavigationBarTheme(
           data: currentNavBarTheme.copyWith(
-            iconTheme: MaterialStateProperty.resolveWith(
-              (Set<MaterialState> states) {
+            iconTheme: WidgetStateProperty.resolveWith(
+              (Set<WidgetState> states) {
                 return currentNavBarTheme.iconTheme
                         ?.resolve(states)
                         ?.copyWith(size: iconSize) ??

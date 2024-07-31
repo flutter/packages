@@ -11,10 +11,13 @@ import io.mockk.slot
 import io.mockk.verify
 import java.nio.ByteBuffer
 import java.util.ArrayList
-import junit.framework.TestCase
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
-internal class EnumTest : TestCase() {
+internal class EnumTest {
+
   @Test
   fun testEchoHost() {
     val binaryMessenger = mockk<BinaryMessenger>()

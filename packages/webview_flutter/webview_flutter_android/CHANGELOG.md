@@ -1,6 +1,23 @@
-## 3.16.2
+## 3.16.6
 
 * Bumps androidx.annotation:annotation from 1.7.1 to 1.8.0.
+
+## 3.16.5
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 3.16.4
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
+## 3.16.3
+
+* Bumps androidx.webkit:webkit from 1.10.0 to 1.11.0.
+
+## 3.16.2
+
+* Bumps androidx.webkit:webkit from 1.7.0 to 1.10.0.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 3.16.1

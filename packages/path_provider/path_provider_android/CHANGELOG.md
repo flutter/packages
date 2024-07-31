@@ -1,6 +1,23 @@
-## NEXT
+## 2.2.9
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Updates annotations lib to 1.8.1.
+
+## 2.2.8
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 2.2.7
+
+* Updates AGP version to 8.5.0.
+
+## 2.2.6
+
+* Updates annotations lib to 1.8.0.
+
+## 2.2.5
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
 
 ## 2.2.4
 

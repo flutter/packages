@@ -7,18 +7,15 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
   dartTestOut: 'test/test_api.g.dart',
-  objcHeaderOut:
-      'ios/file_selector_ios/Sources/file_selector_ios/include/file_selector_ios/messages.g.h',
-  objcSourceOut: 'ios/file_selector_ios/Sources/file_selector_ios/messages.g.m',
-  objcOptions: ObjcOptions(
-    prefix: 'FFS',
-    headerIncludePath: './include/file_selector_ios/messages.g.h',
-  ),
+  swiftOut: 'ios/file_selector_ios/Sources/file_selector_ios/messages.g.swift',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 class FileSelectorConfig {
   FileSelectorConfig(
       {this.utis = const <String?>[], this.allowMultiSelection = false});
+  // TODO(stuartmorgan): Declare these as non-nullable generics once
+  // https://github.com/flutter/flutter/issues/97848 is fixed. In practice,
+  // the values will never be null, and the native implementation assumes that.
   List<String?> utis;
   bool allowMultiSelection;
 }

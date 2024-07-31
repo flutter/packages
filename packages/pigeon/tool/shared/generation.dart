@@ -13,6 +13,7 @@ import 'process_utils.dart';
 enum GeneratorLanguage {
   cpp,
   dart,
+  gobject,
   java,
   kotlin,
   objc,
@@ -98,6 +99,11 @@ Future<int> generateTestPigeons({required String baseDir}) async {
     int generateCode = await runPigeon(
       input: './pigeons/$input.dart',
       dartOut: '$sharedDartOutputBase/lib/src/generated/$input.gen.dart',
+      dartTestOut: input == 'message'
+          ? '$sharedDartOutputBase/test/test_message.gen.dart'
+          : null,
+      dartPackageName: 'pigeon_integration_tests',
+      suppressVersion: true,
       // Android
       kotlinOut: skipLanguages.contains(GeneratorLanguage.kotlin)
           ? null
@@ -110,6 +116,14 @@ Future<int> generateTestPigeons({required String baseDir}) async {
           ? null
           : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
+      // Linux
+      gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)
+          ? null
+          : '$outputBase/linux/pigeon/$input.gen.h',
+      gobjectSourceOut: skipLanguages.contains(GeneratorLanguage.gobject)
+          ? null
+          : '$outputBase/linux/pigeon/$input.gen.cc',
+      gobjectModule: '${pascalCaseName}PigeonTest',
       // Windows
       cppHeaderOut: skipLanguages.contains(GeneratorLanguage.cpp)
           ? null
@@ -118,8 +132,6 @@ Future<int> generateTestPigeons({required String baseDir}) async {
           ? null
           : '$outputBase/windows/pigeon/$input.gen.cpp',
       cppNamespace: '${input}_pigeontest',
-      suppressVersion: true,
-      dartPackageName: 'pigeon_integration_tests',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -201,6 +213,9 @@ Future<int> runPigeon({
   String? cppNamespace,
   String? dartOut,
   String? dartTestOut,
+  String? gobjectHeaderOut,
+  String? gobjectSourceOut,
+  String? gobjectModule,
   String? javaOut,
   String? javaPackage,
   String? objcHeaderOut,
@@ -232,6 +247,9 @@ Future<int> runPigeon({
     cppHeaderOut: cppHeaderOut,
     cppSourceOut: cppSourceOut,
     cppOptions: CppOptions(namespace: cppNamespace),
+    gobjectHeaderOut: gobjectHeaderOut,
+    gobjectSourceOut: gobjectSourceOut,
+    gobjectOptions: GObjectOptions(module: gobjectModule),
     javaOut: javaOut,
     javaOptions: JavaOptions(package: javaPackage),
     kotlinOut: kotlinOut,
@@ -264,6 +282,7 @@ Future<int> formatAllFiles({
   Set<GeneratorLanguage> languages = const <GeneratorLanguage>{
     GeneratorLanguage.cpp,
     GeneratorLanguage.dart,
+    GeneratorLanguage.gobject,
     GeneratorLanguage.java,
     GeneratorLanguage.kotlin,
     GeneratorLanguage.objc,
@@ -279,6 +298,7 @@ Future<int> formatAllFiles({
         'format',
         '--packages=pigeon',
         if (languages.contains(GeneratorLanguage.cpp) ||
+            languages.contains(GeneratorLanguage.gobject) ||
             languages.contains(GeneratorLanguage.objc))
           '--clang-format'
         else
