@@ -82,6 +82,14 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 @end
 
 @implementation FLADefaultNSAlert
+- (instancetype)initWithAlert:(NSAlert *)alert {
+  self = [super init];
+  if (self) {
+    _alert = alert;
+  }
+  return self;
+}
+
 - (NSString *)messageText {
   return self.alert.messageText;
 }
@@ -91,7 +99,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 }
 
 - (NSButton *)addButtonWithTitle:(NSString *)title {
-  [self.alert addButtonWithTitle:title];
+  return [self.alert addButtonWithTitle:title];
 }
 
 - (void)beginSheetModalForWindow:(NSWindow *)sheetWindow
@@ -113,6 +121,14 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 @end
 
 @implementation FLADefaultUIAlertController
+- (instancetype)initWithAlertController:(UIAlertController *)controller {
+  self = [super init];
+  if (self) {
+    _controller = controller;
+  }
+  return self;
+}
+
 - (void)addAction:(UIAlertAction *)action {
   [self.controller addAction:action];
 }
