@@ -398,6 +398,8 @@ open class ProxyApiTestsPigeonProxyApiRegistrar {
   let binaryMessenger: FlutterBinaryMessenger
   let apiDelegate: ProxyApiTestsPigeonProxyApiDelegate
   let instanceManager: ProxyApiTestsPigeonInstanceManager
+  /// Whether APIs should ignore calling to Dart.
+  public var ignoreCallsToDart = false
   private var _codec: FlutterStandardMessageCodec?
   var codec: FlutterStandardMessageCodec {
     if _codec == nil {
@@ -2793,6 +2795,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance: ProxyApiTestClass,
     completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -2862,6 +2872,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
     completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -2889,6 +2907,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
     completion: @escaping (Result<Any?, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -2917,6 +2943,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
     completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -2944,6 +2978,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aBool aBoolArg: Bool,
     completion: @escaping (Result<Bool, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -2978,6 +3020,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anInt anIntArg: Int64,
     completion: @escaping (Result<Int64, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3013,6 +3063,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aDouble aDoubleArg: Double,
     completion: @escaping (Result<Double, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3047,6 +3105,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aString aStringArg: String,
     completion: @escaping (Result<String, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3081,6 +3147,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: FlutterStandardTypedData,
     completion: @escaping (Result<FlutterStandardTypedData, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3115,6 +3189,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [Any?],
     completion: @escaping (Result<[Any?], ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3150,6 +3232,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [ProxyApiTestClass?],
     completion: @escaping (Result<[ProxyApiTestClass?], ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3184,6 +3274,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: Any?],
     completion: @escaping (Result<[String?: Any?], ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3220,6 +3318,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     aMap aMapArg: [String?: ProxyApiTestClass?],
     completion: @escaping (Result<[String?: ProxyApiTestClass?], ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3254,6 +3360,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anEnum anEnumArg: ProxyApiTestEnum,
     completion: @escaping (Result<ProxyApiTestEnum, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3288,6 +3402,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aProxyApi aProxyApiArg: ProxyApiSuperClass,
     completion: @escaping (Result<ProxyApiSuperClass, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3322,6 +3444,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aBool aBoolArg: Bool?,
     completion: @escaping (Result<Bool?, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3350,6 +3480,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anInt anIntArg: Int64?,
     completion: @escaping (Result<Int64?, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3382,6 +3520,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aDouble aDoubleArg: Double?,
     completion: @escaping (Result<Double?, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3410,6 +3556,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aString aStringArg: String?,
     completion: @escaping (Result<String?, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3438,6 +3592,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: FlutterStandardTypedData?,
     completion: @escaping (Result<FlutterStandardTypedData?, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3466,6 +3628,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [Any?]?,
     completion: @escaping (Result<[Any?]?, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3494,6 +3664,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: Any?]?,
     completion: @escaping (Result<[String?: Any?]?, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3522,6 +3700,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anEnum anEnumArg: ProxyApiTestEnum?,
     completion: @escaping (Result<ProxyApiTestEnum?, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3551,6 +3737,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     aProxyApi aProxyApiArg: ProxyApiSuperClass?,
     completion: @escaping (Result<ProxyApiSuperClass?, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3580,6 +3774,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
     completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3607,6 +3809,14 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aString aStringArg: String,
     completion: @escaping (Result<String, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3709,6 +3919,14 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
     pigeonInstance: ProxyApiSuperClass,
     completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -3761,6 +3979,14 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
     pigeonInstance: ProxyApiInterface,
     completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
@@ -3792,6 +4018,14 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
     pigeonInstance pigeonInstanceArg: ProxyApiInterface,
     completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3931,6 +4165,14 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
     pigeonInstance: ClassWithApiRequirement,
     completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return

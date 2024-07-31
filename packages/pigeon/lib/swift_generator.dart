@@ -1462,6 +1462,13 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       indent.writeln(
           'let instanceManager: ${swiftInstanceManagerClassName(generatorOptions)}');
 
+      addDocumentationComments(
+        indent,
+        <String>[' Whether APIs should ignore calling to Dart.'],
+        _docCommentSpec,
+      );
+      indent.writeln('public var ignoreCallsToDart = false');
+
       indent.writeln('private var _codec: FlutterStandardMessageCodec?');
       indent.format(
         '''
@@ -2074,6 +2081,23 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     );
     indent.writeScoped('$methodSignature {', '}', () {
       indent.writeScoped(
+        'if pigeonRegistrar.ignoreCallsToDart {',
+        '}',
+        () {
+          indent.format(
+            '''
+            completion(
+              .failure(
+                ${_getErrorClassName(generatorOptions)}(
+                  code: "ignore-calls-error",
+                  message: "Calls to Dart are being ignored.", details: "")))
+            return''',
+            trimIndentation: true,
+          );
+        },
+      );
+
+      indent.writeScoped(
         'if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {',
         '}',
         () {
@@ -2180,6 +2204,22 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       indent.write(methodSignature);
       if (writeBody) {
         indent.writeScoped(' {', '}', () {
+          indent.writeScoped(
+            'if pigeonRegistrar.ignoreCallsToDart {',
+            '}',
+            () {
+              indent.format(
+                '''
+                completion(
+                  .failure(
+                    ${_getErrorClassName(generatorOptions)}(
+                      code: "ignore-calls-error",
+                      message: "Calls to Dart are being ignored.", details: "")))
+                return''',
+                trimIndentation: true,
+              );
+            },
+          );
           indent
               .writeln('let binaryMessenger = pigeonRegistrar.binaryMessenger');
           indent.writeln('let codec = pigeonRegistrar.codec');
