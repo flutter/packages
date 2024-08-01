@@ -5,8 +5,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-import 'serialization.dart';
 import 'messages.g.dart';
+import 'serialization.dart';
 
 /// An Android of implementation of [GoogleMapsInspectorPlatform].
 @visibleForTesting
@@ -83,7 +83,7 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
       return null;
     }
 
-    final json = heatmapInfo.json as Map<String, dynamic>;
+    final Map<String, dynamic> json = heatmapInfo.json as Map<String, dynamic>;
     return Heatmap(
       heatmapId: heatmapId,
       data: (json['data']! as List<Object?>)

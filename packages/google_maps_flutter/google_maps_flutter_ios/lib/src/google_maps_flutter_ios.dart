@@ -12,8 +12,8 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 import 'package:stream_transform/stream_transform.dart';
 
 import 'google_map_inspector_ios.dart';
-import 'serialization.dart';
 import 'messages.g.dart';
+import 'serialization.dart';
 
 // TODO(stuartmorgan): Remove the dependency on platform interface toJson
 // methods. Channel serialization details should all be package-internal.
