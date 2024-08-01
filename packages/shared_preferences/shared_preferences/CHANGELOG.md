@@ -1,4 +1,4 @@
-## 2.3.2
+## 2.4.0
 
 * Adds shared preferences devtools extension
 
