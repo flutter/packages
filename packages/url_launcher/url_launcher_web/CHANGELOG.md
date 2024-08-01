@@ -1,3 +1,7 @@
+## 2.3.2
+
+* Adds support for `web: ^1.0.0`.
+
 ## 2.3.1
 
 * Implements correct handling of keyboard events with Link.
