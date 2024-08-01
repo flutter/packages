@@ -52,7 +52,7 @@ class InteractiveMediaAdsPlugin : FlutterPlugin, ActivityAware {
   }
 }
 
-internal class FlutterViewFactory(private val instanceManager: PigeonInstanceManager) :
+internal class FlutterViewFactory(private val instanceManager: InteractiveMediaAdsLibraryPigeonInstanceManager) :
     PlatformViewFactory(StandardMessageCodec.INSTANCE) {
 
   override fun create(context: Context, viewId: Int, args: Any?): PlatformView {

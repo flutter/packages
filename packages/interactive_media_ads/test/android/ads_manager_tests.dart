@@ -78,13 +78,17 @@ void main() {
       await adsManager.setAdsManagerDelegate(
         AndroidAdsManagerDelegate(
           PlatformAdsManagerDelegateCreationParams(
-            onAdEvent: expectAsync1((_) {}),
+            onAdEvent: expectAsync1((AdEvent event) {
+              expect(event.type, AdEventType.allAdsCompleted);
+              expect(event.adData, <String, String>{'shrek': 'donkey'});
+            }),
           ),
         ),
       );
 
       final MockAdEvent mockAdEvent = MockAdEvent();
       when(mockAdEvent.type).thenReturn(ima.AdEventType.allAdsCompleted);
+      when(mockAdEvent.adData).thenReturn(<String, String>{'shrek': 'donkey'});
       onAdEventCallback(MockAdEventListener(), mockAdEvent);
     });
 
