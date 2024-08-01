@@ -587,6 +587,17 @@ void main() {
         expect(preferences.getStringList(listKey), testList);
       });
 
+      testWidgets('get StringList handles List<Object?>',
+          (WidgetTester _) async {
+        final (
+          SharedPreferencesWithCache preferences,
+          Map<String, Object?> cache
+        ) = await getPreferences();
+        final List<Object?> listObject = <Object?>['one', 'two'];
+        cache[listKey] = listObject;
+        expect(preferences.getStringList(listKey), listObject);
+      });
+
       testWidgets('reloading', (WidgetTester _) async {
         final (
           SharedPreferencesWithCache preferences,
