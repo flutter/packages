@@ -57,13 +57,11 @@ class AndroidAdsManager extends PlatformAdsManager {
     weakThis.target?._manager.addAdEventListener(
       proxy.newAdEventListener(
         onAdEvent: (_, ima.AdEvent event) {
-          late final AdEventType? eventType = toInterfaceEventType(event.type);
-          if (eventType == null) {
-            return;
-          }
-
-          weakThis.target?._managerDelegate?.params.onAdEvent
-              ?.call(AdEvent(type: eventType));
+          weakThis.target?._managerDelegate?.params.onAdEvent?.call(
+            AdEvent(
+              type: toInterfaceEventType(event.type),
+            ),
+          );
         },
       ),
     );
