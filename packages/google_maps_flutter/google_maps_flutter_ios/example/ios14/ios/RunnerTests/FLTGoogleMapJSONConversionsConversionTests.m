@@ -342,12 +342,14 @@
 
   NSArray<GMUWeightedLatLng *> *weightedData =
       [FLTGoogleMapJSONConversions weightedDataFromArray:data];
-  XCTAssertEqual([weightedData[0] intensity], intensity1);
-  XCTAssertEqual([weightedData[1] intensity], intentisy2);
+  XCTAssertEqual([weightedData[0] intensity], [intensity1 floatValue]);
+  XCTAssertEqual([weightedData[1] intensity], [intensity2 floatValue]);
 }
 
 - (void)testGradientFromDictionary {
-  NSNumber *startPoint = @0.6 NSNumber *colorMapSize = @200 NSDictionary *gradientData = @{
+  NSNumber *startPoint = @0.6;
+  NSNumber *colorMapSize = @200;
+  NSDictionary *gradientData = @{
     @"colors" : @[
       // Color.fromARGB(255, 0, 255, 255)
       @4278255615,
@@ -363,8 +365,8 @@
   XCTAssertEqual(green, 1);
   XCTAssertEqual(blue, 1);
   XCTAssertEqual(alpha, 1);
-  XCTAssertEqualWithAccuracy([[gradient startPoints][0] doubleValue], startPoint, 0);
-  XCTAssertEqual([gradient mapSize], colorMapSize);
+  XCTAssertEqualWithAccuracy([[gradient startPoints][0] doubleValue], [startPoint doubleValue], 0);
+  XCTAssertEqual([gradient mapSize], [colorMapSize intValue]);
 }
 
 @end
