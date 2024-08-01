@@ -8,7 +8,8 @@
 import 'dart:async';
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
-import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer, immutable, protected;
+import 'package:flutter/foundation.dart'
+    show ReadBuffer, WriteBuffer, immutable, protected;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
@@ -19,7 +20,8 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -28,6 +30,7 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
   }
   return <Object?>[error.code, error.message, error.details];
 }
+
 /// An immutable object that serves as the base class for all ProxyApis and
 /// can provide functional copies of itself.
 ///
@@ -113,7 +116,8 @@ class PigeonInstanceManager {
   final Expando<int> _identifiers = Expando<int>();
   final Map<int, WeakReference<PigeonProxyApiBaseClass>> _weakInstances =
       <int, WeakReference<PigeonProxyApiBaseClass>>{};
-  final Map<int, PigeonProxyApiBaseClass> _strongInstances = <int, PigeonProxyApiBaseClass>{};
+  final Map<int, PigeonProxyApiBaseClass> _strongInstances =
+      <int, PigeonProxyApiBaseClass>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -131,23 +135,39 @@ class PigeonInstanceManager {
         api.removeStrongReference(identifier);
       },
     );
-    _PigeonInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
-    IMAAdDisplayContainer.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    _PigeonInstanceManagerApi.setUpMessageHandlers(
+        instanceManager: instanceManager);
+    IMAAdDisplayContainer.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
     UIView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    UIViewController.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    IMAContentPlayhead.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    IMAAdsLoader.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    IMASettings.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    IMAAdsRequest.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    IMAAdsLoaderDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    IMAAdsLoadedData.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    IMAAdLoadingErrorData.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    IMAAdError.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    IMAAdsManager.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    IMAAdsManagerDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    IMAAdEvent.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    IMAAdsRenderingSettings.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    NSObject.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    UIViewController.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    IMAContentPlayhead.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    IMAAdsLoader.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    IMASettings.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    IMAAdsRequest.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    IMAAdsLoaderDelegate.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    IMAAdsLoadedData.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    IMAAdLoadingErrorData.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    IMAAdError.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    IMAAdsManager.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    IMAAdsManagerDelegate.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    IMAAdEvent.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    IMAAdsRenderingSettings.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    NSObject.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -211,15 +231,19 @@ class PigeonInstanceManager {
   ///
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
-  T? getInstanceWithWeakReference<T extends PigeonProxyApiBaseClass>(int identifier) {
-    final PigeonProxyApiBaseClass? weakInstance = _weakInstances[identifier]?.target;
+  T? getInstanceWithWeakReference<T extends PigeonProxyApiBaseClass>(
+      int identifier) {
+    final PigeonProxyApiBaseClass? weakInstance =
+        _weakInstances[identifier]?.target;
 
     if (weakInstance == null) {
-      final PigeonProxyApiBaseClass? strongInstance = _strongInstances[identifier];
+      final PigeonProxyApiBaseClass? strongInstance =
+          _strongInstances[identifier];
       if (strongInstance != null) {
         final PigeonProxyApiBaseClass copy = strongInstance.pigeon_copy();
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] = WeakReference<PigeonProxyApiBaseClass>(copy);
+        _weakInstances[identifier] =
+            WeakReference<PigeonProxyApiBaseClass>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
         return copy as T;
       }
@@ -243,17 +267,20 @@ class PigeonInstanceManager {
   /// added.
   ///
   /// Returns unique identifier of the [instance] added.
-  void addHostCreatedInstance(PigeonProxyApiBaseClass instance, int identifier) {
+  void addHostCreatedInstance(
+      PigeonProxyApiBaseClass instance, int identifier) {
     _addInstanceWithIdentifier(instance, identifier);
   }
 
-  void _addInstanceWithIdentifier(PigeonProxyApiBaseClass instance, int identifier) {
+  void _addInstanceWithIdentifier(
+      PigeonProxyApiBaseClass instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] = WeakReference<PigeonProxyApiBaseClass>(instance);
+    _weakInstances[identifier] =
+        WeakReference<PigeonProxyApiBaseClass>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
     final PigeonProxyApiBaseClass copy = instance.pigeon_copy();
@@ -377,29 +404,29 @@ class _PigeonInstanceManagerApi {
 }
 
 class _PigeonProxyApiBaseCodec extends _PigeonCodec {
- const _PigeonProxyApiBaseCodec(this.instanceManager);
- final PigeonInstanceManager instanceManager;
- @override
- void writeValue(WriteBuffer buffer, Object? value) {
-   if (value is PigeonProxyApiBaseClass) {
-     buffer.putUint8(128);
-     writeValue(buffer, instanceManager.getIdentifier(value));
-   } else {
-     super.writeValue(buffer, value);
-   }
- }
- @override
- Object? readValueOfType(int type, ReadBuffer buffer) {
-   switch (type) {
-     case 128:
-       return instanceManager
-           .getInstanceWithWeakReference(readValue(buffer)! as int);
-     default:
-       return super.readValueOfType(type, buffer);
-   }
- }
-}
+  const _PigeonProxyApiBaseCodec(this.instanceManager);
+  final PigeonInstanceManager instanceManager;
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is PigeonProxyApiBaseClass) {
+      buffer.putUint8(128);
+      writeValue(buffer, instanceManager.getIdentifier(value));
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
 
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return instanceManager
+            .getInstanceWithWeakReference(readValue(buffer)! as int);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
 
 /// Possible error types while loading or playing ads.
 ///
@@ -407,8 +434,10 @@ class _PigeonProxyApiBaseCodec extends _PigeonCodec {
 enum AdErrorType {
   /// An error occurred while loading the ads.
   loadingFailed,
+
   /// An error occurred while playing the ads.
   adPlayingFailed,
+
   /// An unexpected error occurred while loading or playing the ads.
   ///
   /// This may mean that the SDK wasn’t loaded properly or the wrapper doesn't
@@ -422,58 +451,81 @@ enum AdErrorType {
 enum AdErrorCode {
   /// The ad slot is not visible on the page.
   adslotNotVisible,
+
   /// Generic invalid usage of the API.
   apiError,
+
   /// A companion ad failed to load or render.
   companionAdLoadingFailed,
+
   /// Content playhead was not passed in, but list of ads has been returned from
   /// the server.
   contentPlayheadMissing,
+
   /// There was an error loading the ad.
   failedLoadingAd,
+
   /// There was a problem requesting ads from the server.
   failedToRequestAds,
+
   /// Invalid arguments were provided to SDK methods.
   invalidArguments,
+
   /// The version of the runtime is too old.
   osRuntimeTooOld,
+
   /// Ads list response was malformed.
   playlistMalformedResponse,
+
   /// Listener for at least one of the required vast events was not added.
   requiredListenersNotAdded,
+
   /// There was an error initializing the stream.
   streamInitializationFailed,
+
   /// An unexpected error occurred and the cause is not known.
   unknownError,
+
   /// No assets were found in the VAST ad response.
   vastAssetNotFound,
+
   /// A VAST response containing a single `<VAST>` tag with no child tags.
   vastEmptyResponse,
+
   /// At least one VAST wrapper loaded and a subsequent wrapper or inline ad
   /// load has resulted in a 404 response code.
   vastInvalidUrl,
+
   /// Assets were found in the VAST ad response for a linear ad, but none of
   /// them matched the video player's capabilities.
   vastLinearAssetMismatch,
+
   /// The VAST URI provided, or a VAST URI provided in a subsequent Wrapper
   /// element, was either unavailable or reached a timeout, as defined by the
   /// video player.
   vastLoadTimeout,
+
   /// The ad response was not recognized as a valid VAST ad.
   vastMalformedResponse,
+
   /// Failed to load media assets from a VAST response.
   vastMediaLoadTimeout,
+
   /// The maximum number of VAST wrapper redirects has been reached.
   vastTooManyRedirects,
+
   /// Trafficking error.
   ///
   /// Video player received an ad type that it was not expecting and/or cannot
   /// display.
   vastTraffickingError,
+
   /// Another VideoAdsManager is still using the video.
   videoElementUsed,
+
   /// A video element was not specified where it was required.
   videoElementRequired,
+
   /// There was an error playing the video ad.
   videoPlayError,
 }
@@ -484,53 +536,77 @@ enum AdErrorCode {
 enum AdEventType {
   /// Fired the first time each ad break ends.
   adBreakEnded,
+
   /// Fired when an ad break will not play back any ads.
   adBreakFetchError,
+
   /// Fired when an ad break is ready.
   adBreakReady,
+
   /// Fired first time each ad break begins playback.
   adBreakStarted,
+
   /// Fired every time the stream switches from advertising or slate to content.
   adPeriodEnded,
+
   /// Fired every time the stream switches from content to advertising or slate.
   adPeriodStarted,
+
   /// All valid ads managed by the ads manager have completed or the ad response
   /// did not return any valid ads.
   allAdsCompleted,
+
   /// Fired when an ad is clicked.
   clicked,
+
   /// Single ad has finished.
   completed,
+
   /// Cuepoints changed for VOD stream (only used for dynamic ad insertion).
   cuepointsChanged,
+
   /// First quartile of a linear ad was reached.
   firstQuartile,
+
   /// The user has closed the icon fallback image dialog.
   iconFallbackImageClosed,
+
   /// The user has tapped an ad icon.
   iconTapped,
+
   /// An ad was loaded.
   loaded,
+
   /// A log event for the ads being played.
   log,
+
   /// Midpoint of a linear ad was reached.
   midpoint,
+
   /// Ad paused.
   pause,
+
   /// Ad resumed.
   resume,
+
   /// Fired when an ad was skipped.
   skipped,
+
   /// Fired when an ad starts playing.
   started,
+
   /// Stream request has loaded (only used for dynamic ad insertion).
   streamLoaded,
+
   /// Stream has started playing (only used for dynamic ad insertion).
   streamStarted,
+
   /// Ad tapped.
   tapped,
+
   /// Third quartile of a linear ad was reached..
   thirdQuartile,
+
   /// The event type is not recognized by this wrapper.
   unknown,
 }
@@ -542,12 +618,15 @@ enum KeyValueObservingOptions {
   /// Indicates that the change dictionary should provide the new attribute
   /// value, if applicable.
   newValue,
+
   /// Indicates that the change dictionary should contain the old attribute
   /// value, if applicable.
   oldValue,
+
   /// If specified, a notification should be sent to the observer immediately,
   /// before the observer registration method even returns.
   initialValue,
+
   /// Whether separate notifications should be sent to the observer before and
   /// after each change, instead of a single notification after the change.
   priorNotification,
@@ -559,12 +638,15 @@ enum KeyValueObservingOptions {
 enum KeyValueChange {
   /// Indicates that the value of the observed key path was set to a new value.
   setting,
+
   /// Indicates that an object has been inserted into the to-many relationship
   /// that is being observed.
   insertion,
+
   /// Indicates that an object has been removed from the to-many relationship
   /// that is being observed.
   removal,
+
   /// Indicates that an object has been replaced in the to-many relationship
   /// that is being observed.
   replacement,
@@ -579,24 +661,28 @@ enum KeyValueChangeKey {
   /// this key is an NSIndexSet object that contains the indexes of the
   /// inserted, removed, or replaced objects.
   indexes,
+
   /// An NSNumber object that contains a value corresponding to one of the
   /// NSKeyValueChange enums, indicating what sort of change has occurred.
   kind,
+
   /// If the value of the kindKey entry is NSKeyValueChange.setting, and new was
   /// specified when the observer was registered, the value of this key is the
   /// new value for the attribute.
   newValue,
+
   /// If the prior option was specified when the observer was registered this
   /// notification is sent prior to a change.
   notificationIsPrior,
+
   /// If the value of the kindKey entry is NSKeyValueChange.setting, and old was
   /// specified when the observer was registered, the value of this key is the
   /// value before the attribute was changed.
   oldValue,
+
   /// The key is not recognized by this wrapper.
   unknown,
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -605,19 +691,19 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is AdErrorType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else     if (value is AdErrorCode) {
+    } else if (value is AdErrorCode) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else     if (value is AdEventType) {
+    } else if (value is AdEventType) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    } else     if (value is KeyValueObservingOptions) {
+    } else if (value is KeyValueObservingOptions) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    } else     if (value is KeyValueChange) {
+    } else if (value is KeyValueChange) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    } else     if (value is KeyValueChangeKey) {
+    } else if (value is KeyValueChangeKey) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
     } else {
@@ -628,22 +714,22 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AdErrorType.values[value];
-      case 130: 
+      case 130:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AdErrorCode.values[value];
-      case 131: 
+      case 131:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AdEventType.values[value];
-      case 132: 
+      case 132:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : KeyValueObservingOptions.values[value];
-      case 133: 
+      case 133:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : KeyValueChange.values[value];
-      case 134: 
+      case 134:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : KeyValueChangeKey.values[value];
       default:
@@ -651,6 +737,7 @@ class _PigeonCodec extends StandardMessageCodec {
     }
   }
 }
+
 /// The `IMAAdDisplayContainer` is responsible for managing the ad container
 /// view and companion ad slots used for ad playback.
 ///
@@ -2972,4 +3059,3 @@ class NSObject extends PigeonProxyApiBaseClass {
     );
   }
 }
-

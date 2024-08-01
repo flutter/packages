@@ -30,7 +30,7 @@ final class AdEventTests: XCTestCase {
 
     XCTAssertEqual(value, "message")
   }
-  
+
   func testAdData() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdEvent(registrar)
@@ -39,7 +39,7 @@ final class AdEventTests: XCTestCase {
 
     let value = try? api.pigeonDelegate.adData(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value as! [String : String], ["my": "string"])
+    XCTAssertEqual(value as! [String: String], ["my": "string"])
   }
 }
 
@@ -58,8 +58,8 @@ class TestAdEvent: IMAAdEvent {
   override var typeString: String {
     return "message"
   }
-  
-  override var adData: [String : Any]? {
+
+  override var adData: [String: Any]? {
     return ["my": "string"]
   }
 }
