@@ -641,6 +641,41 @@ void main() {
       );
     });
 
+    test('fails gracefully if the first entry uses the wrong style', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, version: '1.0.0');
+
+      const String changelog = '''
+# 1.0.0
+* Some changes for a later release.
+## 0.9.0
+* Some earlier changes.
+''';
+      plugin.changelogFile.writeAsStringSync(changelog);
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+      ];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'version-check',
+        '--base-sha=main',
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Unable to find a version in CHANGELOG.md'),
+          contains('The current version should be on a line starting with '
+              '"## ", either on the first non-empty line or after a "## NEXT" '
+              'section.'),
+        ]),
+      );
+    });
+
     test(
         'fails gracefully if the version headers are not found due to using the wrong style',
         () async {
