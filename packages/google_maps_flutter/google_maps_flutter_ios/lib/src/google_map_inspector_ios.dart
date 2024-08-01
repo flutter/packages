@@ -77,26 +77,24 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   @override
   Future<Heatmap?> getHeatmapInfo(HeatmapId heatmapId,
       {required int mapId}) async {
-    final Map<String, Object?>? heatmapInfo = await _channelProvider(mapId)!
-        .invokeMapMethod<String, dynamic>(
-            'map#getHeatmapInfo', <String, String>{
-      'heatmapId': heatmapId.value,
-    });
+    final PlatformHeatmap? heatmapInfo =
+        await _inspectorProvider(mapId)!.getHeatmapInfo(heatmapId.value);
     if (heatmapInfo == null) {
       return null;
     }
 
+    final json = heatmapInfo.json as Map<String, dynamic>;
     return Heatmap(
       heatmapId: heatmapId,
-      data: (heatmapInfo['data']! as List<Object?>)
+      data: (json['data']! as List<Object?>)
           .map(deserializeWeightedLatLng)
           .whereType<WeightedLatLng>()
           .toList(),
-      gradient: deserializeHeatmapGradient(heatmapInfo['gradient']),
-      opacity: heatmapInfo['opacity']! as double,
-      radius: HeatmapRadius.fromJson(heatmapInfo['radius']),
-      minimumZoomIntensity: heatmapInfo['minimumZoomIntensity']! as int,
-      maximumZoomIntensity: heatmapInfo['maximumZoomIntensity']! as int,
+      gradient: deserializeHeatmapGradient(json['gradient']),
+      opacity: json['opacity']! as double,
+      radius: HeatmapRadius.fromJson(json['radius']),
+      minimumZoomIntensity: json['minimumZoomIntensity']! as int,
+      maximumZoomIntensity: json['maximumZoomIntensity']! as int,
     );
   }
 

@@ -1770,6 +1770,31 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsInspectorApi.getHeatmapInfo",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FGMGetMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getInfoForHeatmapWithIdentifier:error:)],
+                @"FGMMapsInspectorApi api (%@) doesn't respond to "
+                @"@selector(getInfoForHeatmapWithIdentifier:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        NSString *arg_heatmapId = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        FGMPlatformHeatmap *output = [api getInfoForHeatmapWithIdentifier:arg_heatmapId
+                                                                    error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
                                                    @"MapsInspectorApi.getZoomRange",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger

@@ -1850,6 +1850,30 @@ class MapsInspectorApi {
     }
   }
 
+  Future<PlatformHeatmap?> getHeatmapInfo(String heatmapId) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.getHeatmapInfo$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[heatmapId]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as PlatformHeatmap?);
+    }
+  }
+
   Future<PlatformZoomRange> getZoomRange() async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.getZoomRange$__pigeon_messageChannelSuffix';

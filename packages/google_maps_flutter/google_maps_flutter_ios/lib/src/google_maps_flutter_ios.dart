@@ -279,9 +279,12 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     HeatmapUpdates heatmapUpdates, {
     required int mapId,
   }) {
-    return _hostApi(mapId).invokeMethod<void>(
-      'heatmaps#update',
-      serializeMapsObjectUpdates(heatmapUpdates, serializeHeatmap),
+    return _hostApi(mapId).updateHeatmaps(
+      heatmapUpdates.heatmapsToAdd.map(_platformHeatmapFromHeatmap).toList(),
+      heatmapUpdates.heatmapsToChange.map(_platformHeatmapFromHeatmap).toList(),
+      heatmapUpdates.heatmapIdsToRemove
+          .map((HeatmapId id) => id.value)
+          .toList(),
     );
   }
 
@@ -550,6 +553,10 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
 
   static PlatformCircle _platformCircleFromCircle(Circle circle) {
     return PlatformCircle(json: circle.toJson());
+  }
+
+  static PlatformHeatmap _platformHeatmapFromHeatmap(Heatmap heatmap) {
+    return PlatformHeatmap(json: heatmap.toJson());
   }
 
   static PlatformMarker _platformMarkerFromMarker(Marker marker) {

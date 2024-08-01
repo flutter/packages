@@ -378,6 +378,9 @@ extern void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
 - (nullable FGMPlatformTileLayer *)
     getInfoForTileOverlayWithIdentifier:(NSString *)tileOverlayId
                                   error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable FGMPlatformHeatmap *)getInfoForHeatmapWithIdentifier:(NSString *)heatmapId
+                                                           error:(FlutterError *_Nullable *_Nonnull)
+                                                                     error;
 /// @return `nil` only when `error != nil`.
 - (nullable FGMPlatformZoomRange *)zoomRange:(FlutterError *_Nullable *_Nonnull)error;
 @end
