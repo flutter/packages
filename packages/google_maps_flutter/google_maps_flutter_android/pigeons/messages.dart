@@ -65,7 +65,7 @@ class PlatformHeatmap {
   /// internal implementation details of that method.
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
-  final Object json;
+  final Map<String?, Object?> json;
 }
 
 /// Pigeon equivalent of the ClusterManager class.

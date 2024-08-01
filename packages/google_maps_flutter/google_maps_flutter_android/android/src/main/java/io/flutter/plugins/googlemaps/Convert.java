@@ -32,7 +32,6 @@ import com.google.android.gms.maps.model.Tile;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.WeightedLatLng;
-import com.google.maps.android.projection.SphericalMercatorProjection;
 import io.flutter.FlutterInjector;
 import java.io.IOException;
 import java.io.InputStream;
@@ -887,8 +886,7 @@ class Convert {
    * @return the heatmapId.
    * @throws IllegalArgumentException if heatmapId is null.
    */
-  static String interpretHeatmapOptions(Object o, HeatmapOptionsSink sink) {
-    final Map<?, ?> data = toMap(o);
+  static String interpretHeatmapOptions(Map<String, ?> data, HeatmapOptionsSink sink) {
     final Object rawWeightedData = data.get(HEATMAP_DATA_KEY);
     if (rawWeightedData != null) {
       sink.setWeightedData(toWeightedData(rawWeightedData));

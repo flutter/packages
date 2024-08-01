@@ -37,7 +37,9 @@ public class HeatmapsController {
   void addJsonHeatmaps(List<Object> heatmapsToAdd) {
     if (heatmapsToAdd != null) {
       for (Object heatmapToAdd : heatmapsToAdd) {
-        addJsonHeatmap(heatmapToAdd);
+        @SuppressWarnings("unchecked")
+        Map<String, ?> heatmapMap = (Map<String, ?>) heatmapToAdd;
+        addJsonHeatmap(heatmapMap);
       }
     }
   }
@@ -52,7 +54,7 @@ public class HeatmapsController {
   /** Updates the given heatmaps on the map. */
   void changeHeatmaps(@NonNull List<Messages.PlatformHeatmap> heatmapsToChange) {
     for (Messages.PlatformHeatmap heatmapToChange : heatmapsToChange) {
-      changeHeatmap(heatmapToChange);
+      changeJsonHeatmap(heatmapToChange.getJson());
     }
   }
 
@@ -74,7 +76,7 @@ public class HeatmapsController {
   }
 
   /** Adds a heatmap to the map from json data. */
-  private void addJsonHeatmap(Object heatmap) {
+  private void addJsonHeatmap(Map<String, ?> heatmap) {
     if (heatmap == null) {
       return;
     }
@@ -93,22 +95,21 @@ public class HeatmapsController {
   }
 
   /** Updates the given heatmap on the map. */
-  private void changeHeatmap(Messages.PlatformHeatmap heatmap) {
+  private void changeJsonHeatmap(Map<String, ?> heatmap) {
     if (heatmap == null) {
       return;
     }
     String heatmapId = getHeatmapId(heatmap);
     HeatmapController heatmapController = heatmapIdToController.get(heatmapId);
     if (heatmapController != null) {
-      Convert.interpretHeatmapOptions(heatmap.getJson(), heatmapController);
+      Convert.interpretHeatmapOptions(heatmap, heatmapController);
       heatmapController.clearTileCache();
     }
   }
 
   /** Returns the heatmap id from the given heatmap data. */
   @SuppressWarnings("unchecked")
-  private static String getHeatmapId(Messages.PlatformHeatmap heatmap) {
-    Map<String, Object> heatmapMap = (Map<String, Object>) heatmap.getJson();
-    return (String) heatmapMap.get(HEATMAP_ID_KEY);
+  private static String getHeatmapId(Map<String, ?> heatmap) {
+    return (String) heatmap.get(HEATMAP_ID_KEY);
   }
 }

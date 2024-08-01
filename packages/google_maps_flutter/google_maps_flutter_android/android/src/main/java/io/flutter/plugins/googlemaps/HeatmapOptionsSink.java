@@ -15,7 +15,7 @@ interface HeatmapOptionsSink {
   void setWeightedData(@NonNull List<WeightedLatLng> weightedData);
 
   /** Set the gradient to be used to color the heatmap. */
-  void setGradient(Gradient gradient);
+  void setGradient(@NonNull Gradient gradient);
 
   /** Set the maximum intensity for the heatmap. */
   void setMaxIntensity(double maxIntensity);

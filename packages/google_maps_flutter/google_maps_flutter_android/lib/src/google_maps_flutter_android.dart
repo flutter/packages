@@ -696,7 +696,10 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformHeatmap _platformHeatmapFromHeatmap(Heatmap heatmap) {
-    return PlatformHeatmap(json: heatmap.toJson());
+    // This cast is not ideal, but the Java code already assumes this format.
+    // See the TODOs at the top of this file and on the 'json' field in
+    // messages.dart.
+    return PlatformHeatmap(json: heatmap.toJson() as Map<String, Object?>);
   }
 
   static PlatformClusterManager _platformClusterManagerFromClusterManager(

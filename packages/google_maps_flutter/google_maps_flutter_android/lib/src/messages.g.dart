@@ -130,7 +130,7 @@ class PlatformHeatmap {
   /// The heatmap data, as JSON. This should only be set from
   /// Heatmap.toJson, and the native code must interpret it according to the
   /// internal implementation details of that method.
-  Object json;
+  Map<String?, Object?> json;
 
   Object encode() {
     return <Object?>[
@@ -141,7 +141,7 @@ class PlatformHeatmap {
   static PlatformHeatmap decode(Object result) {
     result as List<Object?>;
     return PlatformHeatmap(
-      json: result[0]!,
+      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
     );
   }
 }

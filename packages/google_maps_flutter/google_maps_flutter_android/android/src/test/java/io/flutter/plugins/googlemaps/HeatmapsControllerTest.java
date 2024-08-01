@@ -17,12 +17,9 @@ import static org.mockito.Mockito.when;
 
 import android.os.Build;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
-import com.google.maps.android.heatmaps.WeightedLatLng;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -67,7 +64,8 @@ public class HeatmapsControllerTest {
     final HeatmapTileProvider heatmap = mock(HeatmapTileProvider.class);
 
     final String googleHeatmapId = "abc123";
-    final Object heatmapData = Collections.singletonList(Arrays.asList(Arrays.asList(1.1, 2.2), 3.3));
+    final Object heatmapData =
+        Collections.singletonList(Arrays.asList(Arrays.asList(1.1, 2.2), 3.3));
 
     when(googleMap.addTileOverlay(any(TileOverlayOptions.class))).thenReturn(tileOverlay);
     doReturn(heatmap).when(controller).buildHeatmap(any(HeatmapBuilder.class));

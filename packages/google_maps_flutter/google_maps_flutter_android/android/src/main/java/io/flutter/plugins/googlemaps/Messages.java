@@ -395,13 +395,13 @@ public class Messages {
      * The heatmap data, as JSON. This should only be set from Heatmap.toJson, and the native code
      * must interpret it according to the internal implementation details of that method.
      */
-    private @NonNull Object json;
+    private @NonNull Map<String, Object> json;
 
-    public @NonNull Object getJson() {
+    public @NonNull Map<String, Object> getJson() {
       return json;
     }
 
-    public void setJson(@NonNull Object setterArg) {
+    public void setJson(@NonNull Map<String, Object> setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"json\" is null.");
       }
@@ -430,10 +430,10 @@ public class Messages {
 
     public static final class Builder {
 
-      private @Nullable Object json;
+      private @Nullable Map<String, Object> json;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setJson(@NonNull Object setterArg) {
+      public @NonNull Builder setJson(@NonNull Map<String, Object> setterArg) {
         this.json = setterArg;
         return this;
       }
@@ -455,7 +455,7 @@ public class Messages {
     static @NonNull PlatformHeatmap fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformHeatmap pigeonResult = new PlatformHeatmap();
       Object json = __pigeon_list.get(0);
-      pigeonResult.setJson(json);
+      pigeonResult.setJson((Map<String, Object>) json);
       return pigeonResult;
     }
   }
@@ -890,7 +890,8 @@ public class Messages {
   public static final class PlatformTileOverlay {
     /**
      * The tile overlay data, as JSON. This should only be set from TileOverlay.toJson, and the
-     * native code must interpret it according to the internal implementation details of that method.
+     * native code must interpret it according to the internal implementation details of that
+     * method.
      */
     private @NonNull Map<String, Object> json;
 
@@ -1306,8 +1307,8 @@ public class Messages {
   public static final class PlatformMapConfiguration {
     /**
      * The configuration options, as JSON. This should only be set from _jsonForMapConfiguration,
-     * and the native code must interpret it according to the internal implementation details of that
-     * method.
+     * and the native code must interpret it according to the internal implementation details of
+     * that method.
      */
     private @NonNull Map<String, Object> json;
 
