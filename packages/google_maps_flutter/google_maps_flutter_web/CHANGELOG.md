@@ -1,4 +1,8 @@
-# 0.5.9
+## 0.5.9+1
+
+* Fixes a typo in the formatting of the CHANGELOG.
+
+## 0.5.9
 
 * Updates `package:google_maps` dependency to latest (`^8.0.0`).
 * Supports `web: ">=0.5.1 <2.0.0"`.

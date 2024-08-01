@@ -1,6 +1,10 @@
-## 2.3.1
+## 2.3.2
 
 * Adds shared preferences devtools extension
+
+## 2.3.1
+
+* Fixes `getStringList` bug with `List<Object?>` cast exception.
 
 ## 2.3.0
 
