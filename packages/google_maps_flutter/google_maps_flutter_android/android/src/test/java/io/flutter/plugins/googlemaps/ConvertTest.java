@@ -10,9 +10,15 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_DATA_KEY;
 import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_COLORS_KEY;
 import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_KEY;
 import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_START_POINTS_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_ID_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_MAX_INTENSITY_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_OPACITY_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_RADIUS_KEY;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -21,6 +27,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
 import android.util.Base64;
+
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.algo.StaticCluster;
@@ -389,7 +398,41 @@ public class ConvertTest {
 
   @Test()
   public void ConvertInterpretHeatmapOptionsReturnsCorrectData() {
+    final List<Object> dataData = List.of(List.of(List.of(1.1, 2.2), 3.3));
+    final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
+    final Map<String, Object> data = Map.of(
+            HEATMAP_DATA_KEY, dataData,
+            HEATMAP_GRADIENT_KEY, Map.of(
+                    HEATMAP_GRADIENT_COLORS_KEY, List.of(0, 1, 2),
+                    HEATMAP_GRADIENT_START_POINTS_KEY, List.of(0.0, 1.0, 2.0),
+                    HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY, 3
+            ),
+            HEATMAP_MAX_INTENSITY_KEY, 4.4,
+            HEATMAP_OPACITY_KEY, 5.5,
+            HEATMAP_RADIUS_KEY, 6,
+            HEATMAP_ID_KEY, "heatmap_1"
+    );
 
+    final MockHeatmapBuilder builder = new MockHeatmapBuilder();
+    final String id = Convert.interpretHeatmapOptions(data, builder);
+
+    Assert.assertEquals(1, builder.getWeightedData().size());
+    Assert.assertEquals(point.x, builder.getWeightedData().get(0).getPoint().x, 0);
+    Assert.assertEquals(point.y, builder.getWeightedData().get(0).getPoint().y, 0);
+    Assert.assertEquals(3.3, builder.getWeightedData().get(0).getIntensity(), 0);
+    Assert.assertEquals(3, builder.getGradient().mColors.length);
+    Assert.assertEquals(0, builder.getGradient().mColors[0]);
+    Assert.assertEquals(1, builder.getGradient().mColors[1]);
+    Assert.assertEquals(2, builder.getGradient().mColors[2]);
+    Assert.assertEquals(3, builder.getGradient().mStartPoints.length);
+    Assert.assertEquals(0.0, builder.getGradient().mStartPoints[0], 0);
+    Assert.assertEquals(1.0, builder.getGradient().mStartPoints[1], 0);
+    Assert.assertEquals(2.0, builder.getGradient().mStartPoints[2], 0);
+    Assert.assertEquals(3, builder.getGradient().mColorMapSize);
+    Assert.assertEquals(4.4, builder.getMaxIntensity(), 0);
+    Assert.assertEquals(5.5, builder.getOpacity(), 0);
+    Assert.assertEquals(6, builder.getRadius());
+    Assert.assertEquals("heatmap_1", id);
   }
 
   private InputStream buildImageInputStream() {
@@ -422,5 +465,58 @@ public class ConvertTest {
     String base64Image = Base64.encodeToString(pngBytes, Base64.DEFAULT);
 
     return base64Image;
+  }
+}
+
+class MockHeatmapBuilder implements HeatmapOptionsSink {
+  private List<WeightedLatLng> weightedData;
+    private Gradient gradient;
+    private double maxIntensity;
+    private double opacity;
+    private int radius;
+
+    public List<WeightedLatLng> getWeightedData() {
+      return weightedData;
+    }
+
+    public Gradient getGradient() {
+      return gradient;
+    }
+
+    public double getMaxIntensity() {
+      return maxIntensity;
+    }
+
+    public double getOpacity() {
+      return opacity;
+    }
+
+    public int getRadius() {
+      return radius;
+    }
+
+  @Override
+  public void setWeightedData(@NonNull List<WeightedLatLng> weightedData) {
+    this.weightedData = weightedData;
+  }
+
+  @Override
+  public void setGradient(Gradient gradient) {
+    this.gradient = gradient;
+  }
+
+  @Override
+  public void setMaxIntensity(double maxIntensity) {
+    this.maxIntensity = maxIntensity;
+  }
+
+  @Override
+  public void setOpacity(double opacity) {
+    this.opacity = opacity;
+  }
+
+  @Override
+  public void setRadius(int radius) {
+    this.radius = radius;
   }
 }
