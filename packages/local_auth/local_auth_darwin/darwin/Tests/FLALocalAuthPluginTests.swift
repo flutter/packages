@@ -344,12 +344,10 @@ class FLALocalAuthPluginTests: XCTestCase {
         useErrorDialogs: true),
       strings: strings
     ) { resultDetails, error in
+      // TODO(stuartmorgan): Add a wrapper around UIAction to allow accessing the handler, so
+      // that the test can trigger the callback on iOS as well, and then unfork this.
       #if os(macOS)
         expectation.fulfill()
-      #else
-        // Ideally this would trigger an expectation that the test awaited, but there's no way for the
-        // stub to get the handler back out of the UIAction, so that would require an extra layer of
-        // wrappers.
       #endif
     }
     #if os(macOS)
