@@ -132,7 +132,7 @@ typedef ExitCallback = FutureOr<bool> Function(
 ///   routes: <GoRoute>[
 ///     GoRoute(
 ///       path: '/',
-///       redirect: (_) => '/family/${Families.data[0].id}',
+///       redirect: (_, __) => '/family/${Families.data[0].id}',
 ///     ),
 ///     GoRoute(
 ///       path: '/family',
@@ -169,7 +169,7 @@ abstract class RouteBase with Diagnosticable {
   ///   routes: <GoRoute>[
   ///     GoRoute(
   ///       path: '/',
-  ///       redirect: (_) => '/family/${Families.data[0].id}',
+  ///       redirect: (_, __) => '/family/${Families.data[0].id}',
   ///     ),
   ///     GoRoute(
   ///       path: '/family/:fid',
@@ -188,11 +188,11 @@ abstract class RouteBase with Diagnosticable {
   ///   routes: <GoRoute>[
   ///     GoRoute(
   ///       path: '/',
-  ///       redirect: (_) => '/page1', // this takes priority over the sub-route.
+  ///       redirect: (_, __) => '/page1', // this takes priority over the sub-route.
   ///       routes: <GoRoute>[
   ///         GoRoute(
   ///           path: 'child',
-  ///           redirect: (_) => '/page2',
+  ///           redirect: (_, __) => '/page2',
   ///         ),
   ///       ],
   ///     ),
