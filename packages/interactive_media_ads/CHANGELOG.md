@@ -1,4 +1,8 @@
-# 0.1.1
+## 0.1.1+1
+
+* Fixes a typo in the formatting of the CHANGELOG.
+
+## 0.1.1
 
 * Adds iOS implementation.
 * Adds support for setting the layout direction of the `AdDisplayContainer`.
