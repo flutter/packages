@@ -108,7 +108,6 @@ public class HeatmapsController {
   }
 
   /** Returns the heatmap id from the given heatmap data. */
-  @SuppressWarnings("unchecked")
   private static String getHeatmapId(Map<String, ?> heatmap) {
     return (String) heatmap.get(HEATMAP_ID_KEY);
   }
