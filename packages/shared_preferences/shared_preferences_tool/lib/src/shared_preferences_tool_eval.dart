@@ -50,8 +50,13 @@ class SharedPreferencesToolEval {
   Future<SharedPreferencesData> fetchValue(String key) async {
     _valueDisposable?.dispose();
     _valueDisposable = Disposable();
-    final Instance valueInstance = await _eval.prefsGetInstance(
-      "get('$key')",
+    final Instance setInstance = await _eval.prefsGetInstance(
+      "getAll(allowList: {'$key'})",
+      _valueDisposable,
+    );
+
+    final Instance valueInstance = await _eval.safeGetInstance(
+      setInstance.associations!.first.value as InstanceRef,
       _valueDisposable,
     );
 
@@ -126,57 +131,59 @@ extension on EvalOnDartLibrary {
   ///
   /// This method is actually a workaround for the asyncEval method, which is
   /// not working for web targets, check this issue https://github.com/flutter/devtools/issues/7766.
-  Future<InstanceRef> prefsEval(String method, Disposable? isAlive) async {
-    // Create a empty list in memory to hold the shared preferences instance.
+  Future<InstanceRef?> prefsEval(String method, Disposable? isAlive) async {
+    // Create a empty list in memory to hold the future value instance.
     // It could've been anything that can handle values passed by reference.
-    final InstanceRef prefsHolderRef = await safeEval(
+    final InstanceRef valueHolderRef = await safeEval(
       '[]',
       isAlive: isAlive,
     );
 
-    // Add the shared preferences instance to the list once the future completes
+    final InstanceRef futureInstance = await safeEval(
+      'SharedPreferencesAsync().$method',
+      isAlive: isAlive,
+    );
+
+    // Add the future value instance to the list once the future completes
     await eval(
-      'SharedPreferences.getInstance().then(prefsHolder.add);',
+      'future.then(valueHolder.add);',
       scope: <String, String>{
-        'prefsHolder': prefsHolderRef.id!,
+        'valueHolder': valueHolderRef.id!,
+        'future': futureInstance.id!,
       },
       isAlive: isAlive,
     );
 
-    InstanceRef? prefsRef;
-    // The maximum number of retries to get the shared preferences instance.
+    // The maximum number of retries to get the future value instance.
     // Means a max of 1 second of waiting.
     const int maxRetries = 20;
     int retryCount = 0;
 
     // Wait until the shared preferences instance is added to the list.
-    while (prefsRef == null) {
+    while (true) {
       retryCount++;
       // A break condition to avoid infinite loop.
       if (retryCount > maxRetries) {
-        throw StateError('Failed to get shared preferences instance.');
+        throw StateError('Failed to get future value instance.');
       }
       final Instance holderInstance =
-          await safeGetInstance(prefsHolderRef, isAlive);
-      final Object? prefsInstance = holderInstance.elements?.firstOrNull;
-      prefsRef = prefsInstance != null ? prefsInstance as InstanceRef : null;
-      if (prefsRef == null) {
-        await Future<void>.delayed(const Duration(milliseconds: 50));
-      }
-    }
+          await safeGetInstance(valueHolderRef, isAlive);
 
-    return (await eval(
-      'prefs.$method',
-      isAlive: isAlive,
-      scope: <String, String>{
-        'prefs': prefsRef.id!,
-      },
-    ))!;
+      // If the elements list is not empty it means the future has resolved.
+      if (holderInstance.elements case final List<dynamic> elements
+          when elements.isNotEmpty) {
+        final Object? prefsInstance = elements.firstOrNull;
+        // We return null if the future is a Future<void>
+        return prefsInstance != null ? prefsInstance as InstanceRef : null;
+      }
+
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    }
   }
 
   Future<Instance> prefsGetInstance(String method, Disposable? isAlive) async {
     return safeGetInstance(
-      prefsEval(method, isAlive),
+      (await prefsEval(method, isAlive))!,
       isAlive,
     );
   }

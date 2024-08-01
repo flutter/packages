@@ -236,7 +236,7 @@ class _SharedPreferencesStateProviderState
   void initState() {
     super.initState();
     final EvalOnDartLibrary eval = EvalOnDartLibrary(
-      'package:shared_preferences/shared_preferences.dart',
+      'package:shared_preferences/src/shared_preferences_async.dart',
       serviceManager.service!,
       serviceManager: serviceManager,
     );

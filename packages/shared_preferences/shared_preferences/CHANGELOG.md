@@ -1,8 +1,11 @@
+## 2.3.1
+
+* Adds shared preferences devtools extension
+
 ## 2.3.0
 
 * Adds `SharedPreferencesAsync` and `SharedPreferencesWithCache` APIs.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
-* Adds shared preferences devtools extension
 
 ## 2.2.3
 
