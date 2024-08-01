@@ -130,7 +130,7 @@ class MockCameraFactory : public CameraFactory {
 class MockCamera : public Camera {
  public:
   MockCamera(const std::string& device_id)
-      : device_id_(device_id), Camera(device_id){};
+      : device_id_(device_id), Camera(device_id) {};
 
   ~MockCamera() = default;
 
@@ -217,7 +217,7 @@ class MockCamera : public Camera {
 
 class MockCaptureControllerFactory : public CaptureControllerFactory {
  public:
-  MockCaptureControllerFactory(){};
+  MockCaptureControllerFactory() {};
   virtual ~MockCaptureControllerFactory() = default;
 
   // Disallow copy and move.
@@ -263,14 +263,15 @@ class MockCameraPlugin : public CameraPlugin {
  public:
   MockCameraPlugin(flutter::TextureRegistrar* texture_registrar,
                    flutter::BinaryMessenger* messenger)
-      : CameraPlugin(texture_registrar, messenger){};
+      : CameraPlugin(texture_registrar, messenger) {};
 
   // Creates a plugin instance with the given CameraFactory instance.
   // Exists for unit testing with mock implementations.
   MockCameraPlugin(flutter::TextureRegistrar* texture_registrar,
                    flutter::BinaryMessenger* messenger,
                    std::unique_ptr<CameraFactory> camera_factory)
-      : CameraPlugin(texture_registrar, messenger, std::move(camera_factory)){};
+      : CameraPlugin(texture_registrar, messenger, std::move(camera_factory)) {
+        };
 
   ~MockCameraPlugin() = default;
 
@@ -290,7 +291,7 @@ class MockCameraPlugin : public CameraPlugin {
 
 class MockCaptureSource : public IMFCaptureSource {
  public:
-  MockCaptureSource(){};
+  MockCaptureSource() {};
   ~MockCaptureSource() = default;
 
   // IUnknown
@@ -357,7 +358,7 @@ class MockCaptureSource : public IMFCaptureSource {
 // Uses IMFMediaSourceEx which has SetD3DManager method.
 class MockMediaSource : public IMFMediaSourceEx {
  public:
-  MockMediaSource(){};
+  MockMediaSource() {};
   ~MockMediaSource() = default;
 
   // IUnknown
@@ -853,7 +854,7 @@ class FakeMediaType : public FakeIMFAttributesBase<IMFMediaType> {
       : major_type_(major_type),
         sub_type_(sub_type),
         width_(width),
-        height_(height){};
+        height_(height) {};
 
   // IMFAttributes
   HRESULT GetUINT64(REFGUID key, UINT64* value) override {
