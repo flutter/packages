@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class FGMPlatformCameraPosition;
 @class FGMPlatformCameraUpdate;
 @class FGMPlatformCircle;
+@class FGMPlatformHeatmap;
 @class FGMPlatformMarker;
 @class FGMPlatformPolygon;
 @class FGMPlatformPolyline;
@@ -60,6 +61,17 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)makeWithJson:(id)json;
 /// The circle data, as JSON. This should only be set from
 /// Circle.toJson, and the native code must intepret it according to the
+/// internal implementation details of that method.
+@property(nonatomic, strong) id json;
+@end
+
+/// Pigeon equivalent of the Heatmap class.
+@interface FGMPlatformHeatmap : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithJson:(id)json;
+/// The heatmap data, as JSON. This should only be set from
+/// Heatmap.toJson, and the native code must interpret it according to the
 /// internal implementation details of that method.
 @property(nonatomic, strong) id json;
 @end
@@ -202,6 +214,11 @@ NSObject<FlutterMessageCodec> *FGMGetMessagesCodec(void);
                      changing:(NSArray<FGMPlatformCircle *> *)toChange
                      removing:(NSArray<NSString *> *)idsToRemove
                         error:(FlutterError *_Nullable *_Nonnull)error;
+/// Updates the set of heatmaps on the map.
+- (void)updateHeatmapsByAdding:(NSArray<FGMPlatformHeatmap *> *)toAdd
+                      changing:(NSArray<FGMPlatformHeatmap *> *)toChange
+                      removing:(NSArray<NSString *> *)idsToRemove
+                         error:(FlutterError *_Nullable *_Nonnull)error;
 /// Updates the set of markers on the map.
 - (void)updateMarkersByAdding:(NSArray<FGMPlatformMarker *> *)toAdd
                      changing:(NSArray<FGMPlatformMarker *> *)toChange
