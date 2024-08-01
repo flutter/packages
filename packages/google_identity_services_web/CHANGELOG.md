@@ -1,3 +1,7 @@
+## 0.3.1+4
+
+* Downgrades SDK version to Dart `^3.3.0`.
+
 ## 0.3.1+3
 
 * Updates `README.md` to reflect modern `index.html` script tag placement.

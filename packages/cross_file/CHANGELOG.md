@@ -1,7 +1,6 @@
 ## 0.3.4+2
 
 * Supports `web: ">=0.5.1 <2.0.0"`.
-* Updates SDK version to Dart `^3.4.0`.
 
 ## 0.3.4+1
 
