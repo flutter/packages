@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Support return NavigationType in NavigationRequest from WKWebview.
 
 ## 2.10.0
 

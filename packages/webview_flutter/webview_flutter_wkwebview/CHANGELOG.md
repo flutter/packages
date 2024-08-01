@@ -1,3 +1,7 @@
+## NEXT
+
+* Support return NavigationType in NavigationRequest from WKWebview.
+
 ## 3.14.0
 
 * Adds Swift Package Manager compatibility.
@@ -88,7 +92,7 @@
 
 * Introduces `NSError.toString` for better diagnostics.
 
-## 3.6.2 
+## 3.6.2
 
 * Fixes unawaited_futures violations.
 
