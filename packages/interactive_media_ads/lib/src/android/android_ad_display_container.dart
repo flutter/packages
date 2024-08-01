@@ -122,7 +122,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
 
   // Whether MediaPlayer.start() should be called whenever the VideoView
   // `onPrepared` callback is triggered. `onPrepared` is triggered whenever the
-  // app comes back on screen.
+  // app is resumed after being inactive.
   bool _playAdWhenVideoIsPrepared = true;
 
   late final AndroidAdDisplayContainerCreationParams _androidParams =
