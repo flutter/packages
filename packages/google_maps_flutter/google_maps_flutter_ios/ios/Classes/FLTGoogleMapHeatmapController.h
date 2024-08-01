@@ -6,6 +6,8 @@
 #import <GoogleMaps/GoogleMaps.h>
 @import GoogleMapsUtils;
 
+#import "messages.g.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 /// Controller of a single Heatmap on the map.
@@ -57,11 +59,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// Initializes the controller with a GMSMapView.
 - (instancetype)initWithMapView:(GMSMapView *)mapView;
 
+/// Adds heatmaps to the map from JSON data.
+- (void)addJSONHeatmaps:(NSArray<NSDictionary<NSString *, id> *> *)heatmapsToAdd;
+
 /// Adds heatmaps to the map.
-- (void)addHeatmaps:(NSArray<NSDictionary<NSString *, id> *> *)heatmapsToAdd;
+- (void)addHeatmaps:(NSArray<FGMPlatformHeatmap *> *)heatmapsToAdd;
 
 /// Updates heatmaps on the map.
-- (void)changeHeatmaps:(NSArray<NSDictionary<NSString *, id> *> *)heatmapsToChange;
+- (void)changeHeatmaps:(NSArray<FGMPlatformHeatmap *> *)heatmapsToChange;
 
 /// Removes heatmaps from the map.
 - (void)removeHeatmapsWithIdentifiers:(NSArray<NSString *> *)identifiers;

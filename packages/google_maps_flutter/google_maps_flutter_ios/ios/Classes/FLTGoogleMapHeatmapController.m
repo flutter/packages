@@ -104,9 +104,9 @@
   }
   return self;
 }
-- (void)addHeatmaps:(NSArray<NSDictionary<NSString *, id> *> *)heatmapsToAdd {
+- (void)addJSONHeatmaps:(NSArray<NSDictionary<NSString *, id> *> *)heatmapsToAdd {
   for (NSDictionary<NSString *, id> *heatmap in heatmapsToAdd) {
-    NSString *heatmapId = [FLTHeatmapsController heatmapIdentifierFor:heatmap];
+    NSString *heatmapId = [FLTHeatmapsController getHeatmapId:heatmap];
     GMUHeatmapTileLayer *heatmapTileLayer = [[GMUHeatmapTileLayer alloc] init];
     FLTGoogleMapHeatmapController *controller =
         [[FLTGoogleMapHeatmapController alloc] initWithHeatmapTileLayer:heatmapTileLayer
@@ -115,12 +115,23 @@
     _heatmapIdToController[heatmapId] = controller;
   }
 }
-- (void)changeHeatmaps:(NSArray<NSDictionary<NSString *, id> *> *)heatmapsToChange {
-  for (NSDictionary<NSString *, id> *heatmap in heatmapsToChange) {
-    NSString *heatmapId = [FLTHeatmapsController heatmapIdentifierFor:heatmap];
+- (void)addHeatmaps:(NSArray<FGMPlatformHeatmap *> *)heatmapsToAdd {
+  for (FGMPlatformHeatmap *heatmap in heatmapsToAdd) {
+    NSString *heatmapId = [FLTHeatmapsController getHeatmapId:heatmap.json];
+    GMUHeatmapTileLayer *heatmapTileLayer = [[GMUHeatmapTileLayer alloc] init];
+    FLTGoogleMapHeatmapController *controller =
+        [[FLTGoogleMapHeatmapController alloc] initWithHeatmapTileLayer:heatmapTileLayer
+                                                                mapView:_mapView
+                                                                options:heatmap.json];
+    _heatmapIdToController[heatmapId] = controller;
+  }
+}
+- (void)changeHeatmaps:(NSArray<FGMPlatformHeatmap *> *)heatmapsToChange {
+  for (FGMPlatformHeatmap *heatmap in heatmapsToChange) {
+    NSString *heatmapId = [FLTHeatmapsController getHeatmapId:heatmap.json];
     FLTGoogleMapHeatmapController *controller = _heatmapIdToController[heatmapId];
 
-    [controller interpretHeatmapOptions:heatmap];
+    [controller interpretHeatmapOptions:heatmap.json];
     [controller clearTileCache];
   }
 }
@@ -153,7 +164,7 @@
   }
   return nil;
 }
-+ (NSString *)heatmapIdentifierFor:(NSDictionary<NSString *, id> *)heatmap {
++ (NSString *)getHeatmapId:(NSDictionary<NSString *, id> *)heatmap {
   return heatmap[kHeatmapIdKey];
 }
 @end

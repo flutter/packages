@@ -210,7 +210,7 @@
     }
     id heatmapsToAdd = args[kHeatmapsToAddKey];
     if ([heatmapsToAdd isKindOfClass:[NSArray class]]) {
-      [_heatmapsController addHeatmaps:heatmapsToAdd];
+      [_heatmapsController addJSONHeatmaps:heatmapsToAdd];
     }
     id tileOverlaysToAdd = args[@"tileOverlaysToAdd"];
     if ([tileOverlaysToAdd isKindOfClass:[NSArray class]]) {
@@ -541,6 +541,15 @@
   [self.controller.circlesController removeCirclesWithIdentifiers:idsToRemove];
 }
 
+- (void)updateHeatmapsByAdding:(nonnull NSArray<FGMPlatformHeatmap *> *)toAdd
+                      changing:(nonnull NSArray<FGMPlatformHeatmap *> *)toChange
+                      removing:(nonnull NSArray<NSString *> *)idsToRemove
+                         error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [self.controller.heatmapsController addHeatmaps:toAdd];
+  [self.controller.heatmapsController changeHeatmaps:toChange];
+  [self.controller.heatmapsController removeHeatmapsWithIdentifiers:idsToRemove];
+}
+
 - (void)updateWithMapConfiguration:(nonnull FGMPlatformMapConfiguration *)configuration
                              error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   [self.controller interpretMapOptions:configuration.json];
@@ -761,6 +770,17 @@
                                         fadeIn:layer.fadeIn
                                        opacity:layer.opacity
                                         zIndex:layer.zIndex];
+}
+
+- (nullable FGMPlatformHeatmap *)
+    getInfoForHeatmapWithIdentifier:(nonnull NSString *)heatmapId
+                              error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  NSDictionary<NSString *, id> *heatmapInfo =
+      [self.controller.heatmapsController heatmapInfoWithIdentifier:heatmapId];
+  if (!heatmapInfo) {
+    return nil;
+  }
+  return [FGMPlatformHeatmap makeWithJson:heatmapInfo];
 }
 
 - (nullable NSNumber *)isCompassEnabledWithError:
