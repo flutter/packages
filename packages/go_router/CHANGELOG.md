@@ -1,3 +1,7 @@
+## 14.3.0
+
+- Fixes an issue where redirects did not work when browser history was changed.
+
 ## 14.2.1
 
 - Makes GoRouterState lookup more robust.
