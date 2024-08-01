@@ -1,6 +1,6 @@
 ## 0.1.2
 
-* Adds support for all `AdEventType`s and ad data.
+* Adds support for all `AdEventType`s and ad data. See `AdEventType.adData`.
 
 ## 0.1.1+1
 
