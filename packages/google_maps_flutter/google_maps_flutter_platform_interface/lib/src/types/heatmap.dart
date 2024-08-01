@@ -25,7 +25,7 @@ class HeatmapId extends MapsObjectId<Heatmap> {
 ///
 /// See https://github.com/flutter/flutter/issues/145411
 ///
-/// TODO(stuartmorgan): Add constructor and enum field that informs the platform how to perform the conversion.
+// TODO(stuartmorgan): Add constructor and enum field that informs the platform how to perform the conversion.
 @immutable
 class HeatmapRadius {
   /// Create a [HeatmapRadius] with a radius in pixels.

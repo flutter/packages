@@ -269,9 +269,9 @@ void runTests() {
     }
   }
 
-  final Heatmap heatmap1 = Heatmap(
-    heatmapId: const HeatmapId('heatmap_1'),
-    data: const <WeightedLatLng>[
+  const Heatmap heatmap1 = Heatmap(
+    heatmapId: HeatmapId('heatmap_1'),
+    data: <WeightedLatLng>[
       WeightedLatLng(LatLng(37.782, -122.447)),
       WeightedLatLng(LatLng(37.782, -122.445)),
       WeightedLatLng(LatLng(37.782, -122.443)),
@@ -289,7 +289,7 @@ void runTests() {
     ],
     dissipating: false,
     gradient: HeatmapGradient(
-      const <HeatmapGradientColor>[
+      <HeatmapGradientColor>[
         HeatmapGradientColor(
           Color.fromARGB(255, 0, 255, 255),
           0.2,
@@ -314,7 +314,7 @@ void runTests() {
     ),
     maxIntensity: 1,
     opacity: 0.5,
-    radius: const HeatmapRadius.fromPixels(40),
+    radius: HeatmapRadius.fromPixels(40),
     minimumZoomIntensity: 1,
     maximumZoomIntensity: 20,
   );

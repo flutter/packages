@@ -490,15 +490,13 @@ void main() {
 
     testWidgets('Converts colors to CSS', (WidgetTester tester) async {
       final Set<Heatmap> heatmaps = <Heatmap>{
-        Heatmap(
-          heatmapId: const HeatmapId('1'),
+        const Heatmap(
+          heatmapId: HeatmapId('1'),
           data: heatmapPoints,
           gradient: HeatmapGradient(
-            const <HeatmapGradientColor>[
-              HeatmapGradientColor(Color(0xFFFABADA), 0)
-            ],
+            <HeatmapGradientColor>[HeatmapGradientColor(Color(0xFFFABADA), 0)],
           ),
-          radius: const HeatmapRadius.fromPixels(20),
+          radius: HeatmapRadius.fromPixels(20),
         ),
       };
 

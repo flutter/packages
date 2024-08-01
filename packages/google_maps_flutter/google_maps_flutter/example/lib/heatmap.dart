@@ -103,8 +103,8 @@ class HeatmapBodyState extends State<HeatmapBody> {
                   Heatmap(
                     heatmapId: const HeatmapId('test'),
                     data: enabledPoints,
-                    gradient: HeatmapGradient(
-                      const <HeatmapGradientColor>[
+                    gradient: const HeatmapGradient(
+                      <HeatmapGradientColor>[
                         HeatmapGradientColor(
                           Color.fromARGB(255, 0, 255, 255),
                           0.2,
