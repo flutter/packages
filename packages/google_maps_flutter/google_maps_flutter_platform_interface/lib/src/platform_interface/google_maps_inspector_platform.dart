@@ -116,6 +116,13 @@ abstract class GoogleMapsInspectorPlatform extends PlatformInterface {
     throw UnimplementedError('getTileOverlayInfo() has not been implemented.');
   }
 
+  /// If the platform supports getting information about heatmaps.
+  bool supportsGettingHeatmapInfo() {
+    throw UnimplementedError(
+      'supportsGettingHeatmapInfo() has not been implemented.',
+    );
+  }
+
   /// Returns information about the heatmap with the given ID.
   ///
   /// The returned object will be synthesized from platform data, so will not

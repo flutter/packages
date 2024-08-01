@@ -75,6 +75,9 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   }
 
   @override
+  bool supportsGettingHeatmapInfo() => true;
+
+  @override
   Future<Heatmap?> getHeatmapInfo(HeatmapId heatmapId,
       {required int mapId}) async {
     final PlatformHeatmap? heatmapInfo =

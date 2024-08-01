@@ -319,40 +319,39 @@ void runTests() {
     maximumZoomIntensity: 20,
   );
 
-  testWidgets(
-    'set heatmap correctly',
-    (WidgetTester tester) async {
-      final Completer<int> mapIdCompleter = Completer<int>();
-      final Heatmap heatmap2 = Heatmap(
-        heatmapId: const HeatmapId('heatmap_2'),
-        data: heatmap1.data,
-        dissipating: heatmap1.dissipating,
-        gradient: heatmap1.gradient,
-        maxIntensity: heatmap1.maxIntensity,
-        opacity: heatmap1.opacity - 0.1,
-        radius: heatmap1.radius,
-        minimumZoomIntensity: heatmap1.minimumZoomIntensity,
-        maximumZoomIntensity: heatmap1.maximumZoomIntensity,
-      );
+  testWidgets('set heatmap correctly', (WidgetTester tester) async {
+    final Completer<int> mapIdCompleter = Completer<int>();
+    final Heatmap heatmap2 = Heatmap(
+      heatmapId: const HeatmapId('heatmap_2'),
+      data: heatmap1.data,
+      dissipating: heatmap1.dissipating,
+      gradient: heatmap1.gradient,
+      maxIntensity: heatmap1.maxIntensity,
+      opacity: heatmap1.opacity - 0.1,
+      radius: heatmap1.radius,
+      minimumZoomIntensity: heatmap1.minimumZoomIntensity,
+      maximumZoomIntensity: heatmap1.maximumZoomIntensity,
+    );
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: GoogleMap(
-            initialCameraPosition: kInitialCameraPosition,
-            heatmaps: <Heatmap>{heatmap1, heatmap2},
-            onMapCreated: (GoogleMapController controller) {
-              mapIdCompleter.complete(controller.mapId);
-            },
-          ),
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: kInitialCameraPosition,
+          heatmaps: <Heatmap>{heatmap1, heatmap2},
+          onMapCreated: (GoogleMapController controller) {
+            mapIdCompleter.complete(controller.mapId);
+          },
         ),
-      );
-      await tester.pumpAndSettle(const Duration(seconds: 3));
+      ),
+    );
+    await tester.pumpAndSettle(const Duration(seconds: 3));
 
-      final int mapId = await mapIdCompleter.future;
-      final GoogleMapsInspectorPlatform inspector =
-          GoogleMapsInspectorPlatform.instance!;
+    final int mapId = await mapIdCompleter.future;
+    final GoogleMapsInspectorPlatform inspector =
+        GoogleMapsInspectorPlatform.instance!;
 
+    if (inspector.supportsGettingHeatmapInfo()) {
       final Heatmap heatmapInfo1 =
           (await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId))!;
       final Heatmap heatmapInfo2 =
@@ -360,117 +359,110 @@ void runTests() {
 
       expectHeatmapEquals(heatmap1, heatmapInfo1);
       expectHeatmapEquals(heatmap2, heatmapInfo2);
-    },
-    // Heatmap data is not readable from the Android SDK
-    skip: isAndroid,
-  );
+    }
+  });
 
-  testWidgets(
-    'update heatmaps correctly',
-    (WidgetTester tester) async {
-      final Completer<int> mapIdCompleter = Completer<int>();
-      final Key key = GlobalKey();
+  testWidgets('update heatmaps correctly', (WidgetTester tester) async {
+    final Completer<int> mapIdCompleter = Completer<int>();
+    final Key key = GlobalKey();
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: GoogleMap(
-            key: key,
-            initialCameraPosition: kInitialCameraPosition,
-            heatmaps: <Heatmap>{heatmap1},
-            onMapCreated: (GoogleMapController controller) {
-              mapIdCompleter.complete(controller.mapId);
-            },
-          ),
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          key: key,
+          initialCameraPosition: kInitialCameraPosition,
+          heatmaps: <Heatmap>{heatmap1},
+          onMapCreated: (GoogleMapController controller) {
+            mapIdCompleter.complete(controller.mapId);
+          },
         ),
-      );
+      ),
+    );
 
-      final int mapId = await mapIdCompleter.future;
-      final GoogleMapsInspectorPlatform inspector =
-          GoogleMapsInspectorPlatform.instance!;
+    final int mapId = await mapIdCompleter.future;
+    final GoogleMapsInspectorPlatform inspector =
+        GoogleMapsInspectorPlatform.instance!;
 
-      final Heatmap heatmap1New = heatmap1.copyWith(
-        dataParam: heatmap1.data.sublist(5),
-        dissipatingParam: !heatmap1.dissipating,
-        gradientParam: heatmap1.gradient,
-        maxIntensityParam: heatmap1.maxIntensity! + 1,
-        opacityParam: heatmap1.opacity - 0.1,
-        radiusParam: HeatmapRadius.fromPixels(heatmap1.radius.radius + 1),
-        minimumZoomIntensityParam: heatmap1.minimumZoomIntensity + 1,
-        maximumZoomIntensityParam: heatmap1.maximumZoomIntensity + 1,
-      );
+    final Heatmap heatmap1New = heatmap1.copyWith(
+      dataParam: heatmap1.data.sublist(5),
+      dissipatingParam: !heatmap1.dissipating,
+      gradientParam: heatmap1.gradient,
+      maxIntensityParam: heatmap1.maxIntensity! + 1,
+      opacityParam: heatmap1.opacity - 0.1,
+      radiusParam: HeatmapRadius.fromPixels(heatmap1.radius.radius + 1),
+      minimumZoomIntensityParam: heatmap1.minimumZoomIntensity + 1,
+      maximumZoomIntensityParam: heatmap1.maximumZoomIntensity + 1,
+    );
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: GoogleMap(
-            key: key,
-            initialCameraPosition: kInitialCameraPosition,
-            heatmaps: <Heatmap>{heatmap1New},
-            onMapCreated: (GoogleMapController controller) {
-              fail('update: OnMapCreated should get called only once.');
-            },
-          ),
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          key: key,
+          initialCameraPosition: kInitialCameraPosition,
+          heatmaps: <Heatmap>{heatmap1New},
+          onMapCreated: (GoogleMapController controller) {
+            fail('update: OnMapCreated should get called only once.');
+          },
         ),
-      );
+      ),
+    );
 
-      await tester.pumpAndSettle(const Duration(seconds: 3));
+    await tester.pumpAndSettle(const Duration(seconds: 3));
 
+    if (inspector.supportsGettingHeatmapInfo()) {
       final Heatmap heatmapInfo1 =
           (await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId))!;
 
       expectHeatmapEquals(heatmap1New, heatmapInfo1);
-    },
-    // Heatmap data is not readable from the Android SDK
-    skip: isAndroid,
-  );
+    }
+  });
 
-  testWidgets(
-    'remove heatmaps correctly',
-    (WidgetTester tester) async {
-      final Completer<int> mapIdCompleter = Completer<int>();
-      final Key key = GlobalKey();
+  testWidgets('remove heatmaps correctly', (WidgetTester tester) async {
+    final Completer<int> mapIdCompleter = Completer<int>();
+    final Key key = GlobalKey();
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: GoogleMap(
-            key: key,
-            initialCameraPosition: kInitialCameraPosition,
-            heatmaps: <Heatmap>{heatmap1},
-            onMapCreated: (GoogleMapController controller) {
-              mapIdCompleter.complete(controller.mapId);
-            },
-          ),
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          key: key,
+          initialCameraPosition: kInitialCameraPosition,
+          heatmaps: <Heatmap>{heatmap1},
+          onMapCreated: (GoogleMapController controller) {
+            mapIdCompleter.complete(controller.mapId);
+          },
         ),
-      );
+      ),
+    );
 
-      final int mapId = await mapIdCompleter.future;
-      final GoogleMapsInspectorPlatform inspector =
-          GoogleMapsInspectorPlatform.instance!;
+    final int mapId = await mapIdCompleter.future;
+    final GoogleMapsInspectorPlatform inspector =
+        GoogleMapsInspectorPlatform.instance!;
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: GoogleMap(
-            key: key,
-            initialCameraPosition: kInitialCameraPosition,
-            onMapCreated: (GoogleMapController controller) {
-              fail('OnMapCreated should get called only once.');
-            },
-          ),
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          key: key,
+          initialCameraPosition: kInitialCameraPosition,
+          onMapCreated: (GoogleMapController controller) {
+            fail('OnMapCreated should get called only once.');
+          },
         ),
-      );
+      ),
+    );
 
-      await tester.pumpAndSettle(const Duration(seconds: 3));
+    await tester.pumpAndSettle(const Duration(seconds: 3));
+
+    if (inspector.supportsGettingHeatmapInfo()) {
       final Heatmap? heatmapInfo1 =
           await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId);
 
       expect(heatmapInfo1, isNull);
-    },
-    // Heatmap data is not readable from the Android SDK
-    skip: isAndroid,
-  );
+    }
+  });
 }
 
 class _DebugTileProvider implements TileProvider {
