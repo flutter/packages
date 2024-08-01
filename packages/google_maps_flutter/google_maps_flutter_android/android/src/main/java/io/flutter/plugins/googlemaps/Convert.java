@@ -936,7 +936,8 @@ class Convert {
    *     lat/lng.
    * @return a list of WeightedLatLng objects.
    */
-  private static List<WeightedLatLng> toWeightedData(Object o) {
+  @VisibleForTesting
+  static List<WeightedLatLng> toWeightedData(Object o) {
     final List<?> data = toList(o);
     final List<WeightedLatLng> weightedData = new ArrayList<>(data.size());
 
@@ -961,7 +962,8 @@ class Convert {
    *
    * @return a Gradient object.
    */
-  private static Gradient toGradient(Object o) {
+  @VisibleForTesting
+  static Gradient toGradient(Object o) {
     final Map<?, ?> data = toMap(o);
 
     final List<?> colorData = toList(data.get(HEATMAP_GRADIENT_COLORS_KEY));

@@ -10,6 +10,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_COLORS_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_START_POINTS_KEY;
+
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -20,12 +24,20 @@ import android.util.Base64;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.algo.StaticCluster;
+import com.google.maps.android.geometry.Point;
+import com.google.maps.android.heatmaps.Gradient;
+import com.google.maps.android.heatmaps.HeatmapTileProvider;
+import com.google.maps.android.heatmaps.WeightedLatLng;
+import com.google.maps.android.projection.SphericalMercatorProjection;
+
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper;
 import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -322,6 +334,62 @@ public class ConvertTest {
     }
 
     fail("Expected an IllegalArgumentException to be thrown");
+  }
+
+  private static final SphericalMercatorProjection sProjection =
+          new SphericalMercatorProjection(1);
+
+  @Test()
+  public void ConvertToWeightedLatLngReturnsCorrectData() {
+    final Object data = List.of(List.of(1.1, 2.2), 3.3);
+    final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
+
+    final WeightedLatLng result = Convert.toWeightedLatLng(data);
+
+    Assert.assertEquals(point.x, result.getPoint().x, 0);
+    Assert.assertEquals(point.y, result.getPoint().y, 0);
+    Assert.assertEquals(3.3, result.getIntensity(), 0);
+  }
+
+  @Test()
+  public void ConvertToWeightedDataReturnsCorrectData() {
+    final List<Object> data = List.of(List.of(List.of(1.1, 2.2), 3.3));
+    final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
+
+    final List<WeightedLatLng> result = Convert.toWeightedData(data);
+
+    Assert.assertEquals(1, result.size());
+    Assert.assertEquals(point.x, result.get(0).getPoint().x, 0);
+    Assert.assertEquals(point.y, result.get(0).getPoint().y, 0);
+    Assert.assertEquals(3.3, result.get(0).getIntensity(), 0);
+  }
+
+  @Test()
+  public void ConvertToGradientReturnsCorrectData() {
+    final List<Object> colorData = List.of(0, 1, 2);
+    List<Object> startPointData = List.of(0.0, 1.0, 2.0);
+    final Map<String, Object> data = Map.of(
+            HEATMAP_GRADIENT_COLORS_KEY, colorData,
+            HEATMAP_GRADIENT_START_POINTS_KEY, startPointData,
+            HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY, 3
+    );
+
+    final Gradient result = Convert.toGradient(data);
+
+    Assert.assertEquals(3, result.mColors.length);
+    Assert.assertEquals(0, result.mColors[0]);
+    Assert.assertEquals(1, result.mColors[1]);
+    Assert.assertEquals(2, result.mColors[2]);
+    Assert.assertEquals(3, result.mStartPoints.length);
+    Assert.assertEquals(0.0, result.mStartPoints[0], 0);
+    Assert.assertEquals(1.0, result.mStartPoints[1], 0);
+    Assert.assertEquals(2.0, result.mStartPoints[2], 0);
+    Assert.assertEquals(3, result.mColorMapSize);
+  }
+
+  @Test()
+  public void ConvertInterpretHeatmapOptionsReturnsCorrectData() {
+
   }
 
   private InputStream buildImageInputStream() {
