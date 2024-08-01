@@ -342,19 +342,21 @@ public class ConvertTest {
 
   @Test()
   public void ConvertToWeightedLatLngReturnsCorrectData() {
-    final Object data = List.of(List.of(1.1, 2.2), 3.3);
+    final double intensity = 3.3;
+    final Object data = List.of(List.of(1.1, 2.2), intensity);
     final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
 
     final WeightedLatLng result = Convert.toWeightedLatLng(data);
 
     Assert.assertEquals(point.x, result.getPoint().x, 0);
     Assert.assertEquals(point.y, result.getPoint().y, 0);
-    Assert.assertEquals(3.3, result.getIntensity(), 0);
+    Assert.assertEquals(intensity, result.getIntensity(), 0);
   }
 
   @Test()
   public void ConvertToWeightedDataReturnsCorrectData() {
-    final List<Object> data = List.of(List.of(List.of(1.1, 2.2), 3.3));
+    final double intensity = 3.3;
+    final List<Object> data = List.of(List.of(List.of(1.1, 2.2), intensity));
     final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
 
     final List<WeightedLatLng> result = Convert.toWeightedData(data);
@@ -362,53 +364,79 @@ public class ConvertTest {
     Assert.assertEquals(1, result.size());
     Assert.assertEquals(point.x, result.get(0).getPoint().x, 0);
     Assert.assertEquals(point.y, result.get(0).getPoint().y, 0);
-    Assert.assertEquals(3.3, result.get(0).getIntensity(), 0);
+    Assert.assertEquals(intensity, result.get(0).getIntensity(), 0);
   }
 
   @Test()
   public void ConvertToGradientReturnsCorrectData() {
-    final List<Object> colorData = List.of(0, 1, 2);
-    List<Object> startPointData = List.of(0.0, 1.0, 2.0);
+    final int color1 = 0;
+    final int color2 = 1;
+    final int color3 = 2;
+    final List<Object> colorData = List.of(color1, color2, color3);
+    final double startPoint1 = 0.0;
+    final double startPoint2 = 1.0;
+    final double startPoint3 = 2.0;
+    List<Object> startPointData = List.of(startPoint1, startPoint2, startPoint3);
+    final int colorMapSize = 3;
     final Map<String, Object> data =
         Map.of(
             HEATMAP_GRADIENT_COLORS_KEY, colorData,
             HEATMAP_GRADIENT_START_POINTS_KEY, startPointData,
-            HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY, 3);
+            HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY, colorMapSize);
 
     final Gradient result = Convert.toGradient(data);
 
     Assert.assertEquals(3, result.mColors.length);
-    Assert.assertEquals(0, result.mColors[0]);
-    Assert.assertEquals(1, result.mColors[1]);
-    Assert.assertEquals(2, result.mColors[2]);
+    Assert.assertEquals(color1, result.mColors[0]);
+    Assert.assertEquals(color2, result.mColors[1]);
+    Assert.assertEquals(color3, result.mColors[2]);
     Assert.assertEquals(3, result.mStartPoints.length);
-    Assert.assertEquals(0.0, result.mStartPoints[0], 0);
-    Assert.assertEquals(1.0, result.mStartPoints[1], 0);
-    Assert.assertEquals(2.0, result.mStartPoints[2], 0);
-    Assert.assertEquals(3, result.mColorMapSize);
+    Assert.assertEquals(startPoint1, result.mStartPoints[0], 0);
+    Assert.assertEquals(startPoint2, result.mStartPoints[1], 0);
+    Assert.assertEquals(startPoint3, result.mStartPoints[2], 0);
+    Assert.assertEquals(colorMapSize, result.mColorMapSize);
   }
 
   @Test()
   public void ConvertInterpretHeatmapOptionsReturnsCorrectData() {
-    final List<Object> dataData = List.of(List.of(List.of(1.1, 2.2), 3.3));
+    final double intensity = 3.3;
+    final List<Object> dataData = List.of(List.of(List.of(1.1, 2.2), intensity));
     final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
+
+    final int color1 = 0;
+    final int color2 = 1;
+    final int color3 = 2;
+    final List<Object> colorData = List.of(color1, color2, color3);
+    final double startPoint1 = 0.0;
+    final double startPoint2 = 1.0;
+    final double startPoint3 = 2.0;
+    List<Object> startPointData = List.of(startPoint1, startPoint2, startPoint3);
+    final int colorMapSize = 3;
+    final Map<String, ?> gradientData =
+        Map.of(
+            HEATMAP_GRADIENT_COLORS_KEY, colorData,
+            HEATMAP_GRADIENT_START_POINTS_KEY, startPointData,
+            HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY, colorMapSize);
+
+    final double maxIntensity = 4.4;
+    final double opacity = 5.5;
+    final int radius = 6;
+    final String idData = "heatmap_1";
+
     final Map<String, Object> data =
         Map.of(
             HEATMAP_DATA_KEY,
             dataData,
             HEATMAP_GRADIENT_KEY,
-            Map.of(
-                HEATMAP_GRADIENT_COLORS_KEY, List.of(0, 1, 2),
-                HEATMAP_GRADIENT_START_POINTS_KEY, List.of(0.0, 1.0, 2.0),
-                HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY, 3),
+            gradientData,
             HEATMAP_MAX_INTENSITY_KEY,
-            4.4,
+            maxIntensity,
             HEATMAP_OPACITY_KEY,
-            5.5,
+            opacity,
             HEATMAP_RADIUS_KEY,
-            6,
+            radius,
             HEATMAP_ID_KEY,
-            "heatmap_1");
+            idData);
 
     final MockHeatmapBuilder builder = new MockHeatmapBuilder();
     final String id = Convert.interpretHeatmapOptions(data, builder);
@@ -416,20 +444,20 @@ public class ConvertTest {
     Assert.assertEquals(1, builder.getWeightedData().size());
     Assert.assertEquals(point.x, builder.getWeightedData().get(0).getPoint().x, 0);
     Assert.assertEquals(point.y, builder.getWeightedData().get(0).getPoint().y, 0);
-    Assert.assertEquals(3.3, builder.getWeightedData().get(0).getIntensity(), 0);
+    Assert.assertEquals(intensity, builder.getWeightedData().get(0).getIntensity(), 0);
     Assert.assertEquals(3, builder.getGradient().mColors.length);
-    Assert.assertEquals(0, builder.getGradient().mColors[0]);
-    Assert.assertEquals(1, builder.getGradient().mColors[1]);
-    Assert.assertEquals(2, builder.getGradient().mColors[2]);
+    Assert.assertEquals(color1, builder.getGradient().mColors[0]);
+    Assert.assertEquals(color2, builder.getGradient().mColors[1]);
+    Assert.assertEquals(color3, builder.getGradient().mColors[2]);
     Assert.assertEquals(3, builder.getGradient().mStartPoints.length);
-    Assert.assertEquals(0.0, builder.getGradient().mStartPoints[0], 0);
-    Assert.assertEquals(1.0, builder.getGradient().mStartPoints[1], 0);
-    Assert.assertEquals(2.0, builder.getGradient().mStartPoints[2], 0);
-    Assert.assertEquals(3, builder.getGradient().mColorMapSize);
-    Assert.assertEquals(4.4, builder.getMaxIntensity(), 0);
-    Assert.assertEquals(5.5, builder.getOpacity(), 0);
-    Assert.assertEquals(6, builder.getRadius());
-    Assert.assertEquals("heatmap_1", id);
+    Assert.assertEquals(startPoint1, builder.getGradient().mStartPoints[0], 0);
+    Assert.assertEquals(startPoint2, builder.getGradient().mStartPoints[1], 0);
+    Assert.assertEquals(startPoint3, builder.getGradient().mStartPoints[2], 0);
+    Assert.assertEquals(colorMapSize, builder.getGradient().mColorMapSize);
+    Assert.assertEquals(maxIntensity, builder.getMaxIntensity(), 0);
+    Assert.assertEquals(opacity, builder.getOpacity(), 0);
+    Assert.assertEquals(radius, builder.getRadius());
+    Assert.assertEquals(idData, id);
   }
 
   private InputStream buildImageInputStream() {
