@@ -1,7 +1,6 @@
 ## 0.9.4+2
 
 * Supports `web: ">=0.5.1 <2.0.0"`.
-* Updates SDK version to Flutter `^3.19.0`.
 
 ## 0.9.4+1
 
@@ -10,7 +9,7 @@
 ## 0.9.4
 
 * Updates web code to package `web: ^0.5.0`.
-* Updates SDK version to Dart `^3.3.0`. Flutter `^3.16.0`.
+* Updates SDK version to Dart `^3.3.0`. Flutter `^3.19.0`.
 
 ## 0.9.3
 
