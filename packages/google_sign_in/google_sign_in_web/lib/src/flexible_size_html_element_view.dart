@@ -78,6 +78,8 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
   ) {
     final web.DOMRectReadOnly rect = resizes.toDart.last.contentRect;
     if (rect.width > 0 && rect.height > 0) {
+      // The following ignore can be removed once the package leaves web:0.5.1 behind.
+      //ignore:noop_primitive_operations
       _doResize(Size(rect.width.toDouble(), rect.height.toDouble()));
     }
   }
