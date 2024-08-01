@@ -1,6 +1,6 @@
 ## 2.7.1
 
-- Fixes readme typo and uses code excerpts.
+- Fixes readme typos and uses code excerpts.
 
 ## 2.7.0
 
