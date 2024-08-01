@@ -1,3 +1,7 @@
+## 1.4.0
+
+* Adds macOS support.
+
 ## 1.3.1
 
 * Adjusts implementation for improved testability, and removes use of OCMock.
