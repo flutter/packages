@@ -1,6 +1,6 @@
-## NEXT
+## 0.3.4+2
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Adds support for `web: ^1.0.0`.
 
 ## 0.3.4+1
 

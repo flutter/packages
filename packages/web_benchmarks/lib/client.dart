@@ -25,6 +25,15 @@ late Map<String, RecorderFactory> _benchmarks;
 
 final LocalBenchmarkServerClient _client = LocalBenchmarkServerClient();
 
+/// Adapts between web:0.5.1 and 1.0.0, so this package is compatible with both.
+extension on HTMLElement {
+  @JS('innerHTML')
+  external set innerHTMLString(String value);
+  @JS('insertAdjacentHTML')
+  external void insertAdjacentHTMLString(String position, String string);
+  void appendHtml(String input) => insertAdjacentHTMLString('beforeend', input);
+}
+
 /// Starts a local benchmark client to run [benchmarks].
 ///
 /// Usually used in combination with a benchmark server, which orders the
@@ -152,7 +161,7 @@ void _fallbackToManual(String error) {
 void _printResultsToScreen(Profile profile) {
   final HTMLBodyElement body = document.body! as HTMLBodyElement;
 
-  body.innerHTML = '<h2>${profile.name}</h2>';
+  body.innerHTMLString = '<h2>${profile.name}</h2>';
 
   profile.scoreData.forEach((String scoreKey, Timeseries timeseries) {
     body.appendHtml('<h2>$scoreKey</h2>');
@@ -401,8 +410,4 @@ class LocalBenchmarkServerClient {
     }
     return completer.future;
   }
-}
-
-extension on HTMLElement {
-  void appendHtml(String input) => insertAdjacentHTML('beforeend', input);
 }

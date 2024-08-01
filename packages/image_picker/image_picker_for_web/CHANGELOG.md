@@ -1,3 +1,7 @@
+## 3.0.5
+
+* Adds support for `web: ^1.0.0`.
+
 ## 3.0.4
 
 * Improves README example and updates it to use code excerpts.
