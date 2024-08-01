@@ -67,6 +67,12 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
         interfaceDelegate.target?.params.onAdEvent?.call(
           AdEvent(
             type: toInterfaceEventType(event.type),
+            adData: event.adData?.map(
+                  (String? key, Object? value) {
+                    return MapEntry<String, String>(key!, value.toString());
+                  },
+                ) ??
+                <String, String>{},
           ),
         );
       },

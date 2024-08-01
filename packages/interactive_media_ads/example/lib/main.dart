@@ -105,7 +105,10 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
                 _adsManager = null;
               case AdEventType.clicked:
               case AdEventType.complete:
+              case _:
             }
+
+            return;
           },
           onAdErrorEvent: (AdErrorEvent event) {
             debugPrint('AdErrorEvent: ${event.error.message}');

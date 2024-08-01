@@ -7,7 +7,6 @@
 // Swift ProxyApi feature from pigeon.
 // ignore_for_file: avoid_unused_constructor_parameters
 
-/*
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
@@ -488,6 +487,9 @@ abstract class IMAAdEvent extends NSObject {
 
   /// Stringified type of the event.
   late final String typeString;
+
+  /// Extra data about the ad.
+  late final Map<String, Object>? adData;
 }
 
 /// Set of properties that influence how ads are rendered.
@@ -505,4 +507,3 @@ abstract class IMAAdsRenderingSettings extends NSObject {
 /// See https://developer.apple.com/documentation/objectivec/nsobject.
 @ProxyApi()
 abstract class NSObject {}
-*/

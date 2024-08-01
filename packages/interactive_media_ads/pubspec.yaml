@@ -34,7 +34,7 @@ dev_dependencies:
   pigeon:
     git:
       url: https://github.com/bparrishMines/packages.git
-      ref: pigeon_kotlin_split
+      ref: pigeon_wrapper_swift
       path: packages/pigeon
 
 topics:
