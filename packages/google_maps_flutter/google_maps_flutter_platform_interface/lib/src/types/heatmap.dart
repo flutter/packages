@@ -256,11 +256,12 @@ class HeatmapGradient {
   const HeatmapGradient(
     this.colors, {
     this.colorMapSize = 256,
-  }) : assert(colors.length > 0);
+  });
 
   /// The gradient colors.
   ///
   /// Distributed along [startPoint]s or uniformly depending on the platform.
+  /// Must contain at least one color.
   final List<HeatmapGradientColor> colors;
 
   /// Number of entries in the generated color map.
