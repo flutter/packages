@@ -490,14 +490,6 @@ class Convert {
     return new WeightedLatLng(toLatLng(data.get(0)), toDouble(data.get(1)));
   }
 
-  private static final SphericalMercatorProjection sProjection = new SphericalMercatorProjection(1);
-
-  static Object weightedLatLngToJson(WeightedLatLng weightedLatLng) {
-    return Arrays.asList(
-        latLngToJson(sProjection.toLatLng(weightedLatLng.getPoint())),
-        weightedLatLng.getIntensity());
-  }
-
   static Point pointFromPigeon(Messages.PlatformPoint point) {
     return new Point(point.getX().intValue(), point.getY().intValue());
   }
@@ -952,16 +944,6 @@ class Convert {
       weightedData.add(toWeightedLatLng(rawWeightedPoint));
     }
     return weightedData;
-  }
-
-  /** Converts the given list of WeightedLatLng objects to a JSON object. */
-  public static Object weightedDataToJson(List<WeightedLatLng> weightedData) {
-    final List<Object> data = new ArrayList<>(weightedData.size());
-
-    for (WeightedLatLng weightedLatLng : weightedData) {
-      data.add(weightedLatLngToJson(weightedLatLng));
-    }
-    return data;
   }
 
   /**
