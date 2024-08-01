@@ -1,6 +1,6 @@
 ## 2.3.1
 
-* Fixes `getStringList` bug with `List<Object>` cast exception.
+* Fixes `getStringList` bug with `List<Object?>` cast exception.
 
 ## 2.3.0
 
