@@ -327,8 +327,10 @@
 
   // The location gets projected to different values
   XCTAssertEqual([weightedLocation intensity], 3);
+}
 
-  weightedLatLng = @[];
+- (void)testWeightedLatLngFromArrayThrowsForInvalidInput {
+  NSArray *weightedLatLng = @[];
 
   XCTAssertThrows([FLTGoogleMapJSONConversions weightedLatLngFromArray:weightedLatLng]);
 }
