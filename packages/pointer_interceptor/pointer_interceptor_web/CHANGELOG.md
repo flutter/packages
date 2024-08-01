@@ -1,6 +1,6 @@
 ## 0.10.2+1
 
-* Supports `web: ">=0.5.1 <2.0.0"`.
+* Adds support for `web: ^1.0.0`.
 
 ## 0.10.2
 
