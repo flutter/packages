@@ -1,3 +1,7 @@
+## 0.1.2
+
+* Adds support for all `AdEventType`s and ad data.
+
 ## 0.1.1+1
 
 * Fixes a typo in the formatting of the CHANGELOG.
