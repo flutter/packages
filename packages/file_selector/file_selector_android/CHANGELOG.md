@@ -1,3 +1,11 @@
+## 0.5.1+5
+
+* Bumps androidx.annotation:annotation from 1.8.0 to 1.8.1.
+
+## 0.5.1+4
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 0.5.1+3
 
 * Bumps com.android.tools.build:gradle from 7.3.0 to 8.5.1.

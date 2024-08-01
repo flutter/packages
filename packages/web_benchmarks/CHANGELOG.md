@@ -1,3 +1,7 @@
+## 2.0.1
+
+* Adds support for `web: ^1.0.0`.
+
 ## 2.0.0
 
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.

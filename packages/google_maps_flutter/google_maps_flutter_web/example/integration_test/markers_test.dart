@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -26,7 +27,7 @@ void main() {
     late StreamController<MapEvent<Object?>> events;
     late MarkersController controller;
     late ClusterManagersController clusterManagersController;
-    late gmaps.GMap map;
+    late gmaps.Map map;
 
     setUp(() {
       events = StreamController<MapEvent<Object?>>();
@@ -34,7 +35,7 @@ void main() {
       clusterManagersController = ClusterManagersController(stream: events);
       controller = MarkersController(
           stream: events, clusterManagersController: clusterManagersController);
-      map = gmaps.GMap(createDivElement());
+      map = gmaps.Map(createDivElement());
       clusterManagersController.bindToMap(123, map);
       controller.bindToMap(123, map);
     });
@@ -230,7 +231,7 @@ void main() {
           controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
-      final String assetUrl = icon!.url!;
+      final String assetUrl = icon!.url;
       expect(assetUrl, startsWith('assets'));
 
       final gmaps.Size size = icon.size!;
@@ -262,7 +263,7 @@ void main() {
           controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
-      final String assetUrl = icon!.url!;
+      final String assetUrl = icon!.url;
       expect(assetUrl, startsWith('assets'));
 
       final gmaps.Size size = icon.size!;
@@ -297,7 +298,7 @@ void main() {
           controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
-      final String assetUrl = icon!.url!;
+      final String assetUrl = icon!.url;
       expect(assetUrl, startsWith('assets'));
 
       final gmaps.Size size = icon.size!;
@@ -330,7 +331,7 @@ void main() {
           controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
-      final String assetUrl = icon!.url!;
+      final String assetUrl = icon!.url;
       expect(assetUrl, startsWith('assets'));
 
       // For invalid assets, the size and scaledSize should be null.
@@ -360,7 +361,7 @@ void main() {
           controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
-      final String blobUrl = icon!.url!;
+      final String blobUrl = icon!.url;
       expect(blobUrl, startsWith('blob:'));
 
       final http.Response response = await http.get(Uri.parse(blobUrl));
@@ -464,9 +465,12 @@ void main() {
       expect(controller.markers.length, 1);
       final HTMLElement? content = controller
           .markers[const MarkerId('1')]?.infoWindow?.content as HTMLElement?;
-      expect(content?.innerHTML, contains('title for test'));
+      expect(content, isNotNull);
+
+      final String innerHtml = (content!.innerHTML as JSString).toDart;
+      expect(innerHtml, contains('title for test'));
       expect(
-          content?.innerHTML,
+          innerHtml,
           contains(
             '<a href="https://www.google.com">Go to Google &gt;&gt;&gt;</a>',
           ));
