@@ -1,3 +1,7 @@
+## 2.4.1
+
+* Adds support for `web: ^1.0.0`.
+
 ## 2.4.0
 
 * Adds `SharedPreferencesAsyncWeb` API.

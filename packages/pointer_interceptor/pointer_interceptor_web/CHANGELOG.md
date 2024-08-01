@@ -1,3 +1,7 @@
+## 0.10.2+1
+
+* Adds support for `web: ^1.0.0`.
+
 ## 0.10.2
 
 * Updates web code to package `web: ^0.5.0`.
