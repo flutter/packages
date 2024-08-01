@@ -107,8 +107,6 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
               case AdEventType.complete:
               case _:
             }
-
-            return;
           },
           onAdErrorEvent: (AdErrorEvent event) {
             debugPrint('AdErrorEvent: ${event.error.message}');
