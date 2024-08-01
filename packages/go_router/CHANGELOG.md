@@ -1,3 +1,7 @@
+## 14.2.2
+
+- Fixes redirect example's signature in `route.dart`.
+
 ## 14.2.1
 
 - Makes GoRouterState lookup more robust.
