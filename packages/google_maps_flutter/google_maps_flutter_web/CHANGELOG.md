@@ -1,6 +1,6 @@
 ## 0.5.9+2
 
-* Downgrades SDK version to Dart `^3.3.0`. Flutter `^3.19.0`.
+* Restores support for Dart `^3.3.0` and Flutter `^3.19.0`.
 
 ## 0.5.9+1
 

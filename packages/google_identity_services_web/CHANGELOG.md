@@ -1,6 +1,6 @@
 ## 0.3.1+4
 
-* Downgrades SDK version to Dart `^3.3.0`.
+* Restores support for Dart `^3.3.0`.
 
 ## 0.3.1+3
 
