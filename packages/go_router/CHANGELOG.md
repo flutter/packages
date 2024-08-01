@@ -1,5 +1,8 @@
-## 14.2.1
+## 14.2.2
+- Allows going to a path relatively by prefixing `./`
+- Adds `TypedRelativeGoRoute`
 
+## 14.2.1
 - Makes GoRouterState lookup more robust.
 
 ## 14.2.0
