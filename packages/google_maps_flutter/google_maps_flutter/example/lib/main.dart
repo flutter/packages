@@ -80,7 +80,6 @@ void main() {
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
-    mapsImplementation.useAndroidViewSurface = true;
     initializeMapRenderer();
   }
   runApp(const MaterialApp(home: MapsDemo()));

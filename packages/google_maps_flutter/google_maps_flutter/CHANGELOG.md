@@ -2,6 +2,10 @@
 
 * Adds support for heatmap layers.
 
+## 2.7.1
+
+* Updates the example app to use TLHC mode, per current package guidance.
+
 ## 2.7.0
 
 * Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
