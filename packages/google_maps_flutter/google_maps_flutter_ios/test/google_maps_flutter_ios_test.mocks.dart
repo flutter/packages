@@ -100,6 +100,25 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
       ) as _i3.Future<void>);
 
   @override
+  _i3.Future<void> updateHeatmaps(
+    List<_i2.PlatformHeatmap?>? toAdd,
+    List<_i2.PlatformHeatmap?>? toChange,
+    List<String?>? idsToRemove,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateHeatmaps,
+          [
+            toAdd,
+            toChange,
+            idsToRemove,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
   _i3.Future<void> updateMarkers(
     List<_i2.PlatformMarker?>? toAdd,
     List<_i2.PlatformMarker?>? toChange,
