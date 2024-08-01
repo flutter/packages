@@ -492,6 +492,7 @@ visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(Heatmap heatmap) {
                 ..weight = e.weight,
             )
             .toList()
+            .toJS
         ..dissipating = heatmap.dissipating
         ..gradient = gradientColors == null
             ? null

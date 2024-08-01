@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
@@ -229,7 +230,7 @@ void main() {
       final HeatmapController controller = HeatmapController(heatmap: heatmap);
       final visualization.HeatmapLayerOptions options =
           visualization.HeatmapLayerOptions()
-            ..data = <gmaps.LatLng>[gmaps.LatLng(0, 0)];
+            ..data = <gmaps.LatLng>[gmaps.LatLng(0, 0)].toJS;
 
       expect(heatmap.data, hasLength(0));
 
