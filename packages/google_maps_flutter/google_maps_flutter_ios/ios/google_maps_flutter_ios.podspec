@@ -25,11 +25,9 @@ Downloaded by pub (not CocoaPods).
   # Versions earlier than 8.4 can't be supported because that's the first version
   # that supports privacy manifests.
   s.dependency 'GoogleMaps', '>= 8.4', '< 10.0'
-  s.dependency 'Google-Maps-iOS-Utils'
+  s.dependency 'Google-Maps-iOS-Utils', '>= 5.0', '< 7.0'
   s.static_framework = true
   s.platform = :ios, '14.0'
-  # DO NOT MERGE: The ECLUDED_ARCHS key is a temporary workaround necessitated by https://github.com/googlemaps/google-maps-ios-utils/issues/456
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
   # "Google-Maps-iOS-Utils" is static and contains Swift classes.
   # Find the Swift runtime when these plugins are built as libraries without `use_frameworks!`
   s.swift_version = '5.0'
