@@ -53,7 +53,7 @@ platform_properties:
       device_type: none
       dependencies: >-
         [
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "clang", "version": "git_revision:3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
           {"dependency": "curl", "version": "version:7.64.0"}
@@ -123,7 +123,7 @@ targets:
       # The format check requires clang-format, and the current version of ktfmt requires JDK 11+.
       dependencies: >-
         [
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "clang", "version": "git_revision:3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff"},
           {"dependency": "open_jdk", "version": "version:17"}
         ]
       env_variables: >-
@@ -324,7 +324,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "clang", "version": "git_revision:3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
           {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
@@ -347,7 +347,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "clang", "version": "git_revision:3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
           {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
