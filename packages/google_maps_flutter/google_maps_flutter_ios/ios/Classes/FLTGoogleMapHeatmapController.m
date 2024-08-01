@@ -45,6 +45,7 @@
                                                  mapView:_mapView
                                                  options:data];
 }
+
 + (void)interpretHeatmapOptions:(GMUHeatmapTileLayer *)heatmapTileLayer
                         mapView:(GMSMapView *)mapView
                         options:(NSDictionary<NSString *, id> *)options {
@@ -104,6 +105,7 @@
   }
   return self;
 }
+
 - (void)addJSONHeatmaps:(NSArray<NSDictionary<NSString *, id> *> *)heatmapsToAdd {
   for (NSDictionary<NSString *, id> *heatmap in heatmapsToAdd) {
     NSString *heatmapId = [FLTHeatmapsController getHeatmapId:heatmap];
@@ -115,6 +117,7 @@
     _heatmapIdToController[heatmapId] = controller;
   }
 }
+
 - (void)addHeatmaps:(NSArray<FGMPlatformHeatmap *> *)heatmapsToAdd {
   for (FGMPlatformHeatmap *heatmap in heatmapsToAdd) {
     NSString *heatmapId = [FLTHeatmapsController getHeatmapId:heatmap.json];
@@ -126,6 +129,7 @@
     _heatmapIdToController[heatmapId] = controller;
   }
 }
+
 - (void)changeHeatmaps:(NSArray<FGMPlatformHeatmap *> *)heatmapsToChange {
   for (FGMPlatformHeatmap *heatmap in heatmapsToChange) {
     NSString *heatmapId = [FLTHeatmapsController getHeatmapId:heatmap.json];
@@ -135,6 +139,7 @@
     [controller clearTileCache];
   }
 }
+
 - (void)removeHeatmapsWithIdentifiers:(NSArray<NSString *> *)identifiers {
   for (NSString *heatmapId in identifiers) {
     FLTGoogleMapHeatmapController *controller = _heatmapIdToController[heatmapId];
@@ -145,9 +150,11 @@
     [_heatmapIdToController removeObjectForKey:heatmapId];
   }
 }
-- (bool)hasHeatmapWithIdentifier:(NSString *)identifier {
+
+- (BOOL)hasHeatmapWithIdentifier:(NSString *)identifier {
   return _heatmapIdToController[identifier] != nil;
 }
+
 - (nullable NSDictionary<NSString *, id> *)heatmapInfoWithIdentifier:(NSString *)identifier {
   FLTGoogleMapHeatmapController *heatmapController = self.heatmapIdToController[identifier];
   if (heatmapController) {
@@ -164,6 +171,7 @@
   }
   return nil;
 }
+
 + (NSString *)getHeatmapId:(NSDictionary<NSString *, id> *)heatmap {
   return heatmap[kHeatmapIdKey];
 }

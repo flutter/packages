@@ -37,8 +37,6 @@ extern FGMPlatformCameraPosition *FGMGetPigeonCameraPositionForPosition(
 @interface FLTGoogleMapJSONConversions : NSObject
 
 extern NSString *const kHeatmapsToAddKey;
-extern NSString *const kHeatmapsToChangeKey;
-extern NSString *const kHeatmapIdsToRemoveKey;
 extern NSString *const kHeatmapIdKey;
 extern NSString *const kHeatmapDataKey;
 extern NSString *const kHeatmapGradientKey;

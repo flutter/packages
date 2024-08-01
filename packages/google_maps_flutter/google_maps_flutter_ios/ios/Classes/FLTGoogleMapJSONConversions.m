@@ -43,8 +43,6 @@ FGMPlatformCameraPosition *FGMGetPigeonCameraPositionForPosition(GMSCameraPositi
 
 // These constants must match the corresponding constants in serialization.dart
 NSString *const kHeatmapsToAddKey = @"heatmapsToAdd";
-NSString *const kHeatmapsToChangeKey = @"heatmapsToChange";
-NSString *const kHeatmapIdsToRemoveKey = @"heatmapIdsToRemove";
 NSString *const kHeatmapIdKey = @"heatmapId";
 NSString *const kHeatmapDataKey = @"data";
 NSString *const kHeatmapGradientKey = @"gradient";

@@ -34,7 +34,7 @@ double _getCssOpacity(Color color) {
 
 // Converts a [Color] into a valid CSS value rgba(R, G, B, A).
 String _getCssColorWithAlpha(Color color) {
-  return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha / 255})';
+  return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${(color.alpha / 255).toStringAsFixed(2)})';
 }
 
 // Converts options from the plugin into gmaps.MapOptions that can be used by the JS SDK.
