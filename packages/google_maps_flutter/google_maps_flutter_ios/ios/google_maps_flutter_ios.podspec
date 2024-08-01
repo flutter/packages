@@ -25,6 +25,8 @@ Downloaded by pub (not CocoaPods).
   # Versions earlier than 8.4 can't be supported because that's the first version
   # that supports privacy manifests.
   s.dependency 'GoogleMaps', '>= 8.4', '< 10.0'
+  # Google-Maps-iOS-Utils 5.x supports GoogleMaps 8.x and iOS 14.0+
+  # Google-Maps-iOS-Utils 6.x supports GoogleMaps 9.x and iOS 15.0+
   s.dependency 'Google-Maps-iOS-Utils', '>= 5.0', '< 7.0'
   s.static_framework = true
   s.platform = :ios, '14.0'
