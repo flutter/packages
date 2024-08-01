@@ -1,3 +1,7 @@
+## 0.2.4
+
+* Adds support for setting the credentialless attribute on the <iframe> element.
+
 ## 0.2.3+1
 
 * Fixes DOM timing issue with Legacy Widget build method.

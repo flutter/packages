@@ -18,19 +18,32 @@ import 'http_request_factory.dart';
 @immutable
 class WebWebViewControllerCreationParams
     extends PlatformWebViewControllerCreationParams {
-  /// Creates a new [AndroidWebViewControllerCreationParams] instance.
+  /// Creates a new [WebWebViewControllerCreationParams] instance.
+  /// [iFrameCredentialless] can be used to set the credentialless attribute on the <iframe>.
   WebWebViewControllerCreationParams({
     @visibleForTesting this.httpRequestFactory = const HttpRequestFactory(),
-  }) : super();
+    bool iFrameCredentialless = false,
+  })  : iFrame = web.HTMLIFrameElement()
+          ..id = 'webView${_nextIFrameId++}'
+          ..style.width = '100%'
+          ..style.height = '100%'
+          ..style.border = 'none'
+          ..setAttribute(
+              'credentialless', iFrameCredentialless ? 'true' : 'false'),
+        super();
 
   /// Creates a [WebWebViewControllerCreationParams] instance based on [PlatformWebViewControllerCreationParams].
+  /// [iFrameCredentialless] can be used to set the credentialless attribute on the <iframe>.
   WebWebViewControllerCreationParams.fromPlatformWebViewControllerCreationParams(
     // Recommended placeholder to prevent being broken by platform interface.
     // ignore: avoid_unused_constructor_parameters
     PlatformWebViewControllerCreationParams params, {
     @visibleForTesting
     HttpRequestFactory httpRequestFactory = const HttpRequestFactory(),
-  }) : this(httpRequestFactory: httpRequestFactory);
+    bool iFrameCredentialless = false,
+  }) : this(
+            httpRequestFactory: httpRequestFactory,
+            iFrameCredentialless: iFrameCredentialless);
 
   static int _nextIFrameId = 0;
 
@@ -39,11 +52,7 @@ class WebWebViewControllerCreationParams
 
   /// The underlying element used as the WebView.
   @visibleForTesting
-  final web.HTMLIFrameElement iFrame = web.HTMLIFrameElement()
-    ..id = 'webView${_nextIFrameId++}'
-    ..style.width = '100%'
-    ..style.height = '100%'
-    ..style.border = 'none';
+  final web.HTMLIFrameElement iFrame;
 }
 
 /// An implementation of [PlatformWebViewController] using Flutter for Web API.
