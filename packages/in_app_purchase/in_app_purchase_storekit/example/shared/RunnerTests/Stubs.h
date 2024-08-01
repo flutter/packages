@@ -120,7 +120,7 @@ API_AVAILABLE(ios(13.0), macos(10.15))
 @property(nonatomic, copy, nullable) void (^invokeMethodChannelStub)
     (NSString *method, id _Nullable arguments);
 @property(nonatomic, copy, nullable) void (^invokeMethodChannelWithResultsStub)
-    (NSString *method, id arguments, FlutterResult _Nullable);
+    (NSString *method, id _Nullable arguments, FlutterResult _Nullable);
 
 @end
 

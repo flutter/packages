@@ -1,3 +1,7 @@
+## 2.12.1
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 2.12.0
 
 * Converts Java->Dart calls to Pigeon.

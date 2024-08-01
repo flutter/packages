@@ -9,6 +9,3 @@
 # https://github.com/flutter/flutter/issues/117022
 - camera
 
-# Dependencies are not migrated yet
-# https://github.com/flutter/flutter/issues/148624
-- google_maps_flutter

@@ -89,6 +89,24 @@ void main() {
       );
     });
 
+    test('fails if wasm flag is present but not web platform', () async {
+      setMockFlutterDevicesOutput();
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['drive-examples', '--android', '--wasm'],
+          errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('--wasm is only supported on the web platform'),
+        ]),
+      );
+    });
+
     test('fails if multiple platforms are provided', () async {
       setMockFlutterDevicesOutput();
       Error? commandError;
@@ -682,6 +700,57 @@ void main() {
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--web-renderer=canvaskit',
+                  '--driver',
+                  'test_driver/integration_test.dart',
+                  '--target',
+                  'integration_test/plugin_test.dart',
+                ],
+                pluginExampleDirectory.path),
+          ]));
+    });
+
+    test('drives a web plugin compiled to WASM', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>[
+          'example/integration_test/plugin_test.dart',
+          'example/test_driver/integration_test.dart',
+          'example/web/index.html',
+        ],
+        platformSupport: <String, PlatformDetails>{
+          platformWeb: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'drive-examples',
+        '--web',
+        '--wasm',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          contains('No issues found!'),
+        ]),
+      );
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+                getFlutterCommand(mockPlatform),
+                const <String>[
+                  'drive',
+                  '-d',
+                  'web-server',
+                  '--web-port=7357',
+                  '--browser-name=chrome',
+                  '--wasm',
                   '--driver',
                   'test_driver/integration_test.dart',
                   '--target',
