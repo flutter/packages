@@ -34,7 +34,7 @@ class PlatformCameraUpdate {
   PlatformCameraUpdate(this.json);
 
   /// The update data, as JSON. This should only be set from
-  /// CameraUpdate.toJson, and the native code must intepret it according to the
+  /// CameraUpdate.toJson, and the native code must interpret it according to the
   /// internal implementation details of the CameraUpdate class.
   // TODO(stuartmorgan): Update the google_maps_platform_interface CameraUpdate
   //  class to provide a structured representation of an update. Currently it
@@ -49,7 +49,7 @@ class PlatformCircle {
   PlatformCircle(this.json);
 
   /// The circle data, as JSON. This should only be set from
-  /// Circle.toJson, and the native code must intepret it according to the
+  /// Circle.toJson, and the native code must interpret it according to the
   /// internal implementation details of that method.
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
@@ -63,7 +63,8 @@ class PlatformHeatmap {
   /// The heatmap data, as JSON. This should only be set from
   /// Heatmap.toJson, and the native code must interpret it according to the
   /// internal implementation details of that method.
-  // This exists only to allow incremental migration to Pigeon.
+  // TODO(stuartmorgan): Replace this with structured data. This exists only to
+  //  allow incremental migration to Pigeon.
   final Object json;
 }
 
@@ -79,7 +80,7 @@ class PlatformMarker {
   PlatformMarker(this.json);
 
   /// The marker data, as JSON. This should only be set from
-  /// Marker.toJson, and the native code must intepret it according to the
+  /// Marker.toJson, and the native code must interpret it according to the
   /// internal implementation details of that method.
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
@@ -91,7 +92,7 @@ class PlatformPolygon {
   PlatformPolygon(this.json);
 
   /// The polygon data, as JSON. This should only be set from
-  /// Polygon.toJson, and the native code must intepret it according to the
+  /// Polygon.toJson, and the native code must interpret it according to the
   /// internal implementation details of that method.
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
@@ -103,7 +104,7 @@ class PlatformPolyline {
   PlatformPolyline(this.json);
 
   /// The polyline data, as JSON. This should only be set from
-  /// Polyline.toJson, and the native code must intepret it according to the
+  /// Polyline.toJson, and the native code must interpret it according to the
   /// internal implementation details of that method.
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
@@ -124,7 +125,7 @@ class PlatformTileOverlay {
   PlatformTileOverlay(this.json);
 
   /// The tile overlay data, as JSON. This should only be set from
-  /// TileOverlay.toJson, and the native code must intepret it according to the
+  /// TileOverlay.toJson, and the native code must interpret it according to the
   /// internal implementation details of that method.
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
@@ -170,7 +171,7 @@ class PlatformMapConfiguration {
   PlatformMapConfiguration({required this.json});
 
   /// The configuration options, as JSON. This should only be set from
-  /// _jsonForMapConfiguration, and the native code must intepret it according
+  /// _jsonForMapConfiguration, and the native code must interpret it according
   /// to the internal implementation details of that method.
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.

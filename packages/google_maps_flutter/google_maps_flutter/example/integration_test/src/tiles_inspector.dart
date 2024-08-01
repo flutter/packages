@@ -22,6 +22,8 @@ void main() {
 }
 
 void runTests() {
+  const double floatTolerance = 1e-8;
+
   GoogleMapsFlutterPlatform.instance.enableDebugInspection();
 
   final GoogleMapsInspectorPlatform inspector =
@@ -226,20 +228,20 @@ void runTests() {
     HeatmapGradient? gradient1,
     HeatmapGradient? gradient2,
   ) {
-    if (gradient1 == null) {
-      expect(gradient2, isNull);
+    if (gradient1 == null || gradient2 == null) {
+      expect(gradient1, gradient2);
       return;
     }
     expect(gradient2, isNotNull);
 
-    expect(gradient1.colors.length, gradient2!.colors.length);
+    expect(gradient1.colors.length, gradient2.colors.length);
     for (int i = 0; i < gradient1.colors.length; i++) {
       final HeatmapGradientColor color1 = gradient1.colors[i];
       final HeatmapGradientColor color2 = gradient2.colors[i];
       expect(color1.color, color2.color);
       expect(
         color1.startPoint,
-        moreOrLessEquals(color2.startPoint, epsilon: 1e-7),
+        moreOrLessEquals(color2.startPoint, epsilon: floatTolerance),
       );
     }
 
@@ -254,7 +256,10 @@ void runTests() {
     if (Platform.isAndroid) {
       expect(heatmap1.maxIntensity, heatmap2.maxIntensity);
     }
-    expect(heatmap1.opacity, moreOrLessEquals(heatmap2.opacity, epsilon: 1e-8));
+    expect(
+      heatmap1.opacity,
+      moreOrLessEquals(heatmap2.opacity, epsilon: floatTolerance),
+    );
     expect(heatmap1.radius, heatmap2.radius);
     // Only iOS supports `minimumZoomIntensity` and `maximumZoomIntensity`
     // so the platform value is undefined on others.

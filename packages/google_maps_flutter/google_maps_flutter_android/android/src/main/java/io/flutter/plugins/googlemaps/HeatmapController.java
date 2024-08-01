@@ -13,11 +13,11 @@ import java.util.List;
 
 /** Controller of a single Heatmap on the map. */
 public class HeatmapController implements HeatmapOptionsSink {
-  private final HeatmapTileProvider heatmap;
-  private final TileOverlay heatmapTileOverlay;
+  private final @NonNull HeatmapTileProvider heatmap;
+  private final @NonNull TileOverlay heatmapTileOverlay;
 
   /** Construct a HeatmapController with the given heatmap and heatmapTileOverlay. */
-  HeatmapController(HeatmapTileProvider heatmap, TileOverlay heatmapTileOverlay) {
+  HeatmapController(@NonNull HeatmapTileProvider heatmap, @NonNull TileOverlay heatmapTileOverlay) {
     this.heatmap = heatmap;
     this.heatmapTileOverlay = heatmapTileOverlay;
   }

@@ -78,7 +78,7 @@ class PlatformCameraUpdate {
   });
 
   /// The update data, as JSON. This should only be set from
-  /// CameraUpdate.toJson, and the native code must intepret it according to the
+  /// CameraUpdate.toJson, and the native code must interpret it according to the
   /// internal implementation details of the CameraUpdate class.
   Object json;
 
@@ -103,7 +103,7 @@ class PlatformCircle {
   });
 
   /// The circle data, as JSON. This should only be set from
-  /// Circle.toJson, and the native code must intepret it according to the
+  /// Circle.toJson, and the native code must interpret it according to the
   /// internal implementation details of that method.
   Map<String?, Object?> json;
 
@@ -175,7 +175,7 @@ class PlatformMarker {
   });
 
   /// The marker data, as JSON. This should only be set from
-  /// Marker.toJson, and the native code must intepret it according to the
+  /// Marker.toJson, and the native code must interpret it according to the
   /// internal implementation details of that method.
   Map<String?, Object?> json;
 
@@ -200,7 +200,7 @@ class PlatformPolygon {
   });
 
   /// The polygon data, as JSON. This should only be set from
-  /// Polygon.toJson, and the native code must intepret it according to the
+  /// Polygon.toJson, and the native code must interpret it according to the
   /// internal implementation details of that method.
   Map<String?, Object?> json;
 
@@ -225,7 +225,7 @@ class PlatformPolyline {
   });
 
   /// The polyline data, as JSON. This should only be set from
-  /// Polyline.toJson, and the native code must intepret it according to the
+  /// Polyline.toJson, and the native code must interpret it according to the
   /// internal implementation details of that method.
   Map<String?, Object?> json;
 
@@ -282,7 +282,7 @@ class PlatformTileOverlay {
   });
 
   /// The tile overlay data, as JSON. This should only be set from
-  /// TileOverlay.toJson, and the native code must intepret it according to the
+  /// TileOverlay.toJson, and the native code must interpret it according to the
   /// internal implementation details of that method.
   Map<String?, Object?> json;
 
@@ -398,7 +398,7 @@ class PlatformMapConfiguration {
   });
 
   /// The configuration options, as JSON. This should only be set from
-  /// _jsonForMapConfiguration, and the native code must intepret it according
+  /// _jsonForMapConfiguration, and the native code must interpret it according
   /// to the internal implementation details of that method.
   Map<String?, Object?> json;
 

@@ -242,7 +242,7 @@ public class Messages {
   public static final class PlatformCameraUpdate {
     /**
      * The update data, as JSON. This should only be set from CameraUpdate.toJson, and the native
-     * code must intepret it according to the internal implementation details of the CameraUpdate
+     * code must interpret it according to the internal implementation details of the CameraUpdate
      * class.
      */
     private @NonNull Object json;
@@ -318,7 +318,7 @@ public class Messages {
   public static final class PlatformCircle {
     /**
      * The circle data, as JSON. This should only be set from Circle.toJson, and the native code
-     * must intepret it according to the internal implementation details of that method.
+     * must interpret it according to the internal implementation details of that method.
      */
     private @NonNull Map<String, Object> json;
 
@@ -539,7 +539,7 @@ public class Messages {
   public static final class PlatformMarker {
     /**
      * The marker data, as JSON. This should only be set from Marker.toJson, and the native code
-     * must intepret it according to the internal implementation details of that method.
+     * must interpret it according to the internal implementation details of that method.
      */
     private @NonNull Map<String, Object> json;
 
@@ -614,7 +614,7 @@ public class Messages {
   public static final class PlatformPolygon {
     /**
      * The polygon data, as JSON. This should only be set from Polygon.toJson, and the native code
-     * must intepret it according to the internal implementation details of that method.
+     * must interpret it according to the internal implementation details of that method.
      */
     private @NonNull Map<String, Object> json;
 
@@ -689,7 +689,7 @@ public class Messages {
   public static final class PlatformPolyline {
     /**
      * The polyline data, as JSON. This should only be set from Polyline.toJson, and the native code
-     * must intepret it according to the internal implementation details of that method.
+     * must interpret it according to the internal implementation details of that method.
      */
     private @NonNull Map<String, Object> json;
 
@@ -890,7 +890,7 @@ public class Messages {
   public static final class PlatformTileOverlay {
     /**
      * The tile overlay data, as JSON. This should only be set from TileOverlay.toJson, and the
-     * native code must intepret it according to the internal implementation details of that method.
+     * native code must interpret it according to the internal implementation details of that method.
      */
     private @NonNull Map<String, Object> json;
 
@@ -1306,7 +1306,7 @@ public class Messages {
   public static final class PlatformMapConfiguration {
     /**
      * The configuration options, as JSON. This should only be set from _jsonForMapConfiguration,
-     * and the native code must intepret it according to the internal implementation details of that
+     * and the native code must interpret it according to the internal implementation details of that
      * method.
      */
     private @NonNull Map<String, Object> json;

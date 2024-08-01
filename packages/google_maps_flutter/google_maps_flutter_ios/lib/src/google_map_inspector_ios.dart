@@ -83,7 +83,8 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
       return null;
     }
 
-    final Map<String, dynamic> json = heatmapInfo.json as Map<String, dynamic>;
+    final Map<String, Object?> json =
+        (heatmapInfo.json as Map<Object?, Object?>).cast<String, Object?>();
     return Heatmap(
       heatmapId: heatmapId,
       data: (json['data']! as List<Object?>)
