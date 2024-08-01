@@ -1,11 +1,15 @@
-# 0.2.0
+## 0.2.0
 
 * Adds support for pausing and resuming Ad playback. See `AdsManager.pause` and `AdsManager.resume`.
 * Adds support to skip an Ad. See `AdsManager.skip` and `AdsManager.discardAdBreak`.
 * **Breaking Change** To keep platform consistency, Android no longer continues playing an Ad 
   whenever it returns from an Ad click. Call `AdsManager.resume` to resume Ad playback.
 
-# 0.1.1
+## 0.1.1+1
+
+* Fixes a typo in the formatting of the CHANGELOG.
+
+## 0.1.1
 
 * Adds iOS implementation.
 * Adds support for setting the layout direction of the `AdDisplayContainer`.

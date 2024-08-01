@@ -6,14 +6,14 @@ part of '../google_maps_flutter_web.dart';
 
 /// Type used when passing an override to the _createMap function.
 @visibleForTesting
-typedef DebugCreateMapFunction = gmaps.GMap Function(
+typedef DebugCreateMapFunction = gmaps.Map Function(
     HTMLElement div, gmaps.MapOptions options);
 
 /// Type used when passing an override to the _setOptions function.
 @visibleForTesting
 typedef DebugSetOptionsFunction = void Function(gmaps.MapOptions options);
 
-/// Encapsulates a [gmaps.GMap], its events, and where in the DOM it's rendered.
+/// Encapsulates a [gmaps.Map], its events, and where in the DOM it's rendered.
 class GoogleMapController {
   /// Initializes the GMap, and the sub-controllers related to it. Wires events.
   GoogleMapController({
@@ -45,7 +45,7 @@ class GoogleMapController {
 
     // Register the view factory that will hold the `_div` that holds the map in the DOM.
     // The `_div` needs to be created outside of the ViewFactory (and cached!) so we can
-    // use it to create the [gmaps.GMap] in the `init()` method of this class.
+    // use it to create the [gmaps.Map] in the `init()` method of this class.
     _div = createDivElement()
       ..id = _getViewType(mapId)
       ..style.width = '100%'
@@ -108,7 +108,7 @@ class GoogleMapController {
   gmaps.TrafficLayer? get trafficLayer => _trafficLayer;
 
   // The underlying GMap instance. This is the interface with the JS SDK.
-  gmaps.GMap? _googleMap;
+  gmaps.Map? _googleMap;
 
   // The StreamController used by this controller and the geometry ones.
   final StreamController<MapEvent<Object?>> _streamController;
@@ -164,11 +164,11 @@ class GoogleMapController {
   DebugCreateMapFunction? _overrideCreateMap;
   DebugSetOptionsFunction? _overrideSetOptions;
 
-  gmaps.GMap _createMap(HTMLElement div, gmaps.MapOptions options) {
+  gmaps.Map _createMap(HTMLElement div, gmaps.MapOptions options) {
     if (_overrideCreateMap != null) {
       return _overrideCreateMap!(div, options);
     }
-    return gmaps.GMap(div, options);
+    return gmaps.Map(div, options);
   }
 
   /// A flag that returns true if the controller has been initialized or not.
@@ -179,7 +179,7 @@ class GoogleMapController {
   ///
   /// (Also initializes the geometry/traffic layers.)
   ///
-  /// The first part of this method starts the rendering of a [gmaps.GMap] inside
+  /// The first part of this method starts the rendering of a [gmaps.Map] inside
   /// of the target [_div], with configuration from `rawOptions`. It then stores
   /// the created GMap in the [_googleMap] attribute.
   ///
@@ -207,7 +207,7 @@ class GoogleMapController {
     }
 
     // Create the map...
-    final gmaps.GMap map = _createMap(_div, options);
+    final gmaps.Map map = _createMap(_div, options);
     _googleMap = map;
 
     _attachMapEvents(map);
@@ -221,12 +221,12 @@ class GoogleMapController {
   }
 
   // Funnels map gmap events into the plugin's stream controller.
-  void _attachMapEvents(gmaps.GMap map) {
+  void _attachMapEvents(gmaps.Map map) {
     map.onTilesloaded.first.then((void _) {
       // Report the map as ready to go the first time the tiles load
       _streamController.add(WebMapReadyEvent(_mapId));
     });
-    map.onClick.listen((gmaps.IconMouseEvent event) {
+    map.onClick.listen((gmaps.MapMouseEventOrIconMouseEvent event) {
       assert(event.latLng != null);
       _streamController.add(
         MapTapEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
@@ -254,7 +254,7 @@ class GoogleMapController {
   }
 
   // Binds the Geometry controllers to a map instance
-  void _attachGeometryControllers(gmaps.GMap map) {
+  void _attachGeometryControllers(gmaps.Map map) {
     // Now we can add the initial geometry.
     // And bind the (ready) map instance to the other geometry controllers.
     //
@@ -373,7 +373,7 @@ class GoogleMapController {
   }
 
   // Attaches/detaches a Traffic Layer on the passed `map` if `attach` is true/false.
-  void _setTrafficLayer(gmaps.GMap map, bool attach) {
+  void _setTrafficLayer(gmaps.Map map, bool attach) {
     if (attach && _trafficLayer == null) {
       _trafficLayer = gmaps.TrafficLayer()..set('map', map);
     }
@@ -405,7 +405,7 @@ class GoogleMapController {
     final gmaps.Point point =
         toScreenLocation(_googleMap!, _latLngToGmLatLng(latLng));
 
-    return ScreenCoordinate(x: point.x!.toInt(), y: point.y!.toInt());
+    return ScreenCoordinate(x: point.x.toInt(), y: point.y.toInt());
   }
 
   /// Returns the [LatLng] for a `screenCoordinate` (in pixels) of the viewport.
@@ -428,10 +428,10 @@ class GoogleMapController {
   /// Returns the zoom level of the current viewport.
   Future<double> getZoomLevel() async {
     assert(_googleMap != null, 'Cannot get zoom level of a null map.');
-    assert(_googleMap!.zoom != null,
+    assert(_googleMap!.isZoomDefined(),
         'Zoom level should not be null. Is the map correctly initialized?');
 
-    return _googleMap!.zoom!.toDouble();
+    return _googleMap!.zoom.toDouble();
   }
 
   // Geometry manipulation
