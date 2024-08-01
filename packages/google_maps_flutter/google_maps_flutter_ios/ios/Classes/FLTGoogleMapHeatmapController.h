@@ -48,9 +48,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Clears the tile cache in order to visually udpate this heatmap.
 - (void)clearTileCache;
-
-/// Reads heatmap data from a dictionary and configures the heatmapTileLayer accordingly.
-- (void)interpretHeatmapOptions:(NSDictionary<NSString *, id> *)data;
 @end
 
 /// Controller of multiple Heatmaps on the map.
