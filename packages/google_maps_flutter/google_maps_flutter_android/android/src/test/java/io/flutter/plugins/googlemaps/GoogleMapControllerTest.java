@@ -228,14 +228,27 @@ public class GoogleMapControllerTest {
   @Test
   public void SetInitialHeatmaps() {
     GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
-    Map<String, Object> initialHeatmap = new HashMap<>();
-    initialHeatmap.put("heatmapId", "hm_1");
-    List<Object> initialHeatmaps = new ArrayList<>();
-    initialHeatmaps.add(initialHeatmap);
+
+    List<Object> initialHeatmaps = List.of(Map.of("heatmapId", "hm_1"));
     googleMapController.setInitialHeatmaps(initialHeatmaps);
     googleMapController.onMapReady(mockGoogleMap);
 
     // Verify if the HeatmapsController.addHeatmaps method is called with initial heatmaps.
-    verify(mockHeatmapsController, times(1)).addHeatmaps(any());
+    verify(mockHeatmapsController, times(1)).addJsonHeatmaps(initialHeatmaps);
+  }
+
+  @Test
+  public void UpdateHeatmaps() {
+    GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
+
+    final List<Messages.PlatformHeatmap> toAdd = List.of(new Messages.PlatformHeatmap());
+    final List<Messages.PlatformHeatmap> toChange = List.of(new Messages.PlatformHeatmap());
+    final List<String> idsToRemove = List.of("hm_1");
+
+    googleMapController.updateHeatmaps(toAdd, toChange, idsToRemove);
+
+    verify(mockHeatmapsController, times(1)).addHeatmaps(toAdd);
+    verify(mockHeatmapsController, times(1)).changeHeatmaps(toChange);
+    verify(mockHeatmapsController, times(1)).removeHeatmaps(idsToRemove);
   }
 }

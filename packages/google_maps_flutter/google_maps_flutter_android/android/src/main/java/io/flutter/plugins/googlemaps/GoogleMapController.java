@@ -688,7 +688,7 @@ class GoogleMapController
 
   @Override
   public void setInitialHeatmaps(Object initialHeatmaps) {
-    ArrayList<?> heatmaps = (ArrayList<?>) initialHeatmaps;
+    List<?> heatmaps = (List<?>) initialHeatmaps;
     this.initialHeatmaps = heatmaps != null ? new ArrayList<>(heatmaps) : null;
     if (googleMap != null) {
       updateInitialHeatmaps();
