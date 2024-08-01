@@ -47,13 +47,7 @@ anywhere within a package).
 dart run script/tool/bin/flutter_plugin_tools.dart format --packages package_name
 ```
 
-The `flutter/packages` repository uses clang version `15.0.0` . Newer versions of clang may format code differently. Here is an example of how to install clang version 15 on macOS using [Homebrew](https://brew.sh):
-
-```zsh
-brew tap llvm-hs/homebrew-llvm
-brew install llvm@15
-echo 'export PATH="/opt/homebrew/opt/llvm@15/bin:$PATH"' >> ~/.zshrc
-```
+The `flutter/packages` repository uses clang version `15.0.0` . Newer versions of clang may format code differently.
 
 ### Run the Dart Static Analyzer
 
