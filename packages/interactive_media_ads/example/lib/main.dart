@@ -68,6 +68,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   @override
   void initState() {
     super.initState();
+    // Adds this instance as an observer for `AppLifecycleState` changes.
     WidgetsBinding.instance.addObserver(this);
 
     _contentVideoController = VideoPlayerController.networkUrl(
@@ -88,6 +89,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   }
   // #enddocregion ad_and_content_players
 
+  // #docregion listen_for_lifecycle_state
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
@@ -97,7 +99,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
         // Pausing the Ad video player on Android can only be done in this state
         // because it corresponds to `Activity.onPause`. This state is also
         // triggered before resume, so this will only pause the Ad if the app is
-        // in the process of becoming backgrounded.
+        // in the process of being sent to the background.
         if (_lastLifecycleState == AppLifecycleState.resumed) {
           _adsManager?.pause();
         }
@@ -107,6 +109,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
     }
     _lastLifecycleState = state;
   }
+  // #enddocregion listen_for_lifecycle_state
 
   // #docregion request_ads
   Future<void> _requestAds(AdDisplayContainer container) {
@@ -169,9 +172,9 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   @override
   void dispose() {
     super.dispose();
-    WidgetsBinding.instance.removeObserver(this);
     _contentVideoController.dispose();
     _adsManager?.destroy();
+    WidgetsBinding.instance.removeObserver(this);
   }
   // #enddocregion dispose
 

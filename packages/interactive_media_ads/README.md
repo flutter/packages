@@ -75,7 +75,8 @@ class AdExampleWidget extends StatefulWidget {
   State<AdExampleWidget> createState() => _AdExampleWidgetState();
 }
 
-class _AdExampleWidgetState extends State<AdExampleWidget> {
+class _AdExampleWidgetState extends State<AdExampleWidget>
+    with WidgetsBindingObserver {
   // IMA sample tag for a single skippable inline video ad. See more IMA sample
   // tags at https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags
   static const String _adTagUrl =
@@ -86,6 +87,9 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
 
   // AdsManager exposes methods to control ad playback and listen to ad events.
   AdsManager? _adsManager;
+
+  // Last state received in `didChangeAppLifecycleState`.
+  AppLifecycleState _lastLifecycleState = AppLifecycleState.resumed;
 
   // Whether the widget should be displaying the content video. The content
   // player is hidden while Ads are playing.
@@ -120,6 +124,9 @@ late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
 @override
 void initState() {
   super.initState();
+  // Adds this instance as an observer for `AppLifecycleState` changes.
+  WidgetsBinding.instance.addObserver(this);
+
   _contentVideoController = VideoPlayerController.networkUrl(
     Uri.parse(
       'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
@@ -250,9 +257,37 @@ Future<void> _pauseContent() {
 }
 ```
 
-### 7. Dispose Resources
+### 7. Handle Lifecycle State Changes
 
-Dispose the content player and the destroy the [AdsManager][6].
+Control ad playback in response to app lifecycle changes.
+
+<?code-excerpt "example/lib/main.dart (listen_for_lifecycle_state)"?>
+```dart
+@override
+void didChangeAppLifecycleState(AppLifecycleState state) {
+  switch (state) {
+    case AppLifecycleState.resumed:
+      _adsManager?.resume();
+    case AppLifecycleState.inactive:
+      // Pausing the Ad video player on Android can only be done in this state
+      // because it corresponds to `Activity.onPause`. This state is also
+      // triggered before resume, so this will only pause the Ad if the app is
+      // in the process of being sent to the background.
+      if (_lastLifecycleState == AppLifecycleState.resumed) {
+        _adsManager?.pause();
+      }
+    case AppLifecycleState.hidden:
+    case AppLifecycleState.paused:
+    case AppLifecycleState.detached:
+  }
+  _lastLifecycleState = state;
+}
+```
+
+### 8. Dispose Resources
+
+Dispose the content player, destroy the [AdsManager][6] and stop listening to lifecycle state
+changes.
 
 <?code-excerpt "example/lib/main.dart (dispose)"?>
 ```dart
@@ -261,6 +296,7 @@ void dispose() {
   super.dispose();
   _contentVideoController.dispose();
   _adsManager?.destroy();
+  WidgetsBinding.instance.removeObserver(this);
 }
 ```
 
