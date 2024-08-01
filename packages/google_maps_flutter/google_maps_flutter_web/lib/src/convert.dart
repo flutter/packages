@@ -503,7 +503,7 @@ visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(Heatmap heatmap) {
               ].map(_getCssColorWithAlpha).toList()
         ..maxIntensity = heatmap.maxIntensity
         ..opacity = heatmap.opacity
-        ..radius = heatmap.radius.pixels;
+        ..radius = heatmap.radius.radius;
   return heatmapOptions;
 }
 

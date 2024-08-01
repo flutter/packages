@@ -71,7 +71,7 @@ Object serializeHeatmap(Heatmap heatmap) {
         json, _heatmapGradientKey, serializeHeatmapGradient(gradient));
   }
   _addIfNonNull(json, _heatmapOpacityKey, heatmap.opacity);
-  _addIfNonNull(json, _heatmapRadiusKey, heatmap.radius.pixels);
+  _addIfNonNull(json, _heatmapRadiusKey, heatmap.radius.radius);
   _addIfNonNull(
       json, _heatmapMinimumZoomIntensityKey, heatmap.minimumZoomIntensity);
   _addIfNonNull(

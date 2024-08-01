@@ -21,34 +21,21 @@ class HeatmapId extends MapsObjectId<Heatmap> {
 ///
 /// Currently this class only handles platform-specific values, but in the
 /// future it may provide alternate constructors that abstract platform
-/// differences in handling of heatmap radius values. See flutter/flutter#145411.
+/// differences in handling of heatmap radius values.
+///
+/// See https://github.com/flutter/flutter/issues/145411
+///
+/// TODO(stuartmorgan): Add constructor and enum field that informs the platform how to perform the conversion.
 @immutable
 class HeatmapRadius {
-  /// Create a [HeatmapRadius] from a platform-independent [radius] value.
-  ///
-  /// In the future, this will convert the platform-independent [radius] to a
-  /// platform-specific value for [pixels].
-  // const HeatmapRadius(this.radius) : pixels = radius;
-
   /// Create a [HeatmapRadius] with a radius in pixels.
   ///
   /// This value will be used verbatim on all platforms. It is up to the
   /// developer to ensure that the value is appropriate for the platform.
-  const HeatmapRadius.fromPixels(this.pixels) : radius = pixels;
-
-  /// Create a [HeatmapRadius] from a platform value.
-  ///
-  /// In the future, this will convert the platform value to a
-  /// platform-independent value for [radius].
-  const HeatmapRadius.fromJson(dynamic json)
-      : radius = json as int,
-        pixels = json;
+  const HeatmapRadius.fromPixels(this.radius);
 
   /// The platform-independent value of the radius.
   final int radius;
-
-  /// The platform-specific value of the radius in pixels.
-  final int pixels;
 
   @override
   bool operator ==(Object other) {
@@ -193,7 +180,7 @@ class Heatmap implements MapsObject<Heatmap> {
     addIfPresent('gradient', gradient?.toJson());
     addIfPresent('maxIntensity', maxIntensity);
     addIfPresent('opacity', opacity);
-    addIfPresent('radius', radius.pixels);
+    addIfPresent('radius', radius.radius);
     addIfPresent('minimumZoomIntensity', minimumZoomIntensity);
     addIfPresent('maximumZoomIntensity', maximumZoomIntensity);
 

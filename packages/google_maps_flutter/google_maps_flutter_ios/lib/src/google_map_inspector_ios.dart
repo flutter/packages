@@ -96,7 +96,7 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
           .toList(),
       gradient: deserializeHeatmapGradient(json['gradient']),
       opacity: json['opacity']! as double,
-      radius: HeatmapRadius.fromJson(json['radius']),
+      radius: HeatmapRadius.fromPixels(json['radius']! as int),
       minimumZoomIntensity: json['minimumZoomIntensity']! as int,
       maximumZoomIntensity: json['maximumZoomIntensity']! as int,
     );
