@@ -308,7 +308,7 @@ class SharedPreferencesWithCache {
           '$key is not included in the PreferencesFilter allowlist');
     }
     // Make a copy of the list so that later mutations won't propagate
-    return (_cache[key] as List<Object>?)?.cast<String>().toList();
+    return (_cache[key] as List<Object?>?)?.cast<String>().toList();
   }
 
   /// Saves a boolean [value] to the cache and platform.
