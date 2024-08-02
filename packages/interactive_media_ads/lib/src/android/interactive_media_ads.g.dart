@@ -1810,13 +1810,14 @@ class AdEvent extends PigeonProxyApiBaseClass {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required this.type,
-    required this.adData,
+    this.adData,
   });
 
   /// The type of event that occurred.
   final AdEventType type;
 
-  final Map<String?, String?> adData;
+  /// A map containing any extra ad data for the event, if needed.
+  final Map<String?, String?>? adData;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -1824,7 +1825,7 @@ class AdEvent extends PigeonProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     AdEvent Function(
       AdEventType type,
-      Map<String?, String?> adData,
+      Map<String?, String?>? adData,
     )? pigeon_newInstance,
   }) {
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
@@ -1852,17 +1853,15 @@ class AdEvent extends PigeonProxyApiBaseClass {
               'Argument for dev.flutter.pigeon.interactive_media_ads.AdEvent.pigeon_newInstance was null, expected non-null AdEventType.');
           final Map<String?, String?>? arg_adData =
               (args[2] as Map<Object?, Object?>?)?.cast<String?, String?>();
-          assert(arg_adData != null,
-              'Argument for dev.flutter.pigeon.interactive_media_ads.AdEvent.pigeon_newInstance was null, expected non-null Map<String?, String?>.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_type!, arg_adData!) ??
+              pigeon_newInstance?.call(arg_type!, arg_adData) ??
                   AdEvent.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     type: arg_type!,
-                    adData: arg_adData!,
+                    adData: arg_adData,
                   ),
               arg_pigeon_instanceIdentifier!,
             );

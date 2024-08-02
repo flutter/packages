@@ -60,7 +60,8 @@ class AndroidAdsManager extends PlatformAdsManager {
           weakThis.target?._managerDelegate?.params.onAdEvent?.call(
             AdEvent(
               type: toInterfaceEventType(event.type),
-              adData: event.adData.cast<String, String>(),
+              adData:
+                  event.adData?.cast<String, String>() ?? <String, String>{},
             ),
           );
         },

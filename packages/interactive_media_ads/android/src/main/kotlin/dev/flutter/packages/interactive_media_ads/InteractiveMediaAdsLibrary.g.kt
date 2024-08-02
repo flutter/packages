@@ -1782,9 +1782,10 @@ abstract class PigeonApiAdEvent(
   /** The type of event that occurred. */
   abstract fun type(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdEvent): AdEventType
 
+  /** A map containing any extra ad data for the event, if needed. */
   abstract fun adData(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.AdEvent
-  ): Map<String, String>
+  ): Map<String, String>?
 
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of AdEvent and attaches it to [pigeon_instanceArg]. */

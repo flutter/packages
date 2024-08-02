@@ -387,7 +387,7 @@
 //   late final AdEventType type;
 //
 //   /// A map containing any extra ad data for the event, if needed.
-//   late final Map<String, String> adData;
+//   late final Map<String, String>? adData;
 // }
 //
 // /// Factory class for creating SDK objects.
