@@ -367,8 +367,8 @@ class Camera {
           false;
 
       if (canEnableTorchMode) {
-        defaultVideoTrack
-            .applyConstraints(web.MediaTrackConstraints(torch: enabled.toJS));
+        defaultVideoTrack.applyWebTweakConstraints(
+            WebTweakMediaTrackConstraints(torch: enabled.toJS));
       } else {
         throw CameraWebException(
           textureId,
@@ -416,8 +416,8 @@ class Camera {
       );
     }
 
-    zoomLevelCapability.videoTrack
-        .applyConstraints(MediaTrackConstraints(zoom: zoom.toJS));
+    zoomLevelCapability.videoTrack.applyWebTweakConstraints(
+        WebTweakMediaTrackConstraints(zoom: zoom.toJS));
   }
 
   /// Returns a lens direction of this camera.

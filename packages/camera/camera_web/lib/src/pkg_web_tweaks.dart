@@ -8,6 +8,11 @@ import 'dart:js_interop';
 
 import 'package:web/web.dart';
 
+/// Adds missing fields to [Element].
+extension FullScreenSupportMethods on Element {
+  external JSPromise<JSAny?> requestFullscreen([JSAny options]);
+}
+
 /// Adds missing fields to [MediaTrackSupportedConstraints].
 extension NonStandardFieldsOnMediaTrackSupportedConstraints
     on MediaTrackSupportedConstraints {
@@ -19,10 +24,9 @@ extension NonStandardFieldsOnMediaTrackSupportedConstraints
 }
 
 /// Adds missing fields to [MediaTrackCapabilities].
-
 extension NonStandardFieldsOnMediaTrackCapabilities on MediaTrackCapabilities {
   @JS('zoom')
-  external MediaSettingsRange? get zoomNullable;
+  external WebTweakMediaSettingsRange? get zoomNullable;
 
   @JS('torch')
   external JSArray<JSBoolean>? get torchNullable;
@@ -32,4 +36,38 @@ extension NonStandardFieldsOnMediaTrackCapabilities on MediaTrackCapabilities {
 extension NonStandardFieldsOnMediaTrackSettings on MediaTrackSettings {
   @JS('facingMode')
   external String? get facingModeNullable;
+}
+
+/// Brought over from package:web 1.0.0
+extension type WebTweakMediaSettingsRange._(JSObject _) implements JSObject {
+  @JS('MediaSettingsRange')
+  external factory WebTweakMediaSettingsRange({
+    num max,
+    num min,
+    num step,
+  });
+
+  external double get max;
+  external set max(num value);
+  external double get min;
+  external set min(num value);
+  external double get step;
+  external set step(num value);
+}
+
+/// Adds an applyConstraints method that accepts the WebTweakMediaTrackConstraints.
+extension WebTweakMethodVersions on MediaStreamTrack {
+  @JS('applyConstraints')
+  external JSPromise<JSAny?> applyWebTweakConstraints(
+      [WebTweakMediaTrackConstraints constraints]);
+}
+
+/// Allows creating the MediaTrackConstraints that are needed.
+/// Brought over from package:web 1.0.0
+extension type WebTweakMediaTrackConstraints._(JSObject _) implements JSObject {
+  @JS('MediaTrackConstraints')
+  external factory WebTweakMediaTrackConstraints({
+    JSAny zoom,
+    ConstrainBoolean torch,
+  });
 }
