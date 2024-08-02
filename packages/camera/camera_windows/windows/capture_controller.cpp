@@ -39,7 +39,7 @@ CaptureControllerImpl::CaptureControllerImpl(
     : capture_controller_listener_(listener),
       media_settings_(
           PlatformMediaSettings(PlatformResolutionPreset::kMax, true)),
-      CaptureController(){};
+      CaptureController() {}
 
 CaptureControllerImpl::~CaptureControllerImpl() {
   ResetCaptureController();
