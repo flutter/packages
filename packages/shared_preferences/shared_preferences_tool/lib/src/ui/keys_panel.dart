@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../async_state.dart';
+import '../shared_preferences_state.dart';
 import '../shared_preferences_state_provider.dart';
 import 'error_panel.dart';
 
@@ -177,14 +178,14 @@ class _StateMapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (SharedPreferencesStateProvider.keysListStateOf(context)) {
-      final AsyncStateData<List<String>> value => _KeysList(
+      final AsyncStateData<List<KeyData>> value => _KeysList(
           keys: value.data,
         ),
-      final AsyncStateError<List<String>> value => ErrorPanel(
+      final AsyncStateError<List<KeyData>> value => ErrorPanel(
           error: value.error,
           stackTrace: value.stackTrace,
         ),
-      AsyncStateLoading<List<String>>() => const Center(
+      AsyncStateLoading<List<KeyData>>() => const Center(
           child: CircularProgressIndicator(),
         ),
     };
@@ -196,7 +197,7 @@ class _KeysList extends StatefulWidget {
     required this.keys,
   });
 
-  final List<String> keys;
+  final List<KeyData> keys;
 
   @override
   State<_KeysList> createState() => _KeysListState();
@@ -215,12 +216,15 @@ class _KeysListState extends State<_KeysList> {
   Widget build(BuildContext context) {
     return Scrollbar(
       controller: scrollController,
-      child: ListView.builder(
+      child: ListView(
         controller: scrollController,
-        itemCount: widget.keys.length,
-        itemBuilder: (BuildContext context, int index) => _KeyItem(
-          keyName: widget.keys[index],
-        ),
+        children: <Widget>[
+          for (final KeyData keyData in widget.keys)
+            _KeyItem(
+              keyName: keyData.key,
+              legacy: keyData.legacy,
+            ),
+        ],
       ),
     );
   }
@@ -229,21 +233,25 @@ class _KeysListState extends State<_KeysList> {
 class _KeyItem extends StatelessWidget {
   const _KeyItem({
     required this.keyName,
+    required this.legacy,
   });
 
   final String keyName;
+  final bool legacy;
 
   @override
   Widget build(BuildContext context) {
+    final SelectedSharedPreferencesKey? selectedKey =
+        SharedPreferencesStateProvider.selectedKeyOf(context);
     final bool isSelected =
-        SharedPreferencesStateProvider.selectedKeyOf(context) == keyName;
+        selectedKey?.key == keyName && selectedKey?.legacy == legacy;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final Color? backgroundColor =
         isSelected ? colorScheme.selectedRowBackgroundColor : null;
 
     return InkWell(
       onTap: () {
-        context.sharedPreferencesStateNotifier.selectKey(keyName);
+        context.sharedPreferencesStateNotifier.selectKey(keyName, legacy);
       },
       child: Container(
         color: backgroundColor,
@@ -254,7 +262,7 @@ class _KeyItem extends StatelessWidget {
           bottom: densePadding,
         ),
         child: Text(
-          keyName,
+          legacy ? 'legacy - $keyName' : keyName,
           style: Theme.of(context).textTheme.titleSmall,
         ),
       ),

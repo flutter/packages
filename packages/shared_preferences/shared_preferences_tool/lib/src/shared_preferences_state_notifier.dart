@@ -21,7 +21,8 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
 
   final SharedPreferencesToolEval _eval;
 
-  List<String> _keys = <String>[];
+  List<String> _asyncKeys = const <String>[];
+  List<String> _legacyKeys = const <String>[];
 
   /// Retrieves all keys from the shared preferences of the target debug session.
   ///
@@ -29,9 +30,20 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   Future<void> fetchAllKeys() async {
     value = const _State.loading();
     try {
-      _keys = await _eval.fetchAllKeys();
+      final KeysResult allKeys = await _eval.fetchAllKeys();
+      _legacyKeys = allKeys.legacyKeys;
+      // Platforms other than Android also add the legacy keys to the async keys
+      // in the pattern `flutter.$key`, so we need to remove them to avoid duplicates.
+      const String legacyPrefix = 'flutter.';
+      _asyncKeys = <String>[
+        for (final String key in allKeys.asyncKeys)
+          if (!(key.startsWith(legacyPrefix) &&
+              _legacyKeys.contains(key.replaceAll(legacyPrefix, ''))))
+            key,
+      ];
       value = _State.data(SharedPreferencesState(
-        allKeys: _keys,
+        asyncKeys: _asyncKeys,
+        legacyKeys: _legacyKeys,
       ));
     } catch (error, stackTrace) {
       value = _State.error(error, stackTrace);
@@ -41,35 +53,41 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   void _setSelectedKeyValue(
     String key,
     AsyncState<SharedPreferencesData> asyncValue,
+    bool legacy,
   ) {
     value = value.whenData(
       (SharedPreferencesState data) => data.copyWith(
         selectedKey: SelectedSharedPreferencesKey(
           key: key,
           value: asyncValue,
+          legacy: legacy,
         ),
       ),
     );
   }
 
   /// Set the key as selected and retrieve the value from the shared preferences of the target debug session.
-  Future<void> selectKey(String key) async {
+  Future<void> selectKey(String key, bool legacy) async {
     stopEditing();
     _setSelectedKeyValue(
       key,
       const AsyncState<SharedPreferencesData>.loading(),
+      legacy,
     );
 
     try {
-      final SharedPreferencesData keyValue = await _eval.fetchValue(key);
+      final SharedPreferencesData keyValue =
+          await _eval.fetchValue(key, legacy);
       _setSelectedKeyValue(
         key,
         AsyncState<SharedPreferencesData>.data(keyValue),
+        legacy,
       );
     } catch (error, stackTrace) {
       _setSelectedKeyValue(
         key,
         AsyncState<SharedPreferencesData>.error(error, stackTrace),
+        legacy,
       );
     }
   }
@@ -84,36 +102,47 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   /// If all characters from the token are found in the key, the key is included in the result.
   void filter(String token) {
     final String lowercaseToken = token.toLowerCase();
+
+    bool filter(String key) {
+      String currentSubstring = key.toLowerCase();
+      for (final String char in lowercaseToken.characters) {
+        final int currentIndex = currentSubstring.indexOf(char);
+        if (currentIndex == -1) {
+          return false;
+        }
+        currentSubstring = currentSubstring.substring(currentIndex + 1);
+      }
+      return true;
+    }
+
     value = value.whenData((SharedPreferencesState data) {
       return data.copyWith(
-          allKeys: _keys.where(
-        (String key) {
-          String currentSubstring = key.toLowerCase();
-          for (final String char in lowercaseToken.characters) {
-            final int currentIndex = currentSubstring.indexOf(char);
-            if (currentIndex == -1) {
-              return false;
-            }
-            currentSubstring = currentSubstring.substring(currentIndex + 1);
-          }
-          return true;
-        },
-      ).toList());
+        asyncKeys: _asyncKeys.where(filter).toList(),
+        legacyKeys: _legacyKeys.where(filter).toList(),
+      );
     });
   }
 
   /// Changes the value of the selected key in the shared preferences of the target debug session.
-  Future<void> changeValue(String key, SharedPreferencesData newValue) async {
-    await _eval.changeValue(key, newValue);
-    await selectKey(key);
-    stopEditing();
+  Future<void> changeValue(
+    SharedPreferencesData newValue,
+  ) async {
+    if (value.dataOrNull?.selectedKey
+        case final SelectedSharedPreferencesKey selectedKey) {
+      await _eval.changeValue(selectedKey.key, newValue, selectedKey.legacy);
+      await selectKey(selectedKey.key, selectedKey.legacy);
+      stopEditing();
+    }
   }
 
   /// Deletes the selected key from the shared preferences of the target debug session.
-  Future<void> deleteKey(String selectedKey) async {
-    await _eval.deleteKey(selectedKey);
-    await fetchAllKeys();
-    stopEditing();
+  Future<void> deleteSelectedKey() async {
+    if (value.dataOrNull?.selectedKey
+        case final SelectedSharedPreferencesKey selectedKey) {
+      await _eval.deleteKey(selectedKey.key, selectedKey.legacy);
+      await fetchAllKeys();
+      stopEditing();
+    }
   }
 
   /// Change the editing state to true, allowing the user to edit the value of the selected key.

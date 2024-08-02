@@ -87,7 +87,7 @@ class _Header extends StatelessWidget {
     // it is safe to assume that the selected key is not null
     // because the header is only shown when a key is selected
     final String selectedKey =
-        SharedPreferencesStateProvider.requireSelectedKeyOf(context);
+        SharedPreferencesStateProvider.requireSelectedKeyOf(context).key;
 
     return AreaPaneHeader(
       roundedTopBorder: false,
@@ -114,7 +114,6 @@ class _Header extends StatelessWidget {
               onPressed: () async {
                 try {
                   await context.sharedPreferencesStateNotifier.changeValue(
-                    selectedKey,
                     data.changeValue(currentValue),
                   );
                 } catch (error) {
@@ -177,7 +176,7 @@ class _ConfirmRemoveDialog extends StatelessWidget {
           child: const Text('REMOVE'),
           onPressed: () async {
             try {
-              await notifier.deleteKey(selectedKey);
+              await notifier.deleteSelectedKey();
             } catch (error) {
               if (context.mounted) {
                 context.showSnackBar('Error: $error');

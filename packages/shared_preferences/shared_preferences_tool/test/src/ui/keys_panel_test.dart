@@ -46,14 +46,16 @@ void main() {
     }
 
     void stubDataState({
-      List<String> allKeys = const <String>[],
+      List<String> asyncKeys = const <String>[],
+      List<String> legacyKeys = const <String>[],
       SelectedSharedPreferencesKey? selectedKey,
       bool editing = false,
     }) {
       stubAsyncState(
         AsyncState<SharedPreferencesState>.data(
           SharedPreferencesState(
-            allKeys: allKeys,
+            asyncKeys: asyncKeys,
+            legacyKeys: legacyKeys,
             selectedKey: selectedKey,
             editing: editing,
           ),
@@ -80,14 +82,23 @@ void main() {
       expect(find.byType(ErrorPanel), findsOneWidget);
     });
 
-    testWidgets('should show keys list', (WidgetTester tester) async {
-      const List<String> keys = <String>['key1', 'key2'];
-      stubDataState(allKeys: keys);
+    testWidgets('should show keys list with async and legacy keys',
+        (WidgetTester tester) async {
+      const List<String> asyncKeys = <String>['key1', 'key2'];
+      const List<String> legacyKeys = <String>['key3', 'key4'];
+      stubDataState(
+        asyncKeys: asyncKeys,
+        legacyKeys: legacyKeys,
+      );
 
       await pumpKeysPanel(tester);
 
-      for (final String key in keys) {
+      for (final String key in asyncKeys) {
         expect(find.text(key), findsOneWidget);
+      }
+
+      for (final String key in legacyKeys) {
+        expect(find.text('legacy - $key'), findsOneWidget);
       }
     });
 
@@ -97,10 +108,11 @@ void main() {
         const String selectedKey = 'selectedKey';
         const List<String> keys = <String>['key1', selectedKey, 'key2'];
         stubDataState(
-          allKeys: keys,
+          asyncKeys: keys,
           selectedKey: const SelectedSharedPreferencesKey(
             key: selectedKey,
             value: AsyncState<SharedPreferencesData>.loading(),
+            legacy: false,
           ),
         );
 
@@ -114,6 +126,47 @@ void main() {
         Color? bgColorFor(String key) {
           final Container? container = tester
               .element(find.text(key))
+              .findAncestorWidgetOfExactType<Container>();
+          return container?.color;
+        }
+
+        for (final String key in <String>[...keys]..remove(selectedKey)) {
+          expect(
+            bgColorFor(key),
+            isNot(equals(colorScheme.selectedRowBackgroundColor)),
+          );
+        }
+        expect(
+          bgColorFor(selectedKey),
+          equals(colorScheme.selectedRowBackgroundColor),
+        );
+      },
+    );
+
+    testWidgets(
+      'only selected legacy key should be highlighted',
+      (WidgetTester tester) async {
+        const String selectedKey = 'selectedKey';
+        const List<String> keys = <String>['key1', selectedKey, 'key2'];
+        stubDataState(
+          legacyKeys: keys,
+          selectedKey: const SelectedSharedPreferencesKey(
+            key: selectedKey,
+            value: AsyncState<SharedPreferencesData>.loading(),
+            legacy: true,
+          ),
+        );
+
+        await pumpKeysPanel(tester);
+
+        final Element selectedKeyElement =
+            tester.element(find.text('legacy - $selectedKey'));
+        final ColorScheme colorScheme =
+            Theme.of(selectedKeyElement).colorScheme;
+
+        Color? bgColorFor(String key) {
+          final Container? container = tester
+              .element(find.text('legacy - $key'))
               .findAncestorWidgetOfExactType<Container>();
           return container?.color;
         }
@@ -190,12 +243,25 @@ void main() {
       'should select key on key clicked',
       (WidgetTester tester) async {
         const String keyToSelect = 'keyToSelect';
-        stubDataState(allKeys: <String>[keyToSelect]);
+        stubDataState(asyncKeys: <String>[keyToSelect]);
         await pumpKeysPanel(tester);
 
         await tester.tap(find.text(keyToSelect));
 
-        verify(notifierMock.selectKey(keyToSelect)).called(1);
+        verify(notifierMock.selectKey(keyToSelect, false)).called(1);
+      },
+    );
+
+    testWidgets(
+      'should select legacy key on key clicked',
+      (WidgetTester tester) async {
+        const String keyToSelect = 'keyToSelect';
+        stubDataState(legacyKeys: <String>[keyToSelect]);
+        await pumpKeysPanel(tester);
+
+        await tester.tap(find.text('legacy - $keyToSelect'));
+
+        verify(notifierMock.selectKey(keyToSelect, true)).called(1);
       },
     );
   });

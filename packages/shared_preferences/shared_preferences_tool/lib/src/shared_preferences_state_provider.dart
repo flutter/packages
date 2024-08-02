@@ -11,6 +11,12 @@ import 'shared_preferences_state.dart';
 import 'shared_preferences_state_notifier.dart';
 import 'shared_preferences_tool_eval.dart';
 
+/// A record that holds the string key and wether or not it is a legacy key.
+typedef KeyData = ({
+  String key,
+  bool legacy,
+});
+
 /// A class that provides a [SharedPreferencesStateNotifier] to its descendants
 /// without listening to state changes.
 ///
@@ -79,11 +85,14 @@ class _SharedPreferencesStateInheritedModel
 }
 
 extension on AsyncState<SharedPreferencesState> {
-  AsyncState<List<String>> get keysListState => mapWhenData(
-        (SharedPreferencesState data) => data.allKeys,
+  AsyncState<List<KeyData>> get keysListState => mapWhenData(
+        (SharedPreferencesState data) => <KeyData>[
+          for (final String key in data.asyncKeys) (key: key, legacy: false),
+          for (final String key in data.legacyKeys) (key: key, legacy: true),
+        ],
       );
 
-  String? get selectedKeyState => dataOrNull?.selectedKey?.key;
+  SelectedSharedPreferencesKey? get selectedKeyState => dataOrNull?.selectedKey;
 
   AsyncState<SharedPreferencesData?> get selectedKeyDataState =>
       flatMapWhenData(
@@ -148,13 +157,13 @@ class SharedPreferencesStateProvider extends StatefulWidget {
     required this.child,
   });
 
-  /// Returns the async state of the list of keys from the closest
+  /// Returns the async state of the list of all keys.
   /// [_SharedPreferencesStateInheritedModel] ancestor.
   ///
   /// Use of this method will cause the given [context] to rebuild whenever the
   /// list of keys changes, including loading and error states.
   /// This will not cause a rebuild when any other part of the state changes.
-  static AsyncState<List<String>> keysListStateOf(BuildContext context) {
+  static AsyncState<List<KeyData>> keysListStateOf(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<
             _SharedPreferencesStateInheritedModel>(
@@ -170,7 +179,7 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   /// Use of this method will cause the given [context] to rebuild whenever the
   /// selected key changes, including loading and error states.
   /// This will not cause a rebuild when any other part of the state changes.
-  static String? selectedKeyOf(BuildContext context) {
+  static SelectedSharedPreferencesKey? selectedKeyOf(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<
             _SharedPreferencesStateInheritedModel>(
@@ -184,7 +193,8 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   /// [_SharedPreferencesStateInheritedModel] ancestor.
   ///
   /// Throws an error if the selected key is null.
-  static String requireSelectedKeyOf(BuildContext context) {
+  static SelectedSharedPreferencesKey requireSelectedKeyOf(
+      BuildContext context) {
     return selectedKeyOf(context)!;
   }
 
@@ -235,12 +245,21 @@ class _SharedPreferencesStateProviderState
   @override
   void initState() {
     super.initState();
-    final EvalOnDartLibrary eval = EvalOnDartLibrary(
+    final EvalOnDartLibrary asyncEval = EvalOnDartLibrary(
       'package:shared_preferences/src/shared_preferences_async.dart',
       serviceManager.service!,
       serviceManager: serviceManager,
     );
-    final SharedPreferencesToolEval toolEval = SharedPreferencesToolEval(eval);
+    final EvalOnDartLibrary legacyEval = EvalOnDartLibrary(
+      'package:shared_preferences/src/shared_preferences_legacy.dart',
+      serviceManager.service!,
+      serviceManager: serviceManager,
+    );
+    final SharedPreferencesToolEval toolEval = SharedPreferencesToolEval(
+      asyncEval,
+      legacyEval,
+      serviceManager.connectedApp?.isFlutterWebAppNow ?? false,
+    );
     _notifier = SharedPreferencesStateNotifier(toolEval);
     _notifier.fetchAllKeys();
   }

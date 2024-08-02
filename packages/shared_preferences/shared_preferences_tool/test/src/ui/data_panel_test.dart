@@ -41,19 +41,23 @@ void main() {
       );
     }
 
-    void stubAsyncState(AsyncState<SharedPreferencesData>? state,
-        {bool editing = false}) {
+    void stubAsyncState(
+      AsyncState<SharedPreferencesData>? state, {
+      bool editing = false,
+      bool legacy = false,
+    }) {
       const String selectedKey = 'selectedTestKey';
       when(notifierMock.value).thenReturn(
         AsyncState<SharedPreferencesState>.data(
           SharedPreferencesState(
-            allKeys: const <String>[selectedKey],
+            asyncKeys: const <String>[selectedKey],
             editing: editing,
             selectedKey: state == null
                 ? null
                 : SelectedSharedPreferencesKey(
                     key: selectedKey,
                     value: state,
+                    legacy: legacy,
                   ),
           ),
         ),
@@ -187,7 +191,7 @@ void main() {
         await tester.tap(find.text('REMOVE'));
 
         verify(
-          notifierMock.deleteKey('selectedTestKey'),
+          notifierMock.deleteSelectedKey(),
         ).called(1);
       },
     );
@@ -360,19 +364,16 @@ void main() {
 
         verifyInOrder(<Future<void>>[
           notifierMock.changeValue(
-            'selectedTestKey',
             const SharedPreferencesData.stringList(
               value: <String>['0', 'value1', 'value2'],
             ),
           ),
           notifierMock.changeValue(
-            'selectedTestKey',
             const SharedPreferencesData.stringList(
               value: <String>['0', '1', 'value1', 'value2'],
             ),
           ),
           notifierMock.changeValue(
-            'selectedTestKey',
             const SharedPreferencesData.stringList(
               value: <String>['0', '1', '2', 'value1', 'value2'],
             ),

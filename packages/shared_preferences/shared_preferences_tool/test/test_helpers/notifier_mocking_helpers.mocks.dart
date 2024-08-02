@@ -74,10 +74,17 @@ class MockSharedPreferencesStateNotifier extends _i1.Mock
       ) as _i6.Future<void>);
 
   @override
-  _i6.Future<void> selectKey(String? key) => (super.noSuchMethod(
+  _i6.Future<void> selectKey(
+    String? key,
+    bool? legacy,
+  ) =>
+      (super.noSuchMethod(
         Invocation.method(
           #selectKey,
-          [key],
+          [
+            key,
+            legacy,
+          ],
         ),
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
@@ -93,27 +100,21 @@ class MockSharedPreferencesStateNotifier extends _i1.Mock
       );
 
   @override
-  _i6.Future<void> changeValue(
-    String? key,
-    _i4.SharedPreferencesData? newValue,
-  ) =>
+  _i6.Future<void> changeValue(_i4.SharedPreferencesData? newValue) =>
       (super.noSuchMethod(
         Invocation.method(
           #changeValue,
-          [
-            key,
-            newValue,
-          ],
+          [newValue],
         ),
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
 
   @override
-  _i6.Future<void> deleteKey(String? selectedKey) => (super.noSuchMethod(
+  _i6.Future<void> deleteSelectedKey() => (super.noSuchMethod(
         Invocation.method(
-          #deleteKey,
-          [selectedKey],
+          #deleteSelectedKey,
+          [],
         ),
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),

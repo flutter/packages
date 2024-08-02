@@ -42,28 +42,46 @@ class _FakeCompleter_0<T> extends _i1.SmartFake implements _i2.Completer<T> {
 class MockSharedPreferencesToolEval extends _i1.Mock
     implements _i3.SharedPreferencesToolEval {
   @override
-  _i2.Future<List<String>> fetchAllKeys() => (super.noSuchMethod(
-        Invocation.method(
-          #fetchAllKeys,
-          [],
-        ),
-        returnValue: _i2.Future<List<String>>.value(<String>[]),
-        returnValueForMissingStub: _i2.Future<List<String>>.value(<String>[]),
-      ) as _i2.Future<List<String>>);
+  _i2.Future<({List<String> asyncKeys, List<String> legacyKeys})>
+      fetchAllKeys() => (super.noSuchMethod(
+            Invocation.method(
+              #fetchAllKeys,
+              [],
+            ),
+            returnValue: _i2.Future<
+                ({
+                  List<String> asyncKeys,
+                  List<String> legacyKeys
+                })>.value((asyncKeys: <String>[], legacyKeys: <String>[])),
+            returnValueForMissingStub: _i2.Future<
+                ({
+                  List<String> asyncKeys,
+                  List<String> legacyKeys
+                })>.value((asyncKeys: <String>[], legacyKeys: <String>[])),
+          ) as _i2.Future<({List<String> asyncKeys, List<String> legacyKeys})>);
 
   @override
-  _i2.Future<_i4.SharedPreferencesData> fetchValue(String? key) =>
+  _i2.Future<_i4.SharedPreferencesData> fetchValue(
+    String? key,
+    bool? legacy,
+  ) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchValue,
-          [key],
+          [
+            key,
+            legacy,
+          ],
         ),
         returnValue: _i2.Future<_i4.SharedPreferencesData>.value(
             _i5.dummyValue<_i4.SharedPreferencesData>(
           this,
           Invocation.method(
             #fetchValue,
-            [key],
+            [
+              key,
+              legacy,
+            ],
           ),
         )),
         returnValueForMissingStub: _i2.Future<_i4.SharedPreferencesData>.value(
@@ -71,7 +89,10 @@ class MockSharedPreferencesToolEval extends _i1.Mock
           this,
           Invocation.method(
             #fetchValue,
-            [key],
+            [
+              key,
+              legacy,
+            ],
           ),
         )),
       ) as _i2.Future<_i4.SharedPreferencesData>);
@@ -80,6 +101,7 @@ class MockSharedPreferencesToolEval extends _i1.Mock
   _i2.Future<void> changeValue(
     String? key,
     _i4.SharedPreferencesData? value,
+    bool? legacy,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -87,6 +109,7 @@ class MockSharedPreferencesToolEval extends _i1.Mock
           [
             key,
             value,
+            legacy,
           ],
         ),
         returnValue: _i2.Future<void>.value(),
@@ -94,10 +117,17 @@ class MockSharedPreferencesToolEval extends _i1.Mock
       ) as _i2.Future<void>);
 
   @override
-  _i2.Future<void> deleteKey(String? key) => (super.noSuchMethod(
+  _i2.Future<void> deleteKey(
+    String? key,
+    bool? legacy,
+  ) =>
+      (super.noSuchMethod(
         Invocation.method(
           #deleteKey,
-          [key],
+          [
+            key,
+            legacy,
+          ],
         ),
         returnValue: _i2.Future<void>.value(),
         returnValueForMissingStub: _i2.Future<void>.value(),
