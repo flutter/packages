@@ -19,6 +19,10 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+class _PigeonCodec extends StandardMessageCodec {
+  const _PigeonCodec();
+}
+
 class BackgroundApi2Host {
   /// Constructor for [BackgroundApi2Host].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -30,8 +34,7 @@ class BackgroundApi2Host {
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      StandardMessageCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String __pigeon_messageChannelSuffix;
 

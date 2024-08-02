@@ -30,6 +30,10 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+class _PigeonCodec extends StandardMessageCodec {
+  const _PigeonCodec();
+}
+
 class MultipleArityHostApi {
   /// Constructor for [MultipleArityHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -41,8 +45,7 @@ class MultipleArityHostApi {
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      StandardMessageCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String __pigeon_messageChannelSuffix;
 
@@ -77,8 +80,7 @@ class MultipleArityHostApi {
 }
 
 abstract class MultipleArityFlutterApi {
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      StandardMessageCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   int subtract(int x, int y);
 

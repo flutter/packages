@@ -21,7 +21,7 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
-  espresso: ^0.2.0
+  espresso: ^0.4.0
   flutter_test:
     sdk: flutter
   integration_test:

@@ -1123,28 +1123,6 @@ abstract class Api {
     expect(results.errors.length, 0);
   });
 
-  test('Enum key not supported', () {
-    const String code = '''
-enum MessageKey {
-  title,
-  subtitle,
-  description,
-}
-
-class Message {
-  int? id;
-  Map<MessageKey?, String?>? additionalProperties;
-}
-
-@HostApi()
-abstract class HostApiBridge {
-  void sendMessage(Message message);
-}
-''';
-    final ParseResults results = parseSource(code);
-    expect(results.errors.length, 1);
-  });
-
   test('Export unreferenced enums', () {
     const String code = '''
 enum MessageKey {
@@ -1211,6 +1189,36 @@ class Message {
     final ParseResults results = parseSource(code);
     final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
     expect(options.objcOptions!.copyrightHeader, <String>['A', 'Header']);
+  });
+
+  test('@ConfigurePigeon ObjcOptions.headerIncludePath', () {
+    const String code = '''
+@ConfigurePigeon(PigeonOptions(
+  objcOptions: ObjcOptions(headerIncludePath: 'Header.path'),
+))
+class Message {
+  int? id;
+}
+''';
+
+    final ParseResults results = parseSource(code);
+    final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
+    expect(options.objcOptions?.headerIncludePath, 'Header.path');
+  });
+
+  test('@ConfigurePigeon CppOptions.headerIncludePath', () {
+    const String code = '''
+@ConfigurePigeon(PigeonOptions(
+  cppOptions: CppOptions(headerIncludePath: 'Header.path'),
+))
+class Message {
+  int? id;
+}
+''';
+
+    final ParseResults results = parseSource(code);
+    final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
+    expect(options.cppOptions?.headerIncludePath, 'Header.path');
   });
 
   test('return nullable', () {

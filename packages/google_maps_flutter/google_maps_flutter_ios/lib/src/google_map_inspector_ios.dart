@@ -3,111 +3,100 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+
+import 'messages.g.dart';
 
 /// An Android of implementation of [GoogleMapsInspectorPlatform].
 @visibleForTesting
 class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
-  /// Creates a method-channel-based inspector instance that gets the channel
-  /// for a given map ID from [channelProvider].
-  GoogleMapsInspectorIOS(MethodChannel? Function(int mapId) channelProvider)
-      : _channelProvider = channelProvider;
+  /// Creates an inspector API instance for a given map ID from
+  /// [inspectorProvider].
+  GoogleMapsInspectorIOS(
+      MapsInspectorApi? Function(int mapId) inspectorProvider)
+      : _inspectorProvider = inspectorProvider;
 
-  final MethodChannel? Function(int mapId) _channelProvider;
+  final MapsInspectorApi? Function(int mapId) _inspectorProvider;
 
   @override
   Future<bool> areBuildingsEnabled({required int mapId}) async {
-    return (await _channelProvider(mapId)!
-        .invokeMethod<bool>('map#isBuildingsEnabled'))!;
+    return _inspectorProvider(mapId)!.areBuildingsEnabled();
   }
 
   @override
   Future<bool> areRotateGesturesEnabled({required int mapId}) async {
-    return (await _channelProvider(mapId)!
-        .invokeMethod<bool>('map#isRotateGesturesEnabled'))!;
+    return _inspectorProvider(mapId)!.areRotateGesturesEnabled();
   }
 
   @override
   Future<bool> areScrollGesturesEnabled({required int mapId}) async {
-    return (await _channelProvider(mapId)!
-        .invokeMethod<bool>('map#isScrollGesturesEnabled'))!;
+    return _inspectorProvider(mapId)!.areScrollGesturesEnabled();
   }
 
   @override
   Future<bool> areTiltGesturesEnabled({required int mapId}) async {
-    return (await _channelProvider(mapId)!
-        .invokeMethod<bool>('map#isTiltGesturesEnabled'))!;
+    return _inspectorProvider(mapId)!.areTiltGesturesEnabled();
   }
 
   @override
   Future<bool> areZoomControlsEnabled({required int mapId}) async {
-    return (await _channelProvider(mapId)!
-        .invokeMethod<bool>('map#isZoomControlsEnabled'))!;
+    // Does not exist on iOS.
+    return false;
   }
 
   @override
   Future<bool> areZoomGesturesEnabled({required int mapId}) async {
-    return (await _channelProvider(mapId)!
-        .invokeMethod<bool>('map#isZoomGesturesEnabled'))!;
+    return _inspectorProvider(mapId)!.areZoomGesturesEnabled();
   }
 
   @override
   Future<MinMaxZoomPreference> getMinMaxZoomLevels({required int mapId}) async {
-    final List<double> zoomLevels = (await _channelProvider(mapId)!
-            .invokeMethod<List<dynamic>>('map#getMinMaxZoomLevels'))!
-        .cast<double>();
-    return MinMaxZoomPreference(zoomLevels[0], zoomLevels[1]);
+    final PlatformZoomRange zoomLevels =
+        await _inspectorProvider(mapId)!.getZoomRange();
+    return MinMaxZoomPreference(zoomLevels.min, zoomLevels.max);
   }
 
   @override
   Future<TileOverlay?> getTileOverlayInfo(TileOverlayId tileOverlayId,
       {required int mapId}) async {
-    final Map<String, Object?>? tileInfo = await _channelProvider(mapId)!
-        .invokeMapMethod<String, dynamic>(
-            'map#getTileOverlayInfo', <String, String>{
-      'tileOverlayId': tileOverlayId.value,
-    });
+    final PlatformTileLayer? tileInfo = await _inspectorProvider(mapId)!
+        .getTileOverlayInfo(tileOverlayId.value);
     if (tileInfo == null) {
       return null;
     }
     return TileOverlay(
       tileOverlayId: tileOverlayId,
-      fadeIn: tileInfo['fadeIn']! as bool,
-      transparency: tileInfo['transparency']! as double,
-      visible: tileInfo['visible']! as bool,
-      // Android and iOS return different types.
-      zIndex: (tileInfo['zIndex']! as num).toInt(),
+      fadeIn: tileInfo.fadeIn,
+      transparency: 1.0 - tileInfo.opacity,
+      visible: tileInfo.visible,
+      zIndex: tileInfo.zIndex,
     );
   }
 
   @override
   Future<bool> isCompassEnabled({required int mapId}) async {
-    return (await _channelProvider(mapId)!
-        .invokeMethod<bool>('map#isCompassEnabled'))!;
+    return _inspectorProvider(mapId)!.isCompassEnabled();
   }
 
   @override
   Future<bool> isLiteModeEnabled({required int mapId}) async {
-    return (await _channelProvider(mapId)!
-        .invokeMethod<bool>('map#isLiteModeEnabled'))!;
+    // Does not exist on iOS.
+    return false;
   }
 
   @override
   Future<bool> isMapToolbarEnabled({required int mapId}) async {
-    return (await _channelProvider(mapId)!
-        .invokeMethod<bool>('map#isMapToolbarEnabled'))!;
+    // Does not exist on iOS.
+    return false;
   }
 
   @override
   Future<bool> isMyLocationButtonEnabled({required int mapId}) async {
-    return (await _channelProvider(mapId)!
-        .invokeMethod<bool>('map#isMyLocationButtonEnabled'))!;
+    return _inspectorProvider(mapId)!.isMyLocationButtonEnabled();
   }
 
   @override
   Future<bool> isTrafficEnabled({required int mapId}) async {
-    return (await _channelProvider(mapId)!
-        .invokeMethod<bool>('map#isTrafficEnabled'))!;
+    return _inspectorProvider(mapId)!.isTrafficEnabled();
   }
 }

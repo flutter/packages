@@ -517,8 +517,8 @@ void main() {
           contains(
             r'__pigeon_channel.send(<Object?>[ '
             r'__pigeon_instanceIdentifier, '
-            r'validType, enumType.index, proxyApiType, '
-            r'nullableValidType, nullableEnumType?.index, nullableProxyApiType ])',
+            r'validType, enumType, proxyApiType, '
+            r'nullableValidType, nullableEnumType, nullableProxyApiType ])',
           ),
         );
       });
@@ -627,8 +627,8 @@ void main() {
           contains(
             r'__pigeon_channel.send(<Object?>[ '
             r'__pigeon_instanceIdentifier, '
-            r'validType, enumType.index, proxyApiType, '
-            r'nullableValidType, nullableEnumType?.index, nullableProxyApiType ])',
+            r'validType, enumType, proxyApiType, '
+            r'nullableValidType, nullableEnumType, nullableProxyApiType ])',
           ),
         );
         expect(
@@ -847,8 +847,8 @@ void main() {
           collapsedCode,
           contains(
             r'await __pigeon_channel.send(<Object?>[ this, validType, '
-            r'enumType.index, proxyApiType, nullableValidType, '
-            r'nullableEnumType?.index, nullableProxyApiType ])',
+            r'enumType, proxyApiType, nullableValidType, '
+            r'nullableEnumType, nullableProxyApiType ])',
           ),
         );
       });
@@ -1004,10 +1004,9 @@ void main() {
           contains(r'final int? arg_validType = (args[1] as int?);'),
         );
         expect(
-          collapsedCode,
+          code,
           contains(
-            r'final AnEnum? arg_enumType = args[2] == null ? '
-            r'null : AnEnum.values[args[2]! as int];',
+            r'final AnEnum? arg_enumType = (args[2] as AnEnum?);',
           ),
         );
         expect(
@@ -1019,10 +1018,9 @@ void main() {
           contains(r'final int? arg_nullableValidType = (args[4] as int?);'),
         );
         expect(
-          collapsedCode,
+          code,
           contains(
-            r'final AnEnum? arg_nullableEnumType = args[5] == null ? '
-            r'null : AnEnum.values[args[5]! as int];',
+            r'final AnEnum? arg_nullableEnumType = (args[5] as AnEnum?);',
           ),
         );
         expect(

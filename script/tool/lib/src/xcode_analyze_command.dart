@@ -111,6 +111,7 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
       print('Running $platform tests and analyzer for $examplePath...');
       final int exitCode = await _xcode.runXcodeBuild(
         example.directory,
+        platform,
         // Clean before analyzing to remove cached swiftmodules from previous
         // runs, which can cause conflicts.
         actions: <String>['clean', 'analyze'],

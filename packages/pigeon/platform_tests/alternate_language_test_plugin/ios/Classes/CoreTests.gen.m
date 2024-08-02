@@ -17,7 +17,7 @@
 #error File requires ARC to be enabled.
 #endif
 
-static NSArray *wrapResult(id result, FlutterError *error) {
+static NSArray<id> *wrapResult(id result, FlutterError *error) {
   if (error) {
     return @[
       error.code ?: [NSNull null], error.message ?: [NSNull null], error.details ?: [NSNull null]
@@ -35,7 +35,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
             details:@""];
 }
 
-static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
+static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   id result = array[key];
   return (result == [NSNull null]) ? nil : result;
 }
@@ -51,33 +51,33 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @interface FLTAllTypes ()
-+ (FLTAllTypes *)fromList:(NSArray *)list;
-+ (nullable FLTAllTypes *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
++ (FLTAllTypes *)fromList:(NSArray<id> *)list;
++ (nullable FLTAllTypes *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
 @end
 
 @interface FLTAllNullableTypes ()
-+ (FLTAllNullableTypes *)fromList:(NSArray *)list;
-+ (nullable FLTAllNullableTypes *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
++ (FLTAllNullableTypes *)fromList:(NSArray<id> *)list;
++ (nullable FLTAllNullableTypes *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
 @end
 
 @interface FLTAllNullableTypesWithoutRecursion ()
-+ (FLTAllNullableTypesWithoutRecursion *)fromList:(NSArray *)list;
-+ (nullable FLTAllNullableTypesWithoutRecursion *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
++ (FLTAllNullableTypesWithoutRecursion *)fromList:(NSArray<id> *)list;
++ (nullable FLTAllNullableTypesWithoutRecursion *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
 @end
 
 @interface FLTAllClassesWrapper ()
-+ (FLTAllClassesWrapper *)fromList:(NSArray *)list;
-+ (nullable FLTAllClassesWrapper *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
++ (FLTAllClassesWrapper *)fromList:(NSArray<id> *)list;
++ (nullable FLTAllClassesWrapper *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
 @end
 
 @interface FLTTestMessage ()
-+ (FLTTestMessage *)fromList:(NSArray *)list;
-+ (nullable FLTTestMessage *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
++ (FLTTestMessage *)fromList:(NSArray<id> *)list;
++ (nullable FLTTestMessage *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
 @end
 
 @implementation FLTAllTypes
@@ -89,11 +89,15 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
                   a4ByteArray:(FlutterStandardTypedData *)a4ByteArray
                   a8ByteArray:(FlutterStandardTypedData *)a8ByteArray
                   aFloatArray:(FlutterStandardTypedData *)aFloatArray
-                         list:(NSArray *)list
-                         aMap:(NSDictionary *)aMap
                        anEnum:(FLTAnEnum)anEnum
                       aString:(NSString *)aString
-                     anObject:(id)anObject {
+                     anObject:(id)anObject
+                         list:(NSArray<id> *)list
+                   stringList:(NSArray<NSString *> *)stringList
+                      intList:(NSArray<NSNumber *> *)intList
+                   doubleList:(NSArray<NSNumber *> *)doubleList
+                     boolList:(NSArray<NSNumber *> *)boolList
+                          map:(NSDictionary *)map {
   FLTAllTypes *pigeonResult = [[FLTAllTypes alloc] init];
   pigeonResult.aBool = aBool;
   pigeonResult.anInt = anInt;
@@ -103,14 +107,18 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.a4ByteArray = a4ByteArray;
   pigeonResult.a8ByteArray = a8ByteArray;
   pigeonResult.aFloatArray = aFloatArray;
-  pigeonResult.list = list;
-  pigeonResult.aMap = aMap;
   pigeonResult.anEnum = anEnum;
   pigeonResult.aString = aString;
   pigeonResult.anObject = anObject;
+  pigeonResult.list = list;
+  pigeonResult.stringList = stringList;
+  pigeonResult.intList = intList;
+  pigeonResult.doubleList = doubleList;
+  pigeonResult.boolList = boolList;
+  pigeonResult.map = map;
   return pigeonResult;
 }
-+ (FLTAllTypes *)fromList:(NSArray *)list {
++ (FLTAllTypes *)fromList:(NSArray<id> *)list {
   FLTAllTypes *pigeonResult = [[FLTAllTypes alloc] init];
   pigeonResult.aBool = [GetNullableObjectAtIndex(list, 0) boolValue];
   pigeonResult.anInt = [GetNullableObjectAtIndex(list, 1) integerValue];
@@ -120,17 +128,22 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.a4ByteArray = GetNullableObjectAtIndex(list, 5);
   pigeonResult.a8ByteArray = GetNullableObjectAtIndex(list, 6);
   pigeonResult.aFloatArray = GetNullableObjectAtIndex(list, 7);
-  pigeonResult.list = GetNullableObjectAtIndex(list, 8);
-  pigeonResult.aMap = GetNullableObjectAtIndex(list, 9);
-  pigeonResult.anEnum = [GetNullableObjectAtIndex(list, 10) integerValue];
-  pigeonResult.aString = GetNullableObjectAtIndex(list, 11);
-  pigeonResult.anObject = GetNullableObjectAtIndex(list, 12);
+  FLTAnEnumBox *enumBox = GetNullableObjectAtIndex(list, 8);
+  pigeonResult.anEnum = enumBox.value;
+  pigeonResult.aString = GetNullableObjectAtIndex(list, 9);
+  pigeonResult.anObject = GetNullableObjectAtIndex(list, 10);
+  pigeonResult.list = GetNullableObjectAtIndex(list, 11);
+  pigeonResult.stringList = GetNullableObjectAtIndex(list, 12);
+  pigeonResult.intList = GetNullableObjectAtIndex(list, 13);
+  pigeonResult.doubleList = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.boolList = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.map = GetNullableObjectAtIndex(list, 16);
   return pigeonResult;
 }
-+ (nullable FLTAllTypes *)nullableFromList:(NSArray *)list {
++ (nullable FLTAllTypes *)nullableFromList:(NSArray<id> *)list {
   return (list) ? [FLTAllTypes fromList:list] : nil;
 }
-- (NSArray *)toList {
+- (NSArray<id> *)toList {
   return @[
     @(self.aBool),
     @(self.anInt),
@@ -140,11 +153,15 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     self.a4ByteArray ?: [NSNull null],
     self.a8ByteArray ?: [NSNull null],
     self.aFloatArray ?: [NSNull null],
-    self.list ?: [NSNull null],
-    self.aMap ?: [NSNull null],
-    @(self.anEnum),
+    [[FLTAnEnumBox alloc] initWithValue:self.anEnum],
     self.aString ?: [NSNull null],
     self.anObject ?: [NSNull null],
+    self.list ?: [NSNull null],
+    self.stringList ?: [NSNull null],
+    self.intList ?: [NSNull null],
+    self.doubleList ?: [NSNull null],
+    self.boolList ?: [NSNull null],
+    self.map ?: [NSNull null],
   ];
 }
 @end
@@ -158,8 +175,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
                   aNullable4ByteArray:(nullable FlutterStandardTypedData *)aNullable4ByteArray
                   aNullable8ByteArray:(nullable FlutterStandardTypedData *)aNullable8ByteArray
                   aNullableFloatArray:(nullable FlutterStandardTypedData *)aNullableFloatArray
-                        aNullableList:(nullable NSArray *)aNullableList
-                         aNullableMap:(nullable NSDictionary *)aNullableMap
                    nullableNestedList:(nullable NSArray<NSArray<NSNumber *> *> *)nullableNestedList
            nullableMapWithAnnotations:
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
@@ -167,7 +182,14 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
                         aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject
-                     allNullableTypes:(nullable FLTAllNullableTypes *)allNullableTypes {
+                     allNullableTypes:(nullable FLTAllNullableTypes *)allNullableTypes
+                                 list:(nullable NSArray<id> *)list
+                           stringList:(nullable NSArray<NSString *> *)stringList
+                              intList:(nullable NSArray<NSNumber *> *)intList
+                           doubleList:(nullable NSArray<NSNumber *> *)doubleList
+                             boolList:(nullable NSArray<NSNumber *> *)boolList
+                      nestedClassList:(nullable NSArray<FLTAllNullableTypes *> *)nestedClassList
+                                  map:(nullable NSDictionary *)map {
   FLTAllNullableTypes *pigeonResult = [[FLTAllNullableTypes alloc] init];
   pigeonResult.aNullableBool = aNullableBool;
   pigeonResult.aNullableInt = aNullableInt;
@@ -177,8 +199,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.aNullable4ByteArray = aNullable4ByteArray;
   pigeonResult.aNullable8ByteArray = aNullable8ByteArray;
   pigeonResult.aNullableFloatArray = aNullableFloatArray;
-  pigeonResult.aNullableList = aNullableList;
-  pigeonResult.aNullableMap = aNullableMap;
   pigeonResult.nullableNestedList = nullableNestedList;
   pigeonResult.nullableMapWithAnnotations = nullableMapWithAnnotations;
   pigeonResult.nullableMapWithObject = nullableMapWithObject;
@@ -186,9 +206,16 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.aNullableString = aNullableString;
   pigeonResult.aNullableObject = aNullableObject;
   pigeonResult.allNullableTypes = allNullableTypes;
+  pigeonResult.list = list;
+  pigeonResult.stringList = stringList;
+  pigeonResult.intList = intList;
+  pigeonResult.doubleList = doubleList;
+  pigeonResult.boolList = boolList;
+  pigeonResult.nestedClassList = nestedClassList;
+  pigeonResult.map = map;
   return pigeonResult;
 }
-+ (FLTAllNullableTypes *)fromList:(NSArray *)list {
++ (FLTAllNullableTypes *)fromList:(NSArray<id> *)list {
   FLTAllNullableTypes *pigeonResult = [[FLTAllNullableTypes alloc] init];
   pigeonResult.aNullableBool = GetNullableObjectAtIndex(list, 0);
   pigeonResult.aNullableInt = GetNullableObjectAtIndex(list, 1);
@@ -198,26 +225,26 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.aNullable4ByteArray = GetNullableObjectAtIndex(list, 5);
   pigeonResult.aNullable8ByteArray = GetNullableObjectAtIndex(list, 6);
   pigeonResult.aNullableFloatArray = GetNullableObjectAtIndex(list, 7);
-  pigeonResult.aNullableList = GetNullableObjectAtIndex(list, 8);
-  pigeonResult.aNullableMap = GetNullableObjectAtIndex(list, 9);
-  pigeonResult.nullableNestedList = GetNullableObjectAtIndex(list, 10);
-  pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 11);
-  pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 12);
-  NSNumber *aNullableEnumAsNumber = GetNullableObjectAtIndex(list, 13);
-  FLTAnEnumBox *aNullableEnum =
-      aNullableEnumAsNumber == nil
-          ? nil
-          : [[FLTAnEnumBox alloc] initWithValue:[aNullableEnumAsNumber integerValue]];
-  pigeonResult.aNullableEnum = aNullableEnum;
-  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
-  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
-  pigeonResult.allNullableTypes = GetNullableObjectAtIndex(list, 16);
+  pigeonResult.nullableNestedList = GetNullableObjectAtIndex(list, 8);
+  pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 9);
+  pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 10);
+  pigeonResult.aNullableEnum = GetNullableObjectAtIndex(list, 11);
+  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 12);
+  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 13);
+  pigeonResult.allNullableTypes = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.list = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.stringList = GetNullableObjectAtIndex(list, 16);
+  pigeonResult.intList = GetNullableObjectAtIndex(list, 17);
+  pigeonResult.doubleList = GetNullableObjectAtIndex(list, 18);
+  pigeonResult.boolList = GetNullableObjectAtIndex(list, 19);
+  pigeonResult.nestedClassList = GetNullableObjectAtIndex(list, 20);
+  pigeonResult.map = GetNullableObjectAtIndex(list, 21);
   return pigeonResult;
 }
-+ (nullable FLTAllNullableTypes *)nullableFromList:(NSArray *)list {
++ (nullable FLTAllNullableTypes *)nullableFromList:(NSArray<id> *)list {
   return (list) ? [FLTAllNullableTypes fromList:list] : nil;
 }
-- (NSArray *)toList {
+- (NSArray<id> *)toList {
   return @[
     self.aNullableBool ?: [NSNull null],
     self.aNullableInt ?: [NSNull null],
@@ -227,16 +254,20 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     self.aNullable4ByteArray ?: [NSNull null],
     self.aNullable8ByteArray ?: [NSNull null],
     self.aNullableFloatArray ?: [NSNull null],
-    self.aNullableList ?: [NSNull null],
-    self.aNullableMap ?: [NSNull null],
     self.nullableNestedList ?: [NSNull null],
     self.nullableMapWithAnnotations ?: [NSNull null],
     self.nullableMapWithObject ?: [NSNull null],
-    (self.aNullableEnum == nil ? [NSNull null]
-                               : [NSNumber numberWithInteger:self.aNullableEnum.value]),
+    self.aNullableEnum ?: [NSNull null],
     self.aNullableString ?: [NSNull null],
     self.aNullableObject ?: [NSNull null],
     self.allNullableTypes ?: [NSNull null],
+    self.list ?: [NSNull null],
+    self.stringList ?: [NSNull null],
+    self.intList ?: [NSNull null],
+    self.doubleList ?: [NSNull null],
+    self.boolList ?: [NSNull null],
+    self.nestedClassList ?: [NSNull null],
+    self.map ?: [NSNull null],
   ];
 }
 @end
@@ -250,15 +281,19 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
                   aNullable4ByteArray:(nullable FlutterStandardTypedData *)aNullable4ByteArray
                   aNullable8ByteArray:(nullable FlutterStandardTypedData *)aNullable8ByteArray
                   aNullableFloatArray:(nullable FlutterStandardTypedData *)aNullableFloatArray
-                        aNullableList:(nullable NSArray *)aNullableList
-                         aNullableMap:(nullable NSDictionary *)aNullableMap
                    nullableNestedList:(nullable NSArray<NSArray<NSNumber *> *> *)nullableNestedList
            nullableMapWithAnnotations:
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
-                      aNullableObject:(nullable id)aNullableObject {
+                      aNullableObject:(nullable id)aNullableObject
+                                 list:(nullable NSArray<id> *)list
+                           stringList:(nullable NSArray<NSString *> *)stringList
+                              intList:(nullable NSArray<NSNumber *> *)intList
+                           doubleList:(nullable NSArray<NSNumber *> *)doubleList
+                             boolList:(nullable NSArray<NSNumber *> *)boolList
+                                  map:(nullable NSDictionary *)map {
   FLTAllNullableTypesWithoutRecursion *pigeonResult =
       [[FLTAllNullableTypesWithoutRecursion alloc] init];
   pigeonResult.aNullableBool = aNullableBool;
@@ -269,17 +304,21 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.aNullable4ByteArray = aNullable4ByteArray;
   pigeonResult.aNullable8ByteArray = aNullable8ByteArray;
   pigeonResult.aNullableFloatArray = aNullableFloatArray;
-  pigeonResult.aNullableList = aNullableList;
-  pigeonResult.aNullableMap = aNullableMap;
   pigeonResult.nullableNestedList = nullableNestedList;
   pigeonResult.nullableMapWithAnnotations = nullableMapWithAnnotations;
   pigeonResult.nullableMapWithObject = nullableMapWithObject;
   pigeonResult.aNullableEnum = aNullableEnum;
   pigeonResult.aNullableString = aNullableString;
   pigeonResult.aNullableObject = aNullableObject;
+  pigeonResult.list = list;
+  pigeonResult.stringList = stringList;
+  pigeonResult.intList = intList;
+  pigeonResult.doubleList = doubleList;
+  pigeonResult.boolList = boolList;
+  pigeonResult.map = map;
   return pigeonResult;
 }
-+ (FLTAllNullableTypesWithoutRecursion *)fromList:(NSArray *)list {
++ (FLTAllNullableTypesWithoutRecursion *)fromList:(NSArray<id> *)list {
   FLTAllNullableTypesWithoutRecursion *pigeonResult =
       [[FLTAllNullableTypesWithoutRecursion alloc] init];
   pigeonResult.aNullableBool = GetNullableObjectAtIndex(list, 0);
@@ -290,25 +329,24 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.aNullable4ByteArray = GetNullableObjectAtIndex(list, 5);
   pigeonResult.aNullable8ByteArray = GetNullableObjectAtIndex(list, 6);
   pigeonResult.aNullableFloatArray = GetNullableObjectAtIndex(list, 7);
-  pigeonResult.aNullableList = GetNullableObjectAtIndex(list, 8);
-  pigeonResult.aNullableMap = GetNullableObjectAtIndex(list, 9);
-  pigeonResult.nullableNestedList = GetNullableObjectAtIndex(list, 10);
-  pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 11);
-  pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 12);
-  NSNumber *aNullableEnumAsNumber = GetNullableObjectAtIndex(list, 13);
-  FLTAnEnumBox *aNullableEnum =
-      aNullableEnumAsNumber == nil
-          ? nil
-          : [[FLTAnEnumBox alloc] initWithValue:[aNullableEnumAsNumber integerValue]];
-  pigeonResult.aNullableEnum = aNullableEnum;
-  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
-  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.nullableNestedList = GetNullableObjectAtIndex(list, 8);
+  pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 9);
+  pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 10);
+  pigeonResult.aNullableEnum = GetNullableObjectAtIndex(list, 11);
+  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 12);
+  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 13);
+  pigeonResult.list = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.stringList = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.intList = GetNullableObjectAtIndex(list, 16);
+  pigeonResult.doubleList = GetNullableObjectAtIndex(list, 17);
+  pigeonResult.boolList = GetNullableObjectAtIndex(list, 18);
+  pigeonResult.map = GetNullableObjectAtIndex(list, 19);
   return pigeonResult;
 }
-+ (nullable FLTAllNullableTypesWithoutRecursion *)nullableFromList:(NSArray *)list {
++ (nullable FLTAllNullableTypesWithoutRecursion *)nullableFromList:(NSArray<id> *)list {
   return (list) ? [FLTAllNullableTypesWithoutRecursion fromList:list] : nil;
 }
-- (NSArray *)toList {
+- (NSArray<id> *)toList {
   return @[
     self.aNullableBool ?: [NSNull null],
     self.aNullableInt ?: [NSNull null],
@@ -318,15 +356,18 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     self.aNullable4ByteArray ?: [NSNull null],
     self.aNullable8ByteArray ?: [NSNull null],
     self.aNullableFloatArray ?: [NSNull null],
-    self.aNullableList ?: [NSNull null],
-    self.aNullableMap ?: [NSNull null],
     self.nullableNestedList ?: [NSNull null],
     self.nullableMapWithAnnotations ?: [NSNull null],
     self.nullableMapWithObject ?: [NSNull null],
-    (self.aNullableEnum == nil ? [NSNull null]
-                               : [NSNumber numberWithInteger:self.aNullableEnum.value]),
+    self.aNullableEnum ?: [NSNull null],
     self.aNullableString ?: [NSNull null],
     self.aNullableObject ?: [NSNull null],
+    self.list ?: [NSNull null],
+    self.stringList ?: [NSNull null],
+    self.intList ?: [NSNull null],
+    self.doubleList ?: [NSNull null],
+    self.boolList ?: [NSNull null],
+    self.map ?: [NSNull null],
   ];
 }
 @end
@@ -342,17 +383,17 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.allTypes = allTypes;
   return pigeonResult;
 }
-+ (FLTAllClassesWrapper *)fromList:(NSArray *)list {
++ (FLTAllClassesWrapper *)fromList:(NSArray<id> *)list {
   FLTAllClassesWrapper *pigeonResult = [[FLTAllClassesWrapper alloc] init];
   pigeonResult.allNullableTypes = GetNullableObjectAtIndex(list, 0);
   pigeonResult.allNullableTypesWithoutRecursion = GetNullableObjectAtIndex(list, 1);
   pigeonResult.allTypes = GetNullableObjectAtIndex(list, 2);
   return pigeonResult;
 }
-+ (nullable FLTAllClassesWrapper *)nullableFromList:(NSArray *)list {
++ (nullable FLTAllClassesWrapper *)nullableFromList:(NSArray<id> *)list {
   return (list) ? [FLTAllClassesWrapper fromList:list] : nil;
 }
-- (NSArray *)toList {
+- (NSArray<id> *)toList {
   return @[
     self.allNullableTypes ?: [NSNull null],
     self.allNullableTypesWithoutRecursion ?: [NSNull null],
@@ -362,94 +403,102 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FLTTestMessage
-+ (instancetype)makeWithTestList:(nullable NSArray *)testList {
++ (instancetype)makeWithTestList:(nullable NSArray<id> *)testList {
   FLTTestMessage *pigeonResult = [[FLTTestMessage alloc] init];
   pigeonResult.testList = testList;
   return pigeonResult;
 }
-+ (FLTTestMessage *)fromList:(NSArray *)list {
++ (FLTTestMessage *)fromList:(NSArray<id> *)list {
   FLTTestMessage *pigeonResult = [[FLTTestMessage alloc] init];
   pigeonResult.testList = GetNullableObjectAtIndex(list, 0);
   return pigeonResult;
 }
-+ (nullable FLTTestMessage *)nullableFromList:(NSArray *)list {
++ (nullable FLTTestMessage *)nullableFromList:(NSArray<id> *)list {
   return (list) ? [FLTTestMessage fromList:list] : nil;
 }
-- (NSArray *)toList {
+- (NSArray<id> *)toList {
   return @[
     self.testList ?: [NSNull null],
   ];
 }
 @end
 
-@interface FLTHostIntegrationCoreApiCodecReader : FlutterStandardReader
+@interface FLTCoreTestsPigeonCodecReader : FlutterStandardReader
 @end
-@implementation FLTHostIntegrationCoreApiCodecReader
+@implementation FLTCoreTestsPigeonCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
-      return [FLTAllClassesWrapper fromList:[self readValue]];
     case 129:
-      return [FLTAllNullableTypes fromList:[self readValue]];
-    case 130:
-      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
-    case 131:
       return [FLTAllTypes fromList:[self readValue]];
+    case 130:
+      return [FLTAllNullableTypes fromList:[self readValue]];
+    case 131:
+      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
     case 132:
+      return [FLTAllClassesWrapper fromList:[self readValue]];
+    case 133:
       return [FLTTestMessage fromList:[self readValue]];
+    case 134: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAnEnumBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface FLTHostIntegrationCoreApiCodecWriter : FlutterStandardWriter
+@interface FLTCoreTestsPigeonCodecWriter : FlutterStandardWriter
 @end
-@implementation FLTHostIntegrationCoreApiCodecWriter
+@implementation FLTCoreTestsPigeonCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
-    [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
+  if ([value isKindOfClass:[FLTAllTypes class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+    [self writeByte:133];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTAnEnumBox class]]) {
+    FLTAnEnumBox *box = (FLTAnEnumBox *)value;
+    [self writeByte:134];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
   } else {
     [super writeValue:value];
   }
 }
 @end
 
-@interface FLTHostIntegrationCoreApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface FLTCoreTestsPigeonCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation FLTHostIntegrationCoreApiCodecReaderWriter
+@implementation FLTCoreTestsPigeonCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[FLTHostIntegrationCoreApiCodecWriter alloc] initWithData:data];
+  return [[FLTCoreTestsPigeonCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[FLTHostIntegrationCoreApiCodecReader alloc] initWithData:data];
+  return [[FLTCoreTestsPigeonCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *FLTHostIntegrationCoreApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FLTHostIntegrationCoreApiCodecReaderWriter *readerWriter =
-        [[FLTHostIntegrationCoreApiCodecReaderWriter alloc] init];
+    FLTCoreTestsPigeonCodecReaderWriter *readerWriter =
+        [[FLTCoreTestsPigeonCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
-
 void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                                     NSObject<FLTHostIntegrationCoreApi> *api) {
   SetUpFLTHostIntegrationCoreApiWithSuffix(binaryMessenger, api, @"");
@@ -470,7 +519,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.noop",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(noopWithError:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(noopWithError:)",
@@ -492,14 +541,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAllTypes",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(echoAllTypes:error:)],
           @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoAllTypes:error:)",
           api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FLTAllTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         FLTAllTypes *output = [api echoAllTypes:arg_everything error:&error];
@@ -517,7 +566,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.throwError",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(throwErrorWithError:)],
@@ -540,7 +589,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.throwErrorFromVoid",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(throwErrorFromVoidWithError:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -563,7 +612,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.throwFlutterError",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(throwFlutterErrorWithError:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -586,13 +635,13 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoInt",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoInt:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoInt:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSInteger arg_anInt = [GetNullableObjectAtIndex(args, 0) integerValue];
         FlutterError *error;
         NSNumber *output = [api echoInt:arg_anInt error:&error];
@@ -610,14 +659,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoDouble",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(echoDouble:error:)],
           @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoDouble:error:)",
           api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         double arg_aDouble = [GetNullableObjectAtIndex(args, 0) doubleValue];
         FlutterError *error;
         NSNumber *output = [api echoDouble:arg_aDouble error:&error];
@@ -635,13 +684,13 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoBool",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoBool:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoBool:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         BOOL arg_aBool = [GetNullableObjectAtIndex(args, 0) boolValue];
         FlutterError *error;
         NSNumber *output = [api echoBool:arg_aBool error:&error];
@@ -659,14 +708,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoString",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(echoString:error:)],
           @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoString:error:)",
           api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSString *arg_aString = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSString *output = [api echoString:arg_aString error:&error];
@@ -684,14 +733,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoUint8List",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(echoUint8List:error:)],
           @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoUint8List:error:)",
           api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FlutterStandardTypedData *arg_aUint8List = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         FlutterStandardTypedData *output = [api echoUint8List:arg_aUint8List error:&error];
@@ -709,14 +758,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoObject",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(echoObject:error:)],
           @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoObject:error:)",
           api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         id arg_anObject = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         id output = [api echoObject:arg_anObject error:&error];
@@ -734,13 +783,13 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoList",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoList:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoList:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSArray<id> *arg_list = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSArray<id> *output = [api echoList:arg_list error:&error];
@@ -758,13 +807,13 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoMap",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoMap:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoMap:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSDictionary<NSString *, id> *arg_aMap = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSDictionary<NSString *, id> *output = [api echoMap:arg_aMap error:&error];
@@ -782,14 +831,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoClassWrapper",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoClassWrapper:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoClassWrapper:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FLTAllClassesWrapper *arg_wrapper = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         FLTAllClassesWrapper *output = [api echoClassWrapper:arg_wrapper error:&error];
@@ -807,17 +856,17 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoEnum",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoEnum:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoEnum:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        FLTAnEnum arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
+        NSArray<id> *args = message;
+        FLTAnEnumBox *enumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnEnum arg_anEnum = enumBox.value;
         FlutterError *error;
-        FLTAnEnumBox *enumBox = [api echoEnum:arg_anEnum error:&error];
-        NSNumber *output = enumBox == nil ? nil : [NSNumber numberWithInteger:enumBox.value];
+        FLTAnEnumBox *output = [api echoEnum:arg_anEnum error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -832,14 +881,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNamedDefaultString",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNamedDefaultString:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoNamedDefaultString:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSString *arg_aString = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSString *output = [api echoNamedDefaultString:arg_aString error:&error];
@@ -858,14 +907,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.echoOptionalDefaultDouble",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoOptionalDefaultDouble:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoOptionalDefaultDouble:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         double arg_aDouble = [GetNullableObjectAtIndex(args, 0) doubleValue];
         FlutterError *error;
         NSNumber *output = [api echoOptionalDefaultDouble:arg_aDouble error:&error];
@@ -883,14 +932,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoRequiredInt",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoRequiredInt:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoRequiredInt:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSInteger arg_anInt = [GetNullableObjectAtIndex(args, 0) integerValue];
         FlutterError *error;
         NSNumber *output = [api echoRequiredInt:arg_anInt error:&error];
@@ -908,14 +957,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAllNullableTypes",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAllNullableTypes:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAllNullableTypes:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FLTAllNullableTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         FLTAllNullableTypes *output = [api echoAllNullableTypes:arg_everything error:&error];
@@ -935,14 +984,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                     @"HostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion",
                                     messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAllNullableTypesWithoutRecursion:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAllNullableTypesWithoutRecursion:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FLTAllNullableTypesWithoutRecursion *arg_everything = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         FLTAllNullableTypesWithoutRecursion *output =
@@ -963,14 +1012,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.extractNestedNullableString",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(extractNestedNullableStringFrom:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(extractNestedNullableStringFrom:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FLTAllClassesWrapper *arg_wrapper = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSString *output = [api extractNestedNullableStringFrom:arg_wrapper error:&error];
@@ -990,14 +1039,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.createNestedNullableString",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(createNestedObjectWithNullableString:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(createNestedObjectWithNullableString:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSString *arg_nullableString = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         FLTAllClassesWrapper *output = [api createNestedObjectWithNullableString:arg_nullableString
@@ -1017,7 +1066,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.sendMultipleNullableTypes",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(sendMultipleNullableTypesABool:
                                                                            anInt:aString:error:)],
@@ -1025,7 +1074,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 @"@selector(sendMultipleNullableTypesABool:anInt:aString:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSNumber *arg_aNullableBool = GetNullableObjectAtIndex(args, 0);
         NSNumber *arg_aNullableInt = GetNullableObjectAtIndex(args, 1);
         NSString *arg_aNullableString = GetNullableObjectAtIndex(args, 2);
@@ -1050,7 +1099,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                 @"HostIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion",
                                 messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector
                      (sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:error:)],
@@ -1058,7 +1107,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 @"@selector(sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSNumber *arg_aNullableBool = GetNullableObjectAtIndex(args, 0);
         NSNumber *arg_aNullableInt = GetNullableObjectAtIndex(args, 1);
         NSString *arg_aNullableString = GetNullableObjectAtIndex(args, 2);
@@ -1082,14 +1131,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableInt",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableInt:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoNullableInt:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSNumber *arg_aNullableInt = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSNumber *output = [api echoNullableInt:arg_aNullableInt error:&error];
@@ -1107,14 +1156,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableDouble",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableDouble:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoNullableDouble:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSNumber *arg_aNullableDouble = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSNumber *output = [api echoNullableDouble:arg_aNullableDouble error:&error];
@@ -1132,14 +1181,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableBool",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableBool:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoNullableBool:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSNumber *arg_aNullableBool = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSNumber *output = [api echoNullableBool:arg_aNullableBool error:&error];
@@ -1157,14 +1206,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableString",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableString:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoNullableString:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSString *arg_aNullableString = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSString *output = [api echoNullableString:arg_aNullableString error:&error];
@@ -1182,14 +1231,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableUint8List",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableUint8List:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoNullableUint8List:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FlutterStandardTypedData *arg_aNullableUint8List = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         FlutterStandardTypedData *output = [api echoNullableUint8List:arg_aNullableUint8List
@@ -1208,14 +1257,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableObject",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableObject:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoNullableObject:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         id arg_aNullableObject = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         id output = [api echoNullableObject:arg_aNullableObject error:&error];
@@ -1233,14 +1282,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableList",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableList:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoNullableList:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSArray<id> *arg_aNullableList = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSArray<id> *output = [api echoNullableList:arg_aNullableList error:&error];
@@ -1258,14 +1307,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableMap",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableMap:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoNullableMap:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSDictionary<NSString *, id> *arg_aNullableMap = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSDictionary<NSString *, id> *output = [api echoNullableMap:arg_aNullableMap error:&error];
@@ -1282,22 +1331,17 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableEnum",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableEnum:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoNullableEnum:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSNumber *arg_anEnumAsNumber = GetNullableObjectAtIndex(args, 0);
-        FLTAnEnumBox *arg_anEnum =
-            arg_anEnumAsNumber == nil
-                ? nil
-                : [[FLTAnEnumBox alloc] initWithValue:[arg_anEnumAsNumber integerValue]];
+        NSArray<id> *args = message;
+        FLTAnEnumBox *arg_anEnum = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        FLTAnEnumBox *enumBox = [api echoNullableEnum:arg_anEnum error:&error];
-        NSNumber *output = enumBox == nil ? nil : [NSNumber numberWithInteger:enumBox.value];
+        FLTAnEnumBox *output = [api echoNullableEnum:arg_anEnum error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -1313,14 +1357,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.echoOptionalNullableInt",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoOptionalNullableInt:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoOptionalNullableInt:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSNumber *arg_aNullableInt = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSNumber *output = [api echoOptionalNullableInt:arg_aNullableInt error:&error];
@@ -1339,14 +1383,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.echoNamedNullableString",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNamedNullableString:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoNamedNullableString:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSString *arg_aNullableString = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSString *output = [api echoNamedNullableString:arg_aNullableString error:&error];
@@ -1365,7 +1409,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.noopAsync",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(noopAsyncWithCompletion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1388,14 +1432,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncInt",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncInt:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncInt:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSInteger arg_anInt = [GetNullableObjectAtIndex(args, 0) integerValue];
         [api echoAsyncInt:arg_anInt
                completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
@@ -1414,14 +1458,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncDouble",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncDouble:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncDouble:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         double arg_aDouble = [GetNullableObjectAtIndex(args, 0) doubleValue];
         [api echoAsyncDouble:arg_aDouble
                   completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
@@ -1440,14 +1484,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncBool",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncBool:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncBool:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         BOOL arg_aBool = [GetNullableObjectAtIndex(args, 0) boolValue];
         [api echoAsyncBool:arg_aBool
                 completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
@@ -1466,14 +1510,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncString",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncString:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncString:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSString *arg_aString = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncString:arg_aString
                   completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
@@ -1492,14 +1536,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncUint8List",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncUint8List:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncUint8List:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FlutterStandardTypedData *arg_aUint8List = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncUint8List:arg_aUint8List
                      completion:^(FlutterStandardTypedData *_Nullable output,
@@ -1519,14 +1563,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncObject",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncObject:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncObject:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         id arg_anObject = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncObject:arg_anObject
                   completion:^(id _Nullable output, FlutterError *_Nullable error) {
@@ -1545,14 +1589,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncList",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncList:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncList:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSArray<id> *arg_list = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncList:arg_list
                 completion:^(NSArray<id> *_Nullable output, FlutterError *_Nullable error) {
@@ -1571,14 +1615,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncMap",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncMap:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncMap:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSDictionary<NSString *, id> *arg_aMap = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncMap:arg_aMap
                completion:^(NSDictionary<NSString *, id> *_Nullable output,
@@ -1598,19 +1642,18 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncEnum",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncEnum:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncEnum:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        FLTAnEnum arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
+        NSArray<id> *args = message;
+        FLTAnEnumBox *enumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnEnum arg_anEnum = enumBox.value;
         [api echoAsyncEnum:arg_anEnum
-                completion:^(FLTAnEnumBox *_Nullable enumValue, FlutterError *_Nullable error) {
-                  NSNumber *output =
-                      enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];
+                completion:^(FLTAnEnumBox *_Nullable output, FlutterError *_Nullable error) {
                   callback(wrapResult(output, error));
                 }];
       }];
@@ -1626,7 +1669,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.throwAsyncError",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(throwAsyncErrorWithCompletion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1650,7 +1693,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.throwAsyncErrorFromVoid",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(throwAsyncErrorFromVoidWithCompletion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1673,7 +1716,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.throwAsyncFlutterError",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(throwAsyncFlutterErrorWithCompletion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1697,14 +1740,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncAllTypes",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncAllTypes:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncAllTypes:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FLTAllTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncAllTypes:arg_everything
                     completion:^(FLTAllTypes *_Nullable output, FlutterError *_Nullable error) {
@@ -1724,14 +1767,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                       @"HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes",
                                       messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableAllNullableTypes:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncNullableAllNullableTypes:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FLTAllNullableTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncNullableAllNullableTypes:arg_everything
                                     completion:^(FLTAllNullableTypes *_Nullable output,
@@ -1753,7 +1796,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"echoAsyncNullableAllNullableTypesWithoutRecursion",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector
                      (echoAsyncNullableAllNullableTypesWithoutRecursion:completion:)],
@@ -1761,7 +1804,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 @"@selector(echoAsyncNullableAllNullableTypesWithoutRecursion:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FLTAllNullableTypesWithoutRecursion *arg_everything = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncNullableAllNullableTypesWithoutRecursion:arg_everything
                                                     completion:^(FLTAllNullableTypesWithoutRecursion
@@ -1782,14 +1825,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncNullableInt",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableInt:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncNullableInt:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSNumber *arg_anInt = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncNullableInt:arg_anInt
                        completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
@@ -1809,14 +1852,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.echoAsyncNullableDouble",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableDouble:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncNullableDouble:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSNumber *arg_aDouble = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncNullableDouble:arg_aDouble
                           completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
@@ -1835,14 +1878,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncNullableBool",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableBool:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncNullableBool:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSNumber *arg_aBool = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncNullableBool:arg_aBool
                         completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
@@ -1862,14 +1905,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.echoAsyncNullableString",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableString:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncNullableString:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSString *arg_aString = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncNullableString:arg_aString
                           completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
@@ -1889,14 +1932,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.echoAsyncNullableUint8List",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableUint8List:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncNullableUint8List:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FlutterStandardTypedData *arg_aUint8List = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncNullableUint8List:arg_aUint8List
                              completion:^(FlutterStandardTypedData *_Nullable output,
@@ -1917,14 +1960,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.echoAsyncNullableObject",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableObject:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncNullableObject:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         id arg_anObject = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncNullableObject:arg_anObject
                           completion:^(id _Nullable output, FlutterError *_Nullable error) {
@@ -1943,14 +1986,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncNullableList",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableList:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncNullableList:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSArray<id> *arg_list = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncNullableList:arg_list
                         completion:^(NSArray<id> *_Nullable output, FlutterError *_Nullable error) {
@@ -1969,14 +2012,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncNullableMap",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableMap:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncNullableMap:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSDictionary<NSString *, id> *arg_aMap = GetNullableObjectAtIndex(args, 0);
         [api echoAsyncNullableMap:arg_aMap
                        completion:^(NSDictionary<NSString *, id> *_Nullable output,
@@ -1996,26 +2039,20 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncNullableEnum",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableEnum:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(echoAsyncNullableEnum:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSNumber *arg_anEnumAsNumber = GetNullableObjectAtIndex(args, 0);
-        FLTAnEnumBox *arg_anEnum =
-            arg_anEnumAsNumber == nil
-                ? nil
-                : [[FLTAnEnumBox alloc] initWithValue:[arg_anEnumAsNumber integerValue]];
-        [api echoAsyncNullableEnum:arg_anEnum
-                        completion:^(FLTAnEnumBox *_Nullable enumValue,
-                                     FlutterError *_Nullable error) {
-                          NSNumber *output =
-                              enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];
-                          callback(wrapResult(output, error));
-                        }];
+        NSArray<id> *args = message;
+        FLTAnEnumBox *arg_anEnum = GetNullableObjectAtIndex(args, 0);
+        [api
+            echoAsyncNullableEnum:arg_anEnum
+                       completion:^(FLTAnEnumBox *_Nullable output, FlutterError *_Nullable error) {
+                         callback(wrapResult(output, error));
+                       }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -2028,7 +2065,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterNoop",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterNoopWithCompletion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2050,7 +2087,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterThrowError",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterThrowErrorWithCompletion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2074,7 +2111,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                           @"HostIntegrationCoreApi.callFlutterThrowErrorFromVoid",
                                           messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterThrowErrorFromVoidWithCompletion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2097,14 +2134,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.callFlutterEchoAllTypes",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoAllTypes:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoAllTypes:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FLTAllTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoAllTypes:arg_everything
                           completion:^(FLTAllTypes *_Nullable output,
@@ -2124,14 +2161,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                           @"HostIntegrationCoreApi.callFlutterEchoAllNullableTypes",
                                           messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoAllNullableTypes:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoAllNullableTypes:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FLTAllNullableTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoAllNullableTypes:arg_everything
                                   completion:^(FLTAllNullableTypes *_Nullable output,
@@ -2152,7 +2189,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                     @"HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes",
                                     messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector
                      (callFlutterSendMultipleNullableTypesABool:anInt:aString:completion:)],
@@ -2160,7 +2197,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 @"@selector(callFlutterSendMultipleNullableTypesABool:anInt:aString:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSNumber *arg_aNullableBool = GetNullableObjectAtIndex(args, 0);
         NSNumber *arg_aNullableInt = GetNullableObjectAtIndex(args, 1);
         NSString *arg_aNullableString = GetNullableObjectAtIndex(args, 2);
@@ -2185,7 +2222,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"callFlutterEchoAllNullableTypesWithoutRecursion",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector
                      (callFlutterEchoAllNullableTypesWithoutRecursion:completion:)],
@@ -2193,7 +2230,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 @"@selector(callFlutterEchoAllNullableTypesWithoutRecursion:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FLTAllNullableTypesWithoutRecursion *arg_everything = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoAllNullableTypesWithoutRecursion:arg_everything
                                                   completion:^(FLTAllNullableTypesWithoutRecursion
@@ -2215,7 +2252,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                              @"callFlutterSendMultipleNullableTypesWithoutRecursion",
                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector
@@ -2226,7 +2263,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
           @"completion:)",
           api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSNumber *arg_aNullableBool = GetNullableObjectAtIndex(args, 0);
         NSNumber *arg_aNullableInt = GetNullableObjectAtIndex(args, 1);
         NSString *arg_aNullableString = GetNullableObjectAtIndex(args, 2);
@@ -2251,14 +2288,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterEchoBool",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoBool:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoBool:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         BOOL arg_aBool = [GetNullableObjectAtIndex(args, 0) boolValue];
         [api callFlutterEchoBool:arg_aBool
                       completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
@@ -2276,14 +2313,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterEchoInt",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoInt:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoInt:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSInteger arg_anInt = [GetNullableObjectAtIndex(args, 0) integerValue];
         [api callFlutterEchoInt:arg_anInt
                      completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
@@ -2301,14 +2338,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterEchoDouble",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoDouble:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoDouble:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         double arg_aDouble = [GetNullableObjectAtIndex(args, 0) doubleValue];
         [api callFlutterEchoDouble:arg_aDouble
                         completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
@@ -2326,14 +2363,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterEchoString",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoString:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoString:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSString *arg_aString = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoString:arg_aString
                         completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
@@ -2352,14 +2389,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.callFlutterEchoUint8List",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoUint8List:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoUint8List:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FlutterStandardTypedData *arg_list = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoUint8List:arg_list
                            completion:^(FlutterStandardTypedData *_Nullable output,
@@ -2378,14 +2415,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterEchoList",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoList:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoList:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSArray<id> *arg_list = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoList:arg_list
                       completion:^(NSArray<id> *_Nullable output, FlutterError *_Nullable error) {
@@ -2403,14 +2440,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterEchoMap",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoMap:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoMap:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSDictionary<NSString *, id> *arg_aMap = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoMap:arg_aMap
                      completion:^(NSDictionary<NSString *, id> *_Nullable output,
@@ -2429,20 +2466,18 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterEchoEnum",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoEnum:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoEnum:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        FLTAnEnum arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
+        NSArray<id> *args = message;
+        FLTAnEnumBox *enumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnEnum arg_anEnum = enumBox.value;
         [api callFlutterEchoEnum:arg_anEnum
-                      completion:^(FLTAnEnumBox *_Nullable enumValue,
-                                   FlutterError *_Nullable error) {
-                        NSNumber *output =
-                            enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];
+                      completion:^(FLTAnEnumBox *_Nullable output, FlutterError *_Nullable error) {
                         callback(wrapResult(output, error));
                       }];
       }];
@@ -2458,14 +2493,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.callFlutterEchoNullableBool",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableBool:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoNullableBool:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSNumber *arg_aBool = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoNullableBool:arg_aBool
                               completion:^(NSNumber *_Nullable output,
@@ -2485,14 +2520,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.callFlutterEchoNullableInt",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableInt:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoNullableInt:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSNumber *arg_anInt = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoNullableInt:arg_anInt
                              completion:^(NSNumber *_Nullable output,
@@ -2512,14 +2547,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                           @"HostIntegrationCoreApi.callFlutterEchoNullableDouble",
                                           messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableDouble:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoNullableDouble:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSNumber *arg_aDouble = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoNullableDouble:arg_aDouble
                                 completion:^(NSNumber *_Nullable output,
@@ -2539,14 +2574,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                           @"HostIntegrationCoreApi.callFlutterEchoNullableString",
                                           messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableString:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoNullableString:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSString *arg_aString = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoNullableString:arg_aString
                                 completion:^(NSString *_Nullable output,
@@ -2566,14 +2601,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                       @"HostIntegrationCoreApi.callFlutterEchoNullableUint8List",
                                       messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableUint8List:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoNullableUint8List:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         FlutterStandardTypedData *arg_list = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoNullableUint8List:arg_list
                                    completion:^(FlutterStandardTypedData *_Nullable output,
@@ -2593,14 +2628,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.callFlutterEchoNullableList",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableList:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoNullableList:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSArray<id> *arg_list = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoNullableList:arg_list
                               completion:^(NSArray<id> *_Nullable output,
@@ -2620,14 +2655,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.callFlutterEchoNullableMap",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableMap:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoNullableMap:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSDictionary<NSString *, id> *arg_aMap = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoNullableMap:arg_aMap
                              completion:^(NSDictionary<NSString *, id> *_Nullable output,
@@ -2647,25 +2682,18 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.callFlutterEchoNullableEnum",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableEnum:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterEchoNullableEnum:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSNumber *arg_anEnumAsNumber = GetNullableObjectAtIndex(args, 0);
-        FLTAnEnumBox *arg_anEnum =
-            arg_anEnumAsNumber == nil
-                ? nil
-                : [[FLTAnEnumBox alloc] initWithValue:[arg_anEnumAsNumber integerValue]];
+        NSArray<id> *args = message;
+        FLTAnEnumBox *arg_anEnum = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoNullableEnum:arg_anEnum
-                              completion:^(FLTAnEnumBox *_Nullable enumValue,
+                              completion:^(FLTAnEnumBox *_Nullable output,
                                            FlutterError *_Nullable error) {
-                                NSNumber *output =
-                                    enumValue == nil ? nil
-                                                     : [NSNumber numberWithInteger:enumValue.value];
                                 callback(wrapResult(output, error));
                               }];
       }];
@@ -2681,14 +2709,14 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                           @"HostIntegrationCoreApi.callFlutterSmallApiEchoString",
                                           messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterSmallApiEchoString:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
                 @"@selector(callFlutterSmallApiEchoString:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSString *arg_aString = GetNullableObjectAtIndex(args, 0);
         [api callFlutterSmallApiEchoString:arg_aString
                                 completion:^(NSString *_Nullable output,
@@ -2701,74 +2729,6 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
 }
-@interface FLTFlutterIntegrationCoreApiCodecReader : FlutterStandardReader
-@end
-@implementation FLTFlutterIntegrationCoreApiCodecReader
-- (nullable id)readValueOfType:(UInt8)type {
-  switch (type) {
-    case 128:
-      return [FLTAllClassesWrapper fromList:[self readValue]];
-    case 129:
-      return [FLTAllNullableTypes fromList:[self readValue]];
-    case 130:
-      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
-    case 131:
-      return [FLTAllTypes fromList:[self readValue]];
-    case 132:
-      return [FLTTestMessage fromList:[self readValue]];
-    default:
-      return [super readValueOfType:type];
-  }
-}
-@end
-
-@interface FLTFlutterIntegrationCoreApiCodecWriter : FlutterStandardWriter
-@end
-@implementation FLTFlutterIntegrationCoreApiCodecWriter
-- (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
-    [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
-    [self writeByte:129];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
-    [self writeByte:130];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
-    [self writeByte:131];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
-    [self writeByte:132];
-    [self writeValue:[value toList]];
-  } else {
-    [super writeValue:value];
-  }
-}
-@end
-
-@interface FLTFlutterIntegrationCoreApiCodecReaderWriter : FlutterStandardReaderWriter
-@end
-@implementation FLTFlutterIntegrationCoreApiCodecReaderWriter
-- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[FLTFlutterIntegrationCoreApiCodecWriter alloc] initWithData:data];
-}
-- (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[FLTFlutterIntegrationCoreApiCodecReader alloc] initWithData:data];
-}
-@end
-
-NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
-  static FlutterStandardMessageCodec *sSharedObject = nil;
-  static dispatch_once_t sPred = 0;
-  dispatch_once(&sPred, ^{
-    FLTFlutterIntegrationCoreApiCodecReaderWriter *readerWriter =
-        [[FLTFlutterIntegrationCoreApiCodecReaderWriter alloc] init];
-    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
-  });
-  return sSharedObject;
-}
-
 @interface FLTFlutterIntegrationCoreApi ()
 @property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
 @property(nonatomic, strong) NSString *messageChannelSuffix;
@@ -2798,7 +2758,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:nil
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2823,7 +2783,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:nil
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2849,7 +2809,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:nil
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2875,7 +2835,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_everything ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2903,7 +2863,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_everything ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2933,7 +2893,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[
     arg_aNullableBool ?: [NSNull null], arg_aNullableInt ?: [NSNull null],
     arg_aNullableString ?: [NSNull null]
@@ -2966,7 +2926,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_everything ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2999,7 +2959,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[
     arg_aNullableBool ?: [NSNull null], arg_aNullableInt ?: [NSNull null],
     arg_aNullableString ?: [NSNull null]
@@ -3030,7 +2990,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ @(arg_aBool) ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3056,7 +3016,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ @(arg_anInt) ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3083,7 +3043,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ @(arg_aDouble) ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3110,7 +3070,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3138,7 +3098,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_list ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3166,7 +3126,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_list ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3193,7 +3153,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_aMap ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3221,8 +3181,8 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
-  [channel sendMessage:@[ [NSNumber numberWithInteger:arg_anEnum] ]
+                                                   codec:FLTGetCoreTestsCodec()];
+  [channel sendMessage:@[ [[FLTAnEnumBox alloc] initWithValue:arg_anEnum] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
                      if (reply.count > 1) {
@@ -3230,11 +3190,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
                                                            message:reply[1]
                                                            details:reply[2]]);
                      } else {
-                       NSNumber *outputAsNumber = reply[0] == [NSNull null] ? nil : reply[0];
-                       FLTAnEnumBox *output =
-                           outputAsNumber == nil
-                               ? nil
-                               : [[FLTAnEnumBox alloc] initWithValue:[outputAsNumber integerValue]];
+                       FLTAnEnumBox *output = reply[0] == [NSNull null] ? nil : reply[0];
                        completion(output, nil);
                      }
                    } else {
@@ -3252,7 +3208,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_aBool ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3279,7 +3235,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_anInt ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3306,7 +3262,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_aDouble ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3333,7 +3289,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3361,7 +3317,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_list ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3389,7 +3345,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_list ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3417,7 +3373,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_aMap ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3445,9 +3401,8 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
-  [channel sendMessage:@[ arg_anEnum == nil ? [NSNull null]
-                                            : [NSNumber numberWithInteger:arg_anEnum.value] ]
+                                                   codec:FLTGetCoreTestsCodec()];
+  [channel sendMessage:@[ arg_anEnum == nil ? [NSNull null] : arg_anEnum ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
                      if (reply.count > 1) {
@@ -3455,11 +3410,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
                                                            message:reply[1]
                                                            details:reply[2]]);
                      } else {
-                       NSNumber *outputAsNumber = reply[0] == [NSNull null] ? nil : reply[0];
-                       FLTAnEnumBox *output =
-                           outputAsNumber == nil
-                               ? nil
-                               : [[FLTAnEnumBox alloc] initWithValue:[outputAsNumber integerValue]];
+                       FLTAnEnumBox *output = reply[0] == [NSNull null] ? nil : reply[0];
                        completion(output, nil);
                      }
                    } else {
@@ -3476,7 +3427,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:nil
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3502,7 +3453,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3520,12 +3471,6 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
                  }];
 }
 @end
-
-NSObject<FlutterMessageCodec> *FLTHostTrivialApiGetCodec(void) {
-  static FlutterStandardMessageCodec *sSharedObject = nil;
-  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
-  return sSharedObject;
-}
 
 void SetUpFLTHostTrivialApi(id<FlutterBinaryMessenger> binaryMessenger,
                             NSObject<FLTHostTrivialApi> *api) {
@@ -3546,7 +3491,7 @@ void SetUpFLTHostTrivialApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
                                 @"dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop",
                                 messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostTrivialApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(noopWithError:)],
                 @"FLTHostTrivialApi api (%@) doesn't respond to @selector(noopWithError:)", api);
@@ -3560,12 +3505,6 @@ void SetUpFLTHostTrivialApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
     }
   }
 }
-NSObject<FlutterMessageCodec> *FLTHostSmallApiGetCodec(void) {
-  static FlutterStandardMessageCodec *sSharedObject = nil;
-  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
-  return sSharedObject;
-}
-
 void SetUpFLTHostSmallApi(id<FlutterBinaryMessenger> binaryMessenger,
                           NSObject<FLTHostSmallApi> *api) {
   SetUpFLTHostSmallApiWithSuffix(binaryMessenger, api, @"");
@@ -3585,13 +3524,13 @@ void SetUpFLTHostSmallApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                 @"dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo",
                                 messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostSmallApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoString:completion:)],
                 @"FLTHostSmallApi api (%@) doesn't respond to @selector(echoString:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
+        NSArray<id> *args = message;
         NSString *arg_aString = GetNullableObjectAtIndex(args, 0);
         [api echoString:arg_aString
              completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
@@ -3609,7 +3548,7 @@ void SetUpFLTHostSmallApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"HostSmallApi.voidVoid",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostSmallApiGetCodec()];
+                  codec:FLTGetCoreTestsCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(voidVoidWithCompletion:)],
                 @"FLTHostSmallApi api (%@) doesn't respond to @selector(voidVoidWithCompletion:)",
@@ -3624,54 +3563,6 @@ void SetUpFLTHostSmallApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
 }
-@interface FLTFlutterSmallApiCodecReader : FlutterStandardReader
-@end
-@implementation FLTFlutterSmallApiCodecReader
-- (nullable id)readValueOfType:(UInt8)type {
-  switch (type) {
-    case 128:
-      return [FLTTestMessage fromList:[self readValue]];
-    default:
-      return [super readValueOfType:type];
-  }
-}
-@end
-
-@interface FLTFlutterSmallApiCodecWriter : FlutterStandardWriter
-@end
-@implementation FLTFlutterSmallApiCodecWriter
-- (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FLTTestMessage class]]) {
-    [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else {
-    [super writeValue:value];
-  }
-}
-@end
-
-@interface FLTFlutterSmallApiCodecReaderWriter : FlutterStandardReaderWriter
-@end
-@implementation FLTFlutterSmallApiCodecReaderWriter
-- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[FLTFlutterSmallApiCodecWriter alloc] initWithData:data];
-}
-- (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[FLTFlutterSmallApiCodecReader alloc] initWithData:data];
-}
-@end
-
-NSObject<FlutterMessageCodec> *FLTFlutterSmallApiGetCodec(void) {
-  static FlutterStandardMessageCodec *sSharedObject = nil;
-  static dispatch_once_t sPred = 0;
-  dispatch_once(&sPred, ^{
-    FLTFlutterSmallApiCodecReaderWriter *readerWriter =
-        [[FLTFlutterSmallApiCodecReaderWriter alloc] init];
-    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
-  });
-  return sSharedObject;
-}
-
 @interface FLTFlutterSmallApi ()
 @property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
 @property(nonatomic, strong) NSString *messageChannelSuffix;
@@ -3702,7 +3593,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterSmallApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterSmallApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_msg ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3728,7 +3619,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterSmallApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterSmallApiGetCodec()];
+                                                   codec:FLTGetCoreTestsCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {

@@ -18,7 +18,7 @@
 
 - (void)testIntPrimitive {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:GetPrimitiveCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api anIntValue:1
@@ -31,7 +31,7 @@
 
 - (void)testBoolPrimitive {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:GetPrimitiveCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   BOOL arg = YES;
@@ -46,7 +46,7 @@
 
 - (void)testDoublePrimitive {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:GetPrimitiveCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   NSInteger arg = 1.5;
@@ -61,7 +61,7 @@
 
 - (void)testStringPrimitive {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:GetPrimitiveCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   NSString *arg = @"hello";
@@ -75,12 +75,12 @@
 
 - (void)testListPrimitive {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:GetPrimitiveCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
-  NSArray *arg = @[ @"hello" ];
+  NSArray<id> *arg = @[ @"hello" ];
   [api aListValue:arg
-       completion:^(NSArray *_Nonnull result, FlutterError *_Nullable err) {
+       completion:^(NSArray<id> *_Nonnull result, FlutterError *_Nullable err) {
          XCTAssertEqualObjects(arg, result);
          [expectation fulfill];
        }];
@@ -89,7 +89,7 @@
 
 - (void)testMapPrimitive {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:GetPrimitiveCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   NSDictionary *arg = @{@"hello" : @1};

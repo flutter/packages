@@ -86,7 +86,7 @@ class NullFieldsSearchReply {
       error,
       indices,
       request,
-      type?.index,
+      type,
     ];
   }
 
@@ -97,23 +97,24 @@ class NullFieldsSearchReply {
       error: result[1] as String?,
       indices: (result[2] as List<Object?>?)?.cast<int?>(),
       request: result[3] as NullFieldsSearchRequest?,
-      type: result[4] != null
-          ? NullFieldsSearchReplyType.values[result[4]! as int]
-          : null,
+      type: result[4] as NullFieldsSearchReplyType?,
     );
   }
 }
 
-class _NullFieldsHostApiCodec extends StandardMessageCodec {
-  const _NullFieldsHostApiCodec();
+class _PigeonCodec extends StandardMessageCodec {
+  const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is NullFieldsSearchReply) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is NullFieldsSearchRequest) {
+    if (value is NullFieldsSearchRequest) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
+    } else if (value is NullFieldsSearchReply) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is NullFieldsSearchReplyType) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
     }
@@ -122,10 +123,13 @@ class _NullFieldsHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return NullFieldsSearchReply.decode(readValue(buffer)!);
       case 129:
         return NullFieldsSearchRequest.decode(readValue(buffer)!);
+      case 130:
+        return NullFieldsSearchReply.decode(readValue(buffer)!);
+      case 131:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : NullFieldsSearchReplyType.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -143,8 +147,7 @@ class NullFieldsHostApi {
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _NullFieldsHostApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String __pigeon_messageChannelSuffix;
 
@@ -178,37 +181,8 @@ class NullFieldsHostApi {
   }
 }
 
-class _NullFieldsFlutterApiCodec extends StandardMessageCodec {
-  const _NullFieldsFlutterApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is NullFieldsSearchReply) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is NullFieldsSearchRequest) {
-      buffer.putUint8(129);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return NullFieldsSearchReply.decode(readValue(buffer)!);
-      case 129:
-        return NullFieldsSearchRequest.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 abstract class NullFieldsFlutterApi {
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _NullFieldsFlutterApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   NullFieldsSearchReply search(NullFieldsSearchRequest request);
 

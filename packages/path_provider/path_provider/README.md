@@ -11,10 +11,6 @@ Not all methods are supported on all platforms.
 |-------------|---------|-------|-------|--------|-------------|
 | **Support** | SDK 16+ | 12.0+ | Any   | 10.14+ | Windows 10+ |
 
-## Usage
-
-To use this plugin, add `path_provider` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/platform-integration/platform-channels).
-
 ## Example
 <?code-excerpt "readme_excerpts.dart (Example)"?>
 ```dart
@@ -39,7 +35,7 @@ Directories support by platform:
 | External Storage | ✔️ | ❌ | ❌ | ❌️ | ❌️ |
 | External Cache Directories | ✔️ | ❌ | ❌ | ❌️ | ❌️ |
 | External Storage Directories | ✔️ | ❌ | ❌ | ❌️ | ❌️ |
-| Downloads | ❌ | ✔️ | ✔️ | ✔️ | ✔️ |
+| Downloads | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
 
 ## Testing
 

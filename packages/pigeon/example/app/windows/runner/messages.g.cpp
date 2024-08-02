@@ -82,14 +82,15 @@ EncodableList MessageData::ToEncodableList() const {
   list.push_back(name_ ? EncodableValue(*name_) : EncodableValue());
   list.push_back(description_ ? EncodableValue(*description_)
                               : EncodableValue());
-  list.push_back(EncodableValue((int)code_));
+  list.push_back(CustomEncodableValue(code_));
   list.push_back(EncodableValue(data_));
   return list;
 }
 
 MessageData MessageData::FromEncodableList(const EncodableList& list) {
-  MessageData decoded((Code)(std::get<int32_t>(list[2])),
-                      std::get<EncodableMap>(list[3]));
+  MessageData decoded(
+      std::any_cast<const Code&>(std::get<CustomEncodableValue>(list[2])),
+      std::get<EncodableMap>(list[3]));
   auto& encodable_name = list[0];
   if (!encodable_name.IsNull()) {
     decoded.set_name(std::get<std::string>(encodable_name));
@@ -101,28 +102,43 @@ MessageData MessageData::FromEncodableList(const EncodableList& list) {
   return decoded;
 }
 
-ExampleHostApiCodecSerializer::ExampleHostApiCodecSerializer() {}
+PigeonCodecSerializer::PigeonCodecSerializer() {}
 
-EncodableValue ExampleHostApiCodecSerializer::ReadValueOfType(
+EncodableValue PigeonCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
-    case 128:
+    case 129:
       return CustomEncodableValue(MessageData::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
+    case 130: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<Code>(enum_arg_value));
+    }
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }
 }
 
-void ExampleHostApiCodecSerializer::WriteValue(
+void PigeonCodecSerializer::WriteValue(
     const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
     if (custom_value->type() == typeid(MessageData)) {
-      stream->WriteByte(128);
+      stream->WriteByte(129);
       WriteValue(
           EncodableValue(
               std::any_cast<MessageData>(*custom_value).ToEncodableList()),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(Code)) {
+      stream->WriteByte(130);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<Code>(*custom_value))),
           stream);
       return;
     }
@@ -133,7 +149,7 @@ void ExampleHostApiCodecSerializer::WriteValue(
 /// The codec used by ExampleHostApi.
 const flutter::StandardMessageCodec& ExampleHostApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &ExampleHostApiCodecSerializer::GetInstance());
+      &PigeonCodecSerializer::GetInstance());
 }
 
 // Sets up an instance of `ExampleHostApi` to handle messages through the
@@ -282,7 +298,7 @@ MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger,
 
 const flutter::StandardMessageCodec& MessageFlutterApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &flutter::StandardCodecSerializer::GetInstance());
+      &PigeonCodecSerializer::GetInstance());
 }
 
 void MessageFlutterApi::FlutterMethod(

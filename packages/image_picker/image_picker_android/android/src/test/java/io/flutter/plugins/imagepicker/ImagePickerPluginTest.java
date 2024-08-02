@@ -78,10 +78,6 @@ public class ImagePickerPluginTest {
           .setCamera(Messages.SourceCamera.REAR)
           .build();
 
-  @SuppressWarnings("deprecation")
-  @Mock
-  io.flutter.plugin.common.PluginRegistry.Registrar mockRegistrar;
-
   @Mock ActivityPluginBinding mockActivityBinding;
   @Mock FlutterPluginBinding mockPluginBinding;
 
@@ -97,7 +93,6 @@ public class ImagePickerPluginTest {
   @Before
   public void setUp() {
     mockCloseable = MockitoAnnotations.openMocks(this);
-    when(mockRegistrar.context()).thenReturn(mockApplication);
     when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
     when(mockPluginBinding.getApplicationContext()).thenReturn(mockApplication);
     plugin = new ImagePickerPlugin(mockImagePickerDelegate, mockActivity);

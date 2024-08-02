@@ -14,7 +14,7 @@ should add it to your `pubspec.yaml` as usual.
 ### macOS setup
 
 The GoogleSignIn SDK requires keychain sharing to be enabled, by [adding the
-following entitlements](https://docs.flutter.dev/platform-integration/macos/building#entitlements-and-the-app-sandbox):
+following entitlements](https://flutter.dev/to/macos-entitlements):
 
 ```xml
     <key>keychain-access-groups</key>
@@ -27,7 +27,7 @@ Without this step, the plugin will throw a `keychain error` `PlatformException`
 when trying to sign in.
 
 [1]: https://pub.dev/packages/google_sign_in
-[2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[2]: https://flutter.dev/to/endorsed-federated-plugin
 
 ### iOS integration
 

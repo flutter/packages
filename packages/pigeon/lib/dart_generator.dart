@@ -15,14 +15,8 @@ import 'generator_tools.dart';
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
 
-/// Prefix for all local variables in host API methods.
-///
-/// This lowers the chances of variable name collisions with
-/// user defined parameters.
-const String _varNamePrefix = '__pigeon_';
-
 /// Name of the variable that contains the message channel suffix for APIs.
-const String _suffixVarName = '${_varNamePrefix}messageChannelSuffix';
+const String _suffixVarName = '${varNamePrefix}messageChannelSuffix';
 
 /// Name of the `InstanceManager` variable for a ProxyApi class;
 const String _instanceManagerVarName =
@@ -35,8 +29,8 @@ const String _pigeonChannelCodec = 'pigeonChannelCodec';
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_docCommentPrefix);
 
-/// The standard codec for Flutter, used for any non custom codecs and extended for custom codecs.
-const String _standardMessageCodec = 'StandardMessageCodec';
+/// The custom codec used for all pigeon APIs.
+const String _pigeonCodec = '_PigeonCodec';
 
 /// Options that control how Dart code will be generated.
 class DartOptions {
@@ -229,14 +223,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
       indent.addScoped('[', '];', () {
         for (final NamedType field
             in getFieldsInSerializationOrder(classDefinition)) {
-          final String conditional = field.type.isNullable ? '?' : '';
-          if (field.type.isEnum) {
-            indent.writeln(
-              '${field.name}$conditional.index,',
-            );
-          } else {
-            indent.writeln('${field.name},');
-          }
+          indent.writeln('${field.name},');
         }
       });
     });
@@ -256,18 +243,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
       final String genericType = _makeGenericTypeArguments(field.type);
       final String castCall = _makeGenericCastCall(field.type);
       final String nullableTag = field.type.isNullable ? '?' : '';
-      if (field.type.isEnum) {
-        final String nonNullValue =
-            '${field.type.baseName}.values[$resultAt! as int]';
-        if (field.type.isNullable) {
-          indent.format('''
-$resultAt != null
-\t\t? $nonNullValue
-\t\t: null''', leadingSpace: false, trailingNewline: false);
-        } else {
-          indent.add(nonNullValue);
-        }
-      } else if (field.type.typeArguments.isNotEmpty) {
+      if (field.type.typeArguments.isNotEmpty) {
         indent.add(
           '($resultAt as $genericType?)$castCallPrefix$castCall',
         );
@@ -300,6 +276,69 @@ $resultAt != null
     });
   }
 
+  @override
+  void writeGeneralCodec(
+    DartOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    indent.newln();
+    final Iterable<EnumeratedType> enumeratedTypes = getEnumeratedTypes(root);
+    indent.newln();
+    indent.write('class $_pigeonCodec extends StandardMessageCodec');
+    indent.addScoped(' {', '}', () {
+      indent.writeln('const $_pigeonCodec();');
+      if (enumeratedTypes.isNotEmpty) {
+        indent.writeln('@override');
+        indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
+        indent.addScoped('{', '}', () {
+          enumerate(enumeratedTypes,
+              (int index, final EnumeratedType customType) {
+            indent.writeScoped('if (value is ${customType.name}) {', '} else ',
+                () {
+              indent.writeln('buffer.putUint8(${customType.enumeration});');
+              if (customType.type == CustomTypes.customClass) {
+                indent.writeln('writeValue(buffer, value.encode());');
+              } else if (customType.type == CustomTypes.customEnum) {
+                indent.writeln('writeValue(buffer, value.index);');
+              }
+            }, addTrailingNewline: false);
+          });
+          indent.addScoped('{', '}', () {
+            indent.writeln('super.writeValue(buffer, value);');
+          });
+        });
+        indent.newln();
+        indent.writeln('@override');
+        indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
+        indent.addScoped('{', '}', () {
+          indent.write('switch (type) ');
+          indent.addScoped('{', '}', () {
+            for (final EnumeratedType customType in enumeratedTypes) {
+              indent.writeln('case ${customType.enumeration}: ');
+              indent.nest(1, () {
+                if (customType.type == CustomTypes.customClass) {
+                  indent.writeln(
+                      'return ${customType.name}.decode(readValue(buffer)!);');
+                } else if (customType.type == CustomTypes.customEnum) {
+                  indent
+                      .writeln('final int? value = readValue(buffer) as int?;');
+                  indent.writeln(
+                      'return value == null ? null : ${customType.name}.values[value];');
+                }
+              });
+            }
+            indent.writeln('default:');
+            indent.nest(1, () {
+              indent.writeln('return super.readValueOfType(type, buffer);');
+            });
+          });
+        });
+      }
+    });
+  }
+
   /// Writes the code for host [Api], [api].
   /// Example:
   /// class FooCodec extends StandardMessageCodec {...}
@@ -319,11 +358,6 @@ $resultAt != null
     bool isMockHandler = false,
     required String dartPackageName,
   }) {
-    String codecName = _standardMessageCodec;
-    if (getCodecClasses(api, root).isNotEmpty) {
-      codecName = _getCodecName(api);
-      _writeCodec(indent, codecName, api, root);
-    }
     indent.newln();
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
@@ -335,7 +369,7 @@ $resultAt != null
             'static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;');
       }
       indent.writeln(
-          'static const MessageCodec<Object?> $_pigeonChannelCodec = $codecName();');
+          'static const MessageCodec<Object?> $_pigeonChannelCodec = $_pigeonCodec();');
       indent.newln();
       for (final Method func in api.methods) {
         addDocumentationComments(
@@ -399,11 +433,6 @@ $resultAt != null
     AstHostApi api, {
     required String dartPackageName,
   }) {
-    String codecName = _standardMessageCodec;
-    if (getCodecClasses(api, root).isNotEmpty) {
-      codecName = _getCodecName(api);
-      _writeCodec(indent, codecName, api, root);
-    }
     indent.newln();
     bool first = true;
     addDocumentationComments(
@@ -415,13 +444,13 @@ $resultAt != null
 /// available for dependency injection.  If it is left null, the default
 /// BinaryMessenger will be used which routes to the host platform.
 ${api.name}({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-    : ${_varNamePrefix}binaryMessenger = binaryMessenger,
-      ${_varNamePrefix}messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.\$messageChannelSuffix' : '';
-final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
+    : ${varNamePrefix}binaryMessenger = binaryMessenger,
+      ${varNamePrefix}messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.\$messageChannelSuffix' : '';
+final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 ''');
 
       indent.writeln(
-          'static const MessageCodec<Object?> $_pigeonChannelCodec = $codecName();');
+          'static const MessageCodec<Object?> $_pigeonChannelCodec = $_pigeonCodec();');
       indent.newln();
       indent.writeln('final String $_suffixVarName;');
       indent.newln();
@@ -822,6 +851,8 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
           relativeDartPath.replaceFirst(RegExp(r'^.*/lib/'), '');
       indent.writeln("import 'package:$dartOutputPackageName/$path';");
     }
+    writeGeneralCodec(generatorOptions, root, indent,
+        dartPackageName: dartPackageName);
     for (final AstHostApi api in root.apis.whereType<AstHostApi>()) {
       if (api.dartHostTestHandler != null) {
         final AstFlutterApi mockApi = AstFlutterApi(
@@ -961,18 +992,14 @@ PlatformException _createConnectionError(String channelName) {
       final Iterable<String> argExpressions =
           indexMap(parameters, (int index, NamedType type) {
         final String name = _getParameterName(index, type);
-        if (type.type.isEnum) {
-          return '$name${type.type.isNullable ? '?' : ''}.index';
-        } else {
-          return name;
-        }
+        return name;
       });
       sendArgument = '<Object?>[${argExpressions.join(', ')}]';
     }
     final String channelSuffix = addSuffixVariable ? '\$$_suffixVarName' : '';
     final String constOrFinal = addSuffixVariable ? 'final' : 'const';
     indent.writeln(
-        "$constOrFinal String ${_varNamePrefix}channelName = '$channelName$channelSuffix';");
+        "$constOrFinal String ${varNamePrefix}channelName = '$channelName$channelSuffix';");
     indent.writeScoped(
         'final BasicMessageChannel<Object?> ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
         ');', () {
@@ -990,15 +1017,7 @@ PlatformException _createConnectionError(String channelName) {
     final String nullHandler =
         returnType.isNullable ? (genericCastCall.isEmpty ? '' : '?') : '!';
     String returnStatement = 'return';
-    if (returnType.isEnum) {
-      if (returnType.isNullable) {
-        returnStatement =
-            '$returnStatement ($accessor as int?) == null ? null : $returnTypeName.values[$accessor! as int]';
-      } else {
-        returnStatement =
-            '$returnStatement $returnTypeName.values[$accessor! as int]';
-      }
-    } else if (!returnType.isVoid) {
+    if (!returnType.isVoid) {
       returnStatement =
           '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
     }
@@ -1094,13 +1113,10 @@ if (${varNamePrefix}replyList == null) {
               final String castCall = _makeGenericCastCall(arg.type);
 
               final String leftHandSide = 'final $argType? $argName';
-              if (arg.type.isEnum) {
-                indent.writeln(
-                    '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count]! as int];');
-              } else {
-                indent.writeln(
-                    '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
-              }
+
+              indent.writeln(
+                  '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
+
               if (!arg.type.isNullable) {
                 indent.writeln('assert($argName != null,');
                 indent.writeln(
@@ -1130,12 +1146,9 @@ if (${varNamePrefix}replyList == null) {
               }
 
               const String returnExpression = 'output';
-              final String nullability = returnType.isNullable ? '?' : '';
-              final String valueExtraction =
-                  returnType.isEnum ? '$nullability.index' : '';
               final String returnStatement = isMockHandler
-                  ? 'return <Object?>[$returnExpression$valueExtraction];'
-                  : 'return wrapResponse(result: $returnExpression$valueExtraction);';
+                  ? 'return <Object?>[$returnExpression];'
+                  : 'return wrapResponse(result: $returnExpression);';
               indent.writeln(returnStatement);
             }
           }, addTrailingNewline: false);
@@ -1978,60 +1991,6 @@ String _escapeForDartSingleQuotedString(String raw) {
       .replaceAll(r'\', r'\\')
       .replaceAll(r'$', r'\$')
       .replaceAll(r"'", r"\'");
-}
-
-/// Calculates the name of the codec class that will be generated for [api].
-String _getCodecName(Api api) => '_${api.name}Codec';
-
-/// Writes the codec that will be used by [api].
-/// Example:
-///
-/// class FooCodec extends StandardMessageCodec {...}
-void _writeCodec(Indent indent, String codecName, Api api, Root root) {
-  assert(getCodecClasses(api, root).isNotEmpty);
-  final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
-  indent.newln();
-  indent.write('class $codecName extends $_standardMessageCodec');
-  indent.addScoped(' {', '}', () {
-    indent.writeln('const $codecName();');
-    indent.writeln('@override');
-    indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
-    indent.addScoped('{', '}', () {
-      enumerate(codecClasses, (int index, final EnumeratedClass customClass) {
-        final String ifValue = 'if (value is ${customClass.name}) ';
-        if (index == 0) {
-          indent.write('');
-        }
-        indent.add(ifValue);
-        indent.addScoped('{', '} else ', () {
-          indent.writeln('buffer.putUint8(${customClass.enumeration});');
-          indent.writeln('writeValue(buffer, value.encode());');
-        }, addTrailingNewline: false);
-      });
-      indent.addScoped('{', '}', () {
-        indent.writeln('super.writeValue(buffer, value);');
-      });
-    });
-    indent.newln();
-    indent.writeln('@override');
-    indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
-    indent.addScoped('{', '}', () {
-      indent.write('switch (type) ');
-      indent.addScoped('{', '}', () {
-        for (final EnumeratedClass customClass in codecClasses) {
-          indent.writeln('case ${customClass.enumeration}: ');
-          indent.nest(1, () {
-            indent.writeln(
-                'return ${customClass.name}.decode(readValue(buffer)!);');
-          });
-        }
-        indent.writeln('default:');
-        indent.nest(1, () {
-          indent.writeln('return super.readValueOfType(type, buffer);');
-        });
-      });
-    });
-  });
 }
 
 /// Creates a Dart type where all type arguments are [Objects].

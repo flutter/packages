@@ -6,7 +6,7 @@ Powered by [a14n](https://github.com/a14n)'s [google_maps](https://pub.dev/packa
 
 ## Usage
 
-This package is [endorsed](https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin),
+This package is [endorsed](https://flutter.dev/to/endorsed-federated-plugin),
 which means you can simply use `google_maps_flutter` normally. This package will
 be automatically included in your app when you do, so you do not need to add it
 to your `pubspec.yaml`.
@@ -59,7 +59,7 @@ If you need marker clustering support, modify the <head> tag to load the [js-mar
 
   <!-- // Other stuff -->
 
-  <script src="https://unpkg.com/@googlemaps/markerclusterer@2.5.3/dist/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@googlemaps/markerclusterer@2.5.3/dist/index.umd.min.js"></script>
 </head>
 ```
 
