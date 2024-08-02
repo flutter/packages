@@ -10,7 +10,8 @@ import 'package:web/web.dart';
 
 /// Adds missing fields to [Element].
 extension FullScreenSupportMethods on Element {
-  external JSPromise<JSAny?> requestFullscreen([JSAny options]);
+  @JS('requestFullscreen')
+  external JSPromise<JSAny?> requestFullScreenTweak([JSAny options]);
 }
 
 /// Adds missing fields to [MediaTrackSupportedConstraints].

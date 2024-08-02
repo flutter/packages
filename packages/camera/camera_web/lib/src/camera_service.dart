@@ -142,8 +142,8 @@ class CameraService {
 
       if (zoomLevelCapability != null) {
         return ZoomLevelCapability(
-          minimum: zoomLevelCapability.min.toDouble(),
-          maximum: zoomLevelCapability.max.toDouble(),
+          minimum: zoomLevelCapability.min,
+          maximum: zoomLevelCapability.max,
           videoTrack: defaultVideoTrack,
         );
       } else {
