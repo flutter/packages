@@ -118,7 +118,12 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
     _targetDeviceFlags = <String, List<String>>{
       if (getBoolArg(platformAndroid))
-        platformAndroid: <String>['-d', androidDevice!],
+        platformAndroid: <String>[
+          '-d',
+          androidDevice!,
+          // Temporary workaround for https://github.com/flutter/flutter/issues/152691
+          '--no-enable-impeller',
+        ],
       if (getBoolArg(platformIOS)) platformIOS: <String>['-d', iOSDevice!],
       if (getBoolArg(platformLinux)) platformLinux: <String>['-d', 'linux'],
       if (getBoolArg(platformMacOS)) platformMacOS: <String>['-d', 'macos'],
