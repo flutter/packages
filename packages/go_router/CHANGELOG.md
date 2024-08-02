@@ -1,6 +1,10 @@
-## 14.2.2
+## 14.2.3
 
 - Fixes redirect example's signature in `route.dart`.
+
+## 14.2.2
+
+- Adds section for "Stateful nested navigation" to configuration.md.
 
 ## 14.2.1
 
