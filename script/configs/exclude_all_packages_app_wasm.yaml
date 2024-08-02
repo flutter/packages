@@ -5,3 +5,4 @@
 # This is only used for wasm compilation. Once all packages in the repo have
 # been migrated, remove this file and use `exclude_all_packages_app.yaml` only.
 
+[] # Needed so the contents of this file are an empty array, not `null`!
