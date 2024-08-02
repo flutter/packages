@@ -52,6 +52,7 @@ abstract base class SharedPreferencesAsyncPlatform {
   /// Retrieves the String [value] associated with the [key], if any.
   ///
   /// Throws a [TypeError] if the returned type is not a String.
+  /// May return null for unsupported types.
   Future<String?> getString(
     String key,
     SharedPreferencesOptions options,
@@ -60,6 +61,7 @@ abstract base class SharedPreferencesAsyncPlatform {
   /// Retrieves the bool [value] associated with the [key], if any.
   ///
   /// Throws a [TypeError] if the returned type is not a bool.
+  /// May return null for unsupported types.
   Future<bool?> getBool(
     String key,
     SharedPreferencesOptions options,
@@ -68,6 +70,7 @@ abstract base class SharedPreferencesAsyncPlatform {
   /// Retrieves the double [value] associated with the [key], if any.
   ///
   /// Throws a [TypeError] if the returned type is not a double.
+  /// May return null for unsupported types.
   Future<double?> getDouble(
     String key,
     SharedPreferencesOptions options,
@@ -76,6 +79,7 @@ abstract base class SharedPreferencesAsyncPlatform {
   /// Retrieves the int [value] associated with the [key], if any.
   ///
   /// Throws a [TypeError] if the returned type is not an int.
+  /// May return null for unsupported types.
   Future<int?> getInt(
     String key,
     SharedPreferencesOptions options,
@@ -84,6 +88,7 @@ abstract base class SharedPreferencesAsyncPlatform {
   /// Retrieves the List<String> [value] associated with the [key], if any.
   ///
   /// Throws a [TypeError] if the returned type is not a List<String>.
+  /// May return null for unsupported types.
   Future<List<String>?> getStringList(
     String key,
     SharedPreferencesOptions options,
@@ -96,12 +101,17 @@ abstract base class SharedPreferencesAsyncPlatform {
   );
 
   /// Returns all key/value pairs persisting in this store that match the given [parameters].
+  ///
+  /// Does not return unsupported types, or lists containing unsupported types.
   Future<Map<String, Object>> getPreferences(
     GetPreferencesParameters parameters,
     SharedPreferencesOptions options,
   );
 
   /// Returns all keys persisting in this store that match the given [parameters].
+  ///
+  /// Does not return keys for values that are unsupported types, or lists containing
+  /// unsupported types.
   Future<Set<String>> getKeys(
     GetPreferencesParameters parameters,
     SharedPreferencesOptions options,
