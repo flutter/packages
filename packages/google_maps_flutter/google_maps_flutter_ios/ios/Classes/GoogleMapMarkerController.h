@@ -4,7 +4,7 @@
 
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
-
+#import "FLTClusterManagersController.h"
 #import "GoogleMapController.h"
 #import "messages.g.h"
 
@@ -13,9 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
 // Defines marker controllable by Flutter.
 @interface FLTGoogleMapMarkerController : NSObject
 @property(assign, nonatomic, readonly) BOOL consumeTapEvents;
-- (instancetype)initWithPosition:(CLLocationCoordinate2D)position
-                      identifier:(NSString *)identifier
-                         mapView:(GMSMapView *)mapView;
+- (instancetype)initWithMarker:(GMSMarker *)marker
+              markerIdentifier:(NSString *)markerIdentifier
+      clusterManagerIdentifier:(NSString *)clusterManagerIdentifier
+                       mapView:(GMSMapView *)mapView;
 - (void)showInfoWindow;
 - (void)hideInfoWindow;
 - (BOOL)isInfoWindowShown;
@@ -23,9 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface FLTMarkersController : NSObject
-- (instancetype)initWithMapView:(GMSMapView *)mapView
-                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+- (instancetype)initWithClusterManagersController:
+                    (nullable FLTClusterManagersController *)clusterManagers
+                                  callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                                          mapView:(GMSMapView *)mapView
+                                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 - (void)addJSONMarkers:(NSArray<NSDictionary<NSString *, id> *> *)markersToAdd;
 - (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd;
 - (void)changeMarkers:(NSArray<FGMPlatformMarker *> *)markersToChange;

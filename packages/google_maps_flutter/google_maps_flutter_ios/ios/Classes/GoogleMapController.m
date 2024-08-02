@@ -2,10 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+@import GoogleMapsUtils;
+
 #import "GoogleMapController.h"
 #import "FLTGoogleMapHeatmapController.h"
 #import "FLTGoogleMapJSONConversions.h"
 #import "FLTGoogleMapTileOverlayController.h"
+#import "GoogleMarkerUtilities.h"
 #import "messages.g.h"
 
 #pragma mark - Conversion of JSON-like values sent via platform channels. Forward declarations.
@@ -116,6 +119,7 @@
 @property(nonatomic, strong) FGMMapsCallbackApi *dartCallbackHandler;
 @property(nonatomic, assign) BOOL trackCameraPosition;
 @property(nonatomic, weak) NSObject<FlutterPluginRegistrar> *registrar;
+@property(nonatomic, strong) FLTClusterManagersController *clusterManagersController;
 @property(nonatomic, strong) FLTMarkersController *markersController;
 @property(nonatomic, strong) FLTPolygonsController *polygonsController;
 @property(nonatomic, strong) FLTPolylinesController *polylinesController;
@@ -175,9 +179,14 @@
     _mapView.delegate = self;
     _mapView.paddingAdjustmentBehavior = kGMSMapViewPaddingAdjustmentBehaviorNever;
     _registrar = registrar;
-    _markersController = [[FLTMarkersController alloc] initWithMapView:_mapView
-                                                       callbackHandler:_dartCallbackHandler
-                                                             registrar:registrar];
+    _clusterManagersController =
+        [[FLTClusterManagersController alloc] initWithCallbackHandler:_dartCallbackHandler
+                                                              mapView:_mapView];
+    _markersController =
+        [[FLTMarkersController alloc] initWithClusterManagersController:_clusterManagersController
+                                                        callbackHandler:_dartCallbackHandler
+                                                                mapView:_mapView
+                                                              registrar:registrar];
     _polygonsController = [[FLTPolygonsController alloc] initWithMapView:_mapView
                                                          callbackHandler:_dartCallbackHandler
                                                                registrar:registrar];
@@ -192,10 +201,19 @@
         [[FLTTileOverlaysController alloc] initWithMapView:_mapView
                                            callbackHandler:_dartCallbackHandler
                                                  registrar:registrar];
+
+    id clusterManagersToAdd = args[@"clusterManagersToAdd"];
+    if ([clusterManagersToAdd isKindOfClass:[NSArray class]]) {
+      [_clusterManagersController addJSONClusterManagers:clusterManagersToAdd];
+    }
     id markersToAdd = args[@"markersToAdd"];
     if ([markersToAdd isKindOfClass:[NSArray class]]) {
       [_markersController addJSONMarkers:markersToAdd];
     }
+
+    // Invoke clustering after markers are added.
+    [_clusterManagersController invokeClusteringForEachClusterManager];
+
     id polygonsToAdd = args[@"polygonsToAdd"];
     if ([polygonsToAdd isKindOfClass:[NSArray class]]) {
       [_polygonsController addJSONPolygons:polygonsToAdd];
@@ -386,28 +404,38 @@
 }
 
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  return [self.markersController didTapMarkerWithIdentifier:markerId];
+  if ([marker.userData isKindOfClass:[GMUStaticCluster class]]) {
+    GMUStaticCluster *cluster = marker.userData;
+    [self.clusterManagersController didTapOnCluster:cluster];
+    // When NO is returned, the map will focus on the cluster.
+    return NO;
+  }
+  return [self.markersController
+      didTapMarkerWithIdentifier:[GoogleMarkerUtilities getMarkerIdentifierFrom:marker]];
 }
 
 - (void)mapView:(GMSMapView *)mapView didEndDraggingMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  [self.markersController didEndDraggingMarkerWithIdentifier:markerId location:marker.position];
+  [self.markersController
+      didEndDraggingMarkerWithIdentifier:[GoogleMarkerUtilities getMarkerIdentifierFrom:marker]
+                                location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didBeginDraggingMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  [self.markersController didStartDraggingMarkerWithIdentifier:markerId location:marker.position];
+  [self.markersController
+      didStartDraggingMarkerWithIdentifier:[GoogleMarkerUtilities getMarkerIdentifierFrom:marker]
+                                  location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didDragMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  [self.markersController didDragMarkerWithIdentifier:markerId location:marker.position];
+  [self.markersController
+      didDragMarkerWithIdentifier:[GoogleMarkerUtilities getMarkerIdentifierFrom:marker]
+                         location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapInfoWindowOfMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  [self.markersController didTapInfoWindowOfMarkerWithIdentifier:markerId];
+  [self.markersController
+      didTapInfoWindowOfMarkerWithIdentifier:[GoogleMarkerUtilities
+                                                 getMarkerIdentifierFrom:marker]];
 }
 - (void)mapView:(GMSMapView *)mapView didTapOverlay:(GMSOverlay *)overlay {
   NSString *overlayId = overlay.userData[0];
@@ -562,6 +590,14 @@
   [self.controller.markersController addMarkers:toAdd];
   [self.controller.markersController changeMarkers:toChange];
   [self.controller.markersController removeMarkersWithIdentifiers:idsToRemove];
+  [self.controller.clusterManagersController invokeClusteringForEachClusterManager];
+}
+
+- (void)updateClusterManagersByAdding:(nonnull NSArray<FGMPlatformClusterManager *> *)toAdd
+                             removing:(nonnull NSArray<NSString *> *)idsToRemove
+                                error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [self.controller.clusterManagersController addClusterManagers:toAdd];
+  [self.controller.clusterManagersController removeClusterManagersWithIdentifiers:idsToRemove];
 }
 
 - (void)updatePolygonsByAdding:(nonnull NSArray<FGMPlatformPolygon *> *)toAdd
@@ -781,6 +817,13 @@
     return nil;
   }
   return [FGMPlatformHeatmap makeWithJson:heatmapInfo];
+}
+
+- (nullable NSArray<FGMPlatformCluster *> *)
+    getClustersWithIdentifier:(NSString *)clusterManagerId
+                        error:(FlutterError *_Nullable *_Nonnull)error {
+  return [self.controller.clusterManagersController getClustersWithIdentifier:clusterManagerId
+                                                                        error:error];
 }
 
 - (nullable NSNumber *)isCompassEnabledWithError:

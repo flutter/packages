@@ -141,6 +141,28 @@ class PlatformHeatmap {
   }
 }
 
+/// Pigeon equivalent of the ClusterManager class.
+class PlatformClusterManager {
+  PlatformClusterManager({
+    required this.identifier,
+  });
+
+  String identifier;
+
+  Object encode() {
+    return <Object?>[
+      identifier,
+    ];
+  }
+
+  static PlatformClusterManager decode(Object result) {
+    result as List<Object?>;
+    return PlatformClusterManager(
+      identifier: result[0]! as String,
+    );
+  }
+}
+
 /// Pigeon equivalent of the Marker class.
 class PlatformMarker {
   PlatformMarker({
@@ -327,6 +349,43 @@ class PlatformLatLngBounds {
   }
 }
 
+/// Pigeon equivalent of Cluster.
+class PlatformCluster {
+  PlatformCluster({
+    required this.clusterManagerId,
+    required this.position,
+    required this.bounds,
+    required this.markerIds,
+  });
+
+  String clusterManagerId;
+
+  PlatformLatLng position;
+
+  PlatformLatLngBounds bounds;
+
+  List<String?> markerIds;
+
+  Object encode() {
+    return <Object?>[
+      clusterManagerId,
+      position,
+      bounds,
+      markerIds,
+    ];
+  }
+
+  static PlatformCluster decode(Object result) {
+    result as List<Object?>;
+    return PlatformCluster(
+      clusterManagerId: result[0]! as String,
+      position: result[1]! as PlatformLatLng,
+      bounds: result[2]! as PlatformLatLngBounds,
+      markerIds: (result[3] as List<Object?>?)!.cast<String?>(),
+    );
+  }
+}
+
 /// Pigeon equivalent of MapConfiguration.
 class PlatformMapConfiguration {
   PlatformMapConfiguration({
@@ -459,38 +518,44 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformHeatmap) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMarker) {
+    } else if (value is PlatformClusterManager) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPolygon) {
+    } else if (value is PlatformMarker) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPolyline) {
+    } else if (value is PlatformPolygon) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTile) {
+    } else if (value is PlatformPolyline) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileOverlay) {
+    } else if (value is PlatformTile) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLng) {
+    } else if (value is PlatformTileOverlay) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLngBounds) {
+    } else if (value is PlatformLatLng) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapConfiguration) {
+    } else if (value is PlatformLatLngBounds) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else if (value is PlatformCluster) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileLayer) {
+    } else if (value is PlatformMapConfiguration) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformZoomRange) {
+    } else if (value is PlatformPoint) {
       buffer.putUint8(143);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformTileLayer) {
+      buffer.putUint8(144);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformZoomRange) {
+      buffer.putUint8(145);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -509,26 +574,30 @@ class _PigeonCodec extends StandardMessageCodec {
       case 132:
         return PlatformHeatmap.decode(readValue(buffer)!);
       case 133:
-        return PlatformMarker.decode(readValue(buffer)!);
+        return PlatformClusterManager.decode(readValue(buffer)!);
       case 134:
-        return PlatformPolygon.decode(readValue(buffer)!);
+        return PlatformMarker.decode(readValue(buffer)!);
       case 135:
-        return PlatformPolyline.decode(readValue(buffer)!);
+        return PlatformPolygon.decode(readValue(buffer)!);
       case 136:
-        return PlatformTile.decode(readValue(buffer)!);
+        return PlatformPolyline.decode(readValue(buffer)!);
       case 137:
-        return PlatformTileOverlay.decode(readValue(buffer)!);
+        return PlatformTile.decode(readValue(buffer)!);
       case 138:
-        return PlatformLatLng.decode(readValue(buffer)!);
+        return PlatformTileOverlay.decode(readValue(buffer)!);
       case 139:
-        return PlatformLatLngBounds.decode(readValue(buffer)!);
+        return PlatformLatLng.decode(readValue(buffer)!);
       case 140:
-        return PlatformMapConfiguration.decode(readValue(buffer)!);
+        return PlatformLatLngBounds.decode(readValue(buffer)!);
       case 141:
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformCluster.decode(readValue(buffer)!);
       case 142:
-        return PlatformTileLayer.decode(readValue(buffer)!);
+        return PlatformMapConfiguration.decode(readValue(buffer)!);
       case 143:
+        return PlatformPoint.decode(readValue(buffer)!);
+      case 144:
+        return PlatformTileLayer.decode(readValue(buffer)!);
+      case 145:
         return PlatformZoomRange.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -646,6 +715,32 @@ class MapsApi {
     );
     final List<Object?>? __pigeon_replyList = await __pigeon_channel
         .send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Updates the set of custer managers for clusters on the map.
+  Future<void> updateClusterManagers(
+      List<PlatformClusterManager?> toAdd, List<String?> idsToRemove) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateClusterManagers$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[toAdd, idsToRemove]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -1161,6 +1256,9 @@ abstract class MapsCallbackApi {
   /// Called when a circle is tapped.
   void onCircleTap(String circleId);
 
+  /// Called when a marker cluster is tapped.
+  void onClusterTap(PlatformCluster cluster);
+
   /// Called when a polygon is tapped.
   void onPolygonTap(String polygonId);
 
@@ -1474,6 +1572,34 @@ abstract class MapsCallbackApi {
               'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCircleTap was null, expected non-null String.');
           try {
             api.onCircleTap(arg_circleId!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onClusterTap$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onClusterTap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PlatformCluster? arg_cluster = (args[0] as PlatformCluster?);
+          assert(arg_cluster != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onClusterTap was null, expected non-null PlatformCluster.');
+          try {
+            api.onClusterTap(arg_cluster!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -1900,6 +2026,36 @@ class MapsInspectorApi {
       );
     } else {
       return (__pigeon_replyList[0] as PlatformZoomRange?)!;
+    }
+  }
+
+  Future<List<PlatformCluster?>> getClusters(String clusterManagerId) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.getClusters$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[clusterManagerId]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as List<Object?>?)!
+          .cast<PlatformCluster?>();
     }
   }
 }

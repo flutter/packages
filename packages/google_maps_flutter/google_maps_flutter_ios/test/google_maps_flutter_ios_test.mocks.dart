@@ -119,6 +119,23 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
       ) as _i3.Future<void>);
 
   @override
+  _i3.Future<void> updateClusterManagers(
+    List<_i2.PlatformClusterManager?>? toAdd,
+    List<String?>? idsToRemove,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateClusterManagers,
+          [
+            toAdd,
+            idsToRemove,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
   _i3.Future<void> updateMarkers(
     List<_i2.PlatformMarker?>? toAdd,
     List<_i2.PlatformMarker?>? toChange,
