@@ -24,6 +24,10 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   List<String> _asyncKeys = const <String>[];
   List<String> _legacyKeys = const <String>[];
 
+  bool get _legacyApi => value.dataOrNull?.legacyApi ?? false;
+
+  List<String> get _keysForSelectedApi => _legacyApi ? _legacyKeys : _asyncKeys;
+
   /// Retrieves all keys from the shared preferences of the target debug session.
   ///
   /// If this is called when data already exists, it will update the list of keys.
@@ -41,9 +45,9 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
               _legacyKeys.contains(key.replaceAll(legacyPrefix, ''))))
             key,
       ];
+
       value = _State.data(SharedPreferencesState(
-        asyncKeys: _asyncKeys,
-        legacyKeys: _legacyKeys,
+        allKeys: _keysForSelectedApi,
       ));
     } catch (error, stackTrace) {
       value = _State.error(error, stackTrace);
@@ -53,41 +57,36 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   void _setSelectedKeyValue(
     String key,
     AsyncState<SharedPreferencesData> asyncValue,
-    bool legacy,
   ) {
     value = value.whenData(
       (SharedPreferencesState data) => data.copyWith(
         selectedKey: SelectedSharedPreferencesKey(
           key: key,
           value: asyncValue,
-          legacy: legacy,
         ),
       ),
     );
   }
 
   /// Set the key as selected and retrieve the value from the shared preferences of the target debug session.
-  Future<void> selectKey(String key, bool legacy) async {
+  Future<void> selectKey(String key) async {
     stopEditing();
     _setSelectedKeyValue(
       key,
       const AsyncState<SharedPreferencesData>.loading(),
-      legacy,
     );
 
     try {
       final SharedPreferencesData keyValue =
-          await _eval.fetchValue(key, legacy);
+          await _eval.fetchValue(key, _legacyApi);
       _setSelectedKeyValue(
         key,
         AsyncState<SharedPreferencesData>.data(keyValue),
-        legacy,
       );
     } catch (error, stackTrace) {
       _setSelectedKeyValue(
         key,
         AsyncState<SharedPreferencesData>.error(error, stackTrace),
-        legacy,
       );
     }
   }
@@ -103,22 +102,19 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   void filter(String token) {
     final String lowercaseToken = token.toLowerCase();
 
-    bool filter(String key) {
-      String currentSubstring = key.toLowerCase();
-      for (final String char in lowercaseToken.characters) {
-        final int currentIndex = currentSubstring.indexOf(char);
-        if (currentIndex == -1) {
-          return false;
-        }
-        currentSubstring = currentSubstring.substring(currentIndex + 1);
-      }
-      return true;
-    }
-
     value = value.whenData((SharedPreferencesState data) {
       return data.copyWith(
-        asyncKeys: _asyncKeys.where(filter).toList(),
-        legacyKeys: _legacyKeys.where(filter).toList(),
+        allKeys: _keysForSelectedApi.where((String key) {
+          String currentSubstring = key.toLowerCase();
+          for (final String char in lowercaseToken.characters) {
+            final int currentIndex = currentSubstring.indexOf(char);
+            if (currentIndex == -1) {
+              return false;
+            }
+            currentSubstring = currentSubstring.substring(currentIndex + 1);
+          }
+          return true;
+        }).toList(),
       );
     });
   }
@@ -129,8 +125,8 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   ) async {
     if (value.dataOrNull?.selectedKey
         case final SelectedSharedPreferencesKey selectedKey) {
-      await _eval.changeValue(selectedKey.key, newValue, selectedKey.legacy);
-      await selectKey(selectedKey.key, selectedKey.legacy);
+      await _eval.changeValue(selectedKey.key, newValue, _legacyApi);
+      await selectKey(selectedKey.key);
       stopEditing();
     }
   }
@@ -139,7 +135,7 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   Future<void> deleteSelectedKey() async {
     if (value.dataOrNull?.selectedKey
         case final SelectedSharedPreferencesKey selectedKey) {
-      await _eval.deleteKey(selectedKey.key, selectedKey.legacy);
+      await _eval.deleteKey(selectedKey.key, _legacyApi);
       await fetchAllKeys();
       stopEditing();
     }
@@ -156,6 +152,16 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   void stopEditing() {
     value = value.whenData((SharedPreferencesState data) {
       return data.copyWith(editing: false);
+    });
+  }
+
+  /// Change the API used to fetch the shared preferences of the target debug session.
+  void selectApi({required bool legacyApi}) {
+    value = value.whenData((SharedPreferencesState data) {
+      return SharedPreferencesState(
+        legacyApi: legacyApi,
+        allKeys: legacyApi ? _legacyKeys : _asyncKeys,
+      );
     });
   }
 }

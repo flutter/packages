@@ -44,20 +44,18 @@ void main() {
     void stubAsyncState(
       AsyncState<SharedPreferencesData>? state, {
       bool editing = false,
-      bool legacy = false,
     }) {
       const String selectedKey = 'selectedTestKey';
       when(notifierMock.value).thenReturn(
         AsyncState<SharedPreferencesState>.data(
           SharedPreferencesState(
-            asyncKeys: const <String>[selectedKey],
+            allKeys: const <String>[selectedKey],
             editing: editing,
             selectedKey: state == null
                 ? null
                 : SelectedSharedPreferencesKey(
                     key: selectedKey,
                     value: state,
-                    legacy: legacy,
                   ),
           ),
         ),

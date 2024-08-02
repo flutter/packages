@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import '../async_state.dart';
 import '../shared_preferences_state.dart';
 import '../shared_preferences_state_provider.dart';
+import 'api_switch.dart';
 import 'error_panel.dart';
 
 /// A panel that displays the keys stored in shared preferences.
@@ -91,6 +92,7 @@ class _KeysPanelState extends State<KeysPanel> {
               ],
             ),
           ),
+          const ApiSwitch(),
           const Expanded(
             child: _StateMapper(),
           ),
@@ -178,14 +180,14 @@ class _StateMapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (SharedPreferencesStateProvider.keysListStateOf(context)) {
-      final AsyncStateData<List<KeyData>> value => _KeysList(
+      final AsyncStateData<List<String>> value => _KeysList(
           keys: value.data,
         ),
-      final AsyncStateError<List<KeyData>> value => ErrorPanel(
+      final AsyncStateError<List<String>> value => ErrorPanel(
           error: value.error,
           stackTrace: value.stackTrace,
         ),
-      AsyncStateLoading<List<KeyData>>() => const Center(
+      AsyncStateLoading<List<String>>() => const Center(
           child: CircularProgressIndicator(),
         ),
     };
@@ -197,7 +199,7 @@ class _KeysList extends StatefulWidget {
     required this.keys,
   });
 
-  final List<KeyData> keys;
+  final List<String> keys;
 
   @override
   State<_KeysList> createState() => _KeysListState();
@@ -219,10 +221,9 @@ class _KeysListState extends State<_KeysList> {
       child: ListView(
         controller: scrollController,
         children: <Widget>[
-          for (final KeyData keyData in widget.keys)
+          for (final String keyName in widget.keys)
             _KeyItem(
-              keyName: keyData.key,
-              legacy: keyData.legacy,
+              keyName: keyName,
             ),
         ],
       ),
@@ -233,25 +234,22 @@ class _KeysListState extends State<_KeysList> {
 class _KeyItem extends StatelessWidget {
   const _KeyItem({
     required this.keyName,
-    required this.legacy,
   });
 
   final String keyName;
-  final bool legacy;
 
   @override
   Widget build(BuildContext context) {
     final SelectedSharedPreferencesKey? selectedKey =
         SharedPreferencesStateProvider.selectedKeyOf(context);
-    final bool isSelected =
-        selectedKey?.key == keyName && selectedKey?.legacy == legacy;
+    final bool isSelected = selectedKey?.key == keyName;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final Color? backgroundColor =
         isSelected ? colorScheme.selectedRowBackgroundColor : null;
 
     return InkWell(
       onTap: () {
-        context.sharedPreferencesStateNotifier.selectKey(keyName, legacy);
+        context.sharedPreferencesStateNotifier.selectKey(keyName);
       },
       child: Container(
         color: backgroundColor,
@@ -262,7 +260,7 @@ class _KeyItem extends StatelessWidget {
           bottom: densePadding,
         ),
         child: Text(
-          legacy ? 'legacy - $keyName' : keyName,
+          keyName,
           style: Theme.of(context).textTheme.titleSmall,
         ),
       ),

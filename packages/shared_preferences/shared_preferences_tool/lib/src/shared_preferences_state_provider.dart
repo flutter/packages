@@ -11,12 +11,6 @@ import 'shared_preferences_state.dart';
 import 'shared_preferences_state_notifier.dart';
 import 'shared_preferences_tool_eval.dart';
 
-/// A record that holds the string key and wether or not it is a legacy key.
-typedef KeyData = ({
-  String key,
-  bool legacy,
-});
-
 /// A class that provides a [SharedPreferencesStateNotifier] to its descendants
 /// without listening to state changes.
 ///
@@ -41,6 +35,7 @@ enum _StateInheritedModelAspect {
   selectedKey,
   selectedKeyData,
   editing,
+  legacyApi,
 }
 
 /// An inherited model that provides a [SharedPreferencesState] to its descendants.
@@ -79,17 +74,16 @@ class _SharedPreferencesStateInheritedModel
           state.selectedKeyDataState != oldWidget.state.selectedKeyDataState,
         _StateInheritedModelAspect.editing =>
           state.editingState != oldWidget.state.editingState,
+        _StateInheritedModelAspect.legacyApi =>
+          state.legacyApiState != oldWidget.state.legacyApiState,
       },
     );
   }
 }
 
 extension on AsyncState<SharedPreferencesState> {
-  AsyncState<List<KeyData>> get keysListState => mapWhenData(
-        (SharedPreferencesState data) => <KeyData>[
-          for (final String key in data.asyncKeys) (key: key, legacy: false),
-          for (final String key in data.legacyKeys) (key: key, legacy: true),
-        ],
+  AsyncState<List<String>> get keysListState => mapWhenData(
+        (SharedPreferencesState data) => data.allKeys,
       );
 
   SelectedSharedPreferencesKey? get selectedKeyState => dataOrNull?.selectedKey;
@@ -107,6 +101,7 @@ extension on AsyncState<SharedPreferencesState> {
       );
 
   bool get editingState => dataOrNull?.editing ?? false;
+  bool get legacyApiState => dataOrNull?.legacyApi ?? false;
 }
 
 @visibleForTesting
@@ -163,7 +158,7 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   /// Use of this method will cause the given [context] to rebuild whenever the
   /// list of keys changes, including loading and error states.
   /// This will not cause a rebuild when any other part of the state changes.
-  static AsyncState<List<KeyData>> keysListStateOf(BuildContext context) {
+  static AsyncState<List<String>> keysListStateOf(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<
             _SharedPreferencesStateInheritedModel>(
@@ -228,6 +223,21 @@ class SharedPreferencesStateProvider extends StatefulWidget {
         )!
         .state
         .editingState;
+  }
+
+  /// Returns whether the legacy api is selected or not from the closest
+  /// _SharedPreferencesStateInheritedModel ancestor.
+  /// Use of this method will cause the given [context] to rebuild whenever the
+  /// editing state changes, including loading and error states.
+  /// This will not cause a rebuild when any other part of the state changes.
+  static bool legacyApiOf(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<
+            _SharedPreferencesStateInheritedModel>(
+          aspect: _StateInheritedModelAspect.legacyApi,
+        )!
+        .state
+        .legacyApiState;
   }
 
   /// The required child widget.

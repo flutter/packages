@@ -55,8 +55,7 @@ void main() {
         equals(
           const AsyncState<SharedPreferencesState>.data(
             SharedPreferencesState(
-              asyncKeys: asyncKeys,
-              legacyKeys: legacyKeys,
+              allKeys: asyncKeys,
             ),
           ),
         ),
@@ -80,8 +79,7 @@ void main() {
         equals(
           const AsyncState<SharedPreferencesState>.data(
             SharedPreferencesState(
-              asyncKeys: <String>['key2'],
-              legacyKeys: legacyKeys,
+              allKeys: <String>['key2'],
             ),
           ),
         ),
@@ -103,19 +101,53 @@ void main() {
       );
       await notifier.fetchAllKeys();
 
-      await notifier.selectKey('key1', false);
+      await notifier.selectKey('key1');
 
       expect(
         notifier.value,
         equals(
           const AsyncState<SharedPreferencesState>.data(
             SharedPreferencesState(
-              asyncKeys: keys,
+              allKeys: keys,
               selectedKey: SelectedSharedPreferencesKey(
                 key: 'key1',
                 value: AsyncState<SharedPreferencesData>.data(keyValue),
-                legacy: false,
               ),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('should select key for legacy api', () async {
+      const List<String> keys = <String>['key1', 'key2'];
+      const SharedPreferencesData keyValue =
+          SharedPreferencesData.string(value: 'value');
+      when(evalMock.fetchAllKeys()).thenAnswer(
+        (_) async => (
+          asyncKeys: const <String>[],
+          legacyKeys: keys,
+        ),
+      );
+      when(evalMock.fetchValue('key1', true)).thenAnswer(
+        (_) async => keyValue,
+      );
+      await notifier.fetchAllKeys();
+      notifier.selectApi(legacyApi: true);
+
+      await notifier.selectKey('key1');
+
+      expect(
+        notifier.value,
+        equals(
+          const AsyncState<SharedPreferencesState>.data(
+            SharedPreferencesState(
+              allKeys: keys,
+              selectedKey: SelectedSharedPreferencesKey(
+                key: 'key1',
+                value: AsyncState<SharedPreferencesData>.data(keyValue),
+              ),
+              legacyApi: true,
             ),
           ),
         ),
@@ -140,8 +172,7 @@ void main() {
         equals(
           const AsyncState<SharedPreferencesState>.data(
             SharedPreferencesState(
-              asyncKeys: <String>['key1'],
-              legacyKeys: <String>['key11'],
+              allKeys: <String>['key1'],
             ),
           ),
         ),
@@ -154,8 +185,7 @@ void main() {
         equals(
           const AsyncState<SharedPreferencesState>.data(
             SharedPreferencesState(
-              asyncKeys: asyncKeys,
-              legacyKeys: legacyKeys,
+              allKeys: asyncKeys,
             ),
           ),
         ),
@@ -179,8 +209,7 @@ void main() {
         equals(
           const AsyncState<SharedPreferencesState>.data(
             SharedPreferencesState(
-              asyncKeys: asyncKeys,
-              legacyKeys: legacyKeys,
+              allKeys: asyncKeys,
               editing: true,
             ),
           ),
@@ -194,8 +223,7 @@ void main() {
         equals(
           const AsyncState<SharedPreferencesState>.data(
             SharedPreferencesState(
-              asyncKeys: asyncKeys,
-              legacyKeys: legacyKeys,
+              allKeys: asyncKeys,
               // ignore: avoid_redundant_argument_values
               editing: false,
             ),
@@ -220,7 +248,7 @@ void main() {
         (_) async => keyValue,
       );
       await notifier.fetchAllKeys();
-      await notifier.selectKey('key1', false);
+      await notifier.selectKey('key1');
 
       await notifier.deleteSelectedKey();
 
@@ -241,7 +269,7 @@ void main() {
       when(evalMock.fetchValue('key1', false))
           .thenAnswer((_) async => keyValue);
       await notifier.fetchAllKeys();
-      await notifier.selectKey('key1', false);
+      await notifier.selectKey('key1');
 
       await notifier.changeValue(
         const SharedPreferencesData.string(value: 'newValue'),
@@ -254,6 +282,47 @@ void main() {
           false,
         ),
       ).called(1);
+    });
+
+    test('should change select legacy api and async api', () async {
+      const List<String> asyncKeys = <String>['key1', 'key2'];
+      const List<String> legacyKeys = <String>['key11', 'key22'];
+      when(evalMock.fetchAllKeys()).thenAnswer(
+        (_) async => (
+          asyncKeys: asyncKeys,
+          legacyKeys: legacyKeys,
+        ),
+      );
+      await notifier.fetchAllKeys();
+
+      notifier.selectApi(legacyApi: true);
+
+      expect(
+        notifier.value,
+        equals(
+          const AsyncState<SharedPreferencesState>.data(
+            SharedPreferencesState(
+              legacyApi: true,
+              allKeys: legacyKeys,
+            ),
+          ),
+        ),
+      );
+
+      notifier.selectApi(legacyApi: false);
+
+      expect(
+        notifier.value,
+        equals(
+          const AsyncState<SharedPreferencesState>.data(
+            SharedPreferencesState(
+              // ignore: avoid_redundant_argument_values
+              legacyApi: false,
+              allKeys: asyncKeys,
+            ),
+          ),
+        ),
+      );
     });
   });
 }

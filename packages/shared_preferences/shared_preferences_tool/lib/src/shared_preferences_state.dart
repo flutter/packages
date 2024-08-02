@@ -14,38 +14,38 @@ import 'async_state.dart';
 class SharedPreferencesState {
   /// Default constructor for [SharedPreferencesState].
   const SharedPreferencesState({
-    this.asyncKeys = const <String>[],
-    this.legacyKeys = const <String>[],
+    this.allKeys = const <String>[],
     this.selectedKey,
     this.editing = false,
+    this.legacyApi = false,
   });
 
-  /// A list of all keys in the shared preferences of the target debug session using the async API.
-  final List<String> asyncKeys;
-
-  /// A list of all keys in the shared preferences of the target debug session using the legacy API.
-  final List<String> legacyKeys;
+  /// A list of all keys in the shared preferences of the target debug session using the selected API.
+  final List<String> allKeys;
 
   /// The user selected key and its value in the shared preferences
   /// of the target debug session.
   final SelectedSharedPreferencesKey? selectedKey;
 
-  /// Whether the user is editing the value of the selected key.
+  /// Whether the user is editing the value of the selected key or not.
   final bool editing;
+
+  /// Whether the user has selected the legacy api or not.
+  final bool legacyApi;
 
   /// Creates a copy of this [SharedPreferencesState] but replacing the given
   /// fields with the new values.
   SharedPreferencesState copyWith({
-    List<String>? asyncKeys,
-    List<String>? legacyKeys,
+    List<String>? allKeys,
     SelectedSharedPreferencesKey? selectedKey,
     bool? editing,
+    bool? legacyApi,
   }) {
     return SharedPreferencesState(
-      asyncKeys: asyncKeys ?? this.asyncKeys,
-      legacyKeys: legacyKeys ?? this.legacyKeys,
+      allKeys: allKeys ?? this.allKeys,
       selectedKey: selectedKey ?? this.selectedKey,
       editing: editing ?? this.editing,
+      legacyApi: legacyApi ?? this.legacyApi,
     );
   }
 
@@ -53,23 +53,23 @@ class SharedPreferencesState {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is SharedPreferencesState &&
-            listEquals(other.asyncKeys, asyncKeys) &&
-            listEquals(other.legacyKeys, legacyKeys) &&
+            listEquals(other.allKeys, allKeys) &&
             other.selectedKey == selectedKey &&
-            other.editing == editing);
+            other.editing == editing &&
+            other.legacyApi == legacyApi);
   }
 
   @override
   int get hashCode => Object.hash(
-        asyncKeys,
-        legacyKeys,
+        allKeys,
         selectedKey,
         editing,
+        legacyApi,
       );
 
   @override
   String toString() {
-    return 'SharedPreferencesState(asyncKeys: $asyncKeys, legacyKeys: $legacyKeys, selectedKey: $selectedKey, editing: $editing)';
+    return 'SharedPreferencesState(allKeys: $allKeys, selectedKey: $selectedKey, editing: $editing)';
   }
 }
 
@@ -82,7 +82,6 @@ class SelectedSharedPreferencesKey {
   const SelectedSharedPreferencesKey({
     required this.key,
     required this.value,
-    required this.legacy,
   });
 
   /// The user selected key.
@@ -91,9 +90,6 @@ class SelectedSharedPreferencesKey {
   /// The value of the selected key in the shared preferences of the target
   /// debug session.
   final AsyncState<SharedPreferencesData> value;
-
-  /// Whether or not this is a legacy key.
-  final bool legacy;
 
   @override
   bool operator ==(Object other) {

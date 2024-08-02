@@ -74,17 +74,10 @@ class MockSharedPreferencesStateNotifier extends _i1.Mock
       ) as _i6.Future<void>);
 
   @override
-  _i6.Future<void> selectKey(
-    String? key,
-    bool? legacy,
-  ) =>
-      (super.noSuchMethod(
+  _i6.Future<void> selectKey(String? key) => (super.noSuchMethod(
         Invocation.method(
           #selectKey,
-          [
-            key,
-            legacy,
-          ],
+          [key],
         ),
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
@@ -134,6 +127,16 @@ class MockSharedPreferencesStateNotifier extends _i1.Mock
         Invocation.method(
           #stopEditing,
           [],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void selectApi({required bool? legacyApi}) => super.noSuchMethod(
+        Invocation.method(
+          #selectApi,
+          [],
+          {#legacyApi: legacyApi},
         ),
         returnValueForMissingStub: null,
       );
