@@ -24,10 +24,12 @@ void main() {
       ..update(materialName, createMaterialWidgets());
   }
 
-  testWidgets('Material widgets', (WidgetTester tester) async {
+  setUpAll(() {
     setUpTolerantComparator(
         testPath: 'test/material_widget_test.dart', precisionTolerance: 0.01);
+  });
 
+  testWidgets('Material widgets', (WidgetTester tester) async {
     final Runtime runtime = setupRuntime();
     final DynamicContent data = DynamicContent();
     final List<String> eventLog = <String>[];
