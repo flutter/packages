@@ -29,12 +29,13 @@
   id handler = OCMClassMock([FGMMapsCallbackApi class]);
 
   FLTClusterManagersController *clusterManagersController =
-      [[FLTClusterManagersController alloc] initWithCallbackHandler:handler mapView:mapView];
+      [[FLTClusterManagersController alloc] initWithMapView:mapView callbackHandler:handler];
+
   FLTMarkersController *markersController =
-      [[FLTMarkersController alloc] initWithClusterManagersController:clusterManagersController
-                                                      callbackHandler:handler
-                                                              mapView:mapView
-                                                            registrar:registrar];
+      [[FLTMarkersController alloc] initWithMapView:mapView
+                                    callbackHandler:handler
+                          clusterManagersController:clusterManagersController
+                                          registrar:registrar];
 
   // Add cluster managers.
   NSString *clusterManagerId = @"cm";
@@ -77,7 +78,7 @@
 
   // Verify that the markers were added to the cluster manager
   NSArray<FGMPlatformCluster *> *clusters1 =
-      [clusterManagersController getClustersWithIdentifier:clusterManagerId error:&error];
+      [clusterManagersController clustersWithIdentifier:clusterManagerId error:&error];
   XCTAssertNil(error, @"Error should be nil");
   for (FGMPlatformCluster *cluster in clusters1) {
     NSString *cmId = cluster.clusterManagerId;
@@ -95,7 +96,7 @@
 
   // Verify that the marker2 is removed from the clusterManager
   NSArray<FGMPlatformCluster *> *clusters2 =
-      [clusterManagersController getClustersWithIdentifier:clusterManagerId error:&error];
+      [clusterManagersController clustersWithIdentifier:clusterManagerId error:&error];
   XCTAssertNil(error, @"Error should be nil");
 
   for (FGMPlatformCluster *cluster in clusters2) {
@@ -113,7 +114,7 @@
 
   // Verify that all markers are removed from clusterManager
   NSArray<FGMPlatformCluster *> *clusters3 =
-      [clusterManagersController getClustersWithIdentifier:clusterManagerId error:&error];
+      [clusterManagersController clustersWithIdentifier:clusterManagerId error:&error];
   XCTAssertNil(error, @"Error should be nil");
   XCTAssertEqual(clusters3.count, 0, @"Cluster Manager should not contain any clusters");
 

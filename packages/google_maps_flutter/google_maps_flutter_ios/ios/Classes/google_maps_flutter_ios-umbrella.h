@@ -7,9 +7,8 @@
 #import <google_maps_flutter_ios/FLTGoogleMapJSONConversions.h>
 #import <google_maps_flutter_ios/FLTGoogleMapTileOverlayController.h>
 #import <google_maps_flutter_ios/FLTGoogleMapsPlugin.h>
+#import <google_maps_flutter_ios/FLTGoogleMarkerUserData.h>
 #import <google_maps_flutter_ios/GoogleMapPolylineController_Test.h>
-#import <google_maps_flutter_ios/GoogleMarkerUserData.h>
-#import <google_maps_flutter_ios/GoogleMarkerUtilities.h>
 
 FOUNDATION_EXPORT double google_maps_flutterVersionNumber;
 FOUNDATION_EXPORT const unsigned char google_maps_flutterVersionString[];
