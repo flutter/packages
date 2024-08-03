@@ -372,8 +372,8 @@ extern void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
 - (void)didTapCircleWithIdentifier:(NSString *)circleId
                         completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when a marker cluster is tapped.
-- (void)onClusterTapCluster:(FGMPlatformCluster *)cluster
-                 completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didTapCluster:(FGMPlatformCluster *)cluster
+           completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when a polygon is tapped.
 - (void)didTapPolygonWithIdentifier:(NSString *)polygonId
                          completion:(void (^)(FlutterError *_Nullable))completion;
@@ -415,8 +415,8 @@ extern void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
 - (nullable FGMPlatformZoomRange *)zoomRange:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable NSArray<FGMPlatformCluster *> *)
-    getClustersWithIdentifier:(NSString *)clusterManagerId
-                        error:(FlutterError *_Nullable *_Nonnull)error;
+    clustersWithIdentifier:(NSString *)clusterManagerId
+                     error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFGMMapsInspectorApi(id<FlutterBinaryMessenger> binaryMessenger,

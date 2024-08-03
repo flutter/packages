@@ -388,6 +388,7 @@ abstract class MapsCallbackApi {
   void onCircleTap(String circleId);
 
   /// Called when a marker cluster is tapped.
+  @ObjCSelector('didTapCluster:')
   void onClusterTap(PlatformCluster cluster);
 
   /// Called when a polygon is tapped.
@@ -425,6 +426,6 @@ abstract class MapsInspectorApi {
   // TODO(stuartmorgan): Make the generic type non-nullable once supported.
   // https://github.com/flutter/flutter/issues/97848
   // The consuming code treats the entries as non-nullable.
-  @ObjCSelector('getClustersWithIdentifier:')
+  @ObjCSelector('clustersWithIdentifier:')
   List<PlatformCluster?> getClusters(String clusterManagerId);
 }

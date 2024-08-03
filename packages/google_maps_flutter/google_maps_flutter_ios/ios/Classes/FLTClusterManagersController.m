@@ -5,7 +5,7 @@
 #import "FLTClusterManagersController.h"
 
 #import "FLTGoogleMapJSONConversions.h"
-#import "GoogleMarkerUtilities.h"
+#import "FLTGoogleMarkerUserData.h"
 
 @interface FLTClusterManagersController ()
 
@@ -13,7 +13,7 @@
 @property(strong, nonatomic)
     NSMutableDictionary<NSString *, GMUClusterManager *> *clusterManagerIdentifierToManagers;
 
-/// The method channel that is used to communicate with the Flutter implementation.
+/// The callback handler interface for calls to Flutter.
 @property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 
 /// The current GMSMapView instance on which the cluster managers are operating.
@@ -22,8 +22,8 @@
 @end
 
 @implementation FLTClusterManagersController
-- (instancetype)initWithCallbackHandler:(FGMMapsCallbackApi *)callbackHandler
-                                mapView:(GMSMapView *)mapView {
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler {
   self = [super init];
   if (self) {
     _callbackHandler = callbackHandler;
@@ -82,8 +82,8 @@
 }
 
 - (nullable NSArray<FGMPlatformCluster *> *)
-    getClustersWithIdentifier:(NSString *)identifier
-                        error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+    clustersWithIdentifier:(NSString *)identifier
+                     error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   GMUClusterManager *clusterManager =
       [self.clusterManagerIdentifierToManagers objectForKey:identifier];
 
@@ -95,12 +95,12 @@
     return nil;
   }
 
-  NSMutableArray<FGMPlatformCluster *> *response = [[NSMutableArray alloc] init];
-
   // Ref:
   // https://github.com/googlemaps/google-maps-ios-utils/blob/0e7ed81f1bbd9d29e4529c40ae39b0791b0a0eb8/src/Clustering/GMUClusterManager.m#L94.
   NSUInteger integralZoom = (NSUInteger)floorf(_mapView.camera.zoom + 0.5f);
   NSArray<id<GMUCluster>> *clusters = [clusterManager.algorithm clustersAtZoom:integralZoom];
+  NSMutableArray<FGMPlatformCluster *> *response =
+      [[NSMutableArray alloc] initWithCapacity:clusters.count];
   for (id<GMUCluster> cluster in clusters) {
     FGMPlatformCluster *platFormCluster = FGMGetPigeonCluster(cluster, identifier);
     [response addObject:platFormCluster];
@@ -108,17 +108,15 @@
   return response;
 }
 
-- (void)didTapOnCluster:(GMUStaticCluster *)cluster {
+- (void)didTapCluster:(GMUStaticCluster *)cluster {
   NSString *clusterManagerId = [self clusterManagerIdentifierForCluster:cluster];
   if (!clusterManagerId) {
     return;
   }
-  if (cluster) {
-    FGMPlatformCluster *platFormCluster = FGMGetPigeonCluster(cluster, clusterManagerId);
-    [self.callbackHandler onClusterTapCluster:platFormCluster
-                                   completion:^(FlutterError *_Nullable _){
-                                   }];
-  }
+  FGMPlatformCluster *platFormCluster = FGMGetPigeonCluster(cluster, clusterManagerId);
+  [self.callbackHandler didTapCluster:platFormCluster
+                           completion:^(FlutterError *_Nullable _){
+                           }];
 }
 
 #pragma mark - Private methods
@@ -128,13 +126,9 @@
 /// @param cluster identifier of the ClusterManager.
 /// @return id NSString if found; otherwise, nil.
 - (nullable NSString *)clusterManagerIdentifierForCluster:(GMUStaticCluster *)cluster {
-  if ([cluster.items count] == 0) {
-    return nil;
-  }
-
   if ([cluster.items.firstObject isKindOfClass:[GMSMarker class]]) {
     GMSMarker *firstMarker = (GMSMarker *)cluster.items.firstObject;
-    return [GoogleMarkerUtilities getClusterManagerIdentifierFrom:firstMarker];
+    return FLTGetClusterManagerIdentifierFrom(firstMarker);
   }
 
   return nil;

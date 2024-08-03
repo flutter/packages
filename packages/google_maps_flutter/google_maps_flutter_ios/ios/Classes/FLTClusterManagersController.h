@@ -18,8 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// @param callbackHandler A callback handler.
 /// @param mapView A map view that will be used to display clustered markers.
-- (instancetype)initWithCallbackHandler:(FGMMapsCallbackApi *)callbackHandler
-                                mapView:(GMSMapView *)mapView;
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler;
 
 /// Creates ClusterManagers and initializes them form JSON data.
 ///
@@ -52,15 +52,16 @@ NS_ASSUME_NONNULL_BEGIN
 /// array is returned.
 ///
 /// @param identifier The identifier of the ClusterManager to serialize.
-/// @return An array of FGMPlatformCluster objects representing the clusters.
+/// @return An array of FGMPlatformCluster objects representing the clusters. `nil` is returned only
+/// when `error != nil`.
 - (nullable NSArray<FGMPlatformCluster *> *)
-    getClustersWithIdentifier:(NSString *)identifier
-                        error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error;
+    clustersWithIdentifier:(NSString *)identifier
+                     error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error;
 
 /// Called when cluster marker is tapped on the map.
 ///
 /// @param cluster GMUStaticCluster object.
-- (void)didTapOnCluster:(GMUStaticCluster *)cluster;
+- (void)didTapCluster:(GMUStaticCluster *)cluster;
 
 /// Calls cluster method of all ClusterManagers.
 - (void)invokeClusteringForEachClusterManager;

@@ -41,26 +41,4 @@ void main() {
       }
     ]);
   });
-
-  test('serializeClusterManagerUpdates', () async {
-    final ClusterManagerUpdates updates = ClusterManagerUpdates.from(
-      <ClusterManager>{
-        const ClusterManager(clusterManagerId: ClusterManagerId('1234'))
-      },
-      <ClusterManager>{
-        const ClusterManager(clusterManagerId: ClusterManagerId('5678'))
-      },
-    );
-
-    final Object json = serializeClusterManagerUpdates(updates);
-
-    expect(json, <String, Object>{
-      'clusterManagerIdsToRemove': <Object>['1234'],
-      'clusterManagersToAdd': <Object>[
-        <String, Object>{
-          'clusterManagerId': '5678',
-        }
-      ],
-    });
-  });
 }

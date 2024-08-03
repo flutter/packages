@@ -4,7 +4,7 @@
 
 #import "GoogleMapMarkerController.h"
 #import "FLTGoogleMapJSONConversions.h"
-#import "GoogleMarkerUtilities.h"
+#import "FLTGoogleMarkerUserData.h"
 
 @interface FLTGoogleMapMarkerController ()
 
@@ -12,7 +12,7 @@
 @property(weak, nonatomic) GMSMapView *mapView;
 @property(assign, nonatomic, readwrite) BOOL consumeTapEvents;
 /// The unique identifier for the cluster manager.
-@property(copy, nonatomic) NSString *clusterManagerIdentifier;
+@property(copy, nonatomic, nullable) NSString *clusterManagerIdentifier;
 /// The unique identifier for the marker.
 @property(copy, nonatomic) NSString *markerIdentifier;
 
@@ -22,7 +22,7 @@
 
 - (instancetype)initWithMarker:(GMSMarker *)marker
               markerIdentifier:(NSString *)markerIdentifier
-      clusterManagerIdentifier:(NSString *)clusterManagerIdentifier
+      clusterManagerIdentifier:(nullable NSString *)clusterManagerIdentifier
                        mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
@@ -30,7 +30,7 @@
     _markerIdentifier = [markerIdentifier copy];
     _clusterManagerIdentifier = [clusterManagerIdentifier copy];
     _mapView = mapView;
-    [self updateMarkerUserData];
+    FLTSetIdentifiersToMarkerUserData(_markerIdentifier, _clusterManagerIdentifier, _marker);
   }
   return self;
 }
@@ -103,14 +103,6 @@
 
 - (void)setZIndex:(int)zIndex {
   self.marker.zIndex = zIndex;
-}
-
-- (void)updateMarkerUserData {
-  if (self.clusterManagerIdentifier) {
-    [GoogleMarkerUtilities setMarkerIdentifier:self.markerIdentifier andClusterManagerIdentifier:self.clusterManagerIdentifier for:self.marker];
-  } else {
-    [GoogleMarkerUtilities setMarkerIdentifier:self.markerIdentifier for:self.marker];
-  }
 }
 
 - (void)interpretMarkerOptions:(NSDictionary *)data
@@ -464,16 +456,15 @@
 
 @implementation FLTMarkersController
 
-- (instancetype)initWithClusterManagersController:
-                    (nullable FLTClusterManagersController *)clusterManagers
-                                  callbackHandler:(FGMMapsCallbackApi *)callbackHandler
-                                          mapView:(GMSMapView *)mapView
-                                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+      clusterManagersController:(nullable FLTClusterManagersController *)clusterManagersController
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
     _callbackHandler = callbackHandler;
     _mapView = mapView;
-    _clusterManagersController = clusterManagers;
+    _clusterManagersController = clusterManagersController;
     _markerIdentifierToController = [[NSMutableDictionary alloc] init];
     _registrar = registrar;
   }
@@ -505,10 +496,10 @@
   [controller interpretMarkerOptions:markerToAdd
                            registrar:self.registrar
                          screenScale:[self getScreenScale]];
-  if (clusterManagerIdentifier && [clusterManagerIdentifier isKindOfClass:[NSString class]]) {
+  if (clusterManagerIdentifier) {
     GMUClusterManager *clusterManager =
         [_clusterManagersController clusterManagerWithIdentifier:clusterManagerIdentifier];
-    if (marker && clusterManager) {
+    if ([marker conformsToProtocol:@protocol(GMUClusterItem)]) {
       [clusterManager addItem:(id<GMUClusterItem>)marker];
     }
   }
@@ -551,13 +542,11 @@
   if (!controller) {
     return;
   }
-  id clusterManagerIdentifier = [controller clusterManagerIdentifier];
-  if ([clusterManagerIdentifier isKindOfClass:[NSString class]]) {
+  NSString *clusterManagerIdentifier = [controller clusterManagerIdentifier];
+  if (clusterManagerIdentifier) {
     GMUClusterManager *clusterManager =
         [_clusterManagersController clusterManagerWithIdentifier:clusterManagerIdentifier];
-    if (controller.marker && clusterManager) {
-      [clusterManager removeItem:(id<GMUClusterItem>)controller.marker];
-    }
+    [clusterManager removeItem:(id<GMUClusterItem>)controller.marker];
   } else {
     [controller removeMarker];
   }

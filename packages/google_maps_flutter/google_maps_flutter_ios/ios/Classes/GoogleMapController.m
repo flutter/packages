@@ -8,7 +8,7 @@
 #import "FLTGoogleMapHeatmapController.h"
 #import "FLTGoogleMapJSONConversions.h"
 #import "FLTGoogleMapTileOverlayController.h"
-#import "GoogleMarkerUtilities.h"
+#import "FLTGoogleMarkerUserData.h"
 #import "messages.g.h"
 
 #pragma mark - Conversion of JSON-like values sent via platform channels. Forward declarations.
@@ -180,13 +180,12 @@
     _mapView.paddingAdjustmentBehavior = kGMSMapViewPaddingAdjustmentBehaviorNever;
     _registrar = registrar;
     _clusterManagersController =
-        [[FLTClusterManagersController alloc] initWithCallbackHandler:_dartCallbackHandler
-                                                              mapView:_mapView];
-    _markersController =
-        [[FLTMarkersController alloc] initWithClusterManagersController:_clusterManagersController
-                                                        callbackHandler:_dartCallbackHandler
-                                                                mapView:_mapView
-                                                              registrar:registrar];
+        [[FLTClusterManagersController alloc] initWithMapView:_mapView
+                                              callbackHandler:_dartCallbackHandler];
+    _markersController = [[FLTMarkersController alloc] initWithMapView:_mapView
+                                                       callbackHandler:_dartCallbackHandler
+                                             clusterManagersController:_clusterManagersController
+                                                             registrar:registrar];
     _polygonsController = [[FLTPolygonsController alloc] initWithMapView:_mapView
                                                          callbackHandler:_dartCallbackHandler
                                                                registrar:registrar];
@@ -210,10 +209,6 @@
     if ([markersToAdd isKindOfClass:[NSArray class]]) {
       [_markersController addJSONMarkers:markersToAdd];
     }
-
-    // Invoke clustering after markers are added.
-    [_clusterManagersController invokeClusteringForEachClusterManager];
-
     id polygonsToAdd = args[@"polygonsToAdd"];
     if ([polygonsToAdd isKindOfClass:[NSArray class]]) {
       [_polygonsController addJSONPolygons:polygonsToAdd];
@@ -234,6 +229,9 @@
     if ([tileOverlaysToAdd isKindOfClass:[NSArray class]]) {
       [_tileOverlaysController addJSONTileOverlays:tileOverlaysToAdd];
     }
+
+    // Invoke clustering after markers are added.
+    [_clusterManagersController invokeClusteringForEachClusterManager];
 
     [_mapView addObserver:self forKeyPath:@"frame" options:0 context:nil];
 
@@ -406,36 +404,31 @@
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(GMSMarker *)marker {
   if ([marker.userData isKindOfClass:[GMUStaticCluster class]]) {
     GMUStaticCluster *cluster = marker.userData;
-    [self.clusterManagersController didTapOnCluster:cluster];
+    [self.clusterManagersController didTapCluster:cluster];
     // When NO is returned, the map will focus on the cluster.
     return NO;
   }
-  return [self.markersController
-      didTapMarkerWithIdentifier:[GoogleMarkerUtilities getMarkerIdentifierFrom:marker]];
+  return [self.markersController didTapMarkerWithIdentifier:FLTGetMarkerIdentifierFrom(marker)];
 }
 
 - (void)mapView:(GMSMapView *)mapView didEndDraggingMarker:(GMSMarker *)marker {
-  [self.markersController
-      didEndDraggingMarkerWithIdentifier:[GoogleMarkerUtilities getMarkerIdentifierFrom:marker]
-                                location:marker.position];
+  [self.markersController didEndDraggingMarkerWithIdentifier:FLTGetMarkerIdentifierFrom(marker)
+                                                    location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didBeginDraggingMarker:(GMSMarker *)marker {
-  [self.markersController
-      didStartDraggingMarkerWithIdentifier:[GoogleMarkerUtilities getMarkerIdentifierFrom:marker]
-                                  location:marker.position];
+  [self.markersController didStartDraggingMarkerWithIdentifier:FLTGetMarkerIdentifierFrom(marker)
+                                                      location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didDragMarker:(GMSMarker *)marker {
-  [self.markersController
-      didDragMarkerWithIdentifier:[GoogleMarkerUtilities getMarkerIdentifierFrom:marker]
-                         location:marker.position];
+  [self.markersController didDragMarkerWithIdentifier:FLTGetMarkerIdentifierFrom(marker)
+                                             location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapInfoWindowOfMarker:(GMSMarker *)marker {
   [self.markersController
-      didTapInfoWindowOfMarkerWithIdentifier:[GoogleMarkerUtilities
-                                                 getMarkerIdentifierFrom:marker]];
+      didTapInfoWindowOfMarkerWithIdentifier:FLTGetMarkerIdentifierFrom(marker)];
 }
 - (void)mapView:(GMSMapView *)mapView didTapOverlay:(GMSOverlay *)overlay {
   NSString *overlayId = overlay.userData[0];
@@ -590,6 +583,8 @@
   [self.controller.markersController addMarkers:toAdd];
   [self.controller.markersController changeMarkers:toChange];
   [self.controller.markersController removeMarkersWithIdentifiers:idsToRemove];
+
+  // Invoke clustering after markers are added.
   [self.controller.clusterManagersController invokeClusteringForEachClusterManager];
 }
 
@@ -820,10 +815,10 @@
 }
 
 - (nullable NSArray<FGMPlatformCluster *> *)
-    getClustersWithIdentifier:(NSString *)clusterManagerId
-                        error:(FlutterError *_Nullable *_Nonnull)error {
-  return [self.controller.clusterManagersController getClustersWithIdentifier:clusterManagerId
-                                                                        error:error];
+    clustersWithIdentifier:(NSString *)clusterManagerId
+                     error:(FlutterError *_Nullable *_Nonnull)error {
+  return [self.controller.clusterManagersController clustersWithIdentifier:clusterManagerId
+                                                                     error:error];
 }
 
 - (nullable NSNumber *)isCompassEnabledWithError:

@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(assign, nonatomic, readonly) BOOL consumeTapEvents;
 - (instancetype)initWithMarker:(GMSMarker *)marker
               markerIdentifier:(NSString *)markerIdentifier
-      clusterManagerIdentifier:(NSString *)clusterManagerIdentifier
+      clusterManagerIdentifier:(nullable NSString *)clusterManagerIdentifier
                        mapView:(GMSMapView *)mapView;
 - (void)showInfoWindow;
 - (void)hideInfoWindow;
@@ -24,11 +24,10 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface FLTMarkersController : NSObject
-- (instancetype)initWithClusterManagersController:
-                    (nullable FLTClusterManagersController *)clusterManagers
-                                  callbackHandler:(FGMMapsCallbackApi *)callbackHandler
-                                          mapView:(GMSMapView *)mapView
-                                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+      clusterManagersController:(nullable FLTClusterManagersController *)clusterManagersController
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 - (void)addJSONMarkers:(NSArray<NSDictionary<NSString *, id> *> *)markersToAdd;
 - (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd;
 - (void)changeMarkers:(NSArray<FGMPlatformMarker *> *)markersToChange;

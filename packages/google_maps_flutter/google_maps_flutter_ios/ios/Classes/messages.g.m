@@ -1573,8 +1573,8 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
-- (void)onClusterTapCluster:(FGMPlatformCluster *)arg_cluster
-                 completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didTapCluster:(FGMPlatformCluster *)arg_cluster
+           completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:@"%@%@",
                        @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onClusterTap",
@@ -1946,16 +1946,16 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
         binaryMessenger:binaryMessenger
                   codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getClustersWithIdentifier:error:)],
+      NSCAssert([api respondsToSelector:@selector(clustersWithIdentifier:error:)],
                 @"FGMMapsInspectorApi api (%@) doesn't respond to "
-                @"@selector(getClustersWithIdentifier:error:)",
+                @"@selector(clustersWithIdentifier:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_clusterManagerId = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        NSArray<FGMPlatformCluster *> *output = [api getClustersWithIdentifier:arg_clusterManagerId
-                                                                         error:&error];
+        NSArray<FGMPlatformCluster *> *output = [api clustersWithIdentifier:arg_clusterManagerId
+                                                                      error:&error];
         callback(wrapResult(output, error));
       }];
     } else {

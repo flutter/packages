@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #import "FLTGoogleMapJSONConversions.h"
-#import "GoogleMarkerUtilities.h"
+#import "FLTGoogleMarkerUserData.h"
 
 /// Returns dict[key], or nil if dict[key] is NSNull.
 id FGMGetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
@@ -42,11 +42,11 @@ FGMPlatformCameraPosition *FGMGetPigeonCameraPositionForPosition(GMSCameraPositi
 
 FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
                                         NSString *clusterManagerIdentifier) {
-  NSMutableArray *markerIds = [[NSMutableArray alloc] init];
+  NSMutableArray *markerIDs = [[NSMutableArray alloc] initWithCapacity:cluster.items.count];
   GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] init];
 
   for (GMSMarker *marker in cluster.items) {
-    [markerIds addObject:[GoogleMarkerUtilities getMarkerIdentifierFrom:marker]];
+    [markerIDs addObject:FLTGetMarkerIdentifierFrom(marker)];
     bounds = [bounds includingCoordinate:marker.position];
   }
 
@@ -54,7 +54,7 @@ FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
       makeWithClusterManagerId:clusterManagerIdentifier
                       position:FGMGetPigeonLatLngForCoordinate(cluster.position)
                         bounds:FGMGetPigeonLatLngBoundsForCoordinateBounds(bounds)
-                     markerIds:markerIds];
+                     markerIds:markerIDs];
 }
 
 @implementation FLTGoogleMapJSONConversions
