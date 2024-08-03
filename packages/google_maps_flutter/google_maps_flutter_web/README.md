@@ -59,7 +59,7 @@ If you need marker clustering support, modify the <head> tag to load the [js-mar
 
   <!-- // Other stuff -->
 
-  <script src="https://unpkg.com/@googlemaps/markerclusterer@2.5.3/dist/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@googlemaps/markerclusterer@2.5.3/dist/index.umd.min.js"></script>
 </head>
 ```
 
