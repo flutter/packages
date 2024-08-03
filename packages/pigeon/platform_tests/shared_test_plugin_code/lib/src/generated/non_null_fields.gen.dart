@@ -127,18 +127,18 @@ class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is NonNullFieldSearchRequest) {
+    if (value is ReplyType) {
       buffer.putUint8(129);
-      writeValue(buffer, value.encode());
-    } else if (value is ExtraData) {
+      writeValue(buffer, value.index);
+    } else if (value is NonNullFieldSearchRequest) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is NonNullFieldSearchReply) {
+    } else if (value is ExtraData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is ReplyType) {
+    } else if (value is NonNullFieldSearchReply) {
       buffer.putUint8(132);
-      writeValue(buffer, value.index);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -148,14 +148,14 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        return NonNullFieldSearchRequest.decode(readValue(buffer)!);
-      case 130:
-        return ExtraData.decode(readValue(buffer)!);
-      case 131:
-        return NonNullFieldSearchReply.decode(readValue(buffer)!);
-      case 132:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : ReplyType.values[value];
+      case 130:
+        return NonNullFieldSearchRequest.decode(readValue(buffer)!);
+      case 131:
+        return ExtraData.decode(readValue(buffer)!);
+      case 132:
+        return NonNullFieldSearchReply.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

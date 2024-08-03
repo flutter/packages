@@ -74,12 +74,12 @@ class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is MessageData) {
+    if (value is Code) {
       buffer.putUint8(129);
-      writeValue(buffer, value.encode());
-    } else if (value is Code) {
-      buffer.putUint8(130);
       writeValue(buffer, value.index);
+    } else if (value is MessageData) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -89,10 +89,10 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        return MessageData.decode(readValue(buffer)!);
-      case 130:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : Code.values[value];
+      case 130:
+        return MessageData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

@@ -108,18 +108,21 @@ struct MessageData {
     ]
   }
 }
+
 private class MessagesPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 129:
-      return MessageData.fromList(self.readValue() as! [Any?])
-    case 130:
       var enumResult: Code? = nil
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
       if let enumResultAsInt = enumResultAsInt {
         enumResult = Code(rawValue: enumResultAsInt)
       }
       return enumResult
+    case 130:
+      return MessageData.fromList(self.readValue() as! [Any?])
+    case 255:
+      return __pigeon_CodecOverflow.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -128,12 +131,12 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
 
 private class MessagesPigeonCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? MessageData {
+    if let value = value as? Code {
       super.writeByte(129)
-      super.writeValue(value.toList())
-    } else if let value = value as? Code {
-      super.writeByte(130)
       super.writeValue(value.rawValue)
+    } else if let value = value as? MessageData {
+      super.writeByte(130)
+      super.writeValue(value.toList())
     } else {
       super.writeValue(value)
     }

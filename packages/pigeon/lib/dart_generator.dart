@@ -283,8 +283,58 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
+    void writeEncodeLogic(EnumeratedType customType) {
+      indent.writeScoped('if (value is ${customType.name}) {', '} else ', () {
+        if (customType.enumeration < maximumCodecFieldKey) {
+          indent.writeln('buffer.putUint8(${customType.enumeration});');
+          if (customType.type == CustomTypes.customClass) {
+            indent.writeln('writeValue(buffer, value.encode());');
+          } else if (customType.type == CustomTypes.customEnum) {
+            indent.writeln('writeValue(buffer, value.index);');
+          }
+        } else {
+          final String encodeString = customType.type == CustomTypes.customClass
+              ? '.encode()'
+              : '.index';
+          indent.writeln(
+              'final ${varNamePrefix}CodecOverflow wrap = ${varNamePrefix}CodecOverflow(type: ${customType.enumeration - maximumCodecFieldKey}, wrapped: value$encodeString);');
+          indent.writeln('buffer.putUint8($maximumCodecFieldKey);');
+          indent.writeln('writeValue(buffer, wrap.encode());');
+        }
+      }, addTrailingNewline: false);
+    }
+
+    void writeDecodeLogic(EnumeratedType customType) {
+      indent.writeln('case ${customType.enumeration}: ');
+      indent.nest(1, () {
+        if (customType.type == CustomTypes.customClass) {
+          if (customType.enumeration == maximumCodecFieldKey) {
+            indent.writeln(
+                'final ${customType.name} wrapper = ${customType.name}.decode(readValue(buffer)!);');
+            indent.writeln('return wrapper.unwrap();');
+          } else {
+            indent.writeln(
+                'return ${customType.name}.decode(readValue(buffer)!);');
+          }
+        } else if (customType.type == CustomTypes.customEnum) {
+          indent.writeln('final int? value = readValue(buffer) as int?;');
+          indent.writeln(
+              'return value == null ? null : ${customType.name}.values[value];');
+        }
+      });
+    }
+
+    final EnumeratedType overflowClass = EnumeratedType(
+        '${varNamePrefix}CodecOverflow',
+        maximumCodecFieldKey,
+        CustomTypes.customClass);
+
     indent.newln();
-    final Iterable<EnumeratedType> enumeratedTypes = getEnumeratedTypes(root);
+    final List<EnumeratedType> enumeratedTypes =
+        getEnumeratedTypes(root).toList();
+    if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+      _writeCodecOverflowUtilities(indent, enumeratedTypes);
+    }
     indent.newln();
     indent.write('class $_pigeonCodec extends StandardMessageCodec');
     indent.addScoped(' {', '}', () {
@@ -295,15 +345,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         indent.addScoped('{', '}', () {
           enumerate(enumeratedTypes,
               (int index, final EnumeratedType customType) {
-            indent.writeScoped('if (value is ${customType.name}) {', '} else ',
-                () {
-              indent.writeln('buffer.putUint8(${customType.enumeration});');
-              if (customType.type == CustomTypes.customClass) {
-                indent.writeln('writeValue(buffer, value.encode());');
-              } else if (customType.type == CustomTypes.customEnum) {
-                indent.writeln('writeValue(buffer, value.index);');
-              }
-            }, addTrailingNewline: false);
+            writeEncodeLogic(customType);
           });
           indent.addScoped('{', '}', () {
             indent.writeln('super.writeValue(buffer, value);');
@@ -316,18 +358,12 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
           indent.write('switch (type) ');
           indent.addScoped('{', '}', () {
             for (final EnumeratedType customType in enumeratedTypes) {
-              indent.writeln('case ${customType.enumeration}: ');
-              indent.nest(1, () {
-                if (customType.type == CustomTypes.customClass) {
-                  indent.writeln(
-                      'return ${customType.name}.decode(readValue(buffer)!);');
-                } else if (customType.type == CustomTypes.customEnum) {
-                  indent
-                      .writeln('final int? value = readValue(buffer) as int?;');
-                  indent.writeln(
-                      'return value == null ? null : ${customType.name}.values[value];');
-                }
-              });
+              if (customType.enumeration < maximumCodecFieldKey) {
+                writeDecodeLogic(customType);
+              }
+            }
+            if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+              writeDecodeLogic(overflowClass);
             }
             indent.writeln('default:');
             indent.nest(1, () {
@@ -953,6 +989,52 @@ PlatformException _createConnectionError(String channelName) {
 \t\tmessage: 'Unable to establish connection on channel: "\$channelName".',
 \t);
 }''');
+  }
+
+  void _writeCodecOverflowUtilities(Indent indent, List<EnumeratedType> types) {
+    indent.newln();
+    indent.writeln('// ignore: camel_case_types');
+    indent.writeScoped('class ${varNamePrefix}CodecOverflow {', '}', () {
+      indent.format('''
+${varNamePrefix}CodecOverflow({required this.type, required this.wrapped});
+
+int type;
+Object? wrapped;
+
+Object encode() {
+  return <Object?>[type, wrapped];
+}
+
+static ${varNamePrefix}CodecOverflow decode(Object result) {
+  result as List<Object?>;
+  return ${varNamePrefix}CodecOverflow(
+    type: result[0]! as int,
+    wrapped: result[1],
+  );
+}
+''');
+      indent.writeScoped('Object? unwrap() {', '}', () {
+        indent.format('''
+if (wrapped == null) {
+  return null;
+}
+''');
+        indent.writeScoped('switch (type) {', '}', () {
+          for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
+            indent.writeScoped('case ${i - totalCustomCodecKeysAllowed}:', '',
+                () {
+              if (types[i].type == CustomTypes.customClass) {
+                indent.writeln('return ${types[i].name}.decode(wrapped!);');
+              } else if (types[i].type == CustomTypes.customEnum) {
+                indent.writeln(
+                    'return ${types[i].name}.values[wrapped! as int];');
+              }
+            });
+          }
+        });
+        indent.writeln('return null;');
+      });
+    });
   }
 
   void _writeHostMethod(

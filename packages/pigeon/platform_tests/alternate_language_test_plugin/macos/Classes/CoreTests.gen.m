@@ -426,21 +426,21 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @implementation CoreTestsPigeonCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 129:
-      return [AllTypes fromList:[self readValue]];
-    case 130:
-      return [AllNullableTypes fromList:[self readValue]];
-    case 131:
-      return [AllNullableTypesWithoutRecursion fromList:[self readValue]];
-    case 132:
-      return [AllClassesWrapper fromList:[self readValue]];
-    case 133:
-      return [TestMessage fromList:[self readValue]];
-    case 134: {
+    case 129: {
       NSNumber *enumAsNumber = [self readValue];
       return enumAsNumber == nil ? nil
                                  : [[AnEnumBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
+    case 130:
+      return [AllTypes fromList:[self readValue]];
+    case 131:
+      return [AllNullableTypes fromList:[self readValue]];
+    case 132:
+      return [AllNullableTypesWithoutRecursion fromList:[self readValue]];
+    case 133:
+      return [AllClassesWrapper fromList:[self readValue]];
+    case 134:
+      return [TestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -451,25 +451,25 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 @implementation CoreTestsPigeonCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[AllTypes class]]) {
+  if ([value isKindOfClass:[AnEnumBox class]]) {
+    AnEnumBox *box = (AnEnumBox *)value;
     [self writeByte:129];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllNullableTypes class]]) {
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[AllTypes class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllNullableTypesWithoutRecursion class]]) {
+  } else if ([value isKindOfClass:[AllNullableTypes class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllClassesWrapper class]]) {
+  } else if ([value isKindOfClass:[AllNullableTypesWithoutRecursion class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[TestMessage class]]) {
+  } else if ([value isKindOfClass:[AllClassesWrapper class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AnEnumBox class]]) {
-    AnEnumBox *box = (AnEnumBox *)value;
+  } else if ([value isKindOfClass:[TestMessage class]]) {
     [self writeByte:134];
-    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+    [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
   }

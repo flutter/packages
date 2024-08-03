@@ -89,10 +89,10 @@ private object MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { MessageData.fromList(it) }
+        return (readValue(buffer) as Int?)?.let { Code.ofRaw(it) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as Int?)?.let { Code.ofRaw(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { MessageData.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -100,13 +100,13 @@ private object MessagesPigeonCodec : StandardMessageCodec() {
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
-      is MessageData -> {
-        stream.write(129)
-        writeValue(stream, value.toList())
-      }
       is Code -> {
-        stream.write(130)
+        stream.write(129)
         writeValue(stream, value.raw)
+      }
+      is MessageData -> {
+        stream.write(130)
+        writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
     }

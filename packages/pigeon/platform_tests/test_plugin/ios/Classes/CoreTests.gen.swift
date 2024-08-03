@@ -490,26 +490,29 @@ struct TestMessage {
     ]
   }
 }
+
 private class CoreTestsPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 129:
-      return AllTypes.fromList(self.readValue() as! [Any?])
-    case 130:
-      return AllNullableTypes.fromList(self.readValue() as! [Any?])
-    case 131:
-      return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
-    case 132:
-      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
-    case 133:
-      return TestMessage.fromList(self.readValue() as! [Any?])
-    case 134:
       var enumResult: AnEnum? = nil
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
       if let enumResultAsInt = enumResultAsInt {
         enumResult = AnEnum(rawValue: enumResultAsInt)
       }
       return enumResult
+    case 130:
+      return AllTypes.fromList(self.readValue() as! [Any?])
+    case 131:
+      return AllNullableTypes.fromList(self.readValue() as! [Any?])
+    case 132:
+      return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
+    case 133:
+      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
+    case 134:
+      return TestMessage.fromList(self.readValue() as! [Any?])
+    case 255:
+      return __pigeon_CodecOverflow.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -518,24 +521,24 @@ private class CoreTestsPigeonCodecReader: FlutterStandardReader {
 
 private class CoreTestsPigeonCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? AllTypes {
+    if let value = value as? AnEnum {
       super.writeByte(129)
-      super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypes {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AllTypes {
       super.writeByte(130)
       super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypesWithoutRecursion {
+    } else if let value = value as? AllNullableTypes {
       super.writeByte(131)
       super.writeValue(value.toList())
-    } else if let value = value as? AllClassesWrapper {
+    } else if let value = value as? AllNullableTypesWithoutRecursion {
       super.writeByte(132)
       super.writeValue(value.toList())
-    } else if let value = value as? TestMessage {
+    } else if let value = value as? AllClassesWrapper {
       super.writeByte(133)
       super.writeValue(value.toList())
-    } else if let value = value as? AnEnum {
+    } else if let value = value as? TestMessage {
       super.writeByte(134)
-      super.writeValue(value.rawValue)
+      super.writeValue(value.toList())
     } else {
       super.writeValue(value)
     }

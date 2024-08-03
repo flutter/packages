@@ -12,6 +12,16 @@ enum AnEnum {
   fourHundredTwentyTwo,
 }
 
+class SimpleClass {
+  SimpleClass({
+    this.aString,
+    this.aBool = true,
+  });
+
+  String? aString;
+  bool aBool;
+}
+
 /// A class containing all supported types.
 class AllTypes {
   AllTypes({

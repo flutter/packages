@@ -15,6 +15,24 @@ const String _docCommentPrefix = '///';
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_docCommentPrefix);
 
+const String _overflowClassName = '${varNamePrefix}CodecOverflow';
+
+final NamedType _overflowInt = NamedType(
+    name: 'type',
+    type: const TypeDeclaration(baseName: 'int', isNullable: false));
+final NamedType _overflowObject = NamedType(
+    name: 'wrapped',
+    type: const TypeDeclaration(baseName: 'Object', isNullable: true));
+final List<NamedType> _overflowFields = <NamedType>[
+  _overflowInt,
+  _overflowObject,
+];
+final Class _overflowClass =
+    Class(name: _overflowClassName, fields: _overflowFields);
+final EnumeratedType _enumeratedOverflow = EnumeratedType(
+    _overflowClassName, 255, CustomTypes.customClass,
+    associatedClass: _overflowClass);
+
 /// Options that control how Objective-C code will be generated.
 class ObjcOptions {
   /// Parametric constructor for ObjcOptions.
@@ -197,6 +215,15 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       indent,
       dartPackageName: dartPackageName,
     );
+    if (getEnumeratedTypes(root).length >= totalCustomCodecKeysAllowed) {
+      writeDataClass(
+        generatorOptions,
+        root,
+        indent,
+        _overflowClass,
+        dartPackageName: dartPackageName,
+      );
+    }
   }
 
   @override
@@ -505,7 +532,10 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   }) {
     for (final Class classDefinition in root.classes) {
       _writeObjcSourceDataClassExtension(
-          generatorOptions, indent, classDefinition);
+        generatorOptions,
+        indent,
+        classDefinition,
+      );
     }
     indent.newln();
     super.writeDataClasses(
@@ -524,16 +554,12 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     Class classDefinition, {
     required String dartPackageName,
   }) {
-    final Set<String> customClassNames =
-        root.classes.map((Class x) => x.name).toSet();
-    final Set<String> customEnumNames =
-        root.enums.map((Enum x) => x.name).toSet();
     final String className =
         _className(generatorOptions.prefix, classDefinition.name);
 
     indent.writeln('@implementation $className');
-    _writeObjcSourceClassInitializer(generatorOptions, root, indent,
-        classDefinition, customClassNames, customEnumNames, className);
+    _writeObjcSourceClassInitializer(
+        generatorOptions, root, indent, classDefinition, className);
     writeClassDecode(
       generatorOptions,
       root,
@@ -616,6 +642,99 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     });
   }
 
+  void _writeCodecOverflowUtilities(
+    ObjcOptions generatorOptions,
+    Root root,
+    Indent indent,
+    List<EnumeratedType> types, {
+    required String dartPackageName,
+  }) {
+    _writeObjcSourceDataClassExtension(
+      generatorOptions,
+      indent,
+      _overflowClass,
+      returnType: 'id',
+      overflow: true,
+    );
+    indent.newln();
+    indent.writeln(
+        '@implementation ${_className(generatorOptions.prefix, _overflowClassName)}');
+
+    _writeObjcSourceClassInitializer(
+        generatorOptions,
+        root,
+        indent,
+        _overflowClass,
+        _className(generatorOptions.prefix, _overflowClassName));
+    writeClassEncode(
+      generatorOptions,
+      root,
+      indent,
+      _overflowClass,
+      dartPackageName: dartPackageName,
+    );
+
+    indent.format('''
++ (id)fromList:(NSArray<id> *)list {
+  ${_className(generatorOptions.prefix, _overflowClassName)} *wrapper = [[${_className(generatorOptions.prefix, _overflowClassName)} alloc] init];
+  wrapper.type = [GetNullableObjectAtIndex(list, 0) integerValue];
+  wrapper.wrapped = GetNullableObjectAtIndex(list, 1);
+  return [wrapper unwrap];
+}
+''');
+
+    indent.writeScoped('- (id) unwrap {', '}', () {
+      indent.format('''
+if (self.wrapped == nil) {
+  return nil;
+}
+    ''');
+      indent.writeScoped('switch (self.type) {', '}', () {
+        for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
+          indent.write('case ${i - totalCustomCodecKeysAllowed}:');
+          _writeCodecDecode(
+            indent,
+            types[i],
+            generatorOptions.prefix ?? '',
+            overflow: true,
+          );
+        }
+        indent.writeScoped('default: ', '', () {
+          indent.writeln('return nil;');
+        }, addTrailingNewline: false);
+      });
+    });
+    indent.writeln('@end');
+  }
+
+  void _writeCodecDecode(
+      Indent indent, EnumeratedType customType, String? prefix,
+      {bool overflow = false}) {
+    String readValue = '[self readValue]';
+    if (overflow) {
+      readValue = 'self.wrapped';
+    }
+    if (customType.type == CustomTypes.customClass) {
+      indent.addScoped('', null, () {
+        indent.writeln(
+            'return [${_className(prefix, customType.name)} fromList:$readValue];');
+      }, addTrailingNewline: false);
+    } else if (customType.type == CustomTypes.customEnum) {
+      indent.addScoped(!overflow ? '{' : '', !overflow ? '}' : null, () {
+        String enumAsNumber = 'enumAsNumber';
+        if (!overflow) {
+          indent.writeln('NSNumber *$enumAsNumber = $readValue;');
+          indent.write('return $enumAsNumber == nil ? nil : ');
+        } else {
+          enumAsNumber = 'self.wrapped';
+          indent.write('return ');
+        }
+        indent.addln(
+            '[[${_enumName(customType.name, prefix: prefix, box: true)} alloc] initWithValue:[$enumAsNumber integerValue]];');
+      }, addTrailingNewline: !overflow);
+    }
+  }
+
   @override
   void writeGeneralCodec(
     ObjcOptions generatorOptions,
@@ -624,34 +743,41 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     required String dartPackageName,
   }) {
     const String codecName = 'PigeonCodec';
-    final Iterable<EnumeratedType> codecClasses = getEnumeratedTypes(root);
+    final List<EnumeratedType> enumeratedTypes =
+        getEnumeratedTypes(root).toList();
     final String readerWriterName =
         '${generatorOptions.prefix}${toUpperCamelCase(generatorOptions.fileSpecificClassNameComponent ?? '')}${codecName}ReaderWriter';
     final String readerName =
         '${generatorOptions.prefix}${toUpperCamelCase(generatorOptions.fileSpecificClassNameComponent ?? '')}${codecName}Reader';
     final String writerName =
         '${generatorOptions.prefix}${toUpperCamelCase(generatorOptions.fileSpecificClassNameComponent ?? '')}${codecName}Writer';
+
+    if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+      _writeCodecOverflowUtilities(
+          generatorOptions, root, indent, enumeratedTypes,
+          dartPackageName: dartPackageName);
+    }
+
     indent.writeln('@interface $readerName : FlutterStandardReader');
     indent.writeln('@end');
     indent.writeln('@implementation $readerName');
     indent.write('- (nullable id)readValueOfType:(UInt8)type ');
     indent.addScoped('{', '}', () {
-      indent.write('switch (type) ');
-      indent.addScoped('{', '}', () {
-        for (final EnumeratedType customType in codecClasses) {
-          indent.writeln('case ${customType.enumeration}: ');
-          indent.nest(1, () {
-            if (customType.type == CustomTypes.customClass) {
-              indent.writeln(
-                  'return [${_className(generatorOptions.prefix, customType.name)} fromList:[self readValue]];');
-            } else if (customType.type == CustomTypes.customEnum) {
-              indent.writeScoped('{', '}', () {
-                indent.writeln('NSNumber *enumAsNumber = [self readValue];');
-                indent.writeln(
-                    'return enumAsNumber == nil ? nil : [[${_enumName(customType.name, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[enumAsNumber integerValue]];');
-              });
-            }
-          });
+      indent.writeScoped('switch (type) {', '}', () {
+        for (final EnumeratedType customType in enumeratedTypes) {
+          if (customType.enumeration < maximumCodecFieldKey) {
+            indent.write('case ${customType.enumeration}: ');
+            _writeCodecDecode(
+                indent, customType, generatorOptions.prefix ?? '');
+          }
+        }
+        if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+          indent.write('case 255: ');
+          _writeCodecDecode(
+            indent,
+            _enumeratedOverflow,
+            generatorOptions.prefix,
+          );
         }
         indent.writeln('default:');
         indent.nest(1, () {
@@ -666,30 +792,33 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     indent.writeln('@implementation $writerName');
     indent.write('- (void)writeValue:(id)value ');
     indent.addScoped('{', '}', () {
-      bool firstClass = true;
-      for (final EnumeratedType customClass in codecClasses) {
-        if (firstClass) {
-          indent.write('');
-          firstClass = false;
-        }
-        if (customClass.type == CustomTypes.customClass) {
-          indent.add(
-              'if ([value isKindOfClass:[${_className(generatorOptions.prefix, customClass.name)} class]]) ');
-          indent.addScoped('{', '} else ', () {
-            indent.writeln('[self writeByte:${customClass.enumeration}];');
-            indent.writeln('[self writeValue:[value toList]];');
-          }, addTrailingNewline: false);
-        } else if (customClass.type == CustomTypes.customEnum) {
-          final String boxName = _enumName(customClass.name,
-              prefix: generatorOptions.prefix, box: true);
-          indent.add('if ([value isKindOfClass:[$boxName class]]) ');
-          indent.addScoped('{', '} else ', () {
-            indent.writeln('$boxName * box = ($boxName *)value;');
-            indent.writeln('[self writeByte:${customClass.enumeration}];');
+      indent.write('');
+      for (final EnumeratedType customType in enumeratedTypes) {
+        final String encodeString = customType.type == CustomTypes.customClass
+            ? '[value toList]'
+            : '(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])';
+        final String valueString = customType.enumeration < maximumCodecFieldKey
+            ? encodeString
+            : '[wrap toList]';
+        final String className = customType.type == CustomTypes.customClass
+            ? _className(generatorOptions.prefix, customType.name)
+            : _enumName(customType.name,
+                prefix: generatorOptions.prefix, box: true);
+        indent.addScoped(
+            'if ([value isKindOfClass:[$className class]]) {', '} else ', () {
+          if (customType.type == CustomTypes.customEnum) {
+            indent.writeln('$className *box = ($className *)value;');
+          }
+          final int enumeration = customType.enumeration < maximumCodecFieldKey
+              ? customType.enumeration
+              : maximumCodecFieldKey;
+          if (customType.enumeration >= maximumCodecFieldKey) {
             indent.writeln(
-                '[self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];');
-          }, addTrailingNewline: false);
-        }
+                '${_className(generatorOptions.prefix, _overflowClassName)} *wrap = [${_className(generatorOptions.prefix, _overflowClassName)} makeWithType:${customType.enumeration - maximumCodecFieldKey} wrapped:$encodeString];');
+          }
+          indent.writeln('[self writeByte:$enumeration];');
+          indent.writeln('[self writeValue:$valueString];');
+        }, addTrailingNewline: false);
       }
       indent.addScoped('{', '}', () {
         indent.writeln('[super writeValue:value];');
@@ -1036,14 +1165,19 @@ static FlutterError *createConnectionError(NSString *channelName) {
   }
 
   void _writeObjcSourceDataClassExtension(
-      ObjcOptions languageOptions, Indent indent, Class classDefinition) {
+      ObjcOptions languageOptions, Indent indent, Class classDefinition,
+      {String? returnType, bool overflow = false}) {
     final String className =
         _className(languageOptions.prefix, classDefinition.name);
+    returnType = returnType ?? className;
     indent.newln();
     indent.writeln('@interface $className ()');
-    indent.writeln('+ ($className *)fromList:(NSArray<id> *)list;');
     indent.writeln(
-        '+ (nullable $className *)nullableFromList:(NSArray<id> *)list;');
+        '+ ($returnType${overflow ? '' : ' *'})fromList:(NSArray<id> *)list;');
+    if (!overflow) {
+      indent.writeln(
+          '+ (nullable $returnType *)nullableFromList:(NSArray<id> *)list;');
+    }
     indent.writeln('- (NSArray<id> *)toList;');
     indent.writeln('@end');
   }
@@ -1053,8 +1187,6 @@ static FlutterError *createConnectionError(NSString *channelName) {
     Root root,
     Indent indent,
     Class classDefinition,
-    Set<String> customClassNames,
-    Set<String> customEnumNames,
     String className,
   ) {
     _writeObjcSourceClassInitializerDeclaration(

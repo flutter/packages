@@ -390,7 +390,6 @@ data class AllClassesWrapper(
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class TestMessage(val testList: List<Any?>? = null) {
-
   companion object {
     @Suppress("LocalVariableName")
     fun fromList(__pigeon_list: List<Any?>): TestMessage {
@@ -410,24 +409,24 @@ private object CoreTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
+        return (readValue(buffer) as Int?)?.let { AnEnum.ofRaw(it) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
       }
       131.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+      }
+      132.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           AllNullableTypesWithoutRecursion.fromList(it)
         }
       }
-      132.toByte() -> {
+      133.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
       }
-      133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
-      }
       134.toByte() -> {
-        return (readValue(buffer) as Int?)?.let { AnEnum.ofRaw(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -435,29 +434,29 @@ private object CoreTestsPigeonCodec : StandardMessageCodec() {
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
-      is AllTypes -> {
+      is AnEnum -> {
         stream.write(129)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw)
       }
-      is AllNullableTypes -> {
+      is AllTypes -> {
         stream.write(130)
         writeValue(stream, value.toList())
       }
-      is AllNullableTypesWithoutRecursion -> {
+      is AllNullableTypes -> {
         stream.write(131)
         writeValue(stream, value.toList())
       }
-      is AllClassesWrapper -> {
+      is AllNullableTypesWithoutRecursion -> {
         stream.write(132)
         writeValue(stream, value.toList())
       }
-      is TestMessage -> {
+      is AllClassesWrapper -> {
         stream.write(133)
         writeValue(stream, value.toList())
       }
-      is AnEnum -> {
+      is TestMessage -> {
         stream.write(134)
-        writeValue(stream, value.raw)
+        writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
     }

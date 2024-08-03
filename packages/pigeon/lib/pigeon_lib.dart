@@ -843,7 +843,15 @@ class GObjectGeneratorAdapter implements GeneratorAdapter {
   }
 
   @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(PigeonOptions options, Root root) {
+    final List<Error> errors = <Error>[];
+    if (root.classes.length + root.enums.length > totalCustomCodecKeysAllowed) {
+      errors.add(Error(
+          message:
+              'GObject generator does not yet support more than $totalCustomCodecKeysAllowed custom types.'));
+    }
+    return errors;
+  }
 }
 
 /// A [GeneratorAdapter] that generates Kotlin source code.
@@ -2284,8 +2292,12 @@ ${_argParser.usage}''';
   /// used when running the code generator.  The optional parameter [adapters] allows you to
   /// customize the generators that pigeon will use. The optional parameter
   /// [sdkPath] allows you to specify the Dart SDK path.
-  static Future<int> runWithOptions(PigeonOptions options,
-      {List<GeneratorAdapter>? adapters, String? sdkPath}) async {
+  static Future<int> runWithOptions(
+    PigeonOptions options, {
+    List<GeneratorAdapter>? adapters,
+    String? sdkPath,
+    bool injectOverflowTypes = false,
+  }) async {
     final Pigeon pigeon = Pigeon.setup();
     if (options.debugGenerators ?? false) {
       generator_tools.debugGenerators = true;
@@ -2312,6 +2324,19 @@ ${_argParser.usage}''';
     final ParseResults parseResults =
         pigeon.parseFile(options.input!, sdkPath: sdkPath);
 
+    if (injectOverflowTypes) {
+      final List<Enum> addedEnums = List<Enum>.generate(
+        totalCustomCodecKeysAllowed - 1,
+        (final int tag) {
+          return Enum(
+              name: 'FillerEnum$tag',
+              members: <EnumMember>[EnumMember(name: 'FillerMember$tag')]);
+        },
+      );
+      addedEnums.addAll(parseResults.root.enums);
+      parseResults.root.enums = addedEnums;
+    }
+
     final List<Error> errors = <Error>[];
     errors.addAll(parseResults.errors);
 
@@ -2323,6 +2348,9 @@ ${_argParser.usage}''';
     }
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
+      if (injectOverflowTypes && adapter is GObjectGeneratorAdapter) {
+        continue;
+      }
       final IOSink? sink = adapter.shouldGenerate(options, FileType.source);
       if (sink != null) {
         final List<Error> adapterErrors =

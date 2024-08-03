@@ -106,15 +106,15 @@ class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is NullFieldsSearchRequest) {
+    if (value is NullFieldsSearchReplyType) {
       buffer.putUint8(129);
-      writeValue(buffer, value.encode());
-    } else if (value is NullFieldsSearchReply) {
+      writeValue(buffer, value.index);
+    } else if (value is NullFieldsSearchRequest) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is NullFieldsSearchReplyType) {
+    } else if (value is NullFieldsSearchReply) {
       buffer.putUint8(131);
-      writeValue(buffer, value.index);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -124,12 +124,12 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        return NullFieldsSearchRequest.decode(readValue(buffer)!);
-      case 130:
-        return NullFieldsSearchReply.decode(readValue(buffer)!);
-      case 131:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : NullFieldsSearchReplyType.values[value];
+      case 130:
+        return NullFieldsSearchRequest.decode(readValue(buffer)!);
+      case 131:
+        return NullFieldsSearchReply.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

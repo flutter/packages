@@ -428,21 +428,21 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @implementation FLTCoreTestsPigeonCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 129:
-      return [FLTAllTypes fromList:[self readValue]];
-    case 130:
-      return [FLTAllNullableTypes fromList:[self readValue]];
-    case 131:
-      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
-    case 132:
-      return [FLTAllClassesWrapper fromList:[self readValue]];
-    case 133:
-      return [FLTTestMessage fromList:[self readValue]];
-    case 134: {
+    case 129: {
       NSNumber *enumAsNumber = [self readValue];
       return enumAsNumber == nil ? nil
                                  : [[FLTAnEnumBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
+    case 130:
+      return [FLTAllTypes fromList:[self readValue]];
+    case 131:
+      return [FLTAllNullableTypes fromList:[self readValue]];
+    case 132:
+      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
+    case 133:
+      return [FLTAllClassesWrapper fromList:[self readValue]];
+    case 134:
+      return [FLTTestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -453,25 +453,25 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 @implementation FLTCoreTestsPigeonCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FLTAllTypes class]]) {
+  if ([value isKindOfClass:[FLTAnEnumBox class]]) {
+    FLTAnEnumBox *box = (FLTAnEnumBox *)value;
     [self writeByte:129];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAnEnumBox class]]) {
-    FLTAnEnumBox *box = (FLTAnEnumBox *)value;
+  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
     [self writeByte:134];
-    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+    [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
   }
