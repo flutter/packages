@@ -353,7 +353,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         maximumCodecFieldKey,
         CustomTypes.customClass);
 
-    if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+    if (root.requiresOverflowClass) {
       _writeCodecOverflowUtilities(
         generatorOptions,
         root,
@@ -378,7 +378,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                 writeDecodeLogic(customType);
               }
             }
-            if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+            if (root.requiresOverflowClass) {
               writeDecodeLogic(overflowClass);
             }
             indent.writeln('else -> super.readValueOfType(type, buffer)');

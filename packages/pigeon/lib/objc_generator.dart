@@ -215,7 +215,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       indent,
       dartPackageName: dartPackageName,
     );
-    if (getEnumeratedTypes(root).length >= totalCustomCodecKeysAllowed) {
+    if (root.requiresOverflowClass) {
       writeDataClass(
         generatorOptions,
         root,
@@ -752,7 +752,7 @@ if (self.wrapped == nil) {
     final String writerName =
         '${generatorOptions.prefix}${toUpperCamelCase(generatorOptions.fileSpecificClassNameComponent ?? '')}${codecName}Writer';
 
-    if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+    if (root.requiresOverflowClass) {
       _writeCodecOverflowUtilities(
           generatorOptions, root, indent, enumeratedTypes,
           dartPackageName: dartPackageName);
@@ -771,7 +771,7 @@ if (self.wrapped == nil) {
                 indent, customType, generatorOptions.prefix ?? '');
           }
         }
-        if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+        if (root.requiresOverflowClass) {
           indent.write('case 255: ');
           _writeCodecDecode(
             indent,

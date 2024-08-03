@@ -121,8 +121,6 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
       return enumResult
     case 130:
       return MessageData.fromList(self.readValue() as! [Any?])
-    case 255:
-      return __pigeon_CodecOverflow.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }

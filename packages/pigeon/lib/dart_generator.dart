@@ -332,7 +332,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     indent.newln();
     final List<EnumeratedType> enumeratedTypes =
         getEnumeratedTypes(root).toList();
-    if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+    if (root.requiresOverflowClass) {
       _writeCodecOverflowUtilities(indent, enumeratedTypes);
     }
     indent.newln();
@@ -362,7 +362,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
                 writeDecodeLogic(customType);
               }
             }
-            if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+            if (root.requiresOverflowClass) {
               writeDecodeLogic(overflowClass);
             }
             indent.writeln('default:');

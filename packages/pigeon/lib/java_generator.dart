@@ -516,7 +516,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     final EnumeratedType overflowClass = EnumeratedType(
         _overflowClassName, maximumCodecFieldKey, CustomTypes.customClass);
 
-    if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+    if (root.requiresOverflowClass) {
       _writeCodecOverflowUtilities(
         generatorOptions,
         root,
@@ -544,7 +544,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
               writeDecodeLogic(customType);
             }
           }
-          if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+          if (root.requiresOverflowClass) {
             writeDecodeLogic(overflowClass);
           }
           indent.writeln('default:');

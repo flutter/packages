@@ -163,7 +163,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     final EnumeratedType overflowClass = EnumeratedType(
         _overflowClassName, maximumCodecFieldKey, CustomTypes.customClass);
 
-    if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+    if (root.requiresOverflowClass) {
       indent.newln();
       _writeCodecOverflowUtilities(
           generatorOptions, root, indent, enumeratedTypes,
@@ -184,7 +184,9 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
                 writeDecodeLogic(customType);
               }
             }
-            writeDecodeLogic(overflowClass);
+            if (root.requiresOverflowClass) {
+              writeDecodeLogic(overflowClass);
+            }
             indent.writeln('default:');
             indent.nest(1, () {
               indent.writeln('return super.readValue(ofType: type)');

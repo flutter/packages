@@ -248,7 +248,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
       indent,
       dartPackageName: dartPackageName,
     );
-    if (getEnumeratedTypes(root).length >= totalCustomCodecKeysAllowed) {
+    if (root.requiresOverflowClass) {
       writeDataClass(
         generatorOptions,
         root,
@@ -374,9 +374,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
           _writeFunctionDeclaration(indent, 'Unwrap',
               returnType: 'flutter::EncodableValue');
         }
-        if (!overflow &&
-            root.classes.length + root.enums.length >=
-                totalCustomCodecKeysAllowed) {
+        if (!overflow && root.requiresOverflowClass) {
           indent.writeln('friend class $_overflowClassName;');
         }
         for (final Class friend in root.classes) {
@@ -967,11 +965,9 @@ EncodableValue __pigeon_CodecOverflow::FromEncodableList(
         indent.writeln('return EncodableValue();');
       });
       indent.writeScoped('switch(type_) {', '}', () {
-        for (final EnumeratedType type in types) {
-          if (type.enumeration >= maximumCodecFieldKey) {
-            indent.write('case ${type.enumeration - maximumCodecFieldKey}: ');
-            _writeCodecDecode(indent, type, 'wrapped_');
-          }
+        for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
+          indent.write('case ${types[i].enumeration - maximumCodecFieldKey}: ');
+          _writeCodecDecode(indent, types[i], 'wrapped_');
         }
       });
       indent.writeln('return EncodableValue();');
@@ -982,7 +978,7 @@ EncodableValue __pigeon_CodecOverflow::FromEncodableList(
       Indent indent, EnumeratedType customType, String value) {
     indent.addScoped('{', '}', () {
       if (customType.type == CustomTypes.customClass) {
-        if (customType.enumeration == maximumCodecFieldKey) {
+        if (customType.name == _overflowClassName) {
           indent.writeln(
               'return ${customType.name}::FromEncodableList(std::get<EncodableList>($value));');
         } else {
@@ -1009,7 +1005,7 @@ EncodableValue __pigeon_CodecOverflow::FromEncodableList(
     final List<EnumeratedType> enumeratedTypes =
         getEnumeratedTypes(root).toList();
     indent.newln();
-    if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+    if (root.requiresOverflowClass) {
       _writeCodecOverflowUtilities(
           generatorOptions, root, indent, enumeratedTypes,
           dartPackageName: dartPackageName);
@@ -1035,7 +1031,7 @@ EncodableValue __pigeon_CodecOverflow::FromEncodableList(
             });
           }
         }
-        if (enumeratedTypes.length >= totalCustomCodecKeysAllowed) {
+        if (root.requiresOverflowClass) {
           indent.write('case 255:');
           _writeCodecDecode(indent, _enumeratedOverflow, 'ReadValue(stream)');
         }
