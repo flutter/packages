@@ -30,12 +30,516 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+enum FillerEnum0 {
+  FillerMember0,
+}
+
+enum FillerEnum1 {
+  FillerMember1,
+}
+
+enum FillerEnum2 {
+  FillerMember2,
+}
+
+enum FillerEnum3 {
+  FillerMember3,
+}
+
+enum FillerEnum4 {
+  FillerMember4,
+}
+
+enum FillerEnum5 {
+  FillerMember5,
+}
+
+enum FillerEnum6 {
+  FillerMember6,
+}
+
+enum FillerEnum7 {
+  FillerMember7,
+}
+
+enum FillerEnum8 {
+  FillerMember8,
+}
+
+enum FillerEnum9 {
+  FillerMember9,
+}
+
+enum FillerEnum10 {
+  FillerMember10,
+}
+
+enum FillerEnum11 {
+  FillerMember11,
+}
+
+enum FillerEnum12 {
+  FillerMember12,
+}
+
+enum FillerEnum13 {
+  FillerMember13,
+}
+
+enum FillerEnum14 {
+  FillerMember14,
+}
+
+enum FillerEnum15 {
+  FillerMember15,
+}
+
+enum FillerEnum16 {
+  FillerMember16,
+}
+
+enum FillerEnum17 {
+  FillerMember17,
+}
+
+enum FillerEnum18 {
+  FillerMember18,
+}
+
+enum FillerEnum19 {
+  FillerMember19,
+}
+
+enum FillerEnum20 {
+  FillerMember20,
+}
+
+enum FillerEnum21 {
+  FillerMember21,
+}
+
+enum FillerEnum22 {
+  FillerMember22,
+}
+
+enum FillerEnum23 {
+  FillerMember23,
+}
+
+enum FillerEnum24 {
+  FillerMember24,
+}
+
+enum FillerEnum25 {
+  FillerMember25,
+}
+
+enum FillerEnum26 {
+  FillerMember26,
+}
+
+enum FillerEnum27 {
+  FillerMember27,
+}
+
+enum FillerEnum28 {
+  FillerMember28,
+}
+
+enum FillerEnum29 {
+  FillerMember29,
+}
+
+enum FillerEnum30 {
+  FillerMember30,
+}
+
+enum FillerEnum31 {
+  FillerMember31,
+}
+
+enum FillerEnum32 {
+  FillerMember32,
+}
+
+enum FillerEnum33 {
+  FillerMember33,
+}
+
+enum FillerEnum34 {
+  FillerMember34,
+}
+
+enum FillerEnum35 {
+  FillerMember35,
+}
+
+enum FillerEnum36 {
+  FillerMember36,
+}
+
+enum FillerEnum37 {
+  FillerMember37,
+}
+
+enum FillerEnum38 {
+  FillerMember38,
+}
+
+enum FillerEnum39 {
+  FillerMember39,
+}
+
+enum FillerEnum40 {
+  FillerMember40,
+}
+
+enum FillerEnum41 {
+  FillerMember41,
+}
+
+enum FillerEnum42 {
+  FillerMember42,
+}
+
+enum FillerEnum43 {
+  FillerMember43,
+}
+
+enum FillerEnum44 {
+  FillerMember44,
+}
+
+enum FillerEnum45 {
+  FillerMember45,
+}
+
+enum FillerEnum46 {
+  FillerMember46,
+}
+
+enum FillerEnum47 {
+  FillerMember47,
+}
+
+enum FillerEnum48 {
+  FillerMember48,
+}
+
+enum FillerEnum49 {
+  FillerMember49,
+}
+
+enum FillerEnum50 {
+  FillerMember50,
+}
+
+enum FillerEnum51 {
+  FillerMember51,
+}
+
+enum FillerEnum52 {
+  FillerMember52,
+}
+
+enum FillerEnum53 {
+  FillerMember53,
+}
+
+enum FillerEnum54 {
+  FillerMember54,
+}
+
+enum FillerEnum55 {
+  FillerMember55,
+}
+
+enum FillerEnum56 {
+  FillerMember56,
+}
+
+enum FillerEnum57 {
+  FillerMember57,
+}
+
+enum FillerEnum58 {
+  FillerMember58,
+}
+
+enum FillerEnum59 {
+  FillerMember59,
+}
+
+enum FillerEnum60 {
+  FillerMember60,
+}
+
+enum FillerEnum61 {
+  FillerMember61,
+}
+
+enum FillerEnum62 {
+  FillerMember62,
+}
+
+enum FillerEnum63 {
+  FillerMember63,
+}
+
+enum FillerEnum64 {
+  FillerMember64,
+}
+
+enum FillerEnum65 {
+  FillerMember65,
+}
+
+enum FillerEnum66 {
+  FillerMember66,
+}
+
+enum FillerEnum67 {
+  FillerMember67,
+}
+
+enum FillerEnum68 {
+  FillerMember68,
+}
+
+enum FillerEnum69 {
+  FillerMember69,
+}
+
+enum FillerEnum70 {
+  FillerMember70,
+}
+
+enum FillerEnum71 {
+  FillerMember71,
+}
+
+enum FillerEnum72 {
+  FillerMember72,
+}
+
+enum FillerEnum73 {
+  FillerMember73,
+}
+
+enum FillerEnum74 {
+  FillerMember74,
+}
+
+enum FillerEnum75 {
+  FillerMember75,
+}
+
+enum FillerEnum76 {
+  FillerMember76,
+}
+
+enum FillerEnum77 {
+  FillerMember77,
+}
+
+enum FillerEnum78 {
+  FillerMember78,
+}
+
+enum FillerEnum79 {
+  FillerMember79,
+}
+
+enum FillerEnum80 {
+  FillerMember80,
+}
+
+enum FillerEnum81 {
+  FillerMember81,
+}
+
+enum FillerEnum82 {
+  FillerMember82,
+}
+
+enum FillerEnum83 {
+  FillerMember83,
+}
+
+enum FillerEnum84 {
+  FillerMember84,
+}
+
+enum FillerEnum85 {
+  FillerMember85,
+}
+
+enum FillerEnum86 {
+  FillerMember86,
+}
+
+enum FillerEnum87 {
+  FillerMember87,
+}
+
+enum FillerEnum88 {
+  FillerMember88,
+}
+
+enum FillerEnum89 {
+  FillerMember89,
+}
+
+enum FillerEnum90 {
+  FillerMember90,
+}
+
+enum FillerEnum91 {
+  FillerMember91,
+}
+
+enum FillerEnum92 {
+  FillerMember92,
+}
+
+enum FillerEnum93 {
+  FillerMember93,
+}
+
+enum FillerEnum94 {
+  FillerMember94,
+}
+
+enum FillerEnum95 {
+  FillerMember95,
+}
+
+enum FillerEnum96 {
+  FillerMember96,
+}
+
+enum FillerEnum97 {
+  FillerMember97,
+}
+
+enum FillerEnum98 {
+  FillerMember98,
+}
+
+enum FillerEnum99 {
+  FillerMember99,
+}
+
+enum FillerEnum100 {
+  FillerMember100,
+}
+
+enum FillerEnum101 {
+  FillerMember101,
+}
+
+enum FillerEnum102 {
+  FillerMember102,
+}
+
+enum FillerEnum103 {
+  FillerMember103,
+}
+
+enum FillerEnum104 {
+  FillerMember104,
+}
+
+enum FillerEnum105 {
+  FillerMember105,
+}
+
+enum FillerEnum106 {
+  FillerMember106,
+}
+
+enum FillerEnum107 {
+  FillerMember107,
+}
+
+enum FillerEnum108 {
+  FillerMember108,
+}
+
+enum FillerEnum109 {
+  FillerMember109,
+}
+
+enum FillerEnum110 {
+  FillerMember110,
+}
+
+enum FillerEnum111 {
+  FillerMember111,
+}
+
+enum FillerEnum112 {
+  FillerMember112,
+}
+
+enum FillerEnum113 {
+  FillerMember113,
+}
+
+enum FillerEnum114 {
+  FillerMember114,
+}
+
+enum FillerEnum115 {
+  FillerMember115,
+}
+
+enum FillerEnum116 {
+  FillerMember116,
+}
+
+enum FillerEnum117 {
+  FillerMember117,
+}
+
+enum FillerEnum118 {
+  FillerMember118,
+}
+
+enum FillerEnum119 {
+  FillerMember119,
+}
+
+enum FillerEnum120 {
+  FillerMember120,
+}
+
+enum FillerEnum121 {
+  FillerMember121,
+}
+
+enum FillerEnum122 {
+  FillerMember122,
+}
+
+enum FillerEnum123 {
+  FillerMember123,
+}
+
+enum FillerEnum124 {
+  FillerMember124,
+}
+
 enum AnEnum {
   one,
   two,
   three,
   fortyTwo,
   fourHundredTwentyTwo,
+}
+
+enum AnotherEnum {
+  justInCase,
 }
 
 /// A class containing all supported types.
@@ -50,6 +554,7 @@ class AllTypes {
     required this.a8ByteArray,
     required this.aFloatArray,
     this.anEnum = AnEnum.one,
+    this.anotherEnum = AnotherEnum.justInCase,
     this.aString = '',
     this.anObject = 0,
     required this.list,
@@ -78,6 +583,8 @@ class AllTypes {
 
   AnEnum anEnum;
 
+  AnotherEnum anotherEnum;
+
   String aString;
 
   Object anObject;
@@ -105,6 +612,7 @@ class AllTypes {
       a8ByteArray,
       aFloatArray,
       anEnum,
+      anotherEnum,
       aString,
       anObject,
       list,
@@ -128,14 +636,15 @@ class AllTypes {
       a8ByteArray: result[6]! as Int64List,
       aFloatArray: result[7]! as Float64List,
       anEnum: result[8]! as AnEnum,
-      aString: result[9]! as String,
-      anObject: result[10]!,
-      list: result[11]! as List<Object?>,
-      stringList: (result[12] as List<Object?>?)!.cast<String?>(),
-      intList: (result[13] as List<Object?>?)!.cast<int?>(),
-      doubleList: (result[14] as List<Object?>?)!.cast<double?>(),
-      boolList: (result[15] as List<Object?>?)!.cast<bool?>(),
-      map: result[16]! as Map<Object?, Object?>,
+      anotherEnum: result[9]! as AnotherEnum,
+      aString: result[10]! as String,
+      anObject: result[11]!,
+      list: result[12]! as List<Object?>,
+      stringList: (result[13] as List<Object?>?)!.cast<String?>(),
+      intList: (result[14] as List<Object?>?)!.cast<int?>(),
+      doubleList: (result[15] as List<Object?>?)!.cast<double?>(),
+      boolList: (result[16] as List<Object?>?)!.cast<bool?>(),
+      map: result[17]! as Map<Object?, Object?>,
     );
   }
 }
@@ -155,6 +664,7 @@ class AllNullableTypes {
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
     this.aNullableEnum,
+    this.anotherNullableEnum,
     this.aNullableString,
     this.aNullableObject,
     this.allNullableTypes,
@@ -191,6 +701,8 @@ class AllNullableTypes {
 
   AnEnum? aNullableEnum;
 
+  AnotherEnum? anotherNullableEnum;
+
   String? aNullableString;
 
   Object? aNullableObject;
@@ -225,6 +737,7 @@ class AllNullableTypes {
       nullableMapWithAnnotations,
       nullableMapWithObject,
       aNullableEnum,
+      anotherNullableEnum,
       aNullableString,
       aNullableObject,
       allNullableTypes,
@@ -255,17 +768,18 @@ class AllNullableTypes {
       nullableMapWithObject:
           (result[10] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
       aNullableEnum: result[11] as AnEnum?,
-      aNullableString: result[12] as String?,
-      aNullableObject: result[13],
-      allNullableTypes: result[14] as AllNullableTypes?,
-      list: result[15] as List<Object?>?,
-      stringList: (result[16] as List<Object?>?)?.cast<String?>(),
-      intList: (result[17] as List<Object?>?)?.cast<int?>(),
-      doubleList: (result[18] as List<Object?>?)?.cast<double?>(),
-      boolList: (result[19] as List<Object?>?)?.cast<bool?>(),
+      anotherNullableEnum: result[12] as AnotherEnum?,
+      aNullableString: result[13] as String?,
+      aNullableObject: result[14],
+      allNullableTypes: result[15] as AllNullableTypes?,
+      list: result[16] as List<Object?>?,
+      stringList: (result[17] as List<Object?>?)?.cast<String?>(),
+      intList: (result[18] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[19] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[20] as List<Object?>?)?.cast<bool?>(),
       nestedClassList:
-          (result[20] as List<Object?>?)?.cast<AllNullableTypes?>(),
-      map: result[21] as Map<Object?, Object?>?,
+          (result[21] as List<Object?>?)?.cast<AllNullableTypes?>(),
+      map: result[22] as Map<Object?, Object?>?,
     );
   }
 }
@@ -287,6 +801,7 @@ class AllNullableTypesWithoutRecursion {
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
     this.aNullableEnum,
+    this.anotherNullableEnum,
     this.aNullableString,
     this.aNullableObject,
     this.list,
@@ -321,6 +836,8 @@ class AllNullableTypesWithoutRecursion {
 
   AnEnum? aNullableEnum;
 
+  AnotherEnum? anotherNullableEnum;
+
   String? aNullableString;
 
   Object? aNullableObject;
@@ -351,6 +868,7 @@ class AllNullableTypesWithoutRecursion {
       nullableMapWithAnnotations,
       nullableMapWithObject,
       aNullableEnum,
+      anotherNullableEnum,
       aNullableString,
       aNullableObject,
       list,
@@ -379,14 +897,15 @@ class AllNullableTypesWithoutRecursion {
       nullableMapWithObject:
           (result[10] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
       aNullableEnum: result[11] as AnEnum?,
-      aNullableString: result[12] as String?,
-      aNullableObject: result[13],
-      list: result[14] as List<Object?>?,
-      stringList: (result[15] as List<Object?>?)?.cast<String?>(),
-      intList: (result[16] as List<Object?>?)?.cast<int?>(),
-      doubleList: (result[17] as List<Object?>?)?.cast<double?>(),
-      boolList: (result[18] as List<Object?>?)?.cast<bool?>(),
-      map: result[19] as Map<Object?, Object?>?,
+      anotherNullableEnum: result[12] as AnotherEnum?,
+      aNullableString: result[13] as String?,
+      aNullableObject: result[14],
+      list: result[15] as List<Object?>?,
+      stringList: (result[16] as List<Object?>?)?.cast<String?>(),
+      intList: (result[17] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[18] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[19] as List<Object?>?)?.cast<bool?>(),
+      map: result[20] as Map<Object?, Object?>?,
     );
   }
 }
@@ -450,28 +969,465 @@ class TestMessage {
   }
 }
 
+// ignore: camel_case_types
+class __pigeon_CodecOverflow {
+  __pigeon_CodecOverflow({required this.type, required this.wrapped});
+
+  int type;
+  Object? wrapped;
+
+  Object encode() {
+    return <Object?>[type, wrapped];
+  }
+
+  static __pigeon_CodecOverflow decode(Object result) {
+    result as List<Object?>;
+    return __pigeon_CodecOverflow(
+      type: result[0]! as int,
+      wrapped: result[1],
+    );
+  }
+
+  Object? unwrap() {
+    if (wrapped == null) {
+      return null;
+    }
+
+    switch (type) {
+      case 0:
+        return AnotherEnum.values[wrapped! as int];
+
+      case 1:
+        return AllTypes.decode(wrapped!);
+
+      case 2:
+        return AllNullableTypes.decode(wrapped!);
+
+      case 3:
+        return AllNullableTypesWithoutRecursion.decode(wrapped!);
+
+      case 4:
+        return AllClassesWrapper.decode(wrapped!);
+
+      case 5:
+        return TestMessage.decode(wrapped!);
+    }
+    return null;
+  }
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AnEnum) {
+    if (value is FillerEnum0) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is AllTypes) {
+    } else if (value is FillerEnum1) {
       buffer.putUint8(130);
-      writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypes) {
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum2) {
       buffer.putUint8(131);
-      writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypesWithoutRecursion) {
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum3) {
       buffer.putUint8(132);
-      writeValue(buffer, value.encode());
-    } else if (value is AllClassesWrapper) {
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum4) {
       buffer.putUint8(133);
-      writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum5) {
       buffer.putUint8(134);
-      writeValue(buffer, value.encode());
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum6) {
+      buffer.putUint8(135);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum7) {
+      buffer.putUint8(136);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum8) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum9) {
+      buffer.putUint8(138);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum10) {
+      buffer.putUint8(139);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum11) {
+      buffer.putUint8(140);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum12) {
+      buffer.putUint8(141);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum13) {
+      buffer.putUint8(142);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum14) {
+      buffer.putUint8(143);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum15) {
+      buffer.putUint8(144);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum16) {
+      buffer.putUint8(145);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum17) {
+      buffer.putUint8(146);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum18) {
+      buffer.putUint8(147);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum19) {
+      buffer.putUint8(148);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum20) {
+      buffer.putUint8(149);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum21) {
+      buffer.putUint8(150);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum22) {
+      buffer.putUint8(151);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum23) {
+      buffer.putUint8(152);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum24) {
+      buffer.putUint8(153);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum25) {
+      buffer.putUint8(154);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum26) {
+      buffer.putUint8(155);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum27) {
+      buffer.putUint8(156);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum28) {
+      buffer.putUint8(157);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum29) {
+      buffer.putUint8(158);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum30) {
+      buffer.putUint8(159);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum31) {
+      buffer.putUint8(160);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum32) {
+      buffer.putUint8(161);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum33) {
+      buffer.putUint8(162);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum34) {
+      buffer.putUint8(163);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum35) {
+      buffer.putUint8(164);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum36) {
+      buffer.putUint8(165);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum37) {
+      buffer.putUint8(166);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum38) {
+      buffer.putUint8(167);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum39) {
+      buffer.putUint8(168);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum40) {
+      buffer.putUint8(169);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum41) {
+      buffer.putUint8(170);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum42) {
+      buffer.putUint8(171);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum43) {
+      buffer.putUint8(172);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum44) {
+      buffer.putUint8(173);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum45) {
+      buffer.putUint8(174);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum46) {
+      buffer.putUint8(175);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum47) {
+      buffer.putUint8(176);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum48) {
+      buffer.putUint8(177);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum49) {
+      buffer.putUint8(178);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum50) {
+      buffer.putUint8(179);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum51) {
+      buffer.putUint8(180);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum52) {
+      buffer.putUint8(181);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum53) {
+      buffer.putUint8(182);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum54) {
+      buffer.putUint8(183);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum55) {
+      buffer.putUint8(184);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum56) {
+      buffer.putUint8(185);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum57) {
+      buffer.putUint8(186);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum58) {
+      buffer.putUint8(187);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum59) {
+      buffer.putUint8(188);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum60) {
+      buffer.putUint8(189);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum61) {
+      buffer.putUint8(190);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum62) {
+      buffer.putUint8(191);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum63) {
+      buffer.putUint8(192);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum64) {
+      buffer.putUint8(193);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum65) {
+      buffer.putUint8(194);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum66) {
+      buffer.putUint8(195);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum67) {
+      buffer.putUint8(196);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum68) {
+      buffer.putUint8(197);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum69) {
+      buffer.putUint8(198);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum70) {
+      buffer.putUint8(199);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum71) {
+      buffer.putUint8(200);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum72) {
+      buffer.putUint8(201);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum73) {
+      buffer.putUint8(202);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum74) {
+      buffer.putUint8(203);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum75) {
+      buffer.putUint8(204);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum76) {
+      buffer.putUint8(205);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum77) {
+      buffer.putUint8(206);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum78) {
+      buffer.putUint8(207);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum79) {
+      buffer.putUint8(208);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum80) {
+      buffer.putUint8(209);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum81) {
+      buffer.putUint8(210);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum82) {
+      buffer.putUint8(211);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum83) {
+      buffer.putUint8(212);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum84) {
+      buffer.putUint8(213);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum85) {
+      buffer.putUint8(214);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum86) {
+      buffer.putUint8(215);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum87) {
+      buffer.putUint8(216);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum88) {
+      buffer.putUint8(217);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum89) {
+      buffer.putUint8(218);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum90) {
+      buffer.putUint8(219);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum91) {
+      buffer.putUint8(220);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum92) {
+      buffer.putUint8(221);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum93) {
+      buffer.putUint8(222);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum94) {
+      buffer.putUint8(223);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum95) {
+      buffer.putUint8(224);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum96) {
+      buffer.putUint8(225);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum97) {
+      buffer.putUint8(226);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum98) {
+      buffer.putUint8(227);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum99) {
+      buffer.putUint8(228);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum100) {
+      buffer.putUint8(229);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum101) {
+      buffer.putUint8(230);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum102) {
+      buffer.putUint8(231);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum103) {
+      buffer.putUint8(232);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum104) {
+      buffer.putUint8(233);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum105) {
+      buffer.putUint8(234);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum106) {
+      buffer.putUint8(235);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum107) {
+      buffer.putUint8(236);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum108) {
+      buffer.putUint8(237);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum109) {
+      buffer.putUint8(238);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum110) {
+      buffer.putUint8(239);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum111) {
+      buffer.putUint8(240);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum112) {
+      buffer.putUint8(241);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum113) {
+      buffer.putUint8(242);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum114) {
+      buffer.putUint8(243);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum115) {
+      buffer.putUint8(244);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum116) {
+      buffer.putUint8(245);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum117) {
+      buffer.putUint8(246);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum118) {
+      buffer.putUint8(247);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum119) {
+      buffer.putUint8(248);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum120) {
+      buffer.putUint8(249);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum121) {
+      buffer.putUint8(250);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum122) {
+      buffer.putUint8(251);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum123) {
+      buffer.putUint8(252);
+      writeValue(buffer, value.index);
+    } else if (value is FillerEnum124) {
+      buffer.putUint8(253);
+      writeValue(buffer, value.index);
+    } else if (value is AnEnum) {
+      buffer.putUint8(254);
+      writeValue(buffer, value.index);
+    } else if (value is AnotherEnum) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 0, wrapped: value.index);
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
+    } else if (value is AllTypes) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 1, wrapped: value.encode());
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
+    } else if (value is AllNullableTypes) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 2, wrapped: value.encode());
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
+    } else if (value is AllNullableTypesWithoutRecursion) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 3, wrapped: value.encode());
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
+    } else if (value is AllClassesWrapper) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 4, wrapped: value.encode());
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
+    } else if (value is TestMessage) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 5, wrapped: value.encode());
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -482,17 +1438,386 @@ class _PigeonCodec extends StandardMessageCodec {
     switch (type) {
       case 129:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : AnEnum.values[value];
+        return value == null ? null : FillerEnum0.values[value];
       case 130:
-        return AllTypes.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum1.values[value];
       case 131:
-        return AllNullableTypes.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum2.values[value];
       case 132:
-        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum3.values[value];
       case 133:
-        return AllClassesWrapper.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum4.values[value];
       case 134:
-        return TestMessage.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum5.values[value];
+      case 135:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum6.values[value];
+      case 136:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum7.values[value];
+      case 137:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum8.values[value];
+      case 138:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum9.values[value];
+      case 139:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum10.values[value];
+      case 140:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum11.values[value];
+      case 141:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum12.values[value];
+      case 142:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum13.values[value];
+      case 143:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum14.values[value];
+      case 144:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum15.values[value];
+      case 145:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum16.values[value];
+      case 146:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum17.values[value];
+      case 147:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum18.values[value];
+      case 148:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum19.values[value];
+      case 149:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum20.values[value];
+      case 150:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum21.values[value];
+      case 151:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum22.values[value];
+      case 152:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum23.values[value];
+      case 153:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum24.values[value];
+      case 154:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum25.values[value];
+      case 155:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum26.values[value];
+      case 156:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum27.values[value];
+      case 157:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum28.values[value];
+      case 158:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum29.values[value];
+      case 159:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum30.values[value];
+      case 160:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum31.values[value];
+      case 161:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum32.values[value];
+      case 162:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum33.values[value];
+      case 163:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum34.values[value];
+      case 164:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum35.values[value];
+      case 165:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum36.values[value];
+      case 166:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum37.values[value];
+      case 167:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum38.values[value];
+      case 168:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum39.values[value];
+      case 169:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum40.values[value];
+      case 170:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum41.values[value];
+      case 171:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum42.values[value];
+      case 172:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum43.values[value];
+      case 173:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum44.values[value];
+      case 174:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum45.values[value];
+      case 175:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum46.values[value];
+      case 176:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum47.values[value];
+      case 177:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum48.values[value];
+      case 178:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum49.values[value];
+      case 179:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum50.values[value];
+      case 180:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum51.values[value];
+      case 181:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum52.values[value];
+      case 182:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum53.values[value];
+      case 183:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum54.values[value];
+      case 184:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum55.values[value];
+      case 185:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum56.values[value];
+      case 186:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum57.values[value];
+      case 187:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum58.values[value];
+      case 188:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum59.values[value];
+      case 189:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum60.values[value];
+      case 190:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum61.values[value];
+      case 191:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum62.values[value];
+      case 192:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum63.values[value];
+      case 193:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum64.values[value];
+      case 194:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum65.values[value];
+      case 195:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum66.values[value];
+      case 196:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum67.values[value];
+      case 197:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum68.values[value];
+      case 198:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum69.values[value];
+      case 199:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum70.values[value];
+      case 200:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum71.values[value];
+      case 201:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum72.values[value];
+      case 202:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum73.values[value];
+      case 203:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum74.values[value];
+      case 204:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum75.values[value];
+      case 205:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum76.values[value];
+      case 206:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum77.values[value];
+      case 207:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum78.values[value];
+      case 208:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum79.values[value];
+      case 209:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum80.values[value];
+      case 210:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum81.values[value];
+      case 211:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum82.values[value];
+      case 212:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum83.values[value];
+      case 213:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum84.values[value];
+      case 214:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum85.values[value];
+      case 215:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum86.values[value];
+      case 216:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum87.values[value];
+      case 217:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum88.values[value];
+      case 218:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum89.values[value];
+      case 219:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum90.values[value];
+      case 220:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum91.values[value];
+      case 221:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum92.values[value];
+      case 222:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum93.values[value];
+      case 223:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum94.values[value];
+      case 224:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum95.values[value];
+      case 225:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum96.values[value];
+      case 226:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum97.values[value];
+      case 227:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum98.values[value];
+      case 228:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum99.values[value];
+      case 229:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum100.values[value];
+      case 230:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum101.values[value];
+      case 231:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum102.values[value];
+      case 232:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum103.values[value];
+      case 233:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum104.values[value];
+      case 234:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum105.values[value];
+      case 235:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum106.values[value];
+      case 236:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum107.values[value];
+      case 237:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum108.values[value];
+      case 238:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum109.values[value];
+      case 239:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum110.values[value];
+      case 240:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum111.values[value];
+      case 241:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum112.values[value];
+      case 242:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum113.values[value];
+      case 243:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum114.values[value];
+      case 244:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum115.values[value];
+      case 245:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum116.values[value];
+      case 246:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum117.values[value];
+      case 247:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum118.values[value];
+      case 248:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum119.values[value];
+      case 249:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum120.values[value];
+      case 250:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum121.values[value];
+      case 251:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum122.values[value];
+      case 252:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum123.values[value];
+      case 253:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : FillerEnum124.values[value];
+      case 254:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AnEnum.values[value];
+      case 255:
+        final __pigeon_CodecOverflow wrapper =
+            __pigeon_CodecOverflow.decode(readValue(buffer)!);
+        return wrapper.unwrap();
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -945,6 +2270,36 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (__pigeon_replyList[0] as AnEnum?)!;
+    }
+  }
+
+  /// Returns the passed enum to test serialization and deserialization.
+  Future<AnotherEnum> echoAnotherEnum(AnotherEnum anotherEnum) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherEnum$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[anotherEnum]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as AnotherEnum?)!;
     }
   }
 
@@ -1441,6 +2796,30 @@ class HostIntegrationCoreApi {
     }
   }
 
+  Future<AnotherEnum?> echoAnotherNullableEnum(AnotherEnum? anotherEnum) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherNullableEnum$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[anotherEnum]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as AnotherEnum?);
+    }
+  }
+
   /// Returns passed in int.
   Future<int?> echoOptionalNullableInt([int? aNullableInt]) async {
     final String __pigeon_channelName =
@@ -1785,6 +3164,36 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (__pigeon_replyList[0] as AnEnum?)!;
+    }
+  }
+
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  Future<AnotherEnum> echoAnotherAsyncEnum(AnotherEnum anotherEnum) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncEnum$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[anotherEnum]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as AnotherEnum?)!;
     }
   }
 
@@ -2170,6 +3579,32 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (__pigeon_replyList[0] as AnEnum?);
+    }
+  }
+
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  Future<AnotherEnum?> echoAnotherAsyncNullableEnum(
+      AnotherEnum? anotherEnum) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncNullableEnum$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[anotherEnum]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as AnotherEnum?);
     }
   }
 
@@ -2622,6 +4057,36 @@ class HostIntegrationCoreApi {
     }
   }
 
+  Future<AnotherEnum> callFlutterEchoAnotherEnum(
+      AnotherEnum anotherEnum) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherEnum$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[anotherEnum]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as AnotherEnum?)!;
+    }
+  }
+
   Future<bool?> callFlutterEchoNullableBool(bool? aBool) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool$__pigeon_messageChannelSuffix';
@@ -2817,6 +4282,31 @@ class HostIntegrationCoreApi {
     }
   }
 
+  Future<AnotherEnum?> callFlutterEchoAnotherNullableEnum(
+      AnotherEnum? anotherEnum) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherNullableEnum$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[anotherEnum]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as AnotherEnum?);
+    }
+  }
+
   Future<String> callFlutterSmallApiEchoString(String aString) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSmallApiEchoString$__pigeon_messageChannelSuffix';
@@ -2908,6 +4398,9 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed enum to test serialization and deserialization.
   AnEnum echoEnum(AnEnum anEnum);
 
+  /// Returns the passed enum to test serialization and deserialization.
+  AnotherEnum echoAnotherEnum(AnotherEnum anotherEnum);
+
   /// Returns the passed boolean, to test serialization and deserialization.
   bool? echoNullableBool(bool? aBool);
 
@@ -2931,6 +4424,9 @@ abstract class FlutterIntegrationCoreApi {
 
   /// Returns the passed enum to test serialization and deserialization.
   AnEnum? echoNullableEnum(AnEnum? anEnum);
+
+  /// Returns the passed enum to test serialization and deserialization.
+  AnotherEnum? echoAnotherNullableEnum(AnotherEnum? anotherEnum);
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
@@ -3384,6 +4880,34 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherEnum$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherEnum was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final AnotherEnum? arg_anotherEnum = (args[0] as AnotherEnum?);
+          assert(arg_anotherEnum != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherEnum was null, expected non-null AnotherEnum.');
+          try {
+            final AnotherEnum output = api.echoAnotherEnum(arg_anotherEnum!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
@@ -3581,6 +5105,33 @@ abstract class FlutterIntegrationCoreApi {
           final AnEnum? arg_anEnum = (args[0] as AnEnum?);
           try {
             final AnEnum? output = api.echoNullableEnum(arg_anEnum);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherNullableEnum$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherNullableEnum was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final AnotherEnum? arg_anotherEnum = (args[0] as AnotherEnum?);
+          try {
+            final AnotherEnum? output =
+                api.echoAnotherNullableEnum(arg_anotherEnum);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

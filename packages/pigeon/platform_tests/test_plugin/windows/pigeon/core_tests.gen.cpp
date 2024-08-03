@@ -39,9 +39,9 @@ AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
                    const std::vector<int32_t>& a4_byte_array,
                    const std::vector<int64_t>& a8_byte_array,
                    const std::vector<double>& a_float_array,
-                   const AnEnum& an_enum, const std::string& a_string,
-                   const EncodableValue& an_object, const EncodableList& list,
-                   const EncodableList& string_list,
+                   const AnEnum& an_enum, const AnotherEnum& another_enum,
+                   const std::string& a_string, const EncodableValue& an_object,
+                   const EncodableList& list, const EncodableList& string_list,
                    const EncodableList& int_list,
                    const EncodableList& double_list,
                    const EncodableList& bool_list, const EncodableMap& map)
@@ -54,6 +54,7 @@ AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
       a8_byte_array_(a8_byte_array),
       a_float_array_(a_float_array),
       an_enum_(an_enum),
+      another_enum_(another_enum),
       a_string_(a_string),
       an_object_(an_object),
       list_(list),
@@ -115,6 +116,12 @@ const AnEnum& AllTypes::an_enum() const { return an_enum_; }
 
 void AllTypes::set_an_enum(const AnEnum& value_arg) { an_enum_ = value_arg; }
 
+const AnotherEnum& AllTypes::another_enum() const { return another_enum_; }
+
+void AllTypes::set_another_enum(const AnotherEnum& value_arg) {
+  another_enum_ = value_arg;
+}
+
 const std::string& AllTypes::a_string() const { return a_string_; }
 
 void AllTypes::set_a_string(std::string_view value_arg) {
@@ -161,7 +168,7 @@ void AllTypes::set_map(const EncodableMap& value_arg) { map_ = value_arg; }
 
 EncodableList AllTypes::ToEncodableList() const {
   EncodableList list;
-  list.reserve(17);
+  list.reserve(18);
   list.push_back(EncodableValue(a_bool_));
   list.push_back(EncodableValue(an_int_));
   list.push_back(EncodableValue(an_int64_));
@@ -171,6 +178,7 @@ EncodableList AllTypes::ToEncodableList() const {
   list.push_back(EncodableValue(a8_byte_array_));
   list.push_back(EncodableValue(a_float_array_));
   list.push_back(CustomEncodableValue(an_enum_));
+  list.push_back(CustomEncodableValue(another_enum_));
   list.push_back(EncodableValue(a_string_));
   list.push_back(an_object_);
   list.push_back(EncodableValue(list_));
@@ -190,10 +198,12 @@ AllTypes AllTypes::FromEncodableList(const EncodableList& list) {
       std::get<std::vector<int64_t>>(list[6]),
       std::get<std::vector<double>>(list[7]),
       std::any_cast<const AnEnum&>(std::get<CustomEncodableValue>(list[8])),
-      std::get<std::string>(list[9]), list[10],
-      std::get<EncodableList>(list[11]), std::get<EncodableList>(list[12]),
-      std::get<EncodableList>(list[13]), std::get<EncodableList>(list[14]),
-      std::get<EncodableList>(list[15]), std::get<EncodableMap>(list[16]));
+      std::any_cast<const AnotherEnum&>(
+          std::get<CustomEncodableValue>(list[9])),
+      std::get<std::string>(list[10]), list[11],
+      std::get<EncodableList>(list[12]), std::get<EncodableList>(list[13]),
+      std::get<EncodableList>(list[14]), std::get<EncodableList>(list[15]),
+      std::get<EncodableList>(list[16]), std::get<EncodableMap>(list[17]));
   return decoded;
 }
 
@@ -211,6 +221,7 @@ AllNullableTypes::AllNullableTypes(
     const EncodableList* nullable_nested_list,
     const EncodableMap* nullable_map_with_annotations,
     const EncodableMap* nullable_map_with_object, const AnEnum* a_nullable_enum,
+    const AnotherEnum* another_nullable_enum,
     const std::string* a_nullable_string,
     const EncodableValue* a_nullable_object,
     const AllNullableTypes* all_nullable_types, const EncodableList* list,
@@ -256,6 +267,9 @@ AllNullableTypes::AllNullableTypes(
               : std::nullopt),
       a_nullable_enum_(a_nullable_enum ? std::optional<AnEnum>(*a_nullable_enum)
                                        : std::nullopt),
+      another_nullable_enum_(another_nullable_enum ? std::optional<AnotherEnum>(
+                                                         *another_nullable_enum)
+                                                   : std::nullopt),
       a_nullable_string_(a_nullable_string
                              ? std::optional<std::string>(*a_nullable_string)
                              : std::nullopt),
@@ -325,6 +339,10 @@ AllNullableTypes::AllNullableTypes(const AllNullableTypes& other)
       a_nullable_enum_(other.a_nullable_enum_
                            ? std::optional<AnEnum>(*other.a_nullable_enum_)
                            : std::nullopt),
+      another_nullable_enum_(
+          other.another_nullable_enum_
+              ? std::optional<AnotherEnum>(*other.another_nullable_enum_)
+              : std::nullopt),
       a_nullable_string_(
           other.a_nullable_string_
               ? std::optional<std::string>(*other.a_nullable_string_)
@@ -370,6 +388,7 @@ AllNullableTypes& AllNullableTypes::operator=(const AllNullableTypes& other) {
   nullable_map_with_annotations_ = other.nullable_map_with_annotations_;
   nullable_map_with_object_ = other.nullable_map_with_object_;
   a_nullable_enum_ = other.a_nullable_enum_;
+  another_nullable_enum_ = other.another_nullable_enum_;
   a_nullable_string_ = other.a_nullable_string_;
   a_nullable_object_ = other.a_nullable_object_;
   all_nullable_types_ =
@@ -559,6 +578,19 @@ void AllNullableTypes::set_a_nullable_enum(const AnEnum& value_arg) {
   a_nullable_enum_ = value_arg;
 }
 
+const AnotherEnum* AllNullableTypes::another_nullable_enum() const {
+  return another_nullable_enum_ ? &(*another_nullable_enum_) : nullptr;
+}
+
+void AllNullableTypes::set_another_nullable_enum(const AnotherEnum* value_arg) {
+  another_nullable_enum_ =
+      value_arg ? std::optional<AnotherEnum>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypes::set_another_nullable_enum(const AnotherEnum& value_arg) {
+  another_nullable_enum_ = value_arg;
+}
+
 const std::string* AllNullableTypes::a_nullable_string() const {
   return a_nullable_string_ ? &(*a_nullable_string_) : nullptr;
 }
@@ -692,7 +724,7 @@ void AllNullableTypes::set_map(const EncodableMap& value_arg) {
 
 EncodableList AllNullableTypes::ToEncodableList() const {
   EncodableList list;
-  list.reserve(22);
+  list.reserve(23);
   list.push_back(a_nullable_bool_ ? EncodableValue(*a_nullable_bool_)
                                   : EncodableValue());
   list.push_back(a_nullable_int_ ? EncodableValue(*a_nullable_int_)
@@ -723,6 +755,9 @@ EncodableList AllNullableTypes::ToEncodableList() const {
                      : EncodableValue());
   list.push_back(a_nullable_enum_ ? CustomEncodableValue(*a_nullable_enum_)
                                   : EncodableValue());
+  list.push_back(another_nullable_enum_
+                     ? CustomEncodableValue(*another_nullable_enum_)
+                     : EncodableValue());
   list.push_back(a_nullable_string_ ? EncodableValue(*a_nullable_string_)
                                     : EncodableValue());
   list.push_back(a_nullable_object_ ? *a_nullable_object_ : EncodableValue());
@@ -802,46 +837,51 @@ AllNullableTypes AllNullableTypes::FromEncodableList(
     decoded.set_a_nullable_enum(std::any_cast<const AnEnum&>(
         std::get<CustomEncodableValue>(encodable_a_nullable_enum)));
   }
-  auto& encodable_a_nullable_string = list[12];
+  auto& encodable_another_nullable_enum = list[12];
+  if (!encodable_another_nullable_enum.IsNull()) {
+    decoded.set_another_nullable_enum(std::any_cast<const AnotherEnum&>(
+        std::get<CustomEncodableValue>(encodable_another_nullable_enum)));
+  }
+  auto& encodable_a_nullable_string = list[13];
   if (!encodable_a_nullable_string.IsNull()) {
     decoded.set_a_nullable_string(
         std::get<std::string>(encodable_a_nullable_string));
   }
-  auto& encodable_a_nullable_object = list[13];
+  auto& encodable_a_nullable_object = list[14];
   if (!encodable_a_nullable_object.IsNull()) {
     decoded.set_a_nullable_object(encodable_a_nullable_object);
   }
-  auto& encodable_all_nullable_types = list[14];
+  auto& encodable_all_nullable_types = list[15];
   if (!encodable_all_nullable_types.IsNull()) {
     decoded.set_all_nullable_types(std::any_cast<const AllNullableTypes&>(
         std::get<CustomEncodableValue>(encodable_all_nullable_types)));
   }
-  auto& encodable_list = list[15];
+  auto& encodable_list = list[16];
   if (!encodable_list.IsNull()) {
     decoded.set_list(std::get<EncodableList>(encodable_list));
   }
-  auto& encodable_string_list = list[16];
+  auto& encodable_string_list = list[17];
   if (!encodable_string_list.IsNull()) {
     decoded.set_string_list(std::get<EncodableList>(encodable_string_list));
   }
-  auto& encodable_int_list = list[17];
+  auto& encodable_int_list = list[18];
   if (!encodable_int_list.IsNull()) {
     decoded.set_int_list(std::get<EncodableList>(encodable_int_list));
   }
-  auto& encodable_double_list = list[18];
+  auto& encodable_double_list = list[19];
   if (!encodable_double_list.IsNull()) {
     decoded.set_double_list(std::get<EncodableList>(encodable_double_list));
   }
-  auto& encodable_bool_list = list[19];
+  auto& encodable_bool_list = list[20];
   if (!encodable_bool_list.IsNull()) {
     decoded.set_bool_list(std::get<EncodableList>(encodable_bool_list));
   }
-  auto& encodable_nested_class_list = list[20];
+  auto& encodable_nested_class_list = list[21];
   if (!encodable_nested_class_list.IsNull()) {
     decoded.set_nested_class_list(
         std::get<EncodableList>(encodable_nested_class_list));
   }
-  auto& encodable_map = list[21];
+  auto& encodable_map = list[22];
   if (!encodable_map.IsNull()) {
     decoded.set_map(std::get<EncodableMap>(encodable_map));
   }
@@ -862,6 +902,7 @@ AllNullableTypesWithoutRecursion::AllNullableTypesWithoutRecursion(
     const EncodableList* nullable_nested_list,
     const EncodableMap* nullable_map_with_annotations,
     const EncodableMap* nullable_map_with_object, const AnEnum* a_nullable_enum,
+    const AnotherEnum* another_nullable_enum,
     const std::string* a_nullable_string,
     const EncodableValue* a_nullable_object, const EncodableList* list,
     const EncodableList* string_list, const EncodableList* int_list,
@@ -906,6 +947,9 @@ AllNullableTypesWithoutRecursion::AllNullableTypesWithoutRecursion(
               : std::nullopt),
       a_nullable_enum_(a_nullable_enum ? std::optional<AnEnum>(*a_nullable_enum)
                                        : std::nullopt),
+      another_nullable_enum_(another_nullable_enum ? std::optional<AnotherEnum>(
+                                                         *another_nullable_enum)
+                                                   : std::nullopt),
       a_nullable_string_(a_nullable_string
                              ? std::optional<std::string>(*a_nullable_string)
                              : std::nullopt),
@@ -1109,6 +1153,22 @@ void AllNullableTypesWithoutRecursion::set_a_nullable_enum(
   a_nullable_enum_ = value_arg;
 }
 
+const AnotherEnum* AllNullableTypesWithoutRecursion::another_nullable_enum()
+    const {
+  return another_nullable_enum_ ? &(*another_nullable_enum_) : nullptr;
+}
+
+void AllNullableTypesWithoutRecursion::set_another_nullable_enum(
+    const AnotherEnum* value_arg) {
+  another_nullable_enum_ =
+      value_arg ? std::optional<AnotherEnum>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypesWithoutRecursion::set_another_nullable_enum(
+    const AnotherEnum& value_arg) {
+  another_nullable_enum_ = value_arg;
+}
+
 const std::string* AllNullableTypesWithoutRecursion::a_nullable_string() const {
   return a_nullable_string_ ? &(*a_nullable_string_) : nullptr;
 }
@@ -1228,7 +1288,7 @@ void AllNullableTypesWithoutRecursion::set_map(const EncodableMap& value_arg) {
 
 EncodableList AllNullableTypesWithoutRecursion::ToEncodableList() const {
   EncodableList list;
-  list.reserve(20);
+  list.reserve(21);
   list.push_back(a_nullable_bool_ ? EncodableValue(*a_nullable_bool_)
                                   : EncodableValue());
   list.push_back(a_nullable_int_ ? EncodableValue(*a_nullable_int_)
@@ -1259,6 +1319,9 @@ EncodableList AllNullableTypesWithoutRecursion::ToEncodableList() const {
                      : EncodableValue());
   list.push_back(a_nullable_enum_ ? CustomEncodableValue(*a_nullable_enum_)
                                   : EncodableValue());
+  list.push_back(another_nullable_enum_
+                     ? CustomEncodableValue(*another_nullable_enum_)
+                     : EncodableValue());
   list.push_back(a_nullable_string_ ? EncodableValue(*a_nullable_string_)
                                     : EncodableValue());
   list.push_back(a_nullable_object_ ? *a_nullable_object_ : EncodableValue());
@@ -1333,36 +1396,41 @@ AllNullableTypesWithoutRecursion::FromEncodableList(const EncodableList& list) {
     decoded.set_a_nullable_enum(std::any_cast<const AnEnum&>(
         std::get<CustomEncodableValue>(encodable_a_nullable_enum)));
   }
-  auto& encodable_a_nullable_string = list[12];
+  auto& encodable_another_nullable_enum = list[12];
+  if (!encodable_another_nullable_enum.IsNull()) {
+    decoded.set_another_nullable_enum(std::any_cast<const AnotherEnum&>(
+        std::get<CustomEncodableValue>(encodable_another_nullable_enum)));
+  }
+  auto& encodable_a_nullable_string = list[13];
   if (!encodable_a_nullable_string.IsNull()) {
     decoded.set_a_nullable_string(
         std::get<std::string>(encodable_a_nullable_string));
   }
-  auto& encodable_a_nullable_object = list[13];
+  auto& encodable_a_nullable_object = list[14];
   if (!encodable_a_nullable_object.IsNull()) {
     decoded.set_a_nullable_object(encodable_a_nullable_object);
   }
-  auto& encodable_list = list[14];
+  auto& encodable_list = list[15];
   if (!encodable_list.IsNull()) {
     decoded.set_list(std::get<EncodableList>(encodable_list));
   }
-  auto& encodable_string_list = list[15];
+  auto& encodable_string_list = list[16];
   if (!encodable_string_list.IsNull()) {
     decoded.set_string_list(std::get<EncodableList>(encodable_string_list));
   }
-  auto& encodable_int_list = list[16];
+  auto& encodable_int_list = list[17];
   if (!encodable_int_list.IsNull()) {
     decoded.set_int_list(std::get<EncodableList>(encodable_int_list));
   }
-  auto& encodable_double_list = list[17];
+  auto& encodable_double_list = list[18];
   if (!encodable_double_list.IsNull()) {
     decoded.set_double_list(std::get<EncodableList>(encodable_double_list));
   }
-  auto& encodable_bool_list = list[18];
+  auto& encodable_bool_list = list[19];
   if (!encodable_bool_list.IsNull()) {
     decoded.set_bool_list(std::get<EncodableList>(encodable_bool_list));
   }
-  auto& encodable_map = list[19];
+  auto& encodable_map = list[20];
   if (!encodable_map.IsNull()) {
     decoded.set_map(std::get<EncodableMap>(encodable_map));
   }
@@ -1523,6 +1591,74 @@ TestMessage TestMessage::FromEncodableList(const EncodableList& list) {
   return decoded;
 }
 
+__pigeon_CodecOverflow::__pigeon_CodecOverflow(int64_t type,
+                                               const EncodableValue& wrapped)
+    : type_(type), wrapped_(wrapped) {}
+
+int64_t __pigeon_CodecOverflow::type() const { return type_; }
+
+void __pigeon_CodecOverflow::set_type(int64_t value_arg) { type_ = value_arg; }
+
+const EncodableValue& __pigeon_CodecOverflow::wrapped() const {
+  return wrapped_;
+}
+
+void __pigeon_CodecOverflow::set_wrapped(const EncodableValue& value_arg) {
+  wrapped_ = value_arg;
+}
+
+EncodableList __pigeon_CodecOverflow::ToEncodableList() const {
+  EncodableList list;
+  list.reserve(2);
+  list.push_back(EncodableValue(type_));
+  list.push_back(wrapped_);
+  return list;
+}
+
+EncodableValue __pigeon_CodecOverflow::FromEncodableList(
+    const EncodableList& list) {
+  return __pigeon_CodecOverflow(list[0].LongValue(),
+                                list[1].IsNull() ? EncodableValue() : list[1])
+      .Unwrap();
+}
+EncodableValue __pigeon_CodecOverflow::Unwrap() {
+  if (wrapped_.IsNull()) {
+    return EncodableValue();
+  }
+  switch (type_) {
+    case 0: {
+      const auto& encodable_enum_arg = wrapped_;
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<AnotherEnum>(enum_arg_value));
+    }
+    case 1: {
+      return CustomEncodableValue(
+          AllTypes::FromEncodableList(std::get<EncodableList>(wrapped_)));
+    }
+    case 2: {
+      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
+          std::get<EncodableList>(wrapped_)));
+    }
+    case 3: {
+      return CustomEncodableValue(
+          AllNullableTypesWithoutRecursion::FromEncodableList(
+              std::get<EncodableList>(wrapped_)));
+    }
+    case 4: {
+      return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
+          std::get<EncodableList>(wrapped_)));
+    }
+    case 5: {
+      return CustomEncodableValue(
+          TestMessage::FromEncodableList(std::get<EncodableList>(wrapped_)));
+    }
+  }
+  return EncodableValue();
+}
 PigeonCodecSerializer::PigeonCodecSerializer() {}
 
 EncodableValue PigeonCodecSerializer::ReadValueOfType(
@@ -1534,28 +1670,1136 @@ EncodableValue PigeonCodecSerializer::ReadValueOfType(
           encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
       return encodable_enum_arg.IsNull()
                  ? EncodableValue()
-                 : CustomEncodableValue(static_cast<AnEnum>(enum_arg_value));
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum0>(enum_arg_value));
     }
     case 130: {
-      return CustomEncodableValue(AllTypes::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum1>(enum_arg_value));
     }
     case 131: {
-      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum2>(enum_arg_value));
     }
     case 132: {
-      return CustomEncodableValue(
-          AllNullableTypesWithoutRecursion::FromEncodableList(
-              std::get<EncodableList>(ReadValue(stream))));
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum3>(enum_arg_value));
     }
     case 133: {
-      return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum4>(enum_arg_value));
     }
     case 134: {
-      return CustomEncodableValue(TestMessage::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum5>(enum_arg_value));
+    }
+    case 135: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum6>(enum_arg_value));
+    }
+    case 136: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum7>(enum_arg_value));
+    }
+    case 137: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum8>(enum_arg_value));
+    }
+    case 138: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum9>(enum_arg_value));
+    }
+    case 139: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum10>(enum_arg_value));
+    }
+    case 140: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum11>(enum_arg_value));
+    }
+    case 141: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum12>(enum_arg_value));
+    }
+    case 142: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum13>(enum_arg_value));
+    }
+    case 143: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum14>(enum_arg_value));
+    }
+    case 144: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum15>(enum_arg_value));
+    }
+    case 145: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum16>(enum_arg_value));
+    }
+    case 146: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum17>(enum_arg_value));
+    }
+    case 147: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum18>(enum_arg_value));
+    }
+    case 148: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum19>(enum_arg_value));
+    }
+    case 149: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum20>(enum_arg_value));
+    }
+    case 150: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum21>(enum_arg_value));
+    }
+    case 151: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum22>(enum_arg_value));
+    }
+    case 152: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum23>(enum_arg_value));
+    }
+    case 153: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum24>(enum_arg_value));
+    }
+    case 154: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum25>(enum_arg_value));
+    }
+    case 155: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum26>(enum_arg_value));
+    }
+    case 156: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum27>(enum_arg_value));
+    }
+    case 157: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum28>(enum_arg_value));
+    }
+    case 158: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum29>(enum_arg_value));
+    }
+    case 159: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum30>(enum_arg_value));
+    }
+    case 160: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum31>(enum_arg_value));
+    }
+    case 161: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum32>(enum_arg_value));
+    }
+    case 162: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum33>(enum_arg_value));
+    }
+    case 163: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum34>(enum_arg_value));
+    }
+    case 164: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum35>(enum_arg_value));
+    }
+    case 165: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum36>(enum_arg_value));
+    }
+    case 166: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum37>(enum_arg_value));
+    }
+    case 167: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum38>(enum_arg_value));
+    }
+    case 168: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum39>(enum_arg_value));
+    }
+    case 169: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum40>(enum_arg_value));
+    }
+    case 170: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum41>(enum_arg_value));
+    }
+    case 171: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum42>(enum_arg_value));
+    }
+    case 172: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum43>(enum_arg_value));
+    }
+    case 173: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum44>(enum_arg_value));
+    }
+    case 174: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum45>(enum_arg_value));
+    }
+    case 175: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum46>(enum_arg_value));
+    }
+    case 176: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum47>(enum_arg_value));
+    }
+    case 177: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum48>(enum_arg_value));
+    }
+    case 178: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum49>(enum_arg_value));
+    }
+    case 179: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum50>(enum_arg_value));
+    }
+    case 180: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum51>(enum_arg_value));
+    }
+    case 181: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum52>(enum_arg_value));
+    }
+    case 182: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum53>(enum_arg_value));
+    }
+    case 183: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum54>(enum_arg_value));
+    }
+    case 184: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum55>(enum_arg_value));
+    }
+    case 185: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum56>(enum_arg_value));
+    }
+    case 186: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum57>(enum_arg_value));
+    }
+    case 187: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum58>(enum_arg_value));
+    }
+    case 188: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum59>(enum_arg_value));
+    }
+    case 189: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum60>(enum_arg_value));
+    }
+    case 190: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum61>(enum_arg_value));
+    }
+    case 191: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum62>(enum_arg_value));
+    }
+    case 192: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum63>(enum_arg_value));
+    }
+    case 193: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum64>(enum_arg_value));
+    }
+    case 194: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum65>(enum_arg_value));
+    }
+    case 195: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum66>(enum_arg_value));
+    }
+    case 196: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum67>(enum_arg_value));
+    }
+    case 197: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum68>(enum_arg_value));
+    }
+    case 198: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum69>(enum_arg_value));
+    }
+    case 199: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum70>(enum_arg_value));
+    }
+    case 200: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum71>(enum_arg_value));
+    }
+    case 201: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum72>(enum_arg_value));
+    }
+    case 202: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum73>(enum_arg_value));
+    }
+    case 203: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum74>(enum_arg_value));
+    }
+    case 204: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum75>(enum_arg_value));
+    }
+    case 205: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum76>(enum_arg_value));
+    }
+    case 206: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum77>(enum_arg_value));
+    }
+    case 207: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum78>(enum_arg_value));
+    }
+    case 208: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum79>(enum_arg_value));
+    }
+    case 209: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum80>(enum_arg_value));
+    }
+    case 210: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum81>(enum_arg_value));
+    }
+    case 211: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum82>(enum_arg_value));
+    }
+    case 212: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum83>(enum_arg_value));
+    }
+    case 213: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum84>(enum_arg_value));
+    }
+    case 214: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum85>(enum_arg_value));
+    }
+    case 215: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum86>(enum_arg_value));
+    }
+    case 216: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum87>(enum_arg_value));
+    }
+    case 217: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum88>(enum_arg_value));
+    }
+    case 218: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum89>(enum_arg_value));
+    }
+    case 219: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum90>(enum_arg_value));
+    }
+    case 220: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum91>(enum_arg_value));
+    }
+    case 221: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum92>(enum_arg_value));
+    }
+    case 222: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum93>(enum_arg_value));
+    }
+    case 223: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum94>(enum_arg_value));
+    }
+    case 224: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum95>(enum_arg_value));
+    }
+    case 225: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum96>(enum_arg_value));
+    }
+    case 226: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum97>(enum_arg_value));
+    }
+    case 227: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum98>(enum_arg_value));
+    }
+    case 228: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum99>(enum_arg_value));
+    }
+    case 229: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum100>(enum_arg_value));
+    }
+    case 230: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum101>(enum_arg_value));
+    }
+    case 231: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum102>(enum_arg_value));
+    }
+    case 232: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum103>(enum_arg_value));
+    }
+    case 233: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum104>(enum_arg_value));
+    }
+    case 234: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum105>(enum_arg_value));
+    }
+    case 235: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum106>(enum_arg_value));
+    }
+    case 236: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum107>(enum_arg_value));
+    }
+    case 237: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum108>(enum_arg_value));
+    }
+    case 238: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum109>(enum_arg_value));
+    }
+    case 239: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum110>(enum_arg_value));
+    }
+    case 240: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum111>(enum_arg_value));
+    }
+    case 241: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum112>(enum_arg_value));
+    }
+    case 242: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum113>(enum_arg_value));
+    }
+    case 243: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum114>(enum_arg_value));
+    }
+    case 244: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum115>(enum_arg_value));
+    }
+    case 245: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum116>(enum_arg_value));
+    }
+    case 246: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum117>(enum_arg_value));
+    }
+    case 247: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum118>(enum_arg_value));
+    }
+    case 248: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum119>(enum_arg_value));
+    }
+    case 249: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum120>(enum_arg_value));
+    }
+    case 250: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum121>(enum_arg_value));
+    }
+    case 251: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum122>(enum_arg_value));
+    }
+    case 252: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum123>(enum_arg_value));
+    }
+    case 253: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<FillerEnum124>(enum_arg_value));
+    }
+    case 254: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AnEnum>(enum_arg_value));
+    }
+    case 255: {
+      return __pigeon_CodecOverflow::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream)));
     }
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
@@ -1566,48 +2810,946 @@ void PigeonCodecSerializer::WriteValue(
     const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
-    if (custom_value->type() == typeid(AnEnum)) {
+    if (custom_value->type() == typeid(FillerEnum0)) {
       stream->WriteByte(129);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum0>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum1)) {
+      stream->WriteByte(130);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum1>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum2)) {
+      stream->WriteByte(131);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum2>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum3)) {
+      stream->WriteByte(132);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum3>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum4)) {
+      stream->WriteByte(133);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum4>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum5)) {
+      stream->WriteByte(134);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum5>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum6)) {
+      stream->WriteByte(135);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum6>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum7)) {
+      stream->WriteByte(136);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum7>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum8)) {
+      stream->WriteByte(137);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum8>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum9)) {
+      stream->WriteByte(138);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum9>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum10)) {
+      stream->WriteByte(139);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum10>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum11)) {
+      stream->WriteByte(140);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum11>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum12)) {
+      stream->WriteByte(141);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum12>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum13)) {
+      stream->WriteByte(142);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum13>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum14)) {
+      stream->WriteByte(143);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum14>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum15)) {
+      stream->WriteByte(144);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum15>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum16)) {
+      stream->WriteByte(145);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum16>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum17)) {
+      stream->WriteByte(146);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum17>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum18)) {
+      stream->WriteByte(147);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum18>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum19)) {
+      stream->WriteByte(148);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum19>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum20)) {
+      stream->WriteByte(149);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum20>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum21)) {
+      stream->WriteByte(150);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum21>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum22)) {
+      stream->WriteByte(151);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum22>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum23)) {
+      stream->WriteByte(152);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum23>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum24)) {
+      stream->WriteByte(153);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum24>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum25)) {
+      stream->WriteByte(154);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum25>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum26)) {
+      stream->WriteByte(155);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum26>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum27)) {
+      stream->WriteByte(156);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum27>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum28)) {
+      stream->WriteByte(157);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum28>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum29)) {
+      stream->WriteByte(158);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum29>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum30)) {
+      stream->WriteByte(159);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum30>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum31)) {
+      stream->WriteByte(160);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum31>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum32)) {
+      stream->WriteByte(161);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum32>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum33)) {
+      stream->WriteByte(162);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum33>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum34)) {
+      stream->WriteByte(163);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum34>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum35)) {
+      stream->WriteByte(164);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum35>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum36)) {
+      stream->WriteByte(165);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum36>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum37)) {
+      stream->WriteByte(166);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum37>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum38)) {
+      stream->WriteByte(167);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum38>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum39)) {
+      stream->WriteByte(168);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum39>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum40)) {
+      stream->WriteByte(169);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum40>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum41)) {
+      stream->WriteByte(170);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum41>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum42)) {
+      stream->WriteByte(171);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum42>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum43)) {
+      stream->WriteByte(172);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum43>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum44)) {
+      stream->WriteByte(173);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum44>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum45)) {
+      stream->WriteByte(174);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum45>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum46)) {
+      stream->WriteByte(175);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum46>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum47)) {
+      stream->WriteByte(176);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum47>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum48)) {
+      stream->WriteByte(177);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum48>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum49)) {
+      stream->WriteByte(178);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum49>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum50)) {
+      stream->WriteByte(179);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum50>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum51)) {
+      stream->WriteByte(180);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum51>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum52)) {
+      stream->WriteByte(181);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum52>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum53)) {
+      stream->WriteByte(182);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum53>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum54)) {
+      stream->WriteByte(183);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum54>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum55)) {
+      stream->WriteByte(184);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum55>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum56)) {
+      stream->WriteByte(185);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum56>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum57)) {
+      stream->WriteByte(186);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum57>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum58)) {
+      stream->WriteByte(187);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum58>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum59)) {
+      stream->WriteByte(188);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum59>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum60)) {
+      stream->WriteByte(189);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum60>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum61)) {
+      stream->WriteByte(190);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum61>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum62)) {
+      stream->WriteByte(191);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum62>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum63)) {
+      stream->WriteByte(192);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum63>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum64)) {
+      stream->WriteByte(193);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum64>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum65)) {
+      stream->WriteByte(194);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum65>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum66)) {
+      stream->WriteByte(195);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum66>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum67)) {
+      stream->WriteByte(196);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum67>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum68)) {
+      stream->WriteByte(197);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum68>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum69)) {
+      stream->WriteByte(198);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum69>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum70)) {
+      stream->WriteByte(199);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum70>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum71)) {
+      stream->WriteByte(200);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum71>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum72)) {
+      stream->WriteByte(201);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum72>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum73)) {
+      stream->WriteByte(202);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum73>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum74)) {
+      stream->WriteByte(203);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum74>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum75)) {
+      stream->WriteByte(204);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum75>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum76)) {
+      stream->WriteByte(205);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum76>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum77)) {
+      stream->WriteByte(206);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum77>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum78)) {
+      stream->WriteByte(207);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum78>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum79)) {
+      stream->WriteByte(208);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum79>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum80)) {
+      stream->WriteByte(209);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum80>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum81)) {
+      stream->WriteByte(210);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum81>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum82)) {
+      stream->WriteByte(211);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum82>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum83)) {
+      stream->WriteByte(212);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum83>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum84)) {
+      stream->WriteByte(213);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum84>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum85)) {
+      stream->WriteByte(214);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum85>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum86)) {
+      stream->WriteByte(215);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum86>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum87)) {
+      stream->WriteByte(216);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum87>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum88)) {
+      stream->WriteByte(217);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum88>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum89)) {
+      stream->WriteByte(218);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum89>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum90)) {
+      stream->WriteByte(219);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum90>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum91)) {
+      stream->WriteByte(220);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum91>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum92)) {
+      stream->WriteByte(221);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum92>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum93)) {
+      stream->WriteByte(222);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum93>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum94)) {
+      stream->WriteByte(223);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum94>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum95)) {
+      stream->WriteByte(224);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum95>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum96)) {
+      stream->WriteByte(225);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum96>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum97)) {
+      stream->WriteByte(226);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum97>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum98)) {
+      stream->WriteByte(227);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum98>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum99)) {
+      stream->WriteByte(228);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum99>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum100)) {
+      stream->WriteByte(229);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum100>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum101)) {
+      stream->WriteByte(230);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum101>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum102)) {
+      stream->WriteByte(231);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum102>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum103)) {
+      stream->WriteByte(232);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum103>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum104)) {
+      stream->WriteByte(233);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum104>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum105)) {
+      stream->WriteByte(234);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum105>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum106)) {
+      stream->WriteByte(235);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum106>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum107)) {
+      stream->WriteByte(236);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum107>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum108)) {
+      stream->WriteByte(237);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum108>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum109)) {
+      stream->WriteByte(238);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum109>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum110)) {
+      stream->WriteByte(239);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum110>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum111)) {
+      stream->WriteByte(240);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum111>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum112)) {
+      stream->WriteByte(241);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum112>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum113)) {
+      stream->WriteByte(242);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum113>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum114)) {
+      stream->WriteByte(243);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum114>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum115)) {
+      stream->WriteByte(244);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum115>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum116)) {
+      stream->WriteByte(245);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum116>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum117)) {
+      stream->WriteByte(246);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum117>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum118)) {
+      stream->WriteByte(247);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum118>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum119)) {
+      stream->WriteByte(248);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum119>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum120)) {
+      stream->WriteByte(249);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum120>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum121)) {
+      stream->WriteByte(250);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum121>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum122)) {
+      stream->WriteByte(251);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum122>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum123)) {
+      stream->WriteByte(252);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum123>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(FillerEnum124)) {
+      stream->WriteByte(253);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<FillerEnum124>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AnEnum)) {
+      stream->WriteByte(254);
       WriteValue(EncodableValue(
                      static_cast<int>(std::any_cast<AnEnum>(*custom_value))),
                  stream);
       return;
     }
+    if (custom_value->type() == typeid(AnotherEnum)) {
+      stream->WriteByte(255);
+      const auto& wrap = __pigeon_CodecOverflow(
+          0, static_cast<int>(std::any_cast<AnotherEnum>(*custom_value)));
+      WriteValue(
+          EncodableValue(
+              std::any_cast<__pigeon_CodecOverflow>(wrap).ToEncodableList()),
+          stream);
+      return;
+    }
     if (custom_value->type() == typeid(AllTypes)) {
-      stream->WriteByte(130);
-      WriteValue(EncodableValue(
-                     std::any_cast<AllTypes>(*custom_value).ToEncodableList()),
-                 stream);
+      stream->WriteByte(255);
+      const auto& wrap = __pigeon_CodecOverflow(
+          1, std::any_cast<AllTypes>(*custom_value).ToEncodableList());
+      WriteValue(
+          EncodableValue(
+              std::any_cast<__pigeon_CodecOverflow>(wrap).ToEncodableList()),
+          stream);
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypes)) {
-      stream->WriteByte(131);
+      stream->WriteByte(255);
+      const auto& wrap = __pigeon_CodecOverflow(
+          2, std::any_cast<AllNullableTypes>(*custom_value).ToEncodableList());
       WriteValue(
           EncodableValue(
-              std::any_cast<AllNullableTypes>(*custom_value).ToEncodableList()),
+              std::any_cast<__pigeon_CodecOverflow>(wrap).ToEncodableList()),
           stream);
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypesWithoutRecursion)) {
-      stream->WriteByte(132);
-      WriteValue(EncodableValue(std::any_cast<AllNullableTypesWithoutRecursion>(
-                                    *custom_value)
-                                    .ToEncodableList()),
-                 stream);
+      stream->WriteByte(255);
+      const auto& wrap = __pigeon_CodecOverflow(
+          3, std::any_cast<AllNullableTypesWithoutRecursion>(*custom_value)
+                 .ToEncodableList());
+      WriteValue(
+          EncodableValue(
+              std::any_cast<__pigeon_CodecOverflow>(wrap).ToEncodableList()),
+          stream);
       return;
     }
     if (custom_value->type() == typeid(AllClassesWrapper)) {
-      stream->WriteByte(133);
-      WriteValue(EncodableValue(std::any_cast<AllClassesWrapper>(*custom_value)
-                                    .ToEncodableList()),
-                 stream);
+      stream->WriteByte(255);
+      const auto& wrap = __pigeon_CodecOverflow(
+          4, std::any_cast<AllClassesWrapper>(*custom_value).ToEncodableList());
+      WriteValue(
+          EncodableValue(
+              std::any_cast<__pigeon_CodecOverflow>(wrap).ToEncodableList()),
+          stream);
       return;
     }
     if (custom_value->type() == typeid(TestMessage)) {
-      stream->WriteByte(134);
+      stream->WriteByte(255);
+      const auto& wrap = __pigeon_CodecOverflow(
+          5, std::any_cast<TestMessage>(*custom_value).ToEncodableList());
       WriteValue(
           EncodableValue(
-              std::any_cast<TestMessage>(*custom_value).ToEncodableList()),
+              std::any_cast<__pigeon_CodecOverflow>(wrap).ToEncodableList()),
           stream);
       return;
     }
@@ -2127,6 +4269,43 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto& an_enum_arg = std::any_cast<const AnEnum&>(
                   std::get<CustomEncodableValue>(encodable_an_enum_arg));
               ErrorOr<AnEnum> output = api->EchoEnum(an_enum_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(
+                  CustomEncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostIntegrationCoreApi.echoAnotherEnum" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_another_enum_arg = args.at(0);
+              if (encodable_another_enum_arg.IsNull()) {
+                reply(WrapError("another_enum_arg unexpectedly null."));
+                return;
+              }
+              const auto& another_enum_arg = std::any_cast<const AnotherEnum&>(
+                  std::get<CustomEncodableValue>(encodable_another_enum_arg));
+              ErrorOr<AnotherEnum> output =
+                  api->EchoAnotherEnum(another_enum_arg);
               if (output.has_error()) {
                 reply(WrapError(output.error()));
                 return;
@@ -2869,6 +5048,51 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoAnotherNullableEnum" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_another_enum_arg = args.at(0);
+              AnotherEnum another_enum_arg_value;
+              const AnotherEnum* another_enum_arg = nullptr;
+              if (!encodable_another_enum_arg.IsNull()) {
+                another_enum_arg_value = std::any_cast<const AnotherEnum&>(
+                    std::get<CustomEncodableValue>(encodable_another_enum_arg));
+                another_enum_arg = &another_enum_arg_value;
+              }
+              ErrorOr<std::optional<AnotherEnum>> output =
+                  api->EchoAnotherNullableEnum(
+                      another_enum_arg ? &(*another_enum_arg) : nullptr);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              auto output_optional = std::move(output).TakeValue();
+              if (output_optional) {
+                wrapped.push_back(
+                    CustomEncodableValue(std::move(output_optional).value()));
+              } else {
+                wrapped.push_back(EncodableValue());
+              }
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoOptionalNullableInt" +
             prepended_suffix,
         &GetCodec());
@@ -3298,6 +5522,45 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                   std::get<CustomEncodableValue>(encodable_an_enum_arg));
               api->EchoAsyncEnum(
                   an_enum_arg, [reply](ErrorOr<AnEnum>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        CustomEncodableValue(std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoAnotherAsyncEnum" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_another_enum_arg = args.at(0);
+              if (encodable_another_enum_arg.IsNull()) {
+                reply(WrapError("another_enum_arg unexpectedly null."));
+                return;
+              }
+              const auto& another_enum_arg = std::any_cast<const AnotherEnum&>(
+                  std::get<CustomEncodableValue>(encodable_another_enum_arg));
+              api->EchoAnotherAsyncEnum(
+                  another_enum_arg, [reply](ErrorOr<AnotherEnum>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
                       return;
@@ -3900,6 +6163,52 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               api->EchoAsyncNullableEnum(
                   an_enum_arg ? &(*an_enum_arg) : nullptr,
                   [reply](ErrorOr<std::optional<AnEnum>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(CustomEncodableValue(
+                          std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(EncodableValue());
+                    }
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoAnotherAsyncNullableEnum" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_another_enum_arg = args.at(0);
+              AnotherEnum another_enum_arg_value;
+              const AnotherEnum* another_enum_arg = nullptr;
+              if (!encodable_another_enum_arg.IsNull()) {
+                another_enum_arg_value = std::any_cast<const AnotherEnum&>(
+                    std::get<CustomEncodableValue>(encodable_another_enum_arg));
+                another_enum_arg = &another_enum_arg_value;
+              }
+              api->EchoAnotherAsyncNullableEnum(
+                  another_enum_arg ? &(*another_enum_arg) : nullptr,
+                  [reply](ErrorOr<std::optional<AnotherEnum>>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
                       return;
@@ -4555,6 +6864,45 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "callFlutterEchoAnotherEnum" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_another_enum_arg = args.at(0);
+              if (encodable_another_enum_arg.IsNull()) {
+                reply(WrapError("another_enum_arg unexpectedly null."));
+                return;
+              }
+              const auto& another_enum_arg = std::any_cast<const AnotherEnum&>(
+                  std::get<CustomEncodableValue>(encodable_another_enum_arg));
+              api->CallFlutterEchoAnotherEnum(
+                  another_enum_arg, [reply](ErrorOr<AnotherEnum>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        CustomEncodableValue(std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoNullableBool" +
             prepended_suffix,
         &GetCodec());
@@ -4865,6 +7213,52 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               api->CallFlutterEchoNullableEnum(
                   an_enum_arg ? &(*an_enum_arg) : nullptr,
                   [reply](ErrorOr<std::optional<AnEnum>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(CustomEncodableValue(
+                          std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(EncodableValue());
+                    }
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "callFlutterEchoAnotherNullableEnum" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_another_enum_arg = args.at(0);
+              AnotherEnum another_enum_arg_value;
+              const AnotherEnum* another_enum_arg = nullptr;
+              if (!encodable_another_enum_arg.IsNull()) {
+                another_enum_arg_value = std::any_cast<const AnotherEnum&>(
+                    std::get<CustomEncodableValue>(encodable_another_enum_arg));
+                another_enum_arg = &another_enum_arg_value;
+              }
+              api->CallFlutterEchoAnotherNullableEnum(
+                  another_enum_arg ? &(*another_enum_arg) : nullptr,
+                  [reply](ErrorOr<std::optional<AnotherEnum>>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
                       return;
@@ -5568,6 +7962,44 @@ void FlutterIntegrationCoreApi::EchoEnum(
       });
 }
 
+void FlutterIntegrationCoreApi::EchoAnotherEnum(
+    const AnotherEnum& another_enum_arg,
+    std::function<void(const AnotherEnum&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  const std::string channel_name =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoAnotherEnum" +
+      message_channel_suffix_;
+  BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
+  EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
+      CustomEncodableValue(another_enum_arg),
+  });
+  channel.Send(
+      encoded_api_arguments, [channel_name, on_success = std::move(on_success),
+                              on_error = std::move(on_error)](
+                                 const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<EncodableValue> response =
+            GetCodec().DecodeMessage(reply, reply_size);
+        const auto& encodable_return_value = *response;
+        const auto* list_return_value =
+            std::get_if<EncodableList>(&encodable_return_value);
+        if (list_return_value) {
+          if (list_return_value->size() > 1) {
+            on_error(
+                FlutterError(std::get<std::string>(list_return_value->at(0)),
+                             std::get<std::string>(list_return_value->at(1)),
+                             list_return_value->at(2)));
+          } else {
+            const auto& return_value = std::any_cast<const AnotherEnum&>(
+                std::get<CustomEncodableValue>(list_return_value->at(0)));
+            on_success(return_value);
+          }
+        } else {
+          on_error(CreateConnectionError(channel_name));
+        }
+      });
+}
+
 void FlutterIntegrationCoreApi::EchoNullableBool(
     const bool* a_bool_arg, std::function<void(const bool*)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
@@ -5865,6 +8297,50 @@ void FlutterIntegrationCoreApi::EchoNullableEnum(
             const AnEnum* return_value = nullptr;
             if (!list_return_value->at(0).IsNull()) {
               return_value_value = std::any_cast<const AnEnum&>(
+                  std::get<CustomEncodableValue>(list_return_value->at(0)));
+              return_value = &return_value_value;
+            }
+            on_success(return_value);
+          }
+        } else {
+          on_error(CreateConnectionError(channel_name));
+        }
+      });
+}
+
+void FlutterIntegrationCoreApi::EchoAnotherNullableEnum(
+    const AnotherEnum* another_enum_arg,
+    std::function<void(const AnotherEnum*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  const std::string channel_name =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoAnotherNullableEnum" +
+      message_channel_suffix_;
+  BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
+  EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
+      another_enum_arg ? CustomEncodableValue(*another_enum_arg)
+                       : EncodableValue(),
+  });
+  channel.Send(
+      encoded_api_arguments, [channel_name, on_success = std::move(on_success),
+                              on_error = std::move(on_error)](
+                                 const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<EncodableValue> response =
+            GetCodec().DecodeMessage(reply, reply_size);
+        const auto& encodable_return_value = *response;
+        const auto* list_return_value =
+            std::get_if<EncodableList>(&encodable_return_value);
+        if (list_return_value) {
+          if (list_return_value->size() > 1) {
+            on_error(
+                FlutterError(std::get<std::string>(list_return_value->at(0)),
+                             std::get<std::string>(list_return_value->at(1)),
+                             list_return_value->at(2)));
+          } else {
+            AnotherEnum return_value_value;
+            const AnotherEnum* return_value = nullptr;
+            if (!list_return_value->at(0).IsNull()) {
+              return_value_value = std::any_cast<const AnotherEnum&>(
                   std::get<CustomEncodableValue>(list_return_value->at(0)));
               return_value = &return_value_value;
             }

@@ -14,6 +14,1256 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSUInteger, FillerEnum0) {
+  FillerEnum0FillerMember0 = 0,
+};
+
+/// Wrapper for FillerEnum0 to allow for nullability.
+@interface FillerEnum0Box : NSObject
+@property(nonatomic, assign) FillerEnum0 value;
+- (instancetype)initWithValue:(FillerEnum0)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum1) {
+  FillerEnum1FillerMember1 = 0,
+};
+
+/// Wrapper for FillerEnum1 to allow for nullability.
+@interface FillerEnum1Box : NSObject
+@property(nonatomic, assign) FillerEnum1 value;
+- (instancetype)initWithValue:(FillerEnum1)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum2) {
+  FillerEnum2FillerMember2 = 0,
+};
+
+/// Wrapper for FillerEnum2 to allow for nullability.
+@interface FillerEnum2Box : NSObject
+@property(nonatomic, assign) FillerEnum2 value;
+- (instancetype)initWithValue:(FillerEnum2)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum3) {
+  FillerEnum3FillerMember3 = 0,
+};
+
+/// Wrapper for FillerEnum3 to allow for nullability.
+@interface FillerEnum3Box : NSObject
+@property(nonatomic, assign) FillerEnum3 value;
+- (instancetype)initWithValue:(FillerEnum3)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum4) {
+  FillerEnum4FillerMember4 = 0,
+};
+
+/// Wrapper for FillerEnum4 to allow for nullability.
+@interface FillerEnum4Box : NSObject
+@property(nonatomic, assign) FillerEnum4 value;
+- (instancetype)initWithValue:(FillerEnum4)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum5) {
+  FillerEnum5FillerMember5 = 0,
+};
+
+/// Wrapper for FillerEnum5 to allow for nullability.
+@interface FillerEnum5Box : NSObject
+@property(nonatomic, assign) FillerEnum5 value;
+- (instancetype)initWithValue:(FillerEnum5)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum6) {
+  FillerEnum6FillerMember6 = 0,
+};
+
+/// Wrapper for FillerEnum6 to allow for nullability.
+@interface FillerEnum6Box : NSObject
+@property(nonatomic, assign) FillerEnum6 value;
+- (instancetype)initWithValue:(FillerEnum6)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum7) {
+  FillerEnum7FillerMember7 = 0,
+};
+
+/// Wrapper for FillerEnum7 to allow for nullability.
+@interface FillerEnum7Box : NSObject
+@property(nonatomic, assign) FillerEnum7 value;
+- (instancetype)initWithValue:(FillerEnum7)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum8) {
+  FillerEnum8FillerMember8 = 0,
+};
+
+/// Wrapper for FillerEnum8 to allow for nullability.
+@interface FillerEnum8Box : NSObject
+@property(nonatomic, assign) FillerEnum8 value;
+- (instancetype)initWithValue:(FillerEnum8)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum9) {
+  FillerEnum9FillerMember9 = 0,
+};
+
+/// Wrapper for FillerEnum9 to allow for nullability.
+@interface FillerEnum9Box : NSObject
+@property(nonatomic, assign) FillerEnum9 value;
+- (instancetype)initWithValue:(FillerEnum9)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum10) {
+  FillerEnum10FillerMember10 = 0,
+};
+
+/// Wrapper for FillerEnum10 to allow for nullability.
+@interface FillerEnum10Box : NSObject
+@property(nonatomic, assign) FillerEnum10 value;
+- (instancetype)initWithValue:(FillerEnum10)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum11) {
+  FillerEnum11FillerMember11 = 0,
+};
+
+/// Wrapper for FillerEnum11 to allow for nullability.
+@interface FillerEnum11Box : NSObject
+@property(nonatomic, assign) FillerEnum11 value;
+- (instancetype)initWithValue:(FillerEnum11)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum12) {
+  FillerEnum12FillerMember12 = 0,
+};
+
+/// Wrapper for FillerEnum12 to allow for nullability.
+@interface FillerEnum12Box : NSObject
+@property(nonatomic, assign) FillerEnum12 value;
+- (instancetype)initWithValue:(FillerEnum12)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum13) {
+  FillerEnum13FillerMember13 = 0,
+};
+
+/// Wrapper for FillerEnum13 to allow for nullability.
+@interface FillerEnum13Box : NSObject
+@property(nonatomic, assign) FillerEnum13 value;
+- (instancetype)initWithValue:(FillerEnum13)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum14) {
+  FillerEnum14FillerMember14 = 0,
+};
+
+/// Wrapper for FillerEnum14 to allow for nullability.
+@interface FillerEnum14Box : NSObject
+@property(nonatomic, assign) FillerEnum14 value;
+- (instancetype)initWithValue:(FillerEnum14)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum15) {
+  FillerEnum15FillerMember15 = 0,
+};
+
+/// Wrapper for FillerEnum15 to allow for nullability.
+@interface FillerEnum15Box : NSObject
+@property(nonatomic, assign) FillerEnum15 value;
+- (instancetype)initWithValue:(FillerEnum15)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum16) {
+  FillerEnum16FillerMember16 = 0,
+};
+
+/// Wrapper for FillerEnum16 to allow for nullability.
+@interface FillerEnum16Box : NSObject
+@property(nonatomic, assign) FillerEnum16 value;
+- (instancetype)initWithValue:(FillerEnum16)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum17) {
+  FillerEnum17FillerMember17 = 0,
+};
+
+/// Wrapper for FillerEnum17 to allow for nullability.
+@interface FillerEnum17Box : NSObject
+@property(nonatomic, assign) FillerEnum17 value;
+- (instancetype)initWithValue:(FillerEnum17)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum18) {
+  FillerEnum18FillerMember18 = 0,
+};
+
+/// Wrapper for FillerEnum18 to allow for nullability.
+@interface FillerEnum18Box : NSObject
+@property(nonatomic, assign) FillerEnum18 value;
+- (instancetype)initWithValue:(FillerEnum18)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum19) {
+  FillerEnum19FillerMember19 = 0,
+};
+
+/// Wrapper for FillerEnum19 to allow for nullability.
+@interface FillerEnum19Box : NSObject
+@property(nonatomic, assign) FillerEnum19 value;
+- (instancetype)initWithValue:(FillerEnum19)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum20) {
+  FillerEnum20FillerMember20 = 0,
+};
+
+/// Wrapper for FillerEnum20 to allow for nullability.
+@interface FillerEnum20Box : NSObject
+@property(nonatomic, assign) FillerEnum20 value;
+- (instancetype)initWithValue:(FillerEnum20)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum21) {
+  FillerEnum21FillerMember21 = 0,
+};
+
+/// Wrapper for FillerEnum21 to allow for nullability.
+@interface FillerEnum21Box : NSObject
+@property(nonatomic, assign) FillerEnum21 value;
+- (instancetype)initWithValue:(FillerEnum21)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum22) {
+  FillerEnum22FillerMember22 = 0,
+};
+
+/// Wrapper for FillerEnum22 to allow for nullability.
+@interface FillerEnum22Box : NSObject
+@property(nonatomic, assign) FillerEnum22 value;
+- (instancetype)initWithValue:(FillerEnum22)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum23) {
+  FillerEnum23FillerMember23 = 0,
+};
+
+/// Wrapper for FillerEnum23 to allow for nullability.
+@interface FillerEnum23Box : NSObject
+@property(nonatomic, assign) FillerEnum23 value;
+- (instancetype)initWithValue:(FillerEnum23)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum24) {
+  FillerEnum24FillerMember24 = 0,
+};
+
+/// Wrapper for FillerEnum24 to allow for nullability.
+@interface FillerEnum24Box : NSObject
+@property(nonatomic, assign) FillerEnum24 value;
+- (instancetype)initWithValue:(FillerEnum24)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum25) {
+  FillerEnum25FillerMember25 = 0,
+};
+
+/// Wrapper for FillerEnum25 to allow for nullability.
+@interface FillerEnum25Box : NSObject
+@property(nonatomic, assign) FillerEnum25 value;
+- (instancetype)initWithValue:(FillerEnum25)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum26) {
+  FillerEnum26FillerMember26 = 0,
+};
+
+/// Wrapper for FillerEnum26 to allow for nullability.
+@interface FillerEnum26Box : NSObject
+@property(nonatomic, assign) FillerEnum26 value;
+- (instancetype)initWithValue:(FillerEnum26)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum27) {
+  FillerEnum27FillerMember27 = 0,
+};
+
+/// Wrapper for FillerEnum27 to allow for nullability.
+@interface FillerEnum27Box : NSObject
+@property(nonatomic, assign) FillerEnum27 value;
+- (instancetype)initWithValue:(FillerEnum27)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum28) {
+  FillerEnum28FillerMember28 = 0,
+};
+
+/// Wrapper for FillerEnum28 to allow for nullability.
+@interface FillerEnum28Box : NSObject
+@property(nonatomic, assign) FillerEnum28 value;
+- (instancetype)initWithValue:(FillerEnum28)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum29) {
+  FillerEnum29FillerMember29 = 0,
+};
+
+/// Wrapper for FillerEnum29 to allow for nullability.
+@interface FillerEnum29Box : NSObject
+@property(nonatomic, assign) FillerEnum29 value;
+- (instancetype)initWithValue:(FillerEnum29)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum30) {
+  FillerEnum30FillerMember30 = 0,
+};
+
+/// Wrapper for FillerEnum30 to allow for nullability.
+@interface FillerEnum30Box : NSObject
+@property(nonatomic, assign) FillerEnum30 value;
+- (instancetype)initWithValue:(FillerEnum30)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum31) {
+  FillerEnum31FillerMember31 = 0,
+};
+
+/// Wrapper for FillerEnum31 to allow for nullability.
+@interface FillerEnum31Box : NSObject
+@property(nonatomic, assign) FillerEnum31 value;
+- (instancetype)initWithValue:(FillerEnum31)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum32) {
+  FillerEnum32FillerMember32 = 0,
+};
+
+/// Wrapper for FillerEnum32 to allow for nullability.
+@interface FillerEnum32Box : NSObject
+@property(nonatomic, assign) FillerEnum32 value;
+- (instancetype)initWithValue:(FillerEnum32)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum33) {
+  FillerEnum33FillerMember33 = 0,
+};
+
+/// Wrapper for FillerEnum33 to allow for nullability.
+@interface FillerEnum33Box : NSObject
+@property(nonatomic, assign) FillerEnum33 value;
+- (instancetype)initWithValue:(FillerEnum33)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum34) {
+  FillerEnum34FillerMember34 = 0,
+};
+
+/// Wrapper for FillerEnum34 to allow for nullability.
+@interface FillerEnum34Box : NSObject
+@property(nonatomic, assign) FillerEnum34 value;
+- (instancetype)initWithValue:(FillerEnum34)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum35) {
+  FillerEnum35FillerMember35 = 0,
+};
+
+/// Wrapper for FillerEnum35 to allow for nullability.
+@interface FillerEnum35Box : NSObject
+@property(nonatomic, assign) FillerEnum35 value;
+- (instancetype)initWithValue:(FillerEnum35)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum36) {
+  FillerEnum36FillerMember36 = 0,
+};
+
+/// Wrapper for FillerEnum36 to allow for nullability.
+@interface FillerEnum36Box : NSObject
+@property(nonatomic, assign) FillerEnum36 value;
+- (instancetype)initWithValue:(FillerEnum36)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum37) {
+  FillerEnum37FillerMember37 = 0,
+};
+
+/// Wrapper for FillerEnum37 to allow for nullability.
+@interface FillerEnum37Box : NSObject
+@property(nonatomic, assign) FillerEnum37 value;
+- (instancetype)initWithValue:(FillerEnum37)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum38) {
+  FillerEnum38FillerMember38 = 0,
+};
+
+/// Wrapper for FillerEnum38 to allow for nullability.
+@interface FillerEnum38Box : NSObject
+@property(nonatomic, assign) FillerEnum38 value;
+- (instancetype)initWithValue:(FillerEnum38)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum39) {
+  FillerEnum39FillerMember39 = 0,
+};
+
+/// Wrapper for FillerEnum39 to allow for nullability.
+@interface FillerEnum39Box : NSObject
+@property(nonatomic, assign) FillerEnum39 value;
+- (instancetype)initWithValue:(FillerEnum39)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum40) {
+  FillerEnum40FillerMember40 = 0,
+};
+
+/// Wrapper for FillerEnum40 to allow for nullability.
+@interface FillerEnum40Box : NSObject
+@property(nonatomic, assign) FillerEnum40 value;
+- (instancetype)initWithValue:(FillerEnum40)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum41) {
+  FillerEnum41FillerMember41 = 0,
+};
+
+/// Wrapper for FillerEnum41 to allow for nullability.
+@interface FillerEnum41Box : NSObject
+@property(nonatomic, assign) FillerEnum41 value;
+- (instancetype)initWithValue:(FillerEnum41)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum42) {
+  FillerEnum42FillerMember42 = 0,
+};
+
+/// Wrapper for FillerEnum42 to allow for nullability.
+@interface FillerEnum42Box : NSObject
+@property(nonatomic, assign) FillerEnum42 value;
+- (instancetype)initWithValue:(FillerEnum42)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum43) {
+  FillerEnum43FillerMember43 = 0,
+};
+
+/// Wrapper for FillerEnum43 to allow for nullability.
+@interface FillerEnum43Box : NSObject
+@property(nonatomic, assign) FillerEnum43 value;
+- (instancetype)initWithValue:(FillerEnum43)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum44) {
+  FillerEnum44FillerMember44 = 0,
+};
+
+/// Wrapper for FillerEnum44 to allow for nullability.
+@interface FillerEnum44Box : NSObject
+@property(nonatomic, assign) FillerEnum44 value;
+- (instancetype)initWithValue:(FillerEnum44)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum45) {
+  FillerEnum45FillerMember45 = 0,
+};
+
+/// Wrapper for FillerEnum45 to allow for nullability.
+@interface FillerEnum45Box : NSObject
+@property(nonatomic, assign) FillerEnum45 value;
+- (instancetype)initWithValue:(FillerEnum45)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum46) {
+  FillerEnum46FillerMember46 = 0,
+};
+
+/// Wrapper for FillerEnum46 to allow for nullability.
+@interface FillerEnum46Box : NSObject
+@property(nonatomic, assign) FillerEnum46 value;
+- (instancetype)initWithValue:(FillerEnum46)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum47) {
+  FillerEnum47FillerMember47 = 0,
+};
+
+/// Wrapper for FillerEnum47 to allow for nullability.
+@interface FillerEnum47Box : NSObject
+@property(nonatomic, assign) FillerEnum47 value;
+- (instancetype)initWithValue:(FillerEnum47)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum48) {
+  FillerEnum48FillerMember48 = 0,
+};
+
+/// Wrapper for FillerEnum48 to allow for nullability.
+@interface FillerEnum48Box : NSObject
+@property(nonatomic, assign) FillerEnum48 value;
+- (instancetype)initWithValue:(FillerEnum48)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum49) {
+  FillerEnum49FillerMember49 = 0,
+};
+
+/// Wrapper for FillerEnum49 to allow for nullability.
+@interface FillerEnum49Box : NSObject
+@property(nonatomic, assign) FillerEnum49 value;
+- (instancetype)initWithValue:(FillerEnum49)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum50) {
+  FillerEnum50FillerMember50 = 0,
+};
+
+/// Wrapper for FillerEnum50 to allow for nullability.
+@interface FillerEnum50Box : NSObject
+@property(nonatomic, assign) FillerEnum50 value;
+- (instancetype)initWithValue:(FillerEnum50)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum51) {
+  FillerEnum51FillerMember51 = 0,
+};
+
+/// Wrapper for FillerEnum51 to allow for nullability.
+@interface FillerEnum51Box : NSObject
+@property(nonatomic, assign) FillerEnum51 value;
+- (instancetype)initWithValue:(FillerEnum51)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum52) {
+  FillerEnum52FillerMember52 = 0,
+};
+
+/// Wrapper for FillerEnum52 to allow for nullability.
+@interface FillerEnum52Box : NSObject
+@property(nonatomic, assign) FillerEnum52 value;
+- (instancetype)initWithValue:(FillerEnum52)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum53) {
+  FillerEnum53FillerMember53 = 0,
+};
+
+/// Wrapper for FillerEnum53 to allow for nullability.
+@interface FillerEnum53Box : NSObject
+@property(nonatomic, assign) FillerEnum53 value;
+- (instancetype)initWithValue:(FillerEnum53)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum54) {
+  FillerEnum54FillerMember54 = 0,
+};
+
+/// Wrapper for FillerEnum54 to allow for nullability.
+@interface FillerEnum54Box : NSObject
+@property(nonatomic, assign) FillerEnum54 value;
+- (instancetype)initWithValue:(FillerEnum54)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum55) {
+  FillerEnum55FillerMember55 = 0,
+};
+
+/// Wrapper for FillerEnum55 to allow for nullability.
+@interface FillerEnum55Box : NSObject
+@property(nonatomic, assign) FillerEnum55 value;
+- (instancetype)initWithValue:(FillerEnum55)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum56) {
+  FillerEnum56FillerMember56 = 0,
+};
+
+/// Wrapper for FillerEnum56 to allow for nullability.
+@interface FillerEnum56Box : NSObject
+@property(nonatomic, assign) FillerEnum56 value;
+- (instancetype)initWithValue:(FillerEnum56)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum57) {
+  FillerEnum57FillerMember57 = 0,
+};
+
+/// Wrapper for FillerEnum57 to allow for nullability.
+@interface FillerEnum57Box : NSObject
+@property(nonatomic, assign) FillerEnum57 value;
+- (instancetype)initWithValue:(FillerEnum57)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum58) {
+  FillerEnum58FillerMember58 = 0,
+};
+
+/// Wrapper for FillerEnum58 to allow for nullability.
+@interface FillerEnum58Box : NSObject
+@property(nonatomic, assign) FillerEnum58 value;
+- (instancetype)initWithValue:(FillerEnum58)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum59) {
+  FillerEnum59FillerMember59 = 0,
+};
+
+/// Wrapper for FillerEnum59 to allow for nullability.
+@interface FillerEnum59Box : NSObject
+@property(nonatomic, assign) FillerEnum59 value;
+- (instancetype)initWithValue:(FillerEnum59)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum60) {
+  FillerEnum60FillerMember60 = 0,
+};
+
+/// Wrapper for FillerEnum60 to allow for nullability.
+@interface FillerEnum60Box : NSObject
+@property(nonatomic, assign) FillerEnum60 value;
+- (instancetype)initWithValue:(FillerEnum60)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum61) {
+  FillerEnum61FillerMember61 = 0,
+};
+
+/// Wrapper for FillerEnum61 to allow for nullability.
+@interface FillerEnum61Box : NSObject
+@property(nonatomic, assign) FillerEnum61 value;
+- (instancetype)initWithValue:(FillerEnum61)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum62) {
+  FillerEnum62FillerMember62 = 0,
+};
+
+/// Wrapper for FillerEnum62 to allow for nullability.
+@interface FillerEnum62Box : NSObject
+@property(nonatomic, assign) FillerEnum62 value;
+- (instancetype)initWithValue:(FillerEnum62)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum63) {
+  FillerEnum63FillerMember63 = 0,
+};
+
+/// Wrapper for FillerEnum63 to allow for nullability.
+@interface FillerEnum63Box : NSObject
+@property(nonatomic, assign) FillerEnum63 value;
+- (instancetype)initWithValue:(FillerEnum63)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum64) {
+  FillerEnum64FillerMember64 = 0,
+};
+
+/// Wrapper for FillerEnum64 to allow for nullability.
+@interface FillerEnum64Box : NSObject
+@property(nonatomic, assign) FillerEnum64 value;
+- (instancetype)initWithValue:(FillerEnum64)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum65) {
+  FillerEnum65FillerMember65 = 0,
+};
+
+/// Wrapper for FillerEnum65 to allow for nullability.
+@interface FillerEnum65Box : NSObject
+@property(nonatomic, assign) FillerEnum65 value;
+- (instancetype)initWithValue:(FillerEnum65)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum66) {
+  FillerEnum66FillerMember66 = 0,
+};
+
+/// Wrapper for FillerEnum66 to allow for nullability.
+@interface FillerEnum66Box : NSObject
+@property(nonatomic, assign) FillerEnum66 value;
+- (instancetype)initWithValue:(FillerEnum66)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum67) {
+  FillerEnum67FillerMember67 = 0,
+};
+
+/// Wrapper for FillerEnum67 to allow for nullability.
+@interface FillerEnum67Box : NSObject
+@property(nonatomic, assign) FillerEnum67 value;
+- (instancetype)initWithValue:(FillerEnum67)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum68) {
+  FillerEnum68FillerMember68 = 0,
+};
+
+/// Wrapper for FillerEnum68 to allow for nullability.
+@interface FillerEnum68Box : NSObject
+@property(nonatomic, assign) FillerEnum68 value;
+- (instancetype)initWithValue:(FillerEnum68)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum69) {
+  FillerEnum69FillerMember69 = 0,
+};
+
+/// Wrapper for FillerEnum69 to allow for nullability.
+@interface FillerEnum69Box : NSObject
+@property(nonatomic, assign) FillerEnum69 value;
+- (instancetype)initWithValue:(FillerEnum69)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum70) {
+  FillerEnum70FillerMember70 = 0,
+};
+
+/// Wrapper for FillerEnum70 to allow for nullability.
+@interface FillerEnum70Box : NSObject
+@property(nonatomic, assign) FillerEnum70 value;
+- (instancetype)initWithValue:(FillerEnum70)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum71) {
+  FillerEnum71FillerMember71 = 0,
+};
+
+/// Wrapper for FillerEnum71 to allow for nullability.
+@interface FillerEnum71Box : NSObject
+@property(nonatomic, assign) FillerEnum71 value;
+- (instancetype)initWithValue:(FillerEnum71)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum72) {
+  FillerEnum72FillerMember72 = 0,
+};
+
+/// Wrapper for FillerEnum72 to allow for nullability.
+@interface FillerEnum72Box : NSObject
+@property(nonatomic, assign) FillerEnum72 value;
+- (instancetype)initWithValue:(FillerEnum72)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum73) {
+  FillerEnum73FillerMember73 = 0,
+};
+
+/// Wrapper for FillerEnum73 to allow for nullability.
+@interface FillerEnum73Box : NSObject
+@property(nonatomic, assign) FillerEnum73 value;
+- (instancetype)initWithValue:(FillerEnum73)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum74) {
+  FillerEnum74FillerMember74 = 0,
+};
+
+/// Wrapper for FillerEnum74 to allow for nullability.
+@interface FillerEnum74Box : NSObject
+@property(nonatomic, assign) FillerEnum74 value;
+- (instancetype)initWithValue:(FillerEnum74)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum75) {
+  FillerEnum75FillerMember75 = 0,
+};
+
+/// Wrapper for FillerEnum75 to allow for nullability.
+@interface FillerEnum75Box : NSObject
+@property(nonatomic, assign) FillerEnum75 value;
+- (instancetype)initWithValue:(FillerEnum75)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum76) {
+  FillerEnum76FillerMember76 = 0,
+};
+
+/// Wrapper for FillerEnum76 to allow for nullability.
+@interface FillerEnum76Box : NSObject
+@property(nonatomic, assign) FillerEnum76 value;
+- (instancetype)initWithValue:(FillerEnum76)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum77) {
+  FillerEnum77FillerMember77 = 0,
+};
+
+/// Wrapper for FillerEnum77 to allow for nullability.
+@interface FillerEnum77Box : NSObject
+@property(nonatomic, assign) FillerEnum77 value;
+- (instancetype)initWithValue:(FillerEnum77)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum78) {
+  FillerEnum78FillerMember78 = 0,
+};
+
+/// Wrapper for FillerEnum78 to allow for nullability.
+@interface FillerEnum78Box : NSObject
+@property(nonatomic, assign) FillerEnum78 value;
+- (instancetype)initWithValue:(FillerEnum78)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum79) {
+  FillerEnum79FillerMember79 = 0,
+};
+
+/// Wrapper for FillerEnum79 to allow for nullability.
+@interface FillerEnum79Box : NSObject
+@property(nonatomic, assign) FillerEnum79 value;
+- (instancetype)initWithValue:(FillerEnum79)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum80) {
+  FillerEnum80FillerMember80 = 0,
+};
+
+/// Wrapper for FillerEnum80 to allow for nullability.
+@interface FillerEnum80Box : NSObject
+@property(nonatomic, assign) FillerEnum80 value;
+- (instancetype)initWithValue:(FillerEnum80)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum81) {
+  FillerEnum81FillerMember81 = 0,
+};
+
+/// Wrapper for FillerEnum81 to allow for nullability.
+@interface FillerEnum81Box : NSObject
+@property(nonatomic, assign) FillerEnum81 value;
+- (instancetype)initWithValue:(FillerEnum81)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum82) {
+  FillerEnum82FillerMember82 = 0,
+};
+
+/// Wrapper for FillerEnum82 to allow for nullability.
+@interface FillerEnum82Box : NSObject
+@property(nonatomic, assign) FillerEnum82 value;
+- (instancetype)initWithValue:(FillerEnum82)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum83) {
+  FillerEnum83FillerMember83 = 0,
+};
+
+/// Wrapper for FillerEnum83 to allow for nullability.
+@interface FillerEnum83Box : NSObject
+@property(nonatomic, assign) FillerEnum83 value;
+- (instancetype)initWithValue:(FillerEnum83)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum84) {
+  FillerEnum84FillerMember84 = 0,
+};
+
+/// Wrapper for FillerEnum84 to allow for nullability.
+@interface FillerEnum84Box : NSObject
+@property(nonatomic, assign) FillerEnum84 value;
+- (instancetype)initWithValue:(FillerEnum84)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum85) {
+  FillerEnum85FillerMember85 = 0,
+};
+
+/// Wrapper for FillerEnum85 to allow for nullability.
+@interface FillerEnum85Box : NSObject
+@property(nonatomic, assign) FillerEnum85 value;
+- (instancetype)initWithValue:(FillerEnum85)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum86) {
+  FillerEnum86FillerMember86 = 0,
+};
+
+/// Wrapper for FillerEnum86 to allow for nullability.
+@interface FillerEnum86Box : NSObject
+@property(nonatomic, assign) FillerEnum86 value;
+- (instancetype)initWithValue:(FillerEnum86)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum87) {
+  FillerEnum87FillerMember87 = 0,
+};
+
+/// Wrapper for FillerEnum87 to allow for nullability.
+@interface FillerEnum87Box : NSObject
+@property(nonatomic, assign) FillerEnum87 value;
+- (instancetype)initWithValue:(FillerEnum87)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum88) {
+  FillerEnum88FillerMember88 = 0,
+};
+
+/// Wrapper for FillerEnum88 to allow for nullability.
+@interface FillerEnum88Box : NSObject
+@property(nonatomic, assign) FillerEnum88 value;
+- (instancetype)initWithValue:(FillerEnum88)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum89) {
+  FillerEnum89FillerMember89 = 0,
+};
+
+/// Wrapper for FillerEnum89 to allow for nullability.
+@interface FillerEnum89Box : NSObject
+@property(nonatomic, assign) FillerEnum89 value;
+- (instancetype)initWithValue:(FillerEnum89)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum90) {
+  FillerEnum90FillerMember90 = 0,
+};
+
+/// Wrapper for FillerEnum90 to allow for nullability.
+@interface FillerEnum90Box : NSObject
+@property(nonatomic, assign) FillerEnum90 value;
+- (instancetype)initWithValue:(FillerEnum90)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum91) {
+  FillerEnum91FillerMember91 = 0,
+};
+
+/// Wrapper for FillerEnum91 to allow for nullability.
+@interface FillerEnum91Box : NSObject
+@property(nonatomic, assign) FillerEnum91 value;
+- (instancetype)initWithValue:(FillerEnum91)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum92) {
+  FillerEnum92FillerMember92 = 0,
+};
+
+/// Wrapper for FillerEnum92 to allow for nullability.
+@interface FillerEnum92Box : NSObject
+@property(nonatomic, assign) FillerEnum92 value;
+- (instancetype)initWithValue:(FillerEnum92)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum93) {
+  FillerEnum93FillerMember93 = 0,
+};
+
+/// Wrapper for FillerEnum93 to allow for nullability.
+@interface FillerEnum93Box : NSObject
+@property(nonatomic, assign) FillerEnum93 value;
+- (instancetype)initWithValue:(FillerEnum93)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum94) {
+  FillerEnum94FillerMember94 = 0,
+};
+
+/// Wrapper for FillerEnum94 to allow for nullability.
+@interface FillerEnum94Box : NSObject
+@property(nonatomic, assign) FillerEnum94 value;
+- (instancetype)initWithValue:(FillerEnum94)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum95) {
+  FillerEnum95FillerMember95 = 0,
+};
+
+/// Wrapper for FillerEnum95 to allow for nullability.
+@interface FillerEnum95Box : NSObject
+@property(nonatomic, assign) FillerEnum95 value;
+- (instancetype)initWithValue:(FillerEnum95)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum96) {
+  FillerEnum96FillerMember96 = 0,
+};
+
+/// Wrapper for FillerEnum96 to allow for nullability.
+@interface FillerEnum96Box : NSObject
+@property(nonatomic, assign) FillerEnum96 value;
+- (instancetype)initWithValue:(FillerEnum96)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum97) {
+  FillerEnum97FillerMember97 = 0,
+};
+
+/// Wrapper for FillerEnum97 to allow for nullability.
+@interface FillerEnum97Box : NSObject
+@property(nonatomic, assign) FillerEnum97 value;
+- (instancetype)initWithValue:(FillerEnum97)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum98) {
+  FillerEnum98FillerMember98 = 0,
+};
+
+/// Wrapper for FillerEnum98 to allow for nullability.
+@interface FillerEnum98Box : NSObject
+@property(nonatomic, assign) FillerEnum98 value;
+- (instancetype)initWithValue:(FillerEnum98)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum99) {
+  FillerEnum99FillerMember99 = 0,
+};
+
+/// Wrapper for FillerEnum99 to allow for nullability.
+@interface FillerEnum99Box : NSObject
+@property(nonatomic, assign) FillerEnum99 value;
+- (instancetype)initWithValue:(FillerEnum99)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum100) {
+  FillerEnum100FillerMember100 = 0,
+};
+
+/// Wrapper for FillerEnum100 to allow for nullability.
+@interface FillerEnum100Box : NSObject
+@property(nonatomic, assign) FillerEnum100 value;
+- (instancetype)initWithValue:(FillerEnum100)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum101) {
+  FillerEnum101FillerMember101 = 0,
+};
+
+/// Wrapper for FillerEnum101 to allow for nullability.
+@interface FillerEnum101Box : NSObject
+@property(nonatomic, assign) FillerEnum101 value;
+- (instancetype)initWithValue:(FillerEnum101)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum102) {
+  FillerEnum102FillerMember102 = 0,
+};
+
+/// Wrapper for FillerEnum102 to allow for nullability.
+@interface FillerEnum102Box : NSObject
+@property(nonatomic, assign) FillerEnum102 value;
+- (instancetype)initWithValue:(FillerEnum102)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum103) {
+  FillerEnum103FillerMember103 = 0,
+};
+
+/// Wrapper for FillerEnum103 to allow for nullability.
+@interface FillerEnum103Box : NSObject
+@property(nonatomic, assign) FillerEnum103 value;
+- (instancetype)initWithValue:(FillerEnum103)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum104) {
+  FillerEnum104FillerMember104 = 0,
+};
+
+/// Wrapper for FillerEnum104 to allow for nullability.
+@interface FillerEnum104Box : NSObject
+@property(nonatomic, assign) FillerEnum104 value;
+- (instancetype)initWithValue:(FillerEnum104)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum105) {
+  FillerEnum105FillerMember105 = 0,
+};
+
+/// Wrapper for FillerEnum105 to allow for nullability.
+@interface FillerEnum105Box : NSObject
+@property(nonatomic, assign) FillerEnum105 value;
+- (instancetype)initWithValue:(FillerEnum105)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum106) {
+  FillerEnum106FillerMember106 = 0,
+};
+
+/// Wrapper for FillerEnum106 to allow for nullability.
+@interface FillerEnum106Box : NSObject
+@property(nonatomic, assign) FillerEnum106 value;
+- (instancetype)initWithValue:(FillerEnum106)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum107) {
+  FillerEnum107FillerMember107 = 0,
+};
+
+/// Wrapper for FillerEnum107 to allow for nullability.
+@interface FillerEnum107Box : NSObject
+@property(nonatomic, assign) FillerEnum107 value;
+- (instancetype)initWithValue:(FillerEnum107)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum108) {
+  FillerEnum108FillerMember108 = 0,
+};
+
+/// Wrapper for FillerEnum108 to allow for nullability.
+@interface FillerEnum108Box : NSObject
+@property(nonatomic, assign) FillerEnum108 value;
+- (instancetype)initWithValue:(FillerEnum108)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum109) {
+  FillerEnum109FillerMember109 = 0,
+};
+
+/// Wrapper for FillerEnum109 to allow for nullability.
+@interface FillerEnum109Box : NSObject
+@property(nonatomic, assign) FillerEnum109 value;
+- (instancetype)initWithValue:(FillerEnum109)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum110) {
+  FillerEnum110FillerMember110 = 0,
+};
+
+/// Wrapper for FillerEnum110 to allow for nullability.
+@interface FillerEnum110Box : NSObject
+@property(nonatomic, assign) FillerEnum110 value;
+- (instancetype)initWithValue:(FillerEnum110)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum111) {
+  FillerEnum111FillerMember111 = 0,
+};
+
+/// Wrapper for FillerEnum111 to allow for nullability.
+@interface FillerEnum111Box : NSObject
+@property(nonatomic, assign) FillerEnum111 value;
+- (instancetype)initWithValue:(FillerEnum111)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum112) {
+  FillerEnum112FillerMember112 = 0,
+};
+
+/// Wrapper for FillerEnum112 to allow for nullability.
+@interface FillerEnum112Box : NSObject
+@property(nonatomic, assign) FillerEnum112 value;
+- (instancetype)initWithValue:(FillerEnum112)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum113) {
+  FillerEnum113FillerMember113 = 0,
+};
+
+/// Wrapper for FillerEnum113 to allow for nullability.
+@interface FillerEnum113Box : NSObject
+@property(nonatomic, assign) FillerEnum113 value;
+- (instancetype)initWithValue:(FillerEnum113)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum114) {
+  FillerEnum114FillerMember114 = 0,
+};
+
+/// Wrapper for FillerEnum114 to allow for nullability.
+@interface FillerEnum114Box : NSObject
+@property(nonatomic, assign) FillerEnum114 value;
+- (instancetype)initWithValue:(FillerEnum114)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum115) {
+  FillerEnum115FillerMember115 = 0,
+};
+
+/// Wrapper for FillerEnum115 to allow for nullability.
+@interface FillerEnum115Box : NSObject
+@property(nonatomic, assign) FillerEnum115 value;
+- (instancetype)initWithValue:(FillerEnum115)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum116) {
+  FillerEnum116FillerMember116 = 0,
+};
+
+/// Wrapper for FillerEnum116 to allow for nullability.
+@interface FillerEnum116Box : NSObject
+@property(nonatomic, assign) FillerEnum116 value;
+- (instancetype)initWithValue:(FillerEnum116)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum117) {
+  FillerEnum117FillerMember117 = 0,
+};
+
+/// Wrapper for FillerEnum117 to allow for nullability.
+@interface FillerEnum117Box : NSObject
+@property(nonatomic, assign) FillerEnum117 value;
+- (instancetype)initWithValue:(FillerEnum117)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum118) {
+  FillerEnum118FillerMember118 = 0,
+};
+
+/// Wrapper for FillerEnum118 to allow for nullability.
+@interface FillerEnum118Box : NSObject
+@property(nonatomic, assign) FillerEnum118 value;
+- (instancetype)initWithValue:(FillerEnum118)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum119) {
+  FillerEnum119FillerMember119 = 0,
+};
+
+/// Wrapper for FillerEnum119 to allow for nullability.
+@interface FillerEnum119Box : NSObject
+@property(nonatomic, assign) FillerEnum119 value;
+- (instancetype)initWithValue:(FillerEnum119)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum120) {
+  FillerEnum120FillerMember120 = 0,
+};
+
+/// Wrapper for FillerEnum120 to allow for nullability.
+@interface FillerEnum120Box : NSObject
+@property(nonatomic, assign) FillerEnum120 value;
+- (instancetype)initWithValue:(FillerEnum120)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum121) {
+  FillerEnum121FillerMember121 = 0,
+};
+
+/// Wrapper for FillerEnum121 to allow for nullability.
+@interface FillerEnum121Box : NSObject
+@property(nonatomic, assign) FillerEnum121 value;
+- (instancetype)initWithValue:(FillerEnum121)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum122) {
+  FillerEnum122FillerMember122 = 0,
+};
+
+/// Wrapper for FillerEnum122 to allow for nullability.
+@interface FillerEnum122Box : NSObject
+@property(nonatomic, assign) FillerEnum122 value;
+- (instancetype)initWithValue:(FillerEnum122)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum123) {
+  FillerEnum123FillerMember123 = 0,
+};
+
+/// Wrapper for FillerEnum123 to allow for nullability.
+@interface FillerEnum123Box : NSObject
+@property(nonatomic, assign) FillerEnum123 value;
+- (instancetype)initWithValue:(FillerEnum123)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FillerEnum124) {
+  FillerEnum124FillerMember124 = 0,
+};
+
+/// Wrapper for FillerEnum124 to allow for nullability.
+@interface FillerEnum124Box : NSObject
+@property(nonatomic, assign) FillerEnum124 value;
+- (instancetype)initWithValue:(FillerEnum124)value;
+@end
+
 typedef NS_ENUM(NSUInteger, AnEnum) {
   AnEnumOne = 0,
   AnEnumTwo = 1,
@@ -26,6 +1276,16 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @interface AnEnumBox : NSObject
 @property(nonatomic, assign) AnEnum value;
 - (instancetype)initWithValue:(AnEnum)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AnotherEnum) {
+  AnotherEnumJustInCase = 0,
+};
+
+/// Wrapper for AnotherEnum to allow for nullability.
+@interface AnotherEnumBox : NSObject
+@property(nonatomic, assign) AnotherEnum value;
+- (instancetype)initWithValue:(AnotherEnum)value;
 @end
 
 @class AllTypes;
@@ -47,6 +1307,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
                   a8ByteArray:(FlutterStandardTypedData *)a8ByteArray
                   aFloatArray:(FlutterStandardTypedData *)aFloatArray
                        anEnum:(AnEnum)anEnum
+                  anotherEnum:(AnotherEnum)anotherEnum
                       aString:(NSString *)aString
                      anObject:(id)anObject
                          list:(NSArray<id> *)list
@@ -64,6 +1325,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, strong) FlutterStandardTypedData *a8ByteArray;
 @property(nonatomic, strong) FlutterStandardTypedData *aFloatArray;
 @property(nonatomic, assign) AnEnum anEnum;
+@property(nonatomic, assign) AnotherEnum anotherEnum;
 @property(nonatomic, copy) NSString *aString;
 @property(nonatomic, strong) id anObject;
 @property(nonatomic, copy) NSArray<id> *list;
@@ -89,6 +1351,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(nullable AnEnumBox *)aNullableEnum
+                  anotherNullableEnum:(nullable AnotherEnumBox *)anotherNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject
                      allNullableTypes:(nullable AllNullableTypes *)allNullableTypes
@@ -112,6 +1375,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
     NSDictionary<NSString *, NSString *> *nullableMapWithAnnotations;
 @property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *nullableMapWithObject;
 @property(nonatomic, strong, nullable) AnEnumBox *aNullableEnum;
+@property(nonatomic, strong, nullable) AnotherEnumBox *anotherNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @property(nonatomic, strong, nullable) id aNullableObject;
 @property(nonatomic, strong, nullable) AllNullableTypes *allNullableTypes;
@@ -141,6 +1405,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(nullable AnEnumBox *)aNullableEnum
+                  anotherNullableEnum:(nullable AnotherEnumBox *)anotherNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject
                                  list:(nullable NSArray<id> *)list
@@ -162,6 +1427,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
     NSDictionary<NSString *, NSString *> *nullableMapWithAnnotations;
 @property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *nullableMapWithObject;
 @property(nonatomic, strong, nullable) AnEnumBox *aNullableEnum;
+@property(nonatomic, strong, nullable) AnotherEnumBox *anotherNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @property(nonatomic, strong, nullable) id aNullableObject;
 @property(nonatomic, copy, nullable) NSArray<id> *list;
@@ -194,6 +1460,14 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @interface TestMessage : NSObject
 + (instancetype)makeWithTestList:(nullable NSArray<id> *)testList;
 @property(nonatomic, copy, nullable) NSArray<id> *testList;
+@end
+
+@interface __pigeon_CodecOverflow : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithType:(NSInteger)type wrapped:(nullable id)wrapped;
+@property(nonatomic, assign) NSInteger type;
+@property(nonatomic, strong, nullable) id wrapped;
 @end
 
 /// The codec used by all APIs.
@@ -261,6 +1535,11 @@ NSObject<FlutterMessageCodec> *GetCoreTestsCodec(void);
 ///
 /// @return `nil` only when `error != nil`.
 - (AnEnumBox *_Nullable)echoEnum:(AnEnum)anEnum error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed enum to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (AnotherEnumBox *_Nullable)echoAnotherEnum:(AnotherEnum)anotherEnum
+                                       error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the default string.
 ///
 /// @return `nil` only when `error != nil`.
@@ -338,6 +1617,8 @@ NSObject<FlutterMessageCodec> *GetCoreTestsCodec(void);
                                                      error:(FlutterError *_Nullable *_Nonnull)error;
 - (AnEnumBox *_Nullable)echoNullableEnum:(nullable AnEnumBox *)anEnumBoxed
                                    error:(FlutterError *_Nullable *_Nonnull)error;
+- (AnotherEnumBox *_Nullable)echoAnotherNullableEnum:(nullable AnotherEnumBox *)anotherEnumBoxed
+                                               error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns passed in int.
 - (nullable NSNumber *)echoOptionalNullableInt:(nullable NSNumber *)aNullableInt
                                          error:(FlutterError *_Nullable *_Nonnull)error;
@@ -376,6 +1657,10 @@ NSObject<FlutterMessageCodec> *GetCoreTestsCodec(void);
 /// Returns the passed enum, to test asynchronous serialization and deserialization.
 - (void)echoAsyncEnum:(AnEnum)anEnum
            completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed enum, to test asynchronous serialization and deserialization.
+- (void)echoAnotherAsyncEnum:(AnotherEnum)anotherEnum
+                  completion:
+                      (void (^)(AnotherEnumBox *_Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async function returning a value.
 - (void)throwAsyncErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async void function.
@@ -426,6 +1711,10 @@ NSObject<FlutterMessageCodec> *GetCoreTestsCodec(void);
 /// Returns the passed enum, to test asynchronous serialization and deserialization.
 - (void)echoAsyncNullableEnum:(nullable AnEnumBox *)anEnumBoxed
                    completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed enum, to test asynchronous serialization and deserialization.
+- (void)echoAnotherAsyncNullableEnum:(nullable AnotherEnumBox *)anotherEnumBoxed
+                          completion:(void (^)(AnotherEnumBox *_Nullable,
+                                               FlutterError *_Nullable))completion;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterThrowErrorWithCompletion:(void (^)(id _Nullable,
                                                       FlutterError *_Nullable))completion;
@@ -473,6 +1762,9 @@ NSObject<FlutterMessageCodec> *GetCoreTestsCodec(void);
                                      FlutterError *_Nullable))completion;
 - (void)callFlutterEchoEnum:(AnEnum)anEnum
                  completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoAnotherEnum:(AnotherEnum)anotherEnum
+                        completion:(void (^)(AnotherEnumBox *_Nullable,
+                                             FlutterError *_Nullable))completion;
 - (void)callFlutterEchoNullableBool:(nullable NSNumber *)aBool
                          completion:
                              (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
@@ -497,6 +1789,9 @@ NSObject<FlutterMessageCodec> *GetCoreTestsCodec(void);
 - (void)callFlutterEchoNullableEnum:(nullable AnEnumBox *)anEnumBoxed
                          completion:
                              (void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoAnotherNullableEnum:(nullable AnotherEnumBox *)anotherEnumBoxed
+                                completion:(void (^)(AnotherEnumBox *_Nullable,
+                                                     FlutterError *_Nullable))completion;
 - (void)callFlutterSmallApiEchoString:(NSString *)aString
                            completion:
                                (void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
@@ -577,6 +1872,9 @@ extern void SetUpHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> bin
 /// Returns the passed enum to test serialization and deserialization.
 - (void)echoEnum:(AnEnum)anEnum
       completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed enum to test serialization and deserialization.
+- (void)echoAnotherEnum:(AnotherEnum)anotherEnum
+             completion:(void (^)(AnotherEnumBox *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed boolean, to test serialization and deserialization.
 - (void)echoNullableBool:(nullable NSNumber *)aBool
               completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
@@ -603,6 +1901,10 @@ extern void SetUpHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> bin
 /// Returns the passed enum to test serialization and deserialization.
 - (void)echoNullableEnum:(nullable AnEnumBox *)anEnumBoxed
               completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed enum to test serialization and deserialization.
+- (void)echoAnotherNullableEnum:(nullable AnotherEnumBox *)anotherEnumBoxed
+                     completion:
+                         (void (^)(AnotherEnumBox *_Nullable, FlutterError *_Nullable))completion;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic asynchronous calling.
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion;

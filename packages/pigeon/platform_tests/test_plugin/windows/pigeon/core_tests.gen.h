@@ -65,6 +65,256 @@ class ErrorOr {
   std::variant<T, FlutterError> v_;
 };
 
+enum class FillerEnum0 { kFillerMember0 = 0 };
+
+enum class FillerEnum1 { kFillerMember1 = 0 };
+
+enum class FillerEnum2 { kFillerMember2 = 0 };
+
+enum class FillerEnum3 { kFillerMember3 = 0 };
+
+enum class FillerEnum4 { kFillerMember4 = 0 };
+
+enum class FillerEnum5 { kFillerMember5 = 0 };
+
+enum class FillerEnum6 { kFillerMember6 = 0 };
+
+enum class FillerEnum7 { kFillerMember7 = 0 };
+
+enum class FillerEnum8 { kFillerMember8 = 0 };
+
+enum class FillerEnum9 { kFillerMember9 = 0 };
+
+enum class FillerEnum10 { kFillerMember10 = 0 };
+
+enum class FillerEnum11 { kFillerMember11 = 0 };
+
+enum class FillerEnum12 { kFillerMember12 = 0 };
+
+enum class FillerEnum13 { kFillerMember13 = 0 };
+
+enum class FillerEnum14 { kFillerMember14 = 0 };
+
+enum class FillerEnum15 { kFillerMember15 = 0 };
+
+enum class FillerEnum16 { kFillerMember16 = 0 };
+
+enum class FillerEnum17 { kFillerMember17 = 0 };
+
+enum class FillerEnum18 { kFillerMember18 = 0 };
+
+enum class FillerEnum19 { kFillerMember19 = 0 };
+
+enum class FillerEnum20 { kFillerMember20 = 0 };
+
+enum class FillerEnum21 { kFillerMember21 = 0 };
+
+enum class FillerEnum22 { kFillerMember22 = 0 };
+
+enum class FillerEnum23 { kFillerMember23 = 0 };
+
+enum class FillerEnum24 { kFillerMember24 = 0 };
+
+enum class FillerEnum25 { kFillerMember25 = 0 };
+
+enum class FillerEnum26 { kFillerMember26 = 0 };
+
+enum class FillerEnum27 { kFillerMember27 = 0 };
+
+enum class FillerEnum28 { kFillerMember28 = 0 };
+
+enum class FillerEnum29 { kFillerMember29 = 0 };
+
+enum class FillerEnum30 { kFillerMember30 = 0 };
+
+enum class FillerEnum31 { kFillerMember31 = 0 };
+
+enum class FillerEnum32 { kFillerMember32 = 0 };
+
+enum class FillerEnum33 { kFillerMember33 = 0 };
+
+enum class FillerEnum34 { kFillerMember34 = 0 };
+
+enum class FillerEnum35 { kFillerMember35 = 0 };
+
+enum class FillerEnum36 { kFillerMember36 = 0 };
+
+enum class FillerEnum37 { kFillerMember37 = 0 };
+
+enum class FillerEnum38 { kFillerMember38 = 0 };
+
+enum class FillerEnum39 { kFillerMember39 = 0 };
+
+enum class FillerEnum40 { kFillerMember40 = 0 };
+
+enum class FillerEnum41 { kFillerMember41 = 0 };
+
+enum class FillerEnum42 { kFillerMember42 = 0 };
+
+enum class FillerEnum43 { kFillerMember43 = 0 };
+
+enum class FillerEnum44 { kFillerMember44 = 0 };
+
+enum class FillerEnum45 { kFillerMember45 = 0 };
+
+enum class FillerEnum46 { kFillerMember46 = 0 };
+
+enum class FillerEnum47 { kFillerMember47 = 0 };
+
+enum class FillerEnum48 { kFillerMember48 = 0 };
+
+enum class FillerEnum49 { kFillerMember49 = 0 };
+
+enum class FillerEnum50 { kFillerMember50 = 0 };
+
+enum class FillerEnum51 { kFillerMember51 = 0 };
+
+enum class FillerEnum52 { kFillerMember52 = 0 };
+
+enum class FillerEnum53 { kFillerMember53 = 0 };
+
+enum class FillerEnum54 { kFillerMember54 = 0 };
+
+enum class FillerEnum55 { kFillerMember55 = 0 };
+
+enum class FillerEnum56 { kFillerMember56 = 0 };
+
+enum class FillerEnum57 { kFillerMember57 = 0 };
+
+enum class FillerEnum58 { kFillerMember58 = 0 };
+
+enum class FillerEnum59 { kFillerMember59 = 0 };
+
+enum class FillerEnum60 { kFillerMember60 = 0 };
+
+enum class FillerEnum61 { kFillerMember61 = 0 };
+
+enum class FillerEnum62 { kFillerMember62 = 0 };
+
+enum class FillerEnum63 { kFillerMember63 = 0 };
+
+enum class FillerEnum64 { kFillerMember64 = 0 };
+
+enum class FillerEnum65 { kFillerMember65 = 0 };
+
+enum class FillerEnum66 { kFillerMember66 = 0 };
+
+enum class FillerEnum67 { kFillerMember67 = 0 };
+
+enum class FillerEnum68 { kFillerMember68 = 0 };
+
+enum class FillerEnum69 { kFillerMember69 = 0 };
+
+enum class FillerEnum70 { kFillerMember70 = 0 };
+
+enum class FillerEnum71 { kFillerMember71 = 0 };
+
+enum class FillerEnum72 { kFillerMember72 = 0 };
+
+enum class FillerEnum73 { kFillerMember73 = 0 };
+
+enum class FillerEnum74 { kFillerMember74 = 0 };
+
+enum class FillerEnum75 { kFillerMember75 = 0 };
+
+enum class FillerEnum76 { kFillerMember76 = 0 };
+
+enum class FillerEnum77 { kFillerMember77 = 0 };
+
+enum class FillerEnum78 { kFillerMember78 = 0 };
+
+enum class FillerEnum79 { kFillerMember79 = 0 };
+
+enum class FillerEnum80 { kFillerMember80 = 0 };
+
+enum class FillerEnum81 { kFillerMember81 = 0 };
+
+enum class FillerEnum82 { kFillerMember82 = 0 };
+
+enum class FillerEnum83 { kFillerMember83 = 0 };
+
+enum class FillerEnum84 { kFillerMember84 = 0 };
+
+enum class FillerEnum85 { kFillerMember85 = 0 };
+
+enum class FillerEnum86 { kFillerMember86 = 0 };
+
+enum class FillerEnum87 { kFillerMember87 = 0 };
+
+enum class FillerEnum88 { kFillerMember88 = 0 };
+
+enum class FillerEnum89 { kFillerMember89 = 0 };
+
+enum class FillerEnum90 { kFillerMember90 = 0 };
+
+enum class FillerEnum91 { kFillerMember91 = 0 };
+
+enum class FillerEnum92 { kFillerMember92 = 0 };
+
+enum class FillerEnum93 { kFillerMember93 = 0 };
+
+enum class FillerEnum94 { kFillerMember94 = 0 };
+
+enum class FillerEnum95 { kFillerMember95 = 0 };
+
+enum class FillerEnum96 { kFillerMember96 = 0 };
+
+enum class FillerEnum97 { kFillerMember97 = 0 };
+
+enum class FillerEnum98 { kFillerMember98 = 0 };
+
+enum class FillerEnum99 { kFillerMember99 = 0 };
+
+enum class FillerEnum100 { kFillerMember100 = 0 };
+
+enum class FillerEnum101 { kFillerMember101 = 0 };
+
+enum class FillerEnum102 { kFillerMember102 = 0 };
+
+enum class FillerEnum103 { kFillerMember103 = 0 };
+
+enum class FillerEnum104 { kFillerMember104 = 0 };
+
+enum class FillerEnum105 { kFillerMember105 = 0 };
+
+enum class FillerEnum106 { kFillerMember106 = 0 };
+
+enum class FillerEnum107 { kFillerMember107 = 0 };
+
+enum class FillerEnum108 { kFillerMember108 = 0 };
+
+enum class FillerEnum109 { kFillerMember109 = 0 };
+
+enum class FillerEnum110 { kFillerMember110 = 0 };
+
+enum class FillerEnum111 { kFillerMember111 = 0 };
+
+enum class FillerEnum112 { kFillerMember112 = 0 };
+
+enum class FillerEnum113 { kFillerMember113 = 0 };
+
+enum class FillerEnum114 { kFillerMember114 = 0 };
+
+enum class FillerEnum115 { kFillerMember115 = 0 };
+
+enum class FillerEnum116 { kFillerMember116 = 0 };
+
+enum class FillerEnum117 { kFillerMember117 = 0 };
+
+enum class FillerEnum118 { kFillerMember118 = 0 };
+
+enum class FillerEnum119 { kFillerMember119 = 0 };
+
+enum class FillerEnum120 { kFillerMember120 = 0 };
+
+enum class FillerEnum121 { kFillerMember121 = 0 };
+
+enum class FillerEnum122 { kFillerMember122 = 0 };
+
+enum class FillerEnum123 { kFillerMember123 = 0 };
+
+enum class FillerEnum124 { kFillerMember124 = 0 };
+
 enum class AnEnum {
   kOne = 0,
   kTwo = 1,
@@ -72,6 +322,8 @@ enum class AnEnum {
   kFortyTwo = 3,
   kFourHundredTwentyTwo = 4
 };
+
+enum class AnotherEnum { kJustInCase = 0 };
 
 // A class containing all supported types.
 //
@@ -84,7 +336,8 @@ class AllTypes {
                     const std::vector<int32_t>& a4_byte_array,
                     const std::vector<int64_t>& a8_byte_array,
                     const std::vector<double>& a_float_array,
-                    const AnEnum& an_enum, const std::string& a_string,
+                    const AnEnum& an_enum, const AnotherEnum& another_enum,
+                    const std::string& a_string,
                     const flutter::EncodableValue& an_object,
                     const flutter::EncodableList& list,
                     const flutter::EncodableList& string_list,
@@ -120,6 +373,9 @@ class AllTypes {
   const AnEnum& an_enum() const;
   void set_an_enum(const AnEnum& value_arg);
 
+  const AnotherEnum& another_enum() const;
+  void set_another_enum(const AnotherEnum& value_arg);
+
   const std::string& a_string() const;
   void set_a_string(std::string_view value_arg);
 
@@ -147,6 +403,7 @@ class AllTypes {
  private:
   static AllTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
+  friend class __pigeon_CodecOverflow;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
@@ -164,6 +421,7 @@ class AllTypes {
   std::vector<int64_t> a8_byte_array_;
   std::vector<double> a_float_array_;
   AnEnum an_enum_;
+  AnotherEnum another_enum_;
   std::string a_string_;
   flutter::EncodableValue an_object_;
   flutter::EncodableList list_;
@@ -193,7 +451,8 @@ class AllNullableTypes {
       const flutter::EncodableList* nullable_nested_list,
       const flutter::EncodableMap* nullable_map_with_annotations,
       const flutter::EncodableMap* nullable_map_with_object,
-      const AnEnum* a_nullable_enum, const std::string* a_nullable_string,
+      const AnEnum* a_nullable_enum, const AnotherEnum* another_nullable_enum,
+      const std::string* a_nullable_string,
       const flutter::EncodableValue* a_nullable_object,
       const AllNullableTypes* all_nullable_types,
       const flutter::EncodableList* list,
@@ -259,6 +518,10 @@ class AllNullableTypes {
   void set_a_nullable_enum(const AnEnum* value_arg);
   void set_a_nullable_enum(const AnEnum& value_arg);
 
+  const AnotherEnum* another_nullable_enum() const;
+  void set_another_nullable_enum(const AnotherEnum* value_arg);
+  void set_another_nullable_enum(const AnotherEnum& value_arg);
+
   const std::string* a_nullable_string() const;
   void set_a_nullable_string(const std::string_view* value_arg);
   void set_a_nullable_string(std::string_view value_arg);
@@ -302,6 +565,7 @@ class AllNullableTypes {
  private:
   static AllNullableTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
+  friend class __pigeon_CodecOverflow;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
@@ -322,6 +586,7 @@ class AllNullableTypes {
   std::optional<flutter::EncodableMap> nullable_map_with_annotations_;
   std::optional<flutter::EncodableMap> nullable_map_with_object_;
   std::optional<AnEnum> a_nullable_enum_;
+  std::optional<AnotherEnum> another_nullable_enum_;
   std::optional<std::string> a_nullable_string_;
   std::optional<flutter::EncodableValue> a_nullable_object_;
   std::unique_ptr<AllNullableTypes> all_nullable_types_;
@@ -355,7 +620,8 @@ class AllNullableTypesWithoutRecursion {
       const flutter::EncodableList* nullable_nested_list,
       const flutter::EncodableMap* nullable_map_with_annotations,
       const flutter::EncodableMap* nullable_map_with_object,
-      const AnEnum* a_nullable_enum, const std::string* a_nullable_string,
+      const AnEnum* a_nullable_enum, const AnotherEnum* another_nullable_enum,
+      const std::string* a_nullable_string,
       const flutter::EncodableValue* a_nullable_object,
       const flutter::EncodableList* list,
       const flutter::EncodableList* string_list,
@@ -414,6 +680,10 @@ class AllNullableTypesWithoutRecursion {
   void set_a_nullable_enum(const AnEnum* value_arg);
   void set_a_nullable_enum(const AnEnum& value_arg);
 
+  const AnotherEnum* another_nullable_enum() const;
+  void set_another_nullable_enum(const AnotherEnum* value_arg);
+  void set_another_nullable_enum(const AnotherEnum& value_arg);
+
   const std::string* a_nullable_string() const;
   void set_a_nullable_string(const std::string_view* value_arg);
   void set_a_nullable_string(std::string_view value_arg);
@@ -450,6 +720,7 @@ class AllNullableTypesWithoutRecursion {
   static AllNullableTypesWithoutRecursion FromEncodableList(
       const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
+  friend class __pigeon_CodecOverflow;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
@@ -470,6 +741,7 @@ class AllNullableTypesWithoutRecursion {
   std::optional<flutter::EncodableMap> nullable_map_with_annotations_;
   std::optional<flutter::EncodableMap> nullable_map_with_object_;
   std::optional<AnEnum> a_nullable_enum_;
+  std::optional<AnotherEnum> another_nullable_enum_;
   std::optional<std::string> a_nullable_string_;
   std::optional<flutter::EncodableValue> a_nullable_object_;
   std::optional<flutter::EncodableList> list_;
@@ -521,6 +793,7 @@ class AllClassesWrapper {
   static AllClassesWrapper FromEncodableList(
       const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
+  friend class __pigeon_CodecOverflow;
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
   friend class HostTrivialApi;
@@ -552,6 +825,7 @@ class TestMessage {
  private:
   static TestMessage FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
+  friend class __pigeon_CodecOverflow;
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
   friend class HostTrivialApi;
@@ -560,6 +834,35 @@ class TestMessage {
   friend class PigeonCodecSerializer;
   friend class CoreTestsTest;
   std::optional<flutter::EncodableList> test_list_;
+};
+
+// Generated class from Pigeon that represents data sent in messages.
+class __pigeon_CodecOverflow {
+ public:
+  // Constructs an object setting all fields.
+  explicit __pigeon_CodecOverflow(int64_t type,
+                                  const flutter::EncodableValue& wrapped);
+
+  int64_t type() const;
+  void set_type(int64_t value_arg);
+
+  const flutter::EncodableValue& wrapped() const;
+  void set_wrapped(const flutter::EncodableValue& value_arg);
+
+ private:
+  static flutter::EncodableValue FromEncodableList(
+      const flutter::EncodableList& list);
+  flutter::EncodableList ToEncodableList() const;
+  flutter::EncodableValue Unwrap();
+  friend class HostIntegrationCoreApi;
+  friend class FlutterIntegrationCoreApi;
+  friend class HostTrivialApi;
+  friend class HostSmallApi;
+  friend class FlutterSmallApi;
+  friend class PigeonCodecSerializer;
+  friend class CoreTestsTest;
+  int64_t type_;
+  flutter::EncodableValue wrapped_;
 };
 
 class PigeonCodecSerializer : public flutter::StandardCodecSerializer {
@@ -626,6 +929,9 @@ class HostIntegrationCoreApi {
       const AllClassesWrapper& wrapper) = 0;
   // Returns the passed enum to test serialization and deserialization.
   virtual ErrorOr<AnEnum> EchoEnum(const AnEnum& an_enum) = 0;
+  // Returns the passed enum to test serialization and deserialization.
+  virtual ErrorOr<AnotherEnum> EchoAnotherEnum(
+      const AnotherEnum& another_enum) = 0;
   // Returns the default string.
   virtual ErrorOr<std::string> EchoNamedDefaultString(
       const std::string& a_string) = 0;
@@ -683,6 +989,8 @@ class HostIntegrationCoreApi {
       const flutter::EncodableMap* a_nullable_map) = 0;
   virtual ErrorOr<std::optional<AnEnum>> EchoNullableEnum(
       const AnEnum* an_enum) = 0;
+  virtual ErrorOr<std::optional<AnotherEnum>> EchoAnotherNullableEnum(
+      const AnotherEnum* another_enum) = 0;
   // Returns passed in int.
   virtual ErrorOr<std::optional<int64_t>> EchoOptionalNullableInt(
       const int64_t* a_nullable_int) = 0;
@@ -729,6 +1037,11 @@ class HostIntegrationCoreApi {
   virtual void EchoAsyncEnum(
       const AnEnum& an_enum,
       std::function<void(ErrorOr<AnEnum> reply)> result) = 0;
+  // Returns the passed enum, to test asynchronous serialization and
+  // deserialization.
+  virtual void EchoAnotherAsyncEnum(
+      const AnotherEnum& another_enum,
+      std::function<void(ErrorOr<AnotherEnum> reply)> result) = 0;
   // Responds with an error from an async function returning a value.
   virtual void ThrowAsyncError(
       std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
@@ -799,6 +1112,12 @@ class HostIntegrationCoreApi {
   virtual void EchoAsyncNullableEnum(
       const AnEnum* an_enum,
       std::function<void(ErrorOr<std::optional<AnEnum>> reply)> result) = 0;
+  // Returns the passed enum, to test asynchronous serialization and
+  // deserialization.
+  virtual void EchoAnotherAsyncNullableEnum(
+      const AnotherEnum* another_enum,
+      std::function<void(ErrorOr<std::optional<AnotherEnum>> reply)>
+          result) = 0;
   virtual void CallFlutterNoop(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
   virtual void CallFlutterThrowError(
@@ -848,6 +1167,9 @@ class HostIntegrationCoreApi {
   virtual void CallFlutterEchoEnum(
       const AnEnum& an_enum,
       std::function<void(ErrorOr<AnEnum> reply)> result) = 0;
+  virtual void CallFlutterEchoAnotherEnum(
+      const AnotherEnum& another_enum,
+      std::function<void(ErrorOr<AnotherEnum> reply)> result) = 0;
   virtual void CallFlutterEchoNullableBool(
       const bool* a_bool,
       std::function<void(ErrorOr<std::optional<bool>> reply)> result) = 0;
@@ -876,6 +1198,10 @@ class HostIntegrationCoreApi {
   virtual void CallFlutterEchoNullableEnum(
       const AnEnum* an_enum,
       std::function<void(ErrorOr<std::optional<AnEnum>> reply)> result) = 0;
+  virtual void CallFlutterEchoAnotherNullableEnum(
+      const AnotherEnum* another_enum,
+      std::function<void(ErrorOr<std::optional<AnotherEnum>> reply)>
+          result) = 0;
   virtual void CallFlutterSmallApiEchoString(
       const std::string& a_string,
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
@@ -977,6 +1303,10 @@ class FlutterIntegrationCoreApi {
   void EchoEnum(const AnEnum& an_enum,
                 std::function<void(const AnEnum&)>&& on_success,
                 std::function<void(const FlutterError&)>&& on_error);
+  // Returns the passed enum to test serialization and deserialization.
+  void EchoAnotherEnum(const AnotherEnum& another_enum,
+                       std::function<void(const AnotherEnum&)>&& on_success,
+                       std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed boolean, to test serialization and deserialization.
   void EchoNullableBool(const bool* a_bool,
                         std::function<void(const bool*)>&& on_success,
@@ -1012,6 +1342,11 @@ class FlutterIntegrationCoreApi {
   void EchoNullableEnum(const AnEnum* an_enum,
                         std::function<void(const AnEnum*)>&& on_success,
                         std::function<void(const FlutterError&)>&& on_error);
+  // Returns the passed enum to test serialization and deserialization.
+  void EchoAnotherNullableEnum(
+      const AnotherEnum* another_enum,
+      std::function<void(const AnotherEnum*)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
   // A no-op function taking no arguments and returning no value, to sanity
   // test basic asynchronous calling.
   void NoopAsync(std::function<void(void)>&& on_success,

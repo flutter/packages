@@ -624,7 +624,8 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
             valueGetter,
             prefix: generatorOptions.prefix,
           );
-          ivarValueExpression = 'enumBox.value';
+          ivarValueExpression =
+              'an${_enumName(field.type.baseName, prefix: generatorOptions.prefix, box: true)}.value';
         } else if (primitiveExtractionMethod != null) {
           ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
         } else {
@@ -1021,7 +1022,8 @@ static FlutterError *createConnectionError(NSString *channelName) {
             valueGetter,
             prefix: generatorOptions.prefix,
           );
-          ivarValueExpression = 'enumBox.value';
+          ivarValueExpression =
+              'an${_enumName(arg.type.baseName, prefix: generatorOptions.prefix, box: true)}.value';
         } else if (primitiveExtractionMethod != null) {
           ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
         } else {
@@ -1708,7 +1710,7 @@ void _writeEnumBoxToEnum(
   String? prefix = '',
 }) {
   indent.writeln(
-      '${_enumName(field.type.baseName, prefix: prefix, box: true, suffix: ' *')}enumBox = $valueGetter;');
+      '${_enumName(field.type.baseName, prefix: prefix, box: true, suffix: ' *')}an${_enumName(field.type.baseName, prefix: prefix, box: true)} = $valueGetter;');
 }
 
 String _getEnumToEnumBox(

@@ -40,8 +40,1268 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
+@implementation FLTFillerEnum0Box
+- (instancetype)initWithValue:(FLTFillerEnum0)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum1Box
+- (instancetype)initWithValue:(FLTFillerEnum1)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum2Box
+- (instancetype)initWithValue:(FLTFillerEnum2)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum3Box
+- (instancetype)initWithValue:(FLTFillerEnum3)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum4Box
+- (instancetype)initWithValue:(FLTFillerEnum4)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum5Box
+- (instancetype)initWithValue:(FLTFillerEnum5)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum6Box
+- (instancetype)initWithValue:(FLTFillerEnum6)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum7Box
+- (instancetype)initWithValue:(FLTFillerEnum7)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum8Box
+- (instancetype)initWithValue:(FLTFillerEnum8)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum9Box
+- (instancetype)initWithValue:(FLTFillerEnum9)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum10Box
+- (instancetype)initWithValue:(FLTFillerEnum10)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum11Box
+- (instancetype)initWithValue:(FLTFillerEnum11)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum12Box
+- (instancetype)initWithValue:(FLTFillerEnum12)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum13Box
+- (instancetype)initWithValue:(FLTFillerEnum13)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum14Box
+- (instancetype)initWithValue:(FLTFillerEnum14)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum15Box
+- (instancetype)initWithValue:(FLTFillerEnum15)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum16Box
+- (instancetype)initWithValue:(FLTFillerEnum16)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum17Box
+- (instancetype)initWithValue:(FLTFillerEnum17)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum18Box
+- (instancetype)initWithValue:(FLTFillerEnum18)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum19Box
+- (instancetype)initWithValue:(FLTFillerEnum19)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum20Box
+- (instancetype)initWithValue:(FLTFillerEnum20)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum21Box
+- (instancetype)initWithValue:(FLTFillerEnum21)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum22Box
+- (instancetype)initWithValue:(FLTFillerEnum22)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum23Box
+- (instancetype)initWithValue:(FLTFillerEnum23)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum24Box
+- (instancetype)initWithValue:(FLTFillerEnum24)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum25Box
+- (instancetype)initWithValue:(FLTFillerEnum25)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum26Box
+- (instancetype)initWithValue:(FLTFillerEnum26)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum27Box
+- (instancetype)initWithValue:(FLTFillerEnum27)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum28Box
+- (instancetype)initWithValue:(FLTFillerEnum28)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum29Box
+- (instancetype)initWithValue:(FLTFillerEnum29)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum30Box
+- (instancetype)initWithValue:(FLTFillerEnum30)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum31Box
+- (instancetype)initWithValue:(FLTFillerEnum31)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum32Box
+- (instancetype)initWithValue:(FLTFillerEnum32)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum33Box
+- (instancetype)initWithValue:(FLTFillerEnum33)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum34Box
+- (instancetype)initWithValue:(FLTFillerEnum34)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum35Box
+- (instancetype)initWithValue:(FLTFillerEnum35)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum36Box
+- (instancetype)initWithValue:(FLTFillerEnum36)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum37Box
+- (instancetype)initWithValue:(FLTFillerEnum37)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum38Box
+- (instancetype)initWithValue:(FLTFillerEnum38)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum39Box
+- (instancetype)initWithValue:(FLTFillerEnum39)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum40Box
+- (instancetype)initWithValue:(FLTFillerEnum40)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum41Box
+- (instancetype)initWithValue:(FLTFillerEnum41)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum42Box
+- (instancetype)initWithValue:(FLTFillerEnum42)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum43Box
+- (instancetype)initWithValue:(FLTFillerEnum43)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum44Box
+- (instancetype)initWithValue:(FLTFillerEnum44)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum45Box
+- (instancetype)initWithValue:(FLTFillerEnum45)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum46Box
+- (instancetype)initWithValue:(FLTFillerEnum46)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum47Box
+- (instancetype)initWithValue:(FLTFillerEnum47)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum48Box
+- (instancetype)initWithValue:(FLTFillerEnum48)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum49Box
+- (instancetype)initWithValue:(FLTFillerEnum49)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum50Box
+- (instancetype)initWithValue:(FLTFillerEnum50)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum51Box
+- (instancetype)initWithValue:(FLTFillerEnum51)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum52Box
+- (instancetype)initWithValue:(FLTFillerEnum52)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum53Box
+- (instancetype)initWithValue:(FLTFillerEnum53)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum54Box
+- (instancetype)initWithValue:(FLTFillerEnum54)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum55Box
+- (instancetype)initWithValue:(FLTFillerEnum55)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum56Box
+- (instancetype)initWithValue:(FLTFillerEnum56)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum57Box
+- (instancetype)initWithValue:(FLTFillerEnum57)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum58Box
+- (instancetype)initWithValue:(FLTFillerEnum58)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum59Box
+- (instancetype)initWithValue:(FLTFillerEnum59)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum60Box
+- (instancetype)initWithValue:(FLTFillerEnum60)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum61Box
+- (instancetype)initWithValue:(FLTFillerEnum61)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum62Box
+- (instancetype)initWithValue:(FLTFillerEnum62)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum63Box
+- (instancetype)initWithValue:(FLTFillerEnum63)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum64Box
+- (instancetype)initWithValue:(FLTFillerEnum64)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum65Box
+- (instancetype)initWithValue:(FLTFillerEnum65)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum66Box
+- (instancetype)initWithValue:(FLTFillerEnum66)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum67Box
+- (instancetype)initWithValue:(FLTFillerEnum67)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum68Box
+- (instancetype)initWithValue:(FLTFillerEnum68)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum69Box
+- (instancetype)initWithValue:(FLTFillerEnum69)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum70Box
+- (instancetype)initWithValue:(FLTFillerEnum70)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum71Box
+- (instancetype)initWithValue:(FLTFillerEnum71)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum72Box
+- (instancetype)initWithValue:(FLTFillerEnum72)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum73Box
+- (instancetype)initWithValue:(FLTFillerEnum73)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum74Box
+- (instancetype)initWithValue:(FLTFillerEnum74)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum75Box
+- (instancetype)initWithValue:(FLTFillerEnum75)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum76Box
+- (instancetype)initWithValue:(FLTFillerEnum76)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum77Box
+- (instancetype)initWithValue:(FLTFillerEnum77)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum78Box
+- (instancetype)initWithValue:(FLTFillerEnum78)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum79Box
+- (instancetype)initWithValue:(FLTFillerEnum79)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum80Box
+- (instancetype)initWithValue:(FLTFillerEnum80)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum81Box
+- (instancetype)initWithValue:(FLTFillerEnum81)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum82Box
+- (instancetype)initWithValue:(FLTFillerEnum82)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum83Box
+- (instancetype)initWithValue:(FLTFillerEnum83)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum84Box
+- (instancetype)initWithValue:(FLTFillerEnum84)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum85Box
+- (instancetype)initWithValue:(FLTFillerEnum85)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum86Box
+- (instancetype)initWithValue:(FLTFillerEnum86)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum87Box
+- (instancetype)initWithValue:(FLTFillerEnum87)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum88Box
+- (instancetype)initWithValue:(FLTFillerEnum88)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum89Box
+- (instancetype)initWithValue:(FLTFillerEnum89)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum90Box
+- (instancetype)initWithValue:(FLTFillerEnum90)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum91Box
+- (instancetype)initWithValue:(FLTFillerEnum91)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum92Box
+- (instancetype)initWithValue:(FLTFillerEnum92)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum93Box
+- (instancetype)initWithValue:(FLTFillerEnum93)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum94Box
+- (instancetype)initWithValue:(FLTFillerEnum94)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum95Box
+- (instancetype)initWithValue:(FLTFillerEnum95)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum96Box
+- (instancetype)initWithValue:(FLTFillerEnum96)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum97Box
+- (instancetype)initWithValue:(FLTFillerEnum97)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum98Box
+- (instancetype)initWithValue:(FLTFillerEnum98)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum99Box
+- (instancetype)initWithValue:(FLTFillerEnum99)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum100Box
+- (instancetype)initWithValue:(FLTFillerEnum100)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum101Box
+- (instancetype)initWithValue:(FLTFillerEnum101)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum102Box
+- (instancetype)initWithValue:(FLTFillerEnum102)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum103Box
+- (instancetype)initWithValue:(FLTFillerEnum103)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum104Box
+- (instancetype)initWithValue:(FLTFillerEnum104)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum105Box
+- (instancetype)initWithValue:(FLTFillerEnum105)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum106Box
+- (instancetype)initWithValue:(FLTFillerEnum106)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum107Box
+- (instancetype)initWithValue:(FLTFillerEnum107)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum108Box
+- (instancetype)initWithValue:(FLTFillerEnum108)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum109Box
+- (instancetype)initWithValue:(FLTFillerEnum109)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum110Box
+- (instancetype)initWithValue:(FLTFillerEnum110)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum111Box
+- (instancetype)initWithValue:(FLTFillerEnum111)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum112Box
+- (instancetype)initWithValue:(FLTFillerEnum112)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum113Box
+- (instancetype)initWithValue:(FLTFillerEnum113)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum114Box
+- (instancetype)initWithValue:(FLTFillerEnum114)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum115Box
+- (instancetype)initWithValue:(FLTFillerEnum115)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum116Box
+- (instancetype)initWithValue:(FLTFillerEnum116)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum117Box
+- (instancetype)initWithValue:(FLTFillerEnum117)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum118Box
+- (instancetype)initWithValue:(FLTFillerEnum118)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum119Box
+- (instancetype)initWithValue:(FLTFillerEnum119)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum120Box
+- (instancetype)initWithValue:(FLTFillerEnum120)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum121Box
+- (instancetype)initWithValue:(FLTFillerEnum121)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum122Box
+- (instancetype)initWithValue:(FLTFillerEnum122)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum123Box
+- (instancetype)initWithValue:(FLTFillerEnum123)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTFillerEnum124Box
+- (instancetype)initWithValue:(FLTFillerEnum124)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
 @implementation FLTAnEnumBox
 - (instancetype)initWithValue:(FLTAnEnum)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAnotherEnumBox
+- (instancetype)initWithValue:(FLTAnotherEnum)value {
   self = [super init];
   if (self) {
     _value = value;
@@ -90,6 +1350,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                   a8ByteArray:(FlutterStandardTypedData *)a8ByteArray
                   aFloatArray:(FlutterStandardTypedData *)aFloatArray
                        anEnum:(FLTAnEnum)anEnum
+                  anotherEnum:(FLTAnotherEnum)anotherEnum
                       aString:(NSString *)aString
                      anObject:(id)anObject
                          list:(NSArray<id> *)list
@@ -108,6 +1369,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.a8ByteArray = a8ByteArray;
   pigeonResult.aFloatArray = aFloatArray;
   pigeonResult.anEnum = anEnum;
+  pigeonResult.anotherEnum = anotherEnum;
   pigeonResult.aString = aString;
   pigeonResult.anObject = anObject;
   pigeonResult.list = list;
@@ -128,16 +1390,18 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.a4ByteArray = GetNullableObjectAtIndex(list, 5);
   pigeonResult.a8ByteArray = GetNullableObjectAtIndex(list, 6);
   pigeonResult.aFloatArray = GetNullableObjectAtIndex(list, 7);
-  FLTAnEnumBox *enumBox = GetNullableObjectAtIndex(list, 8);
-  pigeonResult.anEnum = enumBox.value;
-  pigeonResult.aString = GetNullableObjectAtIndex(list, 9);
-  pigeonResult.anObject = GetNullableObjectAtIndex(list, 10);
-  pigeonResult.list = GetNullableObjectAtIndex(list, 11);
-  pigeonResult.stringList = GetNullableObjectAtIndex(list, 12);
-  pigeonResult.intList = GetNullableObjectAtIndex(list, 13);
-  pigeonResult.doubleList = GetNullableObjectAtIndex(list, 14);
-  pigeonResult.boolList = GetNullableObjectAtIndex(list, 15);
-  pigeonResult.map = GetNullableObjectAtIndex(list, 16);
+  FLTAnEnumBox *anFLTAnEnumBox = GetNullableObjectAtIndex(list, 8);
+  pigeonResult.anEnum = anFLTAnEnumBox.value;
+  FLTAnotherEnumBox *anFLTAnotherEnumBox = GetNullableObjectAtIndex(list, 9);
+  pigeonResult.anotherEnum = anFLTAnotherEnumBox.value;
+  pigeonResult.aString = GetNullableObjectAtIndex(list, 10);
+  pigeonResult.anObject = GetNullableObjectAtIndex(list, 11);
+  pigeonResult.list = GetNullableObjectAtIndex(list, 12);
+  pigeonResult.stringList = GetNullableObjectAtIndex(list, 13);
+  pigeonResult.intList = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.doubleList = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.boolList = GetNullableObjectAtIndex(list, 16);
+  pigeonResult.map = GetNullableObjectAtIndex(list, 17);
   return pigeonResult;
 }
 + (nullable FLTAllTypes *)nullableFromList:(NSArray<id> *)list {
@@ -154,6 +1418,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.a8ByteArray ?: [NSNull null],
     self.aFloatArray ?: [NSNull null],
     [[FLTAnEnumBox alloc] initWithValue:self.anEnum],
+    [[FLTAnotherEnumBox alloc] initWithValue:self.anotherEnum],
     self.aString ?: [NSNull null],
     self.anObject ?: [NSNull null],
     self.list ?: [NSNull null],
@@ -180,6 +1445,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
+                  anotherNullableEnum:(nullable FLTAnotherEnumBox *)anotherNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject
                      allNullableTypes:(nullable FLTAllNullableTypes *)allNullableTypes
@@ -203,6 +1469,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.nullableMapWithAnnotations = nullableMapWithAnnotations;
   pigeonResult.nullableMapWithObject = nullableMapWithObject;
   pigeonResult.aNullableEnum = aNullableEnum;
+  pigeonResult.anotherNullableEnum = anotherNullableEnum;
   pigeonResult.aNullableString = aNullableString;
   pigeonResult.aNullableObject = aNullableObject;
   pigeonResult.allNullableTypes = allNullableTypes;
@@ -229,16 +1496,17 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 9);
   pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 10);
   pigeonResult.aNullableEnum = GetNullableObjectAtIndex(list, 11);
-  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 12);
-  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 13);
-  pigeonResult.allNullableTypes = GetNullableObjectAtIndex(list, 14);
-  pigeonResult.list = GetNullableObjectAtIndex(list, 15);
-  pigeonResult.stringList = GetNullableObjectAtIndex(list, 16);
-  pigeonResult.intList = GetNullableObjectAtIndex(list, 17);
-  pigeonResult.doubleList = GetNullableObjectAtIndex(list, 18);
-  pigeonResult.boolList = GetNullableObjectAtIndex(list, 19);
-  pigeonResult.nestedClassList = GetNullableObjectAtIndex(list, 20);
-  pigeonResult.map = GetNullableObjectAtIndex(list, 21);
+  pigeonResult.anotherNullableEnum = GetNullableObjectAtIndex(list, 12);
+  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 13);
+  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.allNullableTypes = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.list = GetNullableObjectAtIndex(list, 16);
+  pigeonResult.stringList = GetNullableObjectAtIndex(list, 17);
+  pigeonResult.intList = GetNullableObjectAtIndex(list, 18);
+  pigeonResult.doubleList = GetNullableObjectAtIndex(list, 19);
+  pigeonResult.boolList = GetNullableObjectAtIndex(list, 20);
+  pigeonResult.nestedClassList = GetNullableObjectAtIndex(list, 21);
+  pigeonResult.map = GetNullableObjectAtIndex(list, 22);
   return pigeonResult;
 }
 + (nullable FLTAllNullableTypes *)nullableFromList:(NSArray<id> *)list {
@@ -258,6 +1526,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.nullableMapWithAnnotations ?: [NSNull null],
     self.nullableMapWithObject ?: [NSNull null],
     self.aNullableEnum ?: [NSNull null],
+    self.anotherNullableEnum ?: [NSNull null],
     self.aNullableString ?: [NSNull null],
     self.aNullableObject ?: [NSNull null],
     self.allNullableTypes ?: [NSNull null],
@@ -286,6 +1555,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
+                  anotherNullableEnum:(nullable FLTAnotherEnumBox *)anotherNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject
                                  list:(nullable NSArray<id> *)list
@@ -308,6 +1578,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.nullableMapWithAnnotations = nullableMapWithAnnotations;
   pigeonResult.nullableMapWithObject = nullableMapWithObject;
   pigeonResult.aNullableEnum = aNullableEnum;
+  pigeonResult.anotherNullableEnum = anotherNullableEnum;
   pigeonResult.aNullableString = aNullableString;
   pigeonResult.aNullableObject = aNullableObject;
   pigeonResult.list = list;
@@ -333,14 +1604,15 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 9);
   pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 10);
   pigeonResult.aNullableEnum = GetNullableObjectAtIndex(list, 11);
-  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 12);
-  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 13);
-  pigeonResult.list = GetNullableObjectAtIndex(list, 14);
-  pigeonResult.stringList = GetNullableObjectAtIndex(list, 15);
-  pigeonResult.intList = GetNullableObjectAtIndex(list, 16);
-  pigeonResult.doubleList = GetNullableObjectAtIndex(list, 17);
-  pigeonResult.boolList = GetNullableObjectAtIndex(list, 18);
-  pigeonResult.map = GetNullableObjectAtIndex(list, 19);
+  pigeonResult.anotherNullableEnum = GetNullableObjectAtIndex(list, 12);
+  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 13);
+  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.list = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.stringList = GetNullableObjectAtIndex(list, 16);
+  pigeonResult.intList = GetNullableObjectAtIndex(list, 17);
+  pigeonResult.doubleList = GetNullableObjectAtIndex(list, 18);
+  pigeonResult.boolList = GetNullableObjectAtIndex(list, 19);
+  pigeonResult.map = GetNullableObjectAtIndex(list, 20);
   return pigeonResult;
 }
 + (nullable FLTAllNullableTypesWithoutRecursion *)nullableFromList:(NSArray<id> *)list {
@@ -360,6 +1632,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.nullableMapWithAnnotations ?: [NSNull null],
     self.nullableMapWithObject ?: [NSNull null],
     self.aNullableEnum ?: [NSNull null],
+    self.anotherNullableEnum ?: [NSNull null],
     self.aNullableString ?: [NSNull null],
     self.aNullableObject ?: [NSNull null],
     self.list ?: [NSNull null],
@@ -423,6 +1696,54 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@interface FLT__pigeon_CodecOverflow ()
++ (id)fromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@implementation FLT__pigeon_CodecOverflow
++ (instancetype)makeWithType:(NSInteger)type wrapped:(nullable id)wrapped {
+  FLT__pigeon_CodecOverflow *pigeonResult = [[FLT__pigeon_CodecOverflow alloc] init];
+  pigeonResult.type = type;
+  pigeonResult.wrapped = wrapped;
+  return pigeonResult;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.type),
+    self.wrapped ?: [NSNull null],
+  ];
+}
++ (id)fromList:(NSArray<id> *)list {
+  FLT__pigeon_CodecOverflow *wrapper = [[FLT__pigeon_CodecOverflow alloc] init];
+  wrapper.type = [GetNullableObjectAtIndex(list, 0) integerValue];
+  wrapper.wrapped = GetNullableObjectAtIndex(list, 1);
+  return [wrapper unwrap];
+}
+
+- (id)unwrap {
+  if (self.wrapped == nil) {
+    return nil;
+  }
+
+  switch (self.type) {
+    case 0:
+      return [[FLTAnotherEnumBox alloc] initWithValue:[self.wrapped integerValue]];
+    case 1:
+      return [FLTAllTypes fromList:self.wrapped];
+    case 2:
+      return [FLTAllNullableTypes fromList:self.wrapped];
+    case 3:
+      return [FLTAllNullableTypesWithoutRecursion fromList:self.wrapped];
+    case 4:
+      return [FLTAllClassesWrapper fromList:self.wrapped];
+    case 5:
+      return [FLTTestMessage fromList:self.wrapped];
+    default:
+      return nil;
+  }
+}
+@end
 @interface FLTCoreTestsPigeonCodecReader : FlutterStandardReader
 @end
 @implementation FLTCoreTestsPigeonCodecReader
@@ -430,19 +1751,761 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   switch (type) {
     case 129: {
       NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum0Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 130: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum1Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 131: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum2Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 132: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum3Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 133: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum4Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 134: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum5Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 135: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum6Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 136: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum7Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 137: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum8Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 138: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum9Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 139: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum10Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 140: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum11Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 141: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum12Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 142: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum13Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 143: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum14Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 144: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum15Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 145: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum16Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 146: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum17Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 147: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum18Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 148: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum19Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 149: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum20Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 150: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum21Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 151: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum22Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 152: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum23Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 153: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum24Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 154: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum25Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 155: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum26Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 156: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum27Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 157: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum28Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 158: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum29Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 159: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum30Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 160: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum31Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 161: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum32Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 162: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum33Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 163: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum34Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 164: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum35Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 165: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum36Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 166: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum37Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 167: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum38Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 168: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum39Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 169: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum40Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 170: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum41Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 171: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum42Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 172: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum43Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 173: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum44Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 174: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum45Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 175: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum46Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 176: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum47Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 177: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum48Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 178: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum49Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 179: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum50Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 180: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum51Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 181: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum52Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 182: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum53Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 183: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum54Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 184: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum55Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 185: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum56Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 186: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum57Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 187: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum58Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 188: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum59Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 189: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum60Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 190: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum61Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 191: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum62Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 192: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum63Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 193: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum64Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 194: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum65Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 195: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum66Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 196: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum67Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 197: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum68Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 198: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum69Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 199: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum70Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 200: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum71Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 201: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum72Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 202: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum73Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 203: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum74Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 204: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum75Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 205: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum76Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 206: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum77Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 207: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum78Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 208: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum79Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 209: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum80Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 210: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum81Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 211: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum82Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 212: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum83Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 213: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum84Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 214: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum85Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 215: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum86Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 216: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum87Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 217: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum88Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 218: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum89Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 219: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum90Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 220: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum91Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 221: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum92Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 222: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum93Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 223: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum94Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 224: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum95Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 225: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum96Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 226: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum97Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 227: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum98Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 228: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum99Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 229: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum100Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 230: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum101Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 231: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum102Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 232: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum103Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 233: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum104Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 234: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum105Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 235: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum106Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 236: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum107Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 237: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum108Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 238: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum109Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 239: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum110Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 240: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum111Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 241: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum112Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 242: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum113Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 243: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum114Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 244: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum115Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 245: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum116Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 246: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum117Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 247: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum118Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 248: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum119Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 249: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum120Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 250: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum121Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 251: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum122Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 252: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum123Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 253: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTFillerEnum124Box alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 254: {
+      NSNumber *enumAsNumber = [self readValue];
       return enumAsNumber == nil ? nil
                                  : [[FLTAnEnumBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
-    case 130:
-      return [FLTAllTypes fromList:[self readValue]];
-    case 131:
-      return [FLTAllNullableTypes fromList:[self readValue]];
-    case 132:
-      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
-    case 133:
-      return [FLTAllClassesWrapper fromList:[self readValue]];
-    case 134:
-      return [FLTTestMessage fromList:[self readValue]];
+    case 255:
+      return [FLT__pigeon_CodecOverflow fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -453,25 +2516,542 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 @implementation FLTCoreTestsPigeonCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FLTAnEnumBox class]]) {
-    FLTAnEnumBox *box = (FLTAnEnumBox *)value;
+  if ([value isKindOfClass:[FLTFillerEnum0Box class]]) {
+    FLTFillerEnum0Box *box = (FLTFillerEnum0Box *)value;
     [self writeByte:129];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
-  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
+  } else if ([value isKindOfClass:[FLTFillerEnum1Box class]]) {
+    FLTFillerEnum1Box *box = (FLTFillerEnum1Box *)value;
     [self writeByte:130];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum2Box class]]) {
+    FLTFillerEnum2Box *box = (FLTFillerEnum2Box *)value;
     [self writeByte:131];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum3Box class]]) {
+    FLTFillerEnum3Box *box = (FLTFillerEnum3Box *)value;
     [self writeByte:132];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum4Box class]]) {
+    FLTFillerEnum4Box *box = (FLTFillerEnum4Box *)value;
     [self writeByte:133];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum5Box class]]) {
+    FLTFillerEnum5Box *box = (FLTFillerEnum5Box *)value;
     [self writeByte:134];
-    [self writeValue:[value toList]];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum6Box class]]) {
+    FLTFillerEnum6Box *box = (FLTFillerEnum6Box *)value;
+    [self writeByte:135];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum7Box class]]) {
+    FLTFillerEnum7Box *box = (FLTFillerEnum7Box *)value;
+    [self writeByte:136];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum8Box class]]) {
+    FLTFillerEnum8Box *box = (FLTFillerEnum8Box *)value;
+    [self writeByte:137];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum9Box class]]) {
+    FLTFillerEnum9Box *box = (FLTFillerEnum9Box *)value;
+    [self writeByte:138];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum10Box class]]) {
+    FLTFillerEnum10Box *box = (FLTFillerEnum10Box *)value;
+    [self writeByte:139];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum11Box class]]) {
+    FLTFillerEnum11Box *box = (FLTFillerEnum11Box *)value;
+    [self writeByte:140];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum12Box class]]) {
+    FLTFillerEnum12Box *box = (FLTFillerEnum12Box *)value;
+    [self writeByte:141];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum13Box class]]) {
+    FLTFillerEnum13Box *box = (FLTFillerEnum13Box *)value;
+    [self writeByte:142];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum14Box class]]) {
+    FLTFillerEnum14Box *box = (FLTFillerEnum14Box *)value;
+    [self writeByte:143];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum15Box class]]) {
+    FLTFillerEnum15Box *box = (FLTFillerEnum15Box *)value;
+    [self writeByte:144];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum16Box class]]) {
+    FLTFillerEnum16Box *box = (FLTFillerEnum16Box *)value;
+    [self writeByte:145];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum17Box class]]) {
+    FLTFillerEnum17Box *box = (FLTFillerEnum17Box *)value;
+    [self writeByte:146];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum18Box class]]) {
+    FLTFillerEnum18Box *box = (FLTFillerEnum18Box *)value;
+    [self writeByte:147];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum19Box class]]) {
+    FLTFillerEnum19Box *box = (FLTFillerEnum19Box *)value;
+    [self writeByte:148];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum20Box class]]) {
+    FLTFillerEnum20Box *box = (FLTFillerEnum20Box *)value;
+    [self writeByte:149];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum21Box class]]) {
+    FLTFillerEnum21Box *box = (FLTFillerEnum21Box *)value;
+    [self writeByte:150];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum22Box class]]) {
+    FLTFillerEnum22Box *box = (FLTFillerEnum22Box *)value;
+    [self writeByte:151];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum23Box class]]) {
+    FLTFillerEnum23Box *box = (FLTFillerEnum23Box *)value;
+    [self writeByte:152];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum24Box class]]) {
+    FLTFillerEnum24Box *box = (FLTFillerEnum24Box *)value;
+    [self writeByte:153];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum25Box class]]) {
+    FLTFillerEnum25Box *box = (FLTFillerEnum25Box *)value;
+    [self writeByte:154];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum26Box class]]) {
+    FLTFillerEnum26Box *box = (FLTFillerEnum26Box *)value;
+    [self writeByte:155];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum27Box class]]) {
+    FLTFillerEnum27Box *box = (FLTFillerEnum27Box *)value;
+    [self writeByte:156];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum28Box class]]) {
+    FLTFillerEnum28Box *box = (FLTFillerEnum28Box *)value;
+    [self writeByte:157];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum29Box class]]) {
+    FLTFillerEnum29Box *box = (FLTFillerEnum29Box *)value;
+    [self writeByte:158];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum30Box class]]) {
+    FLTFillerEnum30Box *box = (FLTFillerEnum30Box *)value;
+    [self writeByte:159];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum31Box class]]) {
+    FLTFillerEnum31Box *box = (FLTFillerEnum31Box *)value;
+    [self writeByte:160];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum32Box class]]) {
+    FLTFillerEnum32Box *box = (FLTFillerEnum32Box *)value;
+    [self writeByte:161];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum33Box class]]) {
+    FLTFillerEnum33Box *box = (FLTFillerEnum33Box *)value;
+    [self writeByte:162];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum34Box class]]) {
+    FLTFillerEnum34Box *box = (FLTFillerEnum34Box *)value;
+    [self writeByte:163];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum35Box class]]) {
+    FLTFillerEnum35Box *box = (FLTFillerEnum35Box *)value;
+    [self writeByte:164];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum36Box class]]) {
+    FLTFillerEnum36Box *box = (FLTFillerEnum36Box *)value;
+    [self writeByte:165];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum37Box class]]) {
+    FLTFillerEnum37Box *box = (FLTFillerEnum37Box *)value;
+    [self writeByte:166];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum38Box class]]) {
+    FLTFillerEnum38Box *box = (FLTFillerEnum38Box *)value;
+    [self writeByte:167];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum39Box class]]) {
+    FLTFillerEnum39Box *box = (FLTFillerEnum39Box *)value;
+    [self writeByte:168];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum40Box class]]) {
+    FLTFillerEnum40Box *box = (FLTFillerEnum40Box *)value;
+    [self writeByte:169];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum41Box class]]) {
+    FLTFillerEnum41Box *box = (FLTFillerEnum41Box *)value;
+    [self writeByte:170];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum42Box class]]) {
+    FLTFillerEnum42Box *box = (FLTFillerEnum42Box *)value;
+    [self writeByte:171];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum43Box class]]) {
+    FLTFillerEnum43Box *box = (FLTFillerEnum43Box *)value;
+    [self writeByte:172];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum44Box class]]) {
+    FLTFillerEnum44Box *box = (FLTFillerEnum44Box *)value;
+    [self writeByte:173];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum45Box class]]) {
+    FLTFillerEnum45Box *box = (FLTFillerEnum45Box *)value;
+    [self writeByte:174];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum46Box class]]) {
+    FLTFillerEnum46Box *box = (FLTFillerEnum46Box *)value;
+    [self writeByte:175];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum47Box class]]) {
+    FLTFillerEnum47Box *box = (FLTFillerEnum47Box *)value;
+    [self writeByte:176];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum48Box class]]) {
+    FLTFillerEnum48Box *box = (FLTFillerEnum48Box *)value;
+    [self writeByte:177];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum49Box class]]) {
+    FLTFillerEnum49Box *box = (FLTFillerEnum49Box *)value;
+    [self writeByte:178];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum50Box class]]) {
+    FLTFillerEnum50Box *box = (FLTFillerEnum50Box *)value;
+    [self writeByte:179];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum51Box class]]) {
+    FLTFillerEnum51Box *box = (FLTFillerEnum51Box *)value;
+    [self writeByte:180];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum52Box class]]) {
+    FLTFillerEnum52Box *box = (FLTFillerEnum52Box *)value;
+    [self writeByte:181];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum53Box class]]) {
+    FLTFillerEnum53Box *box = (FLTFillerEnum53Box *)value;
+    [self writeByte:182];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum54Box class]]) {
+    FLTFillerEnum54Box *box = (FLTFillerEnum54Box *)value;
+    [self writeByte:183];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum55Box class]]) {
+    FLTFillerEnum55Box *box = (FLTFillerEnum55Box *)value;
+    [self writeByte:184];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum56Box class]]) {
+    FLTFillerEnum56Box *box = (FLTFillerEnum56Box *)value;
+    [self writeByte:185];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum57Box class]]) {
+    FLTFillerEnum57Box *box = (FLTFillerEnum57Box *)value;
+    [self writeByte:186];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum58Box class]]) {
+    FLTFillerEnum58Box *box = (FLTFillerEnum58Box *)value;
+    [self writeByte:187];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum59Box class]]) {
+    FLTFillerEnum59Box *box = (FLTFillerEnum59Box *)value;
+    [self writeByte:188];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum60Box class]]) {
+    FLTFillerEnum60Box *box = (FLTFillerEnum60Box *)value;
+    [self writeByte:189];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum61Box class]]) {
+    FLTFillerEnum61Box *box = (FLTFillerEnum61Box *)value;
+    [self writeByte:190];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum62Box class]]) {
+    FLTFillerEnum62Box *box = (FLTFillerEnum62Box *)value;
+    [self writeByte:191];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum63Box class]]) {
+    FLTFillerEnum63Box *box = (FLTFillerEnum63Box *)value;
+    [self writeByte:192];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum64Box class]]) {
+    FLTFillerEnum64Box *box = (FLTFillerEnum64Box *)value;
+    [self writeByte:193];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum65Box class]]) {
+    FLTFillerEnum65Box *box = (FLTFillerEnum65Box *)value;
+    [self writeByte:194];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum66Box class]]) {
+    FLTFillerEnum66Box *box = (FLTFillerEnum66Box *)value;
+    [self writeByte:195];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum67Box class]]) {
+    FLTFillerEnum67Box *box = (FLTFillerEnum67Box *)value;
+    [self writeByte:196];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum68Box class]]) {
+    FLTFillerEnum68Box *box = (FLTFillerEnum68Box *)value;
+    [self writeByte:197];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum69Box class]]) {
+    FLTFillerEnum69Box *box = (FLTFillerEnum69Box *)value;
+    [self writeByte:198];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum70Box class]]) {
+    FLTFillerEnum70Box *box = (FLTFillerEnum70Box *)value;
+    [self writeByte:199];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum71Box class]]) {
+    FLTFillerEnum71Box *box = (FLTFillerEnum71Box *)value;
+    [self writeByte:200];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum72Box class]]) {
+    FLTFillerEnum72Box *box = (FLTFillerEnum72Box *)value;
+    [self writeByte:201];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum73Box class]]) {
+    FLTFillerEnum73Box *box = (FLTFillerEnum73Box *)value;
+    [self writeByte:202];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum74Box class]]) {
+    FLTFillerEnum74Box *box = (FLTFillerEnum74Box *)value;
+    [self writeByte:203];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum75Box class]]) {
+    FLTFillerEnum75Box *box = (FLTFillerEnum75Box *)value;
+    [self writeByte:204];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum76Box class]]) {
+    FLTFillerEnum76Box *box = (FLTFillerEnum76Box *)value;
+    [self writeByte:205];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum77Box class]]) {
+    FLTFillerEnum77Box *box = (FLTFillerEnum77Box *)value;
+    [self writeByte:206];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum78Box class]]) {
+    FLTFillerEnum78Box *box = (FLTFillerEnum78Box *)value;
+    [self writeByte:207];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum79Box class]]) {
+    FLTFillerEnum79Box *box = (FLTFillerEnum79Box *)value;
+    [self writeByte:208];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum80Box class]]) {
+    FLTFillerEnum80Box *box = (FLTFillerEnum80Box *)value;
+    [self writeByte:209];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum81Box class]]) {
+    FLTFillerEnum81Box *box = (FLTFillerEnum81Box *)value;
+    [self writeByte:210];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum82Box class]]) {
+    FLTFillerEnum82Box *box = (FLTFillerEnum82Box *)value;
+    [self writeByte:211];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum83Box class]]) {
+    FLTFillerEnum83Box *box = (FLTFillerEnum83Box *)value;
+    [self writeByte:212];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum84Box class]]) {
+    FLTFillerEnum84Box *box = (FLTFillerEnum84Box *)value;
+    [self writeByte:213];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum85Box class]]) {
+    FLTFillerEnum85Box *box = (FLTFillerEnum85Box *)value;
+    [self writeByte:214];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum86Box class]]) {
+    FLTFillerEnum86Box *box = (FLTFillerEnum86Box *)value;
+    [self writeByte:215];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum87Box class]]) {
+    FLTFillerEnum87Box *box = (FLTFillerEnum87Box *)value;
+    [self writeByte:216];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum88Box class]]) {
+    FLTFillerEnum88Box *box = (FLTFillerEnum88Box *)value;
+    [self writeByte:217];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum89Box class]]) {
+    FLTFillerEnum89Box *box = (FLTFillerEnum89Box *)value;
+    [self writeByte:218];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum90Box class]]) {
+    FLTFillerEnum90Box *box = (FLTFillerEnum90Box *)value;
+    [self writeByte:219];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum91Box class]]) {
+    FLTFillerEnum91Box *box = (FLTFillerEnum91Box *)value;
+    [self writeByte:220];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum92Box class]]) {
+    FLTFillerEnum92Box *box = (FLTFillerEnum92Box *)value;
+    [self writeByte:221];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum93Box class]]) {
+    FLTFillerEnum93Box *box = (FLTFillerEnum93Box *)value;
+    [self writeByte:222];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum94Box class]]) {
+    FLTFillerEnum94Box *box = (FLTFillerEnum94Box *)value;
+    [self writeByte:223];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum95Box class]]) {
+    FLTFillerEnum95Box *box = (FLTFillerEnum95Box *)value;
+    [self writeByte:224];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum96Box class]]) {
+    FLTFillerEnum96Box *box = (FLTFillerEnum96Box *)value;
+    [self writeByte:225];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum97Box class]]) {
+    FLTFillerEnum97Box *box = (FLTFillerEnum97Box *)value;
+    [self writeByte:226];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum98Box class]]) {
+    FLTFillerEnum98Box *box = (FLTFillerEnum98Box *)value;
+    [self writeByte:227];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum99Box class]]) {
+    FLTFillerEnum99Box *box = (FLTFillerEnum99Box *)value;
+    [self writeByte:228];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum100Box class]]) {
+    FLTFillerEnum100Box *box = (FLTFillerEnum100Box *)value;
+    [self writeByte:229];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum101Box class]]) {
+    FLTFillerEnum101Box *box = (FLTFillerEnum101Box *)value;
+    [self writeByte:230];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum102Box class]]) {
+    FLTFillerEnum102Box *box = (FLTFillerEnum102Box *)value;
+    [self writeByte:231];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum103Box class]]) {
+    FLTFillerEnum103Box *box = (FLTFillerEnum103Box *)value;
+    [self writeByte:232];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum104Box class]]) {
+    FLTFillerEnum104Box *box = (FLTFillerEnum104Box *)value;
+    [self writeByte:233];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum105Box class]]) {
+    FLTFillerEnum105Box *box = (FLTFillerEnum105Box *)value;
+    [self writeByte:234];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum106Box class]]) {
+    FLTFillerEnum106Box *box = (FLTFillerEnum106Box *)value;
+    [self writeByte:235];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum107Box class]]) {
+    FLTFillerEnum107Box *box = (FLTFillerEnum107Box *)value;
+    [self writeByte:236];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum108Box class]]) {
+    FLTFillerEnum108Box *box = (FLTFillerEnum108Box *)value;
+    [self writeByte:237];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum109Box class]]) {
+    FLTFillerEnum109Box *box = (FLTFillerEnum109Box *)value;
+    [self writeByte:238];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum110Box class]]) {
+    FLTFillerEnum110Box *box = (FLTFillerEnum110Box *)value;
+    [self writeByte:239];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum111Box class]]) {
+    FLTFillerEnum111Box *box = (FLTFillerEnum111Box *)value;
+    [self writeByte:240];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum112Box class]]) {
+    FLTFillerEnum112Box *box = (FLTFillerEnum112Box *)value;
+    [self writeByte:241];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum113Box class]]) {
+    FLTFillerEnum113Box *box = (FLTFillerEnum113Box *)value;
+    [self writeByte:242];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum114Box class]]) {
+    FLTFillerEnum114Box *box = (FLTFillerEnum114Box *)value;
+    [self writeByte:243];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum115Box class]]) {
+    FLTFillerEnum115Box *box = (FLTFillerEnum115Box *)value;
+    [self writeByte:244];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum116Box class]]) {
+    FLTFillerEnum116Box *box = (FLTFillerEnum116Box *)value;
+    [self writeByte:245];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum117Box class]]) {
+    FLTFillerEnum117Box *box = (FLTFillerEnum117Box *)value;
+    [self writeByte:246];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum118Box class]]) {
+    FLTFillerEnum118Box *box = (FLTFillerEnum118Box *)value;
+    [self writeByte:247];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum119Box class]]) {
+    FLTFillerEnum119Box *box = (FLTFillerEnum119Box *)value;
+    [self writeByte:248];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum120Box class]]) {
+    FLTFillerEnum120Box *box = (FLTFillerEnum120Box *)value;
+    [self writeByte:249];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum121Box class]]) {
+    FLTFillerEnum121Box *box = (FLTFillerEnum121Box *)value;
+    [self writeByte:250];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum122Box class]]) {
+    FLTFillerEnum122Box *box = (FLTFillerEnum122Box *)value;
+    [self writeByte:251];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum123Box class]]) {
+    FLTFillerEnum123Box *box = (FLTFillerEnum123Box *)value;
+    [self writeByte:252];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTFillerEnum124Box class]]) {
+    FLTFillerEnum124Box *box = (FLTFillerEnum124Box *)value;
+    [self writeByte:253];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAnEnumBox class]]) {
+    FLTAnEnumBox *box = (FLTAnEnumBox *)value;
+    [self writeByte:254];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAnotherEnumBox class]]) {
+    FLTAnotherEnumBox *box = (FLTAnotherEnumBox *)value;
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow
+        makeWithType:0
+             wrapped:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
+  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow makeWithType:1
+                                                                      wrapped:[value toList]];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
+  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow makeWithType:2
+                                                                      wrapped:[value toList]];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
+  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow makeWithType:3
+                                                                      wrapped:[value toList]];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
+  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow makeWithType:4
+                                                                      wrapped:[value toList]];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
+  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow makeWithType:5
+                                                                      wrapped:[value toList]];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
   } else {
     [super writeValue:value];
   }
@@ -863,10 +3443,36 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        FLTAnEnumBox *enumBox = GetNullableObjectAtIndex(args, 0);
-        FLTAnEnum arg_anEnum = enumBox.value;
+        FLTAnEnumBox *anFLTAnEnumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnEnum arg_anEnum = anFLTAnEnumBox.value;
         FlutterError *error;
         FLTAnEnumBox *output = [api echoEnum:arg_anEnum error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed enum to test serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_integration_tests."
+                                                   @"HostIntegrationCoreApi.echoAnotherEnum",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoAnotherEnum:error:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoAnotherEnum:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAnotherEnumBox *anFLTAnotherEnumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnotherEnum arg_anotherEnum = anFLTAnotherEnumBox.value;
+        FlutterError *error;
+        FLTAnotherEnumBox *output = [api echoAnotherEnum:arg_anotherEnum error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -1348,6 +3954,31 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:@"%@%@",
+                                             @"dev.flutter.pigeon.pigeon_integration_tests."
+                                             @"HostIntegrationCoreApi.echoAnotherNullableEnum",
+                                             messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoAnotherNullableEnum:error:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoAnotherNullableEnum:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAnotherEnumBox *arg_anotherEnum = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        FLTAnotherEnumBox *output = [api echoAnotherNullableEnum:arg_anotherEnum error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
   /// Returns passed in int.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
@@ -1650,12 +4281,40 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        FLTAnEnumBox *enumBox = GetNullableObjectAtIndex(args, 0);
-        FLTAnEnum arg_anEnum = enumBox.value;
+        FLTAnEnumBox *anFLTAnEnumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnEnum arg_anEnum = anFLTAnEnumBox.value;
         [api echoAsyncEnum:arg_anEnum
                 completion:^(FLTAnEnumBox *_Nullable output, FlutterError *_Nullable error) {
                   callback(wrapResult(output, error));
                 }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_integration_tests."
+                                                   @"HostIntegrationCoreApi.echoAnotherAsyncEnum",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoAnotherAsyncEnum:completion:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoAnotherAsyncEnum:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAnotherEnumBox *anFLTAnotherEnumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnotherEnum arg_anotherEnum = anFLTAnotherEnumBox.value;
+        [api echoAnotherAsyncEnum:arg_anotherEnum
+                       completion:^(FLTAnotherEnumBox *_Nullable output,
+                                    FlutterError *_Nullable error) {
+                         callback(wrapResult(output, error));
+                       }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -2053,6 +4712,34 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                        completion:^(FLTAnEnumBox *_Nullable output, FlutterError *_Nullable error) {
                          callback(wrapResult(output, error));
                        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:@"%@%@",
+                                             @"dev.flutter.pigeon.pigeon_integration_tests."
+                                             @"HostIntegrationCoreApi.echoAnotherAsyncNullableEnum",
+                                             messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoAnotherAsyncNullableEnum:completion:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoAnotherAsyncNullableEnum:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAnotherEnumBox *arg_anotherEnum = GetNullableObjectAtIndex(args, 0);
+        [api echoAnotherAsyncNullableEnum:arg_anotherEnum
+                               completion:^(FLTAnotherEnumBox *_Nullable output,
+                                            FlutterError *_Nullable error) {
+                                 callback(wrapResult(output, error));
+                               }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -2474,12 +5161,40 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        FLTAnEnumBox *enumBox = GetNullableObjectAtIndex(args, 0);
-        FLTAnEnum arg_anEnum = enumBox.value;
+        FLTAnEnumBox *anFLTAnEnumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnEnum arg_anEnum = anFLTAnEnumBox.value;
         [api callFlutterEchoEnum:arg_anEnum
                       completion:^(FLTAnEnumBox *_Nullable output, FlutterError *_Nullable error) {
                         callback(wrapResult(output, error));
                       }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:@"%@%@",
+                                             @"dev.flutter.pigeon.pigeon_integration_tests."
+                                             @"HostIntegrationCoreApi.callFlutterEchoAnotherEnum",
+                                             messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoAnotherEnum:completion:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoAnotherEnum:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAnotherEnumBox *anFLTAnotherEnumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnotherEnum arg_anotherEnum = anFLTAnotherEnumBox.value;
+        [api callFlutterEchoAnotherEnum:arg_anotherEnum
+                             completion:^(FLTAnotherEnumBox *_Nullable output,
+                                          FlutterError *_Nullable error) {
+                               callback(wrapResult(output, error));
+                             }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -2696,6 +5411,33 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                            FlutterError *_Nullable error) {
                                 callback(wrapResult(output, error));
                               }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:
+                                      @"%@%@",
+                                      @"dev.flutter.pigeon.pigeon_integration_tests."
+                                      @"HostIntegrationCoreApi.callFlutterEchoAnotherNullableEnum",
+                                      messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoAnotherNullableEnum:completion:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoAnotherNullableEnum:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAnotherEnumBox *arg_anotherEnum = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoAnotherNullableEnum:arg_anotherEnum
+                                     completion:^(FLTAnotherEnumBox *_Nullable output,
+                                                  FlutterError *_Nullable error) {
+                                       callback(wrapResult(output, error));
+                                     }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -3198,6 +5940,34 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                    }
                  }];
 }
+- (void)echoAnotherEnum:(FLTAnotherEnum)arg_anotherEnum
+             completion:
+                 (void (^)(FLTAnotherEnumBox *_Nullable, FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:
+          @"%@%@",
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherEnum",
+          _messageChannelSuffix];
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FLTGetCoreTestsCodec()];
+  [channel sendMessage:@[ [[FLTAnotherEnumBox alloc] initWithValue:arg_anotherEnum] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       FLTAnotherEnumBox *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, createConnectionError(channelName));
+                   }
+                 }];
+}
 - (void)echoNullableBool:(nullable NSNumber *)arg_aBool
               completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
@@ -3411,6 +6181,34 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                            details:reply[2]]);
                      } else {
                        FLTAnEnumBox *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, createConnectionError(channelName));
+                   }
+                 }];
+}
+- (void)echoAnotherNullableEnum:(nullable FLTAnotherEnumBox *)arg_anotherEnum
+                     completion:(void (^)(FLTAnotherEnumBox *_Nullable,
+                                          FlutterError *_Nullable))completion {
+  NSString *channelName =
+      [NSString stringWithFormat:@"%@%@",
+                                 @"dev.flutter.pigeon.pigeon_integration_tests."
+                                 @"FlutterIntegrationCoreApi.echoAnotherNullableEnum",
+                                 _messageChannelSuffix];
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FLTGetCoreTestsCodec()];
+  [channel sendMessage:@[ arg_anotherEnum == nil ? [NSNull null] : arg_anotherEnum ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       FLTAnotherEnumBox *output = reply[0] == [NSNull null] ? nil : reply[0];
                        completion(output, nil);
                      }
                    } else {

@@ -71,8 +71,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   PGNMessageData *pigeonResult = [[PGNMessageData alloc] init];
   pigeonResult.name = GetNullableObjectAtIndex(list, 0);
   pigeonResult.description = GetNullableObjectAtIndex(list, 1);
-  PGNCodeBox *enumBox = GetNullableObjectAtIndex(list, 2);
-  pigeonResult.code = enumBox.value;
+  PGNCodeBox *anPGNCodeBox = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.code = anPGNCodeBox.value;
   pigeonResult.data = GetNullableObjectAtIndex(list, 3);
   return pigeonResult;
 }

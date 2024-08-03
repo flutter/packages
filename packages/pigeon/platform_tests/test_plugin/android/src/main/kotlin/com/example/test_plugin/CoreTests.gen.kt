@@ -36,6 +36,1256 @@ private fun createConnectionError(channelName: String): FlutterError {
       "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
 }
 
+enum class FillerEnum0(val raw: Int) {
+  FILLER_MEMBER0(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum0? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum1(val raw: Int) {
+  FILLER_MEMBER1(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum1? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum2(val raw: Int) {
+  FILLER_MEMBER2(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum2? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum3(val raw: Int) {
+  FILLER_MEMBER3(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum3? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum4(val raw: Int) {
+  FILLER_MEMBER4(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum4? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum5(val raw: Int) {
+  FILLER_MEMBER5(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum5? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum6(val raw: Int) {
+  FILLER_MEMBER6(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum6? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum7(val raw: Int) {
+  FILLER_MEMBER7(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum7? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum8(val raw: Int) {
+  FILLER_MEMBER8(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum8? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum9(val raw: Int) {
+  FILLER_MEMBER9(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum9? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum10(val raw: Int) {
+  FILLER_MEMBER10(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum10? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum11(val raw: Int) {
+  FILLER_MEMBER11(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum11? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum12(val raw: Int) {
+  FILLER_MEMBER12(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum12? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum13(val raw: Int) {
+  FILLER_MEMBER13(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum13? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum14(val raw: Int) {
+  FILLER_MEMBER14(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum14? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum15(val raw: Int) {
+  FILLER_MEMBER15(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum15? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum16(val raw: Int) {
+  FILLER_MEMBER16(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum16? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum17(val raw: Int) {
+  FILLER_MEMBER17(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum17? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum18(val raw: Int) {
+  FILLER_MEMBER18(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum18? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum19(val raw: Int) {
+  FILLER_MEMBER19(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum19? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum20(val raw: Int) {
+  FILLER_MEMBER20(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum20? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum21(val raw: Int) {
+  FILLER_MEMBER21(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum21? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum22(val raw: Int) {
+  FILLER_MEMBER22(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum22? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum23(val raw: Int) {
+  FILLER_MEMBER23(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum23? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum24(val raw: Int) {
+  FILLER_MEMBER24(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum24? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum25(val raw: Int) {
+  FILLER_MEMBER25(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum25? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum26(val raw: Int) {
+  FILLER_MEMBER26(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum26? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum27(val raw: Int) {
+  FILLER_MEMBER27(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum27? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum28(val raw: Int) {
+  FILLER_MEMBER28(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum28? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum29(val raw: Int) {
+  FILLER_MEMBER29(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum29? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum30(val raw: Int) {
+  FILLER_MEMBER30(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum30? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum31(val raw: Int) {
+  FILLER_MEMBER31(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum31? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum32(val raw: Int) {
+  FILLER_MEMBER32(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum32? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum33(val raw: Int) {
+  FILLER_MEMBER33(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum33? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum34(val raw: Int) {
+  FILLER_MEMBER34(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum34? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum35(val raw: Int) {
+  FILLER_MEMBER35(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum35? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum36(val raw: Int) {
+  FILLER_MEMBER36(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum36? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum37(val raw: Int) {
+  FILLER_MEMBER37(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum37? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum38(val raw: Int) {
+  FILLER_MEMBER38(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum38? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum39(val raw: Int) {
+  FILLER_MEMBER39(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum39? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum40(val raw: Int) {
+  FILLER_MEMBER40(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum40? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum41(val raw: Int) {
+  FILLER_MEMBER41(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum41? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum42(val raw: Int) {
+  FILLER_MEMBER42(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum42? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum43(val raw: Int) {
+  FILLER_MEMBER43(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum43? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum44(val raw: Int) {
+  FILLER_MEMBER44(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum44? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum45(val raw: Int) {
+  FILLER_MEMBER45(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum45? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum46(val raw: Int) {
+  FILLER_MEMBER46(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum46? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum47(val raw: Int) {
+  FILLER_MEMBER47(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum47? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum48(val raw: Int) {
+  FILLER_MEMBER48(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum48? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum49(val raw: Int) {
+  FILLER_MEMBER49(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum49? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum50(val raw: Int) {
+  FILLER_MEMBER50(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum50? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum51(val raw: Int) {
+  FILLER_MEMBER51(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum51? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum52(val raw: Int) {
+  FILLER_MEMBER52(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum52? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum53(val raw: Int) {
+  FILLER_MEMBER53(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum53? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum54(val raw: Int) {
+  FILLER_MEMBER54(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum54? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum55(val raw: Int) {
+  FILLER_MEMBER55(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum55? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum56(val raw: Int) {
+  FILLER_MEMBER56(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum56? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum57(val raw: Int) {
+  FILLER_MEMBER57(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum57? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum58(val raw: Int) {
+  FILLER_MEMBER58(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum58? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum59(val raw: Int) {
+  FILLER_MEMBER59(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum59? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum60(val raw: Int) {
+  FILLER_MEMBER60(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum60? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum61(val raw: Int) {
+  FILLER_MEMBER61(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum61? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum62(val raw: Int) {
+  FILLER_MEMBER62(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum62? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum63(val raw: Int) {
+  FILLER_MEMBER63(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum63? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum64(val raw: Int) {
+  FILLER_MEMBER64(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum64? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum65(val raw: Int) {
+  FILLER_MEMBER65(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum65? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum66(val raw: Int) {
+  FILLER_MEMBER66(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum66? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum67(val raw: Int) {
+  FILLER_MEMBER67(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum67? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum68(val raw: Int) {
+  FILLER_MEMBER68(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum68? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum69(val raw: Int) {
+  FILLER_MEMBER69(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum69? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum70(val raw: Int) {
+  FILLER_MEMBER70(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum70? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum71(val raw: Int) {
+  FILLER_MEMBER71(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum71? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum72(val raw: Int) {
+  FILLER_MEMBER72(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum72? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum73(val raw: Int) {
+  FILLER_MEMBER73(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum73? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum74(val raw: Int) {
+  FILLER_MEMBER74(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum74? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum75(val raw: Int) {
+  FILLER_MEMBER75(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum75? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum76(val raw: Int) {
+  FILLER_MEMBER76(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum76? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum77(val raw: Int) {
+  FILLER_MEMBER77(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum77? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum78(val raw: Int) {
+  FILLER_MEMBER78(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum78? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum79(val raw: Int) {
+  FILLER_MEMBER79(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum79? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum80(val raw: Int) {
+  FILLER_MEMBER80(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum80? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum81(val raw: Int) {
+  FILLER_MEMBER81(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum81? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum82(val raw: Int) {
+  FILLER_MEMBER82(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum82? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum83(val raw: Int) {
+  FILLER_MEMBER83(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum83? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum84(val raw: Int) {
+  FILLER_MEMBER84(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum84? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum85(val raw: Int) {
+  FILLER_MEMBER85(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum85? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum86(val raw: Int) {
+  FILLER_MEMBER86(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum86? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum87(val raw: Int) {
+  FILLER_MEMBER87(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum87? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum88(val raw: Int) {
+  FILLER_MEMBER88(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum88? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum89(val raw: Int) {
+  FILLER_MEMBER89(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum89? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum90(val raw: Int) {
+  FILLER_MEMBER90(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum90? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum91(val raw: Int) {
+  FILLER_MEMBER91(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum91? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum92(val raw: Int) {
+  FILLER_MEMBER92(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum92? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum93(val raw: Int) {
+  FILLER_MEMBER93(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum93? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum94(val raw: Int) {
+  FILLER_MEMBER94(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum94? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum95(val raw: Int) {
+  FILLER_MEMBER95(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum95? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum96(val raw: Int) {
+  FILLER_MEMBER96(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum96? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum97(val raw: Int) {
+  FILLER_MEMBER97(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum97? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum98(val raw: Int) {
+  FILLER_MEMBER98(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum98? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum99(val raw: Int) {
+  FILLER_MEMBER99(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum99? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum100(val raw: Int) {
+  FILLER_MEMBER100(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum100? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum101(val raw: Int) {
+  FILLER_MEMBER101(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum101? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum102(val raw: Int) {
+  FILLER_MEMBER102(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum102? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum103(val raw: Int) {
+  FILLER_MEMBER103(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum103? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum104(val raw: Int) {
+  FILLER_MEMBER104(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum104? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum105(val raw: Int) {
+  FILLER_MEMBER105(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum105? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum106(val raw: Int) {
+  FILLER_MEMBER106(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum106? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum107(val raw: Int) {
+  FILLER_MEMBER107(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum107? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum108(val raw: Int) {
+  FILLER_MEMBER108(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum108? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum109(val raw: Int) {
+  FILLER_MEMBER109(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum109? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum110(val raw: Int) {
+  FILLER_MEMBER110(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum110? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum111(val raw: Int) {
+  FILLER_MEMBER111(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum111? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum112(val raw: Int) {
+  FILLER_MEMBER112(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum112? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum113(val raw: Int) {
+  FILLER_MEMBER113(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum113? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum114(val raw: Int) {
+  FILLER_MEMBER114(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum114? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum115(val raw: Int) {
+  FILLER_MEMBER115(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum115? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum116(val raw: Int) {
+  FILLER_MEMBER116(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum116? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum117(val raw: Int) {
+  FILLER_MEMBER117(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum117? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum118(val raw: Int) {
+  FILLER_MEMBER118(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum118? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum119(val raw: Int) {
+  FILLER_MEMBER119(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum119? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum120(val raw: Int) {
+  FILLER_MEMBER120(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum120? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum121(val raw: Int) {
+  FILLER_MEMBER121(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum121? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum122(val raw: Int) {
+  FILLER_MEMBER122(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum122? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum123(val raw: Int) {
+  FILLER_MEMBER123(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum123? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class FillerEnum124(val raw: Int) {
+  FILLER_MEMBER124(0);
+
+  companion object {
+    fun ofRaw(raw: Int): FillerEnum124? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 enum class AnEnum(val raw: Int) {
   ONE(0),
   TWO(1),
@@ -45,6 +1295,16 @@ enum class AnEnum(val raw: Int) {
 
   companion object {
     fun ofRaw(raw: Int): AnEnum? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AnotherEnum(val raw: Int) {
+  JUST_IN_CASE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AnotherEnum? {
       return values().firstOrNull { it.raw == raw }
     }
   }
@@ -65,6 +1325,7 @@ data class AllTypes(
     val a8ByteArray: LongArray,
     val aFloatArray: DoubleArray,
     val anEnum: AnEnum,
+    val anotherEnum: AnotherEnum,
     val aString: String,
     val anObject: Any,
     val list: List<Any?>,
@@ -86,14 +1347,15 @@ data class AllTypes(
       val a8ByteArray = __pigeon_list[6] as LongArray
       val aFloatArray = __pigeon_list[7] as DoubleArray
       val anEnum = __pigeon_list[8] as AnEnum
-      val aString = __pigeon_list[9] as String
-      val anObject = __pigeon_list[10] as Any
-      val list = __pigeon_list[11] as List<Any?>
-      val stringList = __pigeon_list[12] as List<String?>
-      val intList = __pigeon_list[13] as List<Long?>
-      val doubleList = __pigeon_list[14] as List<Double?>
-      val boolList = __pigeon_list[15] as List<Boolean?>
-      val map = __pigeon_list[16] as Map<Any, Any?>
+      val anotherEnum = __pigeon_list[9] as AnotherEnum
+      val aString = __pigeon_list[10] as String
+      val anObject = __pigeon_list[11] as Any
+      val list = __pigeon_list[12] as List<Any?>
+      val stringList = __pigeon_list[13] as List<String?>
+      val intList = __pigeon_list[14] as List<Long?>
+      val doubleList = __pigeon_list[15] as List<Double?>
+      val boolList = __pigeon_list[16] as List<Boolean?>
+      val map = __pigeon_list[17] as Map<Any, Any?>
       return AllTypes(
           aBool,
           anInt,
@@ -104,6 +1366,7 @@ data class AllTypes(
           a8ByteArray,
           aFloatArray,
           anEnum,
+          anotherEnum,
           aString,
           anObject,
           list,
@@ -126,6 +1389,7 @@ data class AllTypes(
         a8ByteArray,
         aFloatArray,
         anEnum,
+        anotherEnum,
         aString,
         anObject,
         list,
@@ -156,6 +1420,7 @@ data class AllNullableTypes(
     val nullableMapWithAnnotations: Map<String?, String?>? = null,
     val nullableMapWithObject: Map<String?, Any?>? = null,
     val aNullableEnum: AnEnum? = null,
+    val anotherNullableEnum: AnotherEnum? = null,
     val aNullableString: String? = null,
     val aNullableObject: Any? = null,
     val allNullableTypes: AllNullableTypes? = null,
@@ -184,16 +1449,17 @@ data class AllNullableTypes(
       val nullableMapWithAnnotations = __pigeon_list[9] as Map<String?, String?>?
       val nullableMapWithObject = __pigeon_list[10] as Map<String?, Any?>?
       val aNullableEnum = __pigeon_list[11] as AnEnum?
-      val aNullableString = __pigeon_list[12] as String?
-      val aNullableObject = __pigeon_list[13]
-      val allNullableTypes = __pigeon_list[14] as AllNullableTypes?
-      val list = __pigeon_list[15] as List<Any?>?
-      val stringList = __pigeon_list[16] as List<String?>?
-      val intList = __pigeon_list[17] as List<Long?>?
-      val doubleList = __pigeon_list[18] as List<Double?>?
-      val boolList = __pigeon_list[19] as List<Boolean?>?
-      val nestedClassList = __pigeon_list[20] as List<AllNullableTypes?>?
-      val map = __pigeon_list[21] as Map<Any, Any?>?
+      val anotherNullableEnum = __pigeon_list[12] as AnotherEnum?
+      val aNullableString = __pigeon_list[13] as String?
+      val aNullableObject = __pigeon_list[14]
+      val allNullableTypes = __pigeon_list[15] as AllNullableTypes?
+      val list = __pigeon_list[16] as List<Any?>?
+      val stringList = __pigeon_list[17] as List<String?>?
+      val intList = __pigeon_list[18] as List<Long?>?
+      val doubleList = __pigeon_list[19] as List<Double?>?
+      val boolList = __pigeon_list[20] as List<Boolean?>?
+      val nestedClassList = __pigeon_list[21] as List<AllNullableTypes?>?
+      val map = __pigeon_list[22] as Map<Any, Any?>?
       return AllNullableTypes(
           aNullableBool,
           aNullableInt,
@@ -207,6 +1473,7 @@ data class AllNullableTypes(
           nullableMapWithAnnotations,
           nullableMapWithObject,
           aNullableEnum,
+          anotherNullableEnum,
           aNullableString,
           aNullableObject,
           allNullableTypes,
@@ -234,6 +1501,7 @@ data class AllNullableTypes(
         nullableMapWithAnnotations,
         nullableMapWithObject,
         aNullableEnum,
+        anotherNullableEnum,
         aNullableString,
         aNullableObject,
         allNullableTypes,
@@ -267,6 +1535,7 @@ data class AllNullableTypesWithoutRecursion(
     val nullableMapWithAnnotations: Map<String?, String?>? = null,
     val nullableMapWithObject: Map<String?, Any?>? = null,
     val aNullableEnum: AnEnum? = null,
+    val anotherNullableEnum: AnotherEnum? = null,
     val aNullableString: String? = null,
     val aNullableObject: Any? = null,
     val list: List<Any?>? = null,
@@ -293,14 +1562,15 @@ data class AllNullableTypesWithoutRecursion(
       val nullableMapWithAnnotations = __pigeon_list[9] as Map<String?, String?>?
       val nullableMapWithObject = __pigeon_list[10] as Map<String?, Any?>?
       val aNullableEnum = __pigeon_list[11] as AnEnum?
-      val aNullableString = __pigeon_list[12] as String?
-      val aNullableObject = __pigeon_list[13]
-      val list = __pigeon_list[14] as List<Any?>?
-      val stringList = __pigeon_list[15] as List<String?>?
-      val intList = __pigeon_list[16] as List<Long?>?
-      val doubleList = __pigeon_list[17] as List<Double?>?
-      val boolList = __pigeon_list[18] as List<Boolean?>?
-      val map = __pigeon_list[19] as Map<Any, Any?>?
+      val anotherNullableEnum = __pigeon_list[12] as AnotherEnum?
+      val aNullableString = __pigeon_list[13] as String?
+      val aNullableObject = __pigeon_list[14]
+      val list = __pigeon_list[15] as List<Any?>?
+      val stringList = __pigeon_list[16] as List<String?>?
+      val intList = __pigeon_list[17] as List<Long?>?
+      val doubleList = __pigeon_list[18] as List<Double?>?
+      val boolList = __pigeon_list[19] as List<Boolean?>?
+      val map = __pigeon_list[20] as Map<Any, Any?>?
       return AllNullableTypesWithoutRecursion(
           aNullableBool,
           aNullableInt,
@@ -314,6 +1584,7 @@ data class AllNullableTypesWithoutRecursion(
           nullableMapWithAnnotations,
           nullableMapWithObject,
           aNullableEnum,
+          anotherNullableEnum,
           aNullableString,
           aNullableObject,
           list,
@@ -339,6 +1610,7 @@ data class AllNullableTypesWithoutRecursion(
         nullableMapWithAnnotations,
         nullableMapWithObject,
         aNullableEnum,
+        anotherNullableEnum,
         aNullableString,
         aNullableObject,
         list,
@@ -405,28 +1677,441 @@ data class TestMessage(val testList: List<Any?>? = null) {
   }
 }
 
+@Suppress("ClassName")
+data class CoreTests__pigeon_CodecOverflow(val type: Int, val wrapped: Any? = null) {
+  fun toList(): List<Any?> {
+    return listOf(
+        type,
+        wrapped,
+    )
+  }
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun fromList(__pigeon_list: List<Any?>): Any? {
+      val wrapper =
+          CoreTests__pigeon_CodecOverflow(
+              type = __pigeon_list[0] as Int,
+              wrapped = __pigeon_list[1],
+          )
+      return wrapper.unwrap()
+    }
+  }
+
+  fun unwrap(): Any? {
+    if (wrapped == null) {
+      return null
+    }
+
+    when (type) {
+      0 -> {
+        return AnotherEnum.ofRaw(wrapped as Int)
+      }
+      1 -> {
+        return AllTypes.fromList(wrapped as List<Any?>)
+      }
+      2 -> {
+        return AllNullableTypes.fromList(wrapped as List<Any?>)
+      }
+      3 -> {
+        return AllNullableTypesWithoutRecursion.fromList(wrapped as List<Any?>)
+      }
+      4 -> {
+        return AllClassesWrapper.fromList(wrapped as List<Any?>)
+      }
+      5 -> {
+        return TestMessage.fromList(wrapped as List<Any?>)
+      }
+    }
+    return null
+  }
+}
+
 private object CoreTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Int?)?.let { AnEnum.ofRaw(it) }
+        return (readValue(buffer) as Int?)?.let { FillerEnum0.ofRaw(it) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
+        return (readValue(buffer) as Int?)?.let { FillerEnum1.ofRaw(it) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+        return (readValue(buffer) as Int?)?.let { FillerEnum2.ofRaw(it) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          AllNullableTypesWithoutRecursion.fromList(it)
-        }
+        return (readValue(buffer) as Int?)?.let { FillerEnum3.ofRaw(it) }
       }
       133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
+        return (readValue(buffer) as Int?)?.let { FillerEnum4.ofRaw(it) }
       }
       134.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
+        return (readValue(buffer) as Int?)?.let { FillerEnum5.ofRaw(it) }
+      }
+      135.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum6.ofRaw(it) }
+      }
+      136.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum7.ofRaw(it) }
+      }
+      137.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum8.ofRaw(it) }
+      }
+      138.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum9.ofRaw(it) }
+      }
+      139.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum10.ofRaw(it) }
+      }
+      140.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum11.ofRaw(it) }
+      }
+      141.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum12.ofRaw(it) }
+      }
+      142.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum13.ofRaw(it) }
+      }
+      143.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum14.ofRaw(it) }
+      }
+      144.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum15.ofRaw(it) }
+      }
+      145.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum16.ofRaw(it) }
+      }
+      146.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum17.ofRaw(it) }
+      }
+      147.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum18.ofRaw(it) }
+      }
+      148.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum19.ofRaw(it) }
+      }
+      149.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum20.ofRaw(it) }
+      }
+      150.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum21.ofRaw(it) }
+      }
+      151.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum22.ofRaw(it) }
+      }
+      152.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum23.ofRaw(it) }
+      }
+      153.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum24.ofRaw(it) }
+      }
+      154.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum25.ofRaw(it) }
+      }
+      155.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum26.ofRaw(it) }
+      }
+      156.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum27.ofRaw(it) }
+      }
+      157.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum28.ofRaw(it) }
+      }
+      158.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum29.ofRaw(it) }
+      }
+      159.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum30.ofRaw(it) }
+      }
+      160.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum31.ofRaw(it) }
+      }
+      161.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum32.ofRaw(it) }
+      }
+      162.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum33.ofRaw(it) }
+      }
+      163.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum34.ofRaw(it) }
+      }
+      164.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum35.ofRaw(it) }
+      }
+      165.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum36.ofRaw(it) }
+      }
+      166.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum37.ofRaw(it) }
+      }
+      167.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum38.ofRaw(it) }
+      }
+      168.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum39.ofRaw(it) }
+      }
+      169.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum40.ofRaw(it) }
+      }
+      170.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum41.ofRaw(it) }
+      }
+      171.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum42.ofRaw(it) }
+      }
+      172.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum43.ofRaw(it) }
+      }
+      173.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum44.ofRaw(it) }
+      }
+      174.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum45.ofRaw(it) }
+      }
+      175.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum46.ofRaw(it) }
+      }
+      176.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum47.ofRaw(it) }
+      }
+      177.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum48.ofRaw(it) }
+      }
+      178.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum49.ofRaw(it) }
+      }
+      179.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum50.ofRaw(it) }
+      }
+      180.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum51.ofRaw(it) }
+      }
+      181.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum52.ofRaw(it) }
+      }
+      182.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum53.ofRaw(it) }
+      }
+      183.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum54.ofRaw(it) }
+      }
+      184.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum55.ofRaw(it) }
+      }
+      185.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum56.ofRaw(it) }
+      }
+      186.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum57.ofRaw(it) }
+      }
+      187.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum58.ofRaw(it) }
+      }
+      188.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum59.ofRaw(it) }
+      }
+      189.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum60.ofRaw(it) }
+      }
+      190.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum61.ofRaw(it) }
+      }
+      191.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum62.ofRaw(it) }
+      }
+      192.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum63.ofRaw(it) }
+      }
+      193.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum64.ofRaw(it) }
+      }
+      194.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum65.ofRaw(it) }
+      }
+      195.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum66.ofRaw(it) }
+      }
+      196.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum67.ofRaw(it) }
+      }
+      197.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum68.ofRaw(it) }
+      }
+      198.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum69.ofRaw(it) }
+      }
+      199.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum70.ofRaw(it) }
+      }
+      200.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum71.ofRaw(it) }
+      }
+      201.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum72.ofRaw(it) }
+      }
+      202.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum73.ofRaw(it) }
+      }
+      203.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum74.ofRaw(it) }
+      }
+      204.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum75.ofRaw(it) }
+      }
+      205.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum76.ofRaw(it) }
+      }
+      206.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum77.ofRaw(it) }
+      }
+      207.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum78.ofRaw(it) }
+      }
+      208.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum79.ofRaw(it) }
+      }
+      209.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum80.ofRaw(it) }
+      }
+      210.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum81.ofRaw(it) }
+      }
+      211.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum82.ofRaw(it) }
+      }
+      212.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum83.ofRaw(it) }
+      }
+      213.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum84.ofRaw(it) }
+      }
+      214.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum85.ofRaw(it) }
+      }
+      215.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum86.ofRaw(it) }
+      }
+      216.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum87.ofRaw(it) }
+      }
+      217.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum88.ofRaw(it) }
+      }
+      218.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum89.ofRaw(it) }
+      }
+      219.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum90.ofRaw(it) }
+      }
+      220.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum91.ofRaw(it) }
+      }
+      221.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum92.ofRaw(it) }
+      }
+      222.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum93.ofRaw(it) }
+      }
+      223.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum94.ofRaw(it) }
+      }
+      224.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum95.ofRaw(it) }
+      }
+      225.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum96.ofRaw(it) }
+      }
+      226.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum97.ofRaw(it) }
+      }
+      227.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum98.ofRaw(it) }
+      }
+      228.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum99.ofRaw(it) }
+      }
+      229.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum100.ofRaw(it) }
+      }
+      230.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum101.ofRaw(it) }
+      }
+      231.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum102.ofRaw(it) }
+      }
+      232.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum103.ofRaw(it) }
+      }
+      233.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum104.ofRaw(it) }
+      }
+      234.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum105.ofRaw(it) }
+      }
+      235.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum106.ofRaw(it) }
+      }
+      236.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum107.ofRaw(it) }
+      }
+      237.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum108.ofRaw(it) }
+      }
+      238.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum109.ofRaw(it) }
+      }
+      239.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum110.ofRaw(it) }
+      }
+      240.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum111.ofRaw(it) }
+      }
+      241.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum112.ofRaw(it) }
+      }
+      242.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum113.ofRaw(it) }
+      }
+      243.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum114.ofRaw(it) }
+      }
+      244.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum115.ofRaw(it) }
+      }
+      245.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum116.ofRaw(it) }
+      }
+      246.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum117.ofRaw(it) }
+      }
+      247.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum118.ofRaw(it) }
+      }
+      248.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum119.ofRaw(it) }
+      }
+      249.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum120.ofRaw(it) }
+      }
+      250.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum121.ofRaw(it) }
+      }
+      251.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum122.ofRaw(it) }
+      }
+      252.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum123.ofRaw(it) }
+      }
+      253.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { FillerEnum124.ofRaw(it) }
+      }
+      254.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AnEnum.ofRaw(it) }
+      }
+      255.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          CoreTests__pigeon_CodecOverflow.fromList(it)
+        }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -434,29 +2119,539 @@ private object CoreTestsPigeonCodec : StandardMessageCodec() {
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
-      is AnEnum -> {
+      is FillerEnum0 -> {
         stream.write(129)
         writeValue(stream, value.raw)
       }
-      is AllTypes -> {
+      is FillerEnum1 -> {
         stream.write(130)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum2 -> {
+        stream.write(131)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum3 -> {
+        stream.write(132)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum4 -> {
+        stream.write(133)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum5 -> {
+        stream.write(134)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum6 -> {
+        stream.write(135)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum7 -> {
+        stream.write(136)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum8 -> {
+        stream.write(137)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum9 -> {
+        stream.write(138)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum10 -> {
+        stream.write(139)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum11 -> {
+        stream.write(140)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum12 -> {
+        stream.write(141)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum13 -> {
+        stream.write(142)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum14 -> {
+        stream.write(143)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum15 -> {
+        stream.write(144)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum16 -> {
+        stream.write(145)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum17 -> {
+        stream.write(146)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum18 -> {
+        stream.write(147)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum19 -> {
+        stream.write(148)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum20 -> {
+        stream.write(149)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum21 -> {
+        stream.write(150)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum22 -> {
+        stream.write(151)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum23 -> {
+        stream.write(152)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum24 -> {
+        stream.write(153)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum25 -> {
+        stream.write(154)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum26 -> {
+        stream.write(155)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum27 -> {
+        stream.write(156)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum28 -> {
+        stream.write(157)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum29 -> {
+        stream.write(158)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum30 -> {
+        stream.write(159)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum31 -> {
+        stream.write(160)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum32 -> {
+        stream.write(161)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum33 -> {
+        stream.write(162)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum34 -> {
+        stream.write(163)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum35 -> {
+        stream.write(164)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum36 -> {
+        stream.write(165)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum37 -> {
+        stream.write(166)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum38 -> {
+        stream.write(167)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum39 -> {
+        stream.write(168)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum40 -> {
+        stream.write(169)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum41 -> {
+        stream.write(170)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum42 -> {
+        stream.write(171)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum43 -> {
+        stream.write(172)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum44 -> {
+        stream.write(173)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum45 -> {
+        stream.write(174)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum46 -> {
+        stream.write(175)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum47 -> {
+        stream.write(176)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum48 -> {
+        stream.write(177)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum49 -> {
+        stream.write(178)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum50 -> {
+        stream.write(179)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum51 -> {
+        stream.write(180)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum52 -> {
+        stream.write(181)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum53 -> {
+        stream.write(182)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum54 -> {
+        stream.write(183)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum55 -> {
+        stream.write(184)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum56 -> {
+        stream.write(185)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum57 -> {
+        stream.write(186)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum58 -> {
+        stream.write(187)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum59 -> {
+        stream.write(188)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum60 -> {
+        stream.write(189)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum61 -> {
+        stream.write(190)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum62 -> {
+        stream.write(191)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum63 -> {
+        stream.write(192)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum64 -> {
+        stream.write(193)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum65 -> {
+        stream.write(194)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum66 -> {
+        stream.write(195)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum67 -> {
+        stream.write(196)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum68 -> {
+        stream.write(197)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum69 -> {
+        stream.write(198)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum70 -> {
+        stream.write(199)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum71 -> {
+        stream.write(200)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum72 -> {
+        stream.write(201)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum73 -> {
+        stream.write(202)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum74 -> {
+        stream.write(203)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum75 -> {
+        stream.write(204)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum76 -> {
+        stream.write(205)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum77 -> {
+        stream.write(206)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum78 -> {
+        stream.write(207)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum79 -> {
+        stream.write(208)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum80 -> {
+        stream.write(209)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum81 -> {
+        stream.write(210)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum82 -> {
+        stream.write(211)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum83 -> {
+        stream.write(212)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum84 -> {
+        stream.write(213)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum85 -> {
+        stream.write(214)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum86 -> {
+        stream.write(215)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum87 -> {
+        stream.write(216)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum88 -> {
+        stream.write(217)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum89 -> {
+        stream.write(218)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum90 -> {
+        stream.write(219)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum91 -> {
+        stream.write(220)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum92 -> {
+        stream.write(221)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum93 -> {
+        stream.write(222)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum94 -> {
+        stream.write(223)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum95 -> {
+        stream.write(224)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum96 -> {
+        stream.write(225)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum97 -> {
+        stream.write(226)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum98 -> {
+        stream.write(227)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum99 -> {
+        stream.write(228)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum100 -> {
+        stream.write(229)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum101 -> {
+        stream.write(230)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum102 -> {
+        stream.write(231)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum103 -> {
+        stream.write(232)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum104 -> {
+        stream.write(233)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum105 -> {
+        stream.write(234)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum106 -> {
+        stream.write(235)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum107 -> {
+        stream.write(236)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum108 -> {
+        stream.write(237)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum109 -> {
+        stream.write(238)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum110 -> {
+        stream.write(239)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum111 -> {
+        stream.write(240)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum112 -> {
+        stream.write(241)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum113 -> {
+        stream.write(242)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum114 -> {
+        stream.write(243)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum115 -> {
+        stream.write(244)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum116 -> {
+        stream.write(245)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum117 -> {
+        stream.write(246)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum118 -> {
+        stream.write(247)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum119 -> {
+        stream.write(248)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum120 -> {
+        stream.write(249)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum121 -> {
+        stream.write(250)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum122 -> {
+        stream.write(251)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum123 -> {
+        stream.write(252)
+        writeValue(stream, value.raw)
+      }
+      is FillerEnum124 -> {
+        stream.write(253)
+        writeValue(stream, value.raw)
+      }
+      is AnEnum -> {
+        stream.write(254)
+        writeValue(stream, value.raw)
+      }
+      is AnotherEnum -> {
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 0, wrapped = value.raw)
+        stream.write(255)
+        writeValue(stream, wrap.toList())
+      }
+      is AllTypes -> {
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 1, wrapped = value.toList())
+        stream.write(255)
+        writeValue(stream, wrap.toList())
       }
       is AllNullableTypes -> {
-        stream.write(131)
-        writeValue(stream, value.toList())
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 2, wrapped = value.toList())
+        stream.write(255)
+        writeValue(stream, wrap.toList())
       }
       is AllNullableTypesWithoutRecursion -> {
-        stream.write(132)
-        writeValue(stream, value.toList())
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 3, wrapped = value.toList())
+        stream.write(255)
+        writeValue(stream, wrap.toList())
       }
       is AllClassesWrapper -> {
-        stream.write(133)
-        writeValue(stream, value.toList())
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 4, wrapped = value.toList())
+        stream.write(255)
+        writeValue(stream, wrap.toList())
       }
       is TestMessage -> {
-        stream.write(134)
-        writeValue(stream, value.toList())
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 5, wrapped = value.toList())
+        stream.write(255)
+        writeValue(stream, wrap.toList())
       }
       else -> super.writeValue(stream, value)
     }
@@ -500,6 +2695,8 @@ interface HostIntegrationCoreApi {
   fun echoClassWrapper(wrapper: AllClassesWrapper): AllClassesWrapper
   /** Returns the passed enum to test serialization and deserialization. */
   fun echoEnum(anEnum: AnEnum): AnEnum
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun echoAnotherEnum(anotherEnum: AnotherEnum): AnotherEnum
   /** Returns the default string. */
   fun echoNamedDefaultString(aString: String): String
   /** Returns passed in double. */
@@ -550,6 +2747,8 @@ interface HostIntegrationCoreApi {
   fun echoNullableMap(aNullableMap: Map<String?, Any?>?): Map<String?, Any?>?
 
   fun echoNullableEnum(anEnum: AnEnum?): AnEnum?
+
+  fun echoAnotherNullableEnum(anotherEnum: AnotherEnum?): AnotherEnum?
   /** Returns passed in int. */
   fun echoOptionalNullableInt(aNullableInt: Long?): Long?
   /** Returns the passed in string. */
@@ -577,6 +2776,8 @@ interface HostIntegrationCoreApi {
   fun echoAsyncMap(aMap: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit)
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
   fun echoAsyncEnum(anEnum: AnEnum, callback: (Result<AnEnum>) -> Unit)
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  fun echoAnotherAsyncEnum(anotherEnum: AnotherEnum, callback: (Result<AnotherEnum>) -> Unit)
   /** Responds with an error from an async function returning a value. */
   fun throwAsyncError(callback: (Result<Any?>) -> Unit)
   /** Responds with an error from an async void function. */
@@ -616,6 +2817,11 @@ interface HostIntegrationCoreApi {
   )
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
   fun echoAsyncNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit)
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  fun echoAnotherAsyncNullableEnum(
+      anotherEnum: AnotherEnum?,
+      callback: (Result<AnotherEnum?>) -> Unit
+  )
 
   fun callFlutterNoop(callback: (Result<Unit>) -> Unit)
 
@@ -665,6 +2871,8 @@ interface HostIntegrationCoreApi {
 
   fun callFlutterEchoEnum(anEnum: AnEnum, callback: (Result<AnEnum>) -> Unit)
 
+  fun callFlutterEchoAnotherEnum(anotherEnum: AnotherEnum, callback: (Result<AnotherEnum>) -> Unit)
+
   fun callFlutterEchoNullableBool(aBool: Boolean?, callback: (Result<Boolean?>) -> Unit)
 
   fun callFlutterEchoNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit)
@@ -683,6 +2891,11 @@ interface HostIntegrationCoreApi {
   )
 
   fun callFlutterEchoNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit)
+
+  fun callFlutterEchoAnotherNullableEnum(
+      anotherEnum: AnotherEnum?,
+      callback: (Result<AnotherEnum?>) -> Unit
+  )
 
   fun callFlutterSmallApiEchoString(aString: String, callback: (Result<String>) -> Unit)
 
@@ -1016,6 +3229,28 @@ interface HostIntegrationCoreApi {
             val wrapped: List<Any?> =
                 try {
                   listOf(api.echoEnum(anEnumArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherEnum$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anotherEnumArg = args[0] as AnotherEnum
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoAnotherEnum(anotherEnumArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1436,6 +3671,28 @@ interface HostIntegrationCoreApi {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherNullableEnum$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anotherEnumArg = args[0] as AnotherEnum?
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoAnotherNullableEnum(anotherEnumArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
@@ -1701,6 +3958,30 @@ interface HostIntegrationCoreApi {
             val args = message as List<Any?>
             val anEnumArg = args[0] as AnEnum
             api.echoAsyncEnum(anEnumArg) { result: Result<AnEnum> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncEnum$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anotherEnumArg = args[0] as AnotherEnum
+            api.echoAnotherAsyncEnum(anotherEnumArg) { result: Result<AnotherEnum> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -2056,6 +4337,30 @@ interface HostIntegrationCoreApi {
             val args = message as List<Any?>
             val anEnumArg = args[0] as AnEnum?
             api.echoAsyncNullableEnum(anEnumArg) { result: Result<AnEnum?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncNullableEnum$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anotherEnumArg = args[0] as AnotherEnum?
+            api.echoAnotherAsyncNullableEnum(anotherEnumArg) { result: Result<AnotherEnum?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -2461,6 +4766,30 @@ interface HostIntegrationCoreApi {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherEnum$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anotherEnumArg = args[0] as AnotherEnum
+            api.callFlutterEchoAnotherEnum(anotherEnumArg) { result: Result<AnotherEnum> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
@@ -2636,6 +4965,30 @@ interface HostIntegrationCoreApi {
             val args = message as List<Any?>
             val anEnumArg = args[0] as AnEnum?
             api.callFlutterEchoNullableEnum(anEnumArg) { result: Result<AnEnum?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherNullableEnum$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anotherEnumArg = args[0] as AnotherEnum?
+            api.callFlutterEchoAnotherNullableEnum(anotherEnumArg) { result: Result<AnotherEnum?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -3109,6 +5462,33 @@ class FlutterIntegrationCoreApi(
       }
     }
   }
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun echoAnotherEnum(anotherEnumArg: AnotherEnum, callback: (Result<AnotherEnum>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherEnum$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(anotherEnumArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as AnotherEnum
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
   /** Returns the passed boolean, to test serialization and deserialization. */
   fun echoNullableBool(aBoolArg: Boolean?, callback: (Result<Boolean?>) -> Unit) {
     val separatedMessageChannelSuffix =
@@ -3265,6 +5645,29 @@ class FlutterIntegrationCoreApi(
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           val output = it[0] as AnEnum?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun echoAnotherNullableEnum(
+      anotherEnumArg: AnotherEnum?,
+      callback: (Result<AnotherEnum?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherNullableEnum$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(anotherEnumArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as AnotherEnum?
           callback(Result.success(output))
         }
       } else {

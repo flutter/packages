@@ -12,6 +12,10 @@ enum AnEnum {
   fourHundredTwentyTwo,
 }
 
+enum AnotherEnum {
+  justInCase,
+}
+
 class SimpleClass {
   SimpleClass({
     this.aString,
@@ -34,6 +38,7 @@ class AllTypes {
     required this.a8ByteArray,
     required this.aFloatArray,
     this.anEnum = AnEnum.one,
+    this.anotherEnum = AnotherEnum.justInCase,
     this.aString = '',
     this.anObject = 0,
 
@@ -59,6 +64,7 @@ class AllTypes {
   Int64List a8ByteArray;
   Float64List aFloatArray;
   AnEnum anEnum;
+  AnotherEnum anotherEnum;
   String aString;
   Object anObject;
 
@@ -91,6 +97,7 @@ class AllNullableTypes {
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
     this.aNullableEnum,
+    this.anotherNullableEnum,
     this.aNullableString,
     this.aNullableObject,
     this.allNullableTypes,
@@ -119,6 +126,7 @@ class AllNullableTypes {
   Map<String?, String?>? nullableMapWithAnnotations;
   Map<String?, Object?>? nullableMapWithObject;
   AnEnum? aNullableEnum;
+  AnotherEnum? anotherNullableEnum;
   String? aNullableString;
   Object? aNullableObject;
   AllNullableTypes? allNullableTypes;
@@ -154,6 +162,7 @@ class AllNullableTypesWithoutRecursion {
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
     this.aNullableEnum,
+    this.anotherNullableEnum,
     this.aNullableString,
     this.aNullableObject,
 
@@ -180,6 +189,7 @@ class AllNullableTypesWithoutRecursion {
   Map<String?, String?>? nullableMapWithAnnotations;
   Map<String?, Object?>? nullableMapWithObject;
   AnEnum? aNullableEnum;
+  AnotherEnum? anotherNullableEnum;
   String? aNullableString;
   Object? aNullableObject;
 
@@ -283,6 +293,11 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   AnEnum echoEnum(AnEnum anEnum);
 
+  /// Returns the passed enum to test serialization and deserialization.
+  @ObjCSelector('echoAnotherEnum:')
+  @SwiftFunction('echo(_:)')
+  AnotherEnum echoAnotherEnum(AnotherEnum anotherEnum);
+
   /// Returns the default string.
   @ObjCSelector('echoNamedDefaultString:')
   @SwiftFunction('echoNamedDefault(_:)')
@@ -380,6 +395,10 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoNullable(_:)')
   AnEnum? echoNullableEnum(AnEnum? anEnum);
 
+  @ObjCSelector('echoAnotherNullableEnum:')
+  @SwiftFunction('echoNullable(_:)')
+  AnotherEnum? echoAnotherNullableEnum(AnotherEnum? anotherEnum);
+
   /// Returns passed in int.
   @ObjCSelector('echoOptionalNullableInt:')
   @SwiftFunction('echoOptional(_:)')
@@ -450,6 +469,12 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoAsyncEnum:')
   @SwiftFunction('echoAsync(_:)')
   AnEnum echoAsyncEnum(AnEnum anEnum);
+
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAnotherAsyncEnum:')
+  @SwiftFunction('echoAsync(_:)')
+  AnotherEnum echoAnotherAsyncEnum(AnotherEnum anotherEnum);
 
   /// Responds with an error from an async function returning a value.
   @async
@@ -538,6 +563,12 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoAsyncNullable(_:)')
   AnEnum? echoAsyncNullableEnum(AnEnum? anEnum);
 
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAnotherAsyncNullableEnum:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  AnotherEnum? echoAnotherAsyncNullableEnum(AnotherEnum? anotherEnum);
+
   // ========== Flutter API test wrappers ==========
 
   @async
@@ -623,6 +654,11 @@ abstract class HostIntegrationCoreApi {
   AnEnum callFlutterEchoEnum(AnEnum anEnum);
 
   @async
+  @ObjCSelector('callFlutterEchoAnotherEnum:')
+  @SwiftFunction('callFlutterEcho(_:)')
+  AnotherEnum callFlutterEchoAnotherEnum(AnotherEnum anotherEnum);
+
+  @async
   @ObjCSelector('callFlutterEchoNullableBool:')
   @SwiftFunction('callFlutterEchoNullable(_:)')
   bool? callFlutterEchoNullableBool(bool? aBool);
@@ -660,8 +696,13 @@ abstract class HostIntegrationCoreApi {
 
   @async
   @ObjCSelector('callFlutterEchoNullableEnum:')
-  @SwiftFunction('callFlutterNullableEcho(_:)')
+  @SwiftFunction('callFlutterEchoNullable(_:)')
   AnEnum? callFlutterEchoNullableEnum(AnEnum? anEnum);
+
+  @async
+  @ObjCSelector('callFlutterEchoAnotherNullableEnum:')
+  @SwiftFunction('callFlutterEchoNullable(_:)')
+  AnotherEnum? callFlutterEchoAnotherNullableEnum(AnotherEnum? anotherEnum);
 
   @async
   @ObjCSelector('callFlutterSmallApiEchoString:')
@@ -758,6 +799,11 @@ abstract class FlutterIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   AnEnum echoEnum(AnEnum anEnum);
 
+  /// Returns the passed enum to test serialization and deserialization.
+  @ObjCSelector('echoAnotherEnum:')
+  @SwiftFunction('echo(_:)')
+  AnotherEnum echoAnotherEnum(AnotherEnum anotherEnum);
+
   // ========== Nullable argument/return type tests ==========
 
   /// Returns the passed boolean, to test serialization and deserialization.
@@ -799,6 +845,11 @@ abstract class FlutterIntegrationCoreApi {
   @ObjCSelector('echoNullableEnum:')
   @SwiftFunction('echoNullable(_:)')
   AnEnum? echoNullableEnum(AnEnum? anEnum);
+
+  /// Returns the passed enum to test serialization and deserialization.
+  @ObjCSelector('echoAnotherNullableEnum:')
+  @SwiftFunction('echoNullable(_:)')
+  AnotherEnum? echoAnotherNullableEnum(AnotherEnum? anotherEnum);
 
   // ========== Async tests ==========
   // These are minimal since async FlutterApi only changes Dart generation.

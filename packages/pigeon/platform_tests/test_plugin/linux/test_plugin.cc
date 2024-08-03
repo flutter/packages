@@ -145,6 +145,14 @@ static CoreTestsPigeonTestHostIntegrationCoreApiEchoEnumResponse* echo_enum(
       an_enum);
 }
 
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherEnumResponse*
+echo_another_enum(
+
+    CoreTestsPigeonTestAnotherEnum another_enum, gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_echo_another_enum_response_new(
+      another_enum);
+}
+
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoNamedDefaultStringResponse*
 echo_named_default_string(const gchar* a_string, gpointer user_data) {
   return core_tests_pigeon_test_host_integration_core_api_echo_named_default_string_response_new(
@@ -195,9 +203,9 @@ create_nested_nullable_string(const gchar* nullable_string,
   g_autoptr(CoreTestsPigeonTestAllNullableTypes) types =
       core_tests_pigeon_test_all_nullable_types_new(
           nullptr, nullptr, nullptr, nullptr, nullptr, 0, nullptr, 0, nullptr,
-          0, nullptr, 0, nullptr, nullptr, nullptr, nullptr, nullable_string,
-          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-          nullptr, nullptr);
+          0, nullptr, 0, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullable_string, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr);
   g_autoptr(CoreTestsPigeonTestAllClassesWrapper) wrapper =
       core_tests_pigeon_test_all_classes_wrapper_new(types, nullptr, nullptr);
   return core_tests_pigeon_test_host_integration_core_api_create_nested_nullable_string_response_new(
@@ -212,8 +220,8 @@ send_multiple_nullable_types(gboolean* a_nullable_bool, int64_t* a_nullable_int,
       core_tests_pigeon_test_all_nullable_types_new(
           a_nullable_bool, a_nullable_int, nullptr, nullptr, nullptr, 0,
           nullptr, 0, nullptr, 0, nullptr, 0, nullptr, nullptr, nullptr,
-          nullptr, a_nullable_string, nullptr, nullptr, nullptr, nullptr,
-          nullptr, nullptr, nullptr, nullptr, nullptr);
+          nullptr, nullptr, a_nullable_string, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
   return core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_response_new(
       types);
 }
@@ -227,8 +235,8 @@ send_multiple_nullable_types_without_recursion(gboolean* a_nullable_bool,
       core_tests_pigeon_test_all_nullable_types_without_recursion_new(
           a_nullable_bool, a_nullable_int, nullptr, nullptr, nullptr, 0,
           nullptr, 0, nullptr, 0, nullptr, 0, nullptr, nullptr, nullptr,
-          nullptr, a_nullable_string, nullptr, nullptr, nullptr, nullptr,
-          nullptr, nullptr, nullptr);
+          nullptr, nullptr, a_nullable_string, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, nullptr);
   return core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_without_recursion_response_new(
       types);
 }
@@ -287,6 +295,13 @@ static CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableEnumResponse*
 echo_nullable_enum(CoreTestsPigeonTestAnEnum* an_enum, gpointer user_data) {
   return core_tests_pigeon_test_host_integration_core_api_echo_nullable_enum_response_new(
       an_enum);
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherNullableEnumResponse*
+echo_another_nullable_enum(CoreTestsPigeonTestAnotherEnum* another_enum,
+                           gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_echo_another_nullable_enum_response_new(
+      another_enum);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoOptionalNullableIntResponse*
@@ -380,6 +395,15 @@ static void echo_async_enum(
     gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_enum(
       response_handle, an_enum);
+}
+
+static void echo_another_async_enum(
+
+    CoreTestsPigeonTestAnotherEnum another_enum,
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gpointer user_data) {
+  core_tests_pigeon_test_host_integration_core_api_respond_echo_another_async_enum(
+      response_handle, another_enum);
 }
 
 static void throw_async_error(
@@ -507,6 +531,15 @@ static void echo_async_nullable_enum(
     gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_enum(
       response_handle, an_enum);
+}
+
+static void echo_another_async_nullable_enum(
+
+    CoreTestsPigeonTestAnotherEnum* another_enum,
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gpointer user_data) {
+  core_tests_pigeon_test_host_integration_core_api_respond_echo_another_async_nullable_enum(
+      response_handle, another_enum);
 }
 
 static void noop_cb(GObject* object, GAsyncResult* result, gpointer user_data) {
@@ -1242,6 +1275,52 @@ static void call_flutter_echo_enum(
       callback_data_new(self, response_handle));
 }
 
+static void echo_another_enum_cb(GObject* object, GAsyncResult* result,
+                                 gpointer user_data) {
+  g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
+
+  g_autoptr(GError) error = nullptr;
+  g_autoptr(CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherEnumResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_another_enum(
+        data->response_handle, "Internal Error", error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_get_error_details(
+            response));
+    return;
+  }
+
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_another_enum(
+      data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_get_return_value(
+          response));
+}
+
+static void call_flutter_echo_another_enum(
+
+    CoreTestsPigeonTestAnotherEnum another_enum,
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gpointer user_data) {
+  TestPlugin* self = TEST_PLUGIN(user_data);
+
+  core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum(
+      self->flutter_core_api, another_enum, self->cancellable,
+      echo_another_enum_cb, callback_data_new(self, response_handle));
+}
+
 static void echo_nullable_bool_cb(GObject* object, GAsyncResult* result,
                                   gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
@@ -1609,6 +1688,18 @@ static void call_flutter_echo_nullable_enum(
   core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum(
       self->flutter_core_api, an_enum, self->cancellable, echo_nullable_enum_cb,
       callback_data_new(self, response_handle));
+}
+
+static void call_flutter_echo_another_nullable_enum(
+
+    CoreTestsPigeonTestAnotherEnum* another_enum,
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gpointer user_data) {
+  TestPlugin* self = TEST_PLUGIN(user_data);
+
+  core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum(
+      self->flutter_core_api, another_enum, self->cancellable,
+      echo_nullable_enum_cb, callback_data_new(self, response_handle));
 }
 
 static void small_api_two_echo_string_cb(GObject* object, GAsyncResult* result,
