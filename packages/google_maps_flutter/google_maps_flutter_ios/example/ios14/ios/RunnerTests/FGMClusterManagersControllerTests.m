@@ -11,10 +11,10 @@
 #import <OCMock/OCMock.h>
 #import "PartiallyMockedMapView.h"
 
-@interface FLTClusterManagersControllerTests : XCTestCase
+@interface FGMClusterManagersControllerTests : XCTestCase
 @end
 
-@implementation FLTClusterManagersControllerTests
+@implementation FGMClusterManagersControllerTests
 
 - (void)testClustering {
   NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
@@ -28,8 +28,8 @@
 
   id handler = OCMClassMock([FGMMapsCallbackApi class]);
 
-  FLTClusterManagersController *clusterManagersController =
-      [[FLTClusterManagersController alloc] initWithMapView:mapView callbackHandler:handler];
+  FGMClusterManagersController *clusterManagersController =
+      [[FGMClusterManagersController alloc] initWithMapView:mapView callbackHandler:handler];
 
   FLTMarkersController *markersController =
       [[FLTMarkersController alloc] initWithMapView:mapView

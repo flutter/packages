@@ -7,7 +7,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// Defines user data object for markers.
-@interface FLTGoogleMarkerUserData : NSObject
+@interface FGMMarkerUserData : NSObject
 
 /// The identifier of the marker.
 @property(nonatomic, copy) NSString *markerIdentifier;
@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param markerIdentifier Identifier of marker.
 /// @param clusterManagerIdentifier Optional identifier of cluster manager.
 /// @param marker GMSMarker object.
-extern void FLTSetIdentifiersToMarkerUserData(NSString *markerIdentifier,
+extern void FGMSetIdentifiersToMarkerUserData(NSString *markerIdentifier,
                                               NSString *_Nullable clusterManagerIdentifier,
                                               GMSMarker *marker);
 
@@ -31,12 +31,12 @@ extern void FLTSetIdentifiersToMarkerUserData(NSString *markerIdentifier,
 ///
 /// @param marker GMSMarker object.
 /// @return NSString if found; otherwise, nil.
-extern NSString *_Nullable FLTGetMarkerIdentifierFrom(GMSMarker *marker);
+extern NSString *_Nullable FGMGetMarkerIdentifierFromMarker(GMSMarker *marker);
 
 /// Get ClusterManagerIdentifier from GMSMarker UserData.
 ///
 /// @param marker GMSMarker object.
 /// @return NSString if found; otherwise, nil.
-extern NSString *_Nullable FLTGetClusterManagerIdentifierFrom(GMSMarker *marker);
+extern NSString *_Nullable FGMGetClusterManagerIdentifierFromMarker(GMSMarker *marker);
 
 NS_ASSUME_NONNULL_END

@@ -5,10 +5,11 @@
 @import GoogleMapsUtils;
 
 #import "GoogleMapController.h"
+
+#import "FGMMarkerUserData.h"
 #import "FLTGoogleMapHeatmapController.h"
 #import "FLTGoogleMapJSONConversions.h"
 #import "FLTGoogleMapTileOverlayController.h"
-#import "FLTGoogleMarkerUserData.h"
 #import "messages.g.h"
 
 #pragma mark - Conversion of JSON-like values sent via platform channels. Forward declarations.
@@ -119,7 +120,7 @@
 @property(nonatomic, strong) FGMMapsCallbackApi *dartCallbackHandler;
 @property(nonatomic, assign) BOOL trackCameraPosition;
 @property(nonatomic, weak) NSObject<FlutterPluginRegistrar> *registrar;
-@property(nonatomic, strong) FLTClusterManagersController *clusterManagersController;
+@property(nonatomic, strong) FGMClusterManagersController *clusterManagersController;
 @property(nonatomic, strong) FLTMarkersController *markersController;
 @property(nonatomic, strong) FLTPolygonsController *polygonsController;
 @property(nonatomic, strong) FLTPolylinesController *polylinesController;
@@ -180,7 +181,7 @@
     _mapView.paddingAdjustmentBehavior = kGMSMapViewPaddingAdjustmentBehaviorNever;
     _registrar = registrar;
     _clusterManagersController =
-        [[FLTClusterManagersController alloc] initWithMapView:_mapView
+        [[FGMClusterManagersController alloc] initWithMapView:_mapView
                                               callbackHandler:_dartCallbackHandler];
     _markersController = [[FLTMarkersController alloc] initWithMapView:_mapView
                                                        callbackHandler:_dartCallbackHandler
@@ -408,27 +409,30 @@
     // When NO is returned, the map will focus on the cluster.
     return NO;
   }
-  return [self.markersController didTapMarkerWithIdentifier:FLTGetMarkerIdentifierFrom(marker)];
+  return
+      [self.markersController didTapMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)];
 }
 
 - (void)mapView:(GMSMapView *)mapView didEndDraggingMarker:(GMSMarker *)marker {
-  [self.markersController didEndDraggingMarkerWithIdentifier:FLTGetMarkerIdentifierFrom(marker)
-                                                    location:marker.position];
+  [self.markersController
+      didEndDraggingMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)
+                                location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didBeginDraggingMarker:(GMSMarker *)marker {
-  [self.markersController didStartDraggingMarkerWithIdentifier:FLTGetMarkerIdentifierFrom(marker)
-                                                      location:marker.position];
+  [self.markersController
+      didStartDraggingMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)
+                                  location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didDragMarker:(GMSMarker *)marker {
-  [self.markersController didDragMarkerWithIdentifier:FLTGetMarkerIdentifierFrom(marker)
+  [self.markersController didDragMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)
                                              location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapInfoWindowOfMarker:(GMSMarker *)marker {
   [self.markersController
-      didTapInfoWindowOfMarkerWithIdentifier:FLTGetMarkerIdentifierFrom(marker)];
+      didTapInfoWindowOfMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)];
 }
 - (void)mapView:(GMSMapView *)mapView didTapOverlay:(GMSOverlay *)overlay {
   NSString *overlayId = overlay.userData[0];

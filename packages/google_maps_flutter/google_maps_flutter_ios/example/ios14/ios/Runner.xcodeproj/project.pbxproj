@@ -208,7 +208,7 @@
 			children = (
 				F269303A2BB389BF00BF17C4 /* assets */,
 				52E9C2AF2C5CECD100078060 /* ExtractIconFromDataTests.m */,
-				52E9C2AD2C5CEBD600078060 /* FLTClusterManagersControllerTests.m */,
+				52E9C2AD2C5CEBD600078060 /* FGMClusterManagersControllerTests.m */,
 				6851F3552835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m */,
 				0DD7B6C22B744EEF00E857FD /* FLTTileProviderControllerTests.m */,
 				F7151F12265D7ED70028CB91 /* GoogleMapsTests.m */,
@@ -512,7 +512,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F7151F13265D7ED70028CB91 /* GoogleMapsTests.m in Sources */,
-				52E9C2AE2C5CEBD600078060 /* FLTClusterManagersControllerTests.m in Sources */,
+				52E9C2AE2C5CEBD600078060 /* FGMClusterManagersControllerTests.m in Sources */,
 				6851F3562835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m in Sources */,
 				982F2A6C27BADE17003C81F4 /* PartiallyMockedMapView.m in Sources */,
 				478116522BEF8F47002F593E /* GoogleMapsPolylinesControllerTests.m in Sources */,

@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Defines cluster managers controller interface which
 // is responsible for adding/removing/returning one or more cluster managers.
-@interface FLTClusterManagersController : NSObject
+@interface FGMClusterManagersController : NSObject
 
 /// Initializes FLTClusterManagersController.
 ///

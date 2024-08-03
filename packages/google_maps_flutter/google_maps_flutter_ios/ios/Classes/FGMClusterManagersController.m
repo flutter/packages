@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FLTClusterManagersController.h"
+#import "FGMClusterManagersController.h"
 
+#import "FGMMarkerUserData.h"
 #import "FLTGoogleMapJSONConversions.h"
-#import "FLTGoogleMarkerUserData.h"
 
-@interface FLTClusterManagersController ()
+@interface FGMClusterManagersController ()
 
 /// A dictionary that cluster managers unique identifiers to GMUClusterManager instances.
 @property(strong, nonatomic)
@@ -21,7 +21,7 @@
 
 @end
 
-@implementation FLTClusterManagersController
+@implementation FGMClusterManagersController
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler {
   self = [super init];
@@ -128,7 +128,7 @@
 - (nullable NSString *)clusterManagerIdentifierForCluster:(GMUStaticCluster *)cluster {
   if ([cluster.items.firstObject isKindOfClass:[GMSMarker class]]) {
     GMSMarker *firstMarker = (GMSMarker *)cluster.items.firstObject;
-    return FLTGetClusterManagerIdentifierFrom(firstMarker);
+    return FGMGetClusterManagerIdentifierFromMarker(firstMarker);
   }
 
   return nil;

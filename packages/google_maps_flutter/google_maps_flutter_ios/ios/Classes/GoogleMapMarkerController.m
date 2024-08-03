@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 #import "GoogleMapMarkerController.h"
+#import "FGMMarkerUserData.h"
 #import "FLTGoogleMapJSONConversions.h"
-#import "FLTGoogleMarkerUserData.h"
 
 @interface FLTGoogleMapMarkerController ()
 
@@ -30,7 +30,7 @@
     _markerIdentifier = [markerIdentifier copy];
     _clusterManagerIdentifier = [clusterManagerIdentifier copy];
     _mapView = mapView;
-    FLTSetIdentifiersToMarkerUserData(_markerIdentifier, _clusterManagerIdentifier, _marker);
+    FGMSetIdentifiersToMarkerUserData(_markerIdentifier, _clusterManagerIdentifier, _marker);
   }
   return self;
 }
@@ -448,7 +448,7 @@
 @property(strong, nonatomic) NSMutableDictionary *markerIdentifierToController;
 @property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 /// Controller for adding/removing/fetching cluster managers
-@property(weak, nonatomic, nullable) FLTClusterManagersController *clusterManagersController;
+@property(weak, nonatomic, nullable) FGMClusterManagersController *clusterManagersController;
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
 
@@ -458,7 +458,7 @@
 
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler
-      clusterManagersController:(nullable FLTClusterManagersController *)clusterManagersController
+      clusterManagersController:(nullable FGMClusterManagersController *)clusterManagersController
                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
