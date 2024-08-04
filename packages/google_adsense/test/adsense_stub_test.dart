@@ -29,7 +29,7 @@ void main() {
               adSlot: 'test-slot',
               adClient: 'test-client',
               isAdTest: true,
-              adUnitParams: {'key': 'value'},
+              adUnitParams: <String, String>{'key': 'value'},
             ),
         throwsA(isA<UnsupportedError>()));
   });
