@@ -299,7 +299,7 @@ class _MyHomePageState extends State<MyHomePage>
                   );
                 },
               ),
-              Breakpoints.large: SlotLayout.from(
+              Breakpoints.expanded: SlotLayout.from(
                 key: const Key('Large primaryNavigation'),
                 // The AdaptiveScaffold builder here greatly simplifies
                 // navigational elements.

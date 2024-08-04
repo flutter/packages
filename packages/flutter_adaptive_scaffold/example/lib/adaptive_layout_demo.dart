@@ -200,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
               unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
             ),
           ),
-          Breakpoints.large: SlotLayout.from(
+          Breakpoints.expanded: SlotLayout.from(
             key: const Key('Primary Navigation Large'),
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(

@@ -7,6 +7,10 @@
 * Add `groupAlignment` property to change alignment.
 * Set `navRailTheme` when using the Drawer just like the other NavigationRails.
 
+## 0.1.12
+
+* Add breakpoints for Expanded and Extra Large.
+
 ## 0.1.11+1
 
 * Allows custom animation duration for the NavigationRail and 

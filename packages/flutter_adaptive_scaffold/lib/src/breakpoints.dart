@@ -58,16 +58,46 @@ class Breakpoints {
   static const Breakpoint mediumMobile =
       WidthPlatformBreakpoint(begin: 600, end: 840, platform: _mobile);
 
+  /// A window whose width is between 840 dp and 1200 dp.
+  static const Breakpoint expanded =
+      WidthPlatformBreakpoint(begin: 840, end: 1200);
+
   /// A window whose width is greater than 840 dp.
-  static const Breakpoint large = WidthPlatformBreakpoint(begin: 840);
+  static const Breakpoint expandedAndUp = WidthPlatformBreakpoint(begin: 840);
 
-  /// A desktop window whose width is greater than 840 dp.
+  /// A desktop window whose width is between 840 dp and 1200 dp.
+  static const Breakpoint expandedDesktop =
+      WidthPlatformBreakpoint(begin: 840, end: 1200, platform: _desktop);
+
+  /// A mobile window whose width is between 840 dp and 1200 dp.
+  static const Breakpoint expandedMobile =
+      WidthPlatformBreakpoint(begin: 840, end: 1200, platform: _mobile);
+
+  /// A window whose width is between 1200 dp and 1600 dp.
+  static const Breakpoint large =
+      WidthPlatformBreakpoint(begin: 1200, end: 1600);
+
+  /// A window whose width is greater than 1200 dp.
+  static const Breakpoint largeAndUp = WidthPlatformBreakpoint(begin: 1200);
+
+  /// A desktop window whose width is between 1200 dp and 1600 dp.
   static const Breakpoint largeDesktop =
-      WidthPlatformBreakpoint(begin: 840, platform: _desktop);
+      WidthPlatformBreakpoint(begin: 1200, end: 1600, platform: _desktop);
 
-  /// A mobile window whose width is greater than 840 dp.
+  /// A mobile window whose width is between 1200 dp and 1600 dp.
   static const Breakpoint largeMobile =
-      WidthPlatformBreakpoint(begin: 840, platform: _mobile);
+      WidthPlatformBreakpoint(begin: 1200, end: 1600, platform: _mobile);
+
+  /// A window whose width is greater than 1600 dp.
+  static const Breakpoint extraLarge = WidthPlatformBreakpoint(begin: 1600);
+
+  /// A desktop window whose width is greater than 1600 dp.
+  static const Breakpoint extraLargeDesktop =
+      WidthPlatformBreakpoint(begin: 1600, platform: _desktop);
+
+  /// A mobile window whose width is greater than 1600 dp.
+  static const Breakpoint extraLargeMobile =
+      WidthPlatformBreakpoint(begin: 1600, platform: _mobile);
 }
 
 /// A class that can be used to quickly generate [Breakpoint]s that depend on
