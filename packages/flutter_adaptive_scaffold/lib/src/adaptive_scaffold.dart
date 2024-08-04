@@ -93,9 +93,13 @@ class AdaptiveScaffold extends StatefulWidget {
     this.smallBody,
     this.body,
     this.expandedBody,
+    this.largeBody,
+    this.extraLargeBody,
     this.smallSecondaryBody,
     this.secondaryBody,
     this.expandedSecondaryBody,
+    this.largeSecondaryBody,
+    this.extraLargeSecondaryBody,
     this.bodyRatio,
     this.smallBreakpoint = Breakpoints.small,
     this.mediumBreakpoint = Breakpoints.medium,
@@ -148,19 +152,33 @@ class AdaptiveScaffold extends StatefulWidget {
   /// empty.
   final WidgetBuilder? smallBody;
 
-  /// Widget to be displayed in the body slot at the middle breakpoint.
+  /// Widget to be displayed in the body slot at the medium breakpoint.
   ///
   /// The default displayed body.
   final WidgetBuilder? body;
 
-  /// Widget to be displayed in the body slot at the largest breakpoint.
+  /// Widget to be displayed in the body slot at the expanded breakpoint.
   ///
   /// If nothing is entered for this property, then the default [body] is
   /// displayed in the slot. If null is entered for this slot, the slot stays
   /// empty.
   final WidgetBuilder? expandedBody;
 
-  /// Widget to be displayed in the secondaryBody slot at the smallest
+  /// Widget to be displayed in the body slot at the large breakpoint.
+  ///
+  /// If nothing is entered for this property, then the default [body] is
+  /// displayed in the slot. If null is entered for this slot, the slot stays
+  /// empty.
+  final WidgetBuilder? largeBody;
+
+  /// Widget to be displayed in the body slot at the extra large breakpoint.
+  ///
+  /// If nothing is entered for this property, then the default [body] is
+  /// displayed in the slot. If null is entered for this slot, the slot stays
+  /// empty.
+  final WidgetBuilder? extraLargeBody;
+
+  /// Widget to be displayed in the secondaryBody slot at the compact
   /// breakpoint.
   ///
   /// If nothing is entered for this property, then the default [secondaryBody]
@@ -168,18 +186,34 @@ class AdaptiveScaffold extends StatefulWidget {
   /// empty.
   final WidgetBuilder? smallSecondaryBody;
 
-  /// Widget to be displayed in the secondaryBody slot at the middle breakpoint.
+  /// Widget to be displayed in the secondaryBody slot at the medium breakpoint.
   ///
   /// The default displayed secondaryBody.
   final WidgetBuilder? secondaryBody;
 
-  /// Widget to be displayed in the secondaryBody slot at the largest
+  /// Widget to be displayed in the secondaryBody slot at the expanded
   /// breakpoint.
   ///
   /// If nothing is entered for this property, then the default [secondaryBody]
   /// is displayed in the slot. If null is entered for this slot, the slot stays
   /// empty.
   final WidgetBuilder? expandedSecondaryBody;
+
+  /// Widget to be displayed in the secondaryBody slot at the large
+  /// breakpoint.
+  ///
+  /// If nothing is entered for this property, then the default [secondaryBody]
+  /// is displayed in the slot. If null is entered for this slot, the slot stays
+  /// empty.
+  final WidgetBuilder? largeSecondaryBody;
+
+  /// Widget to be displayed in the secondaryBody slot at the extra large
+  /// breakpoint.
+  ///
+  /// If nothing is entered for this property, then the default [secondaryBody]
+  /// is displayed in the slot. If null is entered for this slot, the slot stays
+  /// empty.
+  final WidgetBuilder? extraLargeSecondaryBody;
 
   /// Defines the fractional ratio of body to the secondaryBody.
   ///
@@ -386,6 +420,8 @@ class AdaptiveScaffold extends StatefulWidget {
       Breakpoints.small,
       Breakpoints.medium,
       Breakpoints.expanded,
+      Breakpoints.large,
+      Breakpoints.extraLarge,
     ],
     double margin = 8,
     int itemColumns = 1,
@@ -663,6 +699,26 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                           builder: widget.expandedBody,
                         )
                       : null,
+            if (widget.largeBody != null)
+              widget.largeBreakpoint:
+                  (widget.largeBody != AdaptiveScaffold.emptyBuilder)
+                      ? SlotLayout.from(
+                          key: const Key('largeBody'),
+                          inAnimation: AdaptiveScaffold.fadeIn,
+                          outAnimation: AdaptiveScaffold.fadeOut,
+                          builder: widget.largeBody,
+                        )
+                      : null,
+            if (widget.extraLargeBody != null)
+              widget.largeBreakpoint:
+                  (widget.extraLargeBody != AdaptiveScaffold.emptyBuilder)
+                      ? SlotLayout.from(
+                          key: const Key('extraLargeBody'),
+                          inAnimation: AdaptiveScaffold.fadeIn,
+                          outAnimation: AdaptiveScaffold.fadeOut,
+                          builder: widget.extraLargeBody,
+                        )
+                      : null,
           },
         ),
         secondaryBody: SlotLayout(
@@ -697,6 +753,24 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                       key: const Key('expandedSBody'),
                       outAnimation: AdaptiveScaffold.stayOnScreen,
                       builder: widget.expandedSecondaryBody,
+                    )
+                  : null,
+            if (widget.largeSecondaryBody != null)
+              widget.largeBreakpoint:
+                  (widget.largeSecondaryBody != AdaptiveScaffold.emptyBuilder)
+                      ? SlotLayout.from(
+                          key: const Key('largeSBody'),
+                          outAnimation: AdaptiveScaffold.stayOnScreen,
+                          builder: widget.largeSecondaryBody,
+                        )
+                      : null,
+            if (widget.extraLargeSecondaryBody != null)
+              widget.largeBreakpoint: (widget.extraLargeSecondaryBody !=
+                      AdaptiveScaffold.emptyBuilder)
+                  ? SlotLayout.from(
+                      key: const Key('extraLargeSBody'),
+                      outAnimation: AdaptiveScaffold.stayOnScreen,
+                      builder: widget.extraLargeSecondaryBody,
                     )
                   : null,
           },
