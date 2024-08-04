@@ -82,7 +82,7 @@ class TestScaffoldState extends State<TestScaffold> {
       internalAnimations: widget.isAnimated,
       smallBreakpoint: TestBreakpoint0(),
       mediumBreakpoint: TestBreakpoint800(),
-      largeBreakpoint: TestBreakpoint1000(),
+      expandedBreakpoint: TestBreakpoint1000(),
       destinations: TestScaffold.destinations,
       smallBody: (_) => Container(color: Colors.red),
       body: (_) => Container(color: Colors.green),

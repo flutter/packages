@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // and large.
       smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
       mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
-      largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
+      expandedBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
       useDrawer: false,
       selectedIndex: _selectedTab,
       onSelectedIndexChange: (int index) {

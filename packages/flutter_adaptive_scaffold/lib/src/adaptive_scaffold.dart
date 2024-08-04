@@ -103,7 +103,9 @@ class AdaptiveScaffold extends StatefulWidget {
     this.bodyRatio,
     this.smallBreakpoint = Breakpoints.small,
     this.mediumBreakpoint = Breakpoints.medium,
-    this.largeBreakpoint = Breakpoints.expanded,
+    this.expandedBreakpoint = Breakpoints.expanded,
+    this.largeBreakpoint = Breakpoints.large,
+    this.extraLargeBreakpoint = Breakpoints.extraLarge,
     this.drawerBreakpoint = Breakpoints.smallDesktop,
     this.internalAnimations = true,
     this.transitionDuration = const Duration(seconds: 1),
@@ -224,7 +226,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// the center of the screen.
   final double? bodyRatio;
 
-  /// The breakpoint defined for the small size, associated with mobile-like
+  /// The breakpoint defined for the compact size, associated with mobile-like
   /// features.
   ///
   /// Defaults to [Breakpoints.small].
@@ -236,11 +238,23 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Defaults to [Breakpoints.mediumBreakpoint].
   final Breakpoint mediumBreakpoint;
 
+  /// The breakpoint defined for the expanded size, associated with desktop-like
+  /// features.
+  ///
+  /// Defaults to [Breakpoints.expandedBreakpoint].
+  final Breakpoint expandedBreakpoint;
+
   /// The breakpoint defined for the large size, associated with desktop-like
   /// features.
   ///
   /// Defaults to [Breakpoints.largeBreakpoint].
   final Breakpoint largeBreakpoint;
+
+  /// The breakpoint defined for the extra large size, associated with ultra-wide
+  /// features.
+  ///
+  /// Defaults to [Breakpoints.extraLargeBreakpoint].
+  final Breakpoint extraLargeBreakpoint;
 
   /// Whether or not the developer wants the smooth entering slide transition on
   /// secondaryBody.
@@ -624,7 +638,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 groupAlignment: widget.groupAlignment,
               ),
             ),
-            widget.largeBreakpoint: SlotLayout.from(
+            widget.expandedBreakpoint: SlotLayout.from(
               key: const Key('primaryNavigation1'),
               builder: (_) => AdaptiveScaffold.standardNavigationRail(
                 width: widget.extendedNavigationRailWidth,
@@ -690,7 +704,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                         )
                       : null,
             if (widget.expandedBody != null)
-              widget.largeBreakpoint:
+              widget.expandedBreakpoint:
                   (widget.expandedBody != AdaptiveScaffold.emptyBuilder)
                       ? SlotLayout.from(
                           key: const Key('expandedBody'),
@@ -700,7 +714,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                         )
                       : null,
             if (widget.largeBody != null)
-              widget.largeBreakpoint:
+              widget.expandedBreakpoint:
                   (widget.largeBody != AdaptiveScaffold.emptyBuilder)
                       ? SlotLayout.from(
                           key: const Key('largeBody'),
@@ -710,7 +724,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                         )
                       : null,
             if (widget.extraLargeBody != null)
-              widget.largeBreakpoint:
+              widget.expandedBreakpoint:
                   (widget.extraLargeBody != AdaptiveScaffold.emptyBuilder)
                       ? SlotLayout.from(
                           key: const Key('extraLargeBody'),
@@ -747,7 +761,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                         )
                       : null,
             if (widget.expandedSecondaryBody != null)
-              widget.largeBreakpoint: (widget.expandedSecondaryBody !=
+              widget.expandedBreakpoint: (widget.expandedSecondaryBody !=
                       AdaptiveScaffold.emptyBuilder)
                   ? SlotLayout.from(
                       key: const Key('expandedSBody'),
@@ -756,7 +770,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                     )
                   : null,
             if (widget.largeSecondaryBody != null)
-              widget.largeBreakpoint:
+              widget.expandedBreakpoint:
                   (widget.largeSecondaryBody != AdaptiveScaffold.emptyBuilder)
                       ? SlotLayout.from(
                           key: const Key('largeSBody'),
@@ -765,7 +779,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                         )
                       : null,
             if (widget.extraLargeSecondaryBody != null)
-              widget.largeBreakpoint: (widget.extraLargeSecondaryBody !=
+              widget.expandedBreakpoint: (widget.extraLargeSecondaryBody !=
                       AdaptiveScaffold.emptyBuilder)
                   ? SlotLayout.from(
                       key: const Key('extraLargeSBody'),
