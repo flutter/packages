@@ -1,0 +1,5 @@
+#override_platforms:
+#  chrome:
+#    settings:
+#      executable: /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+#      arguments: --no-sandbox

@@ -1,11 +1,18 @@
+/*
+ * // Copyright 2013 The Flutter Authors. All rights reserved.
+ * // Use of this source code is governed by a BSD-style license that can be
+ * // found in the LICENSE file.
+ */
+
 import 'package:flutter/material.dart';
+// #docregion init
 import 'package:google_adsense/adsense.dart';
 
 void main() {
   Adsense().initialize('your_ad_client_id');
   runApp(const MyApp());
 }
-
+// #enddocregion init
 /// The main app.
 class MyApp extends StatelessWidget {
   /// Constructs a [MyApp]
@@ -60,7 +67,8 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            Adsense().adView(
+            // #docregion adView
+            Adsense().adUnit(
               adSlot: 'your_ad_slot_id',
               isAdTest: true,
               adUnitParams: <String, dynamic>{
@@ -68,6 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 AdUnitParams.FULL_WIDTH_RESPONSIVE: true,
               },
             )
+            // #enddocregion adView
           ],
         ),
       ),

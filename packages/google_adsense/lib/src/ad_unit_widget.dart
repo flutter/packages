@@ -1,3 +1,9 @@
+/*
+ * // Copyright 2013 The Flutter Authors. All rights reserved.
+ * // Use of this source code is governed by a BSD-style license that can be
+ * // found in the LICENSE file.
+ */
+
 import 'dart:developer';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
@@ -10,9 +16,9 @@ import '../adsense.dart';
 import 'ad_unit_params.dart';
 
 /// Widget containing an ad slot
-class AdViewWidget extends StatefulWidget {
-  /// Constructs [AdViewWidget]
-  AdViewWidget(
+class AdUnitWidget extends StatefulWidget {
+  /// Constructs [AdUnitWidget]
+  AdUnitWidget(
       {required String adClient,
       required String adSlot,
       required bool isAdTest,
@@ -54,10 +60,10 @@ class AdViewWidget extends StatefulWidget {
       web.document.createElement('ins') as web.HTMLElement;
 
   @override
-  State<AdViewWidget> createState() => _AdViewWidgetState();
+  State<AdUnitWidget> createState() => _AdUnitWidgetState();
 }
 
-class _AdViewWidgetState extends State<AdViewWidget>
+class _AdUnitWidgetState extends State<AdUnitWidget>
     with AutomaticKeepAliveClientMixin {
   static int adViewCounter = 0;
   double adHeight = 1.0;

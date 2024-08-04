@@ -1,18 +1,23 @@
+/*
+ * // Copyright 2013 The Flutter Authors. All rights reserved.
+ * // Use of this source code is governed by a BSD-style license that can be
+ * // found in the LICENSE file.
+ */
+
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
-import 'ad_view_widget.dart';
+import 'ad_unit_widget.dart';
 
 /// Main class to work with the library
 class Adsense {
   /// Returns a singleton instance of Adsense library public interface
-  factory Adsense() {
-    return _instance;
-  }
+  factory Adsense() => _instance;
   Adsense._internal();
+
   static final Adsense _instance = Adsense._internal();
   static bool _isInitialized = false;
   String _adClient = '';
@@ -23,18 +28,18 @@ class Adsense {
       log('Adsense was already initialized, skipping');
       return;
     }
-    _isInitialized = true;
     _adClient = adClient;
     _addMasterScript(adClient);
+    _isInitialized = true;
   }
 
   /// Returns a configurable AdViewWidget
-  Widget adView(
+  Widget adUnit(
       {required String adSlot,
       String adClient = '',
       bool isAdTest = false,
       Map<String, dynamic> adUnitParams = const <String, dynamic>{}}) {
-    return AdViewWidget(
+    return AdUnitWidget(
       adSlot: adSlot,
       adClient: adClient.isNotEmpty ? adClient : _adClient,
       isAdTest: isAdTest,
@@ -42,7 +47,7 @@ class Adsense {
     );
   }
 
-  static void _addMasterScript(String adClient) {
+  void _addMasterScript(String adClient) {
     final web.HTMLScriptElement scriptElement = web.HTMLScriptElement();
     scriptElement.async = true;
     scriptElement.src =

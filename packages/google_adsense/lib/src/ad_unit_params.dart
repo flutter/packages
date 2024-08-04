@@ -1,3 +1,9 @@
+/*
+ * // Copyright 2013 The Flutter Authors. All rights reserved.
+ * // Use of this source code is governed by a BSD-style license that can be
+ * // found in the LICENSE file.
+ */
+
 /// Contains adUnitParams keys constants for convenience and documentation
 class AdUnitParams {
   /// /// (Optional) Can be provided in adUnitParams. If not provided, value passed on initialization will be used
