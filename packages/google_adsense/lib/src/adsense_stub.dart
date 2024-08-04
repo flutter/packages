@@ -17,7 +17,7 @@ class Adsense {
     throw UnsupportedError('Only supported on web');
   }
 
-  /// Returns a configurable AdViewWidget
+  /// Returns a configurable [AdUnitWidget]
   Widget adUnit(
       {required String adSlot,
       String adClient = '',

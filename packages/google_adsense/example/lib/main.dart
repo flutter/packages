@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            // #docregion adView
+            // #docregion adUnit
             Adsense().adUnit(
               adSlot: 'your_ad_slot_id',
               isAdTest: true,
@@ -75,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 AdUnitParams.FULL_WIDTH_RESPONSIVE: true,
               },
             )
-            // #enddocregion adView
+            // #enddocregion adUnit
           ],
         ),
       ),

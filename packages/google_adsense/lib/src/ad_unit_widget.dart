@@ -63,9 +63,9 @@ class AdUnitWidget extends StatefulWidget {
 
 class _AdUnitWidgetState extends State<AdUnitWidget>
     with AutomaticKeepAliveClientMixin {
-  static int adViewCounter = 0;
+  static int adUnitCounter = 0;
   double adHeight = 1.0;
-  late web.HTMLElement adViewDiv;
+  late web.HTMLElement adUnitDiv;
 
   @override
   bool get wantKeepAlive => true;
@@ -91,14 +91,14 @@ class _AdUnitWidgetState extends State<AdUnitWidget>
   }
 
   void onElementCreated(Object element) {
-    adViewDiv = element as web.HTMLElement;
-    log('onElementCreated: $adViewDiv with style height=${element.offsetHeight} and width=${element.offsetWidth}');
-    adViewDiv
-      ..id = 'adView${adViewCounter++}'
+    adUnitDiv = element as web.HTMLElement;
+    log('onElementCreated: $adUnitDiv with style height=${element.offsetHeight} and width=${element.offsetWidth}');
+    adUnitDiv
+      ..id = 'adUnit${adUnitCounter++}'
       ..style.height = 'min-content'
       ..style.textAlign = 'center';
-    // Adding ins inside of the adView
-    adViewDiv.append(widget._insElement);
+    // Adding ins inside of the adUnit
+    adUnitDiv.append(widget._insElement);
 
     // TODO(sokoloff06): Make shared
     // Using Resize observer to detect element attached to DOM
@@ -120,7 +120,7 @@ class _AdUnitWidgetState extends State<AdUnitWidget>
         }
       }
     }.toJS)
-        .observe(adViewDiv);
+        .observe(adUnitDiv);
 
     // Using Mutation Observer to detect when adslot is being loaded based on https://support.google.com/adsense/answer/10762946?hl=en
     web.MutationObserver(

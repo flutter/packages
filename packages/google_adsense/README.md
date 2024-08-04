@@ -17,52 +17,26 @@ run `flutter pub add google_adsense`
 Before displaying ads, initialize the AdSense with your ad client ID.
 <?code-excerpt "example/lib/main.dart (init)"?>
 ```dart
+import 'package:google_adsense/google_adsense.dart';
+
+void main() {
+  Adsense().initialize('your_ad_client_id');
+  runApp(const MyApp());
+}
+
 ```
-
-[//]: # (```dart)
-
-[//]: # (import 'package:google_adsense/adsense.dart';)
-
-[//]: # ()
-[//]: # (void main&#40;&#41; {)
-
-[//]: # (  Adsense&#40;&#41;.initialize&#40;'your_ad_client_id'&#41;;)
-
-[//]: # (})
-
-[//]: # (```)
-#### Display AdViewWidget
+#### Display AdUnitWidget
 <?code-excerpt "example/lib/main.dart (adView)"?>
 ```dart
+Adsense().adUnit(
+  adSlot: 'your_ad_slot_id',
+  isAdTest: true,
+  adUnitParams: <String, dynamic>{
+    AdUnitParams.AD_FORMAT: 'auto',
+    AdUnitParams.FULL_WIDTH_RESPONSIVE: true,
+  },
+)
 ```
-
-[//]: # (```dart)
-
-[//]: # (import 'package:google_adsense/adsense.dart';)
-
-[//]: # ()
-[//]: # (// ...)
-
-[//]: # (val adWidget = Adsense&#40;&#41;.adView&#40;)
-
-[//]: # (  adSlot: 'your_ad_slot_id',)
-
-[//]: # (  isAdTest: true,)
-
-[//]: # (  adUnitParams: <String, dynamic>{)
-
-[//]: # (    AdUnitParams.AD_FORMAT: 'auto',)
-
-[//]: # (    AdUnitParams.FULL_WIDTH_RESPONSIVE: true,)
-
-[//]: # (    // ...)
-
-[//]: # (  },)
-
-[//]: # (&#41;;)
-
-[//]: # (```)
-
 ## Testing and common errors
 
 ### Failed to load resource: the server responded with a status of 400 ()
