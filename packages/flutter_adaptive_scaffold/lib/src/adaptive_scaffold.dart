@@ -657,6 +657,46 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 groupAlignment: widget.groupAlignment,
               ),
             ),
+            widget.largeBreakpoint: SlotLayout.from(
+              key: const Key('primaryNavigation1'),
+              builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                width: widget.extendedNavigationRailWidth,
+                extended: true,
+                leading: widget.leadingExtendedNavRail,
+                trailing: widget.trailingNavRail,
+                selectedIndex: widget.selectedIndex,
+                destinations: widget.destinations
+                    .map((NavigationDestination destination) =>
+                        AdaptiveScaffold.toRailDestination(destination))
+                    .toList(),
+                onDestinationSelected: widget.onSelectedIndexChange,
+                backgroundColor: navRailTheme.backgroundColor,
+                selectedIconTheme: navRailTheme.selectedIconTheme,
+                unselectedIconTheme: navRailTheme.unselectedIconTheme,
+                selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+                unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+              ),
+            ),
+            widget.extraLargeBreakpoint: SlotLayout.from(
+              key: const Key('primaryNavigation1'),
+              builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                width: widget.extendedNavigationRailWidth,
+                extended: true,
+                leading: widget.leadingExtendedNavRail,
+                trailing: widget.trailingNavRail,
+                selectedIndex: widget.selectedIndex,
+                destinations: widget.destinations
+                    .map((NavigationDestination destination) =>
+                        AdaptiveScaffold.toRailDestination(destination))
+                    .toList(),
+                onDestinationSelected: widget.onSelectedIndexChange,
+                backgroundColor: navRailTheme.backgroundColor,
+                selectedIconTheme: navRailTheme.selectedIconTheme,
+                unselectedIconTheme: navRailTheme.unselectedIconTheme,
+                selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+                unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+              ),
+            ),
           },
         ),
         bottomNavigation:
