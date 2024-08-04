@@ -1,3 +1,7 @@
+## 0.4.0+1
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 0.4.0
 
 * Updates androidx.test.espresso version to 3.6.1.

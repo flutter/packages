@@ -1,3 +1,11 @@
+## 2.12.2
+
+* Updates the example app to use TLHC mode, per current package guidance.
+
+## 2.12.1
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 2.12.0
 
 * Converts Java->Dart calls to Pigeon.

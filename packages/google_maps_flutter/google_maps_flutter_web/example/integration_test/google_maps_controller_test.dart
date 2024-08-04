@@ -20,12 +20,24 @@ import 'google_maps_controller_test.mocks.dart';
 // LatLng values.
 const String _kCloudMapId = '000000000000000'; // Dummy map ID.
 
+gmaps.Map mapShim() => throw UnimplementedError();
+
 @GenerateNiceMocks(<MockSpec<dynamic>>[
-  MockSpec<CirclesController>(),
-  MockSpec<PolygonsController>(),
-  MockSpec<PolylinesController>(),
-  MockSpec<MarkersController>(),
-  MockSpec<TileOverlaysController>(),
+  MockSpec<CirclesController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
+  ),
+  MockSpec<PolygonsController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
+  ),
+  MockSpec<PolylinesController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
+  ),
+  MockSpec<MarkersController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
+  ),
+  MockSpec<TileOverlaysController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
+  ),
 ])
 
 /// Test Google Map Controller
@@ -221,7 +233,7 @@ void main() {
       late MockPolygonsController polygons;
       late MockPolylinesController polylines;
       late MockTileOverlaysController tileOverlays;
-      late gmaps.GMap map;
+      late gmaps.Map map;
 
       setUp(() {
         circles = MockCirclesController();
@@ -229,7 +241,7 @@ void main() {
         polygons = MockPolygonsController();
         polylines = MockPolylinesController();
         tileOverlays = MockTileOverlaysController();
-        map = gmaps.GMap(createDivElement());
+        map = gmaps.Map(createDivElement());
       });
 
       testWidgets('listens to map events', (WidgetTester tester) async {
@@ -246,19 +258,19 @@ void main() {
         // Trigger events on the map, and verify they've been broadcast to the stream
         final Stream<MapEvent<Object?>> capturedEvents = stream.stream.take(5);
 
-        gmaps.Event.trigger(
+        gmaps.event.trigger(
           map,
           'click',
-          <Object>[gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)],
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
         );
-        gmaps.Event.trigger(
+        gmaps.event.trigger(
           map,
           'rightclick',
-          <Object>[gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)],
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
         );
         // The following line causes 2 events
-        gmaps.Event.trigger(map, 'bounds_changed', <Object>[]);
-        gmaps.Event.trigger(map, 'idle', <Object>[]);
+        gmaps.event.trigger(map, 'bounds_changed');
+        gmaps.event.trigger(map, 'idle');
 
         final List<MapEvent<Object?>> events = await capturedEvents.toList();
 
@@ -539,12 +551,12 @@ void main() {
       });
     });
 
-    // These are the methods that are delegated to the gmaps.GMap object, that we can mock...
+    // These are the methods that are delegated to the gmaps.Map object, that we can mock...
     group('Map control methods', () {
-      late gmaps.GMap map;
+      late gmaps.Map map;
 
       setUp(() {
-        map = gmaps.GMap(
+        map = gmaps.Map(
           createDivElement(),
           gmaps.MapOptions()
             ..zoom = 10
@@ -604,7 +616,7 @@ void main() {
 
       group('viewport getters', () {
         testWidgets('getVisibleRegion', (WidgetTester tester) async {
-          final gmaps.LatLng gmCenter = map.center!;
+          final gmaps.LatLng gmCenter = map.center;
           final LatLng center =
               LatLng(gmCenter.lat.toDouble(), gmCenter.lng.toDouble());
 
