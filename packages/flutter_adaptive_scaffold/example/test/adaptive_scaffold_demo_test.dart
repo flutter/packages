@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   final Finder smallBody = find.byKey(const Key('smallBody'));
   final Finder body = find.byKey(const Key('body'));
-  final Finder largeBody = find.byKey(const Key('largeBody'));
+  final Finder expandedBody = find.byKey(const Key('expandedBody'));
   final Finder bnav = find.byKey(const Key('bottomNavigation'));
   final Finder pnav = find.byKey(const Key('primaryNavigation'));
   final Finder pnav1 = find.byKey(const Key('primaryNavigation1'));
@@ -38,7 +38,7 @@ void main() {
     expect(tester.getTopLeft(smallBody), Offset.zero);
     expect(tester.getTopLeft(bnav), const Offset(0, 720));
     expect(body, findsNothing);
-    expect(largeBody, findsNothing);
+    expect(expandedBody, findsNothing);
     expect(pnav, findsNothing);
     expect(pnav1, findsNothing);
 
@@ -48,7 +48,7 @@ void main() {
     expect(tester.getTopLeft(body), const Offset(88, 0));
     expect(body, findsOneWidget);
     expect(bnav, findsNothing);
-    expect(largeBody, findsNothing);
+    expect(expandedBody, findsNothing);
     expect(pnav, findsOneWidget);
     expect(tester.getTopLeft(pnav), Offset.zero);
     expect(tester.getBottomRight(pnav), const Offset(88, 800));

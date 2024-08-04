@@ -92,14 +92,14 @@ class AdaptiveScaffold extends StatefulWidget {
     this.trailingNavRail,
     this.smallBody,
     this.body,
-    this.largeBody,
+    this.expandedBody,
     this.smallSecondaryBody,
     this.secondaryBody,
-    this.largeSecondaryBody,
+    this.expandedSecondaryBody,
     this.bodyRatio,
     this.smallBreakpoint = Breakpoints.small,
     this.mediumBreakpoint = Breakpoints.medium,
-    this.largeBreakpoint = Breakpoints.large,
+    this.largeBreakpoint = Breakpoints.expanded,
     this.drawerBreakpoint = Breakpoints.smallDesktop,
     this.internalAnimations = true,
     this.transitionDuration = const Duration(seconds: 1),
@@ -158,7 +158,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// If nothing is entered for this property, then the default [body] is
   /// displayed in the slot. If null is entered for this slot, the slot stays
   /// empty.
-  final WidgetBuilder? largeBody;
+  final WidgetBuilder? expandedBody;
 
   /// Widget to be displayed in the secondaryBody slot at the smallest
   /// breakpoint.
@@ -179,7 +179,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// If nothing is entered for this property, then the default [secondaryBody]
   /// is displayed in the slot. If null is entered for this slot, the slot stays
   /// empty.
-  final WidgetBuilder? largeSecondaryBody;
+  final WidgetBuilder? expandedSecondaryBody;
 
   /// Defines the fractional ratio of body to the secondaryBody.
   ///
@@ -385,7 +385,7 @@ class AdaptiveScaffold extends StatefulWidget {
     List<Breakpoint> breakpoints = const <Breakpoint>[
       Breakpoints.small,
       Breakpoints.medium,
-      Breakpoints.large,
+      Breakpoints.expanded,
     ],
     double margin = 8,
     int itemColumns = 1,
@@ -408,7 +408,7 @@ class AdaptiveScaffold extends StatefulWidget {
         if (thisMargin < kMaterialMediumMinMargin) {
           thisMargin = kMaterialMediumMinMargin;
         }
-      } else if (currentBreakpoint == Breakpoints.large) {
+      } else if (currentBreakpoint == Breakpoints.expanded) {
         if (thisMargin < kMaterialExpandedMinMargin) {
           thisMargin = kMaterialExpandedMinMargin;
         }
@@ -653,14 +653,14 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                           builder: widget.body,
                         )
                       : null,
-            if (widget.largeBody != null)
+            if (widget.expandedBody != null)
               widget.largeBreakpoint:
-                  (widget.largeBody != AdaptiveScaffold.emptyBuilder)
+                  (widget.expandedBody != AdaptiveScaffold.emptyBuilder)
                       ? SlotLayout.from(
-                          key: const Key('largeBody'),
+                          key: const Key('expandedBody'),
                           inAnimation: AdaptiveScaffold.fadeIn,
                           outAnimation: AdaptiveScaffold.fadeOut,
-                          builder: widget.largeBody,
+                          builder: widget.expandedBody,
                         )
                       : null,
           },
@@ -690,15 +690,15 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                           builder: widget.secondaryBody,
                         )
                       : null,
-            if (widget.largeSecondaryBody != null)
-              widget.largeBreakpoint:
-                  (widget.largeSecondaryBody != AdaptiveScaffold.emptyBuilder)
-                      ? SlotLayout.from(
-                          key: const Key('largeSBody'),
-                          outAnimation: AdaptiveScaffold.stayOnScreen,
-                          builder: widget.largeSecondaryBody,
-                        )
-                      : null,
+            if (widget.expandedSecondaryBody != null)
+              widget.largeBreakpoint: (widget.expandedSecondaryBody !=
+                      AdaptiveScaffold.emptyBuilder)
+                  ? SlotLayout.from(
+                      key: const Key('expandedSBody'),
+                      outAnimation: AdaptiveScaffold.stayOnScreen,
+                      builder: widget.expandedSecondaryBody,
+                    )
+                  : null,
           },
         ),
       ),
