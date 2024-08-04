@@ -6,7 +6,7 @@ Generally integration with AdSense requires:
 1. Adding an [AdSense code](https://support.google.com/adsense/answer/9274634?hl=en&ref_topic=28893&sjid=9002959242386336076-EU) usually in between the `<head></head>` tag to connect your site with AdSense account. Allows using **Auto ads**
 2.  Adding [ad unit code](https://support.google.com/adsense/answer/9274025?sjid=9002959242386336076-EU) in between the `<body><body/>` tags of your pages where you want ad to appear. Ad unit code snippet is unique per **ad unit** that you need to create in your AdSense account first. You might have several ad units added to your website
 
-Since Flutter apps are not rendered as traditional HTML pages and there is no easy way to access final DOM tree from Dart, this plugin provides a Widget (`AdViewWidget`) that you can configure as an ad unit and place in the desired location in your app UI
+Since Flutter apps are not rendered as traditional HTML pages and there is no easy way to access final DOM tree from Dart, this plugin provides an `AdUnitWidget` that you can configure and place in the desired location in your app UI
 
 
 ## Installation
