@@ -110,7 +110,7 @@ enum SimulatedLayout {
   }) : _width = width;
 
   final double _width;
-  final double _height = 800;
+  final double _height = 2000;
   final String navSlotKey;
 
   static const Color navigationRailThemeBgColor = Colors.white;

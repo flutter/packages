@@ -714,7 +714,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                         )
                       : null,
             if (widget.largeBody != null)
-              widget.expandedBreakpoint:
+              widget.largeBreakpoint:
                   (widget.largeBody != AdaptiveScaffold.emptyBuilder)
                       ? SlotLayout.from(
                           key: const Key('largeBody'),
@@ -724,7 +724,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                         )
                       : null,
             if (widget.extraLargeBody != null)
-              widget.expandedBreakpoint:
+              widget.extraLargeBreakpoint:
                   (widget.extraLargeBody != AdaptiveScaffold.emptyBuilder)
                       ? SlotLayout.from(
                           key: const Key('extraLargeBody'),
@@ -770,7 +770,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                     )
                   : null,
             if (widget.largeSecondaryBody != null)
-              widget.expandedBreakpoint:
+              widget.largeBreakpoint:
                   (widget.largeSecondaryBody != AdaptiveScaffold.emptyBuilder)
                       ? SlotLayout.from(
                           key: const Key('largeSBody'),
@@ -779,7 +779,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                         )
                       : null,
             if (widget.extraLargeSecondaryBody != null)
-              widget.expandedBreakpoint: (widget.extraLargeSecondaryBody !=
+              widget.extraLargeBreakpoint: (widget.extraLargeSecondaryBody !=
                       AdaptiveScaffold.emptyBuilder)
                   ? SlotLayout.from(
                       key: const Key('extraLargeSBody'),
