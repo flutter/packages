@@ -17,19 +17,19 @@ flutter run --release
 
 ## AdaptiveScaffold
 
-AdaptiveScaffold implements the basic visual layout structure for Material
+`AdaptiveScaffold` implements the basic visual layout structure for Material
 Design 3 that adapts to a variety of screens. It provides a preset of layout,
 including positions and animations, by handling macro changes in navigational
 elements and bodies based on the current features of the screen, namely screen
 width and platform. For example, the navigational elements would be a
-BottomNavigationBar on a small mobile device and a NavigationRail on larger
+`BottomNavigationBar` on a small mobile device and a `NavigationRail` on larger
 devices. The body is the primary screen that takes up the space left by the
 navigational elements. The secondaryBody acts as an option to split the space
 between two panes for purposes such as having a detail view. There is some
 automatic functionality with foldables to handle the split between panels
-properly. AdaptiveScaffold is much simpler to use but is not the best if you
+properly. `AdaptiveScaffold` is much simpler to use but is not the best if you
 would like high customizability. Apps that would like more refined layout and/or
-animation should use AdaptiveLayout.
+animation should use `AdaptiveLayout`.
 
 ### Example Usage
 
@@ -52,10 +52,12 @@ Widget build(BuildContext context) {
     // An option to override the default transition duration.
     transitionDuration: Duration(milliseconds: _transitionDuration),
     // An option to override the default breakpoints used for small, medium,
-    // and large.
+    // expanded, large and extraLarge.
     smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
     mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
-    largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
+    expandedBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
+    largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000, end: 1200),
+    extraLargeBreakpoint: const WidthPlatformBreakpoint(begin: 1200),
     useDrawer: false,
     selectedIndex: _selectedTab,
     onSelectedIndexChange: (int index) {
@@ -115,16 +117,16 @@ customizability at a cost of more lines of code.
 ### AdaptiveLayout
 
 !["AdaptiveLayout's Assigned Slots Displayed on Screen"](example/demo_files/screenSlots.png)
-AdaptiveLayout is the top-level widget class that arranges the layout of the
+`AdaptiveLayout` is the top-level widget class that arranges the layout of the
 slots and their animation, similar to Scaffold. It takes in several LayoutSlots
-and returns an appropriate layout based on the diagram above. AdaptiveScaffold
-is built upon AdaptiveLayout internally but abstracts some of the complexity
+and returns an appropriate layout based on the diagram above. `AdaptiveScaffold`
+is built upon `AdaptiveLayout` internally but abstracts some of the complexity
 with presets based on the Material 3 Design specification.
 
 ### SlotLayout
 
-SlotLayout handles the adaptivity or the changes between widgets at certain
-Breakpoints. It also holds the logic for animating between breakpoints. It takes
+`SlotLayout` handles the adaptivity or the changes between widgets at certain
+`Breakpoints`. It also holds the logic for animating between breakpoints. It takes
 SlotLayoutConfigs mapped to Breakpoints in a config and displays a widget based
 on that information.
 
