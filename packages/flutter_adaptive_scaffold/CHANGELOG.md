@@ -10,6 +10,7 @@
 ## 0.1.12
 
 * Add breakpoints for Expanded and Extra Large.
+* Add height based breakpoint checks
 
 ## 0.1.11+1
 
