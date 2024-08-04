@@ -211,18 +211,18 @@ class WidthPlatformBreakpoint extends Breakpoint {
     final double lowerBoundWidth = begin ?? double.negativeInfinity;
     final double upperBoundWidth = end ?? double.infinity;
 
-    final double lowerBoundHeight = orientation == Orientation.landscape
-        ? top ?? double.negativeInfinity
-        : double.negativeInfinity;
-    final double upperBoundHeight = orientation == Orientation.landscape
-        ? bottom ?? double.infinity
-        : double.infinity;
+    final double lowerBoundHeight = top ?? double.negativeInfinity;
+    final double upperBoundHeight = bottom ?? double.infinity;
 
-    return width >= lowerBoundWidth &&
-        width < upperBoundWidth &&
-        height >= lowerBoundHeight &&
-        height < upperBoundHeight &&
-        isRightPlatform;
+    final bool isWidthActive =
+        width >= lowerBoundWidth && width < upperBoundWidth;
+
+    final bool isHeightActive = (orientation == Orientation.landscape &&
+            height >= lowerBoundHeight &&
+            height < upperBoundHeight) ||
+        orientation == Orientation.portrait;
+
+    return isWidthActive && isHeightActive && isRightPlatform;
   }
 }
 
