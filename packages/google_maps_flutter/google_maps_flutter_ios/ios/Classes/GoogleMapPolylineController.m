@@ -26,6 +26,18 @@
   return self;
 }
 
+- (instancetype)initWithPolyline:(GMSPolyline *)polyline
+                      identifier:(NSString *)identifier
+                         mapView:(GMSMapView *)mapView {
+  self = [super init];
+  if (self) {
+    _polyline = polyline;
+    _mapView = mapView;
+    _polyline.userData = @[ identifier ];
+  }
+  return self;
+}
+
 - (void)removePolyline {
   self.polyline.map = nil;
 }
@@ -70,11 +82,6 @@
     [self setConsumeTapEvents:[consumeTapEvents boolValue]];
   }
 
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
-    [self setVisible:[visible boolValue]];
-  }
-
   NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
   if (zIndex) {
     [self setZIndex:[zIndex intValue]];
@@ -106,6 +113,11 @@
         setPattern:[FLTGoogleMapJSONConversions strokeStylesFromPatterns:patterns
                                                              strokeColor:self.polyline.strokeColor]
            lengths:[FLTGoogleMapJSONConversions spanLengthsFromPatterns:patterns]];
+  }
+
+  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
+  if (visible) {
+    [self setVisible:[visible boolValue]];
   }
 }
 

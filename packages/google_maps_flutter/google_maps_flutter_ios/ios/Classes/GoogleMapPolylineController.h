@@ -12,6 +12,9 @@
 - (instancetype)initWithPath:(GMSMutablePath *)path
                   identifier:(NSString *)identifier
                      mapView:(GMSMapView *)mapView;
+- (instancetype)initWithPolyline:(GMSPolyline *)polyline
+                      identifier:(NSString *)identifier
+                         mapView:(GMSMapView *)mapView;
 - (void)removePolyline;
 
 /// Sets the pattern on polyline controller

@@ -26,6 +26,18 @@
   return self;
 }
 
+- (instancetype)initWithPolygon:(GMSPolygon *)polygon
+                     identifier:(NSString *)identifier
+                        mapView:(GMSMapView *)mapView {
+  self = [super init];
+  if (self) {
+    _polygon = polygon;
+    _mapView = mapView;
+    _polygon.userData = @[ identifier ];
+  }
+  return self;
+}
+
 - (void)removePolygon {
   self.polygon.map = nil;
 }
@@ -78,11 +90,6 @@
     [self setConsumeTapEvents:[consumeTapEvents boolValue]];
   }
 
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
-    [self setVisible:[visible boolValue]];
-  }
-
   NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
   if (zIndex) {
     [self setZIndex:[zIndex intValue]];
@@ -111,6 +118,11 @@
   NSNumber *strokeWidth = FGMGetValueOrNilFromDict(data, @"strokeWidth");
   if (strokeWidth) {
     [self setStrokeWidth:[strokeWidth intValue]];
+  }
+
+  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
+  if (visible) {
+    [self setVisible:[visible boolValue]];
   }
 }
 

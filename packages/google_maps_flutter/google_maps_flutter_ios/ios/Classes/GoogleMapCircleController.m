@@ -29,6 +29,20 @@
   return self;
 }
 
+- (instancetype)initWithCircle:(GMSCircle *)circle
+                      circleId:(NSString *)circleIdentifier
+                       mapView:(GMSMapView *)mapView
+                       options:(NSDictionary *)options {
+  self = [super init];
+  if (self) {
+    _circle = circle;
+    _mapView = mapView;
+    _circle.userData = @[ circleIdentifier ];
+    [self interpretCircleOptions:options];
+  }
+  return self;
+}
+
 - (void)removeCircle {
   self.circle.map = nil;
 }
@@ -65,11 +79,6 @@
     [self setConsumeTapEvents:consumeTapEvents.boolValue];
   }
 
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
-    [self setVisible:[visible boolValue]];
-  }
-
   NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
   if (zIndex) {
     [self setZIndex:[zIndex intValue]];
@@ -98,6 +107,11 @@
   NSNumber *fillColor = FGMGetValueOrNilFromDict(data, @"fillColor");
   if (fillColor) {
     [self setFillColor:[FLTGoogleMapJSONConversions colorFromRGBA:fillColor]];
+  }
+
+  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
+  if (visible) {
+    [self setVisible:[visible boolValue]];
   }
 }
 

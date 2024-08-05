@@ -14,6 +14,10 @@
                               circleId:(NSString *)circleIdentifier
                                mapView:(GMSMapView *)mapView
                                options:(NSDictionary *)options;
+- (instancetype)initWithCircle:(GMSCircle *)circle
+                      circleId:(NSString *)circleIdentifier
+                       mapView:(GMSMapView *)mapView
+                       options:(NSDictionary *)options;
 - (void)removeCircle;
 @end
 
