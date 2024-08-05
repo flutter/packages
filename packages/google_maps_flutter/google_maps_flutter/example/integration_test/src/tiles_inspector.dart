@@ -251,9 +251,20 @@ void runTests() {
   void expectHeatmapEquals(Heatmap heatmap1, Heatmap heatmap2) {
     expectHeatmapDataMoreOrLessEquals(heatmap1.data, heatmap2.data);
     expectHeatmapGradientMoreOrLessEquals(heatmap1.gradient, heatmap2.gradient);
+
     // Only Android supports `maxIntensity`
     // so the platform value is undefined on others.
-    if (Platform.isAndroid) {
+    bool canHandleMaxIntensity() {
+      return Platform.isAndroid;
+    }
+
+    // Only iOS supports `minimumZoomIntensity` and `maximumZoomIntensity`
+    // so the platform value is undefined on others.
+    bool canHandleZoomIntensity() {
+      return Platform.isIOS;
+    }
+
+    if (canHandleMaxIntensity()) {
       expect(heatmap1.maxIntensity, heatmap2.maxIntensity);
     }
     expect(
@@ -261,9 +272,7 @@ void runTests() {
       moreOrLessEquals(heatmap2.opacity, epsilon: floatTolerance),
     );
     expect(heatmap1.radius, heatmap2.radius);
-    // Only iOS supports `minimumZoomIntensity` and `maximumZoomIntensity`
-    // so the platform value is undefined on others.
-    if (Platform.isIOS) {
+    if (canHandleZoomIntensity()) {
       expect(heatmap1.minimumZoomIntensity, heatmap2.minimumZoomIntensity);
       expect(heatmap1.maximumZoomIntensity, heatmap2.maximumZoomIntensity);
     }
