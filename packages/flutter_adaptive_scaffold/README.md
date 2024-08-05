@@ -171,8 +171,8 @@ return AdaptiveLayout(
           unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
         ),
       ),
-      Breakpoints.large: SlotLayout.from(
-        key: const Key('Primary Navigation Large'),
+      Breakpoints.expanded: SlotLayout.from(
+        key: const Key('Primary Navigation Expanded'),
         inAnimation: AdaptiveScaffold.leftOutIn,
         builder: (_) => AdaptiveScaffold.standardNavigationRail(
           selectedIndex: selectedNavigation,

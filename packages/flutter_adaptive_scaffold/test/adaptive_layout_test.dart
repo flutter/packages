@@ -26,6 +26,10 @@ void main() {
                   key: const Key('400'), builder: (_) => const SizedBox()),
               TestBreakpoint800(): SlotLayout.from(
                   key: const Key('800'), builder: (_) => const SizedBox()),
+              TestBreakpoint1200(): SlotLayout.from(
+                  key: const Key('1200'), builder: (_) => const SizedBox()),
+              TestBreakpoint1600(): SlotLayout.from(
+                  key: const Key('1600'), builder: (_) => const SizedBox()),
             },
           ),
         ),
@@ -36,16 +40,36 @@ void main() {
     expect(find.byKey(const Key('0')), findsOneWidget);
     expect(find.byKey(const Key('400')), findsNothing);
     expect(find.byKey(const Key('800')), findsNothing);
+    expect(find.byKey(const Key('1200')), findsNothing);
+    expect(find.byKey(const Key('1600')), findsNothing);
 
     await tester.pumpWidget(slot(500));
     expect(find.byKey(const Key('0')), findsNothing);
     expect(find.byKey(const Key('400')), findsOneWidget);
     expect(find.byKey(const Key('800')), findsNothing);
+    expect(find.byKey(const Key('1200')), findsNothing);
+    expect(find.byKey(const Key('1600')), findsNothing);
 
     await tester.pumpWidget(slot(1000));
     expect(find.byKey(const Key('0')), findsNothing);
     expect(find.byKey(const Key('400')), findsNothing);
     expect(find.byKey(const Key('800')), findsOneWidget);
+    expect(find.byKey(const Key('1200')), findsNothing);
+    expect(find.byKey(const Key('1600')), findsNothing);
+
+    await tester.pumpWidget(slot(1400));
+    expect(find.byKey(const Key('0')), findsNothing);
+    expect(find.byKey(const Key('400')), findsNothing);
+    expect(find.byKey(const Key('800')), findsNothing);
+    expect(find.byKey(const Key('1200')), findsOneWidget);
+    expect(find.byKey(const Key('1600')), findsNothing);
+
+    await tester.pumpWidget(slot(1800));
+    expect(find.byKey(const Key('0')), findsNothing);
+    expect(find.byKey(const Key('400')), findsNothing);
+    expect(find.byKey(const Key('800')), findsNothing);
+    expect(find.byKey(const Key('1200')), findsNothing);
+    expect(find.byKey(const Key('1600')), findsOneWidget);
   });
 
   testWidgets('adaptive layout displays children in correct places',
@@ -115,8 +139,12 @@ void main() {
 
   final Finder begin = find.byKey(const Key('0'));
   final Finder end = find.byKey(const Key('400'));
+  final Finder large = find.byKey(const Key('1200'));
+  final Finder extraLarge = find.byKey(const Key('1600'));
+
   Finder slideIn(String key) => find.byKey(Key('in-${Key(key)}'));
   Finder slideOut(String key) => find.byKey(Key('out-${Key(key)}'));
+
   testWidgets(
       'slot layout properly switches between items with the appropriate animation',
       (WidgetTester tester) async {
@@ -143,6 +171,44 @@ void main() {
     await tester.pumpAndSettle();
     expect(begin, findsNothing);
     expect(end, findsOneWidget);
+
+    await tester
+        .pumpWidget(slot(1300, const Duration(milliseconds: 1000), tester));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(tester.widget<SlideTransition>(slideOut('400')).position.value,
+        const Offset(-0.5, 0));
+    expect(tester.widget<SlideTransition>(slideIn('1200')).position.value,
+        const Offset(-0.5, 0));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(tester.widget<SlideTransition>(slideOut('400')).position.value,
+        const Offset(-1.0, 0));
+    expect(tester.widget<SlideTransition>(slideIn('1200')).position.value,
+        Offset.zero);
+
+    await tester.pumpAndSettle();
+    expect(end, findsNothing);
+    expect(large, findsOneWidget);
+
+    await tester
+        .pumpWidget(slot(1700, const Duration(milliseconds: 1000), tester));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(tester.widget<SlideTransition>(slideOut('1200')).position.value,
+        const Offset(-0.5, 0));
+    expect(tester.widget<SlideTransition>(slideIn('1600')).position.value,
+        const Offset(-0.5, 0));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(tester.widget<SlideTransition>(slideOut('1200')).position.value,
+        const Offset(-1.0, 0));
+    expect(tester.widget<SlideTransition>(slideIn('1600')).position.value,
+        Offset.zero);
+
+    await tester.pumpAndSettle();
+    expect(large, findsNothing);
+    expect(extraLarge, findsOneWidget);
   });
 
   testWidgets('AnimatedSwitcher does not spawn duplicate keys on rapid resize',
@@ -307,6 +373,20 @@ class TestBreakpoint800 extends Breakpoint {
   }
 }
 
+class TestBreakpoint1200 extends Breakpoint {
+  @override
+  bool isActive(BuildContext context) {
+    return MediaQuery.of(context).size.width > 1200;
+  }
+}
+
+class TestBreakpoint1600 extends Breakpoint {
+  @override
+  bool isActive(BuildContext context) {
+    return MediaQuery.of(context).size.width > 1600;
+  }
+}
+
 final Finder topNavigation = find.byKey(const Key('Top Navigation'));
 final Finder secondaryNavigation =
     find.byKey(const Key('Secondary Navigation Small'));
@@ -347,7 +427,11 @@ Future<MediaQuery> layout({
             TestBreakpoint400(): SlotLayout.from(
                 key: const Key('Primary Navigation Medium'), builder: on),
             TestBreakpoint800(): SlotLayout.from(
+                key: const Key('Primary Navigation Expanded'), builder: on),
+            TestBreakpoint1200(): SlotLayout.from(
                 key: const Key('Primary Navigation Large'), builder: on),
+            TestBreakpoint1600(): SlotLayout.from(
+                key: const Key('Primary Navigation ExtraLarge'), builder: on),
           },
         ),
         secondaryNavigation: SlotLayout(
@@ -357,7 +441,11 @@ Future<MediaQuery> layout({
             TestBreakpoint400(): SlotLayout.from(
                 key: const Key('Secondary Navigation Medium'), builder: on),
             TestBreakpoint800(): SlotLayout.from(
+                key: const Key('Secondary Navigation Expanded'), builder: on),
+            TestBreakpoint1200(): SlotLayout.from(
                 key: const Key('Secondary Navigation Large'), builder: on),
+            TestBreakpoint1600(): SlotLayout.from(
+                key: const Key('Secondary Navigation ExtraLarge'), builder: on),
           },
         ),
         topNavigation: SlotLayout(
@@ -368,6 +456,10 @@ Future<MediaQuery> layout({
                 SlotLayout.from(key: const Key('Top Navigation1'), builder: on),
             TestBreakpoint800():
                 SlotLayout.from(key: const Key('Top Navigation2'), builder: on),
+            TestBreakpoint1200():
+                SlotLayout.from(key: const Key('Top Navigation3'), builder: on),
+            TestBreakpoint1600():
+                SlotLayout.from(key: const Key('Top Navigation4'), builder: on),
           },
         ),
         bottomNavigation: SlotLayout(
@@ -378,6 +470,10 @@ Future<MediaQuery> layout({
                 SlotLayout.from(key: const Key('bnav1'), builder: on),
             TestBreakpoint800():
                 SlotLayout.from(key: const Key('bnav2'), builder: on),
+            TestBreakpoint1200():
+                SlotLayout.from(key: const Key('bnav3'), builder: on),
+            TestBreakpoint1600():
+                SlotLayout.from(key: const Key('bnav4'), builder: on),
           },
         ),
         body: SlotLayout(
@@ -394,6 +490,14 @@ Future<MediaQuery> layout({
               key: const Key('Test Breakpoint 2'),
               builder: (_) => Container(color: Colors.red),
             ),
+            TestBreakpoint1200(): SlotLayout.from(
+              key: const Key('Test Breakpoint 3'),
+              builder: (_) => Container(color: Colors.red),
+            ),
+            TestBreakpoint1600(): SlotLayout.from(
+              key: const Key('Test Breakpoint 4'),
+              builder: (_) => Container(color: Colors.red),
+            ),
           },
         ),
         secondaryBody: SlotLayout(
@@ -408,6 +512,14 @@ Future<MediaQuery> layout({
             ),
             TestBreakpoint800(): SlotLayout.from(
               key: const Key('Secondary Test Breakpoint 2'),
+              builder: (_) => Container(color: Colors.blue),
+            ),
+            TestBreakpoint1200(): SlotLayout.from(
+              key: const Key('Secondary Test Breakpoint 3'),
+              builder: (_) => Container(color: Colors.blue),
+            ),
+            TestBreakpoint1600(): SlotLayout.from(
+              key: const Key('Secondary Test Breakpoint 4'),
               builder: (_) => Container(color: Colors.blue),
             ),
           },
@@ -458,6 +570,27 @@ MediaQuery slot(double width, Duration duration, WidgetTester tester) {
             outAnimation: leftInOut,
             duration: duration,
             key: const Key('400'),
+            builder: (_) => const SizedBox(width: 10, height: 10),
+          ),
+          TestBreakpoint800(): SlotLayout.from(
+            inAnimation: leftOutIn,
+            outAnimation: leftInOut,
+            duration: duration,
+            key: const Key('800'),
+            builder: (_) => const SizedBox(width: 10, height: 10),
+          ),
+          TestBreakpoint1200(): SlotLayout.from(
+            inAnimation: leftOutIn,
+            outAnimation: leftInOut,
+            duration: duration,
+            key: const Key('1200'),
+            builder: (_) => const SizedBox(width: 10, height: 10),
+          ),
+          TestBreakpoint1600(): SlotLayout.from(
+            inAnimation: leftOutIn,
+            outAnimation: leftInOut,
+            duration: duration,
+            key: const Key('1600'),
             builder: (_) => const SizedBox(width: 10, height: 10),
           ),
         },
