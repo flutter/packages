@@ -1,3 +1,7 @@
+## 2.13.0
+
+* Adds support for heatmap layers.
+
 ## 2.12.2
 
 * Updates the example app to use TLHC mode, per current package guidance.
