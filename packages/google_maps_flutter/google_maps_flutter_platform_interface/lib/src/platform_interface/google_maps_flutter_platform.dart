@@ -49,8 +49,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('init() has not been implemented.');
   }
 
-  /// Updates configuration options of the map user interface - deprecated, use
-  /// updateMapConfiguration instead.
+  /// Updates configuration options of the map user interface.
   ///
   /// Change listeners are notified once the update has been made on the
   /// platform side.
@@ -401,8 +400,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     return null;
   }
 
-  /// Returns a widget displaying the map view - deprecated, use
-  /// [buildViewWithConfiguration] instead.
+  /// Returns a widget displaying the map view.
   @Deprecated('Use buildViewWithConfiguration instead.')
   Widget buildView(
     int creationId,
@@ -422,8 +420,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('buildView() has not been implemented.');
   }
 
-  /// Returns a widget displaying the map view - deprecated, use
-  /// [buildViewWithConfiguration] instead.
+  /// Returns a widget displaying the map view.
   ///
   /// This method is similar to [buildView], but contains a parameter for
   /// platforms that require a text direction.
