@@ -65,256 +65,6 @@ class ErrorOr {
   std::variant<T, FlutterError> v_;
 };
 
-enum class FillerEnum0 { kFillerMember0 = 0 };
-
-enum class FillerEnum1 { kFillerMember1 = 0 };
-
-enum class FillerEnum2 { kFillerMember2 = 0 };
-
-enum class FillerEnum3 { kFillerMember3 = 0 };
-
-enum class FillerEnum4 { kFillerMember4 = 0 };
-
-enum class FillerEnum5 { kFillerMember5 = 0 };
-
-enum class FillerEnum6 { kFillerMember6 = 0 };
-
-enum class FillerEnum7 { kFillerMember7 = 0 };
-
-enum class FillerEnum8 { kFillerMember8 = 0 };
-
-enum class FillerEnum9 { kFillerMember9 = 0 };
-
-enum class FillerEnum10 { kFillerMember10 = 0 };
-
-enum class FillerEnum11 { kFillerMember11 = 0 };
-
-enum class FillerEnum12 { kFillerMember12 = 0 };
-
-enum class FillerEnum13 { kFillerMember13 = 0 };
-
-enum class FillerEnum14 { kFillerMember14 = 0 };
-
-enum class FillerEnum15 { kFillerMember15 = 0 };
-
-enum class FillerEnum16 { kFillerMember16 = 0 };
-
-enum class FillerEnum17 { kFillerMember17 = 0 };
-
-enum class FillerEnum18 { kFillerMember18 = 0 };
-
-enum class FillerEnum19 { kFillerMember19 = 0 };
-
-enum class FillerEnum20 { kFillerMember20 = 0 };
-
-enum class FillerEnum21 { kFillerMember21 = 0 };
-
-enum class FillerEnum22 { kFillerMember22 = 0 };
-
-enum class FillerEnum23 { kFillerMember23 = 0 };
-
-enum class FillerEnum24 { kFillerMember24 = 0 };
-
-enum class FillerEnum25 { kFillerMember25 = 0 };
-
-enum class FillerEnum26 { kFillerMember26 = 0 };
-
-enum class FillerEnum27 { kFillerMember27 = 0 };
-
-enum class FillerEnum28 { kFillerMember28 = 0 };
-
-enum class FillerEnum29 { kFillerMember29 = 0 };
-
-enum class FillerEnum30 { kFillerMember30 = 0 };
-
-enum class FillerEnum31 { kFillerMember31 = 0 };
-
-enum class FillerEnum32 { kFillerMember32 = 0 };
-
-enum class FillerEnum33 { kFillerMember33 = 0 };
-
-enum class FillerEnum34 { kFillerMember34 = 0 };
-
-enum class FillerEnum35 { kFillerMember35 = 0 };
-
-enum class FillerEnum36 { kFillerMember36 = 0 };
-
-enum class FillerEnum37 { kFillerMember37 = 0 };
-
-enum class FillerEnum38 { kFillerMember38 = 0 };
-
-enum class FillerEnum39 { kFillerMember39 = 0 };
-
-enum class FillerEnum40 { kFillerMember40 = 0 };
-
-enum class FillerEnum41 { kFillerMember41 = 0 };
-
-enum class FillerEnum42 { kFillerMember42 = 0 };
-
-enum class FillerEnum43 { kFillerMember43 = 0 };
-
-enum class FillerEnum44 { kFillerMember44 = 0 };
-
-enum class FillerEnum45 { kFillerMember45 = 0 };
-
-enum class FillerEnum46 { kFillerMember46 = 0 };
-
-enum class FillerEnum47 { kFillerMember47 = 0 };
-
-enum class FillerEnum48 { kFillerMember48 = 0 };
-
-enum class FillerEnum49 { kFillerMember49 = 0 };
-
-enum class FillerEnum50 { kFillerMember50 = 0 };
-
-enum class FillerEnum51 { kFillerMember51 = 0 };
-
-enum class FillerEnum52 { kFillerMember52 = 0 };
-
-enum class FillerEnum53 { kFillerMember53 = 0 };
-
-enum class FillerEnum54 { kFillerMember54 = 0 };
-
-enum class FillerEnum55 { kFillerMember55 = 0 };
-
-enum class FillerEnum56 { kFillerMember56 = 0 };
-
-enum class FillerEnum57 { kFillerMember57 = 0 };
-
-enum class FillerEnum58 { kFillerMember58 = 0 };
-
-enum class FillerEnum59 { kFillerMember59 = 0 };
-
-enum class FillerEnum60 { kFillerMember60 = 0 };
-
-enum class FillerEnum61 { kFillerMember61 = 0 };
-
-enum class FillerEnum62 { kFillerMember62 = 0 };
-
-enum class FillerEnum63 { kFillerMember63 = 0 };
-
-enum class FillerEnum64 { kFillerMember64 = 0 };
-
-enum class FillerEnum65 { kFillerMember65 = 0 };
-
-enum class FillerEnum66 { kFillerMember66 = 0 };
-
-enum class FillerEnum67 { kFillerMember67 = 0 };
-
-enum class FillerEnum68 { kFillerMember68 = 0 };
-
-enum class FillerEnum69 { kFillerMember69 = 0 };
-
-enum class FillerEnum70 { kFillerMember70 = 0 };
-
-enum class FillerEnum71 { kFillerMember71 = 0 };
-
-enum class FillerEnum72 { kFillerMember72 = 0 };
-
-enum class FillerEnum73 { kFillerMember73 = 0 };
-
-enum class FillerEnum74 { kFillerMember74 = 0 };
-
-enum class FillerEnum75 { kFillerMember75 = 0 };
-
-enum class FillerEnum76 { kFillerMember76 = 0 };
-
-enum class FillerEnum77 { kFillerMember77 = 0 };
-
-enum class FillerEnum78 { kFillerMember78 = 0 };
-
-enum class FillerEnum79 { kFillerMember79 = 0 };
-
-enum class FillerEnum80 { kFillerMember80 = 0 };
-
-enum class FillerEnum81 { kFillerMember81 = 0 };
-
-enum class FillerEnum82 { kFillerMember82 = 0 };
-
-enum class FillerEnum83 { kFillerMember83 = 0 };
-
-enum class FillerEnum84 { kFillerMember84 = 0 };
-
-enum class FillerEnum85 { kFillerMember85 = 0 };
-
-enum class FillerEnum86 { kFillerMember86 = 0 };
-
-enum class FillerEnum87 { kFillerMember87 = 0 };
-
-enum class FillerEnum88 { kFillerMember88 = 0 };
-
-enum class FillerEnum89 { kFillerMember89 = 0 };
-
-enum class FillerEnum90 { kFillerMember90 = 0 };
-
-enum class FillerEnum91 { kFillerMember91 = 0 };
-
-enum class FillerEnum92 { kFillerMember92 = 0 };
-
-enum class FillerEnum93 { kFillerMember93 = 0 };
-
-enum class FillerEnum94 { kFillerMember94 = 0 };
-
-enum class FillerEnum95 { kFillerMember95 = 0 };
-
-enum class FillerEnum96 { kFillerMember96 = 0 };
-
-enum class FillerEnum97 { kFillerMember97 = 0 };
-
-enum class FillerEnum98 { kFillerMember98 = 0 };
-
-enum class FillerEnum99 { kFillerMember99 = 0 };
-
-enum class FillerEnum100 { kFillerMember100 = 0 };
-
-enum class FillerEnum101 { kFillerMember101 = 0 };
-
-enum class FillerEnum102 { kFillerMember102 = 0 };
-
-enum class FillerEnum103 { kFillerMember103 = 0 };
-
-enum class FillerEnum104 { kFillerMember104 = 0 };
-
-enum class FillerEnum105 { kFillerMember105 = 0 };
-
-enum class FillerEnum106 { kFillerMember106 = 0 };
-
-enum class FillerEnum107 { kFillerMember107 = 0 };
-
-enum class FillerEnum108 { kFillerMember108 = 0 };
-
-enum class FillerEnum109 { kFillerMember109 = 0 };
-
-enum class FillerEnum110 { kFillerMember110 = 0 };
-
-enum class FillerEnum111 { kFillerMember111 = 0 };
-
-enum class FillerEnum112 { kFillerMember112 = 0 };
-
-enum class FillerEnum113 { kFillerMember113 = 0 };
-
-enum class FillerEnum114 { kFillerMember114 = 0 };
-
-enum class FillerEnum115 { kFillerMember115 = 0 };
-
-enum class FillerEnum116 { kFillerMember116 = 0 };
-
-enum class FillerEnum117 { kFillerMember117 = 0 };
-
-enum class FillerEnum118 { kFillerMember118 = 0 };
-
-enum class FillerEnum119 { kFillerMember119 = 0 };
-
-enum class FillerEnum120 { kFillerMember120 = 0 };
-
-enum class FillerEnum121 { kFillerMember121 = 0 };
-
-enum class FillerEnum122 { kFillerMember122 = 0 };
-
-enum class FillerEnum123 { kFillerMember123 = 0 };
-
-enum class FillerEnum124 { kFillerMember124 = 0 };
-
 enum class AnEnum {
   kOne = 0,
   kTwo = 1,
@@ -403,7 +153,6 @@ class AllTypes {
  private:
   static AllTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
-  friend class __pigeon_CodecOverflow;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
@@ -565,7 +314,6 @@ class AllNullableTypes {
  private:
   static AllNullableTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
-  friend class __pigeon_CodecOverflow;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
@@ -720,7 +468,6 @@ class AllNullableTypesWithoutRecursion {
   static AllNullableTypesWithoutRecursion FromEncodableList(
       const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
-  friend class __pigeon_CodecOverflow;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
@@ -793,7 +540,6 @@ class AllClassesWrapper {
   static AllClassesWrapper FromEncodableList(
       const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
-  friend class __pigeon_CodecOverflow;
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
   friend class HostTrivialApi;
@@ -825,7 +571,6 @@ class TestMessage {
  private:
   static TestMessage FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
-  friend class __pigeon_CodecOverflow;
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
   friend class HostTrivialApi;
@@ -834,35 +579,6 @@ class TestMessage {
   friend class PigeonCodecSerializer;
   friend class CoreTestsTest;
   std::optional<flutter::EncodableList> test_list_;
-};
-
-// Generated class from Pigeon that represents data sent in messages.
-class __pigeon_CodecOverflow {
- public:
-  // Constructs an object setting all fields.
-  explicit __pigeon_CodecOverflow(int64_t type,
-                                  const flutter::EncodableValue& wrapped);
-
-  int64_t type() const;
-  void set_type(int64_t value_arg);
-
-  const flutter::EncodableValue& wrapped() const;
-  void set_wrapped(const flutter::EncodableValue& value_arg);
-
- private:
-  static flutter::EncodableValue FromEncodableList(
-      const flutter::EncodableList& list);
-  flutter::EncodableList ToEncodableList() const;
-  flutter::EncodableValue Unwrap();
-  friend class HostIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApi;
-  friend class HostTrivialApi;
-  friend class HostSmallApi;
-  friend class FlutterSmallApi;
-  friend class PigeonCodecSerializer;
-  friend class CoreTestsTest;
-  int64_t type_;
-  flutter::EncodableValue wrapped_;
 };
 
 class PigeonCodecSerializer : public flutter::StandardCodecSerializer {

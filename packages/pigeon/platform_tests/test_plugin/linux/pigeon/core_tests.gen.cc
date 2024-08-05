@@ -238,10 +238,10 @@ static FlValue* core_tests_pigeon_test_all_types_to_list(
       values,
       fl_value_new_float_list(self->a_float_array, self->a_float_array_length));
   fl_value_append_take(values,
-                       fl_value_new_custom(254, fl_value_new_int(self->an_enum),
+                       fl_value_new_custom(129, fl_value_new_int(self->an_enum),
                                            (GDestroyNotify)fl_value_unref));
   fl_value_append_take(
-      values, fl_value_new_custom(255, fl_value_new_int(self->another_enum),
+      values, fl_value_new_custom(130, fl_value_new_int(self->another_enum),
                                   (GDestroyNotify)fl_value_unref));
   fl_value_append_take(values, fl_value_new_string(self->a_string));
   fl_value_append_take(values, fl_value_ref(self->an_object));
@@ -767,13 +767,13 @@ static FlValue* core_tests_pigeon_test_all_nullable_types_to_list(
   fl_value_append_take(
       values,
       self->a_nullable_enum != nullptr
-          ? fl_value_new_custom(254, fl_value_new_int(*self->a_nullable_enum),
+          ? fl_value_new_custom(129, fl_value_new_int(*self->a_nullable_enum),
                                 (GDestroyNotify)fl_value_unref)
           : fl_value_new_null());
   fl_value_append_take(
       values, self->another_nullable_enum != nullptr
                   ? fl_value_new_custom(
-                        255, fl_value_new_int(*self->another_nullable_enum),
+                        130, fl_value_new_int(*self->another_nullable_enum),
                         (GDestroyNotify)fl_value_unref)
                   : fl_value_new_null());
   fl_value_append_take(values,
@@ -786,7 +786,7 @@ static FlValue* core_tests_pigeon_test_all_nullable_types_to_list(
   fl_value_append_take(
       values,
       self->all_nullable_types != nullptr
-          ? fl_value_new_custom_object(257, G_OBJECT(self->all_nullable_types))
+          ? fl_value_new_custom_object(132, G_OBJECT(self->all_nullable_types))
           : fl_value_new_null());
   fl_value_append_take(values, self->list != nullptr ? fl_value_ref(self->list)
                                                      : fl_value_new_null());
@@ -1431,13 +1431,13 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_to_list(
   fl_value_append_take(
       values,
       self->a_nullable_enum != nullptr
-          ? fl_value_new_custom(254, fl_value_new_int(*self->a_nullable_enum),
+          ? fl_value_new_custom(129, fl_value_new_int(*self->a_nullable_enum),
                                 (GDestroyNotify)fl_value_unref)
           : fl_value_new_null());
   fl_value_append_take(
       values, self->another_nullable_enum != nullptr
                   ? fl_value_new_custom(
-                        255, fl_value_new_int(*self->another_nullable_enum),
+                        130, fl_value_new_int(*self->another_nullable_enum),
                         (GDestroyNotify)fl_value_unref)
                   : fl_value_new_null());
   fl_value_append_take(values,
@@ -1696,16 +1696,16 @@ static FlValue* core_tests_pigeon_test_all_classes_wrapper_to_list(
     CoreTestsPigeonTestAllClassesWrapper* self) {
   FlValue* values = fl_value_new_list();
   fl_value_append_take(values, fl_value_new_custom_object(
-                                   257, G_OBJECT(self->all_nullable_types)));
+                                   132, G_OBJECT(self->all_nullable_types)));
   fl_value_append_take(
       values,
       self->all_nullable_types_without_recursion != nullptr
           ? fl_value_new_custom_object(
-                258, G_OBJECT(self->all_nullable_types_without_recursion))
+                133, G_OBJECT(self->all_nullable_types_without_recursion))
           : fl_value_new_null());
   fl_value_append_take(
       values, self->all_types != nullptr
-                  ? fl_value_new_custom_object(256, G_OBJECT(self->all_types))
+                  ? fl_value_new_custom_object(131, G_OBJECT(self->all_types))
                   : fl_value_new_null());
   return values;
 }
@@ -1810,7 +1810,7 @@ G_DEFINE_TYPE(CoreTestsPigeonTestMessageCodec,
               fl_standard_message_codec_get_type())
 
 static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum0(
+core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_an_enum(
     FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
     GError** error) {
   uint8_t type = 129;
@@ -1819,7 +1819,7 @@ core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum0(
 }
 
 static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum1(
+core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_another_enum(
     FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
     GError** error) {
   uint8_t type = 130;
@@ -1828,1135 +1828,10 @@ core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum1(
 }
 
 static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum2(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 131;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum3(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 132;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum4(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 133;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum5(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 134;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum6(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 135;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum7(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 136;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum8(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 137;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum9(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 138;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum10(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 139;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum11(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 140;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum12(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 141;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum13(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 142;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum14(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 143;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum15(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 144;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum16(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 145;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum17(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 146;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum18(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 147;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum19(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 148;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum20(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 149;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum21(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 150;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum22(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 151;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum23(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 152;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum24(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 153;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum25(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 154;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum26(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 155;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum27(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 156;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum28(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 157;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum29(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 158;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum30(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 159;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum31(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 160;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum32(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 161;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum33(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 162;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum34(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 163;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum35(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 164;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum36(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 165;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum37(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 166;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum38(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 167;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum39(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 168;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum40(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 169;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum41(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 170;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum42(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 171;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum43(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 172;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum44(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 173;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum45(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 174;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum46(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 175;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum47(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 176;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum48(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 177;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum49(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 178;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum50(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 179;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum51(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 180;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum52(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 181;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum53(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 182;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum54(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 183;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum55(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 184;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum56(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 185;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum57(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 186;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum58(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 187;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum59(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 188;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum60(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 189;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum61(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 190;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum62(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 191;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum63(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 192;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum64(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 193;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum65(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 194;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum66(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 195;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum67(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 196;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum68(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 197;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum69(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 198;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum70(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 199;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum71(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 200;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum72(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 201;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum73(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 202;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum74(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 203;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum75(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 204;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum76(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 205;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum77(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 206;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum78(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 207;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum79(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 208;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum80(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 209;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum81(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 210;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum82(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 211;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum83(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 212;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum84(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 213;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum85(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 214;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum86(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 215;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum87(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 216;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum88(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 217;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum89(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 218;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum90(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 219;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum91(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 220;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum92(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 221;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum93(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 222;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum94(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 223;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum95(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 224;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum96(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 225;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum97(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 226;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum98(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 227;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum99(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 228;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum100(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 229;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum101(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 230;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum102(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 231;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum103(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 232;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum104(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 233;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum105(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 234;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum106(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 235;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum107(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 236;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum108(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 237;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum109(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 238;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum110(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 239;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum111(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 240;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum112(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 241;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum113(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 242;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum114(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 243;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum115(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 244;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum116(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 245;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum117(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 246;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum118(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 247;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum119(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 248;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum120(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 249;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum121(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 250;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum122(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 251;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum123(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 252;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum124(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 253;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_an_enum(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 254;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
-core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_another_enum(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 255;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
-}
-
-static gboolean
 core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_types(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     CoreTestsPigeonTestAllTypes* value, GError** error) {
-  uint8_t type = 256;
+  uint8_t type = 131;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
   g_autoptr(FlValue) values = core_tests_pigeon_test_all_types_to_list(value);
   return fl_standard_message_codec_write_value(codec, buffer, values, error);
@@ -2966,7 +1841,7 @@ static gboolean
 core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_nullable_types(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     CoreTestsPigeonTestAllNullableTypes* value, GError** error) {
-  uint8_t type = 257;
+  uint8_t type = 132;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
   g_autoptr(FlValue) values =
       core_tests_pigeon_test_all_nullable_types_to_list(value);
@@ -2978,7 +1853,7 @@ core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_nullable_t
     FlStandardMessageCodec* codec, GByteArray* buffer,
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* value,
     GError** error) {
-  uint8_t type = 258;
+  uint8_t type = 133;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
   g_autoptr(FlValue) values =
       core_tests_pigeon_test_all_nullable_types_without_recursion_to_list(
@@ -2990,7 +1865,7 @@ static gboolean
 core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_classes_wrapper(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     CoreTestsPigeonTestAllClassesWrapper* value, GError** error) {
-  uint8_t type = 259;
+  uint8_t type = 134;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
   g_autoptr(FlValue) values =
       core_tests_pigeon_test_all_classes_wrapper_to_list(value);
@@ -3001,7 +1876,7 @@ static gboolean
 core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_test_message(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     CoreTestsPigeonTestTestMessage* value, GError** error) {
-  uint8_t type = 260;
+  uint8_t type = 135;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
   g_autoptr(FlValue) values =
       core_tests_pigeon_test_test_message_to_list(value);
@@ -3014,792 +1889,42 @@ static gboolean core_tests_pigeon_test_message_codec_write_value(
   if (fl_value_get_type(value) == FL_VALUE_TYPE_CUSTOM) {
     switch (fl_value_get_custom_type(value)) {
       case 129:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum0(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 130:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum1(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 131:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum2(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 132:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum3(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 133:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum4(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 134:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum5(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 135:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum6(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 136:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum7(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 137:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum8(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 138:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum9(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 139:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum10(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 140:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum11(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 141:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum12(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 142:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum13(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 143:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum14(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 144:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum15(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 145:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum16(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 146:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum17(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 147:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum18(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 148:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum19(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 149:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum20(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 150:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum21(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 151:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum22(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 152:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum23(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 153:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum24(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 154:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum25(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 155:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum26(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 156:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum27(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 157:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum28(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 158:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum29(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 159:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum30(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 160:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum31(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 161:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum32(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 162:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum33(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 163:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum34(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 164:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum35(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 165:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum36(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 166:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum37(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 167:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum38(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 168:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum39(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 169:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum40(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 170:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum41(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 171:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum42(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 172:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum43(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 173:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum44(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 174:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum45(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 175:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum46(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 176:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum47(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 177:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum48(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 178:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum49(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 179:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum50(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 180:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum51(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 181:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum52(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 182:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum53(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 183:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum54(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 184:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum55(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 185:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum56(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 186:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum57(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 187:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum58(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 188:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum59(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 189:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum60(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 190:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum61(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 191:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum62(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 192:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum63(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 193:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum64(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 194:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum65(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 195:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum66(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 196:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum67(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 197:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum68(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 198:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum69(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 199:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum70(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 200:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum71(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 201:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum72(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 202:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum73(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 203:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum74(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 204:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum75(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 205:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum76(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 206:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum77(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 207:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum78(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 208:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum79(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 209:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum80(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 210:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum81(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 211:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum82(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 212:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum83(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 213:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum84(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 214:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum85(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 215:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum86(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 216:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum87(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 217:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum88(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 218:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum89(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 219:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum90(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 220:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum91(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 221:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum92(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 222:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum93(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 223:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum94(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 224:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum95(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 225:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum96(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 226:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum97(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 227:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum98(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 228:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum99(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 229:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum100(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 230:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum101(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 231:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum102(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 232:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum103(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 233:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum104(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 234:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum105(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 235:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum106(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 236:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum107(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 237:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum108(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 238:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum109(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 239:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum110(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 240:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum111(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 241:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum112(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 242:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum113(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 243:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum114(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 244:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum115(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 245:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum116(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 246:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum117(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 247:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum118(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 248:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum119(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 249:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum120(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 250:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum121(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 251:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum122(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 252:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum123(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 253:
-        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_filler_enum124(
-            codec, buffer,
-            reinterpret_cast<FlValue*>(
-                const_cast<gpointer>(fl_value_get_custom_value(value))),
-            error);
-      case 254:
         return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_an_enum(
             codec, buffer,
             reinterpret_cast<FlValue*>(
                 const_cast<gpointer>(fl_value_get_custom_value(value))),
             error);
-      case 255:
+      case 130:
         return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_another_enum(
             codec, buffer,
             reinterpret_cast<FlValue*>(
                 const_cast<gpointer>(fl_value_get_custom_value(value))),
             error);
-      case 256:
+      case 131:
         return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_types(
             codec, buffer,
             CORE_TESTS_PIGEON_TEST_ALL_TYPES(
                 fl_value_get_custom_value_object(value)),
             error);
-      case 257:
+      case 132:
         return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_nullable_types(
             codec, buffer,
             CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
                 fl_value_get_custom_value_object(value)),
             error);
-      case 258:
+      case 133:
         return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_nullable_types_without_recursion(
             codec, buffer,
             CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
                 fl_value_get_custom_value_object(value)),
             error);
-      case 259:
+      case 134:
         return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_classes_wrapper(
             codec, buffer,
             CORE_TESTS_PIGEON_TEST_ALL_CLASSES_WRAPPER(
                 fl_value_get_custom_value_object(value)),
             error);
-      case 260:
+      case 135:
         return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_test_message(
             codec, buffer,
             CORE_TESTS_PIGEON_TEST_TEST_MESSAGE(
@@ -3814,7 +1939,7 @@ static gboolean core_tests_pigeon_test_message_codec_write_value(
 }
 
 static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum0(
+core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_an_enum(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   return fl_value_new_custom(
@@ -3823,1136 +1948,11 @@ core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum0(
 }
 
 static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum1(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      130, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum2(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      131, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum3(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      132, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum4(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      133, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum5(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      134, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum6(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      135, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum7(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      136, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum8(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      137, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum9(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      138, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum10(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      139, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum11(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      140, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum12(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      141, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum13(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      142, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum14(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      143, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum15(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      144, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum16(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      145, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum17(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      146, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum18(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      147, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum19(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      148, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum20(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      149, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum21(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      150, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum22(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      151, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum23(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      152, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum24(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      153, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum25(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      154, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum26(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      155, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum27(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      156, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum28(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      157, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum29(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      158, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum30(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      159, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum31(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      160, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum32(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      161, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum33(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      162, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum34(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      163, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum35(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      164, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum36(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      165, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum37(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      166, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum38(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      167, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum39(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      168, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum40(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      169, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum41(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      170, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum42(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      171, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum43(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      172, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum44(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      173, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum45(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      174, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum46(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      175, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum47(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      176, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum48(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      177, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum49(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      178, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum50(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      179, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum51(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      180, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum52(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      181, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum53(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      182, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum54(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      183, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum55(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      184, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum56(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      185, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum57(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      186, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum58(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      187, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum59(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      188, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum60(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      189, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum61(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      190, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum62(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      191, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum63(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      192, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum64(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      193, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum65(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      194, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum66(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      195, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum67(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      196, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum68(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      197, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum69(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      198, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum70(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      199, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum71(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      200, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum72(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      201, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum73(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      202, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum74(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      203, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum75(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      204, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum76(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      205, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum77(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      206, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum78(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      207, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum79(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      208, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum80(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      209, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum81(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      210, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum82(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      211, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum83(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      212, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum84(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      213, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum85(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      214, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum86(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      215, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum87(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      216, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum88(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      217, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum89(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      218, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum90(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      219, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum91(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      220, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum92(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      221, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum93(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      222, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum94(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      223, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum95(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      224, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum96(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      225, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum97(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      226, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum98(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      227, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum99(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      228, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum100(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      229, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum101(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      230, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum102(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      231, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum103(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      232, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum104(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      233, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum105(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      234, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum106(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      235, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum107(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      236, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum108(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      237, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum109(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      238, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum110(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      239, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum111(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      240, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum112(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      241, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum113(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      242, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum114(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      243, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum115(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      244, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum116(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      245, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum117(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      246, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum118(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      247, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum119(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      248, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum120(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      249, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum121(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      250, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum122(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      251, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum123(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      252, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum124(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      253, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
-core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_an_enum(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      254, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
-}
-
-static FlValue*
 core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_another_enum(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   return fl_value_new_custom(
-      255, fl_standard_message_codec_read_value(codec, buffer, offset, error),
+      130, fl_standard_message_codec_read_value(codec, buffer, offset, error),
       (GDestroyNotify)fl_value_unref);
 }
 
@@ -4974,7 +1974,7 @@ core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_types(
     return nullptr;
   }
 
-  return fl_value_new_custom_object(256, G_OBJECT(value));
+  return fl_value_new_custom_object(131, G_OBJECT(value));
 }
 
 static FlValue*
@@ -4995,7 +1995,7 @@ core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_nullable_ty
     return nullptr;
   }
 
-  return fl_value_new_custom_object(257, G_OBJECT(value));
+  return fl_value_new_custom_object(132, G_OBJECT(value));
 }
 
 static FlValue*
@@ -5017,7 +2017,7 @@ core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_nullable_ty
     return nullptr;
   }
 
-  return fl_value_new_custom_object(258, G_OBJECT(value));
+  return fl_value_new_custom_object(133, G_OBJECT(value));
 }
 
 static FlValue*
@@ -5038,7 +2038,7 @@ core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_classes_wra
     return nullptr;
   }
 
-  return fl_value_new_custom_object(259, G_OBJECT(value));
+  return fl_value_new_custom_object(134, G_OBJECT(value));
 }
 
 static FlValue*
@@ -5059,7 +2059,7 @@ core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_test_message(
     return nullptr;
   }
 
-  return fl_value_new_custom_object(260, G_OBJECT(value));
+  return fl_value_new_custom_object(135, G_OBJECT(value));
 }
 
 static FlValue* core_tests_pigeon_test_message_codec_read_value_of_type(
@@ -5067,399 +2067,24 @@ static FlValue* core_tests_pigeon_test_message_codec_read_value_of_type(
     GError** error) {
   switch (type) {
     case 129:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum0(
-          codec, buffer, offset, error);
-    case 130:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum1(
-          codec, buffer, offset, error);
-    case 131:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum2(
-          codec, buffer, offset, error);
-    case 132:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum3(
-          codec, buffer, offset, error);
-    case 133:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum4(
-          codec, buffer, offset, error);
-    case 134:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum5(
-          codec, buffer, offset, error);
-    case 135:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum6(
-          codec, buffer, offset, error);
-    case 136:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum7(
-          codec, buffer, offset, error);
-    case 137:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum8(
-          codec, buffer, offset, error);
-    case 138:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum9(
-          codec, buffer, offset, error);
-    case 139:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum10(
-          codec, buffer, offset, error);
-    case 140:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum11(
-          codec, buffer, offset, error);
-    case 141:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum12(
-          codec, buffer, offset, error);
-    case 142:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum13(
-          codec, buffer, offset, error);
-    case 143:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum14(
-          codec, buffer, offset, error);
-    case 144:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum15(
-          codec, buffer, offset, error);
-    case 145:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum16(
-          codec, buffer, offset, error);
-    case 146:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum17(
-          codec, buffer, offset, error);
-    case 147:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum18(
-          codec, buffer, offset, error);
-    case 148:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum19(
-          codec, buffer, offset, error);
-    case 149:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum20(
-          codec, buffer, offset, error);
-    case 150:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum21(
-          codec, buffer, offset, error);
-    case 151:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum22(
-          codec, buffer, offset, error);
-    case 152:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum23(
-          codec, buffer, offset, error);
-    case 153:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum24(
-          codec, buffer, offset, error);
-    case 154:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum25(
-          codec, buffer, offset, error);
-    case 155:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum26(
-          codec, buffer, offset, error);
-    case 156:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum27(
-          codec, buffer, offset, error);
-    case 157:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum28(
-          codec, buffer, offset, error);
-    case 158:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum29(
-          codec, buffer, offset, error);
-    case 159:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum30(
-          codec, buffer, offset, error);
-    case 160:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum31(
-          codec, buffer, offset, error);
-    case 161:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum32(
-          codec, buffer, offset, error);
-    case 162:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum33(
-          codec, buffer, offset, error);
-    case 163:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum34(
-          codec, buffer, offset, error);
-    case 164:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum35(
-          codec, buffer, offset, error);
-    case 165:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum36(
-          codec, buffer, offset, error);
-    case 166:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum37(
-          codec, buffer, offset, error);
-    case 167:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum38(
-          codec, buffer, offset, error);
-    case 168:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum39(
-          codec, buffer, offset, error);
-    case 169:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum40(
-          codec, buffer, offset, error);
-    case 170:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum41(
-          codec, buffer, offset, error);
-    case 171:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum42(
-          codec, buffer, offset, error);
-    case 172:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum43(
-          codec, buffer, offset, error);
-    case 173:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum44(
-          codec, buffer, offset, error);
-    case 174:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum45(
-          codec, buffer, offset, error);
-    case 175:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum46(
-          codec, buffer, offset, error);
-    case 176:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum47(
-          codec, buffer, offset, error);
-    case 177:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum48(
-          codec, buffer, offset, error);
-    case 178:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum49(
-          codec, buffer, offset, error);
-    case 179:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum50(
-          codec, buffer, offset, error);
-    case 180:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum51(
-          codec, buffer, offset, error);
-    case 181:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum52(
-          codec, buffer, offset, error);
-    case 182:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum53(
-          codec, buffer, offset, error);
-    case 183:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum54(
-          codec, buffer, offset, error);
-    case 184:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum55(
-          codec, buffer, offset, error);
-    case 185:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum56(
-          codec, buffer, offset, error);
-    case 186:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum57(
-          codec, buffer, offset, error);
-    case 187:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum58(
-          codec, buffer, offset, error);
-    case 188:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum59(
-          codec, buffer, offset, error);
-    case 189:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum60(
-          codec, buffer, offset, error);
-    case 190:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum61(
-          codec, buffer, offset, error);
-    case 191:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum62(
-          codec, buffer, offset, error);
-    case 192:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum63(
-          codec, buffer, offset, error);
-    case 193:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum64(
-          codec, buffer, offset, error);
-    case 194:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum65(
-          codec, buffer, offset, error);
-    case 195:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum66(
-          codec, buffer, offset, error);
-    case 196:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum67(
-          codec, buffer, offset, error);
-    case 197:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum68(
-          codec, buffer, offset, error);
-    case 198:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum69(
-          codec, buffer, offset, error);
-    case 199:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum70(
-          codec, buffer, offset, error);
-    case 200:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum71(
-          codec, buffer, offset, error);
-    case 201:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum72(
-          codec, buffer, offset, error);
-    case 202:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum73(
-          codec, buffer, offset, error);
-    case 203:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum74(
-          codec, buffer, offset, error);
-    case 204:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum75(
-          codec, buffer, offset, error);
-    case 205:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum76(
-          codec, buffer, offset, error);
-    case 206:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum77(
-          codec, buffer, offset, error);
-    case 207:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum78(
-          codec, buffer, offset, error);
-    case 208:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum79(
-          codec, buffer, offset, error);
-    case 209:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum80(
-          codec, buffer, offset, error);
-    case 210:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum81(
-          codec, buffer, offset, error);
-    case 211:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum82(
-          codec, buffer, offset, error);
-    case 212:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum83(
-          codec, buffer, offset, error);
-    case 213:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum84(
-          codec, buffer, offset, error);
-    case 214:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum85(
-          codec, buffer, offset, error);
-    case 215:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum86(
-          codec, buffer, offset, error);
-    case 216:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum87(
-          codec, buffer, offset, error);
-    case 217:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum88(
-          codec, buffer, offset, error);
-    case 218:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum89(
-          codec, buffer, offset, error);
-    case 219:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum90(
-          codec, buffer, offset, error);
-    case 220:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum91(
-          codec, buffer, offset, error);
-    case 221:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum92(
-          codec, buffer, offset, error);
-    case 222:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum93(
-          codec, buffer, offset, error);
-    case 223:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum94(
-          codec, buffer, offset, error);
-    case 224:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum95(
-          codec, buffer, offset, error);
-    case 225:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum96(
-          codec, buffer, offset, error);
-    case 226:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum97(
-          codec, buffer, offset, error);
-    case 227:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum98(
-          codec, buffer, offset, error);
-    case 228:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum99(
-          codec, buffer, offset, error);
-    case 229:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum100(
-          codec, buffer, offset, error);
-    case 230:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum101(
-          codec, buffer, offset, error);
-    case 231:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum102(
-          codec, buffer, offset, error);
-    case 232:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum103(
-          codec, buffer, offset, error);
-    case 233:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum104(
-          codec, buffer, offset, error);
-    case 234:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum105(
-          codec, buffer, offset, error);
-    case 235:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum106(
-          codec, buffer, offset, error);
-    case 236:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum107(
-          codec, buffer, offset, error);
-    case 237:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum108(
-          codec, buffer, offset, error);
-    case 238:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum109(
-          codec, buffer, offset, error);
-    case 239:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum110(
-          codec, buffer, offset, error);
-    case 240:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum111(
-          codec, buffer, offset, error);
-    case 241:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum112(
-          codec, buffer, offset, error);
-    case 242:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum113(
-          codec, buffer, offset, error);
-    case 243:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum114(
-          codec, buffer, offset, error);
-    case 244:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum115(
-          codec, buffer, offset, error);
-    case 245:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum116(
-          codec, buffer, offset, error);
-    case 246:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum117(
-          codec, buffer, offset, error);
-    case 247:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum118(
-          codec, buffer, offset, error);
-    case 248:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum119(
-          codec, buffer, offset, error);
-    case 249:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum120(
-          codec, buffer, offset, error);
-    case 250:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum121(
-          codec, buffer, offset, error);
-    case 251:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum122(
-          codec, buffer, offset, error);
-    case 252:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum123(
-          codec, buffer, offset, error);
-    case 253:
-      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_filler_enum124(
-          codec, buffer, offset, error);
-    case 254:
       return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_an_enum(
           codec, buffer, offset, error);
-    case 255:
+    case 130:
       return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_another_enum(
           codec, buffer, offset, error);
-    case 256:
+    case 131:
       return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_types(
           codec, buffer, offset, error);
-    case 257:
+    case 132:
       return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_nullable_types(
           codec, buffer, offset, error);
-    case 258:
+    case 133:
       return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_nullable_types_without_recursion(
           codec, buffer, offset, error);
-    case 259:
+    case 134:
       return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_classes_wrapper(
           codec, buffer, offset, error);
-    case 260:
+    case 135:
       return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_test_message(
           codec, buffer, offset, error);
     default:
@@ -5637,7 +2262,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_all_types_response_new(
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(256, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(131, G_OBJECT(return_value)));
   return self;
 }
 
@@ -6407,7 +3032,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_class_wrapper_response_new
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(259, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(134, G_OBJECT(return_value)));
   return self;
 }
 
@@ -6471,7 +3096,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_enum_response_new(
           nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom(254, fl_value_new_int(return_value),
+                       fl_value_new_custom(129, fl_value_new_int(return_value),
                                            (GDestroyNotify)fl_value_unref));
   return self;
 }
@@ -6537,7 +3162,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_another_enum_response_new(
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom(255, fl_value_new_int(return_value),
+                       fl_value_new_custom(130, fl_value_new_int(return_value),
                                            (GDestroyNotify)fl_value_unref));
   return self;
 }
@@ -6805,7 +3430,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_all_nullable_types_respons
   self->value = fl_value_new_list();
   fl_value_append_take(
       self->value, return_value != nullptr
-                       ? fl_value_new_custom_object(257, G_OBJECT(return_value))
+                       ? fl_value_new_custom_object(132, G_OBJECT(return_value))
                        : fl_value_new_null());
   return self;
 }
@@ -6876,7 +3501,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_all_nullable_types_without
   self->value = fl_value_new_list();
   fl_value_append_take(
       self->value, return_value != nullptr
-                       ? fl_value_new_custom_object(258, G_OBJECT(return_value))
+                       ? fl_value_new_custom_object(133, G_OBJECT(return_value))
                        : fl_value_new_null());
   return self;
 }
@@ -7015,7 +3640,7 @@ core_tests_pigeon_test_host_integration_core_api_create_nested_nullable_string_r
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(259, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(134, G_OBJECT(return_value)));
   return self;
 }
 
@@ -7083,7 +3708,7 @@ core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_re
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(257, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(132, G_OBJECT(return_value)));
   return self;
 }
 
@@ -7152,7 +3777,7 @@ core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_wi
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(258, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(133, G_OBJECT(return_value)));
   return self;
 }
 
@@ -7761,7 +4386,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_enum_response_new
   fl_value_append_take(
       self->value,
       return_value != nullptr
-          ? fl_value_new_custom(254, fl_value_new_int(*return_value),
+          ? fl_value_new_custom(129, fl_value_new_int(*return_value),
                                 (GDestroyNotify)fl_value_unref)
           : fl_value_new_null());
   return self;
@@ -7833,7 +4458,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_another_nullable_enum_resp
   fl_value_append_take(
       self->value,
       return_value != nullptr
-          ? fl_value_new_custom(255, fl_value_new_int(*return_value),
+          ? fl_value_new_custom(130, fl_value_new_int(*return_value),
                                 (GDestroyNotify)fl_value_unref)
           : fl_value_new_null());
   return self;
@@ -8680,7 +5305,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_enum_response_new(
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom(254, fl_value_new_int(return_value),
+                       fl_value_new_custom(129, fl_value_new_int(return_value),
                                            (GDestroyNotify)fl_value_unref));
   return self;
 }
@@ -8754,7 +5379,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_another_async_enum_respons
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom(255, fl_value_new_int(return_value),
+                       fl_value_new_custom(130, fl_value_new_int(return_value),
                                            (GDestroyNotify)fl_value_unref));
   return self;
 }
@@ -9047,7 +5672,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_all_types_response_n
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(256, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(131, G_OBJECT(return_value)));
   return self;
 }
 
@@ -9124,7 +5749,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_all_nullabl
   self->value = fl_value_new_list();
   fl_value_append_take(
       self->value, return_value != nullptr
-                       ? fl_value_new_custom_object(257, G_OBJECT(return_value))
+                       ? fl_value_new_custom_object(132, G_OBJECT(return_value))
                        : fl_value_new_null());
   return self;
 }
@@ -9202,7 +5827,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_all_nullabl
   self->value = fl_value_new_list();
   fl_value_append_take(
       self->value, return_value != nullptr
-                       ? fl_value_new_custom_object(258, G_OBJECT(return_value))
+                       ? fl_value_new_custom_object(133, G_OBJECT(return_value))
                        : fl_value_new_null());
   return self;
 }
@@ -9875,7 +6500,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_enum_respon
   fl_value_append_take(
       self->value,
       return_value != nullptr
-          ? fl_value_new_custom(254, fl_value_new_int(*return_value),
+          ? fl_value_new_custom(129, fl_value_new_int(*return_value),
                                 (GDestroyNotify)fl_value_unref)
           : fl_value_new_null());
   return self;
@@ -9955,7 +6580,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_another_async_nullable_enu
   fl_value_append_take(
       self->value,
       return_value != nullptr
-          ? fl_value_new_custom(255, fl_value_new_int(*return_value),
+          ? fl_value_new_custom(130, fl_value_new_int(*return_value),
                                 (GDestroyNotify)fl_value_unref)
           : fl_value_new_null());
   return self;
@@ -10249,7 +6874,7 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_all_types_res
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(256, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(131, G_OBJECT(return_value)));
   return self;
 }
 
@@ -10326,7 +6951,7 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_all_nullable_
   self->value = fl_value_new_list();
   fl_value_append_take(
       self->value, return_value != nullptr
-                       ? fl_value_new_custom_object(257, G_OBJECT(return_value))
+                       ? fl_value_new_custom_object(132, G_OBJECT(return_value))
                        : fl_value_new_null());
   return self;
 }
@@ -10403,7 +7028,7 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_send_multiple_null
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(257, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(132, G_OBJECT(return_value)));
   return self;
 }
 
@@ -10480,7 +7105,7 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_all_nullable_
   self->value = fl_value_new_list();
   fl_value_append_take(
       self->value, return_value != nullptr
-                       ? fl_value_new_custom_object(258, G_OBJECT(return_value))
+                       ? fl_value_new_custom_object(133, G_OBJECT(return_value))
                        : fl_value_new_null());
   return self;
 }
@@ -10557,7 +7182,7 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_send_multiple_null
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(258, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(133, G_OBJECT(return_value)));
   return self;
 }
 
@@ -11136,7 +7761,7 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_enum_response
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom(254, fl_value_new_int(return_value),
+                       fl_value_new_custom(129, fl_value_new_int(return_value),
                                            (GDestroyNotify)fl_value_unref));
   return self;
 }
@@ -11211,7 +7836,7 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_another_enum_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom(255, fl_value_new_int(return_value),
+                       fl_value_new_custom(130, fl_value_new_int(return_value),
                                            (GDestroyNotify)fl_value_unref));
   return self;
 }
@@ -11823,7 +8448,7 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_enum
   fl_value_append_take(
       self->value,
       return_value != nullptr
-          ? fl_value_new_custom(254, fl_value_new_int(*return_value),
+          ? fl_value_new_custom(129, fl_value_new_int(*return_value),
                                 (GDestroyNotify)fl_value_unref)
           : fl_value_new_null());
   return self;
@@ -11903,7 +8528,7 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_another_nulla
   fl_value_append_take(
       self->value,
       return_value != nullptr
-          ? fl_value_new_custom(255, fl_value_new_int(*return_value),
+          ? fl_value_new_custom(130, fl_value_new_int(*return_value),
                                 (GDestroyNotify)fl_value_unref)
           : fl_value_new_null());
   return self;
@@ -18889,7 +15514,7 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_all_types(
     GAsyncReadyCallback callback, gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args,
-                       fl_value_new_custom_object(256, G_OBJECT(everything)));
+                       fl_value_new_custom_object(131, G_OBJECT(everything)));
   g_autofree gchar* channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
       "echoAllTypes%s",
@@ -19064,7 +15689,7 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(
       args, everything != nullptr
-                ? fl_value_new_custom_object(257, G_OBJECT(everything))
+                ? fl_value_new_custom_object(132, G_OBJECT(everything))
                 : fl_value_new_null());
   g_autofree gchar* channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
@@ -19422,7 +16047,7 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(
       args, everything != nullptr
-                ? fl_value_new_custom_object(258, G_OBJECT(everything))
+                ? fl_value_new_custom_object(133, G_OBJECT(everything))
                 : fl_value_new_null());
   g_autofree gchar* channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
@@ -20888,7 +17513,7 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_enum(
     GAsyncReadyCallback callback, gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args,
-                       fl_value_new_custom(254, fl_value_new_int(an_enum),
+                       fl_value_new_custom(129, fl_value_new_int(an_enum),
                                            (GDestroyNotify)fl_value_unref));
   g_autofree gchar* channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
@@ -21054,7 +17679,7 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum(
     GAsyncReadyCallback callback, gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args,
-                       fl_value_new_custom(255, fl_value_new_int(another_enum),
+                       fl_value_new_custom(130, fl_value_new_int(another_enum),
                                            (GDestroyNotify)fl_value_unref));
   g_autofree gchar* channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
@@ -22438,7 +19063,7 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum(
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(
       args, an_enum != nullptr
-                ? fl_value_new_custom(254, fl_value_new_int(*an_enum),
+                ? fl_value_new_custom(129, fl_value_new_int(*an_enum),
                                       (GDestroyNotify)fl_value_unref)
                 : fl_value_new_null());
   g_autofree gchar* channel_name = g_strdup_printf(
@@ -22618,7 +19243,7 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_e
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(
       args, another_enum != nullptr
-                ? fl_value_new_custom(255, fl_value_new_int(*another_enum),
+                ? fl_value_new_custom(130, fl_value_new_int(*another_enum),
                                       (GDestroyNotify)fl_value_unref)
                 : fl_value_new_null());
   g_autofree gchar* channel_name = g_strdup_printf(
@@ -23651,7 +20276,7 @@ void core_tests_pigeon_test_flutter_small_api_echo_wrapped_list(
     CoreTestsPigeonTestTestMessage* msg, GCancellable* cancellable,
     GAsyncReadyCallback callback, gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_value_append_take(args, fl_value_new_custom_object(260, G_OBJECT(msg)));
+  fl_value_append_take(args, fl_value_new_custom_object(135, G_OBJECT(msg)));
   g_autofree gchar* channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi."
       "echoWrappedList%s",
