@@ -1696,7 +1696,7 @@ static void echo_another_nullable_enum_cb(GObject* object, GAsyncResult* result,
 
   g_autoptr(GError) error = nullptr;
   g_autoptr(
-      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableEnumResponse)
+      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherNullableEnumResponse)
       response =
           core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_finish(
               CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
