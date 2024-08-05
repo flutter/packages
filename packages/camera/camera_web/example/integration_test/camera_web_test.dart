@@ -1117,10 +1117,10 @@ void main() {
     group('takePicture', () {
       testWidgets('captures a picture', (WidgetTester tester) async {
         final MockCamera camera = MockCamera();
-        final MockXFile capturedPicture = MockXFile();
+        final XFile capturedPicture = XFile('/bogus/test');
 
         when(camera.takePicture)
-            .thenAnswer((Invocation _) => Future<XFile>.value(capturedPicture));
+            .thenAnswer((Invocation _) async => capturedPicture);
 
         // Save the camera in the camera plugin.
         (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
@@ -1333,10 +1333,10 @@ void main() {
     group('stopVideoRecording', () {
       testWidgets('stops a video recording', (WidgetTester tester) async {
         final MockCamera camera = MockCamera();
-        final MockXFile capturedVideo = MockXFile();
+        final XFile capturedVideo = XFile('/bogus/test');
 
         when(camera.stopVideoRecording)
-            .thenAnswer((Invocation _) => Future<XFile>.value(capturedVideo));
+            .thenAnswer((Invocation _) async => capturedVideo);
 
         // Save the camera in the camera plugin.
         (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
@@ -1354,11 +1354,12 @@ void main() {
         final MockCamera camera = MockCamera();
         final StreamController<ErrorEvent> videoRecordingErrorController =
             StreamController<ErrorEvent>();
+        final XFile capturedVideo = XFile('/bogus/test');
 
         when(camera.startVideoRecording).thenAnswer((Invocation _) async {});
 
         when(camera.stopVideoRecording)
-            .thenAnswer((Invocation _) => Future<XFile>.value(MockXFile()));
+            .thenAnswer((Invocation _) async => capturedVideo);
 
         when(() => camera.onVideoRecordingError)
             .thenAnswer((Invocation _) => videoRecordingErrorController.stream);
@@ -3088,7 +3089,7 @@ void main() {
       testWidgets('onVideoRecordedEvent emits a VideoRecordedEvent',
           (WidgetTester tester) async {
         final MockCamera camera = MockCamera();
-        final MockXFile capturedVideo = MockXFile();
+        final XFile capturedVideo = XFile('/bogus/test');
         final Stream<VideoRecordedEvent> stream =
             Stream<VideoRecordedEvent>.value(
                 VideoRecordedEvent(cameraId, capturedVideo, Duration.zero));

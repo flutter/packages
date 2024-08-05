@@ -13,7 +13,6 @@ import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
 import 'package:camera_web/src/shims/dart_js_util.dart';
 import 'package:camera_web/src/types/types.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:mocktail/mocktail.dart';
 // TODO(srujzs): This is exported in `package:web` 0.6.0. Remove this when it is available.
 import 'package:web/src/helpers/events/streams.dart';
@@ -101,8 +100,6 @@ class MockVideoElement {
   web.MediaProvider? srcObject;
   web.MediaError? error;
 }
-
-class MockXFile extends Mock implements XFile {}
 
 class MockJsUtil extends Mock implements JsUtil {}
 
