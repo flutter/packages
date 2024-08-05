@@ -101,8 +101,8 @@ enum SimulatedLayout {
   small(width: 400, navSlotKey: 'bottomNavigation'),
   medium(width: 800, navSlotKey: 'primaryNavigation'),
   expanded(width: 1100, navSlotKey: 'primaryNavigation1'),
-  large(width: 1400, navSlotKey: 'primaryNavigation1'),
-  extraLarge(width: 1700, navSlotKey: 'primaryNavigation1');
+  large(width: 1400, navSlotKey: 'primaryNavigation2'),
+  extraLarge(width: 1700, navSlotKey: 'primaryNavigation3');
 
   const SimulatedLayout({
     required double width,

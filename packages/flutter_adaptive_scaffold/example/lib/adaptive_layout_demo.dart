@@ -201,7 +201,73 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Breakpoints.expanded: SlotLayout.from(
+            key: const Key('Primary Navigation Expanded'),
+            inAnimation: AdaptiveScaffold.leftOutIn,
+            builder: (_) => AdaptiveScaffold.standardNavigationRail(
+              selectedIndex: selectedNavigation,
+              onDestinationSelected: (int newIndex) {
+                setState(() {
+                  selectedNavigation = newIndex;
+                });
+              },
+              extended: true,
+              leading: const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Text(
+                    'REPLY',
+                    style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
+                  ),
+                  Icon(Icons.menu_open)
+                ],
+              ),
+              destinations: destinations
+                  .map((NavigationDestination destination) =>
+                      AdaptiveScaffold.toRailDestination(destination))
+                  .toList(),
+              trailing: trailingNavRail,
+              backgroundColor: navRailTheme.backgroundColor,
+              selectedIconTheme: navRailTheme.selectedIconTheme,
+              unselectedIconTheme: navRailTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+              unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+            ),
+          ),
+          Breakpoints.large: SlotLayout.from(
             key: const Key('Primary Navigation Large'),
+            inAnimation: AdaptiveScaffold.leftOutIn,
+            builder: (_) => AdaptiveScaffold.standardNavigationRail(
+              selectedIndex: selectedNavigation,
+              onDestinationSelected: (int newIndex) {
+                setState(() {
+                  selectedNavigation = newIndex;
+                });
+              },
+              extended: true,
+              leading: const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Text(
+                    'REPLY',
+                    style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
+                  ),
+                  Icon(Icons.menu_open)
+                ],
+              ),
+              destinations: destinations
+                  .map((NavigationDestination destination) =>
+                      AdaptiveScaffold.toRailDestination(destination))
+                  .toList(),
+              trailing: trailingNavRail,
+              backgroundColor: navRailTheme.backgroundColor,
+              selectedIconTheme: navRailTheme.selectedIconTheme,
+              unselectedIconTheme: navRailTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+              unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+            ),
+          ),
+          Breakpoints.extraLarge: SlotLayout.from(
+            key: const Key('Primary Navigation ExtraLarge'),
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               selectedIndex: selectedNavigation,
@@ -246,11 +312,26 @@ class _MyHomePageState extends State<MyHomePage> {
               itemBuilder: (BuildContext context, int index) => children[index],
             ),
           ),
-          Breakpoints.mediumAndUp: SlotLayout.from(
+          Breakpoints.medium: SlotLayout.from(
             key: const Key('Body Medium'),
             builder: (_) =>
                 GridView.count(crossAxisCount: 2, children: children),
-          )
+          ),
+          Breakpoints.expanded: SlotLayout.from(
+            key: const Key('Body Expanded'),
+            builder: (_) =>
+                GridView.count(crossAxisCount: 3, children: children),
+          ),
+          Breakpoints.large: SlotLayout.from(
+            key: const Key('Body Large'),
+            builder: (_) =>
+                GridView.count(crossAxisCount: 4, children: children),
+          ),
+          Breakpoints.extraLarge: SlotLayout.from(
+            key: const Key('Body ExtraLarge'),
+            builder: (_) =>
+                GridView.count(crossAxisCount: 5, children: children),
+          ),
         },
       ),
       // BottomNavigation is only active in small views defined as under 600 dp

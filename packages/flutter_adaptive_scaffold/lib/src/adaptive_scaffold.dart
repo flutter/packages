@@ -658,7 +658,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               ),
             ),
             widget.largeBreakpoint: SlotLayout.from(
-              key: const Key('primaryNavigation1'),
+              key: const Key('primaryNavigation2'),
               builder: (_) => AdaptiveScaffold.standardNavigationRail(
                 width: widget.extendedNavigationRailWidth,
                 extended: true,
@@ -678,7 +678,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               ),
             ),
             widget.extraLargeBreakpoint: SlotLayout.from(
-              key: const Key('primaryNavigation1'),
+              key: const Key('primaryNavigation3'),
               builder: (_) => AdaptiveScaffold.standardNavigationRail(
                 width: widget.extendedNavigationRailWidth,
                 extended: true,

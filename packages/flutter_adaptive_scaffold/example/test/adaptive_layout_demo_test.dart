@@ -51,15 +51,62 @@ void main() {
       expect(find.byKey(const Key('Primary Navigation Medium')), findsNothing);
       expect(find.byKey(const Key('Bottom Navigation Small')), findsOneWidget);
       expect(find.byKey(const Key('Body Medium')), findsNothing);
+      expect(
+          find.byKey(const Key('Primary Navigation Expanded')), findsNothing);
       expect(find.byKey(const Key('Primary Navigation Large')), findsNothing);
+      expect(
+          find.byKey(const Key('Primary Navigation ExtraLarge')), findsNothing);
 
       await updateScreen(700, tester);
-      expect(find.byKey(const Key('Body')), findsNothing);
+      expect(find.byKey(const Key('Body Small')), findsNothing);
       expect(find.byKey(const Key('Bottom Navigation Small')), findsNothing);
       expect(find.byKey(const Key('Body Medium')), findsOneWidget);
       expect(
           find.byKey(const Key('Primary Navigation Medium')), findsOneWidget);
+      expect(
+          find.byKey(const Key('Primary Navigation Expanded')), findsNothing);
       expect(find.byKey(const Key('Primary Navigation Large')), findsNothing);
+      expect(
+          find.byKey(const Key('Primary Navigation ExtraLarge')), findsNothing);
+
+      await updateScreen(860, tester);
+      expect(find.byKey(const Key('Body Small')), findsNothing);
+      expect(find.byKey(const Key('Bottom Navigation Small')), findsNothing);
+      expect(find.byKey(const Key('Body Medium')), findsNothing);
+      expect(find.byKey(const Key('Body Expanded')), findsOneWidget);
+      expect(find.byKey(const Key('Primary Navigation Medium')), findsNothing);
+      expect(
+          find.byKey(const Key('Primary Navigation Expanded')), findsOneWidget);
+      expect(find.byKey(const Key('Primary Navigation Large')), findsNothing);
+      expect(
+          find.byKey(const Key('Primary Navigation ExtraLarge')), findsNothing);
+
+      await updateScreen(1200, tester);
+      expect(find.byKey(const Key('Body Small')), findsNothing);
+      expect(find.byKey(const Key('Bottom Navigation Small')), findsNothing);
+      expect(find.byKey(const Key('Body Medium')), findsNothing);
+      expect(find.byKey(const Key('Body Expanded')), findsNothing);
+      expect(find.byKey(const Key('Body Large')), findsOneWidget);
+      expect(find.byKey(const Key('Primary Navigation Medium')), findsNothing);
+      expect(
+          find.byKey(const Key('Primary Navigation Expanded')), findsNothing);
+      expect(find.byKey(const Key('Primary Navigation Large')), findsOneWidget);
+      expect(
+          find.byKey(const Key('Primary Navigation ExtraLarge')), findsNothing);
+
+      await updateScreen(1600, tester);
+      expect(find.byKey(const Key('Body Small')), findsNothing);
+      expect(find.byKey(const Key('Bottom Navigation Small')), findsNothing);
+      expect(find.byKey(const Key('Body Medium')), findsNothing);
+      expect(find.byKey(const Key('Body Expanded')), findsNothing);
+      expect(find.byKey(const Key('Body Large')), findsNothing);
+      expect(find.byKey(const Key('Body ExtraLarge')), findsOneWidget);
+      expect(find.byKey(const Key('Primary Navigation Medium')), findsNothing);
+      expect(
+          find.byKey(const Key('Primary Navigation Expanded')), findsNothing);
+      expect(find.byKey(const Key('Primary Navigation Large')), findsNothing);
+      expect(find.byKey(const Key('Primary Navigation ExtraLarge')),
+          findsOneWidget);
     },
   );
 
@@ -166,16 +213,100 @@ void main() {
   );
 
   testWidgets(
+    'when view in expanded screen, navigation rail must be visible as per theme data values.',
+    (WidgetTester tester) async {
+      final Finder primaryNavigationExpanded = find.byKey(
+        const Key('Primary Navigation Expanded'),
+      );
+      await updateScreen(860, tester);
+      expect(primaryNavigationExpanded, findsOneWidget);
+
+      final Finder navigationRailFinder = find.descendant(
+        of: primaryNavigationExpanded,
+        matching: find.byType(NavigationRail),
+      );
+      expect(navigationRailFinder, findsOneWidget);
+
+      final NavigationRail navigationRailView = tester.firstWidget(
+        navigationRailFinder,
+      );
+      expect(navigationRailView, isNotNull);
+      expect(
+        navigationRailView.backgroundColor,
+        navigationRailThemeBgColor,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.size,
+        selectedIconThemeData.size,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.color,
+        selectedIconThemeData.color,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.size,
+        unSelectedIconThemeData.size,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.color,
+        unSelectedIconThemeData.color,
+      );
+    },
+  );
+
+  testWidgets(
     'when view in large screen, navigation rail must be visible as per theme data values.',
     (WidgetTester tester) async {
       final Finder primaryNavigationLarge = find.byKey(
         const Key('Primary Navigation Large'),
       );
-      await updateScreen(860, tester);
+      await updateScreen(1200, tester);
       expect(primaryNavigationLarge, findsOneWidget);
 
       final Finder navigationRailFinder = find.descendant(
         of: primaryNavigationLarge,
+        matching: find.byType(NavigationRail),
+      );
+      expect(navigationRailFinder, findsOneWidget);
+
+      final NavigationRail navigationRailView = tester.firstWidget(
+        navigationRailFinder,
+      );
+      expect(navigationRailView, isNotNull);
+      expect(
+        navigationRailView.backgroundColor,
+        navigationRailThemeBgColor,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.size,
+        selectedIconThemeData.size,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.color,
+        selectedIconThemeData.color,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.size,
+        unSelectedIconThemeData.size,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.color,
+        unSelectedIconThemeData.color,
+      );
+    },
+  );
+
+  testWidgets(
+    'when view in extra large screen, navigation rail must be visible as per theme data values.',
+    (WidgetTester tester) async {
+      final Finder primaryNavigationExtraLarge = find.byKey(
+        const Key('Primary Navigation ExtraLarge'),
+      );
+      await updateScreen(1600, tester);
+      expect(primaryNavigationExtraLarge, findsOneWidget);
+
+      final Finder navigationRailFinder = find.descendant(
+        of: primaryNavigationExtraLarge,
         matching: find.byType(NavigationRail),
       );
       expect(navigationRailFinder, findsOneWidget);
