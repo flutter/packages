@@ -1,6 +1,6 @@
 ## 2.3.3
 
-* Fixes issue where `launchUrl` incorrectly returned `false`.
+* Changes `launchUrl` so it always returns `true`, except for disallowed URL schemes.
 
 ## 2.3.2
 
