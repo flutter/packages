@@ -6,7 +6,7 @@
 
 `PointerInterceptor` is a widget that prevents mouse events from being captured by an underlying [`HtmlElementView`](https://api.flutter.dev/flutter/widgets/HtmlElementView-class.html) in web, or an underlying [`PlatformView`](https://api.flutter.dev/flutter/widgets/PlatformViewLink-class.html) on iOS.
 
-Using multiple `PointerInterceptor` on iOS can be slow with increased memory usage, due to performance overhead of the underlying platform view. 
+Using multiple `PointerInterceptor` instances on iOS can be slow and increases memory usage due to the performance overhead of the underlying platform view.
 
 ## What is the problem?
 
