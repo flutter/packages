@@ -6,9 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 // These constants must match the corresponding constants in Convert.java
-String _objectsToAddKey(String name) => '${name}sToAdd';
-String _objectsToChangeKey(String name) => '${name}sToChange';
-String _objectIdsToRemoveKey(String name) => '${name}IdsToRemove';
 const String _heatmapIdKey = 'heatmapId';
 const String _heatmapDataKey = 'data';
 const String _heatmapGradientKey = 'gradient';
@@ -23,34 +20,6 @@ void _addIfNonNull(Map<String, Object?> map, String fieldName, Object? value) {
   if (value != null) {
     map[fieldName] = value;
   }
-}
-
-/// Serialize [MapsObjectUpdates]
-Object serializeMapsObjectUpdates<T extends MapsObject<T>>(
-  MapsObjectUpdates<T> updates,
-  Object Function(T) serialize,
-) {
-  final Map<String, Object> json = <String, Object>{};
-
-  _addIfNonNull(
-    json,
-    _objectsToAddKey(updates.objectName),
-    updates.objectsToAdd.map(serialize).toList(),
-  );
-  _addIfNonNull(
-    json,
-    _objectsToChangeKey(updates.objectName),
-    updates.objectsToChange.map(serialize).toList(),
-  );
-  _addIfNonNull(
-    json,
-    _objectIdsToRemoveKey(updates.objectName),
-    updates.objectIdsToRemove
-        .map<String>((MapsObjectId<T> m) => m.value)
-        .toList(),
-  );
-
-  return json;
 }
 
 /// Serialize [Heatmap]
