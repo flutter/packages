@@ -1690,6 +1690,41 @@ static void call_flutter_echo_nullable_enum(
       callback_data_new(self, response_handle));
 }
 
+static void echo_another_nullable_enum_cb(GObject* object, GAsyncResult* result,
+                                          gpointer user_data) {
+  g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
+
+  g_autoptr(GError) error = nullptr;
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableEnumResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_another_nullable_enum(
+        data->response_handle, "Internal Error", error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_get_error_details(
+            response));
+    return;
+  }
+
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_another_nullable_enum(
+      data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_get_return_value(
+          response));
+}
+
 static void call_flutter_echo_another_nullable_enum(
 
     CoreTestsPigeonTestAnotherEnum* another_enum,
@@ -1699,7 +1734,7 @@ static void call_flutter_echo_another_nullable_enum(
 
   core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum(
       self->flutter_core_api, another_enum, self->cancellable,
-      echo_nullable_enum_cb, callback_data_new(self, response_handle));
+      echo_another_nullable_enum_cb, callback_data_new(self, response_handle));
 }
 
 static void small_api_two_echo_string_cb(GObject* object, GAsyncResult* result,
