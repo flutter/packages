@@ -83,13 +83,19 @@ class TestScaffoldState extends State<TestScaffold> {
       smallBreakpoint: TestBreakpoint0(),
       mediumBreakpoint: TestBreakpoint800(),
       expandedBreakpoint: TestBreakpoint1000(),
+      largeBreakpoint: TestBreakpoint1200(),
+      extraLargeBreakpoint: TestBreakpoint1600(),
       destinations: TestScaffold.destinations,
       smallBody: (_) => Container(color: Colors.red),
       body: (_) => Container(color: Colors.green),
       expandedBody: (_) => Container(color: Colors.blue),
+      largeBody: (_) => Container(color: Colors.yellow),
+      extraLargeBody: (_) => Container(color: Colors.purple),
       smallSecondaryBody: (_) => Container(color: Colors.red),
       secondaryBody: (_) => Container(color: Colors.green),
       expandedSecondaryBody: (_) => Container(color: Colors.blue),
+      largeSecondaryBody: (_) => Container(color: Colors.yellow),
+      extraLargeSecondaryBody: (_) => Container(color: Colors.purple),
       leadingExtendedNavRail: const Text('leading_extended'),
       leadingUnextendedNavRail: const Text('leading_unextended'),
       trailingNavRail: const Text('trailing'),
@@ -100,9 +106,9 @@ class TestScaffoldState extends State<TestScaffold> {
 enum SimulatedLayout {
   small(width: 400, navSlotKey: 'bottomNavigation'),
   medium(width: 800, navSlotKey: 'primaryNavigation'),
-  expanded(width: 1100, navSlotKey: 'primaryNavigation1'),
-  large(width: 1400, navSlotKey: 'primaryNavigation2'),
-  extraLarge(width: 1700, navSlotKey: 'primaryNavigation3');
+  expanded(width: 1000, navSlotKey: 'primaryNavigation1'),
+  large(width: 1200, navSlotKey: 'primaryNavigation2'),
+  extraLarge(width: 1600, navSlotKey: 'primaryNavigation3');
 
   const SimulatedLayout({
     required double width,

@@ -15,11 +15,11 @@ void main() {
   final Finder pnav1 = find.byKey(const Key('primaryNavigation1'));
 
   Future<void> updateScreen(double width, WidgetTester tester) async {
-    await tester.binding.setSurfaceSize(Size(width, 800));
+    await tester.binding.setSurfaceSize(Size(width, 2000));
     await tester.pumpWidget(
       MaterialApp(
         home: MediaQuery(
-            data: MediaQueryData(size: Size(width, 800)),
+            data: MediaQueryData(size: Size(width, 2000)),
             child: const example.MyHomePage()),
       ),
     );

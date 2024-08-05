@@ -21,11 +21,11 @@ void main() {
 
   Future<void> updateScreen(double width, WidgetTester tester,
       {int transitionDuration = 1000}) async {
-    await tester.binding.setSurfaceSize(Size(width, 800));
+    await tester.binding.setSurfaceSize(Size(width, 2000));
     await tester.pumpWidget(
       MaterialApp(
         home: MediaQuery(
-            data: MediaQueryData(size: Size(width, 800)),
+            data: MediaQueryData(size: Size(width, 2000)),
             child: example.MyHomePage(
               transitionDuration: transitionDuration,
             )),
@@ -40,7 +40,7 @@ void main() {
     expect(smallBody, findsOneWidget);
     expect(bnav, findsOneWidget);
     expect(tester.getTopLeft(smallBody), Offset.zero);
-    expect(tester.getTopLeft(bnav), const Offset(0, 720));
+    expect(tester.getTopLeft(bnav), const Offset(0, 1920));
     expect(body, findsNothing);
     expect(expandedBody, findsNothing);
     expect(largeBody, findsNothing);
@@ -53,32 +53,30 @@ void main() {
     await updateScreen(800, tester);
     await tester.pumpAndSettle();
     expect(body, findsOneWidget);
+    expect(pnav, findsOneWidget);
     expect(tester.getTopLeft(body), const Offset(88, 0));
-    expect(body, findsOneWidget);
-    expect(bnav, findsNothing);
+    expect(tester.getTopLeft(pnav), Offset.zero);
+    expect(smallBody, findsNothing);
     expect(expandedBody, findsNothing);
     expect(largeBody, findsNothing);
     expect(extraLargeBody, findsNothing);
-    expect(pnav, findsOneWidget);
-    expect(tester.getTopLeft(pnav), Offset.zero);
-    expect(tester.getBottomRight(pnav), const Offset(88, 800));
+    expect(bnav, findsNothing);
     expect(pnav1, findsNothing);
     expect(pnav2, findsNothing);
     expect(pnav3, findsNothing);
 
-    await updateScreen(1100, tester);
+    await updateScreen(1200, tester);
     await tester.pumpAndSettle();
-    expect(body, findsOneWidget);
     expect(expandedBody, findsOneWidget);
-    expect(tester.getTopLeft(expandedBody), const Offset(208, 0));
-    expect(expandedBody, findsOneWidget);
-    expect(bnav, findsNothing);
+    expect(pnav1, findsOneWidget);
+    expect(tester.getTopLeft(expandedBody), const Offset(100, 0));
+    expect(tester.getTopLeft(pnav1), Offset.zero);
+    expect(smallBody, findsNothing);
+    expect(body, findsNothing);
     expect(largeBody, findsNothing);
     expect(extraLargeBody, findsNothing);
+    expect(bnav, findsNothing);
     expect(pnav, findsNothing);
-    expect(pnav1, findsOneWidget);
-    expect(tester.getTopLeft(pnav1), Offset.zero);
-    expect(tester.getBottomRight(pnav1), const Offset(208, 800));
     expect(pnav2, findsNothing);
     expect(pnav3, findsNothing);
 

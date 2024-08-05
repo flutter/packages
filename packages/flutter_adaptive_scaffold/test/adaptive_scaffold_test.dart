@@ -27,6 +27,8 @@ void main() {
     final Finder bottomNav = find.byKey(const Key('bottomNavigation'));
     final Finder primaryNav = find.byKey(const Key('primaryNavigation'));
     final Finder primaryNav1 = find.byKey(const Key('primaryNavigation1'));
+    final Finder primaryNav2 = find.byKey(const Key('primaryNavigation2'));
+    final Finder primaryNav3 = find.byKey(const Key('primaryNavigation3'));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.small.size);
     await tester.pumpWidget(SimulatedLayout.small.app());
@@ -69,7 +71,7 @@ void main() {
     expect(primaryNav1, findsOneWidget);
 
     expect(tester.getTopLeft(expandedBody), const Offset(208, 0));
-    expect(tester.getTopLeft(expandedSBody), const Offset(550, 0));
+    expect(tester.getTopLeft(expandedSBody), const Offset(500, 0));
     expect(tester.getTopLeft(primaryNav1), Offset.zero);
     expect(tester.getBottomRight(primaryNav1), const Offset(208, 2000));
 
@@ -82,12 +84,12 @@ void main() {
     expect(expandedSBody, findsNothing);
     expect(largeSBody, findsOneWidget);
     expect(primaryNav1, findsNothing);
-    expect(primaryNav, findsOneWidget);
+    expect(primaryNav2, findsOneWidget);
 
-    expect(tester.getTopLeft(largeBody), const Offset(288, 0));
+    expect(tester.getTopLeft(largeBody), const Offset(208, 0));
     expect(tester.getTopLeft(largeSBody), const Offset(600, 0));
-    expect(tester.getTopLeft(primaryNav), Offset.zero);
-    expect(tester.getBottomRight(primaryNav), const Offset(288, 800));
+    expect(tester.getTopLeft(primaryNav2), Offset.zero);
+    expect(tester.getBottomRight(primaryNav2), const Offset(208, 2000));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.extraLarge.size);
     await tester.pumpWidget(SimulatedLayout.extraLarge.app());
@@ -97,13 +99,13 @@ void main() {
     expect(extraLargeBody, findsOneWidget);
     expect(largeSBody, findsNothing);
     expect(extraLargeSBody, findsOneWidget);
-    expect(primaryNav, findsNothing);
-    expect(primaryNav1, findsOneWidget);
+    expect(primaryNav2, findsNothing);
+    expect(primaryNav3, findsOneWidget);
 
-    expect(tester.getTopLeft(extraLargeBody), const Offset(400, 0));
+    expect(tester.getTopLeft(extraLargeBody), const Offset(208, 0));
     expect(tester.getTopLeft(extraLargeSBody), const Offset(800, 0));
-    expect(tester.getTopLeft(primaryNav1), Offset.zero);
-    expect(tester.getBottomRight(primaryNav1), const Offset(400, 800));
+    expect(tester.getTopLeft(primaryNav3), Offset.zero);
+    expect(tester.getBottomRight(primaryNav3), const Offset(208, 2000));
   });
 
   testWidgets('adaptive scaffold animations work correctly',
