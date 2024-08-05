@@ -759,8 +759,8 @@
 }
 
 - (nullable FGMPlatformTileLayer *)
-    getInfoForTileOverlayWithIdentifier:(nonnull NSString *)tileOverlayId
-                                  error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+    tileOverlayWithIdentifier:(nonnull NSString *)tileOverlayId
+                        error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   GMSTileLayer *layer =
       [self.controller.tileOverlaysController tileOverlayWithIdentifier:tileOverlayId].layer;
   if (!layer) {
@@ -773,8 +773,8 @@
 }
 
 - (nullable FGMPlatformHeatmap *)
-    getInfoForHeatmapWithIdentifier:(nonnull NSString *)heatmapId
-                              error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+    heatmapWithIdentifier:(nonnull NSString *)heatmapId
+                    error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   NSDictionary<NSString *, id> *heatmapInfo =
       [self.controller.heatmapsController heatmapInfoWithIdentifier:heatmapId];
   if (!heatmapInfo) {

@@ -1750,16 +1750,16 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
         binaryMessenger:binaryMessenger
                   codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getInfoForTileOverlayWithIdentifier:error:)],
+      NSCAssert([api respondsToSelector:@selector(tileOverlayWithIdentifier:error:)],
                 @"FGMMapsInspectorApi api (%@) doesn't respond to "
-                @"@selector(getInfoForTileOverlayWithIdentifier:error:)",
+                @"@selector(tileOverlayWithIdentifier:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_tileOverlayId = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        FGMPlatformTileLayer *output = [api getInfoForTileOverlayWithIdentifier:arg_tileOverlayId
-                                                                          error:&error];
+        FGMPlatformTileLayer *output = [api tileOverlayWithIdentifier:arg_tileOverlayId
+                                                                error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -1775,16 +1775,15 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
         binaryMessenger:binaryMessenger
                   codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getInfoForHeatmapWithIdentifier:error:)],
+      NSCAssert([api respondsToSelector:@selector(heatmapWithIdentifier:error:)],
                 @"FGMMapsInspectorApi api (%@) doesn't respond to "
-                @"@selector(getInfoForHeatmapWithIdentifier:error:)",
+                @"@selector(heatmapWithIdentifier:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_heatmapId = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        FGMPlatformHeatmap *output = [api getInfoForHeatmapWithIdentifier:arg_heatmapId
-                                                                    error:&error];
+        FGMPlatformHeatmap *output = [api heatmapWithIdentifier:arg_heatmapId error:&error];
         callback(wrapResult(output, error));
       }];
     } else {

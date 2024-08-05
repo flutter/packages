@@ -33,7 +33,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(minSdk=Build.VERSION_CODES.LOLLIPOP)
+@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 public class HeatmapsControllerTest {
   private HeatmapsController controller;
   private GoogleMap googleMap;

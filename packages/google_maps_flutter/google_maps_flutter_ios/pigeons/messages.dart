@@ -380,9 +380,9 @@ abstract class MapsInspectorApi {
   bool isCompassEnabled();
   bool isMyLocationButtonEnabled();
   bool isTrafficEnabled();
-  @ObjCSelector('getInfoForTileOverlayWithIdentifier:')
+  @ObjCSelector('tileOverlayWithIdentifier:')
   PlatformTileLayer? getTileOverlayInfo(String tileOverlayId);
-  @ObjCSelector('getInfoForHeatmapWithIdentifier:')
+  @ObjCSelector('heatmapWithIdentifier:')
   PlatformHeatmap? getHeatmapInfo(String heatmapId);
   @ObjCSelector('zoomRange')
   PlatformZoomRange getZoomRange();
