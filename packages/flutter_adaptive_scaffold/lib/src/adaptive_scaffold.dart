@@ -252,8 +252,10 @@ class AdaptiveScaffold extends StatefulWidget {
   final double extendedNavigationRailWidth;
 
   /// Used to map NavigationDestination to NavigationRailDestination.
-  final NavigationRailDestination Function(NavigationDestination)?
-      mapNavigationRailDestination;
+  final NavigationRailDestination Function(
+    int index,
+    NavigationDestination destination,
+  )? mapNavigationRailDestination;
 
   /// Callback function for when the index of a [NavigationRail] changes.
   static WidgetBuilder emptyBuilder = (_) => const SizedBox();
@@ -524,7 +526,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
 
     final List<NavigationRailDestination> destinations = widget.destinations
         .map((NavigationDestination destination) =>
-            widget.mapNavigationRailDestination?.call(destination) ??
+            widget.mapNavigationRailDestination
+                ?.call(widget.destinations.indexOf(destination), destination) ??
             AdaptiveScaffold.toRailDestination(destination))
         .toList();
 

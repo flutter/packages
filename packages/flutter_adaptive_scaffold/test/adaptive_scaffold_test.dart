@@ -618,45 +618,45 @@ void main() {
   // creates a NavigationRail widget as expected with groupAlignment provided,
   // and checks whether the NavigationRail's groupAlignment matches the expected value.
   testWidgets(
-      'groupAligment parameter of AdaptiveScaffold.standardNavigationRail works correctly',
-      (WidgetTester tester) async {
-    const List<NavigationRailDestination> destinations =
-        <NavigationRailDestination>[
-      NavigationRailDestination(
-        icon: Icon(Icons.home),
-        label: Text('Home'),
-      ),
-      NavigationRailDestination(
-        icon: Icon(Icons.account_circle),
-        label: Text('Profile'),
-      ),
-      NavigationRailDestination(
-        icon: Icon(Icons.settings),
-        label: Text('Settings'),
-      ),
-    ];
+    'groupAligment parameter of AdaptiveScaffold.standardNavigationRail works correctly',
+    (WidgetTester tester) async {
+      const List<NavigationRailDestination> destinations =
+          <NavigationRailDestination>[
+        NavigationRailDestination(
+          icon: Icon(Icons.home),
+          label: Text('Home'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.account_circle),
+          label: Text('Profile'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.settings),
+          label: Text('Settings'),
+        ),
+      ];
 
-    // Align to bottom.
-    const double groupAlignment = 1.0;
+      const double groupAlignment = 1.0;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Builder(
-            builder: (BuildContext context) {
-              return AdaptiveScaffold.standardNavigationRail(
-                destinations: destinations,
-                groupAlignment: groupAlignment,
-              );
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return AdaptiveScaffold.standardNavigationRail(
+                  destinations: destinations,
+                  groupAlignment: groupAlignment,
+                );
+              },
+            ),
           ),
         ),
-      ),
-    );
-    final NavigationRail rail =
-        tester.widget<NavigationRail>(find.byType(NavigationRail));
-    expect(rail.groupAlignment, equals(groupAlignment));
-  });
+      );
+      final NavigationRail rail =
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(rail.groupAlignment, equals(groupAlignment));
+    },
+  );
 
   testWidgets(
     "doesn't override Directionality",
@@ -742,6 +742,81 @@ void main() {
         ),
         throwsA(isA<AssertionError>()),
       );
+    },
+  );
+
+  // Test for mapNavigationRailDestination parameter
+  testWidgets('adaptive scaffold custom navigation rail destination mapping',
+      (WidgetTester tester) async {
+    const List<NavigationDestination> destinations = <NavigationDestination>[
+      NavigationDestination(
+        icon: Icon(Icons.home),
+        label: 'Home',
+      ),
+      NavigationDestination(
+        icon: Icon(Icons.account_circle),
+        label: 'Profile',
+      ),
+    ];
+
+    NavigationRailDestination customMapping(
+        int index, NavigationDestination destination) {
+      return NavigationRailDestination(
+        icon: destination.icon,
+        label: Text('Custom ${destination.label}'),
+      );
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(size: Size(800, 600)),
+          child: AdaptiveScaffold(
+            destinations: destinations,
+            mapNavigationRailDestination: customMapping,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Custom Home'), findsOneWidget);
+    expect(find.text('Custom Profile'), findsOneWidget);
+  });
+
+  // Test for labelType setting through the navigation rail theme
+  testWidgets(
+    'adaptive scaffold respects NavigationRailLabelType from theme',
+    (WidgetTester tester) async {
+      const List<NavigationDestination> destinations = <NavigationDestination>[
+        NavigationDestination(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.account_circle),
+          label: 'Profile',
+        ),
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            navigationRailTheme: const NavigationRailThemeData(
+              labelType: NavigationRailLabelType.all,
+            ),
+          ),
+          home: MediaQuery(
+            data: const MediaQueryData(size: Size(800, 600)),
+            child: AdaptiveScaffold(
+              destinations: destinations,
+            ),
+          ),
+        ),
+      );
+
+      final NavigationRail rail =
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(rail.labelType, NavigationRailLabelType.all);
     },
   );
 }
