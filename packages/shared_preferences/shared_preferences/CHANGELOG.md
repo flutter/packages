@@ -1,6 +1,10 @@
-## 2.2.4
+## 2.3.1
 
-* Updates documentation for return values in remove and set methods.
+* Fixes `getStringList` bug with `List<Object?>` cast exception.
+
+## 2.3.0
+
+* Adds `SharedPreferencesAsync` and `SharedPreferencesWithCache` APIs.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 2.2.3

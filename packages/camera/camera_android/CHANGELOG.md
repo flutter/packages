@@ -1,3 +1,7 @@
+## 0.10.9+10
+
+* Updates annotations lib to 1.8.1.
+
 ## 0.10.9+9
 
 * Updates lint checks to ignore NewerVersionAvailable.
