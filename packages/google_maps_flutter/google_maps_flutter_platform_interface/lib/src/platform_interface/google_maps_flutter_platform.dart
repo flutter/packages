@@ -49,13 +49,13 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('init() has not been implemented.');
   }
 
-  /// Updates configuration options of the map user interface - deprecated, use
-  /// updateMapConfiguration instead.
+  /// Updates configuration options of the map user interface.
   ///
   /// Change listeners are notified once the update has been made on the
   /// platform side.
   ///
   /// The returned [Future] completes after listeners have been notified.
+  @Deprecated('Use updateMapConfiguration instead.')
   Future<void> updateMapOptions(
     Map<String, dynamic> optionsUpdate, {
     required int mapId,
@@ -400,8 +400,8 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     return null;
   }
 
-  /// Returns a widget displaying the map view - deprecated, use
-  /// [buildViewWithConfiguration] instead.
+  /// Returns a widget displaying the map view.
+  @Deprecated('Use buildViewWithConfiguration instead.')
   Widget buildView(
     int creationId,
     PlatformViewCreatedCallback onPlatformViewCreated, {
@@ -420,8 +420,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('buildView() has not been implemented.');
   }
 
-  /// Returns a widget displaying the map view - deprecated, use
-  /// [buildViewWithConfiguration] instead.
+  /// Returns a widget displaying the map view.
   ///
   /// This method is similar to [buildView], but contains a parameter for
   /// platforms that require a text direction.
@@ -430,6 +429,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   /// [buildView]. This is for backward compatibility with existing
   /// implementations. Platforms that use the text direction should override
   /// this as the primary implementation, and delegate to it from buildView.
+  @Deprecated('Use buildViewWithConfiguration instead.')
   Widget buildViewWithTextDirection(
     int creationId,
     PlatformViewCreatedCallback onPlatformViewCreated, {

@@ -1,5 +1,6 @@
-## NEXT
+## 0.10.1+2
 
+* Adds performance warning about using multiple pointer interceptors on iOS.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 0.10.1+1
