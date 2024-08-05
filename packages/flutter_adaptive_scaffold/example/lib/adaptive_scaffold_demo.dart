@@ -125,19 +125,33 @@ class _MyHomePageState extends State<MyHomePage> {
           label: 'Inbox',
         ),
       ],
-      body: (_) => GridView.count(crossAxisCount: 2, children: children),
       smallBody: (_) => ListView.builder(
         itemCount: children.length,
         itemBuilder: (_, int idx) => children[idx],
       ),
+      body: (_) => GridView.count(crossAxisCount: 2, children: children),
+      expandedBody: (_) =>
+          GridView.count(crossAxisCount: 3, children: children),
+      largeBody: (_) => GridView.count(crossAxisCount: 4, children: children),
+      extraLargeBody: (_) =>
+          GridView.count(crossAxisCount: 5, children: children),
       // Define a default secondaryBody.
-      secondaryBody: (_) => Container(
-        color: const Color.fromARGB(255, 234, 158, 192),
-      ),
       // Override the default secondaryBody during the smallBreakpoint to be
       // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
       // overridden.
       smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
+      secondaryBody: (_) => Container(
+        color: const Color.fromARGB(255, 234, 158, 192),
+      ),
+      expandedSecondaryBody: (_) => Container(
+        color: const Color.fromARGB(255, 234, 158, 192),
+      ),
+      largeSecondaryBody: (_) => Container(
+        color: const Color.fromARGB(255, 234, 158, 192),
+      ),
+      extraLargeSecondaryBody: (_) => Container(
+        color: const Color.fromARGB(255, 234, 158, 192),
+      ),
     );
   }
 // #enddocregion Example

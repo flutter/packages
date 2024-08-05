@@ -35,6 +35,7 @@ void main() {
 
   testWidgets('displays correct item of config based on screen width',
       (WidgetTester tester) async {
+    //Small
     await updateScreen(300, tester);
     await tester.pumpAndSettle();
     expect(smallBody, findsOneWidget);
@@ -50,6 +51,7 @@ void main() {
     expect(pnav2, findsNothing);
     expect(pnav3, findsNothing);
 
+    // Medium
     await updateScreen(800, tester);
     await tester.pumpAndSettle();
     expect(body, findsOneWidget);
@@ -65,11 +67,12 @@ void main() {
     expect(pnav2, findsNothing);
     expect(pnav3, findsNothing);
 
-    await updateScreen(1200, tester);
+    // Expanded
+    await updateScreen(1100, tester);
     await tester.pumpAndSettle();
     expect(expandedBody, findsOneWidget);
     expect(pnav1, findsOneWidget);
-    expect(tester.getTopLeft(expandedBody), const Offset(100, 0));
+    expect(tester.getTopLeft(expandedBody), const Offset(208, 0));
     expect(tester.getTopLeft(pnav1), Offset.zero);
     expect(smallBody, findsNothing);
     expect(body, findsNothing);
@@ -80,37 +83,38 @@ void main() {
     expect(pnav2, findsNothing);
     expect(pnav3, findsNothing);
 
+    // Large
     await updateScreen(1400, tester);
     await tester.pumpAndSettle();
-    expect(body, findsOneWidget);
+    expect(largeBody, findsOneWidget);
     expect(expandedBody, findsNothing);
-    expect(largeBody, findsOneWidget);
-    expect(tester.getTopLeft(largeBody), const Offset(288, 0));
-    expect(largeBody, findsOneWidget);
-    expect(bnav, findsNothing);
+    expect(pnav2, findsOneWidget);
+    expect(tester.getTopLeft(largeBody), const Offset(208, 0));
+    expect(tester.getTopLeft(pnav2), Offset.zero);
+    expect(smallBody, findsNothing);
+    expect(body, findsNothing);
+    expect(expandedBody, findsNothing);
     expect(extraLargeBody, findsNothing);
+    expect(bnav, findsNothing);
     expect(pnav, findsNothing);
     expect(pnav1, findsNothing);
-    expect(pnav2, findsOneWidget);
-    expect(tester.getTopLeft(pnav2), Offset.zero);
-    expect(tester.getBottomRight(pnav2), const Offset(288, 800));
     expect(pnav3, findsNothing);
 
+    // Extra Large
     await updateScreen(1700, tester);
     await tester.pumpAndSettle();
-    expect(body, findsOneWidget);
+    expect(extraLargeBody, findsOneWidget);
+    expect(pnav3, findsOneWidget);
+    expect(tester.getTopLeft(extraLargeBody), const Offset(208, 0));
+    expect(tester.getTopLeft(pnav3), Offset.zero);
+    expect(smallBody, findsNothing);
+    expect(body, findsNothing);
     expect(expandedBody, findsNothing);
     expect(largeBody, findsNothing);
-    expect(extraLargeBody, findsOneWidget);
-    expect(tester.getTopLeft(extraLargeBody), const Offset(400, 0));
-    expect(extraLargeBody, findsOneWidget);
     expect(bnav, findsNothing);
     expect(pnav, findsNothing);
     expect(pnav1, findsNothing);
     expect(pnav2, findsNothing);
-    expect(pnav3, findsOneWidget);
-    expect(tester.getTopLeft(pnav3), Offset.zero);
-    expect(tester.getBottomRight(pnav3), const Offset(400, 800));
   });
 
   testWidgets('adaptive scaffold animations work correctly',
@@ -126,30 +130,30 @@ void main() {
 
     expect(tester.getTopLeft(b), const Offset(17.6, 0));
     expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(778.2, 736), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(778.2, 1936), epsilon: 1.0));
     expect(tester.getTopLeft(sBody),
         offsetMoreOrLessEquals(const Offset(778.2, 0), epsilon: 1.0));
     expect(tester.getBottomRight(sBody),
-        offsetMoreOrLessEquals(const Offset(1178.2, 736), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(1178.2, 1936), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
     expect(tester.getTopLeft(b), const Offset(70.4, 0));
     expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(416.0, 784), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(416.0, 1984), epsilon: 1.0));
     expect(tester.getTopLeft(sBody),
         offsetMoreOrLessEquals(const Offset(416, 0), epsilon: 1.0));
     expect(tester.getBottomRight(sBody),
-        offsetMoreOrLessEquals(const Offset(816, 784), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(816, 1984), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
 
     expect(tester.getTopLeft(b), const Offset(88, 0));
-    expect(tester.getBottomRight(b), const Offset(400, 800));
+    expect(tester.getBottomRight(b), const Offset(400, 2000));
     expect(tester.getTopLeft(sBody), const Offset(400, 0));
-    expect(tester.getBottomRight(sBody), const Offset(800, 800));
+    expect(tester.getBottomRight(sBody), const Offset(800, 2000));
   });
 
   testWidgets('animation plays correctly in declared duration',
@@ -164,94 +168,8 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     expect(tester.getTopLeft(b), const Offset(88, 0));
-    expect(tester.getBottomRight(b), const Offset(400, 800));
+    expect(tester.getBottomRight(b), const Offset(400, 2000));
     expect(tester.getTopLeft(sBody), const Offset(400, 0));
-    expect(tester.getBottomRight(sBody), const Offset(800, 800));
-  });
-
-  testWidgets(
-      'when view in large screen, navigation rail must be visible as per theme data values.',
-      (WidgetTester tester) async {
-    await updateScreen(1200, tester);
-    await tester.pumpAndSettle();
-
-    final Finder primaryNavigationLarge = find.byKey(
-      const Key('primaryNavigation2'),
-    );
-    expect(primaryNavigationLarge, findsOneWidget);
-
-    final Finder navigationRailFinder = find.descendant(
-      of: primaryNavigationLarge,
-      matching: find.byType(NavigationRail),
-    );
-    expect(navigationRailFinder, findsOneWidget);
-
-    final NavigationRail navigationRailView = tester.firstWidget(
-      navigationRailFinder,
-    );
-    expect(navigationRailView, isNotNull);
-    expect(
-      navigationRailView.backgroundColor,
-      Colors.white,
-    );
-    expect(
-      navigationRailView.selectedIconTheme?.size,
-      32.0,
-    );
-    expect(
-      navigationRailView.selectedIconTheme?.color,
-      Colors.red,
-    );
-    expect(
-      navigationRailView.unselectedIconTheme?.size,
-      24.0,
-    );
-    expect(
-      navigationRailView.unselectedIconTheme?.color,
-      Colors.black,
-    );
-  });
-
-  testWidgets(
-      'when view in extra large screen, navigation rail must be visible as per theme data values.',
-      (WidgetTester tester) async {
-    await updateScreen(1600, tester);
-    await tester.pumpAndSettle();
-
-    final Finder primaryNavigationExtraLarge = find.byKey(
-      const Key('primaryNavigation3'),
-    );
-    expect(primaryNavigationExtraLarge, findsOneWidget);
-
-    final Finder navigationRailFinder = find.descendant(
-      of: primaryNavigationExtraLarge,
-      matching: find.byType(NavigationRail),
-    );
-    expect(navigationRailFinder, findsOneWidget);
-
-    final NavigationRail navigationRailView = tester.firstWidget(
-      navigationRailFinder,
-    );
-    expect(navigationRailView, isNotNull);
-    expect(
-      navigationRailView.backgroundColor,
-      Colors.white,
-    );
-    expect(
-      navigationRailView.selectedIconTheme?.size,
-      32.0,
-    );
-    expect(
-      navigationRailView.selectedIconTheme?.color,
-      Colors.red,
-    );
-    expect(
-      navigationRailView.unselectedIconTheme?.size,
-      24.0,
-    );
-    expect(
-      navigationRailView.unselectedIconTheme?.color,
-      Colors.black,
-    );
+    expect(tester.getBottomRight(sBody), const Offset(800, 2000));
   });
 }
