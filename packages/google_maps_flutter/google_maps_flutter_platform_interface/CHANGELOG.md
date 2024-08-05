@@ -1,3 +1,7 @@
+## 2.9.0
+
+* Adds support for heatmap layers.
+
 ## 2.8.0
 
 * Deprecates `BitmapDescriptor.fromAssetImage` in favor of `BitmapDescriptor.asset` and `AssetMapBitmap.create`.
