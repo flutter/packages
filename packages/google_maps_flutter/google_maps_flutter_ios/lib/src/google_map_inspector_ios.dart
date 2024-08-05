@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 import 'messages.g.dart';
+import 'serialization.dart';
 
 /// An Android of implementation of [GoogleMapsInspectorPlatform].
 @visibleForTesting
@@ -70,6 +71,34 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
       transparency: 1.0 - tileInfo.opacity,
       visible: tileInfo.visible,
       zIndex: tileInfo.zIndex,
+    );
+  }
+
+  @override
+  bool supportsGettingHeatmapInfo() => true;
+
+  @override
+  Future<Heatmap?> getHeatmapInfo(HeatmapId heatmapId,
+      {required int mapId}) async {
+    final PlatformHeatmap? heatmapInfo =
+        await _inspectorProvider(mapId)!.getHeatmapInfo(heatmapId.value);
+    if (heatmapInfo == null) {
+      return null;
+    }
+
+    final Map<String, Object?> json =
+        (heatmapInfo.json as Map<Object?, Object?>).cast<String, Object?>();
+    return Heatmap(
+      heatmapId: heatmapId,
+      data: (json['data']! as List<Object?>)
+          .map(deserializeWeightedLatLng)
+          .whereType<WeightedLatLng>()
+          .toList(),
+      gradient: deserializeHeatmapGradient(json['gradient']),
+      opacity: json['opacity']! as double,
+      radius: HeatmapRadius.fromPixels(json['radius']! as int),
+      minimumZoomIntensity: json['minimumZoomIntensity']! as int,
+      maximumZoomIntensity: json['maximumZoomIntensity']! as int,
     );
   }
 

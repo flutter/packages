@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #import "GoogleMapController.h"
+#import "FLTGoogleMapHeatmapController.h"
 #import "FLTGoogleMapJSONConversions.h"
 #import "FLTGoogleMapTileOverlayController.h"
 #import "messages.g.h"
@@ -119,6 +120,9 @@
 @property(nonatomic, strong) FLTPolygonsController *polygonsController;
 @property(nonatomic, strong) FLTPolylinesController *polylinesController;
 @property(nonatomic, strong) FLTCirclesController *circlesController;
+
+// The controller that handles heatmaps
+@property(nonatomic, strong) FLTHeatmapsController *heatmapsController;
 @property(nonatomic, strong) FLTTileOverlaysController *tileOverlaysController;
 // The resulting error message, if any, from the last attempt to set the map style.
 // This is used to provide access to errors after the fact, since the map style is generally set at
@@ -183,6 +187,7 @@
     _circlesController = [[FLTCirclesController alloc] initWithMapView:_mapView
                                                        callbackHandler:_dartCallbackHandler
                                                              registrar:registrar];
+    _heatmapsController = [[FLTHeatmapsController alloc] initWithMapView:_mapView];
     _tileOverlaysController =
         [[FLTTileOverlaysController alloc] initWithMapView:_mapView
                                            callbackHandler:_dartCallbackHandler
@@ -202,6 +207,10 @@
     id circlesToAdd = args[@"circlesToAdd"];
     if ([circlesToAdd isKindOfClass:[NSArray class]]) {
       [_circlesController addJSONCircles:circlesToAdd];
+    }
+    id heatmapsToAdd = args[kHeatmapsToAddKey];
+    if ([heatmapsToAdd isKindOfClass:[NSArray class]]) {
+      [_heatmapsController addJSONHeatmaps:heatmapsToAdd];
     }
     id tileOverlaysToAdd = args[@"tileOverlaysToAdd"];
     if ([tileOverlaysToAdd isKindOfClass:[NSArray class]]) {
@@ -532,6 +541,15 @@
   [self.controller.circlesController removeCirclesWithIdentifiers:idsToRemove];
 }
 
+- (void)updateHeatmapsByAdding:(nonnull NSArray<FGMPlatformHeatmap *> *)toAdd
+                      changing:(nonnull NSArray<FGMPlatformHeatmap *> *)toChange
+                      removing:(nonnull NSArray<NSString *> *)idsToRemove
+                         error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [self.controller.heatmapsController addHeatmaps:toAdd];
+  [self.controller.heatmapsController changeHeatmaps:toChange];
+  [self.controller.heatmapsController removeHeatmapsWithIdentifiers:idsToRemove];
+}
+
 - (void)updateWithMapConfiguration:(nonnull FGMPlatformMapConfiguration *)configuration
                              error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   [self.controller interpretMapOptions:configuration.json];
@@ -741,8 +759,8 @@
 }
 
 - (nullable FGMPlatformTileLayer *)
-    getInfoForTileOverlayWithIdentifier:(nonnull NSString *)tileOverlayId
-                                  error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+    tileOverlayWithIdentifier:(nonnull NSString *)tileOverlayId
+                        error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   GMSTileLayer *layer =
       [self.controller.tileOverlaysController tileOverlayWithIdentifier:tileOverlayId].layer;
   if (!layer) {
@@ -752,6 +770,17 @@
                                         fadeIn:layer.fadeIn
                                        opacity:layer.opacity
                                         zIndex:layer.zIndex];
+}
+
+- (nullable FGMPlatformHeatmap *)
+    heatmapWithIdentifier:(nonnull NSString *)heatmapId
+                    error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  NSDictionary<NSString *, id> *heatmapInfo =
+      [self.controller.heatmapsController heatmapInfoWithIdentifier:heatmapId];
+  if (!heatmapInfo) {
+    return nil;
+  }
+  return [FGMPlatformHeatmap makeWithJson:heatmapInfo];
 }
 
 - (nullable NSNumber *)isCompassEnabledWithError:

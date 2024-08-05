@@ -57,6 +57,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FGMPlatformHeatmap ()
++ (FGMPlatformHeatmap *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformHeatmap *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @interface FGMPlatformMarker ()
 + (FGMPlatformMarker *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformMarker *)nullableFromList:(NSArray<id> *)list;
@@ -190,6 +196,27 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 + (nullable FGMPlatformCircle *)nullableFromList:(NSArray<id> *)list {
   return (list) ? [FGMPlatformCircle fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.json ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation FGMPlatformHeatmap
++ (instancetype)makeWithJson:(id)json {
+  FGMPlatformHeatmap *pigeonResult = [[FGMPlatformHeatmap alloc] init];
+  pigeonResult.json = json;
+  return pigeonResult;
+}
++ (FGMPlatformHeatmap *)fromList:(NSArray<id> *)list {
+  FGMPlatformHeatmap *pigeonResult = [[FGMPlatformHeatmap alloc] init];
+  pigeonResult.json = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable FGMPlatformHeatmap *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformHeatmap fromList:list] : nil;
 }
 - (NSArray<id> *)toList {
   return @[
@@ -474,26 +501,28 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 131:
       return [FGMPlatformCircle fromList:[self readValue]];
     case 132:
-      return [FGMPlatformMarker fromList:[self readValue]];
+      return [FGMPlatformHeatmap fromList:[self readValue]];
     case 133:
-      return [FGMPlatformPolygon fromList:[self readValue]];
+      return [FGMPlatformMarker fromList:[self readValue]];
     case 134:
-      return [FGMPlatformPolyline fromList:[self readValue]];
+      return [FGMPlatformPolygon fromList:[self readValue]];
     case 135:
-      return [FGMPlatformTile fromList:[self readValue]];
+      return [FGMPlatformPolyline fromList:[self readValue]];
     case 136:
-      return [FGMPlatformTileOverlay fromList:[self readValue]];
+      return [FGMPlatformTile fromList:[self readValue]];
     case 137:
-      return [FGMPlatformLatLng fromList:[self readValue]];
+      return [FGMPlatformTileOverlay fromList:[self readValue]];
     case 138:
-      return [FGMPlatformLatLngBounds fromList:[self readValue]];
+      return [FGMPlatformLatLng fromList:[self readValue]];
     case 139:
-      return [FGMPlatformMapConfiguration fromList:[self readValue]];
+      return [FGMPlatformLatLngBounds fromList:[self readValue]];
     case 140:
-      return [FGMPlatformPoint fromList:[self readValue]];
+      return [FGMPlatformMapConfiguration fromList:[self readValue]];
     case 141:
-      return [FGMPlatformTileLayer fromList:[self readValue]];
+      return [FGMPlatformPoint fromList:[self readValue]];
     case 142:
+      return [FGMPlatformTileLayer fromList:[self readValue]];
+    case 143:
       return [FGMPlatformZoomRange fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -514,38 +543,41 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FGMPlatformCircle class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMarker class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformHeatmap class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPolygon class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMarker class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPolyline class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPolygon class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTile class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPolyline class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileOverlay class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTile class]]) {
     [self writeByte:136];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTileOverlay class]]) {
     [self writeByte:137];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
     [self writeByte:138];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
     [self writeByte:139];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
     [self writeByte:140];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
     [self writeByte:141];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
     [self writeByte:142];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+    [self writeByte:143];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -658,6 +690,36 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                           changing:arg_toChange
                           removing:arg_idsToRemove
                              error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Updates the set of heatmaps on the map.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsApi.updateHeatmaps",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FGMGetMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(updateHeatmapsByAdding:changing:removing:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to "
+                @"@selector(updateHeatmapsByAdding:changing:removing:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        NSArray<FGMPlatformHeatmap *> *arg_toAdd = GetNullableObjectAtIndex(args, 0);
+        NSArray<FGMPlatformHeatmap *> *arg_toChange = GetNullableObjectAtIndex(args, 1);
+        NSArray<NSString *> *arg_idsToRemove = GetNullableObjectAtIndex(args, 2);
+        FlutterError *error;
+        [api updateHeatmapsByAdding:arg_toAdd
+                           changing:arg_toChange
+                           removing:arg_idsToRemove
+                              error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1688,16 +1750,40 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
         binaryMessenger:binaryMessenger
                   codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getInfoForTileOverlayWithIdentifier:error:)],
+      NSCAssert([api respondsToSelector:@selector(tileOverlayWithIdentifier:error:)],
                 @"FGMMapsInspectorApi api (%@) doesn't respond to "
-                @"@selector(getInfoForTileOverlayWithIdentifier:error:)",
+                @"@selector(tileOverlayWithIdentifier:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_tileOverlayId = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        FGMPlatformTileLayer *output = [api getInfoForTileOverlayWithIdentifier:arg_tileOverlayId
-                                                                          error:&error];
+        FGMPlatformTileLayer *output = [api tileOverlayWithIdentifier:arg_tileOverlayId
+                                                                error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsInspectorApi.getHeatmapInfo",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FGMGetMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(heatmapWithIdentifier:error:)],
+                @"FGMMapsInspectorApi api (%@) doesn't respond to "
+                @"@selector(heatmapWithIdentifier:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        NSString *arg_heatmapId = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        FGMPlatformHeatmap *output = [api heatmapWithIdentifier:arg_heatmapId error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
