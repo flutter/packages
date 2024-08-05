@@ -8,7 +8,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_maps_flutter_platform_interface: ^2.7.0
+  google_maps_flutter_platform_interface: ^2.9.0
   google_maps_flutter_web:
     path: ../
   web: ^1.0.0
@@ -34,8 +34,6 @@ dependency_overrides:
     path: ../../../google_maps_flutter/google_maps_flutter_android
   google_maps_flutter_ios:
     path: ../../../google_maps_flutter/google_maps_flutter_ios
-  google_maps_flutter_platform_interface:
-    path: ../../../google_maps_flutter/google_maps_flutter_platform_interface
 
   # Override the google_maps_flutter dependency on google_maps_flutter_web.
   # TODO(ditman): Unwind the circular dependency. This will create problems

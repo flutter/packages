@@ -428,14 +428,16 @@ void main() {
       final Set<Heatmap> heatmaps = <Heatmap>{
         const Heatmap(
           heatmapId: HeatmapId('1'),
-          data: heatmapPoints,
+          data: <WeightedLatLng>[],
           radius: HeatmapRadius.fromPixels(20),
         ),
       };
       controller.addHeatmaps(heatmaps);
 
-      expect(controller.heatmaps[const HeatmapId('1')]?.heatmap?.data,
-          hasLength(0));
+      expect(
+        controller.heatmaps[const HeatmapId('1')]?.heatmap?.data,
+        hasLength(0),
+      );
 
       final Set<Heatmap> updatedHeatmaps = <Heatmap>{
         const Heatmap(
@@ -447,8 +449,10 @@ void main() {
       controller.changeHeatmaps(updatedHeatmaps);
 
       expect(controller.heatmaps.length, 1);
-      expect(controller.heatmaps[const HeatmapId('1')]?.heatmap?.data,
-          hasLength(1));
+      expect(
+        controller.heatmaps[const HeatmapId('1')]?.heatmap?.data,
+        hasLength(1),
+      );
     });
 
     testWidgets('removeHeatmaps', (WidgetTester tester) async {
@@ -505,7 +509,10 @@ void main() {
       final visualization.HeatmapLayer heatmap =
           controller.heatmaps.values.first.heatmap!;
 
-      expect(heatmap.get('gradient'), <String>['rgba(250, 186, 218, 1)']);
+      expect(
+        heatmap.get('gradient'),
+        <String>['rgba(250, 186, 218, 0.00)', 'rgba(250, 186, 218, 1.00)'],
+      );
     });
   });
 }
