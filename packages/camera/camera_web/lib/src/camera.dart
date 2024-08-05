@@ -146,9 +146,6 @@ class Camera {
 
   /// A builder to merge a list of blobs into a single blob.
   @visibleForTesting
-  // TODO(stuartmorgan): Remove this 'ignore' once we don't analyze using 2.10
-  // any more. It's a false positive that is fixed in later versions.
-  // ignore: prefer_function_declarations_over_variables
   web.Blob Function(List<web.Blob> blobs, String type) blobBuilder =
       (List<web.Blob> blobs, String type) =>
           web.Blob(blobs.toJS, web.BlobPropertyBag(type: type));
