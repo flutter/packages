@@ -56,6 +56,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   /// platform side.
   ///
   /// The returned [Future] completes after listeners have been notified.
+  @Deprecated('Use updateMapConfiguration instead.')
   Future<void> updateMapOptions(
     Map<String, dynamic> optionsUpdate, {
     required int mapId,
@@ -402,6 +403,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
 
   /// Returns a widget displaying the map view - deprecated, use
   /// [buildViewWithConfiguration] instead.
+  @Deprecated('Use buildViewWithConfiguration instead.')
   Widget buildView(
     int creationId,
     PlatformViewCreatedCallback onPlatformViewCreated, {
@@ -430,6 +432,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   /// [buildView]. This is for backward compatibility with existing
   /// implementations. Platforms that use the text direction should override
   /// this as the primary implementation, and delegate to it from buildView.
+  @Deprecated('Use buildViewWithConfiguration instead.')
   Widget buildViewWithTextDirection(
     int creationId,
     PlatformViewCreatedCallback onPlatformViewCreated, {
