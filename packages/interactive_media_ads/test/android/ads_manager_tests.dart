@@ -80,7 +80,7 @@ void main() {
           PlatformAdsManagerDelegateCreationParams(
             onAdEvent: expectAsync1((AdEvent event) {
               expect(event.type, AdEventType.allAdsCompleted);
-              expect(event.adData, <String, String>{'shrek': 'donkey'});
+              expect(event.adData, <String, String>{'hello': 'world'});
             }),
           ),
         ),
@@ -88,7 +88,7 @@ void main() {
 
       final MockAdEvent mockAdEvent = MockAdEvent();
       when(mockAdEvent.type).thenReturn(ima.AdEventType.allAdsCompleted);
-      when(mockAdEvent.adData).thenReturn(<String, String>{'shrek': 'donkey'});
+      when(mockAdEvent.adData).thenReturn(<String, String>{'hello': 'world'});
       onAdEventCallback(MockAdEventListener(), mockAdEvent);
     });
 
