@@ -15,7 +15,7 @@ void main() {
     MediaQuery slot(double width) {
       return MediaQuery(
         data: MediaQueryData.fromView(tester.view)
-            .copyWith(size: Size(width, 800)),
+            .copyWith(size: Size(width, 2000)),
         child: Directionality(
           textDirection: TextDirection.ltr,
           child: SlotLayout(
@@ -411,9 +411,9 @@ Future<MediaQuery> layout({
   bool animations = true,
   int durationMs = 1000,
 }) async {
-  await tester.binding.setSurfaceSize(Size(width, 800));
+  await tester.binding.setSurfaceSize(Size(width, 2000));
   return MediaQuery(
-    data: MediaQueryData(size: Size(width, 800)),
+    data: MediaQueryData(size: Size(width, 2000)),
     child: Directionality(
       textDirection: directionality,
       child: AdaptiveLayout(
@@ -553,7 +553,8 @@ AnimatedWidget leftInOut(Widget child, Animation<double> animation) {
 
 MediaQuery slot(double width, Duration duration, WidgetTester tester) {
   return MediaQuery(
-    data: MediaQueryData.fromView(tester.view).copyWith(size: Size(width, 800)),
+    data:
+        MediaQueryData.fromView(tester.view).copyWith(size: Size(width, 2000)),
     child: Directionality(
       textDirection: TextDirection.ltr,
       child: SlotLayout(

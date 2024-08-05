@@ -24,7 +24,7 @@ void main() {
   );
 
   Future<void> updateScreen(double width, WidgetTester tester) async {
-    await tester.binding.setSurfaceSize(Size(width, 800));
+    await tester.binding.setSurfaceSize(Size(width, 2000));
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData.light().copyWith(
@@ -35,7 +35,7 @@ void main() {
           ),
         ),
         home: MediaQuery(
-          data: MediaQueryData(size: Size(width, 800)),
+          data: MediaQueryData(size: Size(width, 2000)),
           child: const example.MyHomePage(),
         ),
       ),
@@ -152,8 +152,8 @@ void main() {
     'adaptive layout displays children in correct places',
     (WidgetTester tester) async {
       await updateScreen(400, tester);
-      expect(tester.getBottomLeft(bottomNavigation), const Offset(0, 800));
-      expect(tester.getBottomRight(bottomNavigation), const Offset(400, 800));
+      expect(tester.getBottomLeft(bottomNavigation), const Offset(0, 2000));
+      expect(tester.getBottomRight(bottomNavigation), const Offset(400, 2000));
       expect(tester.getTopRight(body), const Offset(400, 0));
       expect(tester.getTopLeft(body), Offset.zero);
     },
@@ -166,7 +166,7 @@ void main() {
       await updateScreen(690, tester);
 
       expect(tester.getTopLeft(bodyMedium), const Offset(88, 0));
-      expect(tester.getBottomRight(bodyMedium), const Offset(690, 800));
+      expect(tester.getBottomRight(bodyMedium), const Offset(690, 2000));
     },
   );
 
