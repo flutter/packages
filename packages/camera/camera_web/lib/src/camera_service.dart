@@ -36,10 +36,7 @@ class CameraService {
     try {
       return await mediaDevices
           .getUserMedia(
-            web.MediaStreamConstraints(
-              video: options.video.toJson().jsify()!,
-              audio: options.audio.toJson().jsify()!,
-            ),
+            options.toMediaStreamConstraints(),
           )
           .toDart;
     } on web.DOMException catch (e) {

@@ -89,8 +89,10 @@ void main() {
 
         await cameraService.getMediaStreamForOptions(options);
 
-        expect(capturedConstraints?.video.dartify(), options.video.toJson());
-        expect(capturedConstraints?.audio.dartify(), options.audio.toJson());
+        expect(capturedConstraints?.video.dartify(),
+            equals(options.video.toMediaStreamConstraints().dartify()));
+        expect(capturedConstraints?.audio.dartify(),
+            equals(options.audio.toMediaStreamConstraints().dartify()));
       });
 
       group('throws CameraWebException', () {
