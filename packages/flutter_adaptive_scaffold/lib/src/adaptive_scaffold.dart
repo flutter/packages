@@ -103,6 +103,9 @@ class AdaptiveScaffold extends StatefulWidget {
     this.navigationRailWidth = 72,
     this.extendedNavigationRailWidth = 192,
     this.appBarBreakpoint,
+    this.mapNavigationRailDestination,
+    this.labelType = NavigationRailLabelType.none,
+    this.groupAlignment,
   }) : assert(
           destinations.length >= 2,
           'At least two destinations are required',
@@ -128,6 +131,12 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Option to display a trailing widget below the destinations of the
   /// navigation rail at the largest breakpoint.
   final Widget? trailingNavRail;
+
+  /// The type of label to be displayed in the navigation rail.
+  final NavigationRailLabelType labelType;
+
+  /// The alignment of the destinations in the navigation rail.
+  final double? groupAlignment;
 
   /// Widget to be displayed in the body slot at the smallest breakpoint.
   ///
@@ -245,6 +254,10 @@ class AdaptiveScaffold extends StatefulWidget {
   /// The width used for the internal extended [NavigationRail] at the large
   /// [Breakpoint].
   final double extendedNavigationRailWidth;
+
+  /// Used to map NavigationDestination to NavigationRailDestination.
+  final NavigationRailDestination Function(NavigationDestination)?
+      mapNavigationRailDestination;
 
   /// Callback function for when the index of a [NavigationRail] changes.
   static WidgetBuilder emptyBuilder = (_) => const SizedBox();
@@ -513,6 +526,12 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
     final NavigationRailThemeData navRailTheme =
         Theme.of(context).navigationRailTheme;
 
+    final List<NavigationRailDestination> destinations = widget.destinations
+        .map((NavigationDestination destination) =>
+            widget.mapNavigationRailDestination?.call(destination) ??
+            AdaptiveScaffold.toRailDestination(destination))
+        .toList();
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: widget.drawerBreakpoint.isActive(context) && widget.useDrawer ||
@@ -526,11 +545,15 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 leading: widget.leadingExtendedNavRail,
                 trailing: widget.trailingNavRail,
                 selectedIndex: widget.selectedIndex,
-                destinations: widget.destinations
-                    .map((NavigationDestination destination) =>
-                        AdaptiveScaffold.toRailDestination(destination))
-                    .toList(),
+                destinations: destinations,
                 onDestinationSelected: _onDrawerDestinationSelected,
+                backgroundColor: navRailTheme.backgroundColor,
+                selectedIconTheme: navRailTheme.selectedIconTheme,
+                unselectedIconTheme: navRailTheme.unselectedIconTheme,
+                selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+                unselectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+                labelType: widget.labelType,
+                groupAlignment: widget.groupAlignment,
               ),
             )
           : null,
@@ -548,16 +571,15 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 leading: widget.leadingUnextendedNavRail,
                 trailing: widget.trailingNavRail,
                 selectedIndex: widget.selectedIndex,
-                destinations: widget.destinations
-                    .map((NavigationDestination destination) =>
-                        AdaptiveScaffold.toRailDestination(destination))
-                    .toList(),
+                destinations: destinations,
                 onDestinationSelected: widget.onSelectedIndexChange,
                 backgroundColor: navRailTheme.backgroundColor,
                 selectedIconTheme: navRailTheme.selectedIconTheme,
                 unselectedIconTheme: navRailTheme.unselectedIconTheme,
                 selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
                 unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+                labelType: widget.labelType,
+                groupAlignment: widget.groupAlignment,
               ),
             ),
             widget.largeBreakpoint: SlotLayout.from(
@@ -568,16 +590,15 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 leading: widget.leadingExtendedNavRail,
                 trailing: widget.trailingNavRail,
                 selectedIndex: widget.selectedIndex,
-                destinations: widget.destinations
-                    .map((NavigationDestination destination) =>
-                        AdaptiveScaffold.toRailDestination(destination))
-                    .toList(),
+                destinations: destinations,
                 onDestinationSelected: widget.onSelectedIndexChange,
                 backgroundColor: navRailTheme.backgroundColor,
                 selectedIconTheme: navRailTheme.selectedIconTheme,
                 unselectedIconTheme: navRailTheme.unselectedIconTheme,
                 selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
                 unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+                labelType: widget.labelType,
+                groupAlignment: widget.groupAlignment,
               ),
             ),
           },
