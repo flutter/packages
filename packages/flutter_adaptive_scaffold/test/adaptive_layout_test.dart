@@ -349,6 +349,94 @@ void main() {
 
     expect(tester.getTopLeft(testBreakpoint), const Offset(10, 10));
     expect(tester.getBottomRight(testBreakpoint), const Offset(200, 1990));
+
+    await tester.pumpWidget(
+        await layout(width: 800, tester: tester, animations: false));
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(tester.getTopLeft(testBreakpoint400), const Offset(10, 10));
+    expect(tester.getBottomRight(testBreakpoint400), const Offset(400, 1990));
+
+    await tester.pumpWidget(
+        await layout(width: 1000, tester: tester, animations: false));
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(tester.getTopLeft(testBreakpoint800), const Offset(10, 10));
+    expect(tester.getBottomRight(testBreakpoint800), const Offset(500, 1990));
+
+    await tester.pumpWidget(
+        await layout(width: 1300, tester: tester, animations: false));
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(tester.getTopLeft(testBreakpoint1200), const Offset(10, 10));
+    expect(tester.getBottomRight(testBreakpoint1200), const Offset(650, 1990));
+
+    await tester.pumpWidget(
+        await layout(width: 1700, tester: tester, animations: false));
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(tester.getTopLeft(testBreakpoint1600), const Offset(10, 10));
+    expect(tester.getBottomRight(testBreakpoint1600), const Offset(850, 1990));
+  });
+
+  testWidgets(
+      'adaptive layout handles internal animations correctly for additional breakpoints',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(await layout(width: 800, tester: tester));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(tester.getTopLeft(testBreakpoint400), const Offset(1, 1));
+    expect(tester.getBottomRight(testBreakpoint400),
+        offsetMoreOrLessEquals(const Offset(792.6, 1999), epsilon: 1.0));
+    expect(tester.getTopLeft(secondaryTestBreakpoint400),
+        offsetMoreOrLessEquals(const Offset(792.6, 1.0), epsilon: 1.0));
+    expect(tester.getBottomRight(secondaryTestBreakpoint400),
+        offsetMoreOrLessEquals(const Offset(1191.6, 1999.0), epsilon: 1.0));
+
+    await tester.pumpWidget(await layout(width: 1000, tester: tester));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(tester.getTopLeft(testBreakpoint800), const Offset(10, 10));
+    expect(tester.getBottomRight(testBreakpoint800),
+        offsetMoreOrLessEquals(const Offset(855.3, 1990.0), epsilon: 1.0));
+    expect(tester.getTopLeft(secondaryTestBreakpoint800),
+        offsetMoreOrLessEquals(const Offset(855.3, 10.0), epsilon: 1.0));
+    expect(tester.getBottomRight(secondaryTestBreakpoint800),
+        offsetMoreOrLessEquals(const Offset(1345.3, 1990.0), epsilon: 1.0));
+
+    await tester.pumpWidget(await layout(width: 1300, tester: tester));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(tester.getTopLeft(testBreakpoint1200), const Offset(10, 10));
+    expect(tester.getBottomRight(testBreakpoint1200),
+        offsetMoreOrLessEquals(const Offset(1114.0, 1990.0), epsilon: 1.0));
+    expect(tester.getTopLeft(secondaryTestBreakpoint1200),
+        offsetMoreOrLessEquals(const Offset(1114.0, 10.0), epsilon: 1.0));
+    expect(tester.getBottomRight(secondaryTestBreakpoint1200),
+        offsetMoreOrLessEquals(const Offset(1754.0, 1990.0), epsilon: 1.0));
+
+    await tester.pumpWidget(await layout(width: 1700, tester: tester));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(tester.getTopLeft(testBreakpoint1600), const Offset(10, 10));
+    //expect(tester.getBottomRight(testBreakpoint1600),
+    //  const Offset(1676.5, 1990.0));
+    // expect(tester.getTopLeft(secondaryTestBreakpoint1600),
+    //     const Offset(1459.1, 10.0));
+    // expect(tester.getBottomRight(secondaryTestBreakpoint1600),
+    //     const Offset(1676.5, 1990.0));
   });
 }
 
