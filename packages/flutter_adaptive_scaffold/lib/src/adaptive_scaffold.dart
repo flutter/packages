@@ -104,7 +104,6 @@ class AdaptiveScaffold extends StatefulWidget {
     this.extendedNavigationRailWidth = 192,
     this.appBarBreakpoint,
     this.mapNavigationRailDestination,
-    this.labelType = NavigationRailLabelType.none,
     this.groupAlignment,
   }) : assert(
           destinations.length >= 2,
@@ -131,9 +130,6 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Option to display a trailing widget below the destinations of the
   /// navigation rail at the largest breakpoint.
   final Widget? trailingNavRail;
-
-  /// The type of label to be displayed in the navigation rail.
-  final NavigationRailLabelType labelType;
 
   /// The alignment of the destinations in the navigation rail.
   final double? groupAlignment;
@@ -295,7 +291,7 @@ class AdaptiveScaffold extends StatefulWidget {
     IconThemeData? unselectedIconTheme,
     TextStyle? selectedLabelTextStyle,
     TextStyle? unSelectedLabelTextStyle,
-    NavigationRailLabelType labelType = NavigationRailLabelType.none,
+    NavigationRailLabelType? labelType = NavigationRailLabelType.none,
   }) {
     if (extended && width == 72) {
       width = 192;
@@ -552,8 +548,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 unselectedIconTheme: navRailTheme.unselectedIconTheme,
                 selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
                 unselectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
-                labelType: widget.labelType,
                 groupAlignment: widget.groupAlignment,
+                labelType: navRailTheme.labelType,
               ),
             )
           : null,
@@ -578,7 +574,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 unselectedIconTheme: navRailTheme.unselectedIconTheme,
                 selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
                 unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
-                labelType: widget.labelType,
+                labelType: navRailTheme.labelType,
                 groupAlignment: widget.groupAlignment,
               ),
             ),
@@ -597,7 +593,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 unselectedIconTheme: navRailTheme.unselectedIconTheme,
                 selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
                 unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
-                labelType: widget.labelType,
+                labelType: navRailTheme.labelType,
                 groupAlignment: widget.groupAlignment,
               ),
             ),
