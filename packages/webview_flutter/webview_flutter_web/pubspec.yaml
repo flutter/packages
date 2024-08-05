@@ -2,7 +2,7 @@ name: webview_flutter_web
 description: A Flutter plugin that provides a WebView widget on web.
 repository: https://github.com/flutter/packages/tree/main/packages/webview_flutter/webview_flutter_web
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+webview%22
-version: 0.2.3+1
+version: 0.2.3+2
 
 environment:
   sdk: ^3.3.0
@@ -21,7 +21,7 @@ dependencies:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  web: ^0.5.0
+  web: ">=0.5.1 <2.0.0"
   webview_flutter_platform_interface: ^2.0.0
 
 dev_dependencies:
