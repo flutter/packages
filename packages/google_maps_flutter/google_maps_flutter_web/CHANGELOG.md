@@ -1,3 +1,7 @@
+## 0.5.9+2
+
+* Restores support for Dart `^3.3.0` and Flutter `^3.19.0`.
+
 ## 0.5.9+1
 
 * Fixes a typo in the formatting of the CHANGELOG.
@@ -5,7 +9,7 @@
 ## 0.5.9
 
 * Updates `package:google_maps` dependency to latest (`^8.0.0`).
-* Supports `web: ">=0.5.1 <2.0.0"`.
+* Adds support for `web: ^1.0.0`.
 * Updates SDK version to Dart `^3.4.0`. Flutter `^3.22.0`.
 
 ## 0.5.8
