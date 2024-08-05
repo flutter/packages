@@ -29,6 +29,14 @@ flutter:
     - assets/
 
 dependency_overrides:
+  # FOR TESTING ONLY. DO NOT MERGE.
+  google_maps_flutter_android:
+    path: ../../../google_maps_flutter/google_maps_flutter_android
+  google_maps_flutter_ios:
+    path: ../../../google_maps_flutter/google_maps_flutter_ios
+  google_maps_flutter_platform_interface:
+    path: ../../../google_maps_flutter/google_maps_flutter_platform_interface
+
   # Override the google_maps_flutter dependency on google_maps_flutter_web.
   # TODO(ditman): Unwind the circular dependency. This will create problems
   # if we need to make a breaking change to google_maps_flutter_web.
