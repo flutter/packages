@@ -17,7 +17,7 @@ void otherDoc(BuildContext context) {
   GoRoute(
     path: ':familyId',
     builder: (BuildContext context, GoRouterState state) {
-      // require the familyId to be present and be an integer
+      // Require the familyId to be present and be an integer.
       final int familyId = int.parse(state.pathParameters['familyId']!);
       return FamilyScreen(familyId);
     },
@@ -25,7 +25,8 @@ void otherDoc(BuildContext context) {
   // #enddocregion GoRoute
 
   // #docregion GoWrong
-  void tap() => context.go('/familyId/a42'); // error: `a42` is not an `int`
+  void tap() =>
+      context.go('/familyId/a42'); // This is an error: `a42` is not an `int`.
   // #enddocregion GoWrong
 
   // #docregion GoRouter
@@ -46,13 +47,14 @@ void otherDoc(BuildContext context) {
   // #enddocregion go
 
   // #docregion goError
-  // error: missing required parameter 'fid'
+  // This is an error: missing required parameter 'fid'.
   void errorTap() => const FamilyRoute().go(context);
   // #enddocregion goError
 
   // #docregion tapWithExtra
-  void tapWithExtra() =>
-      PersonRouteWithExtra(Person(id: 1, name: 'Marvin', age: 42)).go(context);
+  void tapWithExtra() {
+    PersonRouteWithExtra(Person(id: 1, name: 'Marvin', age: 42)).go(context);
+  }
   // #enddocregion tapWithExtra
 
   final LoginInfo loginInfo = LoginInfo();
@@ -95,10 +97,11 @@ class HomeRoute extends GoRouteData {
 
 // #docregion RedirectRoute
 class RedirectRoute extends GoRouteData {
-  // no need to implement [build] when this [redirect] is unconditional
+  // There is no need to implement [build] when this [redirect] is unconditional.
   @override
-  String? redirect(BuildContext context, GoRouterState state) =>
-      const HomeRoute().location;
+  String? redirect(BuildContext context, GoRouterState state) {
+    return const HomeRoute().location;
+  }
 }
 // #enddocregion RedirectRoute
 
@@ -109,8 +112,9 @@ class LoginRoute extends GoRouteData {
   final String? from;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      LoginScreen(from: from);
+  Widget build(BuildContext context, GoRouterState state) {
+    return LoginScreen(from: from);
+  }
 }
 // #enddocregion login
 // #enddocregion TypedGoRouteHomeRoute
@@ -144,8 +148,9 @@ class FamilyRoute extends GoRouteData {
   final String? fid;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      FamilyScreen(int.parse(fid!));
+  Widget build(BuildContext context, GoRouterState state) {
+    return FamilyScreen(int.parse(fid!));
+  }
 }
 
 class FamilyScreen extends StatelessWidget {
@@ -175,8 +180,9 @@ class ErrorRoute extends GoRouteData {
   final Exception error;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      ErrorScreen(error: error);
+  Widget build(BuildContext context, GoRouterState state) {
+    return ErrorScreen(error: error);
+  }
 }
 // #enddocregion ErrorRoute
 
@@ -217,8 +223,9 @@ class MyRoute extends GoRouteData {
   final String queryParameter;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      MyScreen(queryParameter: queryParameter);
+  Widget build(BuildContext context, GoRouterState state) {
+    return MyScreen(queryParameter: queryParameter);
+  }
 }
 // #enddocregion MyRoute
 
@@ -243,8 +250,9 @@ class PersonRouteWithExtra extends GoRouteData {
   final Person? $extra;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      PersonScreen($extra);
+  Widget build(BuildContext context, GoRouterState state) {
+    return PersonScreen($extra);
+  }
 }
 // #enddocregion PersonRouteWithExtra
 
@@ -266,13 +274,14 @@ class PersonScreen extends StatelessWidget {
 @TypedGoRoute<HotdogRouteWithEverything>(path: '/:ketchup')
 class HotdogRouteWithEverything extends GoRouteData {
   HotdogRouteWithEverything(this.ketchup, this.mustard, this.$extra);
-  final bool ketchup; // required path parameter
-  final String? mustard; // optional query parameter
-  final Sauce $extra; // special $extra parameter
+  final bool ketchup; // A required path parameter.
+  final String? mustard; // An optional query parameter.
+  final Sauce $extra; // A special $extra parameter.
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      HotdogScreen(ketchup, mustard, $extra);
+  Widget build(BuildContext context, GoRouterState state) {
+    return HotdogScreen(ketchup, mustard, $extra);
+  }
 }
 // #enddocregion HotdogRouteWithEverything
 
@@ -280,9 +289,9 @@ class Sauce {}
 
 class HotdogScreen extends StatelessWidget {
   const HotdogScreen(this.ketchup, this.mustard, this.extra, {super.key});
-  final bool ketchup; // required path parameter
-  final String? mustard; // optional query parameter
-  final Sauce extra; // special $extra parameter
+  final bool ketchup;
+  final String? mustard;
+  final Sauce extra;
 
   @override
   Widget build(BuildContext context) {
@@ -302,8 +311,9 @@ class BooksRoute extends GoRouteData {
   final BookKind kind;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      BooksScreen(kind: kind);
+  Widget build(BuildContext context, GoRouterState state) {
+    return BooksScreen(kind: kind);
+  }
 }
 // #enddocregion BookKind
 
@@ -325,11 +335,12 @@ class BooksScreen extends StatelessWidget {
 class MyMaterialRouteWithKey extends GoRouteData {
   static const LocalKey _key = ValueKey<String>('my-route-with-key');
   @override
-  MaterialPage<void> buildPage(BuildContext context, GoRouterState state) =>
-      const MaterialPage<void>(
-        key: _key,
-        child: MyPage(),
-      );
+  MaterialPage<void> buildPage(BuildContext context, GoRouterState state) {
+    return const MaterialPage<void>(
+      key: _key,
+      child: MyPage(),
+    );
+  }
 }
 // #enddocregion MyMaterialRouteWithKey
 
@@ -365,14 +376,17 @@ class MyShellRoutePage extends StatelessWidget {
 class FancyRoute extends GoRouteData {
   @override
   CustomTransitionPage<void> buildPage(
-          BuildContext context, GoRouterState state) =>
-      CustomTransitionPage<void>(
+    BuildContext context,
+    GoRouterState state,
+  ) {
+    return CustomTransitionPage<void>(
         key: state.pageKey,
         child: const MyPage(),
         transitionsBuilder: (BuildContext context, Animation<double> animation,
-                Animation<double> secondaryAnimation, Widget child) =>
-            RotationTransition(turns: animation, child: child),
-      );
+            Animation<double> secondaryAnimation, Widget child) {
+          return RotationTransition(turns: animation, child: child);
+        });
+  }
 }
 // #enddocregion FancyRoute
 

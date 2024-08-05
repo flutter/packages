@@ -56,7 +56,7 @@ often the page builder must first parse the parameters into types that aren't
 GoRoute(
   path: ':familyId',
   builder: (BuildContext context, GoRouterState state) {
-    // require the familyId to be present and be an integer
+    // Require the familyId to be present and be an integer.
     final int familyId = int.parse(state.pathParameters['familyId']!);
     return FamilyScreen(familyId);
   },
@@ -69,7 +69,8 @@ it easy to write code that is not type-safe, e.g.
 
 <?code-excerpt "example/lib/readme_excerpts.dart (GoWrong)"?>
 ```dart
-void tap() => context.go('/familyId/a42'); // error: `a42` is not an `int`
+void tap() =>
+    context.go('/familyId/a42'); // This is an error: `a42` is not an `int`.
 ```
 
 Dart's type system allows mistakes to be caught at compile-time instead of
@@ -115,10 +116,11 @@ class HomeRoute extends GoRouteData {
 }
 
 class RedirectRoute extends GoRouteData {
-  // no need to implement [build] when this [redirect] is unconditional
+  // There is no need to implement [build] when this [redirect] is unconditional.
   @override
-  String? redirect(BuildContext context, GoRouterState state) =>
-      const HomeRoute().location;
+  String? redirect(BuildContext context, GoRouterState state) {
+    return const HomeRoute().location;
+  }
 }
 
 @TypedGoRoute<LoginRoute>(path: '/login')
@@ -127,8 +129,9 @@ class LoginRoute extends GoRouteData {
   final String? from;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      LoginScreen(from: from);
+  Widget build(BuildContext context, GoRouterState state) {
+    return LoginScreen(from: from);
+  }
 }
 ```
 
@@ -153,8 +156,9 @@ class ErrorRoute extends GoRouteData {
   final Exception error;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      ErrorScreen(error: error);
+  Widget build(BuildContext context, GoRouterState state) {
+    return ErrorScreen(error: error);
+  }
 }
 ```
 
@@ -183,7 +187,7 @@ If you get this wrong, the compiler will complain:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (goError)"?>
 ```dart
-// error: missing required parameter 'fid'
+// This is an error: missing required parameter 'fid'.
 void errorTap() => const FamilyRoute().go(context);
 ```
 
@@ -212,8 +216,9 @@ class LoginRoute extends GoRouteData {
   final String? from;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      LoginScreen(from: from);
+  Widget build(BuildContext context, GoRouterState state) {
+    return LoginScreen(from: from);
+  }
 }
 ```
 
@@ -229,8 +234,9 @@ class MyRoute extends GoRouteData {
   final String queryParameter;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      MyScreen(queryParameter: queryParameter);
+  Widget build(BuildContext context, GoRouterState state) {
+    return MyScreen(queryParameter: queryParameter);
+  }
 }
 ```
 
@@ -249,8 +255,9 @@ class PersonRouteWithExtra extends GoRouteData {
   final Person? $extra;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      PersonScreen($extra);
+  Widget build(BuildContext context, GoRouterState state) {
+    return PersonScreen($extra);
+  }
 }
 ```
 
@@ -258,8 +265,9 @@ Pass the extra param as a typed object:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (tapWithExtra)"?>
 ```dart
-void tapWithExtra() =>
-    PersonRouteWithExtra(Person(id: 1, name: 'Marvin', age: 42)).go(context);
+void tapWithExtra() {
+  PersonRouteWithExtra(Person(id: 1, name: 'Marvin', age: 42)).go(context);
+}
 ```
 
 The `$extra` parameter is still passed outside the location, still defeats
@@ -275,13 +283,14 @@ You can, of course, combine the use of path, query and $extra parameters:
 @TypedGoRoute<HotdogRouteWithEverything>(path: '/:ketchup')
 class HotdogRouteWithEverything extends GoRouteData {
   HotdogRouteWithEverything(this.ketchup, this.mustard, this.$extra);
-  final bool ketchup; // required path parameter
-  final String? mustard; // optional query parameter
-  final Sauce $extra; // special $extra parameter
+  final bool ketchup; // A required path parameter.
+  final String? mustard; // An optional query parameter.
+  final Sauce $extra; // A special $extra parameter.
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      HotdogScreen(ketchup, mustard, $extra);
+  Widget build(BuildContext context, GoRouterState state) {
+    return HotdogScreen(ketchup, mustard, $extra);
+  }
 }
 ```
 
@@ -314,10 +323,11 @@ Handle route-level redirects by implementing the `redirect` method on the route:
 <?code-excerpt "example/lib/readme_excerpts.dart (RedirectRoute)"?>
 ```dart
 class RedirectRoute extends GoRouteData {
-  // no need to implement [build] when this [redirect] is unconditional
+  // There is no need to implement [build] when this [redirect] is unconditional.
   @override
-  String? redirect(BuildContext context, GoRouterState state) =>
-      const HomeRoute().location;
+  String? redirect(BuildContext context, GoRouterState state) {
+    return const HomeRoute().location;
+  }
 }
 ```
 
@@ -335,8 +345,9 @@ class BooksRoute extends GoRouteData {
   final BookKind kind;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      BooksScreen(kind: kind);
+  Widget build(BuildContext context, GoRouterState state) {
+    return BooksScreen(kind: kind);
+  }
 }
 ```
 
@@ -361,11 +372,12 @@ method of the base class instead of the `build` method:
 class MyMaterialRouteWithKey extends GoRouteData {
   static const LocalKey _key = ValueKey<String>('my-route-with-key');
   @override
-  MaterialPage<void> buildPage(BuildContext context, GoRouterState state) =>
-      const MaterialPage<void>(
-        key: _key,
-        child: MyPage(),
-      );
+  MaterialPage<void> buildPage(BuildContext context, GoRouterState state) {
+    return const MaterialPage<void>(
+      key: _key,
+      child: MyPage(),
+    );
+  }
 }
 ```
 
@@ -378,14 +390,17 @@ Overriding the `buildPage` method is also useful for custom transitions:
 class FancyRoute extends GoRouteData {
   @override
   CustomTransitionPage<void> buildPage(
-          BuildContext context, GoRouterState state) =>
-      CustomTransitionPage<void>(
+    BuildContext context,
+    GoRouterState state,
+  ) {
+    return CustomTransitionPage<void>(
         key: state.pageKey,
         child: const MyPage(),
         transitionsBuilder: (BuildContext context, Animation<double> animation,
-                Animation<double> secondaryAnimation, Widget child) =>
-            RotationTransition(turns: animation, child: child),
-      );
+            Animation<double> secondaryAnimation, Widget child) {
+          return RotationTransition(turns: animation, child: child);
+        });
+  }
 }
 ```
 
