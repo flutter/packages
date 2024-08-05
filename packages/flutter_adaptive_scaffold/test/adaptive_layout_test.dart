@@ -79,12 +79,12 @@ void main() {
     expect(tester.getTopLeft(topNavigation), Offset.zero);
     expect(tester.getTopLeft(secondaryNavigation), const Offset(390, 10));
     expect(tester.getTopLeft(primaryNavigation), const Offset(0, 10));
-    expect(tester.getTopLeft(bottomNavigation), const Offset(0, 790));
+    expect(tester.getTopLeft(bottomNavigation), const Offset(0, 1990));
     expect(tester.getTopLeft(testBreakpoint), const Offset(10, 10));
-    expect(tester.getBottomRight(testBreakpoint), const Offset(200, 790));
+    expect(tester.getBottomRight(testBreakpoint), const Offset(200, 1990));
     expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(200, 10));
-    expect(
-        tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
+    expect(tester.getBottomRight(secondaryTestBreakpoint),
+        const Offset(390, 1990));
   });
 
   testWidgets('adaptive layout correct layout when body vertical',
@@ -95,12 +95,12 @@ void main() {
     expect(tester.getTopLeft(topNavigation), Offset.zero);
     expect(tester.getTopLeft(secondaryNavigation), const Offset(390, 10));
     expect(tester.getTopLeft(primaryNavigation), const Offset(0, 10));
-    expect(tester.getTopLeft(bottomNavigation), const Offset(0, 790));
+    expect(tester.getTopLeft(bottomNavigation), const Offset(0, 1990));
     expect(tester.getTopLeft(testBreakpoint), const Offset(10, 10));
-    expect(tester.getBottomRight(testBreakpoint), const Offset(390, 400));
-    expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(10, 400));
-    expect(
-        tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
+    expect(tester.getBottomRight(testBreakpoint), const Offset(390, 1000));
+    expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(10, 1000));
+    expect(tester.getBottomRight(secondaryTestBreakpoint),
+        const Offset(390, 1990));
   });
 
   testWidgets('adaptive layout correct layout when rtl',
@@ -111,12 +111,12 @@ void main() {
     expect(tester.getTopLeft(topNavigation), Offset.zero);
     expect(tester.getTopLeft(secondaryNavigation), const Offset(0, 10));
     expect(tester.getTopLeft(primaryNavigation), const Offset(390, 10));
-    expect(tester.getTopLeft(bottomNavigation), const Offset(0, 790));
+    expect(tester.getTopLeft(bottomNavigation), const Offset(0, 1990));
     expect(tester.getTopLeft(testBreakpoint), const Offset(200, 10));
-    expect(tester.getBottomRight(testBreakpoint), const Offset(390, 790));
+    expect(tester.getBottomRight(testBreakpoint), const Offset(390, 1990));
     expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(10, 10));
-    expect(
-        tester.getBottomRight(secondaryTestBreakpoint), const Offset(200, 790));
+    expect(tester.getBottomRight(secondaryTestBreakpoint),
+        const Offset(200, 1990));
   });
 
   testWidgets('adaptive layout correct layout when body ratio not default',
@@ -127,14 +127,14 @@ void main() {
     expect(tester.getTopLeft(topNavigation), Offset.zero);
     expect(tester.getTopLeft(secondaryNavigation), const Offset(390, 10));
     expect(tester.getTopLeft(primaryNavigation), const Offset(0, 10));
-    expect(tester.getTopLeft(bottomNavigation), const Offset(0, 790));
+    expect(tester.getTopLeft(bottomNavigation), const Offset(0, 1990));
     expect(tester.getTopLeft(testBreakpoint), const Offset(10, 10));
     expect(tester.getBottomRight(testBreakpoint),
-        offsetMoreOrLessEquals(const Offset(136.7, 790), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(136.7, 1990), epsilon: 1.0));
     expect(tester.getTopLeft(secondaryTestBreakpoint),
         offsetMoreOrLessEquals(const Offset(136.7, 10), epsilon: 1.0));
-    expect(
-        tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
+    expect(tester.getBottomRight(secondaryTestBreakpoint),
+        const Offset(390, 1990));
   });
 
   final Finder begin = find.byKey(const Key('0'));
@@ -273,42 +273,42 @@ void main() {
 
     expect(tester.getTopLeft(testBreakpoint), const Offset(1, 1));
     expect(tester.getBottomRight(testBreakpoint),
-        offsetMoreOrLessEquals(const Offset(395.8, 799), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(395.8, 1999), epsilon: 1.0));
     expect(tester.getTopLeft(secondaryTestBreakpoint),
         offsetMoreOrLessEquals(const Offset(395.8, 1.0), epsilon: 1.0));
     expect(tester.getBottomRight(secondaryTestBreakpoint),
-        offsetMoreOrLessEquals(const Offset(594.8, 799.0), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(594.8, 1999.0), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
 
     expect(tester.getTopLeft(testBreakpoint), const Offset(5, 5));
     expect(tester.getBottomRight(testBreakpoint),
-        offsetMoreOrLessEquals(const Offset(294.2, 795), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(294.2, 1995), epsilon: 1.0));
     expect(tester.getTopLeft(secondaryTestBreakpoint),
         offsetMoreOrLessEquals(const Offset(294.2, 5.0), epsilon: 1.0));
     expect(tester.getBottomRight(secondaryTestBreakpoint),
-        offsetMoreOrLessEquals(const Offset(489.2, 795.0), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(489.2, 1995.0), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
 
     expect(tester.getTopLeft(testBreakpoint), const Offset(9, 9));
     expect(tester.getBottomRight(testBreakpoint),
-        offsetMoreOrLessEquals(const Offset(201.7, 791), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(201.7, 1991), epsilon: 1.0));
     expect(tester.getTopLeft(secondaryTestBreakpoint),
         offsetMoreOrLessEquals(const Offset(201.7, 9.0), epsilon: 1.0));
     expect(tester.getBottomRight(secondaryTestBreakpoint),
-        offsetMoreOrLessEquals(const Offset(392.7, 791), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(392.7, 1991), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
     expect(tester.getTopLeft(testBreakpoint), const Offset(10, 10));
-    expect(tester.getBottomRight(testBreakpoint), const Offset(200, 790));
+    expect(tester.getBottomRight(testBreakpoint), const Offset(200, 1990));
     expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(200, 10));
-    expect(
-        tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
+    expect(tester.getBottomRight(secondaryTestBreakpoint),
+        const Offset(390, 1990));
   });
 
   testWidgets('adaptive layout can adjust animation duration',
@@ -348,7 +348,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
 
     expect(tester.getTopLeft(testBreakpoint), const Offset(10, 10));
-    expect(tester.getBottomRight(testBreakpoint), const Offset(200, 790));
+    expect(tester.getBottomRight(testBreakpoint), const Offset(200, 1990));
   });
 }
 
@@ -395,8 +395,21 @@ final Finder primaryNavigation =
 final Finder bottomNavigation =
     find.byKey(const Key('Bottom Navigation Small'));
 final Finder testBreakpoint = find.byKey(const Key('Test Breakpoint'));
+final Finder testBreakpoint400 = find.byKey(const Key('Test Breakpoint 400'));
+final Finder testBreakpoint800 = find.byKey(const Key('Test Breakpoint 800'));
+final Finder testBreakpoint1200 = find.byKey(const Key('Test Breakpoint 1200'));
+final Finder testBreakpoint1600 = find.byKey(const Key('Test Breakpoint 1600'));
+
 final Finder secondaryTestBreakpoint =
     find.byKey(const Key('Secondary Test Breakpoint'));
+final Finder secondaryTestBreakpoint400 =
+    find.byKey(const Key('Secondary Test Breakpoint 400'));
+final Finder secondaryTestBreakpoint800 =
+    find.byKey(const Key('Secondary Test Breakpoint 800'));
+final Finder secondaryTestBreakpoint1200 =
+    find.byKey(const Key('Secondary Test Breakpoint 1200'));
+final Finder secondaryTestBreakpoint1600 =
+    find.byKey(const Key('Secondary Test Breakpoint 1600'));
 
 Widget on(BuildContext _) {
   return const SizedBox(width: 10, height: 10);
@@ -483,19 +496,19 @@ Future<MediaQuery> layout({
               builder: (_) => Container(color: Colors.red),
             ),
             TestBreakpoint400(): SlotLayout.from(
-              key: const Key('Test Breakpoint 1'),
+              key: const Key('Test Breakpoint 400'),
               builder: (_) => Container(color: Colors.red),
             ),
             TestBreakpoint800(): SlotLayout.from(
-              key: const Key('Test Breakpoint 2'),
+              key: const Key('Test Breakpoint 800'),
               builder: (_) => Container(color: Colors.red),
             ),
             TestBreakpoint1200(): SlotLayout.from(
-              key: const Key('Test Breakpoint 3'),
+              key: const Key('Test Breakpoint 1200'),
               builder: (_) => Container(color: Colors.red),
             ),
             TestBreakpoint1600(): SlotLayout.from(
-              key: const Key('Test Breakpoint 4'),
+              key: const Key('Test Breakpoint 1600'),
               builder: (_) => Container(color: Colors.red),
             ),
           },
@@ -507,19 +520,19 @@ Future<MediaQuery> layout({
               builder: (_) => Container(color: Colors.blue),
             ),
             TestBreakpoint400(): SlotLayout.from(
-              key: const Key('Secondary Test Breakpoint 1'),
+              key: const Key('Secondary Test Breakpoint 400'),
               builder: (_) => Container(color: Colors.blue),
             ),
             TestBreakpoint800(): SlotLayout.from(
-              key: const Key('Secondary Test Breakpoint 2'),
+              key: const Key('Secondary Test Breakpoint 800'),
               builder: (_) => Container(color: Colors.blue),
             ),
             TestBreakpoint1200(): SlotLayout.from(
-              key: const Key('Secondary Test Breakpoint 3'),
+              key: const Key('Secondary Test Breakpoint 1200'),
               builder: (_) => Container(color: Colors.blue),
             ),
             TestBreakpoint1600(): SlotLayout.from(
-              key: const Key('Secondary Test Breakpoint 4'),
+              key: const Key('Secondary Test Breakpoint 1600'),
               builder: (_) => Container(color: Colors.blue),
             ),
           },
