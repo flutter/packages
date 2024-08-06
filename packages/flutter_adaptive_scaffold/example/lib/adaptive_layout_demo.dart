@@ -48,6 +48,9 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  final TextStyle headerColor =
+      const TextStyle(color: Color.fromARGB(255, 255, 201, 197));
+
   @override
   Widget build(BuildContext context) {
     final NavigationRailThemeData navRailTheme =
@@ -211,14 +214,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
               extended: true,
-              leading: const Row(
+              leading: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   Text(
                     'REPLY',
-                    style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
+                    style: headerColor,
                   ),
-                  Icon(Icons.menu_open)
+                  const Icon(Icons.menu_open)
                 ],
               ),
               destinations: destinations
@@ -244,14 +247,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
               extended: true,
-              leading: const Row(
+              leading: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   Text(
                     'REPLY',
-                    style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
+                    style: headerColor,
                   ),
-                  Icon(Icons.menu_open)
+                  const Icon(Icons.menu_open)
                 ],
               ),
               destinations: destinations
@@ -277,14 +280,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
               extended: true,
-              leading: const Row(
+              leading: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   Text(
                     'REPLY',
-                    style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
+                    style: headerColor,
                   ),
-                  Icon(Icons.menu_open)
+                  const Icon(Icons.menu_open)
                 ],
               ),
               destinations: destinations
