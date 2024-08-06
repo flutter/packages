@@ -5,6 +5,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
+import 'google_maps_flutter_ios.dart';
 import 'messages.g.dart';
 import 'serialization.dart';
 
@@ -127,5 +128,18 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   @override
   Future<bool> isTrafficEnabled({required int mapId}) async {
     return _inspectorProvider(mapId)!.isTrafficEnabled();
+  }
+
+  @override
+  Future<List<Cluster>> getClusters({
+    required int mapId,
+    required ClusterManagerId clusterManagerId,
+  }) async {
+    return (await _inspectorProvider(mapId)!
+            .getClusters(clusterManagerId.value))
+        // See comment in messages.dart for why the force unwrap is okay.
+        .map((PlatformCluster? cluster) =>
+            GoogleMapsFlutterIOS.clusterFromPlatformCluster(cluster!))
+        .toList();
   }
 }

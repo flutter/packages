@@ -66,6 +66,13 @@ class PlatformHeatmap {
   final Object json;
 }
 
+/// Pigeon equivalent of the ClusterManager class.
+class PlatformClusterManager {
+  PlatformClusterManager({required this.identifier});
+
+  final String identifier;
+}
+
 /// Pigeon equivalent of the Marker class.
 class PlatformMarker {
   PlatformMarker(this.json);
@@ -137,6 +144,24 @@ class PlatformLatLngBounds {
 
   final PlatformLatLng northeast;
   final PlatformLatLng southwest;
+}
+
+/// Pigeon equivalent of Cluster.
+class PlatformCluster {
+  PlatformCluster({
+    required this.clusterManagerId,
+    required this.position,
+    required this.bounds,
+    required this.markerIds,
+  });
+
+  final String clusterManagerId;
+  final PlatformLatLng position;
+  final PlatformLatLngBounds bounds;
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats the entries as non-nullable.
+  final List<String?> markerIds;
 }
 
 /// Pigeon equivalent of MapConfiguration.
@@ -212,6 +237,14 @@ abstract class MapsApi {
   @ObjCSelector('updateHeatmapsByAdding:changing:removing:')
   void updateHeatmaps(List<PlatformHeatmap?> toAdd,
       List<PlatformHeatmap?> toChange, List<String?> idsToRemove);
+
+  /// Updates the set of custer managers for clusters on the map.
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats the entries as non-nullable.
+  @ObjCSelector('updateClusterManagersByAdding:removing:')
+  void updateClusterManagers(
+      List<PlatformClusterManager?> toAdd, List<String?> idsToRemove);
 
   /// Updates the set of markers on the map.
   // TODO(stuartmorgan): Make the generic type non-nullable once supported.
@@ -354,6 +387,10 @@ abstract class MapsCallbackApi {
   @ObjCSelector('didTapCircleWithIdentifier:')
   void onCircleTap(String circleId);
 
+  /// Called when a marker cluster is tapped.
+  @ObjCSelector('didTapCluster:')
+  void onClusterTap(PlatformCluster cluster);
+
   /// Called when a polygon is tapped.
   @ObjCSelector('didTapPolygonWithIdentifier:')
   void onPolygonTap(String polygonId);
@@ -386,4 +423,9 @@ abstract class MapsInspectorApi {
   PlatformHeatmap? getHeatmapInfo(String heatmapId);
   @ObjCSelector('zoomRange')
   PlatformZoomRange getZoomRange();
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats the entries as non-nullable.
+  @ObjCSelector('clustersWithIdentifier:')
+  List<PlatformCluster?> getClusters(String clusterManagerId);
 }

@@ -34,6 +34,10 @@ extern FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(
 extern FGMPlatformCameraPosition *FGMGetPigeonCameraPositionForPosition(
     GMSCameraPosition *position);
 
+/// Converts a GMUStaticCluster to its Pigeon representation.
+extern FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
+                                               NSString *clusterManagerIdentifier);
+
 @interface FLTGoogleMapJSONConversions : NSObject
 
 extern NSString *const kHeatmapsToAddKey;
