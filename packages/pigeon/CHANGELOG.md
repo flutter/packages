@@ -3,6 +3,8 @@
 * Removes restriction on number of custom types.
 * [java] Fixes bug with multiple enums.
 * [java] Removes `Object` from generics.
+* [objc] Fixes bug with multiple enums per data class.
+* Updates `varPrefix` and `classMemberNamePrefix`.
 
 ## 21.1.0
 
