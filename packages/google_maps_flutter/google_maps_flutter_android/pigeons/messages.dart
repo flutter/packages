@@ -105,12 +105,12 @@ class PlatformMarker {
   });
 
   final double alpha;
-  final List<double> anchor;
+  final Float64List anchor;
   final bool consumeTapEvents;
   final bool draggable;
   final bool flat;
   final Object icon;
-  final Map<String, Object> infoWindow;
+  final Map<String?, Object?> infoWindow;
   final PlatformLatLng position;
   final double rotation;
   final bool visible;

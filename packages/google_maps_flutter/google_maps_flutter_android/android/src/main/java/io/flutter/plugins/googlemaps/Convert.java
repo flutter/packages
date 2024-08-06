@@ -825,6 +825,17 @@ class Convert {
     }
   }
 
+  static String interpretCircleOptions(Messages.PlatformCircle circle, CircleOptionsSink sink) {
+    sink.setConsumeTapEvents(circle.getConsumeTapEvents());
+    sink.setFillColor(circle.getFillColor().intValue());
+    sink.setStrokeColor(circle.getStrokeColor().intValue());
+    sink.setStrokeWidth(circle.getStrokeWidth());
+    sink.setZIndex(circle.getZIndex().floatValue());
+    sink.setCenter(toLatLng(circle.getCenter().toList()));
+    sink.setRadius(circle.getRadius());
+    return circle.getCircleId();
+  }
+
   static String interpretCircleOptions(Map<String, ?> data, CircleOptionsSink sink) {
     final Object consumeTapEvents = data.get("consumeTapEvents");
     if (consumeTapEvents != null) {

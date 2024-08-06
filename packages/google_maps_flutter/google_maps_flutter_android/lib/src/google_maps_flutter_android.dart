@@ -688,7 +688,17 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     // This cast is not ideal, but the Java code already assumes this format.
     // See the TODOs at the top of this file and on the 'json' field in
     // messages.dart.
-    return PlatformCircle(json: circle.toJson() as Map<String, Object?>);
+    return PlatformCircle(
+      consumeTapEvents: circle.consumeTapEvents,
+      fillColor: circle.fillColor.value,
+      strokeColor: circle.strokeColor.value,
+      visible: circle.visible,
+      strokeWidth: circle.strokeWidth,
+      zIndex: circle.zIndex.toDouble(),
+      center: _platformLatLngFromLatLng(circle.center),
+      radius: circle.radius,
+      circleId: circle.circleId.value,
+    );
   }
 
   static PlatformHeatmap _platformHeatmapFromHeatmap(Heatmap heatmap) {
@@ -708,7 +718,19 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     // This cast is not ideal, but the Java code already assumes this format.
     // See the TODOs at the top of this file and on the 'json' field in
     // messages.dart.
-    return PlatformMarker(json: marker.toJson() as Map<String, Object?>);
+    return PlatformMarker(
+      alpha: marker.alpha,
+      anchor: Float64List.fromList([marker.anchor.dx, marker.anchor.dy]),
+      consumeTapEvents: marker.consumeTapEvents,
+      draggable: marker.draggable,
+      flat: marker.flat,
+      icon: marker.icon,
+      infoWindow: marker.infoWindow.toJson() as Map<String?, Object?>,
+      position: _platformLatLngFromLatLng(marker.position),
+      rotation: marker.rotation,
+      visible: marker.visible,
+      zIndex: marker.zIndex,
+    );
   }
 
   static PlatformPolygon _platformPolygonFromPolygon(Polygon polygon) {
