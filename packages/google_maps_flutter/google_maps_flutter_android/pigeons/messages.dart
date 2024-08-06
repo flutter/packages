@@ -46,14 +46,27 @@ class PlatformCameraUpdate {
 
 /// Pigeon equivalent of the Circle class.
 class PlatformCircle {
-  PlatformCircle(this.json);
+  PlatformCircle({
+    required this.consumeTapEvents,
+    required this.fillColor,
+    required this.strokeColor,
+    required this.visible,
+    required this.strokeWidth,
+    required this.zIndex,
+    required this.center,
+    required this.radius,
+    required this.circleId,
+  });
 
-  /// The circle data, as JSON. This should only be set from
-  /// Circle.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Map<String?, Object?> json;
+  final bool consumeTapEvents;
+  final int fillColor;
+  final int strokeColor;
+  final bool visible;
+  final int strokeWidth;
+  final double zIndex;
+  final PlatformLatLng center;
+  final double radius;
+  final String circleId;
 }
 
 /// Pigeon equivalent of the Heatmap class.
@@ -77,14 +90,31 @@ class PlatformClusterManager {
 
 /// Pigeon equivalent of the Marker class.
 class PlatformMarker {
-  PlatformMarker(this.json);
+  PlatformMarker({
+    required this.alpha,
+    required this.anchor,
+    required this.consumeTapEvents,
+    required this.draggable,
+    required this.flat,
+    required this.icon,
+    required this.infoWindow,
+    required this.position,
+    required this.rotation,
+    required this.visible,
+    required this.zIndex,
+  });
 
-  /// The marker data, as JSON. This should only be set from
-  /// Marker.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Map<String?, Object?> json;
+  final double alpha;
+  final List<double> anchor;
+  final bool consumeTapEvents;
+  final bool draggable;
+  final bool flat;
+  final Object icon;
+  final Map<String, Object> infoWindow;
+  final PlatformLatLng position;
+  final double rotation;
+  final bool visible;
+  final double zIndex;
 }
 
 /// Pigeon equivalent of the Polygon class.
