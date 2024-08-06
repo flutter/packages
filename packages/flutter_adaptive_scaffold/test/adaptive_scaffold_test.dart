@@ -14,13 +14,13 @@ void main() {
       (WidgetTester tester) async {
     final Finder smallBody = find.byKey(const Key('smallBody'));
     final Finder body = find.byKey(const Key('body'));
-    final Finder expandedBody = find.byKey(const Key('expandedBody'));
+    final Finder mediumLargeBody = find.byKey(const Key('mediumLargeBody'));
     final Finder largeBody = find.byKey(const Key('largeBody'));
     final Finder extraLargeBody = find.byKey(const Key('extraLargeBody'));
 
     final Finder smallSBody = find.byKey(const Key('smallSBody'));
     final Finder sBody = find.byKey(const Key('sBody'));
-    final Finder expandedSBody = find.byKey(const Key('expandedSBody'));
+    final Finder mediumLargeSBody = find.byKey(const Key('mediumLargeSBody'));
     final Finder largeSBody = find.byKey(const Key('largeSBody'));
     final Finder extraLargeSBody = find.byKey(const Key('extraLargeSBody'));
 
@@ -59,19 +59,19 @@ void main() {
     expect(tester.getTopLeft(primaryNav), Offset.zero);
     expect(tester.getBottomRight(primaryNav), const Offset(88, 2000));
 
-    await tester.binding.setSurfaceSize(SimulatedLayout.expanded.size);
-    await tester.pumpWidget(SimulatedLayout.expanded.app());
+    await tester.binding.setSurfaceSize(SimulatedLayout.mediumLarge.size);
+    await tester.pumpWidget(SimulatedLayout.mediumLarge.app());
     await tester.pumpAndSettle();
 
     expect(body, findsNothing);
-    expect(expandedBody, findsOneWidget);
+    expect(mediumLargeBody, findsOneWidget);
     expect(sBody, findsNothing);
-    expect(expandedSBody, findsOneWidget);
+    expect(mediumLargeSBody, findsOneWidget);
     expect(primaryNav, findsNothing);
     expect(primaryNav1, findsOneWidget);
 
-    expect(tester.getTopLeft(expandedBody), const Offset(208, 0));
-    expect(tester.getTopLeft(expandedSBody), const Offset(500, 0));
+    expect(tester.getTopLeft(mediumLargeBody), const Offset(208, 0));
+    expect(tester.getTopLeft(mediumLargeSBody), const Offset(500, 0));
     expect(tester.getTopLeft(primaryNav1), Offset.zero);
     expect(tester.getBottomRight(primaryNav1), const Offset(208, 2000));
 
@@ -79,9 +79,9 @@ void main() {
     await tester.pumpWidget(SimulatedLayout.large.app());
     await tester.pumpAndSettle();
 
-    expect(expandedBody, findsNothing);
+    expect(mediumLargeBody, findsNothing);
     expect(largeBody, findsOneWidget);
-    expect(expandedSBody, findsNothing);
+    expect(mediumLargeSBody, findsNothing);
     expect(largeSBody, findsOneWidget);
     expect(primaryNav1, findsNothing);
     expect(primaryNav2, findsOneWidget);
@@ -247,7 +247,7 @@ void main() {
         await tester.pumpWidget(app);
         await tester.pumpAndSettle();
 
-        if (region.size == SimulatedLayout.expanded.size) {
+        if (region.size == SimulatedLayout.mediumLarge.size) {
           expect(find.text('leading_extended'), findsOneWidget);
           expect(find.text('leading_unextended'), findsNothing);
           expect(find.text('trailing'), findsOneWidget);
@@ -496,19 +496,19 @@ void main() {
   );
 
   testWidgets(
-    'when view in expanded screen, navigation rail must be visible as per theme data values.',
+    'when view in mediumLarge screen, navigation rail must be visible as per theme data values.',
     (WidgetTester tester) async {
-      await tester.binding.setSurfaceSize(SimulatedLayout.expanded.size);
-      await tester.pumpWidget(SimulatedLayout.expanded.app());
+      await tester.binding.setSurfaceSize(SimulatedLayout.mediumLarge.size);
+      await tester.pumpWidget(SimulatedLayout.mediumLarge.app());
       await tester.pumpAndSettle();
 
-      final Finder primaryNavigationExpanded = find.byKey(
+      final Finder primaryNavigationMediumLarge = find.byKey(
         const Key('primaryNavigation1'),
       );
-      expect(primaryNavigationExpanded, findsOneWidget);
+      expect(primaryNavigationMediumLarge, findsOneWidget);
 
       final Finder navigationRailFinder = find.descendant(
-        of: primaryNavigationExpanded,
+        of: primaryNavigationMediumLarge,
         matching: find.byType(NavigationRail),
       );
       expect(navigationRailFinder, findsOneWidget);
@@ -748,8 +748,8 @@ void main() {
       expect(appBar, findsOneWidget);
       expect(drawer, findsNothing);
 
-      await tester.binding.setSurfaceSize(SimulatedLayout.expanded.size);
-      await tester.pumpWidget(SimulatedLayout.expanded
+      await tester.binding.setSurfaceSize(SimulatedLayout.mediumLarge.size);
+      await tester.pumpWidget(SimulatedLayout.mediumLarge
           .app(appBarBreakpoint: AppBarAlwaysOnBreakpoint()));
       expect(drawer, findsNothing);
       await tester.pumpAndSettle();

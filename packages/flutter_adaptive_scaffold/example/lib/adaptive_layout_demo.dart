@@ -203,8 +203,8 @@ class _MyHomePageState extends State<MyHomePage> {
               unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
             ),
           ),
-          Breakpoints.expanded: SlotLayout.from(
-            key: const Key('Primary Navigation Expanded'),
+          Breakpoints.mediumLarge: SlotLayout.from(
+            key: const Key('Primary Navigation MediumLarge'),
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               selectedIndex: selectedNavigation,
@@ -320,8 +320,8 @@ class _MyHomePageState extends State<MyHomePage> {
             builder: (_) =>
                 GridView.count(crossAxisCount: 2, children: children),
           ),
-          Breakpoints.expanded: SlotLayout.from(
-            key: const Key('Body Expanded'),
+          Breakpoints.mediumLarge: SlotLayout.from(
+            key: const Key('Body MediumLarge'),
             builder: (_) =>
                 GridView.count(crossAxisCount: 3, children: children),
           ),

@@ -58,7 +58,7 @@ enum _SlotIds {
 ///         key: const Key('Primary Navigation Medium'),
 ///         builder: (_) => AdaptiveScaffold.toNavigationRail(destinations: destinations),
 ///       ),
-///       Breakpoints.expanded: SlotLayout.from(
+///       Breakpoints.mediumLarge: SlotLayout.from(
 ///         key: const Key('Primary Navigation Expanded'),
 ///         inAnimation: leftOutIn,
 ///         builder: (_) => AdaptiveScaffold.toNavigationRail(extended: true, destinations: destinations),

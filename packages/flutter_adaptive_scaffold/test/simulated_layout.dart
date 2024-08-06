@@ -82,18 +82,18 @@ class TestScaffoldState extends State<TestScaffold> {
       internalAnimations: widget.isAnimated,
       smallBreakpoint: TestBreakpoint0(),
       mediumBreakpoint: TestBreakpoint800(),
-      expandedBreakpoint: TestBreakpoint1000(),
+      mediumLargeBreakpoint: TestBreakpoint1000(),
       largeBreakpoint: TestBreakpoint1200(),
       extraLargeBreakpoint: TestBreakpoint1600(),
       destinations: TestScaffold.destinations,
       smallBody: (_) => Container(color: Colors.red),
       body: (_) => Container(color: Colors.green),
-      expandedBody: (_) => Container(color: Colors.blue),
+      mediumLargeBody: (_) => Container(color: Colors.blue),
       largeBody: (_) => Container(color: Colors.yellow),
       extraLargeBody: (_) => Container(color: Colors.purple),
       smallSecondaryBody: (_) => Container(color: Colors.red),
       secondaryBody: (_) => Container(color: Colors.green),
-      expandedSecondaryBody: (_) => Container(color: Colors.blue),
+      mediumLargeSecondaryBody: (_) => Container(color: Colors.blue),
       largeSecondaryBody: (_) => Container(color: Colors.yellow),
       extraLargeSecondaryBody: (_) => Container(color: Colors.purple),
       leadingExtendedNavRail: const Text('leading_extended'),
@@ -106,7 +106,7 @@ class TestScaffoldState extends State<TestScaffold> {
 enum SimulatedLayout {
   small(width: 400, navSlotKey: 'bottomNavigation'),
   medium(width: 800, navSlotKey: 'primaryNavigation'),
-  expanded(width: 1000, navSlotKey: 'primaryNavigation1'),
+  mediumLarge(width: 1000, navSlotKey: 'primaryNavigation1'),
   large(width: 1200, navSlotKey: 'primaryNavigation2'),
   extraLarge(width: 1600, navSlotKey: 'primaryNavigation3');
 
@@ -192,16 +192,16 @@ enum SimulatedLayout {
                 key: const Key('Breakpoints.mediumDesktop'),
                 builder: (BuildContext context) => Container(),
               ),
-              Breakpoints.expanded: SlotLayout.from(
-                key: const Key('Breakpoints.expanded'),
+              Breakpoints.mediumLarge: SlotLayout.from(
+                key: const Key('Breakpoints.mediumLarge'),
                 builder: (BuildContext context) => Container(),
               ),
-              Breakpoints.expandedMobile: SlotLayout.from(
-                key: const Key('Breakpoints.expandedMobile'),
+              Breakpoints.mediumLargeMobile: SlotLayout.from(
+                key: const Key('Breakpoints.mediumLargeMobile'),
                 builder: (BuildContext context) => Container(),
               ),
-              Breakpoints.expandedDesktop: SlotLayout.from(
-                key: const Key('Breakpoints.expandedDesktop'),
+              Breakpoints.mediumLargeDesktop: SlotLayout.from(
+                key: const Key('Breakpoints.mediumLargeDesktop'),
                 builder: (BuildContext context) => Container(),
               ),
               Breakpoints.large: SlotLayout.from(
