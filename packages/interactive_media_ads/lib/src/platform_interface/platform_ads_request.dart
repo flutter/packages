@@ -5,9 +5,9 @@
 import 'platform_content_progress_provider.dart';
 
 /// An object containing the data used to request ads from the server.
-class AdsRequest {
-  /// Creates an [AdsRequest].
-  AdsRequest({
+class PlatformAdsRequest {
+  /// Creates an [PlatformAdsRequest].
+  PlatformAdsRequest({
     required this.adTagUrl,
     this.contentDuration,
     this.contentProgressProvider,

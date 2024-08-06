@@ -72,7 +72,7 @@ base class IOSAdsLoader extends PlatformAdsLoader {
   }
 
   @override
-  Future<void> requestAds(AdsRequest request) async {
+  Future<void> requestAds(PlatformAdsRequest request) async {
     return _adsLoader.requestAds(_iosParams._proxy.newIMAAdsRequest(
       adTagUrl: request.adTagUrl,
       adDisplayContainer:

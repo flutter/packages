@@ -82,7 +82,7 @@ final class TestPlatformAdsLoader extends PlatformAdsLoader {
 
   Future<void> Function() onContentComplete;
 
-  Future<void> Function(AdsRequest request) onRequestAds;
+  Future<void> Function(PlatformAdsRequest request) onRequestAds;
 
   @override
   Future<void> contentComplete() async {
@@ -90,7 +90,7 @@ final class TestPlatformAdsLoader extends PlatformAdsLoader {
   }
 
   @override
-  Future<void> requestAds(AdsRequest request) async {
+  Future<void> requestAds(PlatformAdsRequest request) async {
     return onRequestAds(request);
   }
 }

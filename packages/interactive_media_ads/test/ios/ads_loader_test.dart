@@ -92,7 +92,7 @@ void main() {
         ),
       );
 
-      await loader.requestAds(AdsRequest(adTagUrl: adTag));
+      await loader.requestAds(PlatformAdsRequest(adTagUrl: adTag));
 
       verify(mockLoader.requestAds(any));
     });

@@ -106,7 +106,7 @@ void main() {
       );
 
       await adsLoader.requestAds(
-        AdsRequest(
+        PlatformAdsRequest(
           adTagUrl: 'url',
           contentDuration: const Duration(seconds: 1),
         ),

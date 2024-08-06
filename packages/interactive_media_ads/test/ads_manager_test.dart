@@ -56,7 +56,7 @@ AdsManager createAdsManager(PlatformAdsManager platformManager) {
     onCreatePlatformAdsLoader: (PlatformAdsLoaderCreationParams params) {
       return TestPlatformAdsLoader(params,
           onContentComplete: () async {},
-          onRequestAds: (AdsRequest request) async {});
+          onRequestAds: (PlatformAdsRequest request) async {});
     },
     onCreatePlatformAdsManagerDelegate:
         (PlatformAdsManagerDelegateCreationParams params) {

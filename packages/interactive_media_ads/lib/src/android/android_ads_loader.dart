@@ -79,7 +79,7 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
   }
 
   @override
-  Future<void> requestAds(AdsRequest request) async {
+  Future<void> requestAds(PlatformAdsRequest request) async {
     final ima.AdsLoader adsLoader = await _adsLoaderFuture;
 
     final ima.AdsRequest androidRequest = await _sdkFactory.createAdsRequest();

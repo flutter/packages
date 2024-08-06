@@ -5,6 +5,7 @@
 export 'src/ad_display_container.dart';
 export 'src/ads_loader.dart';
 export 'src/ads_manager_delegate.dart';
+export 'src/ads_request.dart';
 export 'src/android/android_interactive_media_ads.dart'
     show AndroidInteractiveMediaAds;
 export 'src/ios/ios_interactive_media_ads.dart' show IOSInteractiveMediaAds;
@@ -16,5 +17,4 @@ export 'src/platform_interface/platform_interface.dart'
         AdErrorType,
         AdEvent,
         AdEventType,
-        AdsLoadErrorData,
-        AdsRequest;
+        AdsLoadErrorData;
