@@ -729,6 +729,16 @@ class MockCamera2CameraInfo extends _i1.Mock implements _i26.Camera2CameraInfo {
           ),
         )),
       ) as _i17.Future<String>);
+
+  @override
+  _i17.Future<int> getSensorOrientation() => (super.noSuchMethod(
+        Invocation.method(
+          #getSensorOrientation,
+          [],
+        ),
+        returnValue: _i17.Future<int>.value(0),
+        returnValueForMissingStub: _i17.Future<int>.value(0),
+      ) as _i17.Future<int>);
 }
 
 /// A class which mocks [CameraImageData].
@@ -1400,6 +1410,16 @@ class MockTestSystemServicesHostApi extends _i1.Mock
           ),
         ),
       ) as String);
+
+  @override
+  bool isPreviewPreTransformed() => (super.noSuchMethod(
+        Invocation.method(
+          #isPreviewPreTransformed,
+          [],
+        ),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
 }
 
 /// A class which mocks [VideoCapture].

@@ -108,21 +108,21 @@ class FlutterSearchReplies {
   }
 }
 
-class _ApiCodec extends StandardMessageCodec {
-  const _ApiCodec();
+class _PigeonCodec extends StandardMessageCodec {
+  const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is FlutterSearchReplies) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is FlutterSearchReply) {
+    if (value is FlutterSearchRequest) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is FlutterSearchRequest) {
+    } else if (value is FlutterSearchReply) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else if (value is FlutterSearchRequests) {
       buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is FlutterSearchReplies) {
+      buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -132,14 +132,14 @@ class _ApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return FlutterSearchReplies.decode(readValue(buffer)!);
       case 129:
-        return FlutterSearchReply.decode(readValue(buffer)!);
-      case 130:
         return FlutterSearchRequest.decode(readValue(buffer)!);
+      case 130:
+        return FlutterSearchReply.decode(readValue(buffer)!);
       case 131:
         return FlutterSearchRequests.decode(readValue(buffer)!);
+      case 132:
+        return FlutterSearchReplies.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -156,7 +156,7 @@ class Api {
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec = _ApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String __pigeon_messageChannelSuffix;
 

@@ -57,7 +57,7 @@ class MakeDepsPathBasedCommand extends PackageCommand {
   // Includes a reference to the docs so that reviewers who aren't familiar with
   // the federated plugin change process don't think it's a mistake.
   static const String _dependencyOverrideWarningComment =
-      '# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.\n'
+      '# FOR TESTING AND INITIAL REVIEW ONLY. $kDoNotLandWarning.\n'
       '# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins';
 
   @override

@@ -16,10 +16,48 @@ Supported data types are `int`, `double`, `bool`, `String` and `List<String>`.
 | **Support** | SDK 16+ | 12.0+ | Any   | 10.14+ | Any | Any         |
 
 ## Usage
-To use this plugin, add `shared_preferences` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/platform-integration/platform-channels).
 
-### Examples
+## SharedPreferences vs SharedPreferencesAsync vs SharedPreferencesWithCache
+
+Starting with version 2.3.0 there are three available APIs that can be used in this package.
+[SharedPreferences] is a legacy API that will be deprecated in the future. We highly encourage
+any new users of the plugin to use the newer [SharedPreferencesAsync] or [SharedPreferencesWithCache] 
+APIs instead.
+
+Consider migrating existing code to one of the new APIs. See [below](#migrating-from-sharedpreferences-to-sharedpreferencesasyncwithcache) 
+for more information. 
+
+### Cache and async or sync getters
+
+[SharedPreferences] and [SharedPreferencesWithCache] both use a local cache to store preferences.
+This allows for synchronous get calls after the initial setup call fetches the preferences from the platform.
+However, The cache can present issues as well:
+
+- If you are using `shared_preferences` from multiple isolates, since each
+  isolate has its own singleton and cache.
+- If you are using `shared_preferences` in multiple engine instances (including
+  those created by plugins that create background contexts on mobile devices,
+  such as `firebase_messaging`).
+- If you are modifying the underlying system preference store through something
+  other than the `shared_preferences` plugin, such as native code.
+
+This can be remedied by calling the `reload` method before using a getter as needed. 
+If most get calls need a reload, consider using [SharedPreferencesAsync] instead.
+
+[SharedPreferencesAsync] does not utilize a local cache which causes all calls to be asynchronous
+calls to the host platforms storage solution. This can be less performant, but should always provide the
+latest data stored on the native platform regardless of what process was used to store it.
+
+### Android platform storage
+
+The [SharedPreferences] API uses the native [Android Shared Preferences](https://developer.android.com/reference/android/content/SharedPreferences) tool to store data.
+
+The [SharedPreferencesAsync] and [SharedPreferencesWithCache] APIs use [DataStore Preferences](https://developer.android.com/topic/libraries/architecture/datastore) to store data.
+
+## Examples
 Here are small examples that show you how to use the API.
+
+### SharedPreferences
 
 #### Write data
 <?code-excerpt "readme_excerpts.dart (Write)"?>
@@ -61,31 +99,66 @@ final List<String>? items = prefs.getStringList('items');
 await prefs.remove('counter');
 ```
 
-### Multiple instances
+### SharedPreferencesAsync
+<?code-excerpt "readme_excerpts.dart (Async)"?>
+```dart
+final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
 
-In order to make preference lookup via the `get*` methods synchronous,
-`shared_preferences` uses a cache on the Dart side, which is normally only
-updated by the `set*` methods. Usually this is an implementation detail that
-does not affect callers, but it can cause issues in a few cases:
-- If you are using `shared_preferences` from multiple isolates, since each
-  isolate has its own `SharedPreferences` singleton and cache.
-- If you are using `shared_preferences` in multiple engine instances (including
-  those created by plugins that create background contexts on mobile devices,
-  such as `firebase_messaging`).
-- If you are modifying the underlying system preference store through something
-  other than the `shared_preferences` plugin, such as native code.
+await asyncPrefs.setBool('repeat', true);
+await asyncPrefs.setString('action', 'Start');
 
-If you need to read a preference value that may have been changed by anything
-other than the `SharedPreferences` instance you are reading it from, you should
-call `reload()` on the instance before reading from it to update its cache with
-any external changes.
+final bool? repeat = await asyncPrefs.getBool('repeat');
+final String? action = await asyncPrefs.getString('action');
 
-If this is problematic for your use case, you can thumbs up
-[this issue](https://github.com/flutter/flutter/issues/123078) to express
-interest in APIs that provide direct (asynchronous) access to the underlying
-preference store, and/or subscribe to it for updates.
+await asyncPrefs.remove('repeat');
+
+// Any time a filter option is included as a method parameter, strongly consider
+// using it to avoid potentially unwanted side effects.
+await asyncPrefs.clear(allowList: <String>{'action', 'repeat'});
+```
+
+### SharedPreferencesWithCache
+<?code-excerpt "readme_excerpts.dart (WithCache)"?>
+```dart
+final SharedPreferencesWithCache prefsWithCache =
+    await SharedPreferencesWithCache.create(
+  cacheOptions: const SharedPreferencesWithCacheOptions(
+    // When an allowlist is included, any keys that aren't included cannot be used.
+    allowList: <String>{'repeat', 'action'},
+  ),
+);
+
+await prefsWithCache.setBool('repeat', true);
+await prefsWithCache.setString('action', 'Start');
+
+final bool? repeat = prefsWithCache.getBool('repeat');
+final String? action = prefsWithCache.getString('action');
+
+await prefsWithCache.remove('repeat');
+
+// Since the filter options are set at creation, they aren't needed during clear.
+await prefsWithCache.clear();
+```
+
 
 ### Migration and Prefixes
+
+#### Migrating from SharedPreferences to SharedPreferencesAsync/WithCache
+
+Currently, migration from the older [SharedPreferences] API to the newer 
+[SharedPreferencesAsync] or [SharedPreferencesWithCache] will need to be done manually.
+
+A simple form of this could be fetching all preferences with [SharedPreferences] and adding 
+them back using [SharedPreferencesAsync], then storing a preference indicating that the 
+migration has been done so that future runs don't repeat the migration.
+
+If a migration is not performed before moving to [SharedPreferencesAsync] or [SharedPreferencesWithCache],
+most (if not all) data will be lost. Android preferences are stored in a new system, and all platforms
+are likely to have some form of enforced prefix (see below) that would not transfer automatically.
+
+A tool to make this process easier can be tracked here: https://github.com/flutter/flutter/issues/150732
+
+#### Adding, Removing, or changing prefixes on SharedPreferences
 
 By default, the `SharedPreferences` plugin will only read (and write) preferences
 that begin with the prefix `flutter.`. This is all handled internally by the plugin
@@ -124,11 +197,11 @@ SharedPreferences.setMockInitialValues(values);
 
 ### Storage location by platform
 
-| Platform | Location |
-| :--- | :--- |
-| Android | SharedPreferences |
-| iOS | NSUserDefaults |
-| Linux | In the XDG_DATA_HOME directory |
-| macOS | NSUserDefaults |
-| Web | LocalStorage |
-| Windows | In the roaming AppData directory |
+| Platform | SharedPreferences | SharedPreferencesAsync/WithCache |
+| :--- | :--- | :--- |
+| Android | SharedPreferences | DataStore Preferences |
+| iOS | NSUserDefaults | NSUserDefaults |
+| Linux | In the XDG_DATA_HOME directory | In the XDG_DATA_HOME directory |
+| macOS | NSUserDefaults | NSUserDefaults |
+| Web | LocalStorage | LocalStorage |
+| Windows | In the roaming AppData directory | In the roaming AppData directory |

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
 import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -23,10 +24,10 @@ const double _acceptableDelta = 0.01;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late gmaps.GMap map;
+  late gmaps.Map map;
 
   setUp(() {
-    map = gmaps.GMap(createDivElement());
+    map = gmaps.Map(createDivElement());
   });
 
   group('CirclesController', () {
@@ -108,10 +109,12 @@ void main() {
 
       final gmaps.Circle circle = controller.circles.values.first.circle!;
 
-      expect(circle.get('fillColor'), '#fabada');
-      expect(circle.get('fillOpacity'), closeTo(0.5, _acceptableDelta));
-      expect(circle.get('strokeColor'), '#c0ffee');
-      expect(circle.get('strokeOpacity'), closeTo(1, _acceptableDelta));
+      expect((circle.get('fillColor')! as JSString).toDart, '#fabada');
+      expect((circle.get('fillOpacity')! as JSNumber).toDartDouble,
+          closeTo(0.5, _acceptableDelta));
+      expect((circle.get('strokeColor')! as JSString).toDart, '#c0ffee');
+      expect((circle.get('strokeOpacity')! as JSNumber).toDartDouble,
+          closeTo(1, _acceptableDelta));
     });
   });
 
@@ -197,10 +200,12 @@ void main() {
 
       final gmaps.Polygon polygon = controller.polygons.values.first.polygon!;
 
-      expect(polygon.get('fillColor'), '#fabada');
-      expect(polygon.get('fillOpacity'), closeTo(0.5, _acceptableDelta));
-      expect(polygon.get('strokeColor'), '#c0ffee');
-      expect(polygon.get('strokeOpacity'), closeTo(1, _acceptableDelta));
+      expect((polygon.get('fillColor')! as JSString).toDart, '#fabada');
+      expect((polygon.get('fillOpacity')! as JSNumber).toDartDouble,
+          closeTo(0.5, _acceptableDelta));
+      expect((polygon.get('strokeColor')! as JSString).toDart, '#c0ffee');
+      expect((polygon.get('strokeOpacity')! as JSNumber).toDartDouble,
+          closeTo(1, _acceptableDelta));
     });
 
     testWidgets('Handle Polygons with holes', (WidgetTester tester) async {
@@ -253,7 +258,7 @@ void main() {
       final gmaps.Polygon? polygon = controller.polygons.values.first.polygon;
       final gmaps.LatLng pointInHole = gmaps.LatLng(28.632, -68.401);
 
-      expect(geometry.Poly.containsLocation(pointInHole, polygon), false);
+      expect(geometry.poly.containsLocation(pointInHole, polygon!), false);
     });
 
     testWidgets('Hole Path gets reversed to display correctly',
@@ -279,7 +284,7 @@ void main() {
       controller.addPolygons(polygons);
 
       final gmaps.MVCArray<gmaps.MVCArray<gmaps.LatLng?>?> paths =
-          controller.polygons.values.first.polygon!.paths!;
+          controller.polygons.values.first.polygon!.paths;
 
       expect(paths.getAt(1)?.getAt(0)?.lat, 28.745);
       expect(paths.getAt(1)?.getAt(1)?.lat, 29.57);
@@ -365,8 +370,9 @@ void main() {
 
       final gmaps.Polyline line = controller.lines.values.first.line!;
 
-      expect(line.get('strokeColor'), '#fabada');
-      expect(line.get('strokeOpacity'), closeTo(0.5, _acceptableDelta));
+      expect((line.get('strokeColor')! as JSString).toDart, '#fabada');
+      expect((line.get('strokeOpacity')! as JSNumber).toDartDouble,
+          closeTo(0.5, _acceptableDelta));
     });
   });
 }

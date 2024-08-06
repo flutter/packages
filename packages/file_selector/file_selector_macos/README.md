@@ -26,5 +26,5 @@ or read/write access:
 depending on your use case.
 
 [1]: https://pub.dev/packages/file_selector
-[2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[2]: https://flutter.dev/to/endorsed-federated-plugin
 [3]: https://flutter.dev/desktop#entitlements-and-the-app-sandbox

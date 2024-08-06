@@ -11,7 +11,7 @@ class ListTests: XCTestCase {
   func testListInList() throws {
     let inside = TestMessage(testList: [1, 2, 3])
     let top = TestMessage(testList: [inside])
-    let binaryMessenger = EchoBinaryMessenger(codec: FlutterSmallApiCodec.shared)
+    let binaryMessenger = EchoBinaryMessenger(codec: CoreTestsPigeonCodec.shared)
     let api = FlutterSmallApi(binaryMessenger: binaryMessenger)
 
     let expectation = XCTestExpectation(description: "callback")

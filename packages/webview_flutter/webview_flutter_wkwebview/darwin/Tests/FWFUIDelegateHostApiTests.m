@@ -4,7 +4,9 @@
 
 @import XCTest;
 @import webview_flutter_wkwebview;
+#if __has_include(<webview_flutter_wkwebview/webview-umbrella.h>)
 @import webview_flutter_wkwebview.Test;
+#endif
 
 #if TARGET_OS_OSX
 @import FlutterMacOS;

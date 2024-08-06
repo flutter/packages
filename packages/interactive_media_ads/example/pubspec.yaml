@@ -13,6 +13,7 @@ dependencies:
     sdk: flutter
   interactive_media_ads:
     path: ../
+  video_player: ^2.8.6
 
 dev_dependencies:
   espresso: ^0.2.0

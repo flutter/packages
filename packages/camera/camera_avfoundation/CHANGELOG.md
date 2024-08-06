@@ -1,3 +1,31 @@
+## 0.9.17+3
+
+* Fixes deallocation of camera on dispose.
+
+## 0.9.17+2
+
+* Fixes stopVideoRecording waiting indefinitely and lag at start of video.
+
+## 0.9.17+1
+
+* Fixes a crash due to appending sample buffers when readyForMoreMediaData is NO
+
+## 0.9.17
+
+* Adds Swift Package Manager compatibility.
+
+## 0.9.16+3
+
+* Removes unused `maxVideoDuration` code.
+
+## 0.9.16+2
+
+* Fixes regression taking a picture in torch mode.
+
+## 0.9.16+1
+
+* Fixes sample times not being numeric after pause/resume.
+
 ## 0.9.16
 
 * Converts Dart-to-host communcation to Pigeon.

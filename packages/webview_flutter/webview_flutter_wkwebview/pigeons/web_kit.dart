@@ -8,10 +8,13 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'lib/src/common/web_kit.g.dart',
     dartTestOut: 'test/src/common/test_web_kit.g.dart',
-    objcHeaderOut: 'darwin/Classes/FWFGeneratedWebKitApis.h',
-    objcSourceOut: 'darwin/Classes/FWFGeneratedWebKitApis.m',
+    objcHeaderOut:
+        'darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/include/webview_flutter_wkwebview/FWFGeneratedWebKitApis.h',
+    objcSourceOut:
+        'darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/FWFGeneratedWebKitApis.m',
     objcOptions: ObjcOptions(
-      headerIncludePath: 'FWFGeneratedWebKitApis.h',
+      headerIncludePath:
+          './include/webview_flutter_wkwebview/FWFGeneratedWebKitApis.h',
       prefix: 'FWF',
     ),
     copyrightHeader: 'pigeons/copyright.txt',

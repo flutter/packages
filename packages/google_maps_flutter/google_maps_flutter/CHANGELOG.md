@@ -1,6 +1,11 @@
-## NEXT
+## 2.7.1
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Updates the example app to use TLHC mode, per current package guidance.
+
+## 2.7.0
+
+* Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 2.6.1
 

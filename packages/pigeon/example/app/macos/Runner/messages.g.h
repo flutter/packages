@@ -39,8 +39,8 @@ typedef NS_ENUM(NSUInteger, PGNCode) {
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *data;
 @end
 
-/// The codec used by PGNExampleHostApi.
-NSObject<FlutterMessageCodec> *PGNExampleHostApiGetCodec(void);
+/// The codec used by all APIs.
+NSObject<FlutterMessageCodec> *PGNGetMessagesCodec(void);
 
 @protocol PGNExampleHostApi
 /// @return `nil` only when `error != nil`.
@@ -59,9 +59,6 @@ extern void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
 extern void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                              NSObject<PGNExampleHostApi> *_Nullable api,
                                              NSString *messageChannelSuffix);
-
-/// The codec used by PGNMessageFlutterApi.
-NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void);
 
 @interface PGNMessageFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;

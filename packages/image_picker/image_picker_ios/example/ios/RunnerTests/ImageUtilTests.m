@@ -5,7 +5,9 @@
 #import "ImagePickerTestImages.h"
 
 @import image_picker_ios;
+#if __has_include(<image_picker_ios/image_picker_ios-umbrella.h>)
 @import image_picker_ios.Test;
+#endif
 @import XCTest;
 
 // Corner colors of test image scaled to 3x2. Format is "R G B A".

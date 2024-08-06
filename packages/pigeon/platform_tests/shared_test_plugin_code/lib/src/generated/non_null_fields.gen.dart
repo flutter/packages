@@ -107,7 +107,7 @@ class NonNullFieldSearchReply {
       error,
       indices,
       extraData,
-      type.index,
+      type,
     ];
   }
 
@@ -118,24 +118,27 @@ class NonNullFieldSearchReply {
       error: result[1]! as String,
       indices: (result[2] as List<Object?>?)!.cast<int?>(),
       extraData: result[3]! as ExtraData,
-      type: ReplyType.values[result[4]! as int],
+      type: result[4]! as ReplyType,
     );
   }
 }
 
-class _NonNullFieldHostApiCodec extends StandardMessageCodec {
-  const _NonNullFieldHostApiCodec();
+class _PigeonCodec extends StandardMessageCodec {
+  const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is ExtraData) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is NonNullFieldSearchReply) {
+    if (value is NonNullFieldSearchRequest) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is NonNullFieldSearchRequest) {
+    } else if (value is ExtraData) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
+    } else if (value is NonNullFieldSearchReply) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is ReplyType) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
     }
@@ -144,12 +147,15 @@ class _NonNullFieldHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return ExtraData.decode(readValue(buffer)!);
       case 129:
-        return NonNullFieldSearchReply.decode(readValue(buffer)!);
-      case 130:
         return NonNullFieldSearchRequest.decode(readValue(buffer)!);
+      case 130:
+        return ExtraData.decode(readValue(buffer)!);
+      case 131:
+        return NonNullFieldSearchReply.decode(readValue(buffer)!);
+      case 132:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : ReplyType.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -167,8 +173,7 @@ class NonNullFieldHostApi {
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _NonNullFieldHostApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String __pigeon_messageChannelSuffix;
 
@@ -203,42 +208,8 @@ class NonNullFieldHostApi {
   }
 }
 
-class _NonNullFieldFlutterApiCodec extends StandardMessageCodec {
-  const _NonNullFieldFlutterApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is ExtraData) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is NonNullFieldSearchReply) {
-      buffer.putUint8(129);
-      writeValue(buffer, value.encode());
-    } else if (value is NonNullFieldSearchRequest) {
-      buffer.putUint8(130);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return ExtraData.decode(readValue(buffer)!);
-      case 129:
-        return NonNullFieldSearchReply.decode(readValue(buffer)!);
-      case 130:
-        return NonNullFieldSearchRequest.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 abstract class NonNullFieldFlutterApi {
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _NonNullFieldFlutterApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   NonNullFieldSearchReply search(NonNullFieldSearchRequest request);
 

@@ -1,3 +1,7 @@
+## 2.7.1
+
+- Fixes readme typos and uses code excerpts.
+
 ## 2.7.0
 
 - Adds an example and a test with `onExit`.
