@@ -307,13 +307,13 @@ const String instanceManagerClassName = '${classNamePrefix}InstanceManager';
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
-const String classMemberNamePrefix = 'pigeonField_';
+const String classMemberNamePrefix = 'pigeon_';
 
 /// Prefix for  variable names not defined by the user.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
-const String varNamePrefix = 'pigeon_';
+const String varNamePrefix = 'pigeonVar_';
 
 /// Prefixes that are not allowed for any names of any types or methods.
 const List<String> disallowedPrefixes = <String>[

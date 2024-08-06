@@ -86,11 +86,11 @@ struct MessageData {
   var data: [String?: String?]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeon_list: [Any?]) -> MessageData? {
-    let name: String? = nilOrValue(pigeon_list[0])
-    let description: String? = nilOrValue(pigeon_list[1])
-    let code = pigeon_list[2] as! Code
-    let data = pigeon_list[3] as! [String?: String?]
+  static func fromList(_ pigeonVar_list: [Any?]) -> MessageData? {
+    let name: String? = nilOrValue(pigeonVar_list[0])
+    let description: String? = nilOrValue(pigeonVar_list[1])
+    let code = pigeonVar_list[2] as! Code
+    let data = pigeonVar_list[3] as! [String?: String?]
 
     return MessageData(
       name: name,

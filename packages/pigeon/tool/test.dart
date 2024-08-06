@@ -127,6 +127,6 @@ ${parser.usage}''');
     testsToRun,
     runGeneration: !argResults.wasParsed(_noGen),
     runFormat: argResults.wasParsed(_format),
-    overflow: argResults.wasParsed(_overflow),
+    includeOverflow: argResults.wasParsed(_overflow),
   );
 }

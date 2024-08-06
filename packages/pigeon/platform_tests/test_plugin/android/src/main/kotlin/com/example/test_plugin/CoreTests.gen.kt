@@ -87,25 +87,25 @@ data class AllTypes(
 ) {
   companion object {
     @Suppress("LocalVariableName")
-    fun fromList(pigeon_list: List<Any?>): AllTypes {
-      val aBool = pigeon_list[0] as Boolean
-      val anInt = pigeon_list[1].let { num -> if (num is Int) num.toLong() else num as Long }
-      val anInt64 = pigeon_list[2].let { num -> if (num is Int) num.toLong() else num as Long }
-      val aDouble = pigeon_list[3] as Double
-      val aByteArray = pigeon_list[4] as ByteArray
-      val a4ByteArray = pigeon_list[5] as IntArray
-      val a8ByteArray = pigeon_list[6] as LongArray
-      val aFloatArray = pigeon_list[7] as DoubleArray
-      val anEnum = pigeon_list[8] as AnEnum
-      val anotherEnum = pigeon_list[9] as AnotherEnum
-      val aString = pigeon_list[10] as String
-      val anObject = pigeon_list[11] as Any
-      val list = pigeon_list[12] as List<Any?>
-      val stringList = pigeon_list[13] as List<String?>
-      val intList = pigeon_list[14] as List<Long?>
-      val doubleList = pigeon_list[15] as List<Double?>
-      val boolList = pigeon_list[16] as List<Boolean?>
-      val map = pigeon_list[17] as Map<Any, Any?>
+    fun fromList(pigeonVar_list: List<Any?>): AllTypes {
+      val aBool = pigeonVar_list[0] as Boolean
+      val anInt = pigeonVar_list[1].let { num -> if (num is Int) num.toLong() else num as Long }
+      val anInt64 = pigeonVar_list[2].let { num -> if (num is Int) num.toLong() else num as Long }
+      val aDouble = pigeonVar_list[3] as Double
+      val aByteArray = pigeonVar_list[4] as ByteArray
+      val a4ByteArray = pigeonVar_list[5] as IntArray
+      val a8ByteArray = pigeonVar_list[6] as LongArray
+      val aFloatArray = pigeonVar_list[7] as DoubleArray
+      val anEnum = pigeonVar_list[8] as AnEnum
+      val anotherEnum = pigeonVar_list[9] as AnotherEnum
+      val aString = pigeonVar_list[10] as String
+      val anObject = pigeonVar_list[11] as Any
+      val list = pigeonVar_list[12] as List<Any?>
+      val stringList = pigeonVar_list[13] as List<String?>
+      val intList = pigeonVar_list[14] as List<Long?>
+      val doubleList = pigeonVar_list[15] as List<Double?>
+      val boolList = pigeonVar_list[16] as List<Boolean?>
+      val map = pigeonVar_list[17] as Map<Any, Any?>
       return AllTypes(
           aBool,
           anInt,
@@ -184,32 +184,32 @@ data class AllNullableTypes(
 ) {
   companion object {
     @Suppress("LocalVariableName")
-    fun fromList(pigeon_list: List<Any?>): AllNullableTypes {
-      val aNullableBool = pigeon_list[0] as Boolean?
+    fun fromList(pigeonVar_list: List<Any?>): AllNullableTypes {
+      val aNullableBool = pigeonVar_list[0] as Boolean?
       val aNullableInt =
-          pigeon_list[1].let { num -> if (num is Int) num.toLong() else num as Long? }
+          pigeonVar_list[1].let { num -> if (num is Int) num.toLong() else num as Long? }
       val aNullableInt64 =
-          pigeon_list[2].let { num -> if (num is Int) num.toLong() else num as Long? }
-      val aNullableDouble = pigeon_list[3] as Double?
-      val aNullableByteArray = pigeon_list[4] as ByteArray?
-      val aNullable4ByteArray = pigeon_list[5] as IntArray?
-      val aNullable8ByteArray = pigeon_list[6] as LongArray?
-      val aNullableFloatArray = pigeon_list[7] as DoubleArray?
-      val nullableNestedList = pigeon_list[8] as List<List<Boolean?>?>?
-      val nullableMapWithAnnotations = pigeon_list[9] as Map<String?, String?>?
-      val nullableMapWithObject = pigeon_list[10] as Map<String?, Any?>?
-      val aNullableEnum = pigeon_list[11] as AnEnum?
-      val anotherNullableEnum = pigeon_list[12] as AnotherEnum?
-      val aNullableString = pigeon_list[13] as String?
-      val aNullableObject = pigeon_list[14]
-      val allNullableTypes = pigeon_list[15] as AllNullableTypes?
-      val list = pigeon_list[16] as List<Any?>?
-      val stringList = pigeon_list[17] as List<String?>?
-      val intList = pigeon_list[18] as List<Long?>?
-      val doubleList = pigeon_list[19] as List<Double?>?
-      val boolList = pigeon_list[20] as List<Boolean?>?
-      val nestedClassList = pigeon_list[21] as List<AllNullableTypes?>?
-      val map = pigeon_list[22] as Map<Any, Any?>?
+          pigeonVar_list[2].let { num -> if (num is Int) num.toLong() else num as Long? }
+      val aNullableDouble = pigeonVar_list[3] as Double?
+      val aNullableByteArray = pigeonVar_list[4] as ByteArray?
+      val aNullable4ByteArray = pigeonVar_list[5] as IntArray?
+      val aNullable8ByteArray = pigeonVar_list[6] as LongArray?
+      val aNullableFloatArray = pigeonVar_list[7] as DoubleArray?
+      val nullableNestedList = pigeonVar_list[8] as List<List<Boolean?>?>?
+      val nullableMapWithAnnotations = pigeonVar_list[9] as Map<String?, String?>?
+      val nullableMapWithObject = pigeonVar_list[10] as Map<String?, Any?>?
+      val aNullableEnum = pigeonVar_list[11] as AnEnum?
+      val anotherNullableEnum = pigeonVar_list[12] as AnotherEnum?
+      val aNullableString = pigeonVar_list[13] as String?
+      val aNullableObject = pigeonVar_list[14]
+      val allNullableTypes = pigeonVar_list[15] as AllNullableTypes?
+      val list = pigeonVar_list[16] as List<Any?>?
+      val stringList = pigeonVar_list[17] as List<String?>?
+      val intList = pigeonVar_list[18] as List<Long?>?
+      val doubleList = pigeonVar_list[19] as List<Double?>?
+      val boolList = pigeonVar_list[20] as List<Boolean?>?
+      val nestedClassList = pigeonVar_list[21] as List<AllNullableTypes?>?
+      val map = pigeonVar_list[22] as Map<Any, Any?>?
       return AllNullableTypes(
           aNullableBool,
           aNullableInt,
@@ -297,30 +297,30 @@ data class AllNullableTypesWithoutRecursion(
 ) {
   companion object {
     @Suppress("LocalVariableName")
-    fun fromList(pigeon_list: List<Any?>): AllNullableTypesWithoutRecursion {
-      val aNullableBool = pigeon_list[0] as Boolean?
+    fun fromList(pigeonVar_list: List<Any?>): AllNullableTypesWithoutRecursion {
+      val aNullableBool = pigeonVar_list[0] as Boolean?
       val aNullableInt =
-          pigeon_list[1].let { num -> if (num is Int) num.toLong() else num as Long? }
+          pigeonVar_list[1].let { num -> if (num is Int) num.toLong() else num as Long? }
       val aNullableInt64 =
-          pigeon_list[2].let { num -> if (num is Int) num.toLong() else num as Long? }
-      val aNullableDouble = pigeon_list[3] as Double?
-      val aNullableByteArray = pigeon_list[4] as ByteArray?
-      val aNullable4ByteArray = pigeon_list[5] as IntArray?
-      val aNullable8ByteArray = pigeon_list[6] as LongArray?
-      val aNullableFloatArray = pigeon_list[7] as DoubleArray?
-      val nullableNestedList = pigeon_list[8] as List<List<Boolean?>?>?
-      val nullableMapWithAnnotations = pigeon_list[9] as Map<String?, String?>?
-      val nullableMapWithObject = pigeon_list[10] as Map<String?, Any?>?
-      val aNullableEnum = pigeon_list[11] as AnEnum?
-      val anotherNullableEnum = pigeon_list[12] as AnotherEnum?
-      val aNullableString = pigeon_list[13] as String?
-      val aNullableObject = pigeon_list[14]
-      val list = pigeon_list[15] as List<Any?>?
-      val stringList = pigeon_list[16] as List<String?>?
-      val intList = pigeon_list[17] as List<Long?>?
-      val doubleList = pigeon_list[18] as List<Double?>?
-      val boolList = pigeon_list[19] as List<Boolean?>?
-      val map = pigeon_list[20] as Map<Any, Any?>?
+          pigeonVar_list[2].let { num -> if (num is Int) num.toLong() else num as Long? }
+      val aNullableDouble = pigeonVar_list[3] as Double?
+      val aNullableByteArray = pigeonVar_list[4] as ByteArray?
+      val aNullable4ByteArray = pigeonVar_list[5] as IntArray?
+      val aNullable8ByteArray = pigeonVar_list[6] as LongArray?
+      val aNullableFloatArray = pigeonVar_list[7] as DoubleArray?
+      val nullableNestedList = pigeonVar_list[8] as List<List<Boolean?>?>?
+      val nullableMapWithAnnotations = pigeonVar_list[9] as Map<String?, String?>?
+      val nullableMapWithObject = pigeonVar_list[10] as Map<String?, Any?>?
+      val aNullableEnum = pigeonVar_list[11] as AnEnum?
+      val anotherNullableEnum = pigeonVar_list[12] as AnotherEnum?
+      val aNullableString = pigeonVar_list[13] as String?
+      val aNullableObject = pigeonVar_list[14]
+      val list = pigeonVar_list[15] as List<Any?>?
+      val stringList = pigeonVar_list[16] as List<String?>?
+      val intList = pigeonVar_list[17] as List<Long?>?
+      val doubleList = pigeonVar_list[18] as List<Double?>?
+      val boolList = pigeonVar_list[19] as List<Boolean?>?
+      val map = pigeonVar_list[20] as Map<Any, Any?>?
       return AllNullableTypesWithoutRecursion(
           aNullableBool,
           aNullableInt,
@@ -389,10 +389,10 @@ data class AllClassesWrapper(
 ) {
   companion object {
     @Suppress("LocalVariableName")
-    fun fromList(pigeon_list: List<Any?>): AllClassesWrapper {
-      val allNullableTypes = pigeon_list[0] as AllNullableTypes
-      val allNullableTypesWithoutRecursion = pigeon_list[1] as AllNullableTypesWithoutRecursion?
-      val allTypes = pigeon_list[2] as AllTypes?
+    fun fromList(pigeonVar_list: List<Any?>): AllClassesWrapper {
+      val allNullableTypes = pigeonVar_list[0] as AllNullableTypes
+      val allNullableTypesWithoutRecursion = pigeonVar_list[1] as AllNullableTypesWithoutRecursion?
+      val allTypes = pigeonVar_list[2] as AllTypes?
       return AllClassesWrapper(allNullableTypes, allNullableTypesWithoutRecursion, allTypes)
     }
   }
@@ -414,8 +414,8 @@ data class AllClassesWrapper(
 data class TestMessage(val testList: List<Any?>? = null) {
   companion object {
     @Suppress("LocalVariableName")
-    fun fromList(pigeon_list: List<Any?>): TestMessage {
-      val testList = pigeon_list[0] as List<Any?>?
+    fun fromList(pigeonVar_list: List<Any?>): TestMessage {
+      val testList = pigeonVar_list[0] as List<Any?>?
       return TestMessage(testList)
     }
   }

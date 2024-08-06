@@ -110,26 +110,27 @@ struct AllTypes {
   var map: [AnyHashable: Any?]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeon_list: [Any?]) -> AllTypes? {
-    let aBool = pigeon_list[0] as! Bool
-    let anInt = pigeon_list[1] is Int64 ? pigeon_list[1] as! Int64 : Int64(pigeon_list[1] as! Int32)
+  static func fromList(_ pigeonVar_list: [Any?]) -> AllTypes? {
+    let aBool = pigeonVar_list[0] as! Bool
+    let anInt =
+      pigeonVar_list[1] is Int64 ? pigeonVar_list[1] as! Int64 : Int64(pigeonVar_list[1] as! Int32)
     let anInt64 =
-      pigeon_list[2] is Int64 ? pigeon_list[2] as! Int64 : Int64(pigeon_list[2] as! Int32)
-    let aDouble = pigeon_list[3] as! Double
-    let aByteArray = pigeon_list[4] as! FlutterStandardTypedData
-    let a4ByteArray = pigeon_list[5] as! FlutterStandardTypedData
-    let a8ByteArray = pigeon_list[6] as! FlutterStandardTypedData
-    let aFloatArray = pigeon_list[7] as! FlutterStandardTypedData
-    let anEnum = pigeon_list[8] as! AnEnum
-    let anotherEnum = pigeon_list[9] as! AnotherEnum
-    let aString = pigeon_list[10] as! String
-    let anObject = pigeon_list[11]!
-    let list = pigeon_list[12] as! [Any?]
-    let stringList = pigeon_list[13] as! [String?]
-    let intList = pigeon_list[14] as! [Int64?]
-    let doubleList = pigeon_list[15] as! [Double?]
-    let boolList = pigeon_list[16] as! [Bool?]
-    let map = pigeon_list[17] as! [AnyHashable: Any?]
+      pigeonVar_list[2] is Int64 ? pigeonVar_list[2] as! Int64 : Int64(pigeonVar_list[2] as! Int32)
+    let aDouble = pigeonVar_list[3] as! Double
+    let aByteArray = pigeonVar_list[4] as! FlutterStandardTypedData
+    let a4ByteArray = pigeonVar_list[5] as! FlutterStandardTypedData
+    let a8ByteArray = pigeonVar_list[6] as! FlutterStandardTypedData
+    let aFloatArray = pigeonVar_list[7] as! FlutterStandardTypedData
+    let anEnum = pigeonVar_list[8] as! AnEnum
+    let anotherEnum = pigeonVar_list[9] as! AnotherEnum
+    let aString = pigeonVar_list[10] as! String
+    let anObject = pigeonVar_list[11]!
+    let list = pigeonVar_list[12] as! [Any?]
+    let stringList = pigeonVar_list[13] as! [String?]
+    let intList = pigeonVar_list[14] as! [Int64?]
+    let doubleList = pigeonVar_list[15] as! [Double?]
+    let boolList = pigeonVar_list[16] as! [Bool?]
+    let map = pigeonVar_list[17] as! [AnyHashable: Any?]
 
     return AllTypes(
       aBool: aBool,
@@ -254,36 +255,38 @@ class AllNullableTypes {
   var map: [AnyHashable: Any?]?
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeon_list: [Any?]) -> AllNullableTypes? {
-    let aNullableBool: Bool? = nilOrValue(pigeon_list[0])
+  static func fromList(_ pigeonVar_list: [Any?]) -> AllNullableTypes? {
+    let aNullableBool: Bool? = nilOrValue(pigeonVar_list[0])
     let aNullableInt: Int64? =
-      isNullish(pigeon_list[1])
+      isNullish(pigeonVar_list[1])
       ? nil
-      : (pigeon_list[1] is Int64? ? pigeon_list[1] as! Int64? : Int64(pigeon_list[1] as! Int32))
+      : (pigeonVar_list[1] is Int64?
+        ? pigeonVar_list[1] as! Int64? : Int64(pigeonVar_list[1] as! Int32))
     let aNullableInt64: Int64? =
-      isNullish(pigeon_list[2])
+      isNullish(pigeonVar_list[2])
       ? nil
-      : (pigeon_list[2] is Int64? ? pigeon_list[2] as! Int64? : Int64(pigeon_list[2] as! Int32))
-    let aNullableDouble: Double? = nilOrValue(pigeon_list[3])
-    let aNullableByteArray: FlutterStandardTypedData? = nilOrValue(pigeon_list[4])
-    let aNullable4ByteArray: FlutterStandardTypedData? = nilOrValue(pigeon_list[5])
-    let aNullable8ByteArray: FlutterStandardTypedData? = nilOrValue(pigeon_list[6])
-    let aNullableFloatArray: FlutterStandardTypedData? = nilOrValue(pigeon_list[7])
-    let nullableNestedList: [[Bool?]?]? = nilOrValue(pigeon_list[8])
-    let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(pigeon_list[9])
-    let nullableMapWithObject: [String?: Any?]? = nilOrValue(pigeon_list[10])
-    let aNullableEnum: AnEnum? = nilOrValue(pigeon_list[11])
-    let anotherNullableEnum: AnotherEnum? = nilOrValue(pigeon_list[12])
-    let aNullableString: String? = nilOrValue(pigeon_list[13])
-    let aNullableObject: Any? = pigeon_list[14]
-    let allNullableTypes: AllNullableTypes? = nilOrValue(pigeon_list[15])
-    let list: [Any?]? = nilOrValue(pigeon_list[16])
-    let stringList: [String?]? = nilOrValue(pigeon_list[17])
-    let intList: [Int64?]? = nilOrValue(pigeon_list[18])
-    let doubleList: [Double?]? = nilOrValue(pigeon_list[19])
-    let boolList: [Bool?]? = nilOrValue(pigeon_list[20])
-    let nestedClassList: [AllNullableTypes?]? = nilOrValue(pigeon_list[21])
-    let map: [AnyHashable: Any?]? = nilOrValue(pigeon_list[22])
+      : (pigeonVar_list[2] is Int64?
+        ? pigeonVar_list[2] as! Int64? : Int64(pigeonVar_list[2] as! Int32))
+    let aNullableDouble: Double? = nilOrValue(pigeonVar_list[3])
+    let aNullableByteArray: FlutterStandardTypedData? = nilOrValue(pigeonVar_list[4])
+    let aNullable4ByteArray: FlutterStandardTypedData? = nilOrValue(pigeonVar_list[5])
+    let aNullable8ByteArray: FlutterStandardTypedData? = nilOrValue(pigeonVar_list[6])
+    let aNullableFloatArray: FlutterStandardTypedData? = nilOrValue(pigeonVar_list[7])
+    let nullableNestedList: [[Bool?]?]? = nilOrValue(pigeonVar_list[8])
+    let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(pigeonVar_list[9])
+    let nullableMapWithObject: [String?: Any?]? = nilOrValue(pigeonVar_list[10])
+    let aNullableEnum: AnEnum? = nilOrValue(pigeonVar_list[11])
+    let anotherNullableEnum: AnotherEnum? = nilOrValue(pigeonVar_list[12])
+    let aNullableString: String? = nilOrValue(pigeonVar_list[13])
+    let aNullableObject: Any? = pigeonVar_list[14]
+    let allNullableTypes: AllNullableTypes? = nilOrValue(pigeonVar_list[15])
+    let list: [Any?]? = nilOrValue(pigeonVar_list[16])
+    let stringList: [String?]? = nilOrValue(pigeonVar_list[17])
+    let intList: [Int64?]? = nilOrValue(pigeonVar_list[18])
+    let doubleList: [Double?]? = nilOrValue(pigeonVar_list[19])
+    let boolList: [Bool?]? = nilOrValue(pigeonVar_list[20])
+    let nestedClassList: [AllNullableTypes?]? = nilOrValue(pigeonVar_list[21])
+    let map: [AnyHashable: Any?]? = nilOrValue(pigeonVar_list[22])
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -369,34 +372,36 @@ struct AllNullableTypesWithoutRecursion {
   var map: [AnyHashable: Any?]? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeon_list: [Any?]) -> AllNullableTypesWithoutRecursion? {
-    let aNullableBool: Bool? = nilOrValue(pigeon_list[0])
+  static func fromList(_ pigeonVar_list: [Any?]) -> AllNullableTypesWithoutRecursion? {
+    let aNullableBool: Bool? = nilOrValue(pigeonVar_list[0])
     let aNullableInt: Int64? =
-      isNullish(pigeon_list[1])
+      isNullish(pigeonVar_list[1])
       ? nil
-      : (pigeon_list[1] is Int64? ? pigeon_list[1] as! Int64? : Int64(pigeon_list[1] as! Int32))
+      : (pigeonVar_list[1] is Int64?
+        ? pigeonVar_list[1] as! Int64? : Int64(pigeonVar_list[1] as! Int32))
     let aNullableInt64: Int64? =
-      isNullish(pigeon_list[2])
+      isNullish(pigeonVar_list[2])
       ? nil
-      : (pigeon_list[2] is Int64? ? pigeon_list[2] as! Int64? : Int64(pigeon_list[2] as! Int32))
-    let aNullableDouble: Double? = nilOrValue(pigeon_list[3])
-    let aNullableByteArray: FlutterStandardTypedData? = nilOrValue(pigeon_list[4])
-    let aNullable4ByteArray: FlutterStandardTypedData? = nilOrValue(pigeon_list[5])
-    let aNullable8ByteArray: FlutterStandardTypedData? = nilOrValue(pigeon_list[6])
-    let aNullableFloatArray: FlutterStandardTypedData? = nilOrValue(pigeon_list[7])
-    let nullableNestedList: [[Bool?]?]? = nilOrValue(pigeon_list[8])
-    let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(pigeon_list[9])
-    let nullableMapWithObject: [String?: Any?]? = nilOrValue(pigeon_list[10])
-    let aNullableEnum: AnEnum? = nilOrValue(pigeon_list[11])
-    let anotherNullableEnum: AnotherEnum? = nilOrValue(pigeon_list[12])
-    let aNullableString: String? = nilOrValue(pigeon_list[13])
-    let aNullableObject: Any? = pigeon_list[14]
-    let list: [Any?]? = nilOrValue(pigeon_list[15])
-    let stringList: [String?]? = nilOrValue(pigeon_list[16])
-    let intList: [Int64?]? = nilOrValue(pigeon_list[17])
-    let doubleList: [Double?]? = nilOrValue(pigeon_list[18])
-    let boolList: [Bool?]? = nilOrValue(pigeon_list[19])
-    let map: [AnyHashable: Any?]? = nilOrValue(pigeon_list[20])
+      : (pigeonVar_list[2] is Int64?
+        ? pigeonVar_list[2] as! Int64? : Int64(pigeonVar_list[2] as! Int32))
+    let aNullableDouble: Double? = nilOrValue(pigeonVar_list[3])
+    let aNullableByteArray: FlutterStandardTypedData? = nilOrValue(pigeonVar_list[4])
+    let aNullable4ByteArray: FlutterStandardTypedData? = nilOrValue(pigeonVar_list[5])
+    let aNullable8ByteArray: FlutterStandardTypedData? = nilOrValue(pigeonVar_list[6])
+    let aNullableFloatArray: FlutterStandardTypedData? = nilOrValue(pigeonVar_list[7])
+    let nullableNestedList: [[Bool?]?]? = nilOrValue(pigeonVar_list[8])
+    let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(pigeonVar_list[9])
+    let nullableMapWithObject: [String?: Any?]? = nilOrValue(pigeonVar_list[10])
+    let aNullableEnum: AnEnum? = nilOrValue(pigeonVar_list[11])
+    let anotherNullableEnum: AnotherEnum? = nilOrValue(pigeonVar_list[12])
+    let aNullableString: String? = nilOrValue(pigeonVar_list[13])
+    let aNullableObject: Any? = pigeonVar_list[14]
+    let list: [Any?]? = nilOrValue(pigeonVar_list[15])
+    let stringList: [String?]? = nilOrValue(pigeonVar_list[16])
+    let intList: [Int64?]? = nilOrValue(pigeonVar_list[17])
+    let doubleList: [Double?]? = nilOrValue(pigeonVar_list[18])
+    let boolList: [Bool?]? = nilOrValue(pigeonVar_list[19])
+    let map: [AnyHashable: Any?]? = nilOrValue(pigeonVar_list[20])
 
     return AllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
@@ -462,11 +467,11 @@ struct AllClassesWrapper {
   var allTypes: AllTypes? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeon_list: [Any?]) -> AllClassesWrapper? {
-    let allNullableTypes = pigeon_list[0] as! AllNullableTypes
+  static func fromList(_ pigeonVar_list: [Any?]) -> AllClassesWrapper? {
+    let allNullableTypes = pigeonVar_list[0] as! AllNullableTypes
     let allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion? = nilOrValue(
-      pigeon_list[1])
-    let allTypes: AllTypes? = nilOrValue(pigeon_list[2])
+      pigeonVar_list[1])
+    let allTypes: AllTypes? = nilOrValue(pigeonVar_list[2])
 
     return AllClassesWrapper(
       allNullableTypes: allNullableTypes,
@@ -490,8 +495,8 @@ struct TestMessage {
   var testList: [Any?]? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeon_list: [Any?]) -> TestMessage? {
-    let testList: [Any?]? = nilOrValue(pigeon_list[0])
+  static func fromList(_ pigeonVar_list: [Any?]) -> TestMessage? {
+    let testList: [Any?]? = nilOrValue(pigeonVar_list[0])
 
     return TestMessage(
       testList: testList

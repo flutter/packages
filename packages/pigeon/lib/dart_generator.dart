@@ -756,7 +756,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 
     // Each API has a private codec instance used by every host method,
     // constructor, or non-static field.
-    final String codecInstanceName = '${varNamePrefix}codec${api.name}';
+    final String codecInstanceName = '_${varNamePrefix}codec${api.name}';
 
     // AST class used by code_builder to generate the code.
     final cb.Class proxyApi = cb.Class(
@@ -1894,8 +1894,8 @@ if (${varNamePrefix}replyList == null) {
                   if (!field.isStatic) ...<cb.Code>[
                     cb.Code(
                       'final $type $instanceName = $type.${classMemberNamePrefix}detached(\n'
-                      '  pigeon_binaryMessenger: pigeon_binaryMessenger,\n'
-                      '  pigeon_instanceManager: pigeon_instanceManager,\n'
+                      '  ${classMemberNamePrefix}binaryMessenger: ${classMemberNamePrefix}binaryMessenger,\n'
+                      '  ${classMemberNamePrefix}instanceManager: ${classMemberNamePrefix}instanceManager,\n'
                       ');',
                     ),
                     cb.Code('final $codecName $_pigeonChannelCodec =\n'

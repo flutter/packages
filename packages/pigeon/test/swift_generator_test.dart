@@ -51,7 +51,7 @@ void main() {
     expect(code, contains('struct Foobar'));
     expect(code, contains('var field1: Int64? = nil'));
     expect(code,
-        contains('static func fromList(_ pigeon_list: [Any?]) -> Foobar?'));
+        contains('static func fromList(_ pigeonVar_list: [Any?]) -> Foobar?'));
     expect(code, contains('func toList() -> [Any?]'));
     expect(code, isNot(contains('if (')));
   });
@@ -123,7 +123,7 @@ void main() {
         code,
         contains(
             'let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)'));
-    expect(code, contains('enumResult = Foo(rawValue: enumResultAsInt)'));
+    expect(code, contains('return Foo(rawValue: enumResultAsInt)'));
     expect(code, contains('let fooArg = args[0] as! Foo'));
     expect(code, isNot(contains('if (')));
   });
@@ -582,8 +582,9 @@ void main() {
     expect(code, contains('struct Nested'));
     expect(code, contains('var nested: Nested? = nil'));
     expect(code,
-        contains('static func fromList(_ pigeon_list: [Any?]) -> Outer?'));
-    expect(code, contains('let nested: Nested? = nilOrValue(pigeon_list[0])'));
+        contains('static func fromList(_ pigeonVar_list: [Any?]) -> Outer?'));
+    expect(
+        code, contains('let nested: Nested? = nilOrValue(pigeonVar_list[0])'));
     expect(code, contains('func toList() -> [Any?]'));
     expect(code, isNot(contains('if (')));
     // Single-element list serializations should not have a trailing comma.

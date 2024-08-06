@@ -373,7 +373,7 @@ public class CoreTests {
 
     @Override
     public int hashCode() {
-      int pigeon_result =
+      int pigeonVar_result =
           Objects.hash(
               aBool,
               anInt,
@@ -389,11 +389,11 @@ public class CoreTests {
               doubleList,
               boolList,
               map);
-      pigeon_result = 31 * pigeon_result + Arrays.hashCode(aByteArray);
-      pigeon_result = 31 * pigeon_result + Arrays.hashCode(a4ByteArray);
-      pigeon_result = 31 * pigeon_result + Arrays.hashCode(a8ByteArray);
-      pigeon_result = 31 * pigeon_result + Arrays.hashCode(aFloatArray);
-      return pigeon_result;
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(a4ByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(a8ByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aFloatArray);
+      return pigeonVar_result;
     }
 
     public static final class Builder {
@@ -590,47 +590,47 @@ public class CoreTests {
       return toListResult;
     }
 
-    static @NonNull AllTypes fromList(@NonNull ArrayList<Object> pigeon_list) {
+    static @NonNull AllTypes fromList(@NonNull ArrayList<Object> pigeonVar_list) {
       AllTypes pigeonResult = new AllTypes();
-      Object aBool = pigeon_list.get(0);
+      Object aBool = pigeonVar_list.get(0);
       pigeonResult.setABool((Boolean) aBool);
-      Object anInt = pigeon_list.get(1);
+      Object anInt = pigeonVar_list.get(1);
       pigeonResult.setAnInt(
           (anInt == null) ? null : ((anInt instanceof Integer) ? (Integer) anInt : (Long) anInt));
-      Object anInt64 = pigeon_list.get(2);
+      Object anInt64 = pigeonVar_list.get(2);
       pigeonResult.setAnInt64(
           (anInt64 == null)
               ? null
               : ((anInt64 instanceof Integer) ? (Integer) anInt64 : (Long) anInt64));
-      Object aDouble = pigeon_list.get(3);
+      Object aDouble = pigeonVar_list.get(3);
       pigeonResult.setADouble((Double) aDouble);
-      Object aByteArray = pigeon_list.get(4);
+      Object aByteArray = pigeonVar_list.get(4);
       pigeonResult.setAByteArray((byte[]) aByteArray);
-      Object a4ByteArray = pigeon_list.get(5);
+      Object a4ByteArray = pigeonVar_list.get(5);
       pigeonResult.setA4ByteArray((int[]) a4ByteArray);
-      Object a8ByteArray = pigeon_list.get(6);
+      Object a8ByteArray = pigeonVar_list.get(6);
       pigeonResult.setA8ByteArray((long[]) a8ByteArray);
-      Object aFloatArray = pigeon_list.get(7);
+      Object aFloatArray = pigeonVar_list.get(7);
       pigeonResult.setAFloatArray((double[]) aFloatArray);
-      Object anEnum = pigeon_list.get(8);
+      Object anEnum = pigeonVar_list.get(8);
       pigeonResult.setAnEnum((AnEnum) anEnum);
-      Object anotherEnum = pigeon_list.get(9);
+      Object anotherEnum = pigeonVar_list.get(9);
       pigeonResult.setAnotherEnum((AnotherEnum) anotherEnum);
-      Object aString = pigeon_list.get(10);
+      Object aString = pigeonVar_list.get(10);
       pigeonResult.setAString((String) aString);
-      Object anObject = pigeon_list.get(11);
+      Object anObject = pigeonVar_list.get(11);
       pigeonResult.setAnObject(anObject);
-      Object list = pigeon_list.get(12);
+      Object list = pigeonVar_list.get(12);
       pigeonResult.setList((List<Object>) list);
-      Object stringList = pigeon_list.get(13);
+      Object stringList = pigeonVar_list.get(13);
       pigeonResult.setStringList((List<String>) stringList);
-      Object intList = pigeon_list.get(14);
+      Object intList = pigeonVar_list.get(14);
       pigeonResult.setIntList((List<Long>) intList);
-      Object doubleList = pigeon_list.get(15);
+      Object doubleList = pigeonVar_list.get(15);
       pigeonResult.setDoubleList((List<Double>) doubleList);
-      Object boolList = pigeon_list.get(16);
+      Object boolList = pigeonVar_list.get(16);
       pigeonResult.setBoolList((List<Boolean>) boolList);
-      Object map = pigeon_list.get(17);
+      Object map = pigeonVar_list.get(17);
       pigeonResult.setMap((Map<Object, Object>) map);
       return pigeonResult;
     }
@@ -908,7 +908,7 @@ public class CoreTests {
 
     @Override
     public int hashCode() {
-      int pigeon_result =
+      int pigeonVar_result =
           Objects.hash(
               aNullableBool,
               aNullableInt,
@@ -929,11 +929,11 @@ public class CoreTests {
               boolList,
               nestedClassList,
               map);
-      pigeon_result = 31 * pigeon_result + Arrays.hashCode(aNullableByteArray);
-      pigeon_result = 31 * pigeon_result + Arrays.hashCode(aNullable4ByteArray);
-      pigeon_result = 31 * pigeon_result + Arrays.hashCode(aNullable8ByteArray);
-      pigeon_result = 31 * pigeon_result + Arrays.hashCode(aNullableFloatArray);
-      return pigeon_result;
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullableByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable4ByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable8ByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullableFloatArray);
+      return pigeonVar_result;
     }
 
     public static final class Builder {
@@ -1181,61 +1181,61 @@ public class CoreTests {
       return toListResult;
     }
 
-    static @NonNull AllNullableTypes fromList(@NonNull ArrayList<Object> pigeon_list) {
+    static @NonNull AllNullableTypes fromList(@NonNull ArrayList<Object> pigeonVar_list) {
       AllNullableTypes pigeonResult = new AllNullableTypes();
-      Object aNullableBool = pigeon_list.get(0);
+      Object aNullableBool = pigeonVar_list.get(0);
       pigeonResult.setANullableBool((Boolean) aNullableBool);
-      Object aNullableInt = pigeon_list.get(1);
+      Object aNullableInt = pigeonVar_list.get(1);
       pigeonResult.setANullableInt(
           (aNullableInt == null)
               ? null
               : ((aNullableInt instanceof Integer) ? (Integer) aNullableInt : (Long) aNullableInt));
-      Object aNullableInt64 = pigeon_list.get(2);
+      Object aNullableInt64 = pigeonVar_list.get(2);
       pigeonResult.setANullableInt64(
           (aNullableInt64 == null)
               ? null
               : ((aNullableInt64 instanceof Integer)
                   ? (Integer) aNullableInt64
                   : (Long) aNullableInt64));
-      Object aNullableDouble = pigeon_list.get(3);
+      Object aNullableDouble = pigeonVar_list.get(3);
       pigeonResult.setANullableDouble((Double) aNullableDouble);
-      Object aNullableByteArray = pigeon_list.get(4);
+      Object aNullableByteArray = pigeonVar_list.get(4);
       pigeonResult.setANullableByteArray((byte[]) aNullableByteArray);
-      Object aNullable4ByteArray = pigeon_list.get(5);
+      Object aNullable4ByteArray = pigeonVar_list.get(5);
       pigeonResult.setANullable4ByteArray((int[]) aNullable4ByteArray);
-      Object aNullable8ByteArray = pigeon_list.get(6);
+      Object aNullable8ByteArray = pigeonVar_list.get(6);
       pigeonResult.setANullable8ByteArray((long[]) aNullable8ByteArray);
-      Object aNullableFloatArray = pigeon_list.get(7);
+      Object aNullableFloatArray = pigeonVar_list.get(7);
       pigeonResult.setANullableFloatArray((double[]) aNullableFloatArray);
-      Object nullableNestedList = pigeon_list.get(8);
+      Object nullableNestedList = pigeonVar_list.get(8);
       pigeonResult.setNullableNestedList((List<List<Boolean>>) nullableNestedList);
-      Object nullableMapWithAnnotations = pigeon_list.get(9);
+      Object nullableMapWithAnnotations = pigeonVar_list.get(9);
       pigeonResult.setNullableMapWithAnnotations((Map<String, String>) nullableMapWithAnnotations);
-      Object nullableMapWithObject = pigeon_list.get(10);
+      Object nullableMapWithObject = pigeonVar_list.get(10);
       pigeonResult.setNullableMapWithObject((Map<String, Object>) nullableMapWithObject);
-      Object aNullableEnum = pigeon_list.get(11);
+      Object aNullableEnum = pigeonVar_list.get(11);
       pigeonResult.setANullableEnum((AnEnum) aNullableEnum);
-      Object anotherNullableEnum = pigeon_list.get(12);
+      Object anotherNullableEnum = pigeonVar_list.get(12);
       pigeonResult.setAnotherNullableEnum((AnotherEnum) anotherNullableEnum);
-      Object aNullableString = pigeon_list.get(13);
+      Object aNullableString = pigeonVar_list.get(13);
       pigeonResult.setANullableString((String) aNullableString);
-      Object aNullableObject = pigeon_list.get(14);
+      Object aNullableObject = pigeonVar_list.get(14);
       pigeonResult.setANullableObject(aNullableObject);
-      Object allNullableTypes = pigeon_list.get(15);
+      Object allNullableTypes = pigeonVar_list.get(15);
       pigeonResult.setAllNullableTypes((AllNullableTypes) allNullableTypes);
-      Object list = pigeon_list.get(16);
+      Object list = pigeonVar_list.get(16);
       pigeonResult.setList((List<Object>) list);
-      Object stringList = pigeon_list.get(17);
+      Object stringList = pigeonVar_list.get(17);
       pigeonResult.setStringList((List<String>) stringList);
-      Object intList = pigeon_list.get(18);
+      Object intList = pigeonVar_list.get(18);
       pigeonResult.setIntList((List<Long>) intList);
-      Object doubleList = pigeon_list.get(19);
+      Object doubleList = pigeonVar_list.get(19);
       pigeonResult.setDoubleList((List<Double>) doubleList);
-      Object boolList = pigeon_list.get(20);
+      Object boolList = pigeonVar_list.get(20);
       pigeonResult.setBoolList((List<Boolean>) boolList);
-      Object nestedClassList = pigeon_list.get(21);
+      Object nestedClassList = pigeonVar_list.get(21);
       pigeonResult.setNestedClassList((List<AllNullableTypes>) nestedClassList);
-      Object map = pigeon_list.get(22);
+      Object map = pigeonVar_list.get(22);
       pigeonResult.setMap((Map<Object, Object>) map);
       return pigeonResult;
     }
@@ -1492,7 +1492,7 @@ public class CoreTests {
 
     @Override
     public int hashCode() {
-      int pigeon_result =
+      int pigeonVar_result =
           Objects.hash(
               aNullableBool,
               aNullableInt,
@@ -1511,11 +1511,11 @@ public class CoreTests {
               doubleList,
               boolList,
               map);
-      pigeon_result = 31 * pigeon_result + Arrays.hashCode(aNullableByteArray);
-      pigeon_result = 31 * pigeon_result + Arrays.hashCode(aNullable4ByteArray);
-      pigeon_result = 31 * pigeon_result + Arrays.hashCode(aNullable8ByteArray);
-      pigeon_result = 31 * pigeon_result + Arrays.hashCode(aNullableFloatArray);
-      return pigeon_result;
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullableByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable4ByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable8ByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullableFloatArray);
+      return pigeonVar_result;
     }
 
     public static final class Builder {
@@ -1744,57 +1744,57 @@ public class CoreTests {
     }
 
     static @NonNull AllNullableTypesWithoutRecursion fromList(
-        @NonNull ArrayList<Object> pigeon_list) {
+        @NonNull ArrayList<Object> pigeonVar_list) {
       AllNullableTypesWithoutRecursion pigeonResult = new AllNullableTypesWithoutRecursion();
-      Object aNullableBool = pigeon_list.get(0);
+      Object aNullableBool = pigeonVar_list.get(0);
       pigeonResult.setANullableBool((Boolean) aNullableBool);
-      Object aNullableInt = pigeon_list.get(1);
+      Object aNullableInt = pigeonVar_list.get(1);
       pigeonResult.setANullableInt(
           (aNullableInt == null)
               ? null
               : ((aNullableInt instanceof Integer) ? (Integer) aNullableInt : (Long) aNullableInt));
-      Object aNullableInt64 = pigeon_list.get(2);
+      Object aNullableInt64 = pigeonVar_list.get(2);
       pigeonResult.setANullableInt64(
           (aNullableInt64 == null)
               ? null
               : ((aNullableInt64 instanceof Integer)
                   ? (Integer) aNullableInt64
                   : (Long) aNullableInt64));
-      Object aNullableDouble = pigeon_list.get(3);
+      Object aNullableDouble = pigeonVar_list.get(3);
       pigeonResult.setANullableDouble((Double) aNullableDouble);
-      Object aNullableByteArray = pigeon_list.get(4);
+      Object aNullableByteArray = pigeonVar_list.get(4);
       pigeonResult.setANullableByteArray((byte[]) aNullableByteArray);
-      Object aNullable4ByteArray = pigeon_list.get(5);
+      Object aNullable4ByteArray = pigeonVar_list.get(5);
       pigeonResult.setANullable4ByteArray((int[]) aNullable4ByteArray);
-      Object aNullable8ByteArray = pigeon_list.get(6);
+      Object aNullable8ByteArray = pigeonVar_list.get(6);
       pigeonResult.setANullable8ByteArray((long[]) aNullable8ByteArray);
-      Object aNullableFloatArray = pigeon_list.get(7);
+      Object aNullableFloatArray = pigeonVar_list.get(7);
       pigeonResult.setANullableFloatArray((double[]) aNullableFloatArray);
-      Object nullableNestedList = pigeon_list.get(8);
+      Object nullableNestedList = pigeonVar_list.get(8);
       pigeonResult.setNullableNestedList((List<List<Boolean>>) nullableNestedList);
-      Object nullableMapWithAnnotations = pigeon_list.get(9);
+      Object nullableMapWithAnnotations = pigeonVar_list.get(9);
       pigeonResult.setNullableMapWithAnnotations((Map<String, String>) nullableMapWithAnnotations);
-      Object nullableMapWithObject = pigeon_list.get(10);
+      Object nullableMapWithObject = pigeonVar_list.get(10);
       pigeonResult.setNullableMapWithObject((Map<String, Object>) nullableMapWithObject);
-      Object aNullableEnum = pigeon_list.get(11);
+      Object aNullableEnum = pigeonVar_list.get(11);
       pigeonResult.setANullableEnum((AnEnum) aNullableEnum);
-      Object anotherNullableEnum = pigeon_list.get(12);
+      Object anotherNullableEnum = pigeonVar_list.get(12);
       pigeonResult.setAnotherNullableEnum((AnotherEnum) anotherNullableEnum);
-      Object aNullableString = pigeon_list.get(13);
+      Object aNullableString = pigeonVar_list.get(13);
       pigeonResult.setANullableString((String) aNullableString);
-      Object aNullableObject = pigeon_list.get(14);
+      Object aNullableObject = pigeonVar_list.get(14);
       pigeonResult.setANullableObject(aNullableObject);
-      Object list = pigeon_list.get(15);
+      Object list = pigeonVar_list.get(15);
       pigeonResult.setList((List<Object>) list);
-      Object stringList = pigeon_list.get(16);
+      Object stringList = pigeonVar_list.get(16);
       pigeonResult.setStringList((List<String>) stringList);
-      Object intList = pigeon_list.get(17);
+      Object intList = pigeonVar_list.get(17);
       pigeonResult.setIntList((List<Long>) intList);
-      Object doubleList = pigeon_list.get(18);
+      Object doubleList = pigeonVar_list.get(18);
       pigeonResult.setDoubleList((List<Double>) doubleList);
-      Object boolList = pigeon_list.get(19);
+      Object boolList = pigeonVar_list.get(19);
       pigeonResult.setBoolList((List<Boolean>) boolList);
-      Object map = pigeon_list.get(20);
+      Object map = pigeonVar_list.get(20);
       pigeonResult.setMap((Map<Object, Object>) map);
       return pigeonResult;
     }
@@ -1911,14 +1911,14 @@ public class CoreTests {
       return toListResult;
     }
 
-    static @NonNull AllClassesWrapper fromList(@NonNull ArrayList<Object> pigeon_list) {
+    static @NonNull AllClassesWrapper fromList(@NonNull ArrayList<Object> pigeonVar_list) {
       AllClassesWrapper pigeonResult = new AllClassesWrapper();
-      Object allNullableTypes = pigeon_list.get(0);
+      Object allNullableTypes = pigeonVar_list.get(0);
       pigeonResult.setAllNullableTypes((AllNullableTypes) allNullableTypes);
-      Object allNullableTypesWithoutRecursion = pigeon_list.get(1);
+      Object allNullableTypesWithoutRecursion = pigeonVar_list.get(1);
       pigeonResult.setAllNullableTypesWithoutRecursion(
           (AllNullableTypesWithoutRecursion) allNullableTypesWithoutRecursion);
-      Object allTypes = pigeon_list.get(2);
+      Object allTypes = pigeonVar_list.get(2);
       pigeonResult.setAllTypes((AllTypes) allTypes);
       return pigeonResult;
     }
@@ -1981,9 +1981,9 @@ public class CoreTests {
       return toListResult;
     }
 
-    static @NonNull TestMessage fromList(@NonNull ArrayList<Object> pigeon_list) {
+    static @NonNull TestMessage fromList(@NonNull ArrayList<Object> pigeonVar_list) {
       TestMessage pigeonResult = new TestMessage();
-      Object testList = pigeon_list.get(0);
+      Object testList = pigeonVar_list.get(0);
       pigeonResult.setTestList((List<Object>) testList);
       return pigeonResult;
     }
