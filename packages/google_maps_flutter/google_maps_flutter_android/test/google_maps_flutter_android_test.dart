@@ -12,6 +12,7 @@ import 'package:google_maps_flutter_android/src/messages.g.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:pigeon/pigeon.dart';
 
 import 'google_maps_flutter_android_test.mocks.dart';
 
@@ -287,10 +288,30 @@ void main() {
     expect(toRemove.first, object1.circleId.value);
     // Object two should be changed.
     expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    expect(toChange.first?.encode(), <Object>[
+      object2new.consumeTapEvents,
+      object2new.fillColor.value,
+      object2new.strokeColor.value,
+      object2new.visible,
+      object2new.strokeWidth,
+      object2new.zIndex as double,
+      PlatformLatLng(latitude: object2new.center.latitude, longitude: object2new.center.longitude),
+      object2new.radius,
+      object2new.circleId.value,
+    ]);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    expect(toAdd.first?.encode(), <Object>[
+      object3.consumeTapEvents,
+      object3.fillColor.value,
+      object3.strokeColor.value,
+      object3.visible,
+      object3.strokeWidth,
+      object3.zIndex as double,
+      PlatformLatLng(latitude: object3.center.latitude, longitude: object3.center.longitude),
+      object3.radius,
+      object3.circleId.value,
+    ]);
   });
 
   test('updateClusterManagers passes expected arguments', () async {
@@ -348,10 +369,38 @@ void main() {
     expect(toRemove.first, object1.markerId.value);
     // Object two should be changed.
     expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    expect(toChange.first?.encode(), <Object?>[
+      object2new.alpha,
+      Float64List.fromList([object2new.anchor.dx, object2new.anchor.dy]),
+      object2new.consumeTapEvents,
+      object2new.draggable,
+      object2new.flat,
+      object2new.icon.toJson(),
+      object2new.infoWindow.toJson(),
+      PlatformLatLng(latitude: object2new.position.latitude, longitude: object2new.position.longitude),
+      object2new.rotation,
+      object2new.visible,
+      object2new.zIndex,
+      object2new.markerId.value,
+      object2new.clusterManagerId?.value,
+    ]);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    expect(toAdd.first?.encode(), <Object?>[
+      object3.alpha,
+      Float64List.fromList([object3.anchor.dx, object3.anchor.dy]),
+      object3.consumeTapEvents,
+      object3.draggable,
+      object3.flat,
+      object3.icon.toJson(),
+      object3.infoWindow.toJson(),
+      PlatformLatLng(latitude: object3.position.latitude, longitude: object3.position.longitude),
+      object3.rotation,
+      object3.visible,
+      object3.zIndex,
+      object3.markerId.value,
+      object3.clusterManagerId?.value,
+    ]);
   });
 
   test('updatePolygons passes expected arguments', () async {
