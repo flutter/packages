@@ -86,11 +86,11 @@ struct MessageData {
   var data: [String?: String?]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ __pigeon_list: [Any?]) -> MessageData? {
-    let name: String? = nilOrValue(__pigeon_list[0])
-    let description: String? = nilOrValue(__pigeon_list[1])
-    let code = __pigeon_list[2] as! Code
-    let data = __pigeon_list[3] as! [String?: String?]
+  static func fromList(_ pigeon_list: [Any?]) -> MessageData? {
+    let name: String? = nilOrValue(pigeon_list[0])
+    let description: String? = nilOrValue(pigeon_list[1])
+    let code = pigeon_list[2] as! Code
+    let data = pigeon_list[3] as! [String?: String?]
 
     return MessageData(
       name: name,
@@ -113,12 +113,11 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 129:
-      var enumResult: Code? = nil
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
       if let enumResultAsInt = enumResultAsInt {
-        enumResult = Code(rawValue: enumResultAsInt)
+        return Code(rawValue: enumResultAsInt)
       }
-      return enumResult
+      return nil
     case 130:
       return MessageData.fromList(self.readValue() as! [Any?])
     default:

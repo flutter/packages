@@ -18,7 +18,7 @@ Future<void> runTests(
   bool runFormat = false,
   bool runGeneration = true,
   bool ciMode = false,
-  bool overflow = false,
+  bool includeOverflow = false,
 }) async {
   final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
   if (runGeneration) {
@@ -31,9 +31,11 @@ Future<void> runTests(
 
   await _runTests(testsToRun, ciMode: ciMode);
 
-  if (overflow) {
-    await _runGenerate(baseDir, overflow: true);
+  if (includeOverflow) {
+    await _runGenerate(baseDir, includeOverflow: true);
 
+    // TODO(tarrinneal): Remove linux filter once overflow class is added to gobject generator.
+    // https://github.com/flutter/packages/pull/6840
     await _runTests(testsToRun
         .where((String test) =>
             test.contains('integration') && !test.contains('linux'))
@@ -50,13 +52,14 @@ Future<void> runTests(
 }
 
 // Pre-generate the necessary common output files.
-Future<void> _runGenerate(String baseDir, {bool overflow = false}) async {
+Future<void> _runGenerate(String baseDir,
+    {bool includeOverflow = false}) async {
   // TODO(stuartmorgan): Consider making this conditional on the specific
   // tests being run, as not all of them need these files.
   print('# Generating platform_test/ output...');
   final int generateExitCode = await generateTestPigeons(
     baseDir: baseDir,
-    overflow: overflow,
+    includeOverflow: includeOverflow,
   );
   if (generateExitCode == 0) {
     print('Generation complete!');

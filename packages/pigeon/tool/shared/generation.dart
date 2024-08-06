@@ -56,7 +56,7 @@ Future<int> generateExamplePigeons() async {
 }
 
 Future<int> generateTestPigeons(
-    {required String baseDir, bool overflow = false}) async {
+    {required String baseDir, bool includeOverflow = false}) async {
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
   const List<String> inputs = <String>[
@@ -133,7 +133,7 @@ Future<int> generateTestPigeons(
           ? null
           : '$outputBase/windows/pigeon/$input.gen.cpp',
       cppNamespace: '${input}_pigeontest',
-      injectOverflowTypes: overflow && input == 'core_tests',
+      injectOverflowTypes: includeOverflow && input == 'core_tests',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -150,7 +150,7 @@ Future<int> generateTestPigeons(
       swiftErrorClassName: swiftErrorClassName,
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
-      injectOverflowTypes: overflow && input == 'core_tests',
+      injectOverflowTypes: includeOverflow && input == 'core_tests',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -177,7 +177,7 @@ Future<int> generateTestPigeons(
       objcPrefix: input == 'core_tests' ? 'FLT' : '',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
-      injectOverflowTypes: overflow && input == 'core_tests',
+      injectOverflowTypes: includeOverflow && input == 'core_tests',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -196,7 +196,7 @@ Future<int> generateTestPigeons(
           : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.m',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
-      injectOverflowTypes: overflow && input == 'core_tests',
+      injectOverflowTypes: includeOverflow && input == 'core_tests',
     );
     if (generateCode != 0) {
       return generateCode;

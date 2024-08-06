@@ -102,9 +102,9 @@ MessageData MessageData::FromEncodableList(const EncodableList& list) {
   return decoded;
 }
 
-PigeonCodecSerializer::PigeonCodecSerializer() {}
+PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}
 
-EncodableValue PigeonCodecSerializer::ReadValueOfType(
+EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
     case 129: {
@@ -124,7 +124,7 @@ EncodableValue PigeonCodecSerializer::ReadValueOfType(
   }
 }
 
-void PigeonCodecSerializer::WriteValue(
+void PigeonInternalCodecSerializer::WriteValue(
     const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
@@ -150,7 +150,7 @@ void PigeonCodecSerializer::WriteValue(
 /// The codec used by ExampleHostApi.
 const flutter::StandardMessageCodec& ExampleHostApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &PigeonCodecSerializer::GetInstance());
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
 // Sets up an instance of `ExampleHostApi` to handle messages through the
@@ -299,7 +299,7 @@ MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger,
 
 const flutter::StandardMessageCodec& MessageFlutterApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &PigeonCodecSerializer::GetInstance());
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
 void MessageFlutterApi::FlutterMethod(

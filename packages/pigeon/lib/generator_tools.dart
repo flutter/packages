@@ -15,12 +15,6 @@ import 'ast.dart';
 /// This must match the version in pubspec.yaml.
 const String pigeonVersion = '21.2.0';
 
-/// Prefix for all local variables in methods.
-///
-/// This lowers the chances of variable name collisions with
-/// user defined parameters.
-const String varNamePrefix = '__pigeon_';
-
 /// Read all the content from [stdin] to a String.
 String readStdin() {
   final List<int> bytes = <int>[];
@@ -297,11 +291,11 @@ String getGeneratedCodeWarning() {
 /// String to be printed after `getGeneratedCodeWarning()'s warning`.
 const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 
-/// Prefix for utility classes generated for ProxyApis.
+/// Prefix for generated internal classes.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
-const String classNamePrefix = 'Pigeon';
+const String classNamePrefix = 'PigeonInternal';
 
 /// Name for the generated InstanceManager for ProxyApis.
 ///
@@ -313,7 +307,21 @@ const String instanceManagerClassName = '${classNamePrefix}InstanceManager';
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
-const String classMemberNamePrefix = 'pigeon_';
+const String classMemberNamePrefix = 'pigeonField_';
+
+/// Prefix for  variable names not defined by the user.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String varNamePrefix = 'pigeon_';
+
+/// Prefixes that are not allowed for any names of any types or methods.
+const List<String> disallowedPrefixes = <String>[
+  classNamePrefix,
+  classMemberNamePrefix,
+  varNamePrefix,
+  'pigeonChannelCodec'
+];
 
 /// Collection of keys used in dictionaries across generators.
 class Keys {

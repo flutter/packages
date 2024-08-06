@@ -27,7 +27,7 @@ const DocumentCommentSpecification _docCommentSpec =
 
 String _codecName = 'PigeonCodec';
 
-const String _overflowClassName = '${varNamePrefix}CodecOverflow';
+const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
 /// Options that control how Kotlin code will be generated.
 class KotlinOptions {
@@ -203,8 +203,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     });
   }
 
-  void _writeDataClassSignature(Indent indent, Class classDefinition) {
-    indent.write('data class ${classDefinition.name} ');
+  void _writeDataClassSignature(
+    Indent indent,
+    Class classDefinition, {
+    bool private = false,
+  }) {
+    indent.write(
+        '${private ? 'private ' : ''}data class ${classDefinition.name} ');
     indent.addScoped('(', ')', () {
       for (final NamedType element
           in getFieldsInSerializationOrder(classDefinition)) {
@@ -459,8 +464,7 @@ if (wrapped == null) {
     ''');
         indent.writeScoped('when (type) {', '}', () {
           for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
-            indent.writeScoped('${i - totalCustomCodecKeysAllowed} -> {', '}',
-                () {
+            indent.writeScoped('${i - totalCustomCodecKeysAllowed} ->', '', () {
               if (types[i].type == CustomTypes.customClass) {
                 indent.writeln(
                     'return ${types[i].name}.fromList(wrapped as List<Any?>)');

@@ -32,6 +32,8 @@ const DocumentCommentSpecification _docCommentSpec =
 /// The custom codec used for all pigeon APIs.
 const String _pigeonCodec = '_PigeonCodec';
 
+const String _overflowClassName = '_PigeonCodecOverflow';
+
 /// Options that control how Dart code will be generated.
 class DartOptions {
   /// Constructor for DartOptions.
@@ -297,7 +299,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
               ? '.encode()'
               : '.index';
           indent.writeln(
-              'final ${varNamePrefix}CodecOverflow wrap = ${varNamePrefix}CodecOverflow(type: ${customType.enumeration - maximumCodecFieldKey}, wrapped: value$encodeString);');
+              'final $_overflowClassName wrap = $_overflowClassName(type: ${customType.enumeration - maximumCodecFieldKey}, wrapped: value$encodeString);');
           indent.writeln('buffer.putUint8($maximumCodecFieldKey);');
           indent.writeln('writeValue(buffer, wrap.encode());');
         }
@@ -325,9 +327,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     }
 
     final EnumeratedType overflowClass = EnumeratedType(
-        '${varNamePrefix}CodecOverflow',
-        maximumCodecFieldKey,
-        CustomTypes.customClass);
+        _overflowClassName, maximumCodecFieldKey, CustomTypes.customClass);
 
     indent.newln();
     final List<EnumeratedType> enumeratedTypes =
@@ -994,9 +994,9 @@ PlatformException _createConnectionError(String channelName) {
   void _writeCodecOverflowUtilities(Indent indent, List<EnumeratedType> types) {
     indent.newln();
     indent.writeln('// ignore: camel_case_types');
-    indent.writeScoped('class ${varNamePrefix}CodecOverflow {', '}', () {
+    indent.writeScoped('class $_overflowClassName {', '}', () {
       indent.format('''
-${varNamePrefix}CodecOverflow({required this.type, required this.wrapped});
+$_overflowClassName({required this.type, required this.wrapped});
 
 int type;
 Object? wrapped;
@@ -1005,9 +1005,9 @@ Object encode() {
   return <Object?>[type, wrapped];
 }
 
-static ${varNamePrefix}CodecOverflow decode(Object result) {
+static $_overflowClassName decode(Object result) {
   result as List<Object?>;
-  return ${varNamePrefix}CodecOverflow(
+  return $_overflowClassName(
     type: result[0]! as int,
     wrapped: result[1],
   );

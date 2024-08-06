@@ -28,8 +28,9 @@ const DocumentCommentSpecification _docCommentSpec =
 /// The standard codec for Flutter, used for any non custom codecs and extended for custom codecs.
 const String _codecName = 'PigeonCodec';
 
-const String _overflowClassName = '${varNamePrefix}CodecOverflow';
+const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
+// Used to create classes with type Int rather than long.
 const String _forceInt = '${varNamePrefix}forceInt';
 
 /// Options that control how Java code will be generated.
@@ -293,9 +294,11 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Indent indent,
     Class classDefinition,
-    void Function() dataClassBody,
-  ) {
-    indent.write('public static final class ${classDefinition.name} ');
+    void Function() dataClassBody, {
+    bool private = false,
+  }) {
+    indent.write(
+        '${private ? 'private' : 'public'} static final class ${classDefinition.name} ');
     indent.addScoped('{', '}', () {
       for (final NamedType field
           in getFieldsInSerializationOrder(classDefinition)) {
@@ -588,49 +591,53 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     final Class overflowClass =
         Class(name: _overflowClassName, fields: overflowFields);
 
-    _writeDataClassSignature(generatorOptions, indent, overflowClass, () {
-      writeClassEncode(
-        generatorOptions,
-        root,
-        indent,
-        overflowClass,
-        dartPackageName: dartPackageName,
-      );
+    _writeDataClassSignature(
+      generatorOptions,
+      indent,
+      overflowClass,
+      () {
+        writeClassEncode(
+          generatorOptions,
+          root,
+          indent,
+          overflowClass,
+          dartPackageName: dartPackageName,
+        );
 
-      indent.format('''
+        indent.format('''
 static @Nullable Object fromList(@NonNull ArrayList<Object> ${varNamePrefix}list) {
   $_overflowClassName wrapper = new $_overflowClassName();
-  Object type = ${varNamePrefix}list.get(0);
-  wrapper.setType((int) type);
-  Object wrapped = ${varNamePrefix}list.get(1);
-  wrapper.setWrapped(wrapped);
+  wrapper.setType((int) ${varNamePrefix}list.get(0));
+  wrapper.setWrapped(${varNamePrefix}list.get(1));
   return wrapper.unwrap();
 }
 ''');
 
-      indent.writeScoped('@Nullable Object unwrap() {', '}', () {
-        indent.format('''
+        indent.writeScoped('@Nullable Object unwrap() {', '}', () {
+          indent.format('''
 if (wrapped == null) {
   return null;
 }
     ''');
-        indent.writeScoped('switch (type) {', '}', () {
-          for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
-            indent.writeln('case (${i - totalCustomCodecKeysAllowed}):');
-            indent.nest(1, () {
-              if (types[i].type == CustomTypes.customClass) {
-                indent.writeln(
-                    'return ${types[i].name}.fromList((ArrayList<Object>) wrapped);');
-              } else if (types[i].type == CustomTypes.customEnum) {
-                indent.writeln(
-                    'return ${types[i].name}.values()[(int) wrapped];');
-              }
-            });
-          }
+          indent.writeScoped('switch (type) {', '}', () {
+            for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
+              indent.writeln('case ${i - totalCustomCodecKeysAllowed}:');
+              indent.nest(1, () {
+                if (types[i].type == CustomTypes.customClass) {
+                  indent.writeln(
+                      'return ${types[i].name}.fromList((ArrayList<Object>) wrapped);');
+                } else if (types[i].type == CustomTypes.customEnum) {
+                  indent.writeln(
+                      'return ${types[i].name}.values()[(int) wrapped];');
+                }
+              });
+            }
+          });
+          indent.writeln('return null;');
         });
-        indent.writeln('return null;');
-      });
-    });
+      },
+      private: true,
+    );
   }
 
   /// Writes the code for a flutter [Api], [api].

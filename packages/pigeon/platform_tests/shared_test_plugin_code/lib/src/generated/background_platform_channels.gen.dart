@@ -29,41 +29,41 @@ class BackgroundApi2Host {
   /// BinaryMessenger will be used which routes to the host platform.
   BackgroundApi2Host(
       {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : __pigeon_binaryMessenger = binaryMessenger,
-        __pigeon_messageChannelSuffix =
+      : pigeon_binaryMessenger = binaryMessenger,
+        pigeon_messageChannelSuffix =
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
-  final BinaryMessenger? __pigeon_binaryMessenger;
+  final BinaryMessenger? pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
-  final String __pigeon_messageChannelSuffix;
+  final String pigeon_messageChannelSuffix;
 
   Future<int> add(int x, int y) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.BackgroundApi2Host.add$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
+    final String pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.BackgroundApi2Host.add$pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeon_channel =
         BasicMessageChannel<Object?>(
-      __pigeon_channelName,
+      pigeon_channelName,
       pigeonChannelCodec,
-      binaryMessenger: __pigeon_binaryMessenger,
+      binaryMessenger: pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[x, y]) as List<Object?>?;
-    if (__pigeon_replyList == null) {
-      throw _createConnectionError(__pigeon_channelName);
-    } else if (__pigeon_replyList.length > 1) {
+    final List<Object?>? pigeon_replyList =
+        await pigeon_channel.send(<Object?>[x, y]) as List<Object?>?;
+    if (pigeon_replyList == null) {
+      throw _createConnectionError(pigeon_channelName);
+    } else if (pigeon_replyList.length > 1) {
       throw PlatformException(
-        code: __pigeon_replyList[0]! as String,
-        message: __pigeon_replyList[1] as String?,
-        details: __pigeon_replyList[2],
+        code: pigeon_replyList[0]! as String,
+        message: pigeon_replyList[1] as String?,
+        details: pigeon_replyList[2],
       );
-    } else if (__pigeon_replyList[0] == null) {
+    } else if (pigeon_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (__pigeon_replyList[0] as int?)!;
+      return (pigeon_replyList[0] as int?)!;
     }
   }
 }

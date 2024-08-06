@@ -105,99 +105,99 @@ class ExampleHostApi {
   /// BinaryMessenger will be used which routes to the host platform.
   ExampleHostApi(
       {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : __pigeon_binaryMessenger = binaryMessenger,
-        __pigeon_messageChannelSuffix =
+      : pigeon_binaryMessenger = binaryMessenger,
+        pigeon_messageChannelSuffix =
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
-  final BinaryMessenger? __pigeon_binaryMessenger;
+  final BinaryMessenger? pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
-  final String __pigeon_messageChannelSuffix;
+  final String pigeon_messageChannelSuffix;
 
   Future<String> getHostLanguage() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
+    final String pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage$pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeon_channel =
         BasicMessageChannel<Object?>(
-      __pigeon_channelName,
+      pigeon_channelName,
       pigeonChannelCodec,
-      binaryMessenger: __pigeon_binaryMessenger,
+      binaryMessenger: pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(null) as List<Object?>?;
-    if (__pigeon_replyList == null) {
-      throw _createConnectionError(__pigeon_channelName);
-    } else if (__pigeon_replyList.length > 1) {
+    final List<Object?>? pigeon_replyList =
+        await pigeon_channel.send(null) as List<Object?>?;
+    if (pigeon_replyList == null) {
+      throw _createConnectionError(pigeon_channelName);
+    } else if (pigeon_replyList.length > 1) {
       throw PlatformException(
-        code: __pigeon_replyList[0]! as String,
-        message: __pigeon_replyList[1] as String?,
-        details: __pigeon_replyList[2],
+        code: pigeon_replyList[0]! as String,
+        message: pigeon_replyList[1] as String?,
+        details: pigeon_replyList[2],
       );
-    } else if (__pigeon_replyList[0] == null) {
+    } else if (pigeon_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (__pigeon_replyList[0] as String?)!;
+      return (pigeon_replyList[0] as String?)!;
     }
   }
 
   Future<int> add(int a, int b) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
+    final String pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add$pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeon_channel =
         BasicMessageChannel<Object?>(
-      __pigeon_channelName,
+      pigeon_channelName,
       pigeonChannelCodec,
-      binaryMessenger: __pigeon_binaryMessenger,
+      binaryMessenger: pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[a, b]) as List<Object?>?;
-    if (__pigeon_replyList == null) {
-      throw _createConnectionError(__pigeon_channelName);
-    } else if (__pigeon_replyList.length > 1) {
+    final List<Object?>? pigeon_replyList =
+        await pigeon_channel.send(<Object?>[a, b]) as List<Object?>?;
+    if (pigeon_replyList == null) {
+      throw _createConnectionError(pigeon_channelName);
+    } else if (pigeon_replyList.length > 1) {
       throw PlatformException(
-        code: __pigeon_replyList[0]! as String,
-        message: __pigeon_replyList[1] as String?,
-        details: __pigeon_replyList[2],
+        code: pigeon_replyList[0]! as String,
+        message: pigeon_replyList[1] as String?,
+        details: pigeon_replyList[2],
       );
-    } else if (__pigeon_replyList[0] == null) {
+    } else if (pigeon_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (__pigeon_replyList[0] as int?)!;
+      return (pigeon_replyList[0] as int?)!;
     }
   }
 
   Future<bool> sendMessage(MessageData message) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
+    final String pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage$pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeon_channel =
         BasicMessageChannel<Object?>(
-      __pigeon_channelName,
+      pigeon_channelName,
       pigeonChannelCodec,
-      binaryMessenger: __pigeon_binaryMessenger,
+      binaryMessenger: pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[message]) as List<Object?>?;
-    if (__pigeon_replyList == null) {
-      throw _createConnectionError(__pigeon_channelName);
-    } else if (__pigeon_replyList.length > 1) {
+    final List<Object?>? pigeon_replyList =
+        await pigeon_channel.send(<Object?>[message]) as List<Object?>?;
+    if (pigeon_replyList == null) {
+      throw _createConnectionError(pigeon_channelName);
+    } else if (pigeon_replyList.length > 1) {
       throw PlatformException(
-        code: __pigeon_replyList[0]! as String,
-        message: __pigeon_replyList[1] as String?,
-        details: __pigeon_replyList[2],
+        code: pigeon_replyList[0]! as String,
+        message: pigeon_replyList[1] as String?,
+        details: pigeon_replyList[2],
       );
-    } else if (__pigeon_replyList[0] == null) {
+    } else if (pigeon_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (__pigeon_replyList[0] as bool?)!;
+      return (pigeon_replyList[0] as bool?)!;
     }
   }
 }
@@ -215,15 +215,15 @@ abstract class MessageFlutterApi {
     messageChannelSuffix =
         messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+      final BasicMessageChannel<Object?> pigeon_channel = BasicMessageChannel<
               Object?>(
           'dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        __pigeon_channel.setMessageHandler(null);
+        pigeon_channel.setMessageHandler(null);
       } else {
-        __pigeon_channel.setMessageHandler((Object? message) async {
+        pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod was null.');
           final List<Object?> args = (message as List<Object?>?)!;

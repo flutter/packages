@@ -207,15 +207,15 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull MessageData fromList(@NonNull ArrayList<Object> __pigeon_list) {
+    static @NonNull MessageData fromList(@NonNull ArrayList<Object> pigeon_list) {
       MessageData pigeonResult = new MessageData();
-      Object name = __pigeon_list.get(0);
+      Object name = pigeon_list.get(0);
       pigeonResult.setName((String) name);
-      Object description = __pigeon_list.get(1);
+      Object description = pigeon_list.get(1);
       pigeonResult.setDescription((String) description);
-      Object code = __pigeon_list.get(2);
+      Object code = pigeon_list.get(2);
       pigeonResult.setCode((Code) code);
-      Object data = __pigeon_list.get(3);
+      Object data = pigeon_list.get(3);
       pigeonResult.setData((Map<String, String>) data);
       return pigeonResult;
     }

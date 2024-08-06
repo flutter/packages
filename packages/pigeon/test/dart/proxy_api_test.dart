@@ -409,13 +409,13 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r"const String __pigeon_channelName = 'dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor';",
+            r"const String pigeon_channelName = 'dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor';",
           ),
         );
         expect(
           collapsedCode,
           contains(
-            r'__pigeon_channel .send(<Object?>[__pigeon_instanceIdentifier])',
+            r'pigeon_channel .send(<Object?>[pigeon_instanceIdentifier])',
           ),
         );
       });
@@ -515,8 +515,8 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'__pigeon_channel.send(<Object?>[ '
-            r'__pigeon_instanceIdentifier, '
+            r'pigeon_channel.send(<Object?>[ '
+            r'pigeon_instanceIdentifier, '
             r'validType, enumType, proxyApiType, '
             r'nullableValidType, nullableEnumType, nullableProxyApiType ])',
           ),
@@ -625,8 +625,8 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'__pigeon_channel.send(<Object?>[ '
-            r'__pigeon_instanceIdentifier, '
+            r'pigeon_channel.send(<Object?>[ '
+            r'pigeon_instanceIdentifier, '
             r'validType, enumType, proxyApiType, '
             r'nullableValidType, nullableEnumType, nullableProxyApiType ])',
           ),
@@ -697,8 +697,8 @@ void main() {
         );
         final String code = sink.toString();
         expect(code, contains('class Api'));
-        expect(code, contains(r'late final Api2 aField = __pigeon_aField();'));
-        expect(code, contains(r'Api2 __pigeon_aField()'));
+        expect(code, contains(r'late final Api2 aField = pigeon_aField();'));
+        expect(code, contains(r'Api2 pigeon_aField()'));
       });
 
       test('static attached field', () {
@@ -742,9 +742,8 @@ void main() {
         );
         final String code = sink.toString();
         expect(code, contains('class Api'));
-        expect(
-            code, contains(r'static final Api2 aField = __pigeon_aField();'));
-        expect(code, contains(r'static Api2 __pigeon_aField()'));
+        expect(code, contains(r'static final Api2 aField = pigeon_aField();'));
+        expect(code, contains(r'static Api2 pigeon_aField()'));
       });
     });
 
@@ -846,7 +845,7 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'await __pigeon_channel.send(<Object?>[ this, validType, '
+            r'await pigeon_channel.send(<Object?>[ this, validType, '
             r'enumType, proxyApiType, nullableValidType, '
             r'nullableEnumType, nullableProxyApiType ])',
           ),
@@ -894,7 +893,7 @@ void main() {
         );
         expect(
           collapsedCode,
-          contains(r'await __pigeon_channel.send(null)'),
+          contains(r'await pigeon_channel.send(null)'),
         );
       });
     });

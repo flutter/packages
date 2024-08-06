@@ -12,6 +12,8 @@ enum AnEnum {
   fourHundredTwentyTwo,
 }
 
+// Enums require special logic, having multiple ensures that the logic can be
+// replicated without collision.
 enum AnotherEnum {
   justInCase,
 }

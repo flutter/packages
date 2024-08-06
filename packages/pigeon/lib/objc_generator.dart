@@ -15,7 +15,7 @@ const String _docCommentPrefix = '///';
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_docCommentPrefix);
 
-const String _overflowClassName = '${varNamePrefix}CodecOverflow';
+const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
 final NamedType _overflowInt = NamedType(
     name: 'type',
@@ -625,7 +625,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
             prefix: generatorOptions.prefix,
           );
           ivarValueExpression =
-              'an${_enumName(field.type.baseName, prefix: generatorOptions.prefix, box: true)}.value';
+              'boxed${_enumName(field.type.baseName, prefix: generatorOptions.prefix)}.value';
         } else if (primitiveExtractionMethod != null) {
           ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
         } else {
@@ -655,7 +655,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       indent,
       _overflowClass,
       returnType: 'id',
-      overflow: true,
+      isOverflowClass: true,
     );
     indent.newln();
     indent.writeln(
@@ -697,7 +697,7 @@ if (self.wrapped == nil) {
             indent,
             types[i],
             generatorOptions.prefix ?? '',
-            overflow: true,
+            isOverflowClass: true,
           );
         }
         indent.writeScoped('default: ', '', () {
@@ -710,9 +710,9 @@ if (self.wrapped == nil) {
 
   void _writeCodecDecode(
       Indent indent, EnumeratedType customType, String? prefix,
-      {bool overflow = false}) {
+      {bool isOverflowClass = false}) {
     String readValue = '[self readValue]';
-    if (overflow) {
+    if (isOverflowClass) {
       readValue = 'self.wrapped';
     }
     if (customType.type == CustomTypes.customClass) {
@@ -721,9 +721,10 @@ if (self.wrapped == nil) {
             'return [${_className(prefix, customType.name)} fromList:$readValue];');
       }, addTrailingNewline: false);
     } else if (customType.type == CustomTypes.customEnum) {
-      indent.addScoped(!overflow ? '{' : '', !overflow ? '}' : null, () {
+      indent.addScoped(
+          !isOverflowClass ? '{' : '', !isOverflowClass ? '}' : null, () {
         String enumAsNumber = 'enumAsNumber';
-        if (!overflow) {
+        if (!isOverflowClass) {
           indent.writeln('NSNumber *$enumAsNumber = $readValue;');
           indent.write('return $enumAsNumber == nil ? nil : ');
         } else {
@@ -732,7 +733,7 @@ if (self.wrapped == nil) {
         }
         indent.addln(
             '[[${_enumName(customType.name, prefix: prefix, box: true)} alloc] initWithValue:[$enumAsNumber integerValue]];');
-      }, addTrailingNewline: !overflow);
+      }, addTrailingNewline: !isOverflowClass);
     }
   }
 
@@ -1167,16 +1168,20 @@ static FlutterError *createConnectionError(NSString *channelName) {
   }
 
   void _writeObjcSourceDataClassExtension(
-      ObjcOptions languageOptions, Indent indent, Class classDefinition,
-      {String? returnType, bool overflow = false}) {
+    ObjcOptions languageOptions,
+    Indent indent,
+    Class classDefinition, {
+    String? returnType,
+    bool isOverflowClass = false,
+  }) {
     final String className =
         _className(languageOptions.prefix, classDefinition.name);
     returnType = returnType ?? className;
     indent.newln();
     indent.writeln('@interface $className ()');
     indent.writeln(
-        '+ ($returnType${overflow ? '' : ' *'})fromList:(NSArray<id> *)list;');
-    if (!overflow) {
+        '+ ($returnType${isOverflowClass ? '' : ' *'})fromList:(NSArray<id> *)list;');
+    if (!isOverflowClass) {
       indent.writeln(
           '+ (nullable $returnType *)nullableFromList:(NSArray<id> *)list;');
     }
@@ -1710,7 +1715,7 @@ void _writeEnumBoxToEnum(
   String? prefix = '',
 }) {
   indent.writeln(
-      '${_enumName(field.type.baseName, prefix: prefix, box: true, suffix: ' *')}an${_enumName(field.type.baseName, prefix: prefix, box: true)} = $valueGetter;');
+      '${_enumName(field.type.baseName, prefix: prefix, box: true, suffix: ' *')}boxed${_enumName(field.type.baseName, prefix: prefix)} = $valueGetter;');
 }
 
 String _getEnumToEnumBox(

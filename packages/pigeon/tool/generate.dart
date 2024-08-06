@@ -67,7 +67,7 @@ ${parser.usage}''');
 
   final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
 
-  final bool overflow = argResults.wasParsed(_overflowFiller);
+  final bool includeOverflow = argResults.wasParsed(_overflowFiller);
 
   final List<String> toGenerate = argResults.wasParsed(_files)
       ? argResults[_files] as List<String>
@@ -75,8 +75,8 @@ ${parser.usage}''');
 
   if (toGenerate.contains(_test)) {
     print('Generating platform_test/ output...');
-    final int generateExitCode =
-        await generateTestPigeons(baseDir: baseDir, overflow: overflow);
+    final int generateExitCode = await generateTestPigeons(
+        baseDir: baseDir, includeOverflow: includeOverflow);
     if (generateExitCode == 0) {
       print('Generation complete!');
     } else {

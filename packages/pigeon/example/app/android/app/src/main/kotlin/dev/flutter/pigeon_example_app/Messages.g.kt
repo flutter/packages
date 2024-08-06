@@ -66,11 +66,11 @@ data class MessageData(
 ) {
   companion object {
     @Suppress("LocalVariableName")
-    fun fromList(__pigeon_list: List<Any?>): MessageData {
-      val name = __pigeon_list[0] as String?
-      val description = __pigeon_list[1] as String?
-      val code = __pigeon_list[2] as Code
-      val data = __pigeon_list[3] as Map<String?, String?>
+    fun fromList(pigeon_list: List<Any?>): MessageData {
+      val name = pigeon_list[0] as String?
+      val description = pigeon_list[1] as String?
+      val code = pigeon_list[2] as Code
+      val data = pigeon_list[3] as Map<String?, String?>
       return MessageData(name, description, code, data)
     }
   }

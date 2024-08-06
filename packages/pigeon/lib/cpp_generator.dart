@@ -21,9 +21,9 @@ const DocumentCommentSpecification _docCommentSpec =
 const String _standardCodecSerializer = 'flutter::StandardCodecSerializer';
 
 /// The name of the codec serializer.
-const String _codecSerializerName = 'PigeonCodecSerializer';
+const String _codecSerializerName = '${classNamePrefix}CodecSerializer';
 
-const String _overflowClassName = '${varNamePrefix}CodecOverflow';
+const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
 final NamedType _overflowType = NamedType(
     name: 'type',
@@ -255,7 +255,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         indent,
         _overflowClass,
         dartPackageName: dartPackageName,
-        overflow: true,
+        isOverflowClass: true,
       );
     }
   }
@@ -267,7 +267,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     Indent indent,
     Class classDefinition, {
     required String dartPackageName,
-    bool overflow = false,
+    bool isOverflowClass = false,
   }) {
     // When generating for a Pigeon unit test, add a test fixture friend class to
     // allow unit testing private methods, since testing serialization via public
@@ -364,17 +364,18 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
       _writeAccessBlock(indent, _ClassAccess.private, () {
         _writeFunctionDeclaration(indent, 'FromEncodableList',
-            returnType:
-                overflow ? 'flutter::EncodableValue' : classDefinition.name,
+            returnType: isOverflowClass
+                ? 'flutter::EncodableValue'
+                : classDefinition.name,
             parameters: <String>['const flutter::EncodableList& list'],
             isStatic: true);
         _writeFunctionDeclaration(indent, 'ToEncodableList',
             returnType: 'flutter::EncodableList', isConst: true);
-        if (overflow) {
+        if (isOverflowClass) {
           _writeFunctionDeclaration(indent, 'Unwrap',
               returnType: 'flutter::EncodableValue');
         }
-        if (!overflow && root.requiresOverflowClass) {
+        if (!isOverflowClass && root.requiresOverflowClass) {
           indent.writeln('friend class $_overflowClassName;');
         }
         for (final Class friend in root.classes) {
@@ -952,14 +953,14 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     );
 
     indent.format('''
-EncodableValue __pigeon_CodecOverflow::FromEncodableList(
+EncodableValue $_overflowClassName::FromEncodableList(
     const EncodableList& list) {
-  return __pigeon_CodecOverflow(list[0].LongValue(),
+  return $_overflowClassName(list[0].LongValue(),
                                 list[1].IsNull() ? EncodableValue() : list[1])
       .Unwrap();
 }''');
 
-    indent.writeScoped('EncodableValue __pigeon_CodecOverflow::Unwrap() {', '}',
+    indent.writeScoped('EncodableValue $_overflowClassName::Unwrap() {', '}',
         () {
       indent.writeScoped('if (wrapped_.IsNull()) {', '}', () {
         indent.writeln('return EncodableValue();');

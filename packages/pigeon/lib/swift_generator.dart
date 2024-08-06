@@ -14,7 +14,7 @@ const String _docCommentPrefix = '///';
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_docCommentPrefix);
 
-const String _overflowClassName = '${varNamePrefix}CodecOverflow';
+const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
 /// Options that control how Swift code will be generated.
 class SwiftOptions {
@@ -144,15 +144,14 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
       indent.writeln('case ${customType.enumeration}:');
       indent.nest(1, () {
         if (customType.type == CustomTypes.customEnum) {
-          indent.writeln('var enumResult: ${customType.name}? = nil');
           indent.writeln(
               'let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)');
           indent.writeScoped('if let enumResultAsInt = enumResultAsInt {', '}',
               () {
             indent.writeln(
-                'enumResult = ${customType.name}(rawValue: enumResultAsInt)');
+                'return ${customType.name}(rawValue: enumResultAsInt)');
           });
-          indent.writeln('return enumResult');
+          indent.writeln('return nil');
         } else {
           indent.writeln(
               'return ${customType.name}.fromList(self.readValue() as! [Any?])');

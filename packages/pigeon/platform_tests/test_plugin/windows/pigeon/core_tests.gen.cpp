@@ -1591,9 +1591,9 @@ TestMessage TestMessage::FromEncodableList(const EncodableList& list) {
   return decoded;
 }
 
-PigeonCodecSerializer::PigeonCodecSerializer() {}
+PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}
 
-EncodableValue PigeonCodecSerializer::ReadValueOfType(
+EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
     case 129: {
@@ -1639,7 +1639,7 @@ EncodableValue PigeonCodecSerializer::ReadValueOfType(
   }
 }
 
-void PigeonCodecSerializer::WriteValue(
+void PigeonInternalCodecSerializer::WriteValue(
     const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
@@ -1702,7 +1702,7 @@ void PigeonCodecSerializer::WriteValue(
 /// The codec used by HostIntegrationCoreApi.
 const flutter::StandardMessageCodec& HostIntegrationCoreApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &PigeonCodecSerializer::GetInstance());
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
 // Sets up an instance of `HostIntegrationCoreApi` to handle messages through
@@ -5293,7 +5293,7 @@ FlutterIntegrationCoreApi::FlutterIntegrationCoreApi(
 
 const flutter::StandardMessageCodec& FlutterIntegrationCoreApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &PigeonCodecSerializer::GetInstance());
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
 void FlutterIntegrationCoreApi::Noop(
@@ -6368,7 +6368,7 @@ void FlutterIntegrationCoreApi::EchoAsyncString(
 /// The codec used by HostTrivialApi.
 const flutter::StandardMessageCodec& HostTrivialApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &PigeonCodecSerializer::GetInstance());
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
 // Sets up an instance of `HostTrivialApi` to handle messages through the
@@ -6429,7 +6429,7 @@ EncodableValue HostTrivialApi::WrapError(const FlutterError& error) {
 /// The codec used by HostSmallApi.
 const flutter::StandardMessageCodec& HostSmallApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &PigeonCodecSerializer::GetInstance());
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
 // Sets up an instance of `HostSmallApi` to handle messages through the
@@ -6539,7 +6539,7 @@ FlutterSmallApi::FlutterSmallApi(flutter::BinaryMessenger* binary_messenger,
 
 const flutter::StandardMessageCodec& FlutterSmallApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &PigeonCodecSerializer::GetInstance());
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
 void FlutterSmallApi::EchoWrappedList(

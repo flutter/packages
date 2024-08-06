@@ -140,10 +140,10 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.a4ByteArray = GetNullableObjectAtIndex(list, 5);
   pigeonResult.a8ByteArray = GetNullableObjectAtIndex(list, 6);
   pigeonResult.aFloatArray = GetNullableObjectAtIndex(list, 7);
-  FLTAnEnumBox *anFLTAnEnumBox = GetNullableObjectAtIndex(list, 8);
-  pigeonResult.anEnum = anFLTAnEnumBox.value;
-  FLTAnotherEnumBox *anFLTAnotherEnumBox = GetNullableObjectAtIndex(list, 9);
-  pigeonResult.anotherEnum = anFLTAnotherEnumBox.value;
+  FLTAnEnumBox *boxedFLTAnEnum = GetNullableObjectAtIndex(list, 8);
+  pigeonResult.anEnum = boxedFLTAnEnum.value;
+  FLTAnotherEnumBox *boxedFLTAnotherEnum = GetNullableObjectAtIndex(list, 9);
+  pigeonResult.anotherEnum = boxedFLTAnotherEnum.value;
   pigeonResult.aString = GetNullableObjectAtIndex(list, 10);
   pigeonResult.anObject = GetNullableObjectAtIndex(list, 11);
   pigeonResult.list = GetNullableObjectAtIndex(list, 12);
@@ -896,7 +896,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        FLTAnEnumBox *anFLTAnEnumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnEnumBox *boxedFLTAnEnum = GetNullableObjectAtIndex(args, 0);
         FLTAnEnum arg_anEnum = anFLTAnEnumBox.value;
         FlutterError *error;
         FLTAnEnumBox *output = [api echoEnum:arg_anEnum error:&error];
@@ -922,7 +922,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        FLTAnotherEnumBox *anFLTAnotherEnumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnotherEnumBox *boxedFLTAnotherEnum = GetNullableObjectAtIndex(args, 0);
         FLTAnotherEnum arg_anotherEnum = anFLTAnotherEnumBox.value;
         FlutterError *error;
         FLTAnotherEnumBox *output = [api echoAnotherEnum:arg_anotherEnum error:&error];
@@ -1734,7 +1734,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        FLTAnEnumBox *anFLTAnEnumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnEnumBox *boxedFLTAnEnum = GetNullableObjectAtIndex(args, 0);
         FLTAnEnum arg_anEnum = anFLTAnEnumBox.value;
         [api echoAsyncEnum:arg_anEnum
                 completion:^(FLTAnEnumBox *_Nullable output, FlutterError *_Nullable error) {
@@ -1761,7 +1761,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        FLTAnotherEnumBox *anFLTAnotherEnumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnotherEnumBox *boxedFLTAnotherEnum = GetNullableObjectAtIndex(args, 0);
         FLTAnotherEnum arg_anotherEnum = anFLTAnotherEnumBox.value;
         [api echoAnotherAsyncEnum:arg_anotherEnum
                        completion:^(FLTAnotherEnumBox *_Nullable output,
@@ -2614,7 +2614,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        FLTAnEnumBox *anFLTAnEnumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnEnumBox *boxedFLTAnEnum = GetNullableObjectAtIndex(args, 0);
         FLTAnEnum arg_anEnum = anFLTAnEnumBox.value;
         [api callFlutterEchoEnum:arg_anEnum
                       completion:^(FLTAnEnumBox *_Nullable output, FlutterError *_Nullable error) {
@@ -2641,7 +2641,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        FLTAnotherEnumBox *anFLTAnotherEnumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnotherEnumBox *boxedFLTAnotherEnum = GetNullableObjectAtIndex(args, 0);
         FLTAnotherEnum arg_anotherEnum = anFLTAnotherEnumBox.value;
         [api callFlutterEchoAnotherEnum:arg_anotherEnum
                              completion:^(FLTAnotherEnumBox *_Nullable output,
