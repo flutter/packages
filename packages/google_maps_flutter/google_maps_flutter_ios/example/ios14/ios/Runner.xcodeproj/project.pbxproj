@@ -9,11 +9,11 @@
 /* Begin PBXBuildFile section */
 		0DD7B6C32B744EEF00E857FD /* FLTTileProviderControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD7B6C22B744EEF00E857FD /* FLTTileProviderControllerTests.m */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		2BDE99378062AE3E60B40021 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ACE0AFE8D82CD5962486AFD /* Pods_RunnerTests.framework */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
-		4510D964F3B1259FEDD3ABA6 /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7755F8F4BABC3D6A0BD4048B /* libPods-Runner.a */; };
 		478116522BEF8F47002F593E /* GoogleMapsPolylinesControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 478116512BEF8F47002F593E /* GoogleMapsPolylinesControllerTests.m */; };
-		6851F3562835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6851F3552835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m */; };
 		521AB0032B876A76005F460D /* ExtractIconFromDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 521AB0022B876A76005F460D /* ExtractIconFromDataTests.m */; };
+		6851F3562835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6851F3552835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m */; };
 		68E4726A2836FF0C00BDDDAC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68E472692836FF0C00BDDDAC /* MapKit.framework */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
@@ -21,10 +21,10 @@
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		982F2A6C27BADE17003C81F4 /* PartiallyMockedMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 982F2A6B27BADE17003C81F4 /* PartiallyMockedMapView.m */; };
+		B3A7FA04ABB7B84780729949 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61A9A8623F5CA9BBC813DC6B /* Pods_Runner.framework */; };
 		F269303B2BB389BF00BF17C4 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = F269303A2BB389BF00BF17C4 /* assets */; };
 		F7151F13265D7ED70028CB91 /* GoogleMapsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F7151F12265D7ED70028CB91 /* GoogleMapsTests.m */; };
 		F7151F21265D7EE50028CB91 /* GoogleMapsUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F7151F20265D7EE50028CB91 /* GoogleMapsUITests.m */; };
-		FC8F35FC8CD533B128950487 /* libPods-RunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F267F68029D1A4E2E4C572A7 /* libPods-RunnerTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,13 +61,14 @@
 		0DD7B6C22B744EEF00E857FD /* FLTTileProviderControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FLTTileProviderControllerTests.m; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		3ACE0AFE8D82CD5962486AFD /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		478116512BEF8F47002F593E /* GoogleMapsPolylinesControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleMapsPolylinesControllerTests.m; sourceTree = "<group>"; };
-		6851F3552835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLTGoogleMapJSONConversionsConversionTests.m; sourceTree = "<group>"; };
 		521AB0022B876A76005F460D /* ExtractIconFromDataTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExtractIconFromDataTests.m; sourceTree = "<group>"; };
+		61A9A8623F5CA9BBC813DC6B /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6851F3552835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLTGoogleMapJSONConversionsConversionTests.m; sourceTree = "<group>"; };
 		68E472692836FF0C00BDDDAC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/iOSSupport/System/Library/Frameworks/MapKit.framework; sourceTree = DEVELOPER_DIR; };
 		733AFAB37683A9DA7512F09C /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
-		7755F8F4BABC3D6A0BD4048B /* libPods-Runner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Runner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7AFFD8ED1D35381100E5BB4D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -84,7 +85,6 @@
 		B7AFC65E3DD5AC60D834D83D /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		E52C6A6210A56F027C582EF9 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		EA0E91726245EDC22B97E8B9 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
-		F267F68029D1A4E2E4C572A7 /* libPods-RunnerTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RunnerTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F269303A2BB389BF00BF17C4 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
 		F7151F10265D7ED70028CB91 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7151F12265D7ED70028CB91 /* GoogleMapsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GoogleMapsTests.m; sourceTree = "<group>"; };
@@ -99,7 +99,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4510D964F3B1259FEDD3ABA6 /* libPods-Runner.a in Frameworks */,
+				B3A7FA04ABB7B84780729949 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,7 +108,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				68E4726A2836FF0C00BDDDAC /* MapKit.framework in Frameworks */,
-				FC8F35FC8CD533B128950487 /* libPods-RunnerTests.a in Frameworks */,
+				2BDE99378062AE3E60B40021 /* Pods_RunnerTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,8 +126,8 @@
 			isa = PBXGroup;
 			children = (
 				68E472692836FF0C00BDDDAC /* MapKit.framework */,
-				7755F8F4BABC3D6A0BD4048B /* libPods-Runner.a */,
-				F267F68029D1A4E2E4C572A7 /* libPods-RunnerTests.a */,
+				61A9A8623F5CA9BBC813DC6B /* Pods_Runner.framework */,
+				3ACE0AFE8D82CD5962486AFD /* Pods_RunnerTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -241,6 +241,7 @@
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				BB6BD9A1101E970BEF85B6D2 /* [CP] Copy Pods Resources */,
+				A7D3A643E249522B15BA2B1D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -259,6 +260,7 @@
 				F7151F0C265D7ED70028CB91 /* Sources */,
 				F7151F0D265D7ED70028CB91 /* Frameworks */,
 				F7151F0E265D7ED70028CB91 /* Resources */,
+				DF182F6A1B9E41DA05BFCB87 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -411,6 +413,24 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
 		};
+		A7D3A643E249522B15BA2B1D /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/integration_test/integration_test.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/integration_test.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		BB6BD9A1101E970BEF85B6D2 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -451,6 +471,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DF182F6A1B9E41DA05BFCB87 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RunnerTests/Pods-RunnerTests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/OCMock/OCMock.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OCMock.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RunnerTests/Pods-RunnerTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

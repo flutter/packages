@@ -13,6 +13,7 @@ import 'package:stream_transform/stream_transform.dart';
 
 import 'google_map_inspector_ios.dart';
 import 'messages.g.dart';
+import 'serialization.dart';
 
 // TODO(stuartmorgan): Remove the dependency on platform interface toJson
 // methods. Channel serialization details should all be package-internal.
@@ -274,6 +275,20 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateHeatmaps(
+    HeatmapUpdates heatmapUpdates, {
+    required int mapId,
+  }) {
+    return _hostApi(mapId).updateHeatmaps(
+      heatmapUpdates.heatmapsToAdd.map(_platformHeatmapFromHeatmap).toList(),
+      heatmapUpdates.heatmapsToChange.map(_platformHeatmapFromHeatmap).toList(),
+      heatmapUpdates.heatmapIdsToRemove
+          .map((HeatmapId id) => id.value)
+          .toList(),
+    );
+  }
+
+  @override
   Future<void> updateTileOverlays({
     required Set<TileOverlay> newTileOverlays,
     required int mapId,
@@ -421,6 +436,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       'polygonsToAdd': serializePolygonSet(mapObjects.polygons),
       'polylinesToAdd': serializePolylineSet(mapObjects.polylines),
       'circlesToAdd': serializeCircleSet(mapObjects.circles),
+      'heatmapsToAdd': mapObjects.heatmaps.map(serializeHeatmap).toList(),
       'tileOverlaysToAdd': serializeTileOverlaySet(mapObjects.tileOverlays),
     };
 
@@ -533,6 +549,10 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
 
   static PlatformCircle _platformCircleFromCircle(Circle circle) {
     return PlatformCircle(json: circle.toJson());
+  }
+
+  static PlatformHeatmap _platformHeatmapFromHeatmap(Heatmap heatmap) {
+    return PlatformHeatmap(json: heatmap.toJson());
   }
 
   static PlatformMarker _platformMarkerFromMarker(Marker marker) {
