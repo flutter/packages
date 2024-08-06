@@ -21,6 +21,14 @@ dependencies:
     sdk: flutter
   quick_actions_platform_interface: ^1.0.0
 
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+ 
+  quick_actions_platform_interface:
+    path: ../../quick_actions/quick_actions_platform_interface
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
