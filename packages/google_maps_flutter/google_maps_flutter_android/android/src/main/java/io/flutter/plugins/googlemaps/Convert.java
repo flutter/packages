@@ -660,6 +660,20 @@ class Convert {
     }
   }
 
+  static void interpretMarkerOptions(Messages.PlatformMarker marker, MarkerOptionsSink sink, AssetManager assetManager, float density) {
+    sink.setAlpha(marker.getAlpha().floatValue());
+    sink.setAnchor((float)marker.getAnchor()[0], (float)marker.getAnchor()[1]);
+    sink.setConsumeTapEvents(marker.getConsumeTapEvents());
+    sink.setDraggable(marker.getDraggable());
+    sink.setFlat(marker.getFlat());
+    sink.setIcon(toBitmapDescriptor(marker.getIcon(), assetManager, density));
+    interpretInfoWindowOptions(sink, marker.getInfoWindow());
+    sink.setPosition(toLatLng(marker.getPosition().toList()));
+    sink.setRotation(marker.getRotation().floatValue());
+    sink.setVisible(marker.getVisible());
+    sink.setZIndex(marker.getZIndex().floatValue());
+  }
+
   /** Set the options in the given object to marker options sink. */
   static void interpretMarkerOptions(
       Map<String, ?> data, MarkerOptionsSink sink, AssetManager assetManager, float density) {

@@ -218,6 +218,8 @@ class PlatformMarker {
     required this.rotation,
     required this.visible,
     required this.zIndex,
+    required this.markerId,
+    this.clusterManagerId,
   });
 
   double alpha;
@@ -242,6 +244,10 @@ class PlatformMarker {
 
   double zIndex;
 
+  String markerId;
+
+  String? clusterManagerId;
+
   Object encode() {
     return <Object?>[
       alpha,
@@ -255,6 +261,8 @@ class PlatformMarker {
       rotation,
       visible,
       zIndex,
+      markerId,
+      clusterManagerId,
     ];
   }
 
@@ -272,6 +280,8 @@ class PlatformMarker {
       rotation: result[8]! as double,
       visible: result[9]! as bool,
       zIndex: result[10]! as double,
+      markerId: result[11]! as String,
+      clusterManagerId: result[12] as String?,
     );
   }
 }

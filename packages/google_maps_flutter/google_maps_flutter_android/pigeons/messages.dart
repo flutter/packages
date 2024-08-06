@@ -102,6 +102,8 @@ class PlatformMarker {
     required this.rotation,
     required this.visible,
     required this.zIndex,
+    required this.markerId,
+    this.clusterManagerId,
   });
 
   final double alpha;
@@ -115,6 +117,8 @@ class PlatformMarker {
   final double rotation;
   final bool visible;
   final double zIndex;
+  final String markerId;
+  final String? clusterManagerId;
 }
 
 /// Pigeon equivalent of the Polygon class.

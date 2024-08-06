@@ -724,12 +724,14 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       consumeTapEvents: marker.consumeTapEvents,
       draggable: marker.draggable,
       flat: marker.flat,
-      icon: marker.icon,
+      icon: marker.icon.toJson(),
       infoWindow: marker.infoWindow.toJson() as Map<String?, Object?>,
       position: _platformLatLngFromLatLng(marker.position),
       rotation: marker.rotation,
       visible: marker.visible,
       zIndex: marker.zIndex,
+      markerId: marker.markerId.value,
+      clusterManagerId: marker.clusterManagerId?.value,
     );
   }
 

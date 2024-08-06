@@ -855,6 +855,29 @@ public class Messages {
       this.zIndex = setterArg;
     }
 
+    private @NonNull String markerId;
+
+    public @NonNull String getMarkerId() {
+      return markerId;
+    }
+
+    public void setMarkerId(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"markerId\" is null.");
+      }
+      this.markerId = setterArg;
+    }
+
+    private @Nullable String clusterManagerId;
+
+    public @Nullable String getClusterManagerId() {
+      return clusterManagerId;
+    }
+
+    public void setClusterManagerId(@Nullable String setterArg) {
+      this.clusterManagerId = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     PlatformMarker() {}
 
@@ -863,12 +886,12 @@ public class Messages {
       if (this == o) { return true; }
       if (o == null || getClass() != o.getClass()) { return false; }
       PlatformMarker that = (PlatformMarker) o;
-      return alpha.equals(that.alpha) && Arrays.equals(anchor, that.anchor) && consumeTapEvents.equals(that.consumeTapEvents) && draggable.equals(that.draggable) && flat.equals(that.flat) && icon.equals(that.icon) && infoWindow.equals(that.infoWindow) && position.equals(that.position) && rotation.equals(that.rotation) && visible.equals(that.visible) && zIndex.equals(that.zIndex);
+      return alpha.equals(that.alpha) && Arrays.equals(anchor, that.anchor) && consumeTapEvents.equals(that.consumeTapEvents) && draggable.equals(that.draggable) && flat.equals(that.flat) && icon.equals(that.icon) && infoWindow.equals(that.infoWindow) && position.equals(that.position) && rotation.equals(that.rotation) && visible.equals(that.visible) && zIndex.equals(that.zIndex) && markerId.equals(that.markerId) && Objects.equals(clusterManagerId, that.clusterManagerId);
     }
 
     @Override
     public int hashCode() {
-      int __pigeon_result = Objects.hash(alpha, consumeTapEvents, draggable, flat, icon, infoWindow, position, rotation, visible, zIndex);
+      int __pigeon_result = Objects.hash(alpha, consumeTapEvents, draggable, flat, icon, infoWindow, position, rotation, visible, zIndex, markerId, clusterManagerId);
       __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(anchor);
       return __pigeon_result;
     }
@@ -963,6 +986,22 @@ public class Messages {
         return this;
       }
 
+      private @Nullable String markerId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMarkerId(@NonNull String setterArg) {
+        this.markerId = setterArg;
+        return this;
+      }
+
+      private @Nullable String clusterManagerId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setClusterManagerId(@Nullable String setterArg) {
+        this.clusterManagerId = setterArg;
+        return this;
+      }
+
       public @NonNull PlatformMarker build() {
         PlatformMarker pigeonReturn = new PlatformMarker();
         pigeonReturn.setAlpha(alpha);
@@ -976,13 +1015,15 @@ public class Messages {
         pigeonReturn.setRotation(rotation);
         pigeonReturn.setVisible(visible);
         pigeonReturn.setZIndex(zIndex);
+        pigeonReturn.setMarkerId(markerId);
+        pigeonReturn.setClusterManagerId(clusterManagerId);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(11);
+      ArrayList<Object> toListResult = new ArrayList<Object>(13);
       toListResult.add(alpha);
       toListResult.add(anchor);
       toListResult.add(consumeTapEvents);
@@ -994,6 +1035,8 @@ public class Messages {
       toListResult.add(rotation);
       toListResult.add(visible);
       toListResult.add(zIndex);
+      toListResult.add(markerId);
+      toListResult.add(clusterManagerId);
       return toListResult;
     }
 
@@ -1021,6 +1064,10 @@ public class Messages {
       pigeonResult.setVisible((Boolean) visible);
       Object zIndex = __pigeon_list.get(10);
       pigeonResult.setZIndex((Double) zIndex);
+      Object markerId = __pigeon_list.get(11);
+      pigeonResult.setMarkerId((String) markerId);
+      Object clusterManagerId = __pigeon_list.get(12);
+      pigeonResult.setClusterManagerId((String) clusterManagerId);
       return pigeonResult;
     }
   }

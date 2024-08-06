@@ -56,13 +56,13 @@ class MarkersController {
 
   void addMarkers(@NonNull List<Messages.PlatformMarker> markersToAdd) {
     for (Messages.PlatformMarker markerToAdd : markersToAdd) {
-      addJsonMarker(markerToAdd.getJson());
+      addMarker(markerToAdd);
     }
   }
 
   void changeMarkers(@NonNull List<Messages.PlatformMarker> markersToChange) {
     for (Messages.PlatformMarker markerToChange : markersToChange) {
-      changeJsonMarker(markerToChange.getJson());
+      changeMarker(markerToChange);
     }
   }
 
@@ -193,6 +193,17 @@ class MarkersController {
     addMarker(markerBuilder);
   }
 
+  private void addMarker(Messages.PlatformMarker marker) {
+    if (marker == null) {
+      return;
+    }
+    String markerId = marker.getMarkerId();
+    String clusterManagerId = marker.getClusterManagerId();
+    MarkerBuilder markerBuilder = new MarkerBuilder(markerId, clusterManagerId);
+    Convert.interpretMarkerOptions(marker, markerBuilder, assetManager, density);
+    addMarker(markerBuilder);
+  }
+
   private void addMarker(MarkerBuilder markerBuilder) {
     if (markerBuilder == null) {
       return;
@@ -225,25 +236,25 @@ class MarkersController {
     googleMapsMarkerIdToDartMarkerId.put(marker.getId(), markerId);
   }
 
-  private void changeJsonMarker(Map<String, ?> marker) {
+  private void changeMarker(Messages.PlatformMarker marker) {
     if (marker == null) {
       return;
     }
-    String markerId = getMarkerId(marker);
+    String markerId = marker.getMarkerId();
 
     MarkerBuilder markerBuilder = markerIdToMarkerBuilder.get(markerId);
     if (markerBuilder == null) {
       return;
     }
 
-    String clusterManagerId = getClusterManagerId(marker);
+    String clusterManagerId = marker.getClusterManagerId();
     String oldClusterManagerId = markerBuilder.clusterManagerId();
 
     // If the cluster ID on the updated marker has changed, the marker needs to
     // be removed and re-added to update its cluster manager state.
     if (!(Objects.equals(clusterManagerId, oldClusterManagerId))) {
       removeMarker(markerId);
-      addJsonMarker(marker);
+      addMarker(marker);
       return;
     }
 
