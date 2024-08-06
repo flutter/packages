@@ -10,6 +10,7 @@ import '../platform_interface/platform_content_progress_provider.dart';
 import 'android_ad_display_container.dart';
 import 'android_ads_loader.dart';
 import 'android_ads_manager_delegate.dart';
+import 'android_content_progress_provider.dart';
 
 /// Android implementation of [InteractiveMediaAdsPlatform].
 final class AndroidInteractiveMediaAds extends InteractiveMediaAdsPlatform {
@@ -43,7 +44,6 @@ final class AndroidInteractiveMediaAds extends InteractiveMediaAdsPlatform {
   PlatformContentProgressProvider createPlatformContentProgressProvider(
     PlatformContentProgressProviderCreationParams params,
   ) {
-    // TODO: implement createPlatformContentProgressProvider
-    throw UnimplementedError();
+    return AndroidContentProgressProvider(params);
   }
 }

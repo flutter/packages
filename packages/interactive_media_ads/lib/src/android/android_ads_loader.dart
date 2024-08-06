@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 import '../platform_interface/platform_interface.dart';
 import 'android_ad_display_container.dart';
 import 'android_ads_manager.dart';
+import 'android_content_progress_provider.dart';
 import 'enum_converter_utils.dart';
 import 'interactive_media_ads.g.dart' as ima;
 import 'interactive_media_ads_proxy.dart';
@@ -89,6 +90,11 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
       if (request.contentDuration != null)
         androidRequest.setContentDuration(
           request.contentDuration!.inSeconds.toDouble(),
+        ),
+      if (request.contentProgressProvider != null)
+        androidRequest.setContentProgressProvider(
+          (request.contentProgressProvider! as AndroidContentProgressProvider)
+              .progressProvider,
         ),
       adsLoader.requestAds(androidRequest),
     ]);

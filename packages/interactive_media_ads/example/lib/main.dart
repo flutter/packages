@@ -61,6 +61,11 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
     },
   );
 
+  Timer? _contentProgressTimer;
+
+  final ContentProgressProvider _contentProgressProvider =
+      ContentProgressProvider();
+
   @override
   void initState() {
     super.initState();
@@ -121,13 +126,30 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
       },
     );
 
-    return _adsLoader.requestAds(AdsRequest(adTagUrl: _adTagUrl));
+    return _adsLoader.requestAds(AdsRequest(
+      adTagUrl: _adTagUrl,
+      contentProgressProvider: _contentProgressProvider,
+    ));
   }
 
   Future<void> _resumeContent() {
     setState(() {
       _shouldShowContentVideo = true;
     });
+    _contentProgressTimer = Timer.periodic(
+      const Duration(milliseconds: 500),
+      (Timer timer) async {
+        if (_contentVideoController.value.isInitialized) {
+          final Duration? progress = await _contentVideoController.position;
+          if (progress != null) {
+            await _contentProgressProvider.setProgress(
+              progress: progress,
+              duration: _contentVideoController.value.duration,
+            );
+          }
+        }
+      },
+    );
     return _contentVideoController.play();
   }
 
@@ -135,6 +157,8 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
     setState(() {
       _shouldShowContentVideo = false;
     });
+    _contentProgressTimer?.cancel();
+    _contentProgressTimer = null;
     return _contentVideoController.pause();
   }
   // #enddocregion request_ads
@@ -143,6 +167,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
   @override
   void dispose() {
     super.dispose();
+    _contentProgressTimer?.cancel();
     _contentVideoController.dispose();
     _adsManager?.destroy();
   }

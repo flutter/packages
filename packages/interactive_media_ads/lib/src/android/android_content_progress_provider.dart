@@ -4,7 +4,7 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
 
 import '../platform_interface/platform_content_progress_provider.dart';
 import 'interactive_media_ads.g.dart' as ima;
@@ -40,7 +40,11 @@ base class AndroidContentProgressProvider
   /// Constructs an [AndroidContentProgressProvider].
   AndroidContentProgressProvider(super.params) : super.implementation();
 
-  late final ima.ContentProgressProvider _progressProvider =
+  /// The native Android ContentProgressProvider.
+  ///
+  /// This allows the SDK to track progress of the content video.
+  @internal
+  late final ima.ContentProgressProvider progressProvider =
       _androidParams._proxy.newContentProgressProvider();
 
   late final AndroidContentProgressProviderCreationParams _androidParams =
@@ -56,7 +60,7 @@ base class AndroidContentProgressProvider
     required Duration progress,
     required Duration duration,
   }) async {
-    return _progressProvider.setContentProgress(
+    return progressProvider.setContentProgress(
       _androidParams._proxy.newVideoProgressUpdate(
         currentTimeMs: progress.inMilliseconds,
         durationMs: duration.inMilliseconds,
