@@ -433,9 +433,10 @@ class _GoogleMapState extends State<GoogleMap> {
 
   Future<void> _updateHeatmaps() async {
     final GoogleMapController controller = await _controller.future;
-    // ignore: unawaited_futures
-    controller._updateHeatmaps(
-      HeatmapUpdates.from(_heatmaps.values.toSet(), widget.heatmaps),
+    unawaited(
+      controller._updateHeatmaps(
+        HeatmapUpdates.from(_heatmaps.values.toSet(), widget.heatmaps),
+      ),
     );
     _heatmaps = keyByHeatmapId(widget.heatmaps);
   }
