@@ -1,3 +1,7 @@
+## 2.3.0
+
+* Adds endorsed macOS support.
+
 ## 2.2.0
 
 * Switches endorsed iOS implementation to `local_auth_darwin`.
