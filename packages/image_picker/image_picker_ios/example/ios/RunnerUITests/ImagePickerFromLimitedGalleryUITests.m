@@ -108,7 +108,7 @@ const int kLimitedElementWaitingTime = 30;
 
   // Find an image and tap on it.
   NSPredicate *imagePredicate = [NSPredicate predicateWithFormat:@"label BEGINSWITH 'Photo, '"];
-  XCUIElementQuery *imageQuery =[self.app.images matchingPredicate:imagePredicate];
+  XCUIElementQuery *imageQuery = [self.app.images matchingPredicate:imagePredicate];
   XCUIElement *aImage = imageQuery.firstMatch;
   os_log_error(OS_LOG_DEFAULT, "description before picking image %@", self.app.debugDescription);
   if (![aImage waitForExistenceWithTimeout:kLimitedElementWaitingTime]) {
