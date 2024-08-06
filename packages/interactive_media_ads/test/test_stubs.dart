@@ -145,10 +145,16 @@ class TestContentProgressProvider extends PlatformContentProgressProvider {
     this.onSetProgress,
   }) : super.implementation();
 
-  Future<void> Function(Duration progress)? onSetProgress;
+  Future<void> Function({
+    required Duration progress,
+    required Duration duration,
+  })? onSetProgress;
 
   @override
-  Future<void> setProgress(Duration progress) async {
-    return onSetProgress?.call(progress);
+  Future<void> setProgress({
+    required Duration progress,
+    required Duration duration,
+  }) async {
+    return onSetProgress?.call(progress: progress, duration: duration);
   }
 }

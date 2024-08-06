@@ -80,7 +80,10 @@ class ContentProgressProvider {
   final PlatformContentProgressProvider platform;
 
   /// Sends an update on the progress of the content video.
-  Future<void> setProgress(Duration progress) {
-    return platform.setProgress(progress);
+  Future<void> setProgress({
+    required Duration progress,
+    required Duration duration,
+  }) {
+    return platform.setProgress(progress: progress, duration: duration);
   }
 }

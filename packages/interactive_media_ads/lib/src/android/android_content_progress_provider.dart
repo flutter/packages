@@ -52,13 +52,15 @@ base class AndroidContentProgressProvider
             );
 
   @override
-  Future<void> setProgress(Duration progress) async {
-    throw UnimplementedError();
-    // return _progressProvider.setContentProgress(
-    //   _androidParams._proxy.newVideoProgressUpdate(
-    //     currentTimeMs: progress.inMilliseconds,
-    //     durationMs: null,
-    //   ),
-    // );
+  Future<void> setProgress({
+    required Duration progress,
+    required Duration duration,
+  }) async {
+    return _progressProvider.setContentProgress(
+      _androidParams._proxy.newVideoProgressUpdate(
+        currentTimeMs: progress.inMilliseconds,
+        durationMs: duration.inMilliseconds,
+      ),
+    );
   }
 }

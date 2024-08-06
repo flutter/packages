@@ -79,5 +79,8 @@ abstract class PlatformContentProgressProvider {
   final PlatformContentProgressProviderCreationParams params;
 
   /// Sends an update on the progress of the content video.
-  Future<void> setProgress(Duration progress);
+  Future<void> setProgress({
+    required Duration progress,
+    required Duration duration,
+  });
 }

@@ -10,18 +10,32 @@ import 'test_stubs.dart';
 
 void main() {
   test('setProgress', () async {
+    late final Duration callbackProgress;
+    late final Duration callbackDuration;
+
     final TestContentProgressProvider platformProvider =
         TestContentProgressProvider(
       const PlatformContentProgressProviderCreationParams(),
-      onSetProgress: expectAsync1((Duration progress) async {
-        expect(progress, equals(const Duration(seconds: 1)));
-      }),
+      onSetProgress: ({
+        required Duration progress,
+        required Duration duration,
+      }) async {
+        callbackProgress = progress;
+        callbackDuration = duration;
+      },
     );
 
     final ContentProgressProvider provider =
         ContentProgressProvider.fromPlatform(
       platformProvider,
     );
-    await provider.setProgress(const Duration(seconds: 1));
+
+    await provider.setProgress(
+      progress: const Duration(seconds: 1),
+      duration: const Duration(seconds: 10),
+    );
+
+    expect(callbackProgress, const Duration(seconds: 1));
+    expect(callbackDuration, const Duration(seconds: 10));
   });
 }
