@@ -18,25 +18,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/// Sets MarkerId and optionally ClusterManagerId to GMSMarker UserData.
-///
-/// @param markerIdentifier Identifier of marker.
-/// @param clusterManagerIdentifier Optional identifier of cluster manager.
-/// @param marker GMSMarker object.
+/// Associates a marker identifier and optionally a cluster manager identifier with a marker's user
+/// data.
 extern void FGMSetIdentifiersToMarkerUserData(NSString *markerIdentifier,
                                               NSString *_Nullable clusterManagerIdentifier,
                                               GMSMarker *marker);
 
-/// Get MarkerIdentifier from GMSMarker UserData.
+/// Get the marker identifier from marker's user data.
 ///
-/// @param marker GMSMarker object.
-/// @return NSString if found; otherwise, nil.
+/// @return The marker identifier if found; otherwise, nil.
 extern NSString *_Nullable FGMGetMarkerIdentifierFromMarker(GMSMarker *marker);
 
-/// Get ClusterManagerIdentifier from GMSMarker UserData.
+/// Get the cluster manager identifier from marker's user data.
 ///
-/// @param marker GMSMarker object.
-/// @return NSString if found; otherwise, nil.
+/// @return The cluster manager identifier if found; otherwise, nil.
 extern NSString *_Nullable FGMGetClusterManagerIdentifierFromMarker(GMSMarker *marker);
 
 NS_ASSUME_NONNULL_END

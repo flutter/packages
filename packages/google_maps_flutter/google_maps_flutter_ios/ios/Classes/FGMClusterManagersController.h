@@ -10,60 +10,51 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-// Defines cluster managers controller interface which
-// is responsible for adding/removing/returning one or more cluster managers.
+/// A controller that manages all of the cluster managers on a map.
 @interface FGMClusterManagersController : NSObject
 
-/// Initializes FLTClusterManagersController.
+/// Initializes cluster manager controller.
 ///
 /// @param callbackHandler A callback handler.
 /// @param mapView A map view that will be used to display clustered markers.
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler;
 
-/// Creates ClusterManagers and initializes them form JSON data.
+/// Creates cluster managers and initializes them form JSON data.
 ///
-/// @param clusterManagersToAdd List of clustermanager object data.
+/// @param clusterManagersToAdd Array of cluster managers JSON data to add.
 - (void)addJSONClusterManagers:(NSArray<NSDictionary *> *)clusterManagersToAdd;
 
-/// Creates ClusterManagers and initializes them.
+/// Creates cluster managers and initializes them.
 ///
-/// @param clusterManagersToAdd List of clustermanager object data.
+/// @param clusterManagersToAdd Array of cluster managers to add.
 - (void)addClusterManagers:(NSArray<FGMPlatformClusterManager *> *)clusterManagersToAdd;
 
-/// Removes requested ClusterManagers from the controller.
+/// Removes requested cluster managers from the controller.
 ///
-/// @param identifiers List of clusterManagerIds to remove.
-
+/// @param identifiers Array of cluster manager IDs to remove.
 - (void)removeClusterManagersWithIdentifiers:(NSArray<NSString *> *)identifiers;
 
-/// Returns the ClusterManager for the given identifier.
+/// Returns the cluster managers for the given identifier.
 ///
-/// @param identifier identifier of the ClusterManager.
-/// @return GMUClusterManager if found; otherwise, nil.
+/// @param identifier The identifier of the cluster manager.
+/// @return A cluster manager if found; otherwise, nil.
 - (nullable GMUClusterManager *)clusterManagerWithIdentifier:(NSString *)identifier;
 
-/// Converts clusters managed by the specified ClusterManager to
-/// a serializable array of clusters.
+/// Returns an array of clusters managed by the cluster manager.
 ///
-/// This method fetches and serializes clusters at the current zoom
-/// level from the ClusterManager identified by the given identifier.
-/// If the specified ClusterManager identifier does not exist, an empty
-/// array is returned.
-///
-/// @param identifier The identifier of the ClusterManager to serialize.
-/// @return An array of FGMPlatformCluster objects representing the clusters. `nil` is returned only
-/// when `error != nil`.
+/// @param identifier The identifier of the cluster manager whose clusters are to be retrieved.
+/// @return An array of clusters. Returns `nil` only if `error` is populated.
 - (nullable NSArray<FGMPlatformCluster *> *)
     clustersWithIdentifier:(NSString *)identifier
                      error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error;
 
-/// Called when cluster marker is tapped on the map.
+/// Called when a cluster marker is tapped on the map.
 ///
-/// @param cluster GMUStaticCluster object.
+/// @param cluster The cluster that was tapped on.
 - (void)didTapCluster:(GMUStaticCluster *)cluster;
 
-/// Calls cluster method of all ClusterManagers.
+/// Calls the cluster method of all the cluster managers.
 - (void)invokeClusteringForEachClusterManager;
 @end
 

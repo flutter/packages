@@ -9,14 +9,14 @@
 
 @interface FGMClusterManagersController ()
 
-/// A dictionary that cluster managers unique identifiers to GMUClusterManager instances.
+/// A dictionary mapping unique cluster manager identifiers to their corresponding cluster managers.
 @property(strong, nonatomic)
     NSMutableDictionary<NSString *, GMUClusterManager *> *clusterManagerIdentifierToManagers;
 
 /// The callback handler interface for calls to Flutter.
 @property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 
-/// The current GMSMapView instance on which the cluster managers are operating.
+/// The current map instance on which the cluster managers are operating.
 @property(strong, nonatomic) GMSMapView *mapView;
 
 @end
@@ -53,10 +53,9 @@
   id<GMUClusterRenderer> renderer =
       [[GMUDefaultClusterRenderer alloc] initWithMapView:self.mapView
                                     clusterIconGenerator:iconGenerator];
-  GMUClusterManager *clusterManager = [[GMUClusterManager alloc] initWithMap:self.mapView
-                                                                   algorithm:algorithm
-                                                                    renderer:renderer];
-  self.clusterManagerIdentifierToManagers[identifier] = clusterManager;
+  self.clusterManagerIdentifierToManagers[identifier] =
+      [[GMUClusterManager alloc] initWithMap:self.mapView algorithm:algorithm renderer:renderer];
+  ;
 }
 
 - (void)removeClusterManagersWithIdentifiers:(NSArray<NSString *> *)identifiers {
@@ -121,10 +120,9 @@
 
 #pragma mark - Private methods
 
-/// Returns the cluster manager id for given cluster.
+/// Returns the cluster manager identifier for given cluster.
 ///
-/// @param cluster identifier of the ClusterManager.
-/// @return id NSString if found; otherwise, nil.
+/// @return The cluster manager identifier if found; otherwise, nil.
 - (nullable NSString *)clusterManagerIdentifierForCluster:(GMUStaticCluster *)cluster {
   if ([cluster.items.firstObject isKindOfClass:[GMSMarker class]]) {
     GMSMarker *firstMarker = (GMSMarker *)cluster.items.firstObject;
