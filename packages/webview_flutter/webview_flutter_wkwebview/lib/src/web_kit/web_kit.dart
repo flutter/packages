@@ -1282,7 +1282,7 @@ class WKWebViewIOS extends WKWebView implements UIView {
 
 /// The macOS version of a WKWebView.
 class WKWebViewMacOS extends WKWebView {
-  /// Constructs a new iOS WKWebView; see [WKWebView] for details.
+  /// Constructs a new macOS WKWebView; see [WKWebView] for details.
   WKWebViewMacOS(
     super.configuration, {
     super.observeValue,
