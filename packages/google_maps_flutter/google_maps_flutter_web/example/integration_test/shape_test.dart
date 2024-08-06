@@ -3,9 +3,11 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
+import 'package:google_maps/google_maps_visualization.dart' as visualization;
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -207,6 +209,53 @@ void main() {
           (WidgetTester tester) async {
         final gmaps.PolylineOptions options = gmaps.PolylineOptions()
           ..draggable = true;
+
+        controller.remove();
+
+        expect(() {
+          controller.update(options);
+        }, throwsAssertionError);
+      });
+    });
+  });
+
+  group('HeatmapController', () {
+    late visualization.HeatmapLayer heatmap;
+
+    setUp(() {
+      heatmap = visualization.HeatmapLayer();
+    });
+
+    testWidgets('update', (WidgetTester tester) async {
+      final HeatmapController controller = HeatmapController(heatmap: heatmap);
+      final visualization.HeatmapLayerOptions options =
+          visualization.HeatmapLayerOptions()
+            ..data = <gmaps.LatLng>[gmaps.LatLng(0, 0)].toJS;
+
+      expect(heatmap.data, hasLength(0));
+
+      controller.update(options);
+
+      expect(heatmap.data, hasLength(1));
+    });
+
+    group('remove', () {
+      late HeatmapController controller;
+
+      setUp(() {
+        controller = HeatmapController(heatmap: heatmap);
+      });
+
+      testWidgets('drops gmaps instance', (WidgetTester tester) async {
+        controller.remove();
+
+        expect(controller.heatmap, isNull);
+      });
+
+      testWidgets('cannot call update after remove',
+          (WidgetTester tester) async {
+        final visualization.HeatmapLayerOptions options =
+            visualization.HeatmapLayerOptions()..dissipating = true;
 
         controller.remove();
 

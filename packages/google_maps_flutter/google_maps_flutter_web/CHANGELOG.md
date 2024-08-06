@@ -1,3 +1,7 @@
+## 0.5.10
+
+* Adds support for heatmap layers.
+
 ## 0.5.9+2
 
 * Restores support for Dart `^3.3.0` and Flutter `^3.19.0`.
