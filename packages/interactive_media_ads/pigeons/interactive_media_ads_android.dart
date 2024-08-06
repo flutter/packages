@@ -316,6 +316,9 @@ abstract class AdsRequest {
   /// Attaches a ContentProgressProvider instance to allow scheduling ad breaks
   /// based on content progress (cue points).
   void setContentProgressProvider(ContentProgressProvider provider);
+
+  /// Specifies the duration of the content in seconds to be shown.
+  void setContentDuration(double duration);
 }
 
 /// Defines an interface to allow SDK to track progress of the content video.

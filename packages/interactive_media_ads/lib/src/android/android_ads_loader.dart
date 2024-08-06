@@ -86,6 +86,10 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
 
     await Future.wait(<Future<void>>[
       androidRequest.setAdTagUrl(request.adTagUrl),
+      if (request.contentDuration != null)
+        androidRequest.setContentDuration(
+          request.contentDuration!.inSeconds.toDouble(),
+        ),
       adsLoader.requestAds(androidRequest),
     ]);
   }

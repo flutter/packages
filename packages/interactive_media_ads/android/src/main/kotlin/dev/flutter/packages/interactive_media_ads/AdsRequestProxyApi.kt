@@ -38,4 +38,8 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   ) {
     pigeon_instance.contentProgressProvider = provider
   }
+
+  override fun setContentDuration(pigeon_instance: AdsRequest, duration: Double) {
+    pigeon_instance.setContentDuration(duration.toFloat())
+  }
 }

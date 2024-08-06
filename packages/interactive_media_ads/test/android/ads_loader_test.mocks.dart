@@ -800,6 +800,16 @@ class MockAdsRequest extends _i1.Mock implements _i2.AdsRequest {
       ) as _i6.Future<void>);
 
   @override
+  _i6.Future<void> setContentDuration(double? duration) => (super.noSuchMethod(
+        Invocation.method(
+          #setContentDuration,
+          [duration],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
   _i2.AdsRequest pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
           #pigeon_copy,

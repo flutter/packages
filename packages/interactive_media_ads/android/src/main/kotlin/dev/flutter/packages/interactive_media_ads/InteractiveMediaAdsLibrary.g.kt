@@ -1333,6 +1333,12 @@ abstract class PigeonApiAdsRequest(
       provider: com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
   )
 
+  /** Specifies the duration of the content in seconds to be shown. */
+  abstract fun setContentDuration(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
+      duration: Double
+  )
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiAdsRequest?) {
@@ -1376,6 +1382,30 @@ abstract class PigeonApiAdsRequest(
             val wrapped: List<Any?> =
                 try {
                   api.setContentProgressProvider(pigeon_instanceArg, providerArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContentDuration",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
+            val durationArg = args[1] as Double
+            val wrapped: List<Any?> =
+                try {
+                  api.setContentDuration(pigeon_instanceArg, durationArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)

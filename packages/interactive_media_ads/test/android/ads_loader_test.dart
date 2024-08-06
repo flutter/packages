@@ -105,10 +105,16 @@ void main() {
         ),
       );
 
-      await adsLoader.requestAds(AdsRequest(adTagUrl: 'url'));
+      await adsLoader.requestAds(
+        AdsRequest(
+          adTagUrl: 'url',
+          contentDuration: const Duration(seconds: 1),
+        ),
+      );
 
       verifyInOrder(<Future<void>>[
         mockAdsRequest.setAdTagUrl('url'),
+        mockAdsRequest.setContentDuration(1.0),
         mockAdsLoader.requestAds(mockAdsRequest),
       ]);
     });

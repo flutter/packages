@@ -32,4 +32,14 @@ class AdsRequestProxyApiTest {
 
     verify(instance).contentProgressProvider = mockProvider
   }
+
+  @Test
+  fun setContentDuration() {
+    val api = TestProxyApiRegistrar().getPigeonApiAdsRequest()
+
+    val instance = mock<AdsRequest>()
+    api.setContentDuration(instance, 2.0)
+
+    verify(instance).setContentDuration(2.0f)
+  }
 }

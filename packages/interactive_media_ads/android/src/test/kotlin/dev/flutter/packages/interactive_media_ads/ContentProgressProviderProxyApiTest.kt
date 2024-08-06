@@ -31,5 +31,6 @@ class ContentProgressProviderProxyApiTest {
     api.setContentProgress(instance, mockProgressUpdate)
 
     assertEquals(mockProgressUpdate, instance.currentProgress)
+    assertEquals(mockProgressUpdate, instance.contentProgress)
   }
 }
