@@ -66,6 +66,7 @@ AdsManager createAdsManager(PlatformAdsManager platformManager) {
         (PlatformAdDisplayContainerCreationParams params) {
       throw UnimplementedError();
     },
+    onCreatePlatformContentProgressProvider: (_) => throw UnimplementedError(),
   );
 
   late final AdsManager manager;

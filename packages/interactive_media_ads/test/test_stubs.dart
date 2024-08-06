@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:interactive_media_ads/src/platform_interface/platform_content_progress_provider.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 
 final class TestInteractiveMediaAdsPlatform
@@ -11,6 +12,7 @@ final class TestInteractiveMediaAdsPlatform
     required this.onCreatePlatformAdsLoader,
     required this.onCreatePlatformAdsManagerDelegate,
     required this.onCreatePlatformAdDisplayContainer,
+    required this.onCreatePlatformContentProgressProvider,
   });
 
   PlatformAdsLoader Function(PlatformAdsLoaderCreationParams params)
@@ -23,6 +25,10 @@ final class TestInteractiveMediaAdsPlatform
   PlatformAdDisplayContainer Function(
     PlatformAdDisplayContainerCreationParams params,
   ) onCreatePlatformAdDisplayContainer;
+
+  PlatformContentProgressProvider Function(
+    PlatformContentProgressProviderCreationParams params,
+  ) onCreatePlatformContentProgressProvider;
 
   @override
   PlatformAdsLoader createPlatformAdsLoader(
@@ -43,6 +49,13 @@ final class TestInteractiveMediaAdsPlatform
     PlatformAdDisplayContainerCreationParams params,
   ) {
     return onCreatePlatformAdDisplayContainer(params);
+  }
+
+  @override
+  PlatformContentProgressProvider createPlatformContentProgressProvider(
+    PlatformContentProgressProviderCreationParams params,
+  ) {
+    return onCreatePlatformContentProgressProvider(params);
   }
 }
 
@@ -123,5 +136,19 @@ class TestAdsManager extends PlatformAdsManager {
   @override
   Future<void> destroy() async {
     return onDestroy?.call();
+  }
+}
+
+class TestContentProgressProvider extends PlatformContentProgressProvider {
+  TestContentProgressProvider(
+    super.params, {
+    this.onSetProgress,
+  }) : super.implementation();
+
+  Future<void> Function(Duration progress)? onSetProgress;
+
+  @override
+  Future<void> setProgress(Duration progress) async {
+    return onSetProgress?.call(progress);
   }
 }
