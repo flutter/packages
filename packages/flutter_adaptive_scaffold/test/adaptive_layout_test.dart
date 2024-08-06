@@ -431,12 +431,12 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
 
     expect(tester.getTopLeft(testBreakpoint1600), const Offset(10, 10));
-    //expect(tester.getBottomRight(testBreakpoint1600),
-    //  const Offset(1676.5, 1990.0));
-    // expect(tester.getTopLeft(secondaryTestBreakpoint1600),
-    //     const Offset(1459.1, 10.0));
-    // expect(tester.getBottomRight(secondaryTestBreakpoint1600),
-    //     const Offset(1676.5, 1990.0));
+    expect(tester.getBottomRight(testBreakpoint1600),
+        offsetMoreOrLessEquals(const Offset(1459.1, 1990.0), epsilon: 1.0));
+    expect(tester.getTopLeft(secondaryTestBreakpoint1600),
+        offsetMoreOrLessEquals(const Offset(1459.1, 10.0), epsilon: 1.0));
+    expect(tester.getBottomRight(secondaryTestBreakpoint1600),
+        offsetMoreOrLessEquals(const Offset(2299.1, 1990.0), epsilon: 1.0));
   });
 }
 
