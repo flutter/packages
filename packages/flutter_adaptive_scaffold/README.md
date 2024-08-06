@@ -52,10 +52,10 @@ Widget build(BuildContext context) {
     // An option to override the default transition duration.
     transitionDuration: Duration(milliseconds: _transitionDuration),
     // An option to override the default breakpoints used for small, medium,
-    // expanded, large, and extraLarge.
+    // mediumLarge, large, and extraLarge.
     smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
     mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
-    expandedBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
+    mediumLargeBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
     largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000, end: 1200),
     extraLargeBreakpoint: const WidthPlatformBreakpoint(begin: 1200),
     useDrawer: false,
@@ -171,8 +171,8 @@ return AdaptiveLayout(
           unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
         ),
       ),
-      Breakpoints.expanded: SlotLayout.from(
-        key: const Key('Primary Navigation Expanded'),
+      Breakpoints.mediumLarge: SlotLayout.from(
+        key: const Key('Primary Navigation MediumLarge'),
         inAnimation: AdaptiveScaffold.leftOutIn,
         builder: (_) => AdaptiveScaffold.standardNavigationRail(
           selectedIndex: selectedNavigation,

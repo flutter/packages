@@ -88,7 +88,8 @@ class _MyHomePageState extends State<MyHomePage> {
       // and large.
       smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
       mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
-      expandedBreakpoint: const WidthPlatformBreakpoint(begin: 1000, end: 1200),
+      mediumLargeBreakpoint:
+          const WidthPlatformBreakpoint(begin: 1000, end: 1200),
       largeBreakpoint: const WidthPlatformBreakpoint(begin: 1200, end: 1600),
       extraLargeBreakpoint: const WidthPlatformBreakpoint(begin: 1600),
       useDrawer: false,
@@ -130,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
         itemBuilder: (_, int idx) => children[idx],
       ),
       body: (_) => GridView.count(crossAxisCount: 2, children: children),
-      expandedBody: (_) =>
+      mediumLargeBody: (_) =>
           GridView.count(crossAxisCount: 3, children: children),
       largeBody: (_) => GridView.count(crossAxisCount: 4, children: children),
       extraLargeBody: (_) =>
@@ -143,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
       secondaryBody: (_) => Container(
         color: const Color.fromARGB(255, 234, 158, 192),
       ),
-      expandedSecondaryBody: (_) => Container(
+      mediumLargeSecondaryBody: (_) => Container(
         color: const Color.fromARGB(255, 234, 158, 192),
       ),
       largeSecondaryBody: (_) => Container(

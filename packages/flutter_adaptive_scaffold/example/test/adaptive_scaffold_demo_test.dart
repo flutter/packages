@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   final Finder smallBody = find.byKey(const Key('smallBody'));
   final Finder body = find.byKey(const Key('body'));
-  final Finder expandedBody = find.byKey(const Key('expandedBody'));
+  final Finder mediumLargeBody = find.byKey(const Key('mediumLargeBody'));
   final Finder largeBody = find.byKey(const Key('largeBody'));
   final Finder extraLargeBody = find.byKey(const Key('extraLargeBody'));
   final Finder bnav = find.byKey(const Key('bottomNavigation'));
@@ -43,7 +43,7 @@ void main() {
     expect(tester.getTopLeft(smallBody), Offset.zero);
     expect(tester.getTopLeft(bnav), const Offset(0, 1920));
     expect(body, findsNothing);
-    expect(expandedBody, findsNothing);
+    expect(mediumLargeBody, findsNothing);
     expect(largeBody, findsNothing);
     expect(extraLargeBody, findsNothing);
     expect(pnav, findsNothing);
@@ -59,7 +59,7 @@ void main() {
     expect(tester.getTopLeft(body), const Offset(88, 0));
     expect(tester.getTopLeft(pnav), Offset.zero);
     expect(smallBody, findsNothing);
-    expect(expandedBody, findsNothing);
+    expect(mediumLargeBody, findsNothing);
     expect(largeBody, findsNothing);
     expect(extraLargeBody, findsNothing);
     expect(bnav, findsNothing);
@@ -67,12 +67,12 @@ void main() {
     expect(pnav2, findsNothing);
     expect(pnav3, findsNothing);
 
-    // Expanded
+    // Medium Large
     await updateScreen(1100, tester);
     await tester.pumpAndSettle();
-    expect(expandedBody, findsOneWidget);
+    expect(mediumLargeBody, findsOneWidget);
     expect(pnav1, findsOneWidget);
-    expect(tester.getTopLeft(expandedBody), const Offset(208, 0));
+    expect(tester.getTopLeft(mediumLargeBody), const Offset(208, 0));
     expect(tester.getTopLeft(pnav1), Offset.zero);
     expect(smallBody, findsNothing);
     expect(body, findsNothing);
@@ -87,13 +87,13 @@ void main() {
     await updateScreen(1400, tester);
     await tester.pumpAndSettle();
     expect(largeBody, findsOneWidget);
-    expect(expandedBody, findsNothing);
+    expect(mediumLargeBody, findsNothing);
     expect(pnav2, findsOneWidget);
     expect(tester.getTopLeft(largeBody), const Offset(208, 0));
     expect(tester.getTopLeft(pnav2), Offset.zero);
     expect(smallBody, findsNothing);
     expect(body, findsNothing);
-    expect(expandedBody, findsNothing);
+    expect(mediumLargeBody, findsNothing);
     expect(extraLargeBody, findsNothing);
     expect(bnav, findsNothing);
     expect(pnav, findsNothing);
@@ -109,7 +109,7 @@ void main() {
     expect(tester.getTopLeft(pnav3), Offset.zero);
     expect(smallBody, findsNothing);
     expect(body, findsNothing);
-    expect(expandedBody, findsNothing);
+    expect(mediumLargeBody, findsNothing);
     expect(largeBody, findsNothing);
     expect(bnav, findsNothing);
     expect(pnav, findsNothing);

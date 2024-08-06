@@ -528,7 +528,7 @@ Future<MediaQuery> layout({
             TestBreakpoint400(): SlotLayout.from(
                 key: const Key('Primary Navigation Medium'), builder: on),
             TestBreakpoint800(): SlotLayout.from(
-                key: const Key('Primary Navigation Expanded'), builder: on),
+                key: const Key('Primary Navigation MediumLarge'), builder: on),
             TestBreakpoint1200(): SlotLayout.from(
                 key: const Key('Primary Navigation Large'), builder: on),
             TestBreakpoint1600(): SlotLayout.from(
@@ -542,7 +542,8 @@ Future<MediaQuery> layout({
             TestBreakpoint400(): SlotLayout.from(
                 key: const Key('Secondary Navigation Medium'), builder: on),
             TestBreakpoint800(): SlotLayout.from(
-                key: const Key('Secondary Navigation Expanded'), builder: on),
+                key: const Key('Secondary Navigation MediumLarge'),
+                builder: on),
             TestBreakpoint1200(): SlotLayout.from(
                 key: const Key('Secondary Navigation Large'), builder: on),
             TestBreakpoint1600(): SlotLayout.from(

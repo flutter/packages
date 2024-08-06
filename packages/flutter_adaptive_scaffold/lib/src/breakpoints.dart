@@ -92,20 +92,20 @@ class Breakpoints {
   );
 
   /// A window whose width is between 840 dp and 1200 dp.
-  static const Breakpoint expanded = WidthPlatformBreakpoint(
+  static const Breakpoint mediumLarge = WidthPlatformBreakpoint(
     begin: 840,
     end: 1200,
     top: 900,
   );
 
   /// A window whose width is greater than 840 dp.
-  static const Breakpoint expandedAndUp = WidthPlatformBreakpoint(
+  static const Breakpoint mediumLargeAndUp = WidthPlatformBreakpoint(
     begin: 840,
     top: 900,
   );
 
   /// A desktop window whose width is between 840 dp and 1200 dp.
-  static const Breakpoint expandedDesktop = WidthPlatformBreakpoint(
+  static const Breakpoint mediumLargeDesktop = WidthPlatformBreakpoint(
     begin: 840,
     end: 1200,
     top: 900,
@@ -113,7 +113,7 @@ class Breakpoints {
   );
 
   /// A mobile window whose width is between 840 dp and 1200 dp.
-  static const Breakpoint expandedMobile = WidthPlatformBreakpoint(
+  static const Breakpoint mediumLargeMobile = WidthPlatformBreakpoint(
     begin: 840,
     end: 1200,
     top: 900,
