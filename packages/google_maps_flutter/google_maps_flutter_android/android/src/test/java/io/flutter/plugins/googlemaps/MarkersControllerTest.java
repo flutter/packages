@@ -77,11 +77,9 @@ public class MarkersControllerTest {
     when(googleMap.addMarker(any(MarkerOptions.class))).thenReturn(marker);
 
     final LatLng latLng = new LatLng(1.1, 2.2);
-    final Map<String, String> markerOptions = new HashMap<>();
-    markerOptions.put("markerId", googleMarkerId);
 
-    final List<Object> markers = Arrays.<Object>asList(markerOptions);
-    controller.addJsonMarkers(markers);
+    final List<Messages.PlatformMarker> markers = Collections.singletonList(new Messages.PlatformMarker.Builder().setMarkerId(googleMarkerId).build());
+    controller.addMarkers(markers);
     controller.onMarkerDragStart(googleMarkerId, latLng);
 
     Mockito.verify(flutterApi)
@@ -98,11 +96,9 @@ public class MarkersControllerTest {
     when(googleMap.addMarker(any(MarkerOptions.class))).thenReturn(marker);
 
     final LatLng latLng = new LatLng(1.1, 2.2);
-    final Map<String, String> markerOptions = new HashMap<>();
-    markerOptions.put("markerId", googleMarkerId);
 
-    final List<Object> markers = Arrays.<Object>asList(markerOptions);
-    controller.addJsonMarkers(markers);
+    final List<Messages.PlatformMarker> markers = Collections.singletonList(new Messages.PlatformMarker.Builder().setMarkerId(googleMarkerId).build());
+    controller.addMarkers(markers);
     controller.onMarkerDragEnd(googleMarkerId, latLng);
 
     Mockito.verify(flutterApi)
@@ -119,11 +115,9 @@ public class MarkersControllerTest {
     when(googleMap.addMarker(any(MarkerOptions.class))).thenReturn(marker);
 
     final LatLng latLng = new LatLng(1.1, 2.2);
-    final Map<String, String> markerOptions = new HashMap<>();
-    markerOptions.put("markerId", googleMarkerId);
 
-    final List<Object> markers = Arrays.<Object>asList(markerOptions);
-    controller.addJsonMarkers(markers);
+    final List<Messages.PlatformMarker> markers = Collections.singletonList(new Messages.PlatformMarker.Builder().setMarkerId(googleMarkerId).build());
+    controller.addMarkers(markers);
     controller.onMarkerDrag(googleMarkerId, latLng);
 
     Mockito.verify(flutterApi)
@@ -134,9 +128,9 @@ public class MarkersControllerTest {
   public void controller_AddMarkerThrowsErrorIfMarkerIdIsNull() {
     final Map<String, String> markerOptions = new HashMap<>();
 
-    final List<Object> markers = Arrays.<Object>asList(markerOptions);
+    final List<Messages.PlatformMarker> markers = Collections.singletonList(new Messages.PlatformMarker.Builder().build());
     try {
-      controller.addJsonMarkers(markers);
+      controller.addMarkers(markers);
     } catch (IllegalArgumentException e) {
       assertEquals("markerId was null", e.getMessage());
       throw e;
@@ -150,22 +144,15 @@ public class MarkersControllerTest {
     final String googleMarkerId = "abc123";
     final String clusterManagerId = "cm123";
 
+    final Messages.PlatformMarker.Builder builder = new Messages.PlatformMarker.Builder();
+    builder.setMarkerId(googleMarkerId)
+            .setClusterManagerId(clusterManagerId)
+            .setPosition(new Messages.PlatformLatLng.Builder().setLatitude(1.1).setLongitude(2.2).build());
+
     when(marker.getId()).thenReturn(googleMarkerId);
 
-    final LatLng latLng1 = new LatLng(1.1, 2.2);
-    final List<Double> location1 = new ArrayList<>();
-    location1.add(latLng1.latitude);
-    location1.add(latLng1.longitude);
-
-    final Map<String, Object> markerOptions1 = new HashMap<>();
-    markerOptions1.put("markerId", googleMarkerId);
-    markerOptions1.put("position", location1);
-    markerOptions1.put("clusterManagerId", clusterManagerId);
-
-    final List<Object> markers = Arrays.<Object>asList(markerOptions1);
-
     // Add marker and capture the markerBuilder
-    controller.addJsonMarkers(markers);
+    controller.addMarkers(Collections.singletonList(builder.build()));
     ArgumentCaptor<MarkerBuilder> captor = ArgumentCaptor.forClass(MarkerBuilder.class);
     Mockito.verify(clusterManagersController, times(1)).addItem(captor.capture());
     MarkerBuilder capturedMarkerBuilder = captor.getValue();
@@ -176,17 +163,10 @@ public class MarkersControllerTest {
 
     // Change marker to test that markerController is created and the marker can be updated
     final LatLng latLng2 = new LatLng(3.3, 4.4);
-    final List<Double> location2 = new ArrayList<>();
-    location2.add(latLng2.latitude);
-    location2.add(latLng2.longitude);
 
-    final Map<String, Object> markerOptions2 = new HashMap<>();
-    markerOptions2.put("markerId", googleMarkerId);
-    markerOptions2.put("position", location2);
-    markerOptions2.put("clusterManagerId", clusterManagerId);
+    builder.setPosition(new Messages.PlatformLatLng.Builder().setLatitude(3.3).setLongitude(4.4).build());
     final List<Messages.PlatformMarker> updatedMarkers =
-        Collections.singletonList(
-            new Messages.PlatformMarker.Builder().setJson(markerOptions2).build());
+        Collections.singletonList(builder.build());
 
     controller.changeMarkers(updatedMarkers);
     Mockito.verify(marker, times(1)).setPosition(latLng2);
@@ -212,11 +192,9 @@ public class MarkersControllerTest {
     when(marker.getId()).thenReturn(googleMarkerId);
     when(googleMap.addMarker(any(MarkerOptions.class))).thenReturn(marker);
 
-    final Map<String, String> markerOptions1 = new HashMap<>();
-    markerOptions1.put("markerId", googleMarkerId);
-
-    final List<Object> markers = Arrays.<Object>asList(markerOptions1);
-    controller.addJsonMarkers(markers);
+    final Messages.PlatformMarker.Builder builder = new Messages.PlatformMarker.Builder();
+    builder.setMarkerId(googleMarkerId);
+    controller.addMarkers(Collections.singletonList(builder.build()));
 
     // clusterManagersController should not be called when adding the marker
     Mockito.verify(clusterManagersController, times(0)).addItem(any());
@@ -224,13 +202,9 @@ public class MarkersControllerTest {
     Mockito.verify(spyMarkerCollection, times(1)).addMarker(any(MarkerOptions.class));
 
     final float alpha = 0.1f;
-    final Map<String, Object> markerOptions2 = new HashMap<>();
-    markerOptions2.put("markerId", googleMarkerId);
-    markerOptions2.put("alpha", alpha);
 
     final List<Messages.PlatformMarker> markerUpdates =
-        Collections.singletonList(
-            new Messages.PlatformMarker.Builder().setJson(markerOptions2).build());
+        Collections.singletonList(builder.setAlpha((double) alpha).build());
     controller.changeMarkers(markerUpdates);
     Mockito.verify(marker, times(1)).setAlpha(alpha);
 
