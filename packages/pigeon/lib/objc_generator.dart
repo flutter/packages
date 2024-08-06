@@ -1024,7 +1024,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
             prefix: generatorOptions.prefix,
           );
           ivarValueExpression =
-              'an${_enumName(arg.type.baseName, prefix: generatorOptions.prefix, box: true)}.value';
+              'boxed${_enumName(arg.type.baseName, prefix: generatorOptions.prefix)}.value';
         } else if (primitiveExtractionMethod != null) {
           ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
         } else {

@@ -892,7 +892,7 @@ void SetUpHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryMess
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         AnEnumBox *boxedAnEnum = GetNullableObjectAtIndex(args, 0);
-        AnEnum arg_anEnum = anAnEnumBox.value;
+        AnEnum arg_anEnum = boxedAnEnum.value;
         FlutterError *error;
         AnEnumBox *output = [api echoEnum:arg_anEnum error:&error];
         callback(wrapResult(output, error));
@@ -918,7 +918,7 @@ void SetUpHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryMess
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         AnotherEnumBox *boxedAnotherEnum = GetNullableObjectAtIndex(args, 0);
-        AnotherEnum arg_anotherEnum = anAnotherEnumBox.value;
+        AnotherEnum arg_anotherEnum = boxedAnotherEnum.value;
         FlutterError *error;
         AnotherEnumBox *output = [api echoAnotherEnum:arg_anotherEnum error:&error];
         callback(wrapResult(output, error));
@@ -1730,7 +1730,7 @@ void SetUpHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryMess
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         AnEnumBox *boxedAnEnum = GetNullableObjectAtIndex(args, 0);
-        AnEnum arg_anEnum = anAnEnumBox.value;
+        AnEnum arg_anEnum = boxedAnEnum.value;
         [api echoAsyncEnum:arg_anEnum
                 completion:^(AnEnumBox *_Nullable output, FlutterError *_Nullable error) {
                   callback(wrapResult(output, error));
@@ -1757,7 +1757,7 @@ void SetUpHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryMess
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         AnotherEnumBox *boxedAnotherEnum = GetNullableObjectAtIndex(args, 0);
-        AnotherEnum arg_anotherEnum = anAnotherEnumBox.value;
+        AnotherEnum arg_anotherEnum = boxedAnotherEnum.value;
         [api echoAnotherAsyncEnum:arg_anotherEnum
                        completion:^(AnotherEnumBox *_Nullable output,
                                     FlutterError *_Nullable error) {
@@ -2608,7 +2608,7 @@ void SetUpHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryMess
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         AnEnumBox *boxedAnEnum = GetNullableObjectAtIndex(args, 0);
-        AnEnum arg_anEnum = anAnEnumBox.value;
+        AnEnum arg_anEnum = boxedAnEnum.value;
         [api callFlutterEchoEnum:arg_anEnum
                       completion:^(AnEnumBox *_Nullable output, FlutterError *_Nullable error) {
                         callback(wrapResult(output, error));
@@ -2635,7 +2635,7 @@ void SetUpHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryMess
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         AnotherEnumBox *boxedAnotherEnum = GetNullableObjectAtIndex(args, 0);
-        AnotherEnum arg_anotherEnum = anAnotherEnumBox.value;
+        AnotherEnum arg_anotherEnum = boxedAnotherEnum.value;
         [api callFlutterEchoAnotherEnum:arg_anotherEnum
                              completion:^(AnotherEnumBox *_Nullable output,
                                           FlutterError *_Nullable error) {
