@@ -108,7 +108,7 @@
 
 - (void)addJSONHeatmaps:(NSArray<NSDictionary<NSString *, id> *> *)heatmapsToAdd {
   for (NSDictionary<NSString *, id> *heatmap in heatmapsToAdd) {
-    NSString *heatmapId = [FLTHeatmapsController getHeatmapId:heatmap];
+    NSString *heatmapId = [FLTHeatmapsController identifierForHeatmap:heatmap];
     GMUHeatmapTileLayer *heatmapTileLayer = [[GMUHeatmapTileLayer alloc] init];
     FLTGoogleMapHeatmapController *controller =
         [[FLTGoogleMapHeatmapController alloc] initWithHeatmapTileLayer:heatmapTileLayer
@@ -120,7 +120,7 @@
 
 - (void)addHeatmaps:(NSArray<FGMPlatformHeatmap *> *)heatmapsToAdd {
   for (FGMPlatformHeatmap *heatmap in heatmapsToAdd) {
-    NSString *heatmapId = [FLTHeatmapsController getHeatmapId:heatmap.json];
+    NSString *heatmapId = [FLTHeatmapsController identifierForHeatmap:heatmap.json];
     GMUHeatmapTileLayer *heatmapTileLayer = [[GMUHeatmapTileLayer alloc] init];
     FLTGoogleMapHeatmapController *controller =
         [[FLTGoogleMapHeatmapController alloc] initWithHeatmapTileLayer:heatmapTileLayer
@@ -132,7 +132,7 @@
 
 - (void)changeHeatmaps:(NSArray<FGMPlatformHeatmap *> *)heatmapsToChange {
   for (FGMPlatformHeatmap *heatmap in heatmapsToChange) {
-    NSString *heatmapId = [FLTHeatmapsController getHeatmapId:heatmap.json];
+    NSString *heatmapId = [FLTHeatmapsController identifierForHeatmap:heatmap.json];
     FLTGoogleMapHeatmapController *controller = _heatmapIdToController[heatmapId];
 
     [controller interpretHeatmapOptions:heatmap.json];
@@ -172,7 +172,7 @@
   return nil;
 }
 
-+ (NSString *)getHeatmapId:(NSDictionary<NSString *, id> *)heatmap {
++ (NSString *)identifierForHeatmap:(NSDictionary<NSString *, id> *)heatmap {
   return heatmap[kHeatmapIdKey];
 }
 @end
