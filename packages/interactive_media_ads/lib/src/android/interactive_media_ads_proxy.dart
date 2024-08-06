@@ -16,6 +16,7 @@ import 'interactive_media_ads.g.dart';
 class InteractiveMediaAdsProxy {
   /// Constructs an [InteractiveMediaAdsProxy].
   const InteractiveMediaAdsProxy({
+    this.newContentProgressProvider = ContentProgressProvider.new,
     this.newVideoProgressUpdate = VideoProgressUpdate.new,
     this.newFrameLayout = FrameLayout.new,
     this.newVideoView = VideoView.new,
@@ -29,6 +30,9 @@ class InteractiveMediaAdsProxy {
     this.videoTimeNotReadyVideoProgressUpdate =
         _videoTimeNotReadyVideoProgressUpdate,
   });
+
+  /// Constructs [ContentProgressProvider].
+  final ContentProgressProvider Function() newContentProgressProvider;
 
   /// Constructs [VideoProgressUpdate].
   final VideoProgressUpdate Function({

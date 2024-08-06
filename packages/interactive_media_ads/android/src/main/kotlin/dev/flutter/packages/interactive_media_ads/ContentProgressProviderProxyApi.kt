@@ -4,6 +4,9 @@
 
 package dev.flutter.packages.interactive_media_ads
 
+import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
+import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
+
 /**
  * ProxyApi implementation for
  * [com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider].
@@ -12,4 +15,24 @@ package dev.flutter.packages.interactive_media_ads
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class ContentProgressProviderProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
-    PigeonApiContentProgressProvider(pigeonRegistrar)
+    PigeonApiContentProgressProvider(pigeonRegistrar) {
+  internal class ContentProgressProviderImpl(val api: ContentProgressProviderProxyApi) :
+      ContentProgressProvider {
+    var currentProgress = VideoProgressUpdate.VIDEO_TIME_NOT_READY
+
+    override fun getContentProgress(): VideoProgressUpdate {
+      return currentProgress
+    }
+  }
+
+  override fun pigeon_defaultConstructor(): ContentProgressProvider {
+    return ContentProgressProviderImpl(this)
+  }
+
+  override fun setContentProgress(
+      pigeon_instance: ContentProgressProvider,
+      update: VideoProgressUpdate
+  ) {
+    (pigeon_instance as ContentProgressProviderImpl).currentProgress = update
+  }
+}
