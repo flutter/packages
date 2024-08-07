@@ -6,9 +6,6 @@
 * Add `navigationRailDestinationBuilder` to apply custom Destinations.
 * Add `groupAlignment` property to change alignment.
 * Set `navRailTheme` when using the Drawer just like the other NavigationRails.
-
-## 0.1.12
-
 * Add breakpoints for mediumLarge and extraLarge.
 * Add height based breakpoint checks
 
