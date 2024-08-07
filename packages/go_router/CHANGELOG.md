@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
 ## 14.2.3
 
 - Fixes redirect example's signature in `route.dart`.
