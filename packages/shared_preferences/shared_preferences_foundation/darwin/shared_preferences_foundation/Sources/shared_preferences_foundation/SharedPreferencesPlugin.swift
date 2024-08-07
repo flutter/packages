@@ -152,7 +152,7 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
     var filteredPrefs: [String: Any] = [:]
     var compatiblePrefs: [String: Any] = [:]
     let allowSet = allowList.map { Set($0) }
-    if let appDomain = Bundle.main.bundleIdentifier,
+    if let appDomain = options.suiteName ?? Bundle.main.bundleIdentifier,
       let prefs = try getUserDefaults(options: options).persistentDomain(forName: appDomain)
     {
       if let allowSet = allowSet {
