@@ -345,13 +345,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     AVPlayerItem *item = (AVPlayerItem *)object;
     switch (item.status) {
       case AVPlayerItemStatusFailed:
-        if (_eventSink != nil) {
-          _eventSink([FlutterError
-              errorWithCode:@"VideoError"
-                    message:[@"Failed to load video: "
-                                stringByAppendingString:[item.error localizedDescription]]
-                    details:nil]);
-        }
+        [self sendFailedToLoadVideoEvent:item.error];
         break;
       case AVPlayerItemStatusUnknown:
         break;
@@ -406,9 +400,46 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   _displayLink.running = _isPlaying || self.waitingForFrame;
 }
 
+- (void)sendFailedToLoadVideoEvent:(NSError *)error {
+  if (!NSThread.isMainThread) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [self sendFailedToLoadVideoEvent:error];
+    });
+    return;
+  }
+  if (_eventSink == nil) {
+    return;
+  }
+  __block NSString *message = @"Failed to load video";
+  void (^add)(NSString *) = ^(NSString *detail) {
+    if (detail != nil) {
+      message = [message stringByAppendingFormat:@": %@", detail];
+    }
+  };
+  NSError *underlyingError = error.userInfo[NSUnderlyingErrorKey];
+  // add more details to error message
+  // https://github.com/flutter/flutter/issues/56665
+  add(error.localizedDescription);
+  add(error.localizedFailureReason);
+  add(underlyingError.localizedDescription);
+  add(underlyingError.localizedFailureReason);
+  _eventSink([FlutterError errorWithCode:@"VideoError" message:message details:nil]);
+}
+
 - (void)setupEventSinkIfReadyToPlay {
   if (_eventSink && !_isInitialized) {
     AVPlayerItem *currentItem = self.player.currentItem;
+    // if status is Failed here then this was called from onListenWithArguments which means
+    // _eventSink was nil when was called observeValueForKeyPath with updated Failed status
+    // and error was not sent and never will be so it is needed to send it here to have
+    // future returned by initialize resolved instead of in state of infinite waiting,
+    // see comment in onListenWithArguments
+    // https://github.com/flutter/flutter/issues/151475
+    // https://github.com/flutter/flutter/issues/147707
+    if (currentItem.status == AVPlayerItemStatusFailed) {
+      [self sendFailedToLoadVideoEvent:currentItem.error];
+      return;
+    }
     CGSize size = currentItem.presentationSize;
     CGFloat width = size.width;
     CGFloat height = size.height;
@@ -417,13 +448,24 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     AVAsset *asset = currentItem.asset;
     if ([asset statusOfValueForKey:@"tracks" error:nil] != AVKeyValueStatusLoaded) {
       void (^trackCompletionHandler)(void) = ^{
-        if ([asset statusOfValueForKey:@"tracks" error:nil] != AVKeyValueStatusLoaded) {
+        NSError *error;
+        switch ([asset statusOfValueForKey:@"tracks" error:&error]) {
+          case AVKeyValueStatusLoaded:
+            // This completion block will run on an AVFoundation background queue.
+            // Hop back to the main thread to set up event sink.
+            [self performSelector:_cmd
+                         onThread:NSThread.mainThread
+                       withObject:self
+                    waitUntilDone:NO];
+            break;
           // Cancelled, or something failed.
-          return;
+          case AVKeyValueStatusFailed:
+            // if something failed then future should result in error
+            [self sendFailedToLoadVideoEvent:error];
+            break;
+          default:
+            break;
         }
-        // This completion block will run on an AVFoundation background queue.
-        // Hop back to the main thread to set up event sink.
-        [self performSelector:_cmd onThread:NSThread.mainThread withObject:self waitUntilDone:NO];
       };
       [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ]
                            completionHandler:trackCompletionHandler];
