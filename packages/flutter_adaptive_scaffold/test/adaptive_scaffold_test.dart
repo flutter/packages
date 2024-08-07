@@ -745,7 +745,7 @@ void main() {
     },
   );
 
-  // Test for mapNavigationRailDestination parameter.
+  // Test for navigationRailDestinationBuilder parameter.
   testWidgets('adaptive scaffold custom navigation rail destination mapping',
       (WidgetTester tester) async {
     const List<NavigationDestination> destinations = <NavigationDestination>[
@@ -783,7 +783,7 @@ void main() {
     expect(find.text('Custom Profile'), findsOneWidget);
   });
 
-  // Test for labelType setting through the navigation rail theme
+  // Test for labelType setting through the navigation rail theme.
   testWidgets(
     'adaptive scaffold respects NavigationRailLabelType from theme',
     (WidgetTester tester) async {
