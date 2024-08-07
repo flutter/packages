@@ -51,6 +51,14 @@ public class MarkersControllerTest {
   private AssetManager assetManager;
   private final float density = 1;
 
+  private static Messages.PlatformMarker.Builder defaultBuilder() {
+    return new Messages.PlatformMarker.Builder().setPosition(
+            new Messages.PlatformLatLng.Builder().setLatitude(0.0).setLongitude(0.0).build()
+    ).setAnchor(
+            new Messages.PlatformOffset.Builder().setDx(0.0).setDy(0.0).build()
+    );
+  }
+
   @Before
   public void setUp() {
     MockitoAnnotations.openMocks(this);
@@ -78,7 +86,7 @@ public class MarkersControllerTest {
 
     final LatLng latLng = new LatLng(1.1, 2.2);
 
-    final List<Messages.PlatformMarker> markers = Collections.singletonList(new Messages.PlatformMarker.Builder().setMarkerId(googleMarkerId).build());
+    final List<Messages.PlatformMarker> markers = Collections.singletonList(defaultBuilder().setMarkerId(googleMarkerId).build());
     controller.addMarkers(markers);
     controller.onMarkerDragStart(googleMarkerId, latLng);
 
@@ -97,7 +105,7 @@ public class MarkersControllerTest {
 
     final LatLng latLng = new LatLng(1.1, 2.2);
 
-    final List<Messages.PlatformMarker> markers = Collections.singletonList(new Messages.PlatformMarker.Builder().setMarkerId(googleMarkerId).build());
+    final List<Messages.PlatformMarker> markers = Collections.singletonList(defaultBuilder().setMarkerId(googleMarkerId).build());
     controller.addMarkers(markers);
     controller.onMarkerDragEnd(googleMarkerId, latLng);
 
@@ -116,7 +124,7 @@ public class MarkersControllerTest {
 
     final LatLng latLng = new LatLng(1.1, 2.2);
 
-    final List<Messages.PlatformMarker> markers = Collections.singletonList(new Messages.PlatformMarker.Builder().setMarkerId(googleMarkerId).build());
+    final List<Messages.PlatformMarker> markers = Collections.singletonList(defaultBuilder().setMarkerId(googleMarkerId).build());
     controller.addMarkers(markers);
     controller.onMarkerDrag(googleMarkerId, latLng);
 
@@ -128,7 +136,7 @@ public class MarkersControllerTest {
   public void controller_AddMarkerThrowsErrorIfMarkerIdIsNull() {
     final Map<String, String> markerOptions = new HashMap<>();
 
-    final List<Messages.PlatformMarker> markers = Collections.singletonList(new Messages.PlatformMarker.Builder().build());
+    final List<Messages.PlatformMarker> markers = Collections.singletonList(defaultBuilder().build());
     try {
       controller.addMarkers(markers);
     } catch (IllegalArgumentException e) {
@@ -144,7 +152,7 @@ public class MarkersControllerTest {
     final String googleMarkerId = "abc123";
     final String clusterManagerId = "cm123";
 
-    final Messages.PlatformMarker.Builder builder = new Messages.PlatformMarker.Builder();
+    final Messages.PlatformMarker.Builder builder = defaultBuilder();
     builder.setMarkerId(googleMarkerId)
             .setClusterManagerId(clusterManagerId)
             .setPosition(new Messages.PlatformLatLng.Builder().setLatitude(1.1).setLongitude(2.2).build());
@@ -192,7 +200,7 @@ public class MarkersControllerTest {
     when(marker.getId()).thenReturn(googleMarkerId);
     when(googleMap.addMarker(any(MarkerOptions.class))).thenReturn(marker);
 
-    final Messages.PlatformMarker.Builder builder = new Messages.PlatformMarker.Builder();
+    final Messages.PlatformMarker.Builder builder = defaultBuilder();
     builder.setMarkerId(googleMarkerId);
     controller.addMarkers(Collections.singletonList(builder.build()));
 

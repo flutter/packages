@@ -674,6 +674,10 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         latitude: latLng.latitude, longitude: latLng.longitude);
   }
 
+  static PlatformOffset _platformOffsetFromOffset(Offset offset) {
+    return PlatformOffset(dx: offset.dx, dy: offset.dy);
+  }
+
   static ScreenCoordinate _screenCoordinateFromPlatformPoint(
       PlatformPoint point) {
     return ScreenCoordinate(x: point.x, y: point.y);
@@ -720,7 +724,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     // messages.dart.
     return PlatformMarker(
       alpha: marker.alpha,
-      anchor: Float64List.fromList(<double>[marker.anchor.dx, marker.anchor.dy]),
+      anchor: _platformOffsetFromOffset(marker.anchor),
       consumeTapEvents: marker.consumeTapEvents,
       draggable: marker.draggable,
       flat: marker.flat,

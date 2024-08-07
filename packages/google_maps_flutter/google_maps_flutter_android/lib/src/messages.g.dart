@@ -98,14 +98,14 @@ class PlatformCameraUpdate {
 /// Pigeon equivalent of the Circle class.
 class PlatformCircle {
   PlatformCircle({
-    required this.consumeTapEvents,
-    required this.fillColor,
-    required this.strokeColor,
-    required this.visible,
-    required this.strokeWidth,
-    required this.zIndex,
+    this.consumeTapEvents = false,
+    this.fillColor = 0x00000000,
+    this.strokeColor = 0xFF000000,
+    this.visible = true,
+    this.strokeWidth = 10,
+    this.zIndex = 0.0,
     required this.center,
-    required this.radius,
+    this.radius = 0,
     required this.circleId,
   });
 
@@ -204,27 +204,54 @@ class PlatformClusterManager {
   }
 }
 
+/// Pigeon equivalent of the Offset class
+class PlatformOffset {
+  PlatformOffset({
+    required this.dx,
+    required this.dy,
+  });
+
+  double dx;
+
+  double dy;
+
+  Object encode() {
+    return <Object?>[
+      dx,
+      dy,
+    ];
+  }
+
+  static PlatformOffset decode(Object result) {
+    result as List<Object?>;
+    return PlatformOffset(
+      dx: result[0]! as double,
+      dy: result[1]! as double,
+    );
+  }
+}
+
 /// Pigeon equivalent of the Marker class.
 class PlatformMarker {
   PlatformMarker({
-    required this.alpha,
+    this.alpha = 1.0,
     required this.anchor,
-    required this.consumeTapEvents,
-    required this.draggable,
-    required this.flat,
-    required this.icon,
-    required this.infoWindow,
+    this.consumeTapEvents = false,
+    this.draggable = false,
+    this.flat = false,
+    this.icon = const <Object>['defaultMarker'],
+    this.infoWindow = const <String?, Object>{'anchor' : <Object>[0.5, 0.0]},
     required this.position,
-    required this.rotation,
-    required this.visible,
-    required this.zIndex,
+    this.rotation = 0.0,
+    this.visible = true,
+    this.zIndex = 0.0,
     required this.markerId,
     this.clusterManagerId,
   });
 
   double alpha;
 
-  Float64List anchor;
+  PlatformOffset anchor;
 
   bool consumeTapEvents;
 
@@ -270,7 +297,7 @@ class PlatformMarker {
     result as List<Object?>;
     return PlatformMarker(
       alpha: result[0]! as double,
-      anchor: result[1]! as Float64List,
+      anchor: result[1]! as PlatformOffset,
       consumeTapEvents: result[2]! as bool,
       draggable: result[3]! as bool,
       flat: result[4]! as bool,
@@ -620,44 +647,47 @@ class _PigeonCodec extends StandardMessageCodec {
     } else     if (value is PlatformClusterManager) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformMarker) {
+    } else     if (value is PlatformOffset) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformPolygon) {
+    } else     if (value is PlatformMarker) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformPolyline) {
+    } else     if (value is PlatformPolygon) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformTile) {
+    } else     if (value is PlatformPolyline) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformTileOverlay) {
+    } else     if (value is PlatformTile) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformLatLng) {
+    } else     if (value is PlatformTileOverlay) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformLatLngBounds) {
+    } else     if (value is PlatformLatLng) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformCluster) {
+    } else     if (value is PlatformLatLngBounds) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformMapConfiguration) {
+    } else     if (value is PlatformCluster) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformPoint) {
+    } else     if (value is PlatformMapConfiguration) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformTileLayer) {
+    } else     if (value is PlatformPoint) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformZoomRange) {
+    } else     if (value is PlatformTileLayer) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformRendererType) {
+    } else     if (value is PlatformZoomRange) {
       buffer.putUint8(146);
+      writeValue(buffer, value.encode());
+    } else     if (value is PlatformRendererType) {
+      buffer.putUint8(147);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -678,30 +708,32 @@ class _PigeonCodec extends StandardMessageCodec {
       case 133: 
         return PlatformClusterManager.decode(readValue(buffer)!);
       case 134: 
-        return PlatformMarker.decode(readValue(buffer)!);
+        return PlatformOffset.decode(readValue(buffer)!);
       case 135: 
-        return PlatformPolygon.decode(readValue(buffer)!);
+        return PlatformMarker.decode(readValue(buffer)!);
       case 136: 
-        return PlatformPolyline.decode(readValue(buffer)!);
+        return PlatformPolygon.decode(readValue(buffer)!);
       case 137: 
-        return PlatformTile.decode(readValue(buffer)!);
+        return PlatformPolyline.decode(readValue(buffer)!);
       case 138: 
-        return PlatformTileOverlay.decode(readValue(buffer)!);
+        return PlatformTile.decode(readValue(buffer)!);
       case 139: 
-        return PlatformLatLng.decode(readValue(buffer)!);
+        return PlatformTileOverlay.decode(readValue(buffer)!);
       case 140: 
-        return PlatformLatLngBounds.decode(readValue(buffer)!);
+        return PlatformLatLng.decode(readValue(buffer)!);
       case 141: 
-        return PlatformCluster.decode(readValue(buffer)!);
+        return PlatformLatLngBounds.decode(readValue(buffer)!);
       case 142: 
-        return PlatformMapConfiguration.decode(readValue(buffer)!);
+        return PlatformCluster.decode(readValue(buffer)!);
       case 143: 
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformMapConfiguration.decode(readValue(buffer)!);
       case 144: 
-        return PlatformTileLayer.decode(readValue(buffer)!);
+        return PlatformPoint.decode(readValue(buffer)!);
       case 145: 
-        return PlatformZoomRange.decode(readValue(buffer)!);
+        return PlatformTileLayer.decode(readValue(buffer)!);
       case 146: 
+        return PlatformZoomRange.decode(readValue(buffer)!);
+      case 147: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformRendererType.values[value];
       default:

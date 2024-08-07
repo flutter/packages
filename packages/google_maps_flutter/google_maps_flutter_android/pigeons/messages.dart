@@ -47,15 +47,15 @@ class PlatformCameraUpdate {
 /// Pigeon equivalent of the Circle class.
 class PlatformCircle {
   PlatformCircle({
-    required this.consumeTapEvents,
-    required this.fillColor,
-    required this.strokeColor,
-    required this.visible,
-    required this.strokeWidth,
-    required this.zIndex,
-    required this.center,
-    required this.radius,
     required this.circleId,
+    required this.center,
+    this.consumeTapEvents = false,
+    this.fillColor = 0x00000000,
+    this.strokeColor = 0xFF000000,
+    this.visible = true,
+    this.strokeWidth = 10,
+    this.zIndex = 0.0,
+    this.radius = 0,
   });
 
   final bool consumeTapEvents;
@@ -88,26 +88,34 @@ class PlatformClusterManager {
   final String identifier;
 }
 
+/// Pigeon equivalent of the Offset class
+class PlatformOffset {
+  PlatformOffset(this.dx, this.dy);
+
+  final double dx;
+  final double dy;
+}
+
 /// Pigeon equivalent of the Marker class.
 class PlatformMarker {
   PlatformMarker({
-    required this.alpha,
-    required this.anchor,
-    required this.consumeTapEvents,
-    required this.draggable,
-    required this.flat,
-    required this.icon,
-    required this.infoWindow,
-    required this.position,
-    required this.rotation,
-    required this.visible,
-    required this.zIndex,
     required this.markerId,
+    this.alpha = 1.0,
+    required this.anchor,
+    this.consumeTapEvents = false,
+    this.draggable = false,
+    this.flat = false,
+    this.icon = const <Object>['defaultMarker'],
+    this.infoWindow = const <String?, Object>{'anchor': <Object>[0.5, 0.0]},
+    required this.position,
+    this.rotation = 0.0,
+    this.visible = true,
+    this.zIndex = 0.0,
     this.clusterManagerId,
   });
 
   final double alpha;
-  final Float64List anchor;
+  final PlatformOffset anchor;
   final bool consumeTapEvents;
   final bool draggable;
   final bool flat;
