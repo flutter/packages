@@ -773,7 +773,7 @@ void main() {
           data: const MediaQueryData(size: Size(800, 600)),
           child: AdaptiveScaffold(
             destinations: destinations,
-            mapNavigationRailDestination: customMapping,
+            navigationRailDestinationBuilder: customMapping,
           ),
         ),
       ),

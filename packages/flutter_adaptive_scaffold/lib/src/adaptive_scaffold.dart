@@ -103,7 +103,7 @@ class AdaptiveScaffold extends StatefulWidget {
     this.navigationRailWidth = 72,
     this.extendedNavigationRailWidth = 192,
     this.appBarBreakpoint,
-    this.mapNavigationRailDestination,
+    this.navigationRailDestinationBuilder,
     this.groupAlignment,
   }) : assert(
           destinations.length >= 2,
@@ -255,7 +255,7 @@ class AdaptiveScaffold extends StatefulWidget {
   final NavigationRailDestination Function(
     int index,
     NavigationDestination destination,
-  )? mapNavigationRailDestination;
+  )? navigationRailDestinationBuilder;
 
   /// Callback function for when the index of a [NavigationRail] changes.
   static WidgetBuilder emptyBuilder = (_) => const SizedBox();
@@ -529,7 +529,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
 
     final List<NavigationRailDestination> destinations = widget.destinations
         .map((NavigationDestination destination) =>
-            widget.mapNavigationRailDestination
+            widget.navigationRailDestinationBuilder
                 ?.call(widget.destinations.indexOf(destination), destination) ??
             AdaptiveScaffold.toRailDestination(destination))
         .toList();
