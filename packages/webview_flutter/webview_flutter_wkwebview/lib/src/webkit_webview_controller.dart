@@ -1043,6 +1043,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
               await weakThis.target!._onNavigationRequest!(NavigationRequest(
             url: action.request.url,
             isMainFrame: action.targetFrame.isMainFrame,
+            navigationType: action.navigationType.toFlutterType(),
           ));
           switch (decision) {
             case NavigationDecision.prevent:
@@ -1224,5 +1225,28 @@ class WebKitWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
   /// Prompt the user for permission for the requested resource.
   Future<void> prompt() async {
     _onDecision(WKPermissionDecision.prompt);
+  }
+}
+
+/// WKNavigationType's support method.
+extension WKNavigationTypeExtension on WKNavigationType {
+  /// Translate iOS web kit navigation type into Flutter enum.
+  NavigationType toFlutterType() {
+    switch (this) {
+      case WKNavigationType.linkActivated:
+        return NavigationType.linkActivated;
+      case WKNavigationType.submitted:
+        return NavigationType.submitted;
+      case WKNavigationType.backForward:
+        return NavigationType.backForward;
+      case WKNavigationType.reload:
+        return NavigationType.reload;
+      case WKNavigationType.formResubmitted:
+        return NavigationType.formResubmitted;
+      case WKNavigationType.other:
+        return NavigationType.other;
+      case WKNavigationType.unknown:
+        return NavigationType.unknown;
+    }
   }
 }

@@ -1476,6 +1476,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
       NavigationRequest(
         url: url,
         isMainFrame: isForMainFrame,
+        navigationType: NavigationType.unknown,
       ),
     );
 

@@ -1,3 +1,7 @@
+## NEXT
+
+* Support return NavigationType in NavigationRequest from WKWebview.
+
 ## 4.8.0
 
 * Adds `onHttpError` callback to `NavigationDelegate` to catch HTTP error status codes.
