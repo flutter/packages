@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class FGMPlatformCameraUpdate;
 @class FGMPlatformCircle;
 @class FGMPlatformHeatmap;
+@class FGMPlatformClusterManager;
 @class FGMPlatformMarker;
 @class FGMPlatformPolygon;
 @class FGMPlatformPolyline;
@@ -24,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class FGMPlatformTileOverlay;
 @class FGMPlatformLatLng;
 @class FGMPlatformLatLngBounds;
+@class FGMPlatformCluster;
 @class FGMPlatformMapConfiguration;
 @class FGMPlatformPoint;
 @class FGMPlatformTileLayer;
@@ -74,6 +76,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// Heatmap.toJson, and the native code must interpret it according to the
 /// internal implementation details of that method.
 @property(nonatomic, strong) id json;
+@end
+
+/// Pigeon equivalent of the ClusterManager class.
+@interface FGMPlatformClusterManager : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithIdentifier:(NSString *)identifier;
+@property(nonatomic, copy) NSString *identifier;
 @end
 
 /// Pigeon equivalent of the Marker class.
@@ -151,6 +161,20 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) FGMPlatformLatLng *southwest;
 @end
 
+/// Pigeon equivalent of Cluster.
+@interface FGMPlatformCluster : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithClusterManagerId:(NSString *)clusterManagerId
+                                position:(FGMPlatformLatLng *)position
+                                  bounds:(FGMPlatformLatLngBounds *)bounds
+                               markerIds:(NSArray<NSString *> *)markerIds;
+@property(nonatomic, copy) NSString *clusterManagerId;
+@property(nonatomic, strong) FGMPlatformLatLng *position;
+@property(nonatomic, strong) FGMPlatformLatLngBounds *bounds;
+@property(nonatomic, copy) NSArray<NSString *> *markerIds;
+@end
+
 /// Pigeon equivalent of MapConfiguration.
 @interface FGMPlatformMapConfiguration : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
@@ -219,6 +243,10 @@ NSObject<FlutterMessageCodec> *FGMGetMessagesCodec(void);
                       changing:(NSArray<FGMPlatformHeatmap *> *)toChange
                       removing:(NSArray<NSString *> *)idsToRemove
                          error:(FlutterError *_Nullable *_Nonnull)error;
+/// Updates the set of custer managers for clusters on the map.
+- (void)updateClusterManagersByAdding:(NSArray<FGMPlatformClusterManager *> *)toAdd
+                             removing:(NSArray<NSString *> *)idsToRemove
+                                error:(FlutterError *_Nullable *_Nonnull)error;
 /// Updates the set of markers on the map.
 - (void)updateMarkersByAdding:(NSArray<FGMPlatformMarker *> *)toAdd
                      changing:(NSArray<FGMPlatformMarker *> *)toChange
@@ -343,6 +371,9 @@ extern void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
 /// Called when a circle is tapped.
 - (void)didTapCircleWithIdentifier:(NSString *)circleId
                         completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when a marker cluster is tapped.
+- (void)didTapCluster:(FGMPlatformCluster *)cluster
+           completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when a polygon is tapped.
 - (void)didTapPolygonWithIdentifier:(NSString *)polygonId
                          completion:(void (^)(FlutterError *_Nullable))completion;
@@ -382,6 +413,10 @@ extern void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
                                                  error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable FGMPlatformZoomRange *)zoomRange:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<FGMPlatformCluster *> *)
+    clustersWithIdentifier:(NSString *)clusterManagerId
+                     error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFGMMapsInspectorApi(id<FlutterBinaryMessenger> binaryMessenger,
