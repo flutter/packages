@@ -5,9 +5,9 @@
 
 ## 0.1.11+2
 
-* Expose labelType for NavigationRails
-* Add mapNavigationRailDestination to apply custom Destinations
-* Add groupAlignment property to change alignment
+* Expose labelType for NavigationRails.
+* Add mapNavigationRailDestination to apply custom Destinations.
+* Add groupAlignment property to change alignment.
 
 ## 0.1.11+1
 
