@@ -64,6 +64,7 @@ class InfoWindow {
     );
   }
 
+  /// Converts this object to something serializable in JSON.
   Object toJson() {
     final Map<String, Object> json = <String, Object>{};
 

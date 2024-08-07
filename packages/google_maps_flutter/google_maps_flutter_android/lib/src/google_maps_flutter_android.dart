@@ -720,7 +720,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     // messages.dart.
     return PlatformMarker(
       alpha: marker.alpha,
-      anchor: Float64List.fromList([marker.anchor.dx, marker.anchor.dy]),
+      anchor: Float64List.fromList(<double>[marker.anchor.dx, marker.anchor.dy]),
       consumeTapEvents: marker.consumeTapEvents,
       draggable: marker.draggable,
       flat: marker.flat,

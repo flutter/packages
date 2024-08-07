@@ -371,7 +371,7 @@ void main() {
     expect(toChange.length, 1);
     expect(toChange.first?.encode(), <Object?>[
       object2new.alpha,
-      Float64List.fromList([object2new.anchor.dx, object2new.anchor.dy]),
+      Float64List.fromList(<double>[object2new.anchor.dx, object2new.anchor.dy]),
       object2new.consumeTapEvents,
       object2new.draggable,
       object2new.flat,
@@ -388,7 +388,7 @@ void main() {
     expect(toAdd.length, 1);
     expect(toAdd.first?.encode(), <Object?>[
       object3.alpha,
-      Float64List.fromList([object3.anchor.dx, object3.anchor.dy]),
+      Float64List.fromList(<double>[object3.anchor.dx, object3.anchor.dy]),
       object3.consumeTapEvents,
       object3.draggable,
       object3.flat,
