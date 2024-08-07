@@ -23,7 +23,8 @@ import 'web_kit_webview_widget_test.mocks.dart';
   WKNavigationDelegate,
   WKPreferences,
   WKScriptMessageHandler,
-  WKWebView,
+  WKWebViewIOS,
+  WKWebViewMacOS,
   WKWebViewConfiguration,
   WKWebsiteDataStore,
   WKUIDelegate,
@@ -38,7 +39,7 @@ void main() {
   group('WebKitWebViewWidget', () {
     _WebViewMocks configureMocks() {
       final _WebViewMocks mocks = _WebViewMocks(
-          webView: MockWKWebView(),
+          webView: MockWKWebViewIOS(),
           webViewWidgetProxy: MockWebViewWidgetProxy(),
           userContentController: MockWKUserContentController(),
           preferences: MockWKPreferences(),
@@ -1375,7 +1376,7 @@ class _WebViewMocks {
     required this.javascriptChannelRegistry,
   });
 
-  final MockWKWebView webView;
+  final MockWKWebViewIOS webView;
   final MockWebViewWidgetProxy webViewWidgetProxy;
   final MockWKUserContentController userContentController;
   final MockWKPreferences preferences;

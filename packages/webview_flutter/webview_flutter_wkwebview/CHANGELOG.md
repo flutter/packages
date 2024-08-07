@@ -1,3 +1,7 @@
+## 3.15.0
+
+* Adds macOS support.
+
 ## 3.14.0
 
 * Adds Swift Package Manager compatibility.
@@ -88,7 +92,7 @@
 
 * Introduces `NSError.toString` for better diagnostics.
 
-## 3.6.2 
+## 3.6.2
 
 * Fixes unawaited_futures violations.
 

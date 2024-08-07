@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'common/instance_manager.dart';
 import 'foundation/foundation.dart';
 import 'ui_kit/ui_kit.dart';
@@ -11,6 +13,24 @@ import 'web_kit/web_kit.dart';
 // function literals: https://github.com/dart-lang/language/issues/1048.
 WKWebsiteDataStore _defaultWebsiteDataStore() =>
     WKWebsiteDataStore.defaultDataStore;
+
+// This convenience method was added because Dart doesn't support constant
+// function literals: https://github.com/dart-lang/language/issues/1048.
+WKWebView _platformWebViewConstructor(
+  WKWebViewConfiguration configuration, {
+  void Function(
+    String keyPath,
+    NSObject object,
+    Map<NSKeyValueChangeKey, Object?> change,
+  )? observeValue,
+  InstanceManager? instanceManager,
+}) {
+  return Platform.isIOS
+      ? WKWebViewIOS(configuration,
+          observeValue: observeValue, instanceManager: instanceManager)
+      : WKWebViewMacOS(configuration,
+          observeValue: observeValue, instanceManager: instanceManager);
+}
 
 /// Handles constructing objects and calling static methods for the WebKit
 /// native library.
@@ -24,7 +44,7 @@ WKWebsiteDataStore _defaultWebsiteDataStore() =>
 class WebKitProxy {
   /// Constructs a [WebKitProxy].
   const WebKitProxy({
-    this.createWebView = WKWebView.new,
+    this.createWebView = _platformWebViewConstructor,
     this.createWebViewConfiguration = WKWebViewConfiguration.new,
     this.createScriptMessageHandler = WKScriptMessageHandler.new,
     this.defaultWebsiteDataStore = _defaultWebsiteDataStore,

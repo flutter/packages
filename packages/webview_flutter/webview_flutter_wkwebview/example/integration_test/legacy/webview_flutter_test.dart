@@ -588,7 +588,9 @@ Future<void> main() async {
           await controller.runJavascriptReturningResult('isFullScreen();');
       expect(fullScreen, _webviewBool(true));
     });
-  });
+  },
+      // allowsInlineMediaPlayback has no effect on macOS.
+      skip: Platform.isMacOS);
 
   group('Audio playback policy', () {
     late String audioTestBase64;
@@ -755,7 +757,10 @@ Future<void> main() async {
       isPaused = await controller.runJavascriptReturningResult('isPaused();');
       expect(isPaused, _webviewBool(false));
     });
-  });
+  },
+      // OGG playback is not supported on macOS, so the test data would need
+      // to be changed to support macOS.
+      skip: Platform.isMacOS);
 
   testWidgets('getTitle', (WidgetTester tester) async {
     const String getTitleTest = '''
@@ -882,7 +887,9 @@ Future<void> main() async {
       expect(scrollPosX, X_SCROLL * 2);
       expect(scrollPosY, Y_SCROLL * 2);
     });
-  });
+  },
+      // Scroll position is currently not implemented for macOS.
+      skip: Platform.isMacOS);
 
   group('NavigationDelegate', () {
     const String blankPage = '<!DOCTYPE html><head></head><body></body></html>';
