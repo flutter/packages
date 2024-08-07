@@ -227,15 +227,12 @@ HRESULT RecordHandler::InitRecordSink(IMFCaptureEngine* capture_engine,
 }
 
 HRESULT RecordHandler::StartRecord(const std::string& file_path,
-                                   int64_t max_duration,
                                    IMFCaptureEngine* capture_engine,
                                    IMFMediaType* base_media_type) {
   assert(!file_path.empty());
   assert(capture_engine);
   assert(base_media_type);
 
-  type_ = max_duration < 0 ? RecordingType::kContinuous : RecordingType::kTimed;
-  max_video_duration_ms_ = max_duration;
   file_path_ = file_path;
   recording_start_timestamp_us_ = -1;
   recording_duration_us_ = 0;
@@ -268,9 +265,7 @@ void RecordHandler::OnRecordStopped() {
     file_path_ = "";
     recording_start_timestamp_us_ = -1;
     recording_duration_us_ = 0;
-    max_video_duration_ms_ = -1;
     recording_state_ = RecordState::kNotStarted;
-    type_ = RecordingType::kNone;
   }
 }
 
@@ -280,14 +275,6 @@ void RecordHandler::UpdateRecordingTime(uint64_t timestamp) {
   }
 
   recording_duration_us_ = (timestamp - recording_start_timestamp_us_);
-}
-
-bool RecordHandler::ShouldStopTimedRecording() const {
-  return type_ == RecordingType::kTimed &&
-         recording_state_ == RecordState::kRunning &&
-         max_video_duration_ms_ > 0 &&
-         recording_duration_us_ >=
-             (static_cast<uint64_t>(max_video_duration_ms_) * 1000);
 }
 
 }  // namespace camera_windows

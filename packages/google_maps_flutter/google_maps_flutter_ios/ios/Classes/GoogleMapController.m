@@ -112,7 +112,7 @@
 @interface FLTGoogleMapController ()
 
 @property(nonatomic, strong) GMSMapView *mapView;
-@property(nonatomic, strong) FlutterMethodChannel *channel;
+@property(nonatomic, strong) FGMMapsCallbackApi *dartCallbackHandler;
 @property(nonatomic, assign) BOOL trackCameraPosition;
 @property(nonatomic, weak) NSObject<FlutterPluginRegistrar> *registrar;
 @property(nonatomic, strong) FLTMarkersController *markersController;
@@ -165,28 +165,28 @@
     // TODO(cyanglaz): avoid sending message to self in the middle of the init method.
     // https://github.com/flutter/flutter/issues/104121
     [self interpretMapOptions:args[@"options"]];
-    NSString *channelName =
-        [NSString stringWithFormat:@"plugins.flutter.dev/google_maps_ios_%lld", viewId];
-    _channel = [FlutterMethodChannel methodChannelWithName:channelName
-                                           binaryMessenger:registrar.messenger];
+    NSString *pigeonSuffix = [NSString stringWithFormat:@"%lld", viewId];
+    _dartCallbackHandler = [[FGMMapsCallbackApi alloc] initWithBinaryMessenger:registrar.messenger
+                                                          messageChannelSuffix:pigeonSuffix];
     _mapView.delegate = self;
     _mapView.paddingAdjustmentBehavior = kGMSMapViewPaddingAdjustmentBehaviorNever;
     _registrar = registrar;
-    _markersController = [[FLTMarkersController alloc] initWithMethodChannel:_channel
-                                                                     mapView:_mapView
-                                                                   registrar:registrar];
-    _polygonsController = [[FLTPolygonsController alloc] init:_channel
-                                                      mapView:_mapView
-                                                    registrar:registrar];
-    _polylinesController = [[FLTPolylinesController alloc] init:_channel
-                                                        mapView:_mapView
-                                                      registrar:registrar];
-    _circlesController = [[FLTCirclesController alloc] init:_channel
-                                                    mapView:_mapView
-                                                  registrar:registrar];
-    _tileOverlaysController = [[FLTTileOverlaysController alloc] init:_channel
-                                                              mapView:_mapView
-                                                            registrar:registrar];
+    _markersController = [[FLTMarkersController alloc] initWithMapView:_mapView
+                                                       callbackHandler:_dartCallbackHandler
+                                                             registrar:registrar];
+    _polygonsController = [[FLTPolygonsController alloc] initWithMapView:_mapView
+                                                         callbackHandler:_dartCallbackHandler
+                                                               registrar:registrar];
+    _polylinesController = [[FLTPolylinesController alloc] initWithMapView:_mapView
+                                                           callbackHandler:_dartCallbackHandler
+                                                                 registrar:registrar];
+    _circlesController = [[FLTCirclesController alloc] initWithMapView:_mapView
+                                                       callbackHandler:_dartCallbackHandler
+                                                             registrar:registrar];
+    _tileOverlaysController =
+        [[FLTTileOverlaysController alloc] initWithMapView:_mapView
+                                           callbackHandler:_dartCallbackHandler
+                                                 registrar:registrar];
     id markersToAdd = args[@"markersToAdd"];
     if ([markersToAdd isKindOfClass:[NSArray class]]) {
       [_markersController addJSONMarkers:markersToAdd];
@@ -210,15 +210,14 @@
 
     [_mapView addObserver:self forKeyPath:@"frame" options:0 context:nil];
 
-    NSString *suffix = [NSString stringWithFormat:@"%lld", viewId];
     _callHandler = [[FGMMapCallHandler alloc] initWithMapController:self
                                                           messenger:registrar.messenger
-                                                       pigeonSuffix:suffix];
-    SetUpFGMMapsApiWithSuffix(registrar.messenger, _callHandler, suffix);
+                                                       pigeonSuffix:pigeonSuffix];
+    SetUpFGMMapsApiWithSuffix(registrar.messenger, _callHandler, pigeonSuffix);
     _inspector = [[FGMMapInspector alloc] initWithMapController:self
                                                       messenger:registrar.messenger
-                                                   pigeonSuffix:suffix];
-    SetUpFGMMapsInspectorApiWithSuffix(registrar.messenger, _inspector, suffix);
+                                                   pigeonSuffix:pigeonSuffix];
+    SetUpFGMMapsInspectorApiWithSuffix(registrar.messenger, _inspector, pigeonSuffix);
   }
   return self;
 }
@@ -359,20 +358,22 @@
 #pragma mark - GMSMapViewDelegate methods
 
 - (void)mapView:(GMSMapView *)mapView willMove:(BOOL)gesture {
-  [self.channel invokeMethod:@"camera#onMoveStarted" arguments:@{@"isGesture" : @(gesture)}];
+  [self.dartCallbackHandler didStartCameraMoveWithCompletion:^(FlutterError *_Nullable _){
+  }];
 }
 
 - (void)mapView:(GMSMapView *)mapView didChangeCameraPosition:(GMSCameraPosition *)position {
   if (self.trackCameraPosition) {
-    [self.channel invokeMethod:@"camera#onMove"
-                     arguments:@{
-                       @"position" : [FLTGoogleMapJSONConversions dictionaryFromPosition:position]
+    [self.dartCallbackHandler
+        didMoveCameraToPosition:FGMGetPigeonCameraPositionForPosition(position)
+                     completion:^(FlutterError *_Nullable _){
                      }];
   }
 }
 
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
-  [self.channel invokeMethod:@"camera#onIdle" arguments:@{}];
+  [self.dartCallbackHandler didIdleCameraWithCompletion:^(FlutterError *_Nullable _){
+  }];
 }
 
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(GMSMarker *)marker {
@@ -411,15 +412,15 @@
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {
-  [self.channel
-      invokeMethod:@"map#onTap"
-         arguments:@{@"position" : [FLTGoogleMapJSONConversions arrayFromLocation:coordinate]}];
+  [self.dartCallbackHandler didTapAtPosition:FGMGetPigeonLatLngForCoordinate(coordinate)
+                                  completion:^(FlutterError *_Nullable _){
+                                  }];
 }
 
 - (void)mapView:(GMSMapView *)mapView didLongPressAtCoordinate:(CLLocationCoordinate2D)coordinate {
-  [self.channel
-      invokeMethod:@"map#onLongPress"
-         arguments:@{@"position" : [FLTGoogleMapJSONConversions arrayFromLocation:coordinate]}];
+  [self.dartCallbackHandler didLongPressAtPosition:FGMGetPigeonLatLngForCoordinate(coordinate)
+                                        completion:^(FlutterError *_Nullable _){
+                                        }];
 }
 
 - (void)interpretMapOptions:(NSDictionary *)data {

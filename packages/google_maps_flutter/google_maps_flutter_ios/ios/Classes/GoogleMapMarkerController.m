@@ -15,9 +15,9 @@
 
 @implementation FLTGoogleMapMarkerController
 
-- (instancetype)initMarkerWithPosition:(CLLocationCoordinate2D)position
-                            identifier:(NSString *)identifier
-                               mapView:(GMSMapView *)mapView {
+- (instancetype)initWithPosition:(CLLocationCoordinate2D)position
+                      identifier:(NSString *)identifier
+                         mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
     _marker = [GMSMarker markerWithPosition:position];
@@ -431,7 +431,7 @@
 @interface FLTMarkersController ()
 
 @property(strong, nonatomic) NSMutableDictionary *markerIdentifierToController;
-@property(strong, nonatomic) FlutterMethodChannel *methodChannel;
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
 
@@ -439,12 +439,12 @@
 
 @implementation FLTMarkersController
 
-- (instancetype)initWithMethodChannel:(FlutterMethodChannel *)methodChannel
-                              mapView:(GMSMapView *)mapView
-                            registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
-    _methodChannel = methodChannel;
+    _callbackHandler = callbackHandler;
     _mapView = mapView;
     _markerIdentifierToController = [[NSMutableDictionary alloc] init];
     _registrar = registrar;
@@ -457,9 +457,9 @@
     CLLocationCoordinate2D position = [FLTMarkersController getPosition:marker];
     NSString *identifier = marker[@"markerId"];
     FLTGoogleMapMarkerController *controller =
-        [[FLTGoogleMapMarkerController alloc] initMarkerWithPosition:position
-                                                          identifier:identifier
-                                                             mapView:self.mapView];
+        [[FLTGoogleMapMarkerController alloc] initWithPosition:position
+                                                    identifier:identifier
+                                                       mapView:self.mapView];
     [controller interpretMarkerOptions:marker
                              registrar:self.registrar
                            screenScale:[self getScreenScale]];
@@ -472,9 +472,9 @@
     CLLocationCoordinate2D position = [FLTMarkersController getPosition:marker.json];
     NSString *identifier = marker.json[@"markerId"];
     FLTGoogleMapMarkerController *controller =
-        [[FLTGoogleMapMarkerController alloc] initMarkerWithPosition:position
-                                                          identifier:identifier
-                                                             mapView:self.mapView];
+        [[FLTGoogleMapMarkerController alloc] initWithPosition:position
+                                                    identifier:identifier
+                                                       mapView:self.mapView];
     [controller interpretMarkerOptions:marker.json
                              registrar:self.registrar
                            screenScale:[self getScreenScale]];
@@ -511,7 +511,9 @@
   if (!controller) {
     return NO;
   }
-  [self.methodChannel invokeMethod:@"marker#onTap" arguments:@{@"markerId" : identifier}];
+  [self.callbackHandler didTapMarkerWithIdentifier:identifier
+                                        completion:^(FlutterError *_Nullable _){
+                                        }];
   return controller.consumeTapEvents;
 }
 
@@ -524,11 +526,11 @@
   if (!controller) {
     return;
   }
-  [self.methodChannel invokeMethod:@"marker#onDragStart"
-                         arguments:@{
-                           @"markerId" : identifier,
-                           @"position" : [FLTGoogleMapJSONConversions arrayFromLocation:location]
-                         }];
+  [self.callbackHandler
+      didStartDragForMarkerWithIdentifier:identifier
+                               atPosition:FGMGetPigeonLatLngForCoordinate(location)
+                               completion:^(FlutterError *_Nullable _){
+                               }];
 }
 
 - (void)didDragMarkerWithIdentifier:(NSString *)identifier
@@ -540,11 +542,10 @@
   if (!controller) {
     return;
   }
-  [self.methodChannel invokeMethod:@"marker#onDrag"
-                         arguments:@{
-                           @"markerId" : identifier,
-                           @"position" : [FLTGoogleMapJSONConversions arrayFromLocation:location]
-                         }];
+  [self.callbackHandler didDragMarkerWithIdentifier:identifier
+                                         atPosition:FGMGetPigeonLatLngForCoordinate(location)
+                                         completion:^(FlutterError *_Nullable _){
+                                         }];
 }
 
 - (void)didEndDraggingMarkerWithIdentifier:(NSString *)identifier
@@ -553,16 +554,17 @@
   if (!controller) {
     return;
   }
-  [self.methodChannel invokeMethod:@"marker#onDragEnd"
-                         arguments:@{
-                           @"markerId" : identifier,
-                           @"position" : [FLTGoogleMapJSONConversions arrayFromLocation:location]
-                         }];
+  [self.callbackHandler didEndDragForMarkerWithIdentifier:identifier
+                                               atPosition:FGMGetPigeonLatLngForCoordinate(location)
+                                               completion:^(FlutterError *_Nullable _){
+                                               }];
 }
 
 - (void)didTapInfoWindowOfMarkerWithIdentifier:(NSString *)identifier {
   if (identifier && self.markerIdentifierToController[identifier]) {
-    [self.methodChannel invokeMethod:@"infoWindow#onTap" arguments:@{@"markerId" : identifier}];
+    [self.callbackHandler didTapInfoWindowOfMarkerWithIdentifier:identifier
+                                                      completion:^(FlutterError *_Nullable _){
+                                                      }];
   }
 }
 

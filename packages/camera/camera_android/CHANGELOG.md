@@ -1,3 +1,7 @@
+## 0.10.9+8
+
+* Removes unused code related to `maxVideoDuration`.
+
 ## 0.10.9+7
 
 * Updates Android Gradle plugin to 8.5.0.

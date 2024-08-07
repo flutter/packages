@@ -32,6 +32,13 @@ FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(GMSCoordina
                                        southwest:FGMGetPigeonLatLngForCoordinate(bounds.southWest)];
 }
 
+FGMPlatformCameraPosition *FGMGetPigeonCameraPositionForPosition(GMSCameraPosition *position) {
+  return [FGMPlatformCameraPosition makeWithBearing:position.bearing
+                                             target:FGMGetPigeonLatLngForCoordinate(position.target)
+                                               tilt:position.viewingAngle
+                                               zoom:position.zoom];
+}
+
 @implementation FLTGoogleMapJSONConversions
 
 + (CLLocationCoordinate2D)locationFromLatLong:(NSArray *)latlong {
@@ -75,18 +82,6 @@ FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(GMSCoordina
   }
 
   return holes;
-}
-
-+ (nullable NSDictionary<NSString *, id> *)dictionaryFromPosition:(GMSCameraPosition *)position {
-  if (!position) {
-    return nil;
-  }
-  return @{
-    @"target" : [FLTGoogleMapJSONConversions arrayFromLocation:[position target]],
-    @"zoom" : @([position zoom]),
-    @"bearing" : @([position bearing]),
-    @"tilt" : @([position viewingAngle]),
-  };
 }
 
 + (nullable GMSCameraPosition *)cameraPostionFromDictionary:(nullable NSDictionary *)data {

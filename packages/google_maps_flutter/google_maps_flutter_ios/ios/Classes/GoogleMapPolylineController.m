@@ -14,9 +14,9 @@
 
 @implementation FLTGoogleMapPolylineController
 
-- (instancetype)initPolylineWithPath:(GMSMutablePath *)path
-                          identifier:(NSString *)identifier
-                             mapView:(GMSMapView *)mapView {
+- (instancetype)initWithPath:(GMSMutablePath *)path
+                  identifier:(NSString *)identifier
+                     mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
     _polyline = [GMSPolyline polylineWithPath:path];
@@ -114,7 +114,7 @@
 @interface FLTPolylinesController ()
 
 @property(strong, nonatomic) NSMutableDictionary *polylineIdentifierToController;
-@property(strong, nonatomic) FlutterMethodChannel *methodChannel;
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
 
@@ -123,12 +123,12 @@
 
 @implementation FLTPolylinesController
 
-- (instancetype)init:(FlutterMethodChannel *)methodChannel
-             mapView:(GMSMapView *)mapView
-           registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
-    _methodChannel = methodChannel;
+    _callbackHandler = callbackHandler;
     _mapView = mapView;
     _polylineIdentifierToController = [NSMutableDictionary dictionaryWithCapacity:1];
     _registrar = registrar;
@@ -141,9 +141,9 @@
     GMSMutablePath *path = [FLTPolylinesController pathForPolyline:polyline];
     NSString *identifier = polyline[@"polylineId"];
     FLTGoogleMapPolylineController *controller =
-        [[FLTGoogleMapPolylineController alloc] initPolylineWithPath:path
-                                                          identifier:identifier
-                                                             mapView:self.mapView];
+        [[FLTGoogleMapPolylineController alloc] initWithPath:path
+                                                  identifier:identifier
+                                                     mapView:self.mapView];
     [controller interpretPolylineOptions:polyline registrar:self.registrar];
     self.polylineIdentifierToController[identifier] = controller;
   }
@@ -154,9 +154,9 @@
     GMSMutablePath *path = [FLTPolylinesController pathForPolyline:polyline.json];
     NSString *identifier = polyline.json[@"polylineId"];
     FLTGoogleMapPolylineController *controller =
-        [[FLTGoogleMapPolylineController alloc] initPolylineWithPath:path
-                                                          identifier:identifier
-                                                             mapView:self.mapView];
+        [[FLTGoogleMapPolylineController alloc] initWithPath:path
+                                                  identifier:identifier
+                                                     mapView:self.mapView];
     [controller interpretPolylineOptions:polyline.json registrar:self.registrar];
     self.polylineIdentifierToController[identifier] = controller;
   }
@@ -189,7 +189,9 @@
   if (!controller) {
     return;
   }
-  [self.methodChannel invokeMethod:@"polyline#onTap" arguments:@{@"polylineId" : identifier}];
+  [self.callbackHandler didTapPolylineWithIdentifier:identifier
+                                          completion:^(FlutterError *_Nullable _){
+                                          }];
 }
 
 - (bool)hasPolylineWithIdentifier:(NSString *)identifier {

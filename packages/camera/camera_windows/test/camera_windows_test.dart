@@ -360,23 +360,7 @@ void main() {
         await plugin.startVideoRecording(cameraId);
 
         // Assert
-        verify(mockApi.startVideoRecording(any, any));
-      });
-
-      test('Should pass maxVideoDuration when starting recording a video',
-          () async {
-        // Act
-        await plugin.startVideoRecording(
-          cameraId,
-          maxVideoDuration: const Duration(seconds: 10),
-        );
-
-        // Assert
-        final VerificationResult verification =
-            verify(mockApi.startVideoRecording(any, captureAny));
-        final PlatformVideoCaptureOptions? options =
-            verification.captured[0] as PlatformVideoCaptureOptions?;
-        expect(options?.maxDurationMilliseconds, 10000);
+        verify(mockApi.startVideoRecording(any));
       });
 
       test('capturing fails if trying to stream', () async {

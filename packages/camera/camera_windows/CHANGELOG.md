@@ -1,3 +1,9 @@
+## 0.2.4
+
+* Removes `maxVideoDuration`/`maxDuration`, as the feature was never exposed at
+  the app-facing package level, and is deprecated at the platform interface
+  level.
+
 ## 0.2.3
 
 * Converts native platform calls to Pigeon.

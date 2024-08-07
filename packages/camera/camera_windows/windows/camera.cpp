@@ -12,7 +12,6 @@ using flutter::EncodableValue;
 // Camera channel events.
 constexpr char kCameraMethodChannelBaseName[] =
     "plugins.flutter.io/camera_windows/camera";
-constexpr char kVideoRecordedEvent[] = "video_recorded";
 constexpr char kCameraClosingEvent[] = "camera_closing";
 constexpr char kErrorEvent[] = "error";
 
@@ -324,24 +323,6 @@ void CameraImpl::OnTakePictureFailed(CameraResult result,
     pending_take_picture_result(FlutterError(error_code, error));
   }
 };
-
-void CameraImpl::OnVideoRecordSucceeded(const std::string& file_path,
-                                        int64_t video_duration_ms) {
-  if (messenger_ && camera_id_ >= 0) {
-    auto channel = GetMethodChannel();
-
-    std::unique_ptr<EncodableValue> message_data =
-        std::make_unique<EncodableValue>(
-            EncodableMap({{EncodableValue("path"), EncodableValue(file_path)},
-                          {EncodableValue("maxVideoDuration"),
-                           EncodableValue(video_duration_ms)}}));
-
-    channel->InvokeMethod(kVideoRecordedEvent, std::move(message_data));
-  }
-}
-
-void CameraImpl::OnVideoRecordFailed(CameraResult result,
-                                     const std::string& error){};
 
 void CameraImpl::OnCaptureError(CameraResult result, const std::string& error) {
   if (messenger_ && camera_id_ >= 0) {

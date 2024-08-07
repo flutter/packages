@@ -87,8 +87,7 @@ class CaptureController {
   virtual void ResumePreview() = 0;
 
   // Starts recording video.
-  virtual void StartRecord(const std::string& file_path,
-                           int64_t max_video_duration_ms) = 0;
+  virtual void StartRecord(const std::string& file_path) = 0;
 
   // Stops the current video recording.
   virtual void StopRecord() = 0;
@@ -124,8 +123,7 @@ class CaptureControllerImpl : public CaptureController,
   void StartPreview() override;
   void PausePreview() override;
   void ResumePreview() override;
-  void StartRecord(const std::string& file_path,
-                   int64_t max_video_duration_ms) override;
+  void StartRecord(const std::string& file_path) override;
   void StopRecord() override;
   void TakePicture(const std::string& file_path) override;
 
@@ -182,10 +180,6 @@ class CaptureControllerImpl : public CaptureController,
   // Enumerates video_sources media types and finds out best resolution
   // for preview and video capture.
   HRESULT FindBaseMediaTypes();
-
-  // Stops timed video record. Called internally when record handler when max
-  // recording time is exceeded.
-  void StopTimedRecord();
 
   // Stops preview. Called internally on camera reset and dispose.
   HRESULT StopPreview();

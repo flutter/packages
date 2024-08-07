@@ -22,14 +22,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FLTTileProviderController : GMSTileLayer
 @property(copy, nonatomic, readonly) NSString *tileOverlayIdentifier;
-- (instancetype)init:(FlutterMethodChannel *)methodChannel
-    withTileOverlayIdentifier:(NSString *)identifier;
+- (instancetype)initWithTileOverlayIdentifier:(NSString *)identifier
+                              callbackHandler:(FGMMapsCallbackApi *)callbackHandler;
 @end
 
 @interface FLTTileOverlaysController : NSObject
-- (instancetype)init:(FlutterMethodChannel *)methodChannel
-             mapView:(GMSMapView *)mapView
-           registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 - (void)addJSONTileOverlays:(NSArray<NSDictionary<NSString *, id> *> *)tileOverlaysToAdd;
 - (void)addTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToAdd;
 - (void)changeTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToChange;

@@ -13,11 +13,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class FGMPlatformCameraPosition;
 @class FGMPlatformCameraUpdate;
 @class FGMPlatformCircle;
 @class FGMPlatformMarker;
 @class FGMPlatformPolygon;
 @class FGMPlatformPolyline;
+@class FGMPlatformTile;
 @class FGMPlatformTileOverlay;
 @class FGMPlatformLatLng;
 @class FGMPlatformLatLngBounds;
@@ -25,6 +27,20 @@ NS_ASSUME_NONNULL_BEGIN
 @class FGMPlatformPoint;
 @class FGMPlatformTileLayer;
 @class FGMPlatformZoomRange;
+
+/// Pigeon representatation of a CameraPosition.
+@interface FGMPlatformCameraPosition : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithBearing:(double)bearing
+                         target:(FGMPlatformLatLng *)target
+                           tilt:(double)tilt
+                           zoom:(double)zoom;
+@property(nonatomic, assign) double bearing;
+@property(nonatomic, strong) FGMPlatformLatLng *target;
+@property(nonatomic, assign) double tilt;
+@property(nonatomic, assign) double zoom;
+@end
 
 /// Pigeon representation of a CameraUpdate.
 @interface FGMPlatformCameraUpdate : NSObject
@@ -79,6 +95,18 @@ NS_ASSUME_NONNULL_BEGIN
 /// Polyline.toJson, and the native code must intepret it according to the
 /// internal implementation details of that method.
 @property(nonatomic, strong) id json;
+@end
+
+/// Pigeon equivalent of the Tile class.
+@interface FGMPlatformTile : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithWidth:(NSInteger)width
+                       height:(NSInteger)height
+                         data:(nullable FlutterStandardTypedData *)data;
+@property(nonatomic, assign) NSInteger width;
+@property(nonatomic, assign) NSInteger height;
+@property(nonatomic, strong, nullable) FlutterStandardTypedData *data;
 @end
 
 /// Pigeon equivalent of the TileOverlay class.
@@ -258,6 +286,59 @@ extern void SetUpFGMMapsApi(id<FlutterBinaryMessenger> binaryMessenger,
 extern void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                       NSObject<FGMMapsApi> *_Nullable api,
                                       NSString *messageChannelSuffix);
+
+/// Interface for calls from the native SDK to Dart.
+@interface FGMMapsCallbackApi : NSObject
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
+/// Called when the map camera starts moving.
+- (void)didStartCameraMoveWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when the map camera moves.
+- (void)didMoveCameraToPosition:(FGMPlatformCameraPosition *)cameraPosition
+                     completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when the map camera stops moving.
+- (void)didIdleCameraWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when the map, not a specifc map object, is tapped.
+- (void)didTapAtPosition:(FGMPlatformLatLng *)position
+              completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when the map, not a specifc map object, is long pressed.
+- (void)didLongPressAtPosition:(FGMPlatformLatLng *)position
+                    completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when a marker is tapped.
+- (void)didTapMarkerWithIdentifier:(NSString *)markerId
+                        completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when a marker drag starts.
+- (void)didStartDragForMarkerWithIdentifier:(NSString *)markerId
+                                 atPosition:(FGMPlatformLatLng *)position
+                                 completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when a marker drag updates.
+- (void)didDragMarkerWithIdentifier:(NSString *)markerId
+                         atPosition:(FGMPlatformLatLng *)position
+                         completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when a marker drag ends.
+- (void)didEndDragForMarkerWithIdentifier:(NSString *)markerId
+                               atPosition:(FGMPlatformLatLng *)position
+                               completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when a marker's info window is tapped.
+- (void)didTapInfoWindowOfMarkerWithIdentifier:(NSString *)markerId
+                                    completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when a circle is tapped.
+- (void)didTapCircleWithIdentifier:(NSString *)circleId
+                        completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when a polygon is tapped.
+- (void)didTapPolygonWithIdentifier:(NSString *)polygonId
+                         completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when a polyline is tapped.
+- (void)didTapPolylineWithIdentifier:(NSString *)polylineId
+                          completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called to get data for a map tile.
+- (void)tileWithOverlayIdentifier:(NSString *)tileOverlayId
+                         location:(FGMPlatformPoint *)location
+                             zoom:(NSInteger)zoom
+                       completion:(void (^)(FGMPlatformTile *_Nullable,
+                                            FlutterError *_Nullable))completion;
+@end
 
 /// Inspector API only intended for use in integration tests.
 @protocol FGMMapsInspectorApi

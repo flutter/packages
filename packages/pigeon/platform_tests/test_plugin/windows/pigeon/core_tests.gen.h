@@ -66,11 +66,11 @@ class ErrorOr {
 };
 
 enum class AnEnum {
-  one = 0,
-  two = 1,
-  three = 2,
-  fortyTwo = 3,
-  fourHundredTwentyTwo = 4
+  kOne = 0,
+  kTwo = 1,
+  kThree = 2,
+  kFortyTwo = 3,
+  kFourHundredTwentyTwo = 4
 };
 
 // A class containing all supported types.
