@@ -63,6 +63,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FGMPlatformClusterManager ()
++ (FGMPlatformClusterManager *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformClusterManager *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @interface FGMPlatformMarker ()
 + (FGMPlatformMarker *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformMarker *)nullableFromList:(NSArray<id> *)list;
@@ -102,6 +108,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @interface FGMPlatformLatLngBounds ()
 + (FGMPlatformLatLngBounds *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformLatLngBounds *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FGMPlatformCluster ()
++ (FGMPlatformCluster *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformCluster *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
@@ -221,6 +233,27 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList {
   return @[
     self.json ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation FGMPlatformClusterManager
++ (instancetype)makeWithIdentifier:(NSString *)identifier {
+  FGMPlatformClusterManager *pigeonResult = [[FGMPlatformClusterManager alloc] init];
+  pigeonResult.identifier = identifier;
+  return pigeonResult;
+}
++ (FGMPlatformClusterManager *)fromList:(NSArray<id> *)list {
+  FGMPlatformClusterManager *pigeonResult = [[FGMPlatformClusterManager alloc] init];
+  pigeonResult.identifier = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable FGMPlatformClusterManager *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformClusterManager fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.identifier ?: [NSNull null],
   ];
 }
 @end
@@ -387,6 +420,39 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FGMPlatformCluster
++ (instancetype)makeWithClusterManagerId:(NSString *)clusterManagerId
+                                position:(FGMPlatformLatLng *)position
+                                  bounds:(FGMPlatformLatLngBounds *)bounds
+                               markerIds:(NSArray<NSString *> *)markerIds {
+  FGMPlatformCluster *pigeonResult = [[FGMPlatformCluster alloc] init];
+  pigeonResult.clusterManagerId = clusterManagerId;
+  pigeonResult.position = position;
+  pigeonResult.bounds = bounds;
+  pigeonResult.markerIds = markerIds;
+  return pigeonResult;
+}
++ (FGMPlatformCluster *)fromList:(NSArray<id> *)list {
+  FGMPlatformCluster *pigeonResult = [[FGMPlatformCluster alloc] init];
+  pigeonResult.clusterManagerId = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.position = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.bounds = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.markerIds = GetNullableObjectAtIndex(list, 3);
+  return pigeonResult;
+}
++ (nullable FGMPlatformCluster *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformCluster fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.clusterManagerId ?: [NSNull null],
+    self.position ?: [NSNull null],
+    self.bounds ?: [NSNull null],
+    self.markerIds ?: [NSNull null],
+  ];
+}
+@end
+
 @implementation FGMPlatformMapConfiguration
 + (instancetype)makeWithJson:(id)json {
   FGMPlatformMapConfiguration *pigeonResult = [[FGMPlatformMapConfiguration alloc] init];
@@ -503,26 +569,30 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 132:
       return [FGMPlatformHeatmap fromList:[self readValue]];
     case 133:
-      return [FGMPlatformMarker fromList:[self readValue]];
+      return [FGMPlatformClusterManager fromList:[self readValue]];
     case 134:
-      return [FGMPlatformPolygon fromList:[self readValue]];
+      return [FGMPlatformMarker fromList:[self readValue]];
     case 135:
-      return [FGMPlatformPolyline fromList:[self readValue]];
+      return [FGMPlatformPolygon fromList:[self readValue]];
     case 136:
-      return [FGMPlatformTile fromList:[self readValue]];
+      return [FGMPlatformPolyline fromList:[self readValue]];
     case 137:
-      return [FGMPlatformTileOverlay fromList:[self readValue]];
+      return [FGMPlatformTile fromList:[self readValue]];
     case 138:
-      return [FGMPlatformLatLng fromList:[self readValue]];
+      return [FGMPlatformTileOverlay fromList:[self readValue]];
     case 139:
-      return [FGMPlatformLatLngBounds fromList:[self readValue]];
+      return [FGMPlatformLatLng fromList:[self readValue]];
     case 140:
-      return [FGMPlatformMapConfiguration fromList:[self readValue]];
+      return [FGMPlatformLatLngBounds fromList:[self readValue]];
     case 141:
-      return [FGMPlatformPoint fromList:[self readValue]];
+      return [FGMPlatformCluster fromList:[self readValue]];
     case 142:
-      return [FGMPlatformTileLayer fromList:[self readValue]];
+      return [FGMPlatformMapConfiguration fromList:[self readValue]];
     case 143:
+      return [FGMPlatformPoint fromList:[self readValue]];
+    case 144:
+      return [FGMPlatformTileLayer fromList:[self readValue]];
+    case 145:
       return [FGMPlatformZoomRange fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -546,38 +616,44 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FGMPlatformHeatmap class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMarker class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformClusterManager class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPolygon class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMarker class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPolyline class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPolygon class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTile class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPolyline class]]) {
     [self writeByte:136];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileOverlay class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTile class]]) {
     [self writeByte:137];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTileOverlay class]]) {
     [self writeByte:138];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
     [self writeByte:139];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
     [self writeByte:140];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCluster class]]) {
     [self writeByte:141];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
     [self writeByte:142];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
     [self writeByte:143];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
+    [self writeByte:144];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+    [self writeByte:145];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -720,6 +796,32 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                            changing:arg_toChange
                            removing:arg_idsToRemove
                               error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Updates the set of custer managers for clusters on the map.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsApi.updateClusterManagers",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FGMGetMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(updateClusterManagersByAdding:removing:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to "
+                @"@selector(updateClusterManagersByAdding:removing:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        NSArray<FGMPlatformClusterManager *> *arg_toAdd = GetNullableObjectAtIndex(args, 0);
+        NSArray<NSString *> *arg_idsToRemove = GetNullableObjectAtIndex(args, 1);
+        FlutterError *error;
+        [api updateClusterManagersByAdding:arg_toAdd removing:arg_idsToRemove error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1471,6 +1573,31 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
+- (void)didTapCluster:(FGMPlatformCluster *)arg_cluster
+           completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:@"%@%@",
+                       @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onClusterTap",
+                       _messageChannelSuffix];
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FGMGetMessagesCodec()];
+  [channel sendMessage:@[ arg_cluster ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
+}
 - (void)didTapPolygonWithIdentifier:(NSString *)arg_polygonId
                          completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
@@ -1804,6 +1931,31 @@ void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         FGMPlatformZoomRange *output = [api zoomRange:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsInspectorApi.getClusters",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FGMGetMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(clustersWithIdentifier:error:)],
+                @"FGMMapsInspectorApi api (%@) doesn't respond to "
+                @"@selector(clustersWithIdentifier:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        NSString *arg_clusterManagerId = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        NSArray<FGMPlatformCluster *> *output = [api clustersWithIdentifier:arg_clusterManagerId
+                                                                      error:&error];
         callback(wrapResult(output, error));
       }];
     } else {

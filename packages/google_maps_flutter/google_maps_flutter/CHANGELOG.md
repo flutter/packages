@@ -1,3 +1,11 @@
+## 2.9.0
+
+* Adds clustering support.
+
+## 2.8.0
+
+* Adds support for heatmap layers.
+
 ## 2.7.1
 
 * Updates the example app to use TLHC mode, per current package guidance.

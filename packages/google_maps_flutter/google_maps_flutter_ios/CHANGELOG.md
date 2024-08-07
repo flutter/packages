@@ -1,3 +1,7 @@
+## 2.12.0
+
+* Adds support for marker clustering.
+
 ## 2.11.0
 
 * Adds support for heatmap layers.
