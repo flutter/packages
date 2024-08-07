@@ -81,6 +81,37 @@ void main() {
     expect(matches[1].route, routes[0].routes[0]);
   });
 
+  testWidgets('GoRouteInformationParser can handle empty path for non http uri',
+      (WidgetTester tester) async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (_, __) => const Placeholder(),
+        routes: <GoRoute>[
+          GoRoute(
+            path: 'abc',
+            builder: (_, __) => const Placeholder(),
+          ),
+        ],
+      ),
+    ];
+    final GoRouteInformationParser parser = await createParser(
+      tester,
+      routes: routes,
+      redirectLimit: 100,
+      redirect: (_, __) => null,
+    );
+
+    final BuildContext context = tester.element(find.byType(Router<Object>));
+
+    final RouteMatchList matchesObj =
+        await parser.parseRouteInformationWithDependencies(
+            createRouteInformation('elbaapp://domain'), context);
+    final List<RouteMatchBase> matches = matchesObj.matches;
+    expect(matches.length, 1);
+    expect(matchesObj.uri.toString(), 'elbaapp://domain/');
+  });
+
   testWidgets(
       "GoRouteInformationParser can parse deeplink root route and maintain uri's scheme, host, query and fragment",
       (WidgetTester tester) async {
