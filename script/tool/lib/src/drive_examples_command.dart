@@ -13,7 +13,7 @@ import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
-const int _exitNoPlatformFlags = 2;
+const int _exitInvalidArgs = 2;
 const int _exitNoAvailableDevice = 3;
 
 // From https://flutter.dev/to/integration-test-on-web
@@ -40,6 +40,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
         help: 'Runs the web implementation of the examples');
     argParser.addFlag(platformWindows,
         help: 'Runs the Windows implementation of the examples');
+    argParser.addFlag(kWebWasmFlag,
+        help: 'Compile to WebAssembly rather than JavaScript');
     argParser.addOption(
       kEnableExperiment,
       defaultsTo: '',
@@ -84,7 +86,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       printError(
           'Exactly one of ${platformSwitches.map((String platform) => '--$platform').join(', ')} '
           'must be specified.');
-      throw ToolExit(_exitNoPlatformFlags);
+      throw ToolExit(_exitInvalidArgs);
     }
 
     String? androidDevice;
@@ -107,22 +109,31 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       iOSDevice = devices.first;
     }
 
+    final bool useWasm = getBoolArg(kWebWasmFlag);
+    final bool hasPlatformWeb = getBoolArg(platformWeb);
+    if (useWasm && !hasPlatformWeb) {
+      printError('--wasm is only supported on the web platform');
+      throw ToolExit(_exitInvalidArgs);
+    }
+
     _targetDeviceFlags = <String, List<String>>{
       if (getBoolArg(platformAndroid))
         platformAndroid: <String>['-d', androidDevice!],
       if (getBoolArg(platformIOS)) platformIOS: <String>['-d', iOSDevice!],
       if (getBoolArg(platformLinux)) platformLinux: <String>['-d', 'linux'],
       if (getBoolArg(platformMacOS)) platformMacOS: <String>['-d', 'macos'],
-      if (getBoolArg(platformWeb))
+      if (hasPlatformWeb)
         platformWeb: <String>[
           '-d',
           'web-server',
           '--web-port=7357',
           '--browser-name=chrome',
+          if (useWasm)
+            '--wasm'
           // TODO(dit): Clean this up, https://github.com/flutter/flutter/issues/151869
-          if (platform.environment['CHANNEL']?.toLowerCase() == 'master')
-            '--web-renderer=canvaskit',
-          if (platform.environment['CHANNEL']?.toLowerCase() != 'master')
+          else if (platform.environment['CHANNEL']?.toLowerCase() == 'master')
+            '--web-renderer=canvaskit'
+          else
             '--web-renderer=html',
           if (platform.environment.containsKey('CHROME_EXECUTABLE'))
             '--chrome-binary=${platform.environment['CHROME_EXECUTABLE']}',

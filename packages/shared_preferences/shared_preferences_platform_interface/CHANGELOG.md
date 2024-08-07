@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 2.4.1
+
+* Adds comments about unsupported types.
+
 ## 2.4.0
 
 * Adds `SharedPreferencesAsyncPlatform` API.

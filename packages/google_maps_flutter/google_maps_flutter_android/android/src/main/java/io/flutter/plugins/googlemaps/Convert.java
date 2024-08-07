@@ -30,6 +30,8 @@ import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.maps.model.Tile;
 import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.heatmaps.Gradient;
+import com.google.maps.android.heatmaps.WeightedLatLng;
 import io.flutter.FlutterInjector;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +43,17 @@ import java.util.Map;
 
 /** Conversions between JSON-like values and GoogleMaps data types. */
 class Convert {
+  // These constants must match the corresponding constants in serialization.dart
+  public static final String HEATMAPS_TO_ADD_KEY = "heatmapsToAdd";
+  public static final String HEATMAP_ID_KEY = "heatmapId";
+  public static final String HEATMAP_DATA_KEY = "data";
+  public static final String HEATMAP_GRADIENT_KEY = "gradient";
+  public static final String HEATMAP_MAX_INTENSITY_KEY = "maxIntensity";
+  public static final String HEATMAP_OPACITY_KEY = "opacity";
+  public static final String HEATMAP_RADIUS_KEY = "radius";
+  public static final String HEATMAP_GRADIENT_COLORS_KEY = "colors";
+  public static final String HEATMAP_GRADIENT_START_POINTS_KEY = "startPoints";
+  public static final String HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY = "colorMapSize";
 
   private static BitmapDescriptor toBitmapDescriptor(
       Object o, AssetManager assetManager, float density) {
@@ -465,6 +478,17 @@ class Convert {
     return new LatLng(toDouble(data.get(0)), toDouble(data.get(1)));
   }
 
+  /**
+   * Converts a list of serialized weighted lat/lng to a list of WeightedLatLng.
+   *
+   * @param o The serialized list of weighted lat/lng.
+   * @return The list of WeightedLatLng.
+   */
+  static WeightedLatLng toWeightedLatLng(Object o) {
+    final List<?> data = toList(o);
+    return new WeightedLatLng(toLatLng(data.get(0)), toDouble(data.get(1)));
+  }
+
   static Point pointFromPigeon(Messages.PlatformPoint point) {
     return new Point(point.getX().intValue(), point.getY().intValue());
   }
@@ -842,6 +866,55 @@ class Convert {
     }
   }
 
+  /**
+   * Set the options in the given heatmap object to the given sink.
+   *
+   * @param o the object expected to be a Map containing the heatmap options. The options map is
+   *     expected to have the following structure:
+   *     <pre>{@code
+   * {
+   *   "heatmapId": String,
+   *   "data": List, // List of serialized weighted lat/lng
+   *   "gradient": Map, // Serialized heatmap gradient
+   *   "maxIntensity": Double,
+   *   "opacity": Double,
+   *   "radius": Integer
+   * }
+   * }</pre>
+   *
+   * @param sink the HeatmapOptionsSink where the options will be set.
+   * @return the heatmapId.
+   * @throws IllegalArgumentException if heatmapId is null.
+   */
+  static String interpretHeatmapOptions(Map<String, ?> data, HeatmapOptionsSink sink) {
+    final Object rawWeightedData = data.get(HEATMAP_DATA_KEY);
+    if (rawWeightedData != null) {
+      sink.setWeightedData(toWeightedData(rawWeightedData));
+    }
+    final Object gradient = data.get(HEATMAP_GRADIENT_KEY);
+    if (gradient != null) {
+      sink.setGradient(toGradient(gradient));
+    }
+    final Object maxIntensity = data.get(HEATMAP_MAX_INTENSITY_KEY);
+    if (maxIntensity != null) {
+      sink.setMaxIntensity(toDouble(maxIntensity));
+    }
+    final Object opacity = data.get(HEATMAP_OPACITY_KEY);
+    if (opacity != null) {
+      sink.setOpacity(toDouble(opacity));
+    }
+    final Object radius = data.get(HEATMAP_RADIUS_KEY);
+    if (radius != null) {
+      sink.setRadius(toInt(radius));
+    }
+    final String heatmapId = (String) data.get(HEATMAP_ID_KEY);
+    if (heatmapId == null) {
+      throw new IllegalArgumentException("heatmapId was null");
+    } else {
+      return heatmapId;
+    }
+  }
+
   @VisibleForTesting
   static List<LatLng> toPoints(Object o) {
     final List<?> data = toList(o);
@@ -852,6 +925,62 @@ class Convert {
       points.add(new LatLng(toDouble(point.get(0)), toDouble(point.get(1))));
     }
     return points;
+  }
+
+  /**
+   * Converts the given object to a list of WeightedLatLng objects.
+   *
+   * @param o the object to convert. The object is expected to be a List of serialized weighted
+   *     lat/lng.
+   * @return a list of WeightedLatLng objects.
+   */
+  @VisibleForTesting
+  static List<WeightedLatLng> toWeightedData(Object o) {
+    final List<?> data = toList(o);
+    final List<WeightedLatLng> weightedData = new ArrayList<>(data.size());
+
+    for (Object rawWeightedPoint : data) {
+      weightedData.add(toWeightedLatLng(rawWeightedPoint));
+    }
+    return weightedData;
+  }
+
+  /**
+   * Converts the given object to a Gradient object.
+   *
+   * @param o the object to convert. The object is expected to be a Map containing the gradient
+   *     options. The gradient map is expected to have the following structure:
+   *     <pre>{@code
+   * {
+   *   "colors": List<Integer>,
+   *   "startPoints": List<Float>,
+   *   "colorMapSize": Integer
+   * }
+   * }</pre>
+   *
+   * @return a Gradient object.
+   */
+  @VisibleForTesting
+  static Gradient toGradient(Object o) {
+    final Map<?, ?> data = toMap(o);
+
+    final List<?> colorData = toList(data.get(HEATMAP_GRADIENT_COLORS_KEY));
+    assert colorData != null;
+    final int[] colors = new int[colorData.size()];
+    for (int i = 0; i < colorData.size(); i++) {
+      colors[i] = toInt(colorData.get(i));
+    }
+
+    final List<?> startPointData = toList(data.get(HEATMAP_GRADIENT_START_POINTS_KEY));
+    assert startPointData != null;
+    final float[] startPoints = new float[startPointData.size()];
+    for (int i = 0; i < startPointData.size(); i++) {
+      startPoints[i] = toFloat(startPointData.get(i));
+    }
+
+    final int colorMapSize = toInt(data.get(HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY));
+
+    return new Gradient(colors, startPoints, colorMapSize);
   }
 
   private static List<List<LatLng>> toHoles(Object o) {

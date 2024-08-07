@@ -1,3 +1,7 @@
+## 1.0.15
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 1.0.14
 
 * Updates AGP version to 8.4.1.

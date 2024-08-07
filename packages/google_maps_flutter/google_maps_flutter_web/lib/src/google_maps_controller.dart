@@ -6,14 +6,14 @@ part of '../google_maps_flutter_web.dart';
 
 /// Type used when passing an override to the _createMap function.
 @visibleForTesting
-typedef DebugCreateMapFunction = gmaps.GMap Function(
+typedef DebugCreateMapFunction = gmaps.Map Function(
     HTMLElement div, gmaps.MapOptions options);
 
 /// Type used when passing an override to the _setOptions function.
 @visibleForTesting
 typedef DebugSetOptionsFunction = void Function(gmaps.MapOptions options);
 
-/// Encapsulates a [gmaps.GMap], its events, and where in the DOM it's rendered.
+/// Encapsulates a [gmaps.Map], its events, and where in the DOM it's rendered.
 class GoogleMapController {
   /// Initializes the GMap, and the sub-controllers related to it. Wires events.
   GoogleMapController({
@@ -30,9 +30,11 @@ class GoogleMapController {
         _polylines = mapObjects.polylines,
         _circles = mapObjects.circles,
         _clusterManagers = mapObjects.clusterManagers,
+        _heatmaps = mapObjects.heatmaps,
         _tileOverlays = mapObjects.tileOverlays,
         _lastMapConfiguration = mapConfiguration {
     _circlesController = CirclesController(stream: _streamController);
+    _heatmapsController = HeatmapsController();
     _polygonsController = PolygonsController(stream: _streamController);
     _polylinesController = PolylinesController(stream: _streamController);
     _clusterManagersController =
@@ -45,7 +47,7 @@ class GoogleMapController {
 
     // Register the view factory that will hold the `_div` that holds the map in the DOM.
     // The `_div` needs to be created outside of the ViewFactory (and cached!) so we can
-    // use it to create the [gmaps.GMap] in the `init()` method of this class.
+    // use it to create the [gmaps.Map] in the `init()` method of this class.
     _div = createDivElement()
       ..id = _getViewType(mapId)
       ..style.width = '100%'
@@ -66,6 +68,7 @@ class GoogleMapController {
   final Set<Polyline> _polylines;
   final Set<Circle> _circles;
   final Set<ClusterManager> _clusterManagers;
+  final Set<Heatmap> _heatmaps;
   Set<TileOverlay> _tileOverlays;
 
   // The configuration passed by the user, before converting to gmaps.
@@ -108,7 +111,7 @@ class GoogleMapController {
   gmaps.TrafficLayer? get trafficLayer => _trafficLayer;
 
   // The underlying GMap instance. This is the interface with the JS SDK.
-  gmaps.GMap? _googleMap;
+  gmaps.Map? _googleMap;
 
   // The StreamController used by this controller and the geometry ones.
   final StreamController<MapEvent<Object?>> _streamController;
@@ -122,6 +125,7 @@ class GoogleMapController {
 
   // Geometry controllers, for different features of the map.
   CirclesController? _circlesController;
+  HeatmapsController? _heatmapsController;
   PolygonsController? _polygonsController;
   PolylinesController? _polylinesController;
   MarkersController? _markersController;
@@ -146,6 +150,7 @@ class GoogleMapController {
     DebugSetOptionsFunction? setOptions,
     MarkersController? markers,
     CirclesController? circles,
+    HeatmapsController? heatmaps,
     PolygonsController? polygons,
     PolylinesController? polylines,
     ClusterManagersController? clusterManagers,
@@ -155,6 +160,7 @@ class GoogleMapController {
     _overrideSetOptions = setOptions;
     _markersController = markers ?? _markersController;
     _circlesController = circles ?? _circlesController;
+    _heatmapsController = heatmaps ?? _heatmapsController;
     _polygonsController = polygons ?? _polygonsController;
     _polylinesController = polylines ?? _polylinesController;
     _clusterManagersController = clusterManagers ?? _clusterManagersController;
@@ -164,11 +170,11 @@ class GoogleMapController {
   DebugCreateMapFunction? _overrideCreateMap;
   DebugSetOptionsFunction? _overrideSetOptions;
 
-  gmaps.GMap _createMap(HTMLElement div, gmaps.MapOptions options) {
+  gmaps.Map _createMap(HTMLElement div, gmaps.MapOptions options) {
     if (_overrideCreateMap != null) {
       return _overrideCreateMap!(div, options);
     }
-    return gmaps.GMap(div, options);
+    return gmaps.Map(div, options);
   }
 
   /// A flag that returns true if the controller has been initialized or not.
@@ -179,7 +185,7 @@ class GoogleMapController {
   ///
   /// (Also initializes the geometry/traffic layers.)
   ///
-  /// The first part of this method starts the rendering of a [gmaps.GMap] inside
+  /// The first part of this method starts the rendering of a [gmaps.Map] inside
   /// of the target [_div], with configuration from `rawOptions`. It then stores
   /// the created GMap in the [_googleMap] attribute.
   ///
@@ -207,7 +213,7 @@ class GoogleMapController {
     }
 
     // Create the map...
-    final gmaps.GMap map = _createMap(_div, options);
+    final gmaps.Map map = _createMap(_div, options);
     _googleMap = map;
 
     _attachMapEvents(map);
@@ -221,12 +227,12 @@ class GoogleMapController {
   }
 
   // Funnels map gmap events into the plugin's stream controller.
-  void _attachMapEvents(gmaps.GMap map) {
+  void _attachMapEvents(gmaps.Map map) {
     map.onTilesloaded.first.then((void _) {
       // Report the map as ready to go the first time the tiles load
       _streamController.add(WebMapReadyEvent(_mapId));
     });
-    map.onClick.listen((gmaps.IconMouseEvent event) {
+    map.onClick.listen((gmaps.MapMouseEventOrIconMouseEvent event) {
       assert(event.latLng != null);
       _streamController.add(
         MapTapEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
@@ -254,7 +260,7 @@ class GoogleMapController {
   }
 
   // Binds the Geometry controllers to a map instance
-  void _attachGeometryControllers(gmaps.GMap map) {
+  void _attachGeometryControllers(gmaps.Map map) {
     // Now we can add the initial geometry.
     // And bind the (ready) map instance to the other geometry controllers.
     //
@@ -263,6 +269,8 @@ class GoogleMapController {
     // null.
     assert(_circlesController != null,
         'Cannot attach a map to a null CirclesController instance.');
+    assert(_heatmapsController != null,
+        'Cannot attach a map to a null HeatmapsController instance.');
     assert(_polygonsController != null,
         'Cannot attach a map to a null PolygonsController instance.');
     assert(_polylinesController != null,
@@ -275,6 +283,7 @@ class GoogleMapController {
         'Cannot attach a map to a null TileOverlaysController instance.');
 
     _circlesController!.bindToMap(_mapId, map);
+    _heatmapsController!.bindToMap(_mapId, map);
     _polygonsController!.bindToMap(_mapId, map);
     _polylinesController!.bindToMap(_mapId, map);
     _markersController!.bindToMap(_mapId, map);
@@ -301,6 +310,7 @@ class GoogleMapController {
 
     _markersController!.addMarkers(_markers);
     _circlesController!.addCircles(_circles);
+    _heatmapsController!.addHeatmaps(_heatmaps);
     _polygonsController!.addPolygons(_polygons);
     _polylinesController!.addPolylines(_polylines);
     _tileOverlaysController!.addTileOverlays(_tileOverlays);
@@ -373,7 +383,7 @@ class GoogleMapController {
   }
 
   // Attaches/detaches a Traffic Layer on the passed `map` if `attach` is true/false.
-  void _setTrafficLayer(gmaps.GMap map, bool attach) {
+  void _setTrafficLayer(gmaps.Map map, bool attach) {
     if (attach && _trafficLayer == null) {
       _trafficLayer = gmaps.TrafficLayer()..set('map', map);
     }
@@ -405,7 +415,7 @@ class GoogleMapController {
     final gmaps.Point point =
         toScreenLocation(_googleMap!, _latLngToGmLatLng(latLng));
 
-    return ScreenCoordinate(x: point.x!.toInt(), y: point.y!.toInt());
+    return ScreenCoordinate(x: point.x.toInt(), y: point.y.toInt());
   }
 
   /// Returns the [LatLng] for a `screenCoordinate` (in pixels) of the viewport.
@@ -428,10 +438,10 @@ class GoogleMapController {
   /// Returns the zoom level of the current viewport.
   Future<double> getZoomLevel() async {
     assert(_googleMap != null, 'Cannot get zoom level of a null map.');
-    assert(_googleMap!.zoom != null,
+    assert(_googleMap!.isZoomDefined(),
         'Zoom level should not be null. Is the map correctly initialized?');
 
-    return _googleMap!.zoom!.toDouble();
+    return _googleMap!.zoom.toDouble();
   }
 
   // Geometry manipulation
@@ -439,10 +449,23 @@ class GoogleMapController {
   /// Applies [CircleUpdates] to the currently managed circles.
   void updateCircles(CircleUpdates updates) {
     assert(
-        _circlesController != null, 'Cannot update circles after dispose().');
+      _circlesController != null,
+      'Cannot update circles after dispose().',
+    );
     _circlesController?.addCircles(updates.circlesToAdd);
     _circlesController?.changeCircles(updates.circlesToChange);
     _circlesController?.removeCircles(updates.circleIdsToRemove);
+  }
+
+  /// Applies [HeatmapUpdates] to the currently managed heatmaps.
+  void updateHeatmaps(HeatmapUpdates updates) {
+    assert(
+      _heatmapsController != null,
+      'Cannot update heatmaps after dispose().',
+    );
+    _heatmapsController?.addHeatmaps(updates.heatmapsToAdd);
+    _heatmapsController?.changeHeatmaps(updates.heatmapsToChange);
+    _heatmapsController?.removeHeatmaps(updates.heatmapIdsToRemove);
   }
 
   /// Applies [PolygonUpdates] to the currently managed polygons.
@@ -531,6 +554,7 @@ class GoogleMapController {
     _widget = null;
     _googleMap = null;
     _circlesController = null;
+    _heatmapsController = null;
     _polygonsController = null;
     _polylinesController = null;
     _markersController = null;

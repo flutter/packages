@@ -13,6 +13,8 @@ import 'package:stream_transform/stream_transform.dart';
 
 import 'google_map_inspector_ios.dart';
 import 'messages.g.dart';
+import 'serialization.dart';
+import 'utils/cluster_manager.dart';
 
 // TODO(stuartmorgan): Remove the dependency on platform interface toJson
 // methods. Channel serialization details should all be package-internal.
@@ -200,6 +202,11 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<ClusterTapEvent> onClusterTap({required int mapId}) {
+    return _events(mapId).whereType<ClusterTapEvent>();
+  }
+
+  @override
   Future<void> updateMapConfiguration(
     MapConfiguration configuration, {
     required int mapId,
@@ -274,6 +281,20 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateHeatmaps(
+    HeatmapUpdates heatmapUpdates, {
+    required int mapId,
+  }) {
+    return _hostApi(mapId).updateHeatmaps(
+      heatmapUpdates.heatmapsToAdd.map(_platformHeatmapFromHeatmap).toList(),
+      heatmapUpdates.heatmapsToChange.map(_platformHeatmapFromHeatmap).toList(),
+      heatmapUpdates.heatmapIdsToRemove
+          .map((HeatmapId id) => id.value)
+          .toList(),
+    );
+  }
+
+  @override
   Future<void> updateTileOverlays({
     required Set<TileOverlay> newTileOverlays,
     required int mapId,
@@ -295,6 +316,21 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
           .toList(),
       updates.tileOverlayIdsToRemove
           .map((TileOverlayId id) => id.value)
+          .toList(),
+    );
+  }
+
+  @override
+  Future<void> updateClusterManagers(
+    ClusterManagerUpdates clusterManagerUpdates, {
+    required int mapId,
+  }) {
+    return _hostApi(mapId).updateClusterManagers(
+      clusterManagerUpdates.clusterManagersToAdd
+          .map(_platformClusterManagerFromClusterManager)
+          .toList(),
+      clusterManagerUpdates.clusterManagerIdsToRemove
+          .map((ClusterManagerId id) => id.value)
           .toList(),
     );
   }
@@ -421,7 +457,10 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       'polygonsToAdd': serializePolygonSet(mapObjects.polygons),
       'polylinesToAdd': serializePolylineSet(mapObjects.polylines),
       'circlesToAdd': serializeCircleSet(mapObjects.circles),
+      'heatmapsToAdd': mapObjects.heatmaps.map(serializeHeatmap).toList(),
       'tileOverlaysToAdd': serializeTileOverlaySet(mapObjects.tileOverlays),
+      'clusterManagersToAdd':
+          serializeClusterManagerSet(mapObjects.clusterManagers),
     };
 
     return UiKitView(
@@ -515,6 +554,18 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
         MapsInspectorApi(messageChannelSuffix: mapId.toString()));
   }
 
+  /// Converts a Pigeon [PlatformCluster] to the corresponding [Cluster].
+  static Cluster clusterFromPlatformCluster(PlatformCluster cluster) {
+    return Cluster(
+        ClusterManagerId(cluster.clusterManagerId),
+        cluster.markerIds
+            // See comment in messages.dart for why the force unwrap is okay.
+            .map((String? markerId) => MarkerId(markerId!))
+            .toList(),
+        position: _latLngFromPlatformLatLng(cluster.position),
+        bounds: _latLngBoundsFromPlatformLatLngBounds(cluster.bounds));
+  }
+
   static PlatformLatLng _platformLatLngFromLatLng(LatLng latLng) {
     return PlatformLatLng(
         latitude: latLng.latitude, longitude: latLng.longitude);
@@ -535,6 +586,10 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return PlatformCircle(json: circle.toJson());
   }
 
+  static PlatformHeatmap _platformHeatmapFromHeatmap(Heatmap heatmap) {
+    return PlatformHeatmap(json: heatmap.toJson());
+  }
+
   static PlatformMarker _platformMarkerFromMarker(Marker marker) {
     return PlatformMarker(json: marker.toJson());
   }
@@ -550,6 +605,12 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   static PlatformTileOverlay _platformTileOverlayFromTileOverlay(
       TileOverlay tileOverlay) {
     return PlatformTileOverlay(json: tileOverlay.toJson());
+  }
+
+  static PlatformClusterManager _platformClusterManagerFromClusterManager(
+      ClusterManager clusterManager) {
+    return PlatformClusterManager(
+        identifier: clusterManager.clusterManagerId.value);
   }
 }
 
@@ -623,6 +684,14 @@ class HostMapMessageHandler implements MapsCallbackApi {
   @override
   void onCircleTap(String circleId) {
     streamController.add(CircleTapEvent(mapId, CircleId(circleId)));
+  }
+
+  @override
+  void onClusterTap(PlatformCluster cluster) {
+    streamController.add(ClusterTapEvent(
+      mapId,
+      GoogleMapsFlutterIOS.clusterFromPlatformCluster(cluster),
+    ));
   }
 
   @override

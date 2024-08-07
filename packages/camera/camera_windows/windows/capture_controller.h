@@ -6,6 +6,7 @@
 #define PACKAGES_CAMERA_CAMERA_WINDOWS_WINDOWS_CAPTURE_CONTROLLER_H_
 
 #include <d3d11.h>
+#include <flutter/event_channel.h>
 #include <flutter/texture_registrar.h>
 #include <mfapi.h>
 #include <mfcaptureengine.h>
@@ -92,6 +93,13 @@ class CaptureController {
   // Stops the current video recording.
   virtual void StopRecord() = 0;
 
+  // Starts image streaming.
+  virtual void StartImageStream(
+      std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink) = 0;
+
+  // Stops the current image streaming.
+  virtual void StopImageStream() = 0;
+
   // Captures a still photo.
   virtual void TakePicture(const std::string& file_path) = 0;
 };
@@ -125,6 +133,10 @@ class CaptureControllerImpl : public CaptureController,
   void ResumePreview() override;
   void StartRecord(const std::string& file_path) override;
   void StopRecord() override;
+  void StartImageStream(
+      std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink)
+      override;
+  void StopImageStream() override;
   void TakePicture(const std::string& file_path) override;
 
   // CaptureEngineObserver
@@ -215,8 +227,9 @@ class CaptureControllerImpl : public CaptureController,
   std::unique_ptr<PreviewHandler> preview_handler_;
   std::unique_ptr<PhotoHandler> photo_handler_;
   std::unique_ptr<TextureHandler> texture_handler_;
+  std::unique_ptr<flutter::EventSink<flutter::EncodableValue>>
+      image_stream_sink_;
   CaptureControllerListener* capture_controller_listener_;
-
   std::string video_device_id_;
   CaptureEngineState capture_engine_state_ =
       CaptureEngineState::kNotInitialized;
