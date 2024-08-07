@@ -83,9 +83,12 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     Uri uri = routeInformation.uri;
     if (uri.hasEmptyPath) {
       uri = uri.replace(path: '/');
+    } else if (uri.path.length > 1 && uri.path.endsWith('/')) {
+      // Remove trailing `/`.
+      uri = uri.replace(path: uri.path.substring(0, uri.path.length - 1));
     }
     final RouteMatchList initialMatches = configuration.findMatch(
-      uri.toString(),
+      uri,
       extra: state.extra,
     );
     if (initialMatches.isError) {
