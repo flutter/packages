@@ -278,6 +278,9 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Takes in a [selectedIndex] property for the current selected item in
   /// the [NavigationRail] and [extended] for whether the [NavigationRail]
   /// is extended or not.
+  ///
+  /// If [labelType] is null, then the default value is
+  /// [NavigationRailLabelType.none].
   static Builder standardNavigationRail({
     required List<NavigationRailDestination> destinations,
     double width = 72,
