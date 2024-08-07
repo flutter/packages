@@ -24,7 +24,8 @@ const double kMaterialMediumMinMargin = 12;
 /// design 3 spec.
 const double kMaterialExpandedMinMargin = 32;
 
-/// Converts a [NavigationDestination] to a [NavigationRailDestination].
+/// Signature for a builder used by [AdaptiveScaffold.navigationRailDestinationBuilder] that converts a
+/// [NavigationDestination] to a [NavigationRailDestination].
 typedef NavigationRailDestinationBuilder = NavigationRailDestination Function(
   int index,
   NavigationDestination destination,
