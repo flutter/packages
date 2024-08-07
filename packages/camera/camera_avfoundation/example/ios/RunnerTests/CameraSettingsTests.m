@@ -148,9 +148,9 @@ static const BOOL gTestEnableAudio = YES;
 
   // Expect FPS configuration is passed to camera device.
   [self waitForExpectations:@[
-    injectedWrapper.lockExpectation, injectedWrapper.beginConfigurationExpectation,
+    injectedWrapper.beginConfigurationExpectation, injectedWrapper.lockExpectation,
     injectedWrapper.minFrameDurationExpectation, injectedWrapper.maxFrameDurationExpectation,
-    injectedWrapper.commitConfigurationExpectation, injectedWrapper.unlockExpectation
+    injectedWrapper.unlockExpectation, injectedWrapper.commitConfigurationExpectation
   ]
                     timeout:1
                enforceOrder:YES];
@@ -200,6 +200,22 @@ static const BOOL gTestEnableAudio = YES;
 
   // Verify the result
   XCTAssertNotNil(resultValue);
+}
+
+- (void)testSettings_ShouldSelectFormatWhichSupports60FPS {
+  FCPPlatformMediaSettings *settings =
+      [FCPPlatformMediaSettings makeWithResolutionPreset:gTestResolutionPreset
+                                         framesPerSecond:@(60)
+                                            videoBitrate:@(gTestVideoBitrate)
+                                            audioBitrate:@(gTestAudioBitrate)
+                                             enableAudio:gTestEnableAudio];
+
+  FLTCam *camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
+      dispatch_queue_create("test", NULL), settings, nil, nil);
+
+  AVFrameRateRange *range = camera.captureDevice.activeFormat.videoSupportedFrameRateRanges[0];
+  XCTAssertLessThanOrEqual(range.minFrameRate, 60);
+  XCTAssertGreaterThanOrEqual(range.maxFrameRate, 60);
 }
 
 @end

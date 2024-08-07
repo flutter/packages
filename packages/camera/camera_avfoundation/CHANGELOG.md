@@ -1,6 +1,10 @@
+## 0.9.17+2
+
+* Adds possibility to use any supported FPS and fixes crash when using unsupported FPS.
+
 ## 0.9.17+1
 
-* Fixes a crash due to appending sample buffers when readyForMoreMediaData is NO
+* Fixes a crash due to appending sample buffers when readyForMoreMediaData is NO.
 
 ## 0.9.17
 
