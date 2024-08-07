@@ -1,3 +1,8 @@
+## 6.3.9
+
+* Removes dependency on org.jetbrains.kotlin:kotlin-bom.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 6.3.8
 
 * Bumps androidx.browser:browser from 1.5.0 to 1.8.0.
