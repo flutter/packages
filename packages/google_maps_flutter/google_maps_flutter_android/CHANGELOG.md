@@ -1,3 +1,7 @@
+## 2.13.1
+
+* Convert `PlatformCircle` and `PlatformMarker` to pigeon.
+
 ## 2.13.0
 
 * Adds support for heatmap layers.

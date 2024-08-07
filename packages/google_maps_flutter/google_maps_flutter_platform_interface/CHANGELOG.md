@@ -1,3 +1,7 @@
+## 2.9.1
+
+* Expose `Messages.PlatformMarker.InfoWindow.toJson` for pigeon conversion.
+
 ## 2.9.0
 
 * Adds support for heatmap layers.
