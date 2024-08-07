@@ -11,7 +11,8 @@ import StoreKit
   import FlutterMacOS
 #endif
 
-public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
+public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InAppPurchase2API {
+
   private let receiptManager: FIAPReceiptManager
   private var productsCache: NSMutableDictionary = [:]
   private var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
@@ -41,6 +42,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     registrar.addMethodCallDelegate(instance, channel: channel)
     registrar.addApplicationDelegate(instance)
     SetUpInAppPurchaseAPI(messenger, instance)
+    InAppPurchase2APISetup.setUp(binaryMessenger: messenger, api: instance)
   }
 
   // This init is used for tests
@@ -432,5 +434,95 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
         binaryMessenger: messenger
       )
     )
+  }
+
+  // https://developer.apple.com/documentation/storekit/appstore/3822277-canmakepayments
+  func canMakePayments() throws -> Bool {
+    if #available(iOS 15.0, macOS 12.0, *) {
+      return AppStore.canMakePayments
+    }
+    throw PigeonError(
+      code: "storekit2_invalid_os_version ",
+      message:
+        "You have tried to access a StoreKit 2 method on a device below iOS 15.0. or OS X. Please try again on an appropriate device",
+      details: "details")
+  }
+
+  // Gets the appropriate product, then calls purchase on it.
+  // https://developer.apple.com/documentation/storekit/product/3791971-purchase
+  func purchase(id: String, completion: @escaping (Result<Void, any Error>) -> Void) {
+    if #available(iOS 15.0, macOS 12.0, *) {
+      Task {
+        do {
+          let product = try await fetchProducts(identifiers: [id]).first
+          guard let product = product else {
+            throw PigeonError(
+              code: "storekit2_purchase_error", message: "failed to make purchase", details: "")
+          }
+
+          let success = try await product.purchase()
+          completion(.success(()))
+        } catch {
+          completion(.failure(error))
+        }
+      }
+    }
+  }
+
+  // Pigeon method
+  func products(
+    identifiers: [String], completion: @escaping (Result<[SK2ProductMessage], any Error>) -> Void
+  ) {
+    if #available(iOS 15.0, macOS 12.0, *) {
+      Task {
+        do {
+          let products = try await fetchProducts(identifiers: identifiers)
+          let productMessages = products.map { product in
+            product.convertToPigeon()
+          }
+          completion(.success(productMessages))
+        } catch {
+          completion(.failure(error))
+        }
+      }
+    }
+  }
+
+  func transactionsUnfinished(
+    completion: @escaping (Result<[SK2TransactionMessage], any Error>) -> Void
+  ) {
+    if #available(iOS 15.0, macOS 12, *) {
+      Task {
+        do {
+          let transactionsMsgs = await rawTransactions().map { $0.convertToPigeon() }
+          completion(.success(transactionsMsgs))
+        }
+      }
+    } else {
+      fatalError("version")
+    }
+  }
+
+  // raw products call that returns Products
+  @available(iOS 15.0, macOS 12.0, *)
+  func fetchProducts(identifiers: [String]) async throws -> [Product] {
+    return try await Product.products(for: identifiers)
+  }
+
+  @available(iOS 15.0, macOS 12.0, *)
+  func rawTransactions() async -> [Transaction] {
+    var transactions: [Transaction] = []
+
+    for await verificationResult in Transaction.unfinished {
+      switch verificationResult {
+      case .verified(let transaction):
+        transactions.append(transaction)
+      case .unverified(_, _):
+        // Handle unverified transactions if necessary
+        break
+      }
+    }
+
+    return transactions
   }
 }

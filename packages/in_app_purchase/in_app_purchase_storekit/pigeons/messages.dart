@@ -226,16 +226,17 @@ enum SKSubscriptionPeriodUnitMessage {
 @HostApi(dartHostTestHandler: 'TestInAppPurchaseApi')
 abstract class InAppPurchaseAPI {
   /// Returns if the current device is able to make payments
-  bool canMakePayments();
+  bool canMakePayments(); //
 
   List<SKPaymentTransactionMessage> transactions();
 
   SKStorefrontMessage storefront();
 
-  void addPayment(Map<String, Object?> paymentMap);
+  void addPayment(Map<String, Object?> paymentMap); //
 
   @async
   SKProductsResponseMessage startProductRequest(
+      //
       List<String> productIdentifiers);
 
   void finishTransaction(Map<String, Object?> finishMap);
