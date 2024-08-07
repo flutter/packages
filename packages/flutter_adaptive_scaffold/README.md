@@ -55,9 +55,10 @@ Widget build(BuildContext context) {
     // mediumLarge, large, and extraLarge.
     smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
     mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
-    mediumLargeBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
-    largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000, end: 1200),
-    extraLargeBreakpoint: const WidthPlatformBreakpoint(begin: 1200),
+    mediumLargeBreakpoint:
+        const WidthPlatformBreakpoint(begin: 1000, end: 1200),
+    largeBreakpoint: const WidthPlatformBreakpoint(begin: 1200, end: 1600),
+    extraLargeBreakpoint: const WidthPlatformBreakpoint(begin: 1600),
     useDrawer: false,
     selectedIndex: _selectedTab,
     onSelectedIndexChange: (int index) {
@@ -92,19 +93,33 @@ Widget build(BuildContext context) {
         label: 'Inbox',
       ),
     ],
-    body: (_) => GridView.count(crossAxisCount: 2, children: children),
     smallBody: (_) => ListView.builder(
       itemCount: children.length,
       itemBuilder: (_, int idx) => children[idx],
     ),
+    body: (_) => GridView.count(crossAxisCount: 2, children: children),
+    mediumLargeBody: (_) =>
+        GridView.count(crossAxisCount: 3, children: children),
+    largeBody: (_) => GridView.count(crossAxisCount: 4, children: children),
+    extraLargeBody: (_) =>
+        GridView.count(crossAxisCount: 5, children: children),
     // Define a default secondaryBody.
-    secondaryBody: (_) => Container(
-      color: const Color.fromARGB(255, 234, 158, 192),
-    ),
     // Override the default secondaryBody during the smallBreakpoint to be
     // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
     // overridden.
     smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
+    secondaryBody: (_) => Container(
+      color: const Color.fromARGB(255, 234, 158, 192),
+    ),
+    mediumLargeSecondaryBody: (_) => Container(
+      color: const Color.fromARGB(255, 234, 158, 192),
+    ),
+    largeSecondaryBody: (_) => Container(
+      color: const Color.fromARGB(255, 234, 158, 192),
+    ),
+    extraLargeSecondaryBody: (_) => Container(
+      color: const Color.fromARGB(255, 234, 158, 192),
+    ),
   );
 }
 ```
@@ -182,14 +197,80 @@ return AdaptiveLayout(
             });
           },
           extended: true,
-          leading: const Row(
+          leading: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Text(
                 'REPLY',
-                style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
+                style: headerColor,
               ),
-              Icon(Icons.menu_open)
+              const Icon(Icons.menu_open)
+            ],
+          ),
+          destinations: destinations
+              .map((NavigationDestination destination) =>
+                  AdaptiveScaffold.toRailDestination(destination))
+              .toList(),
+          trailing: trailingNavRail,
+          backgroundColor: navRailTheme.backgroundColor,
+          selectedIconTheme: navRailTheme.selectedIconTheme,
+          unselectedIconTheme: navRailTheme.unselectedIconTheme,
+          selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+          unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+        ),
+      ),
+      Breakpoints.large: SlotLayout.from(
+        key: const Key('Primary Navigation Large'),
+        inAnimation: AdaptiveScaffold.leftOutIn,
+        builder: (_) => AdaptiveScaffold.standardNavigationRail(
+          selectedIndex: selectedNavigation,
+          onDestinationSelected: (int newIndex) {
+            setState(() {
+              selectedNavigation = newIndex;
+            });
+          },
+          extended: true,
+          leading: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Text(
+                'REPLY',
+                style: headerColor,
+              ),
+              const Icon(Icons.menu_open)
+            ],
+          ),
+          destinations: destinations
+              .map((NavigationDestination destination) =>
+                  AdaptiveScaffold.toRailDestination(destination))
+              .toList(),
+          trailing: trailingNavRail,
+          backgroundColor: navRailTheme.backgroundColor,
+          selectedIconTheme: navRailTheme.selectedIconTheme,
+          unselectedIconTheme: navRailTheme.unselectedIconTheme,
+          selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+          unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+        ),
+      ),
+      Breakpoints.extraLarge: SlotLayout.from(
+        key: const Key('Primary Navigation ExtraLarge'),
+        inAnimation: AdaptiveScaffold.leftOutIn,
+        builder: (_) => AdaptiveScaffold.standardNavigationRail(
+          selectedIndex: selectedNavigation,
+          onDestinationSelected: (int newIndex) {
+            setState(() {
+              selectedNavigation = newIndex;
+            });
+          },
+          extended: true,
+          leading: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Text(
+                'REPLY',
+                style: headerColor,
+              ),
+              const Icon(Icons.menu_open)
             ],
           ),
           destinations: destinations
@@ -217,11 +298,26 @@ return AdaptiveLayout(
           itemBuilder: (BuildContext context, int index) => children[index],
         ),
       ),
-      Breakpoints.mediumAndUp: SlotLayout.from(
+      Breakpoints.medium: SlotLayout.from(
         key: const Key('Body Medium'),
         builder: (_) =>
             GridView.count(crossAxisCount: 2, children: children),
-      )
+      ),
+      Breakpoints.mediumLarge: SlotLayout.from(
+        key: const Key('Body MediumLarge'),
+        builder: (_) =>
+            GridView.count(crossAxisCount: 3, children: children),
+      ),
+      Breakpoints.large: SlotLayout.from(
+        key: const Key('Body Large'),
+        builder: (_) =>
+            GridView.count(crossAxisCount: 4, children: children),
+      ),
+      Breakpoints.extraLarge: SlotLayout.from(
+        key: const Key('Body ExtraLarge'),
+        builder: (_) =>
+            GridView.count(crossAxisCount: 5, children: children),
+      ),
     },
   ),
   // BottomNavigation is only active in small views defined as under 600 dp
