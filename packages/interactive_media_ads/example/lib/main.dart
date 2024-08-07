@@ -33,10 +33,10 @@ class AdExampleWidget extends StatefulWidget {
 }
 
 class _AdExampleWidgetState extends State<AdExampleWidget> {
-  // IMA sample tag for a single skippable inline video ad. See more IMA sample
+  // IMA sample tag for a single Pre-, Mid-, and Post-roll video ad. See more IMA sample
   // tags at https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags
   static const String _adTagUrl =
-      'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_preroll_skippable&sz=640x480&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=';
+      'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/vmap_ad_samples&sz=640x480&cust_params=sample_ar%3Dpremidpost&ciu_szs=300x250&gdfp_req=1&ad_rule=1&output=vmap&unviewed_position_start=1&env=vp&impl=s&cmsid=496&vid=short_onecue&correlator=';
 
   // The AdsLoader instance exposes the request ads method.
   late final AdsLoader _adsLoader;
@@ -132,25 +132,31 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
     ));
   }
 
-  Future<void> _resumeContent() {
+  Future<void> _resumeContent() async {
     setState(() {
       _shouldShowContentVideo = true;
     });
-    _contentProgressTimer = Timer.periodic(
-      const Duration(milliseconds: 500),
-      (Timer timer) async {
-        if (_contentVideoController.value.isInitialized) {
-          final Duration? progress = await _contentVideoController.position;
-          if (progress != null) {
-            await _contentProgressProvider.setProgress(
-              progress: progress,
-              duration: _contentVideoController.value.duration,
-            );
+
+    if (_adsManager != null) {
+      _contentProgressTimer = Timer.periodic(
+        const Duration(milliseconds: 500),
+        (Timer timer) async {
+          if (_contentVideoController.value.isInitialized) {
+            final Duration? progress = await _contentVideoController.position;
+            if (progress != null) {
+              await _contentProgressProvider.setProgress(
+                progress: progress,
+                duration: _contentVideoController.value.duration,
+              );
+            }
           }
-        }
-      },
-    );
-    return _contentVideoController.play();
+        },
+      );
+    }
+
+    if (!_contentVideoController.value.isCompleted) {
+      await _contentVideoController.play();
+    }
   }
 
   Future<void> _pauseContent() {
