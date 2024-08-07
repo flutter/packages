@@ -745,7 +745,7 @@ void main() {
     },
   );
 
-  // Test for mapNavigationRailDestination parameter
+  // Test for mapNavigationRailDestination parameter.
   testWidgets('adaptive scaffold custom navigation rail destination mapping',
       (WidgetTester tester) async {
     const List<NavigationDestination> destinations = <NavigationDestination>[
