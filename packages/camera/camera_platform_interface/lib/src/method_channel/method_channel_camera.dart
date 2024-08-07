@@ -503,6 +503,44 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   @override
+  Future<Iterable<VideoStabilizationMode>> getVideoStabilizationSupportedModes(
+      int cameraId) async {
+    try {
+      final List<Object?>? modes = await _channel.invokeMethod<List<Object?>>(
+        'getVideoStabilizationSupportedModes',
+        <String, dynamic>{
+          'cameraId': cameraId,
+        },
+      );
+
+      if (modes == null) {
+        return <VideoStabilizationMode>[];
+      }
+      return modes
+          .map((Object? e) => deserializeVideoStabilizationMode(e! as String));
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Sets the video stabilization mode for the selected camera
+  @override
+  Future<void> setVideoStabilizationMode(
+      int cameraId, VideoStabilizationMode mode) async {
+    try {
+      await _channel.invokeMethod<void>(
+        'setVideoStabilizationMode',
+        <String, dynamic>{
+          'cameraId': cameraId,
+          'mode': mode.index,
+        },
+      );
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  @override
   Future<void> pausePreview(int cameraId) async {
     await _channel.invokeMethod<double>(
       'pausePreview',

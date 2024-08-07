@@ -339,6 +339,30 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
       ) as _i3.Future<void>);
 
   @override
+  _i3.Future<void> setVideoStabilizationMode(
+          _i2.PlatformVideoStabilizationMode? mode) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setVideoStabilizationMode,
+          [mode],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<bool> isVideoStabilizationModeSupported(
+          _i2.PlatformVideoStabilizationMode? mode) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isVideoStabilizationModeSupported,
+          [mode],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+        returnValueForMissingStub: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+
+  @override
   _i3.Future<void> pausePreview() => (super.noSuchMethod(
         Invocation.method(
           #pausePreview,

@@ -110,6 +110,76 @@ void main() {
       verify(mockApi.getSupportedHardwareLevel(camera2CameraInfoId));
     });
 
+    test(
+        'getAvailableVideoStabilizationModes makes call to retrieve no available video stabilization modes',
+        () async {
+      // Arrange
+      final MockTestCamera2CameraInfoHostApi mockApi =
+          MockTestCamera2CameraInfoHostApi();
+      TestCamera2CameraInfoHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+      final Camera2CameraInfo camera2CameraInfo = Camera2CameraInfo.detached(
+        instanceManager: instanceManager,
+      );
+      const int camera2CameraInfoId = 9;
+
+      instanceManager.addHostCreatedInstance(
+        camera2CameraInfo,
+        camera2CameraInfoId,
+        onCopy: (_) => Camera2CameraInfo.detached(),
+      );
+
+      const List<int?> expectedModes = <int?>[];
+      when(mockApi.getAvailableVideoStabilizationModes(camera2CameraInfoId))
+          .thenReturn(expectedModes);
+
+      // Act
+      final List<int?> returnedModes =
+          await camera2CameraInfo.getAvailableVideoStabilizationModes();
+
+      // Assert
+      expect(returnedModes, equals(expectedModes));
+      verify(mockApi.getAvailableVideoStabilizationModes(camera2CameraInfoId));
+    });
+
+    test(
+        'getAvailableVideoStabilizationModes makes call to retrieve all available video stabilization modes',
+        () async {
+      // Arrange
+      final MockTestCamera2CameraInfoHostApi mockApi =
+          MockTestCamera2CameraInfoHostApi();
+      TestCamera2CameraInfoHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+      final Camera2CameraInfo camera2CameraInfo = Camera2CameraInfo.detached(
+        instanceManager: instanceManager,
+      );
+      const int camera2CameraInfoId = 9;
+
+      instanceManager.addHostCreatedInstance(
+        camera2CameraInfo,
+        camera2CameraInfoId,
+        onCopy: (_) => Camera2CameraInfo.detached(),
+      );
+
+      const List<int?> expectedModes = <int?>[0, 1, 2];
+      when(mockApi.getAvailableVideoStabilizationModes(camera2CameraInfoId))
+          .thenReturn(expectedModes);
+
+      // Act
+      final List<int?> returnedModes =
+          await camera2CameraInfo.getAvailableVideoStabilizationModes();
+
+      // Assert
+      expect(returnedModes, equals(expectedModes));
+      verify(mockApi.getAvailableVideoStabilizationModes(camera2CameraInfoId));
+    });
+
     test('getCameraId makes call to retrieve camera ID', () async {
       final MockTestCamera2CameraInfoHostApi mockApi =
           MockTestCamera2CameraInfoHostApi();

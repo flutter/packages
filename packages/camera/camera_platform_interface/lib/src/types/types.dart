@@ -13,3 +13,4 @@ export 'image_format_group.dart';
 export 'media_settings.dart';
 export 'resolution_preset.dart';
 export 'video_capture_options.dart';
+export 'video_stabilization_mode.dart';

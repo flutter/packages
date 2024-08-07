@@ -1014,6 +1014,151 @@ void main() {
                     'Illegal zoom error')));
       });
 
+      test('Should get empty list from getVideoStabilizationSupportedModes',
+          () async {
+        // Arrange
+        final MethodChannelMock channel = MethodChannelMock(
+          channelName: 'plugins.flutter.io/camera',
+          methods: <String, dynamic>{
+            'getVideoStabilizationSupportedModes': <String>[],
+          },
+        );
+
+        // Act
+        final Iterable<VideoStabilizationMode> modes =
+            await camera.getVideoStabilizationSupportedModes(
+          cameraId,
+        );
+
+        // Assert
+        expect(modes, <VideoStabilizationMode>[]);
+
+        expect(channel.log, <Matcher>[
+          isMethodCall('getVideoStabilizationSupportedModes',
+              arguments: <String, Object?>{
+                'cameraId': cameraId,
+              }),
+        ]);
+      });
+
+      test(
+          'Should get list containing off from getVideoStabilizationSupportedModes',
+          () async {
+        // Arrange
+        final MethodChannelMock channel = MethodChannelMock(
+          channelName: 'plugins.flutter.io/camera',
+          methods: <String, dynamic>{
+            'getVideoStabilizationSupportedModes': <String>['off'],
+          },
+        );
+
+        // Act
+        final Iterable<VideoStabilizationMode> modes =
+            await camera.getVideoStabilizationSupportedModes(
+          cameraId,
+        );
+
+        // Assert
+        expect(modes, <VideoStabilizationMode>[VideoStabilizationMode.off]);
+
+        expect(channel.log, <Matcher>[
+          isMethodCall('getVideoStabilizationSupportedModes',
+              arguments: <String, Object?>{
+                'cameraId': cameraId,
+              }),
+        ]);
+      });
+
+      test(
+          'Should get list containing all from getVideoStabilizationSupportedModes',
+          () async {
+        // Arrange
+        final MethodChannelMock channel = MethodChannelMock(
+          channelName: 'plugins.flutter.io/camera',
+          methods: <String, dynamic>{
+            'getVideoStabilizationSupportedModes': <String>[
+              'off',
+              'on',
+              'standard',
+              'cinematic',
+              'cinematicExtended',
+            ],
+          },
+        );
+
+        // Act
+        final Iterable<VideoStabilizationMode> modes =
+            await camera.getVideoStabilizationSupportedModes(
+          cameraId,
+        );
+
+        // Assert
+        expect(modes, <VideoStabilizationMode>[
+          VideoStabilizationMode.off,
+          VideoStabilizationMode.on,
+          VideoStabilizationMode.standard,
+          VideoStabilizationMode.cinematic,
+          VideoStabilizationMode.cinematicExtended,
+        ]);
+
+        expect(channel.log, <Matcher>[
+          isMethodCall('getVideoStabilizationSupportedModes',
+              arguments: <String, Object?>{
+                'cameraId': cameraId,
+              }),
+        ]);
+      });
+
+      test('Should set the video stabilization mode', () async {
+        // Arrange
+        final MethodChannelMock channel = MethodChannelMock(
+          channelName: 'plugins.flutter.io/camera',
+          methods: <String, dynamic>{'setVideoStabilizationMode': null},
+        );
+
+        // Act
+        await camera.setVideoStabilizationMode(
+          cameraId,
+          VideoStabilizationMode.off,
+        );
+        await camera.setVideoStabilizationMode(
+          cameraId,
+          VideoStabilizationMode.standard,
+        );
+        await camera.setVideoStabilizationMode(
+          cameraId,
+          VideoStabilizationMode.cinematic,
+        );
+        await camera.setVideoStabilizationMode(
+          cameraId,
+          VideoStabilizationMode.cinematicExtended,
+        );
+
+        // Assert
+        expect(channel.log, <Matcher>[
+          isMethodCall('setVideoStabilizationMode',
+              arguments: <String, Object?>{
+                'cameraId': cameraId,
+                'mode': VideoStabilizationMode.off.index,
+              }),
+          isMethodCall('setVideoStabilizationMode',
+              arguments: <String, Object?>{
+                'cameraId': cameraId,
+                'mode': VideoStabilizationMode.standard.index,
+              }),
+          isMethodCall('setVideoStabilizationMode',
+              arguments: <String, Object?>{
+                'cameraId': cameraId,
+                'mode': VideoStabilizationMode.cinematic.index,
+              }),
+          isMethodCall('setVideoStabilizationMode',
+              arguments: <String, Object?>{
+                'cameraId': cameraId,
+                'mode': VideoStabilizationMode.cinematicExtended.index,
+              }),
+        ]);
+      });
+
       test('Should lock the capture orientation', () async {
         // Arrange
         final MethodChannelMock channel = MethodChannelMock(

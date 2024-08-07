@@ -578,6 +578,118 @@ void main() {
       verify(mockApi.setFocusMode(PlatformFocusMode.locked));
     });
 
+    test('Should set video stabilization mode to off', () async {
+      await camera.setVideoStabilizationMode(
+          cameraId, VideoStabilizationMode.off);
+
+      verify(mockApi
+          .setVideoStabilizationMode(PlatformVideoStabilizationMode.off));
+    });
+
+    test(
+        'Should throw CameraException when off video stabilization mode is set',
+        () async {
+      const String code = 'VIDEO_STABILIIZATION_ERROR';
+      const String message = 'Unavailable video stabilization mode.';
+
+      expect(
+          () => camera.setVideoStabilizationMode(
+              cameraId, VideoStabilizationMode.on),
+          throwsA(isA<CameraException>()
+              .having((CameraException e) => e.code, 'code', code)
+              .having((CameraException e) => e.description, 'description',
+                  message)));
+    });
+
+    test('Should set video stabilization mode to standard', () async {
+      await camera.setVideoStabilizationMode(
+          cameraId, VideoStabilizationMode.standard);
+
+      verify(mockApi
+          .setVideoStabilizationMode(PlatformVideoStabilizationMode.standard));
+    });
+
+    test('Should set video stabilization mode to cinematic', () async {
+      await camera.setVideoStabilizationMode(
+          cameraId, VideoStabilizationMode.cinematic);
+
+      verify(mockApi
+          .setVideoStabilizationMode(PlatformVideoStabilizationMode.cinematic));
+    });
+
+    test('Should set video stabilization mode to cinematicExtended', () async {
+      await camera.setVideoStabilizationMode(
+          cameraId, VideoStabilizationMode.cinematicExtended);
+
+      verify(mockApi.setVideoStabilizationMode(
+          PlatformVideoStabilizationMode.cinematicExtended));
+    });
+
+    test('Should get no video stabilization mode', () async {
+      when(mockApi.isVideoStabilizationModeSupported(any))
+          .thenAnswer((_) async => false);
+
+      final Iterable<VideoStabilizationMode> modes =
+          await camera.getVideoStabilizationSupportedModes(cameraId);
+
+      expect(modes, isEmpty);
+    });
+
+    test('Should get off and standard video stabilization modes', () async {
+      when(mockApi.isVideoStabilizationModeSupported(
+              PlatformVideoStabilizationMode.off))
+          .thenAnswer((_) async => true);
+      when(mockApi.isVideoStabilizationModeSupported(
+              PlatformVideoStabilizationMode.standard))
+          .thenAnswer((_) async => true);
+      when(mockApi.isVideoStabilizationModeSupported(
+              PlatformVideoStabilizationMode.cinematic))
+          .thenAnswer((_) async => false);
+      when(mockApi.isVideoStabilizationModeSupported(
+              PlatformVideoStabilizationMode.cinematicExtended))
+          .thenAnswer((_) async => false);
+
+      final List<VideoStabilizationMode> modes =
+          (await camera.getVideoStabilizationSupportedModes(cameraId)).toList();
+
+      expect(modes, <VideoStabilizationMode>[
+        VideoStabilizationMode.off,
+        VideoStabilizationMode.standard,
+      ]);
+    });
+
+    test('Should get all video stabilization modes', () async {
+      when(mockApi.isVideoStabilizationModeSupported(any))
+          .thenAnswer((_) async => true);
+
+      final List<VideoStabilizationMode> modes =
+          (await camera.getVideoStabilizationSupportedModes(cameraId)).toList();
+
+      expect(modes, <VideoStabilizationMode>[
+        VideoStabilizationMode.off,
+        VideoStabilizationMode.standard,
+        VideoStabilizationMode.cinematic,
+        VideoStabilizationMode.cinematicExtended,
+      ]);
+    });
+
+    test(
+        'Should throw CameraException when unavailable video stabilization mode is set',
+        () async {
+      const String code = 'VIDEO_STABILIIZATION_ERROR';
+      const String message = 'Unavailable video stabilization mode error';
+      when(mockApi.setVideoStabilizationMode(any)).thenAnswer(
+          (_) async => throw PlatformException(code: code, message: message));
+
+      expect(
+          () => camera.setVideoStabilizationMode(
+              cameraId, VideoStabilizationMode.cinematic),
+          throwsA(isA<CameraException>()
+              .having((CameraException e) => e.code, 'code', code)
+              .having((CameraException e) => e.description, 'description',
+                  message)));
+    });
+
     test('Should set the focus point to a value', () async {
       const Point<double> point = Point<double>(0.4, 0.6);
       await camera.setFocusPoint(cameraId, point);

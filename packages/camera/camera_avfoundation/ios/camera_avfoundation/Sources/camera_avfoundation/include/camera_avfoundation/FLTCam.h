@@ -113,6 +113,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger;
 - (void)stopImageStream;
 - (void)setZoomLevel:(CGFloat)zoom withCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)setVideoStabilizationMode:(FCPPlatformVideoStabilizationMode)mode
+                   withCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (bool)isVideoStabilizationModeSupported:(FCPPlatformVideoStabilizationMode)mode;
 - (void)setUpCaptureSessionForAudio;
 
 @end

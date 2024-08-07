@@ -369,6 +369,44 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   @override
+  Future<void> setVideoStabilizationMode(
+      int cameraId, VideoStabilizationMode mode) async {
+    try {
+      final PlatformVideoStabilizationMode? platformMode =
+          _pigeonVideoStabilizationMode(mode);
+      if (platformMode == null) {
+        // TODO(ruicraveiro): add to future possible error codes documentation
+        // https://github.com/flutter/flutter/issues/69298
+        throw CameraException('VIDEO_STABILIIZATION_ERROR',
+            'Unavailable video stabilization mode.');
+      }
+      await _hostApi.setVideoStabilizationMode(platformMode);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  @override
+  Future<Iterable<VideoStabilizationMode>> getVideoStabilizationSupportedModes(
+      int cameraId) async {
+    final Set<VideoStabilizationMode> ret = <VideoStabilizationMode>{};
+
+    for (final VideoStabilizationMode mode in VideoStabilizationMode.values) {
+      final PlatformVideoStabilizationMode? platformMode =
+          _pigeonVideoStabilizationMode(mode);
+      if (platformMode != null) {
+        final bool isSupported =
+            await _hostApi.isVideoStabilizationModeSupported(platformMode);
+        if (isSupported) {
+          ret.add(mode);
+        }
+      }
+    }
+
+    return ret;
+  }
+
+  @override
   Future<void> pausePreview(int cameraId) async {
     await _hostApi.pausePreview();
   }
@@ -478,6 +516,30 @@ class AVFoundationCamera extends CameraPlatform {
     // switch as needing an update.
     // ignore: dead_code
     return PlatformResolutionPreset.max;
+  }
+
+  /// Returns a [ResolutionPreset]'s Pigeon representation.
+  PlatformVideoStabilizationMode? _pigeonVideoStabilizationMode(
+      VideoStabilizationMode videoStabilizationMode) {
+    switch (videoStabilizationMode) {
+      case VideoStabilizationMode.off:
+        return PlatformVideoStabilizationMode.off;
+      case VideoStabilizationMode.on:
+        return null;
+      case VideoStabilizationMode.standard:
+        return PlatformVideoStabilizationMode.standard;
+      case VideoStabilizationMode.cinematic:
+        return PlatformVideoStabilizationMode.cinematic;
+      case VideoStabilizationMode.cinematicExtended:
+        return PlatformVideoStabilizationMode.cinematicExtended;
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return PlatformVideoStabilizationMode.cinematic;
   }
 
   /// Returns an [ImageFormatGroup]'s Pigeon representation.

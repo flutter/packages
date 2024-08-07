@@ -1,3 +1,7 @@
+## 0.10.0
+
+* Adds video stabilization.
+
 ## 0.9.17+3
 
 * Fixes deallocation of camera on dispose.

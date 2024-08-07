@@ -1,3 +1,7 @@
+## 0.7.0
+
+* Adds video stabilization.
+
 ## 0.6.7+2
 
 * Updates lint checks to ignore NewerVersionAvailable.

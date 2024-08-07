@@ -28,9 +28,10 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
-dependency_overrides:
-  camera_web:
-    path: ../../camera_web
-
 flutter:
   uses-material-design: true
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+   {camera: {path: ../../../camera/camera}, camera_android_camerax: {path: ../../../camera/camera_android_camerax}, camera_avfoundation: {path: ../../../camera/camera_avfoundation}, camera_platform_interface: {path: ../../../camera/camera_platform_interface}, camera_web: {path: ../../../camera/camera_web}}

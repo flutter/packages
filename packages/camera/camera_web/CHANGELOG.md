@@ -1,3 +1,7 @@
+## 0.3.5+1
+
+* Updates camera_platform_interface lib to 2.9.0.
+
 ## 0.3.5
 
 * Migrates to package:web to support WASM

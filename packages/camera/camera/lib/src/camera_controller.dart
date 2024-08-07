@@ -54,6 +54,7 @@ class CameraValue {
     this.recordingOrientation,
     this.isPreviewPaused = false,
     this.previewPauseOrientation,
+    this.videoStabilizationMode = VideoStabilizationMode.off,
   }) : _isRecordingPaused = isRecordingPaused;
 
   /// Creates a new camera controller state for an uninitialized controller.
@@ -72,6 +73,7 @@ class CameraValue {
           deviceOrientation: DeviceOrientation.portraitUp,
           isPreviewPaused: false,
           description: description,
+          videoStabilizationMode: VideoStabilizationMode.off,
         );
 
   /// True after [CameraController.initialize] has completed successfully.
@@ -148,6 +150,9 @@ class CameraValue {
   /// The properties of the camera device controlled by this controller.
   final CameraDescription description;
 
+  /// The video stabilization mode in
+  final VideoStabilizationMode videoStabilizationMode;
+
   /// Creates a modified copy of the object.
   ///
   /// Explicitly specified fields get the specified value, all other fields get
@@ -171,6 +176,7 @@ class CameraValue {
     bool? isPreviewPaused,
     CameraDescription? description,
     Optional<DeviceOrientation>? previewPauseOrientation,
+    VideoStabilizationMode? videoStabilizationMode,
   }) {
     return CameraValue(
       isInitialized: isInitialized ?? this.isInitialized,
@@ -198,6 +204,8 @@ class CameraValue {
       previewPauseOrientation: previewPauseOrientation == null
           ? this.previewPauseOrientation
           : previewPauseOrientation.orNull,
+      videoStabilizationMode:
+          videoStabilizationMode ?? this.videoStabilizationMode,
     );
   }
 
@@ -219,6 +227,7 @@ class CameraValue {
         'recordingOrientation: $recordingOrientation, '
         'isPreviewPaused: $isPreviewPaused, '
         'previewPausedOrientation: $previewPauseOrientation, '
+        'videoStabilizationMode: $videoStabilizationMode, '
         'description: $description)';
   }
 }
@@ -684,6 +693,40 @@ class CameraController extends ValueNotifier<CameraValue> {
     _throwIfNotInitialized('setZoomLevel');
     try {
       return CameraPlatform.instance.setZoomLevel(_cameraId, zoom);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Set the video stabilization mode for the selected camera.
+  ///
+  /// On Android (when using camera_android_camerax) and on iOS
+  /// the supplied [mode] value should be a mode in the list returned
+  /// by [getVideoStabilizationSupportedModes].
+  ///
+  /// Throws a [CameraException] when a not supported video stabilization
+  /// mode is supplied.
+  Future<void> setVideoStabilizationMode(VideoStabilizationMode mode) async {
+    _throwIfNotInitialized('setVideoStabilizationMode');
+    try {
+      await CameraPlatform.instance.setVideoStabilizationMode(_cameraId, mode);
+      value = value.copyWith(videoStabilizationMode: mode);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Gets a list of video stabilization modes that are supported for the selected camera.
+  ///
+  /// Will return the list of supported video stabilization modes
+  /// on Android (when using camera_android_camerax package) and
+  /// on iOS. Will return an empty list on all other platforms.
+  Future<Iterable<VideoStabilizationMode>>
+      getVideoStabilizationSupportedModes() {
+    _throwIfNotInitialized('isVideoStabilizationModeSupported');
+    try {
+      return CameraPlatform.instance
+          .getVideoStabilizationSupportedModes(_cameraId);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }

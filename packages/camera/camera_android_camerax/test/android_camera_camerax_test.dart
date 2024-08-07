@@ -2317,6 +2317,221 @@ void main() {
     verify(mockCameraControl.setZoomRatio(zoomRatio));
   });
 
+  test('setVideoStabilizationMode sets mode expected', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 78;
+
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
+
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCamera2CameraControl mockCamera2CameraControl =
+        MockCamera2CameraControl();
+
+    // Set directly for test versus calling createCamera.
+    camera.camera = MockCamera();
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = mockCameraInfo;
+
+    when(mockCamera2CameraInfo.getAvailableVideoStabilizationModes())
+        .thenAnswer(
+      (_) async {
+        return <int>[0];
+      },
+    );
+
+    camera.proxy = CameraXProxy(
+      getCamera2CameraControl: (CameraControl cameraControl) =>
+          cameraControl == mockCameraControl
+              ? mockCamera2CameraControl
+              : Camera2CameraControl.detached(cameraControl: cameraControl),
+      getCamera2CameraInfo: (CameraInfo cameraInfo) async {
+        return cameraInfo == mockCameraInfo
+            ? mockCamera2CameraInfo
+            : Camera2CameraInfo.detached();
+      },
+      createCaptureRequestOptions:
+          (List<(CaptureRequestKeySupportedType, Object?)> options) =>
+              CaptureRequestOptions.detached(requestedOptions: options),
+    );
+
+    // Test off.
+    await camera.setVideoStabilizationMode(
+        cameraId, VideoStabilizationMode.off);
+
+    final VerificationResult verificationResult =
+        verify(mockCamera2CameraControl.addCaptureRequestOptions(captureAny));
+    final CaptureRequestOptions capturedCaptureRequestOptions =
+        verificationResult.captured.single as CaptureRequestOptions;
+    final List<(CaptureRequestKeySupportedType, Object?)> requestedOptions =
+        capturedCaptureRequestOptions.requestedOptions;
+    expect(requestedOptions.length, equals(1));
+    expect(requestedOptions.first.$1,
+        equals(CaptureRequestKeySupportedType.controlVideoStabilizationMode));
+    expect(requestedOptions.first.$2, equals(0));
+  });
+
+  test(
+      'setVideoStabilizationMode throws CameraException when mode not available',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 78;
+
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
+
+    final MockCameraControl mockCameraControl = MockCameraControl();
+
+    // Set directly for test versus calling createCamera.
+    camera.camera = MockCamera();
+    camera.cameraInfo = mockCameraInfo;
+
+    when(mockCamera2CameraInfo.getAvailableVideoStabilizationModes())
+        .thenAnswer(
+      (_) async {
+        return <int>[0];
+      },
+    );
+
+    camera.cameraControl = mockCameraControl;
+
+    camera.proxy = CameraXProxy(
+      getCamera2CameraInfo: (CameraInfo cameraInfo) async {
+        return cameraInfo == mockCameraInfo
+            ? mockCamera2CameraInfo
+            : Camera2CameraInfo.detached();
+      },
+    );
+
+    expect(
+        () => camera.setVideoStabilizationMode(
+            cameraId, VideoStabilizationMode.standard),
+        throwsA(isA<CameraException>()));
+  });
+
+  test('setVideoStabilizationMode throws CameraException when mode not mapped',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 78;
+
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
+
+    final MockCameraControl mockCameraControl = MockCameraControl();
+
+    // Set directly for test versus calling createCamera.
+    camera.camera = MockCamera();
+    camera.cameraInfo = mockCameraInfo;
+
+    when(mockCamera2CameraInfo.getAvailableVideoStabilizationModes())
+        .thenAnswer(
+      (_) async {
+        return <int>[0, 1, 2];
+      },
+    );
+
+    camera.cameraControl = mockCameraControl;
+
+    camera.proxy = CameraXProxy(
+      getCamera2CameraInfo: (CameraInfo cameraInfo) async {
+        return cameraInfo == mockCameraInfo
+            ? mockCamera2CameraInfo
+            : Camera2CameraInfo.detached();
+      },
+    );
+
+    expect(
+        () => camera.setVideoStabilizationMode(
+            cameraId, VideoStabilizationMode.cinematic),
+        throwsA(isA<CameraException>()));
+    expect(
+        () => camera.setVideoStabilizationMode(
+            cameraId, VideoStabilizationMode.cinematicExtended),
+        throwsA(isA<CameraException>()));
+  });
+
+  test('getVideoStabilizationMode returns no available mode', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 78;
+
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
+
+    final MockCameraControl mockCameraControl = MockCameraControl();
+
+    // Set directly for test versus calling createCamera.
+    camera.camera = MockCamera();
+    camera.cameraInfo = mockCameraInfo;
+
+    when(mockCamera2CameraInfo.getAvailableVideoStabilizationModes())
+        .thenAnswer(
+      (_) async {
+        return <int>[];
+      },
+    );
+
+    camera.cameraControl = mockCameraControl;
+
+    // Tell plugin to create detached Camera2CameraControl and
+    // CaptureRequestOptions instances for testing.
+    camera.proxy = CameraXProxy(
+      getCamera2CameraInfo: (CameraInfo cameraInfo) async {
+        return cameraInfo == mockCameraInfo
+            ? mockCamera2CameraInfo
+            : Camera2CameraInfo.detached();
+      },
+    );
+
+    final Iterable<VideoStabilizationMode> modes =
+        await camera.getVideoStabilizationSupportedModes(cameraId);
+
+    expect(modes, isEmpty);
+  });
+
+  test('getVideoStabilizationMode returns all available modes', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 78;
+
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
+
+    final MockCameraControl mockCameraControl = MockCameraControl();
+
+    // Set directly for test versus calling createCamera.
+    camera.camera = MockCamera();
+    camera.cameraInfo = mockCameraInfo;
+
+    when(mockCamera2CameraInfo.getAvailableVideoStabilizationModes())
+        .thenAnswer(
+      (_) async {
+        return <int>[0, 1, 2];
+      },
+    );
+
+    camera.cameraControl = mockCameraControl;
+
+    // Tell plugin to create detached Camera2CameraControl and
+    // CaptureRequestOptions instances for testing.
+    camera.proxy = CameraXProxy(
+      getCamera2CameraInfo: (CameraInfo cameraInfo) async {
+        return cameraInfo == mockCameraInfo
+            ? mockCamera2CameraInfo
+            : Camera2CameraInfo.detached();
+      },
+    );
+
+    final Iterable<VideoStabilizationMode> modes =
+        await camera.getVideoStabilizationSupportedModes(cameraId);
+
+    expect(
+        modes,
+        orderedEquals(<VideoStabilizationMode>[
+          VideoStabilizationMode.off,
+          VideoStabilizationMode.on,
+          VideoStabilizationMode.standard,
+        ]));
+  });
+
   test(
       'onStreamedFrameAvailable emits CameraImageData when picked up from CameraImageData stream controller',
       () async {

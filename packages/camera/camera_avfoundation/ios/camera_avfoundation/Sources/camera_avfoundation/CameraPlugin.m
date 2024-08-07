@@ -421,6 +421,25 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   });
 }
 
+- (void)setVideoStabilizationMode:(FCPPlatformVideoStabilizationMode)mode
+                       completion:(nonnull void (^)(FlutterError *_Nullable))completion {
+  __weak typeof(self) weakSelf = self;
+  dispatch_async(self.captureSessionQueue, ^{
+    [weakSelf.camera setVideoStabilizationMode:mode withCompletion:completion];
+  });
+}
+
+- (void)isVideoStabilizationModeSupported:(FCPPlatformVideoStabilizationMode)mode
+                               completion:(nonnull void (^)(NSNumber *_Nullable,
+                                                            FlutterError *_Nullable))completion {
+  __weak typeof(self) weakSelf = self;
+
+  dispatch_async(self.captureSessionQueue, ^{
+    bool isSupported = [weakSelf.camera isVideoStabilizationModeSupported:mode];
+    completion(@(isSupported), nil);
+  });
+}
+
 #pragma mark Private
 
 // This must be called on captureSessionQueue. It is extracted from
