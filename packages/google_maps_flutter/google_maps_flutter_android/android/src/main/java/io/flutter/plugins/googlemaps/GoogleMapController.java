@@ -92,6 +92,7 @@ class GoogleMapController
   private final PolygonsController polygonsController;
   private final PolylinesController polylinesController;
   private final CirclesController circlesController;
+  private final HeatmapsController heatmapsController;
   private final TileOverlaysController tileOverlaysController;
   private MarkerManager markerManager;
   private MarkerManager.Collection markerCollection;
@@ -100,6 +101,7 @@ class GoogleMapController
   private List<Object> initialPolygons;
   private List<Object> initialPolylines;
   private List<Object> initialCircles;
+  private List<Object> initialHeatmaps;
   private List<Map<String, ?>> initialTileOverlays;
   // Null except between initialization and onMapReady.
   private @Nullable String initialMapStyle;
@@ -129,6 +131,7 @@ class GoogleMapController
     this.polygonsController = new PolygonsController(flutterApi, density);
     this.polylinesController = new PolylinesController(flutterApi, assetManager, density);
     this.circlesController = new CirclesController(flutterApi, density);
+    this.heatmapsController = new HeatmapsController();
     this.tileOverlaysController = new TileOverlaysController(flutterApi);
   }
 
@@ -146,6 +149,7 @@ class GoogleMapController
       PolygonsController polygonsController,
       PolylinesController polylinesController,
       CirclesController circlesController,
+      HeatmapsController heatmapController,
       TileOverlaysController tileOverlaysController) {
     this.id = id;
     this.context = context;
@@ -160,6 +164,7 @@ class GoogleMapController
     this.polygonsController = polygonsController;
     this.polylinesController = polylinesController;
     this.circlesController = circlesController;
+    this.heatmapsController = heatmapController;
     this.tileOverlaysController = tileOverlaysController;
   }
 
@@ -198,6 +203,7 @@ class GoogleMapController
     polygonsController.setGoogleMap(googleMap);
     polylinesController.setGoogleMap(googleMap);
     circlesController.setGoogleMap(googleMap);
+    heatmapsController.setGoogleMap(googleMap);
     tileOverlaysController.setGoogleMap(googleMap);
     setMarkerCollectionListener(this);
     setClusterItemClickListener(this);
@@ -207,6 +213,7 @@ class GoogleMapController
     updateInitialPolygons();
     updateInitialPolylines();
     updateInitialCircles();
+    updateInitialHeatmaps();
     updateInitialTileOverlays();
     if (initialPadding != null && initialPadding.size() == 4) {
       setPadding(
@@ -679,8 +686,21 @@ class GoogleMapController
     }
   }
 
+  @Override
+  public void setInitialHeatmaps(Object initialHeatmaps) {
+    List<?> heatmaps = (List<?>) initialHeatmaps;
+    this.initialHeatmaps = heatmaps != null ? new ArrayList<>(heatmaps) : null;
+    if (googleMap != null) {
+      updateInitialHeatmaps();
+    }
+  }
+
   private void updateInitialCircles() {
     circlesController.addJsonCircles(initialCircles);
+  }
+
+  private void updateInitialHeatmaps() {
+    heatmapsController.addJsonHeatmaps(initialHeatmaps);
   }
 
   @Override
@@ -800,6 +820,16 @@ class GoogleMapController
     circlesController.addCircles(toAdd);
     circlesController.changeCircles(toChange);
     circlesController.removeCircles(idsToRemove);
+  }
+
+  @Override
+  public void updateHeatmaps(
+      @NonNull List<Messages.PlatformHeatmap> toAdd,
+      @NonNull List<Messages.PlatformHeatmap> toChange,
+      @NonNull List<String> idsToRemove) {
+    heatmapsController.addHeatmaps(toAdd);
+    heatmapsController.changeHeatmaps(toChange);
+    heatmapsController.removeHeatmaps(idsToRemove);
   }
 
   @Override

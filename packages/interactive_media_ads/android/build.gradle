@@ -50,7 +50,7 @@ android {
     }
 
     dependencies {
-        implementation 'androidx.annotation:annotation:1.8.0'
+        implementation 'androidx.annotation:annotation:1.8.1'
         implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.34.0'
         testImplementation 'junit:junit:4.13.2'
         testImplementation 'org.jetbrains.kotlin:kotlin-test'
@@ -62,7 +62,7 @@ android {
     lintOptions {
         checkAllWarnings true
         warningsAsErrors true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
+        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 
     testOptions {

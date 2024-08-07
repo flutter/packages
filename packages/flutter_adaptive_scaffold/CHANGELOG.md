@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
 ## 0.1.11+1
 
 * Allows custom animation duration for the NavigationRail and 
