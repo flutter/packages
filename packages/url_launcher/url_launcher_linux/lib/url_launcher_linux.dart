@@ -52,7 +52,7 @@ class UrlLauncherLinux extends UrlLauncherPlatform {
   Future<bool> launchUrl(String url, LaunchOptions options) async {
     final String? error = await _hostApi.launchUrl(url);
     if (error != null) {
-      // TODO(stuartmorgan): Standardized errors across the entire plugin,
+      // TODO(stuartmorgan): Standardize errors across the entire plugin,
       // instead of using PlatformException. This preserves the pre-Pigeon
       // behavior of the C code returning this error response.
       throw PlatformException(
