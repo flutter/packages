@@ -52,11 +52,22 @@ public class MarkersControllerTest {
   private final float density = 1;
 
   private static Messages.PlatformMarker.Builder defaultBuilder() {
+    Map<String, Object> infoWindow = new HashMap<>();
+    List<Double> anchor = new ArrayList<>(Arrays.asList(0.5, 0.0));
+    infoWindow.put("anchor", anchor);
     return new Messages.PlatformMarker.Builder().setPosition(
             new Messages.PlatformLatLng.Builder().setLatitude(0.0).setLongitude(0.0).build()
     ).setAnchor(
             new Messages.PlatformOffset.Builder().setDx(0.0).setDy(0.0).build()
-    );
+    ).setFlat(false)
+            .setDraggable(false)
+            .setVisible(true)
+            .setAlpha(1.0)
+            .setRotation(0.0)
+            .setZIndex(0.0)
+            .setConsumeTapEvents(false)
+            .setIcon(Collections.singletonList("defaultMarker"))
+            .setInfoWindow(infoWindow);
   }
 
   @Before
