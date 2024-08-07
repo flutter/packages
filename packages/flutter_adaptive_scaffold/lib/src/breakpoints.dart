@@ -27,142 +27,142 @@ class Breakpoints {
   /// case that no other breakpoint is active.
   ///
   /// It is active from a width of -1 dp to infinity.
-  static const Breakpoint standard = WidthPlatformBreakpoint(begin: -1);
+  static const Breakpoint standard = WidthPlatformBreakpoint(beginWidth: -1);
 
   /// A window whose width is less than 600 dp and greater than 0 dp.
   static const Breakpoint small = WidthPlatformBreakpoint(
-    begin: 0,
-    end: 600,
-    bottom: 480,
+    beginWidth: 0,
+    endWidth: 600,
+    endHeight: 480,
   );
 
   /// A window whose width is greater than 0 dp.
   static const Breakpoint smallAndUp = WidthPlatformBreakpoint(
-    begin: 0,
-    bottom: 480,
+    beginWidth: 0,
+    endHeight: 480,
   );
 
   /// A desktop screen whose width is less than 600 dp and greater than 0 dp.
   static const Breakpoint smallDesktop = WidthPlatformBreakpoint(
-    begin: 0,
-    end: 600,
-    bottom: 480,
+    beginWidth: 0,
+    endWidth: 600,
+    endHeight: 480,
     platform: _desktop,
   );
 
   /// A mobile screen whose width is less than 600 dp and greater than 0 dp.
   static const Breakpoint smallMobile = WidthPlatformBreakpoint(
-    begin: 0,
-    end: 600,
-    bottom: 480,
+    beginWidth: 0,
+    endWidth: 600,
+    endHeight: 480,
     platform: _mobile,
   );
 
   /// A window whose width is between 600 dp and 840 dp.
   static const Breakpoint medium = WidthPlatformBreakpoint(
-    begin: 600,
-    end: 840,
-    top: 480,
-    bottom: 900,
+    beginWidth: 600,
+    endWidth: 840,
+    beginHeight: 480,
+    endHeight: 900,
   );
 
   /// A window whose width is greater than 600 dp.
   static const Breakpoint mediumAndUp = WidthPlatformBreakpoint(
-    begin: 600,
-    top: 480,
-    bottom: 900,
+    beginWidth: 600,
+    beginHeight: 480,
+    endHeight: 900,
   );
 
   /// A desktop window whose width is between 600 dp and 840 dp.
   static const Breakpoint mediumDesktop = WidthPlatformBreakpoint(
-    begin: 600,
-    end: 840,
-    top: 480,
-    bottom: 900,
+    beginWidth: 600,
+    endWidth: 840,
+    beginHeight: 480,
+    endHeight: 900,
     platform: _desktop,
   );
 
   /// A mobile window whose width is between 600 dp and 840 dp.
   static const Breakpoint mediumMobile = WidthPlatformBreakpoint(
-    begin: 600,
-    end: 840,
-    top: 480,
-    bottom: 900,
+    beginWidth: 600,
+    endWidth: 840,
+    beginHeight: 480,
+    endHeight: 900,
     platform: _mobile,
   );
 
   /// A window whose width is between 840 dp and 1200 dp.
   static const Breakpoint mediumLarge = WidthPlatformBreakpoint(
-    begin: 840,
-    end: 1200,
-    top: 900,
+    beginWidth: 840,
+    endWidth: 1200,
+    beginHeight: 900,
   );
 
   /// A window whose width is greater than 840 dp.
   static const Breakpoint mediumLargeAndUp = WidthPlatformBreakpoint(
-    begin: 840,
-    top: 900,
+    beginWidth: 840,
+    beginHeight: 900,
   );
 
   /// A desktop window whose width is between 840 dp and 1200 dp.
   static const Breakpoint mediumLargeDesktop = WidthPlatformBreakpoint(
-    begin: 840,
-    end: 1200,
-    top: 900,
+    beginWidth: 840,
+    endWidth: 1200,
+    beginHeight: 900,
     platform: _desktop,
   );
 
   /// A mobile window whose width is between 840 dp and 1200 dp.
   static const Breakpoint mediumLargeMobile = WidthPlatformBreakpoint(
-    begin: 840,
-    end: 1200,
-    top: 900,
+    beginWidth: 840,
+    endWidth: 1200,
+    beginHeight: 900,
     platform: _mobile,
   );
 
   /// A window whose width is between 1200 dp and 1600 dp.
   static const Breakpoint large = WidthPlatformBreakpoint(
-    begin: 1200,
-    end: 1600,
-    top: 900,
+    beginWidth: 1200,
+    endWidth: 1600,
+    beginHeight: 900,
   );
 
   /// A window whose width is greater than 1200 dp.
   static const Breakpoint largeAndUp = WidthPlatformBreakpoint(
-    begin: 1200,
-    top: 900,
+    beginWidth: 1200,
+    beginHeight: 900,
   );
 
   /// A desktop window whose width is between 1200 dp and 1600 dp.
   static const Breakpoint largeDesktop = WidthPlatformBreakpoint(
-    begin: 1200,
-    end: 1600,
-    top: 900,
+    beginWidth: 1200,
+    endWidth: 1600,
+    beginHeight: 900,
     platform: _desktop,
   );
 
   /// A mobile window whose width is between 1200 dp and 1600 dp.
   static const Breakpoint largeMobile = WidthPlatformBreakpoint(
-    begin: 1200,
-    end: 1600,
-    top: 900,
+    beginWidth: 1200,
+    endWidth: 1600,
+    beginHeight: 900,
     platform: _mobile,
   );
 
   /// A window whose width is greater than 1600 dp.
   static const Breakpoint extraLarge = WidthPlatformBreakpoint(
-    begin: 1600,
-    top: 900,
+    beginWidth: 1600,
+    beginHeight: 900,
   );
 
   /// A desktop window whose width is greater than 1600 dp.
-  static const Breakpoint extraLargeDesktop =
-      WidthPlatformBreakpoint(begin: 1600, top: 900, platform: _desktop);
+  static const Breakpoint extraLargeDesktop = WidthPlatformBreakpoint(
+      beginWidth: 1600, beginHeight: 900, platform: _desktop);
 
   /// A mobile window whose width is greater than 1600 dp.
   static const Breakpoint extraLargeMobile = WidthPlatformBreakpoint(
-    begin: 1600,
-    top: 900,
+    beginWidth: 1600,
+    beginHeight: 900,
     platform: _mobile,
   );
 }
@@ -172,28 +172,28 @@ class Breakpoints {
 class WidthPlatformBreakpoint extends Breakpoint {
   /// Returns a const [Breakpoint] with the given constraints.
   const WidthPlatformBreakpoint({
-    this.begin,
-    this.end,
-    this.top,
-    this.bottom,
+    this.beginWidth,
+    this.endWidth,
+    this.beginHeight,
+    this.endHeight,
     this.platform,
   });
 
   /// The beginning width dp value. If left null then the [Breakpoint] will have
   /// no lower bound.
-  final double? begin;
+  final double? beginWidth;
 
   /// The end width dp value. If left null then the [Breakpoint] will have no
   /// upper bound.
-  final double? end;
+  final double? endWidth;
 
   /// The beginning height dp value. If left null then the [Breakpoint] will have
   /// no lower bound.
-  final double? top;
+  final double? beginHeight;
 
   /// The end height dp value. If left null then the [Breakpoint] will have no
   /// upper bound.
-  final double? bottom;
+  final double? endHeight;
 
   /// A Set of [TargetPlatform]s that the [Breakpoint] will be active on. If
   /// left null then it will be active on all platforms.
@@ -208,11 +208,11 @@ class WidthPlatformBreakpoint extends Breakpoint {
     final double height = MediaQuery.sizeOf(context).height;
     final Orientation orientation = MediaQuery.orientationOf(context);
 
-    final double lowerBoundWidth = begin ?? double.negativeInfinity;
-    final double upperBoundWidth = end ?? double.infinity;
+    final double lowerBoundWidth = beginWidth ?? double.negativeInfinity;
+    final double upperBoundWidth = endWidth ?? double.infinity;
 
-    final double lowerBoundHeight = top ?? double.negativeInfinity;
-    final double upperBoundHeight = bottom ?? double.infinity;
+    final double lowerBoundHeight = beginHeight ?? double.negativeInfinity;
+    final double upperBoundHeight = endHeight ?? double.infinity;
 
     final bool isWidthActive =
         width >= lowerBoundWidth && width < upperBoundWidth;
