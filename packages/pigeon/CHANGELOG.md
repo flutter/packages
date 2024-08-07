@@ -1,3 +1,7 @@
+## 21.2.0
+
+* [swift] Adds implementation for `@ProxyApi`.
+
 ## 21.1.0
 
 * Adds GObject (Linux) support.

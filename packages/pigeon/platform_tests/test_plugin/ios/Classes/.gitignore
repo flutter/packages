@@ -3,3 +3,5 @@
 # such as a flag to suppress version stamp generation.
 *.gen.swift
 !CoreTests.gen.swift
+!ProxyApiTests.gen.swift
+!ProxyApiTestClass.swift
