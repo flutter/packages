@@ -32,6 +32,8 @@ const DocumentCommentSpecification _docCommentSpec =
 /// The custom codec used for all pigeon APIs.
 const String _pigeonCodec = '_PigeonCodec';
 
+const String _overflowClassName = '_PigeonCodecOverflow';
+
 /// Options that control how Dart code will be generated.
 class DartOptions {
   /// Constructor for DartOptions.
@@ -283,8 +285,56 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
+    void writeEncodeLogic(EnumeratedType customType) {
+      indent.writeScoped('if (value is ${customType.name}) {', '} else ', () {
+        if (customType.enumeration < maximumCodecFieldKey) {
+          indent.writeln('buffer.putUint8(${customType.enumeration});');
+          if (customType.type == CustomTypes.customClass) {
+            indent.writeln('writeValue(buffer, value.encode());');
+          } else if (customType.type == CustomTypes.customEnum) {
+            indent.writeln('writeValue(buffer, value.index);');
+          }
+        } else {
+          final String encodeString = customType.type == CustomTypes.customClass
+              ? '.encode()'
+              : '.index';
+          indent.writeln(
+              'final $_overflowClassName wrap = $_overflowClassName(type: ${customType.enumeration - maximumCodecFieldKey}, wrapped: value$encodeString);');
+          indent.writeln('buffer.putUint8($maximumCodecFieldKey);');
+          indent.writeln('writeValue(buffer, wrap.encode());');
+        }
+      }, addTrailingNewline: false);
+    }
+
+    void writeDecodeLogic(EnumeratedType customType) {
+      indent.writeln('case ${customType.enumeration}: ');
+      indent.nest(1, () {
+        if (customType.type == CustomTypes.customClass) {
+          if (customType.enumeration == maximumCodecFieldKey) {
+            indent.writeln(
+                'final ${customType.name} wrapper = ${customType.name}.decode(readValue(buffer)!);');
+            indent.writeln('return wrapper.unwrap();');
+          } else {
+            indent.writeln(
+                'return ${customType.name}.decode(readValue(buffer)!);');
+          }
+        } else if (customType.type == CustomTypes.customEnum) {
+          indent.writeln('final int? value = readValue(buffer) as int?;');
+          indent.writeln(
+              'return value == null ? null : ${customType.name}.values[value];');
+        }
+      });
+    }
+
+    final EnumeratedType overflowClass = EnumeratedType(
+        _overflowClassName, maximumCodecFieldKey, CustomTypes.customClass);
+
     indent.newln();
-    final Iterable<EnumeratedType> enumeratedTypes = getEnumeratedTypes(root);
+    final List<EnumeratedType> enumeratedTypes =
+        getEnumeratedTypes(root).toList();
+    if (root.requiresOverflowClass) {
+      _writeCodecOverflowUtilities(indent, enumeratedTypes);
+    }
     indent.newln();
     indent.write('class $_pigeonCodec extends StandardMessageCodec');
     indent.addScoped(' {', '}', () {
@@ -295,15 +345,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         indent.addScoped('{', '}', () {
           enumerate(enumeratedTypes,
               (int index, final EnumeratedType customType) {
-            indent.writeScoped('if (value is ${customType.name}) {', '} else ',
-                () {
-              indent.writeln('buffer.putUint8(${customType.enumeration});');
-              if (customType.type == CustomTypes.customClass) {
-                indent.writeln('writeValue(buffer, value.encode());');
-              } else if (customType.type == CustomTypes.customEnum) {
-                indent.writeln('writeValue(buffer, value.index);');
-              }
-            }, addTrailingNewline: false);
+            writeEncodeLogic(customType);
           });
           indent.addScoped('{', '}', () {
             indent.writeln('super.writeValue(buffer, value);');
@@ -316,18 +358,12 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
           indent.write('switch (type) ');
           indent.addScoped('{', '}', () {
             for (final EnumeratedType customType in enumeratedTypes) {
-              indent.writeln('case ${customType.enumeration}: ');
-              indent.nest(1, () {
-                if (customType.type == CustomTypes.customClass) {
-                  indent.writeln(
-                      'return ${customType.name}.decode(readValue(buffer)!);');
-                } else if (customType.type == CustomTypes.customEnum) {
-                  indent
-                      .writeln('final int? value = readValue(buffer) as int?;');
-                  indent.writeln(
-                      'return value == null ? null : ${customType.name}.values[value];');
-                }
-              });
+              if (customType.enumeration < maximumCodecFieldKey) {
+                writeDecodeLogic(customType);
+              }
+            }
+            if (root.requiresOverflowClass) {
+              writeDecodeLogic(overflowClass);
             }
             indent.writeln('default:');
             indent.nest(1, () {
@@ -720,7 +756,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 
     // Each API has a private codec instance used by every host method,
     // constructor, or non-static field.
-    final String codecInstanceName = '${varNamePrefix}codec${api.name}';
+    final String codecInstanceName = '_${varNamePrefix}codec${api.name}';
 
     // AST class used by code_builder to generate the code.
     final cb.Class proxyApi = cb.Class(
@@ -953,6 +989,52 @@ PlatformException _createConnectionError(String channelName) {
 \t\tmessage: 'Unable to establish connection on channel: "\$channelName".',
 \t);
 }''');
+  }
+
+  void _writeCodecOverflowUtilities(Indent indent, List<EnumeratedType> types) {
+    indent.newln();
+    indent.writeln('// ignore: camel_case_types');
+    indent.writeScoped('class $_overflowClassName {', '}', () {
+      indent.format('''
+$_overflowClassName({required this.type, required this.wrapped});
+
+int type;
+Object? wrapped;
+
+Object encode() {
+  return <Object?>[type, wrapped];
+}
+
+static $_overflowClassName decode(Object result) {
+  result as List<Object?>;
+  return $_overflowClassName(
+    type: result[0]! as int,
+    wrapped: result[1],
+  );
+}
+''');
+      indent.writeScoped('Object? unwrap() {', '}', () {
+        indent.format('''
+if (wrapped == null) {
+  return null;
+}
+''');
+        indent.writeScoped('switch (type) {', '}', () {
+          for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
+            indent.writeScoped('case ${i - totalCustomCodecKeysAllowed}:', '',
+                () {
+              if (types[i].type == CustomTypes.customClass) {
+                indent.writeln('return ${types[i].name}.decode(wrapped!);');
+              } else if (types[i].type == CustomTypes.customEnum) {
+                indent.writeln(
+                    'return ${types[i].name}.values[wrapped! as int];');
+              }
+            });
+          }
+        });
+        indent.writeln('return null;');
+      });
+    });
   }
 
   void _writeHostMethod(
@@ -1812,8 +1894,8 @@ if (${varNamePrefix}replyList == null) {
                   if (!field.isStatic) ...<cb.Code>[
                     cb.Code(
                       'final $type $instanceName = $type.${classMemberNamePrefix}detached(\n'
-                      '  pigeon_binaryMessenger: pigeon_binaryMessenger,\n'
-                      '  pigeon_instanceManager: pigeon_instanceManager,\n'
+                      '  ${classMemberNamePrefix}binaryMessenger: ${classMemberNamePrefix}binaryMessenger,\n'
+                      '  ${classMemberNamePrefix}instanceManager: ${classMemberNamePrefix}instanceManager,\n'
                       ');',
                     ),
                     cb.Code('final $codecName $_pigeonChannelCodec =\n'

@@ -51,7 +51,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('data class Foobar ('));
     expect(code, contains('val field1: Long? = null'));
-    expect(code, contains('fun fromList(__pigeon_list: List<Any?>): Foobar'));
+    expect(code, contains('fun fromList(pigeonVar_list: List<Any?>): Foobar'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
 
@@ -132,10 +132,10 @@ void main() {
     expect(code, contains('data class Bar ('));
     expect(code, contains('val field1: Foo,'));
     expect(code, contains('val field2: String'));
-    expect(code, contains('fun fromList(__pigeon_list: List<Any?>): Bar'));
+    expect(code, contains('fun fromList(pigeonVar_list: List<Any?>): Bar'));
     expect(code, contains('Foo.ofRaw(it)'));
-    expect(code, contains('val field1 = __pigeon_list[0] as Foo'));
-    expect(code, contains('val field2 = __pigeon_list[1] as String\n'));
+    expect(code, contains('val field1 = pigeonVar_list[0] as Foo'));
+    expect(code, contains('val field2 = pigeonVar_list[1] as String\n'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
 
@@ -394,7 +394,7 @@ void main() {
     expect(
         code,
         contains(
-            'val aInt = __pigeon_list[1].let { num -> if (num is Int) num.toLong() else num as Long }'));
+            'val aInt = pigeonVar_list[1].let { num -> if (num is Int) num.toLong() else num as Long }'));
     expect(code, contains('val aNullableBool: Boolean? = null'));
     expect(code, contains('val aNullableInt: Long? = null'));
     expect(code, contains('val aNullableDouble: Double? = null'));
@@ -406,7 +406,7 @@ void main() {
     expect(
         code,
         contains(
-            'val aNullableInt = __pigeon_list[9].let { num -> if (num is Int) num.toLong() else num as Long? }'));
+            'val aNullableInt = pigeonVar_list[9].let { num -> if (num is Int) num.toLong() else num as Long? }'));
   });
 
   test('gen one flutter api', () {
@@ -736,8 +736,8 @@ void main() {
     expect(code, contains('data class Outer'));
     expect(code, contains('data class Nested'));
     expect(code, contains('val nested: Nested? = null'));
-    expect(code, contains('fun fromList(__pigeon_list: List<Any?>): Outer'));
-    expect(code, contains('val nested = __pigeon_list[0] as Nested?'));
+    expect(code, contains('fun fromList(pigeonVar_list: List<Any?>): Outer'));
+    expect(code, contains('val nested = pigeonVar_list[0] as Nested?'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
 

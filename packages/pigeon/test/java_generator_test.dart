@@ -85,7 +85,7 @@ void main() {
     expect(code, contains('    TWO_THREE_FOUR(1),'));
     expect(code, contains('    REMOTE_DB(2);'));
     expect(code, contains('final int index;'));
-    expect(code, contains('private Foobar(final int index) {'));
+    expect(code, contains('Foobar(final int index) {'));
     expect(code, contains('      this.index = index;'));
   });
 
@@ -118,7 +118,6 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('package com.google.foobar;'));
-    expect(code, contains('ArrayList<Object> toList()'));
   });
 
   test('gen one host api', () {
@@ -187,7 +186,6 @@ void main() {
         contains(RegExp(
             r'@NonNull\s*protected static ArrayList<Object> wrapError\(@NonNull Throwable exception\)')));
     expect(code, isNot(contains('ArrayList ')));
-    expect(code, isNot(contains('ArrayList<>')));
   });
 
   test('all the simple datatypes header', () {
@@ -736,7 +734,7 @@ void main() {
     expect(code, contains('    TWO_THREE_FOUR(1),'));
     expect(code, contains('    REMOTE_DB(2);'));
     expect(code, contains('final int index;'));
-    expect(code, contains('private Enum1(final int index) {'));
+    expect(code, contains('Enum1(final int index) {'));
     expect(code, contains('      this.index = index;'));
 
     expect(code, contains('toListResult.add(enum1);'));
@@ -1159,7 +1157,7 @@ void main() {
     expect(
         code,
         contains(RegExp(
-            r'channel.send\(\s*new ArrayList<Object>\(Arrays.asList\(xArg, yArg\)\),\s*channelReply ->')));
+            r'channel.send\(\s*new ArrayList<>\(Arrays.asList\(xArg, yArg\)\),\s*channelReply ->')));
   });
 
   test('flutter single args', () {
@@ -1191,7 +1189,7 @@ void main() {
     expect(
         code,
         contains(RegExp(
-            r'channel.send\(\s*new ArrayList<Object>\(Collections.singletonList\(xArg\)\),\s*channelReply ->')));
+            r'channel.send\(\s*new ArrayList<>\(Collections.singletonList\(xArg\)\),\s*channelReply ->')));
   });
 
   test('return nullable host', () {

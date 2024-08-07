@@ -99,6 +99,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return anEnum
   }
 
+  func echo(_ anotherEnum: AnotherEnum) throws -> AnotherEnum {
+    return anotherEnum
+  }
+
   func extractNestedNullableString(from wrapper: AllClassesWrapper) -> String? {
     return wrapper.allNullableTypes.aNullableString
   }
@@ -169,6 +173,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func echoNullable(_ anEnum: AnEnum?) throws -> AnEnum? {
     return anEnum
+  }
+
+  func echoNullable(_ anotherEnum: AnotherEnum?) throws -> AnotherEnum? {
+    return anotherEnum
   }
 
   func echoOptional(_ aNullableInt: Int64?) throws -> Int64? {
@@ -254,6 +262,12 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(anEnum))
   }
 
+  func echoAsync(
+    _ anotherEnum: AnotherEnum, completion: @escaping (Result<AnotherEnum, Error>) -> Void
+  ) {
+    completion(.success(anotherEnum))
+  }
+
   func echoAsyncNullable(_ anInt: Int64?, completion: @escaping (Result<Int64?, Error>) -> Void) {
     completion(.success(anInt))
   }
@@ -293,9 +307,16 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(aMap))
   }
 
-  func echoAsyncNullable(_ anEnum: AnEnum?, completion: @escaping (Result<AnEnum?, Error>) -> Void)
-  {
+  func echoAsyncNullable(
+    _ anEnum: AnEnum?, completion: @escaping (Result<AnEnum?, Error>) -> Void
+  ) {
     completion(.success(anEnum))
+  }
+
+  func echoAsyncNullable(
+    _ anotherEnum: AnotherEnum?, completion: @escaping (Result<AnotherEnum?, Error>) -> Void
+  ) {
+    completion(.success(anotherEnum))
   }
 
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -492,8 +513,23 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
-  func callFlutterEcho(_ anEnum: AnEnum, completion: @escaping (Result<AnEnum, Error>) -> Void) {
+  func callFlutterEcho(
+    _ anEnum: AnEnum, completion: @escaping (Result<AnEnum, Error>) -> Void
+  ) {
     flutterAPI.echo(anEnum) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
+  func callFlutterEcho(
+    _ anotherEnum: AnotherEnum, completion: @escaping (Result<AnotherEnum, Error>) -> Void
+  ) {
+    flutterAPI.echo(anotherEnum) { response in
       switch response {
       case .success(let res):
         completion(.success(res))
@@ -594,10 +630,23 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
-  func callFlutterNullableEcho(
+  func callFlutterEchoNullable(
     _ anEnum: AnEnum?, completion: @escaping (Result<AnEnum?, Error>) -> Void
   ) {
     flutterAPI.echoNullable(anEnum) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
+  func callFlutterEchoNullable(
+    _ anotherEnum: AnotherEnum?, completion: @escaping (Result<AnotherEnum?, Error>) -> Void
+  ) {
+    flutterAPI.echoNullable(anotherEnum) { response in
       switch response {
       case .success(let res):
         completion(.success(res))

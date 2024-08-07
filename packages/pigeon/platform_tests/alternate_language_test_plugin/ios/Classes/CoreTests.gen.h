@@ -28,6 +28,16 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 - (instancetype)initWithValue:(FLTAnEnum)value;
 @end
 
+typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
+  FLTAnotherEnumJustInCase = 0,
+};
+
+/// Wrapper for FLTAnotherEnum to allow for nullability.
+@interface FLTAnotherEnumBox : NSObject
+@property(nonatomic, assign) FLTAnotherEnum value;
+- (instancetype)initWithValue:(FLTAnotherEnum)value;
+@end
+
 @class FLTAllTypes;
 @class FLTAllNullableTypes;
 @class FLTAllNullableTypesWithoutRecursion;
@@ -47,6 +57,7 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
                   a8ByteArray:(FlutterStandardTypedData *)a8ByteArray
                   aFloatArray:(FlutterStandardTypedData *)aFloatArray
                        anEnum:(FLTAnEnum)anEnum
+                  anotherEnum:(FLTAnotherEnum)anotherEnum
                       aString:(NSString *)aString
                      anObject:(id)anObject
                          list:(NSArray<id> *)list
@@ -64,6 +75,7 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 @property(nonatomic, strong) FlutterStandardTypedData *a8ByteArray;
 @property(nonatomic, strong) FlutterStandardTypedData *aFloatArray;
 @property(nonatomic, assign) FLTAnEnum anEnum;
+@property(nonatomic, assign) FLTAnotherEnum anotherEnum;
 @property(nonatomic, copy) NSString *aString;
 @property(nonatomic, strong) id anObject;
 @property(nonatomic, copy) NSArray<id> *list;
@@ -89,6 +101,7 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
+                  anotherNullableEnum:(nullable FLTAnotherEnumBox *)anotherNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject
                      allNullableTypes:(nullable FLTAllNullableTypes *)allNullableTypes
@@ -112,6 +125,7 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
     NSDictionary<NSString *, NSString *> *nullableMapWithAnnotations;
 @property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *nullableMapWithObject;
 @property(nonatomic, strong, nullable) FLTAnEnumBox *aNullableEnum;
+@property(nonatomic, strong, nullable) FLTAnotherEnumBox *anotherNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @property(nonatomic, strong, nullable) id aNullableObject;
 @property(nonatomic, strong, nullable) FLTAllNullableTypes *allNullableTypes;
@@ -141,6 +155,7 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
+                  anotherNullableEnum:(nullable FLTAnotherEnumBox *)anotherNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject
                                  list:(nullable NSArray<id> *)list
@@ -162,6 +177,7 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
     NSDictionary<NSString *, NSString *> *nullableMapWithAnnotations;
 @property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *nullableMapWithObject;
 @property(nonatomic, strong, nullable) FLTAnEnumBox *aNullableEnum;
+@property(nonatomic, strong, nullable) FLTAnotherEnumBox *anotherNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @property(nonatomic, strong, nullable) id aNullableObject;
 @property(nonatomic, copy, nullable) NSArray<id> *list;
@@ -262,6 +278,11 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 /// @return `nil` only when `error != nil`.
 - (FLTAnEnumBox *_Nullable)echoEnum:(FLTAnEnum)anEnum
                               error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed enum to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (FLTAnotherEnumBox *_Nullable)echoAnotherEnum:(FLTAnotherEnum)anotherEnum
+                                          error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the default string.
 ///
 /// @return `nil` only when `error != nil`.
@@ -339,6 +360,9 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
                                                      error:(FlutterError *_Nullable *_Nonnull)error;
 - (FLTAnEnumBox *_Nullable)echoNullableEnum:(nullable FLTAnEnumBox *)anEnumBoxed
                                       error:(FlutterError *_Nullable *_Nonnull)error;
+- (FLTAnotherEnumBox *_Nullable)echoAnotherNullableEnum:
+                                    (nullable FLTAnotherEnumBox *)anotherEnumBoxed
+                                                  error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns passed in int.
 - (nullable NSNumber *)echoOptionalNullableInt:(nullable NSNumber *)aNullableInt
                                          error:(FlutterError *_Nullable *_Nonnull)error;
@@ -377,6 +401,10 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 /// Returns the passed enum, to test asynchronous serialization and deserialization.
 - (void)echoAsyncEnum:(FLTAnEnum)anEnum
            completion:(void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed enum, to test asynchronous serialization and deserialization.
+- (void)echoAnotherAsyncEnum:(FLTAnotherEnum)anotherEnum
+                  completion:
+                      (void (^)(FLTAnotherEnumBox *_Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async function returning a value.
 - (void)throwAsyncErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async void function.
@@ -428,6 +456,10 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 - (void)echoAsyncNullableEnum:(nullable FLTAnEnumBox *)anEnumBoxed
                    completion:
                        (void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed enum, to test asynchronous serialization and deserialization.
+- (void)echoAnotherAsyncNullableEnum:(nullable FLTAnotherEnumBox *)anotherEnumBoxed
+                          completion:(void (^)(FLTAnotherEnumBox *_Nullable,
+                                               FlutterError *_Nullable))completion;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterThrowErrorWithCompletion:(void (^)(id _Nullable,
                                                       FlutterError *_Nullable))completion;
@@ -476,6 +508,9 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
                                      FlutterError *_Nullable))completion;
 - (void)callFlutterEchoEnum:(FLTAnEnum)anEnum
                  completion:(void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoAnotherEnum:(FLTAnotherEnum)anotherEnum
+                        completion:(void (^)(FLTAnotherEnumBox *_Nullable,
+                                             FlutterError *_Nullable))completion;
 - (void)callFlutterEchoNullableBool:(nullable NSNumber *)aBool
                          completion:
                              (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
@@ -500,6 +535,9 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 - (void)callFlutterEchoNullableEnum:(nullable FLTAnEnumBox *)anEnumBoxed
                          completion:
                              (void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoAnotherNullableEnum:(nullable FLTAnotherEnumBox *)anotherEnumBoxed
+                                completion:(void (^)(FLTAnotherEnumBox *_Nullable,
+                                                     FlutterError *_Nullable))completion;
 - (void)callFlutterSmallApiEchoString:(NSString *)aString
                            completion:
                                (void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
@@ -581,6 +619,9 @@ extern void SetUpFLTHostIntegrationCoreApiWithSuffix(
 /// Returns the passed enum to test serialization and deserialization.
 - (void)echoEnum:(FLTAnEnum)anEnum
       completion:(void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed enum to test serialization and deserialization.
+- (void)echoAnotherEnum:(FLTAnotherEnum)anotherEnum
+             completion:(void (^)(FLTAnotherEnumBox *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed boolean, to test serialization and deserialization.
 - (void)echoNullableBool:(nullable NSNumber *)aBool
               completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
@@ -607,6 +648,10 @@ extern void SetUpFLTHostIntegrationCoreApiWithSuffix(
 /// Returns the passed enum to test serialization and deserialization.
 - (void)echoNullableEnum:(nullable FLTAnEnumBox *)anEnumBoxed
               completion:(void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed enum to test serialization and deserialization.
+- (void)echoAnotherNullableEnum:(nullable FLTAnotherEnumBox *)anotherEnumBoxed
+                     completion:(void (^)(FLTAnotherEnumBox *_Nullable,
+                                          FlutterError *_Nullable))completion;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic asynchronous calling.
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion;

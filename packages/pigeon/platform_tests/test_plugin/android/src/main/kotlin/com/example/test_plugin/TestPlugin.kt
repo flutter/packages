@@ -96,6 +96,10 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return anEnum
   }
 
+  override fun echoAnotherEnum(anotherEnum: AnotherEnum): AnotherEnum {
+    return anotherEnum
+  }
+
   override fun echoNamedDefaultString(aString: String): String {
     return aString
   }
@@ -172,6 +176,10 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun echoNullableEnum(anEnum: AnEnum?): AnEnum? {
     return anEnum
+  }
+
+  override fun echoAnotherNullableEnum(anotherEnum: AnotherEnum?): AnotherEnum? {
+    return anotherEnum
   }
 
   override fun echoOptionalNullableInt(aNullableInt: Long?): Long? {
@@ -255,6 +263,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(anEnum))
   }
 
+  override fun echoAnotherAsyncEnum(
+      anotherEnum: AnotherEnum,
+      callback: (Result<AnotherEnum>) -> Unit
+  ) {
+    callback(Result.success(anotherEnum))
+  }
+
   override fun echoAsyncNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit) {
     callback(Result.success(anInt))
   }
@@ -295,6 +310,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun echoAsyncNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit) {
     callback(Result.success(anEnum))
+  }
+
+  override fun echoAnotherAsyncNullableEnum(
+      anotherEnum: AnotherEnum?,
+      callback: (Result<AnotherEnum?>) -> Unit
+  ) {
+    callback(Result.success(anotherEnum))
   }
 
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
@@ -375,8 +397,14 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun callFlutterEchoEnum(anEnum: AnEnum, callback: (Result<AnEnum>) -> Unit) {
-    //    callback(Result.success(anEnum))
     flutterApi!!.echoEnum(anEnum) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoAnotherEnum(
+      anotherEnum: AnotherEnum,
+      callback: (Result<AnotherEnum>) -> Unit
+  ) {
+    flutterApi!!.echoAnotherEnum(anotherEnum) { echo -> callback(echo) }
   }
 
   override fun callFlutterEchoAllNullableTypes(
@@ -431,6 +459,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun callFlutterEchoNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit) {
     flutterApi!!.echoNullableEnum(anEnum) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoAnotherNullableEnum(
+      anotherEnum: AnotherEnum?,
+      callback: (Result<AnotherEnum?>) -> Unit
+  ) {
+    flutterApi!!.echoAnotherNullableEnum(anotherEnum) { echo -> callback(echo) }
   }
 
   override fun callFlutterSmallApiEchoString(aString: String, callback: (Result<String>) -> Unit) {

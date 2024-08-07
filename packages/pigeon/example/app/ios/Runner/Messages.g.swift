@@ -86,11 +86,11 @@ struct MessageData {
   var data: [String?: String?]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ __pigeon_list: [Any?]) -> MessageData? {
-    let name: String? = nilOrValue(__pigeon_list[0])
-    let description: String? = nilOrValue(__pigeon_list[1])
-    let code = __pigeon_list[2] as! Code
-    let data = __pigeon_list[3] as! [String?: String?]
+  static func fromList(_ pigeonVar_list: [Any?]) -> MessageData? {
+    let name: String? = nilOrValue(pigeonVar_list[0])
+    let description: String? = nilOrValue(pigeonVar_list[1])
+    let code = pigeonVar_list[2] as! Code
+    let data = pigeonVar_list[3] as! [String?: String?]
 
     return MessageData(
       name: name,
@@ -108,18 +108,18 @@ struct MessageData {
     ]
   }
 }
+
 private class MessagesPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 129:
-      return MessageData.fromList(self.readValue() as! [Any?])
-    case 130:
-      var enumResult: Code? = nil
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
       if let enumResultAsInt = enumResultAsInt {
-        enumResult = Code(rawValue: enumResultAsInt)
+        return Code(rawValue: enumResultAsInt)
       }
-      return enumResult
+      return nil
+    case 130:
+      return MessageData.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -128,12 +128,12 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
 
 private class MessagesPigeonCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? MessageData {
+    if let value = value as? Code {
       super.writeByte(129)
-      super.writeValue(value.toList())
-    } else if let value = value as? Code {
-      super.writeByte(130)
       super.writeValue(value.rawValue)
+    } else if let value = value as? MessageData {
+      super.writeByte(130)
+      super.writeValue(value.toList())
     } else {
       super.writeValue(value)
     }

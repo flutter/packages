@@ -18,18 +18,18 @@ class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is MessageSearchRequest) {
+    if (value is MessageRequestState) {
       buffer.putUint8(129);
-      writeValue(buffer, value.encode());
-    } else if (value is MessageSearchReply) {
+      writeValue(buffer, value.index);
+    } else if (value is MessageSearchRequest) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is MessageNested) {
+    } else if (value is MessageSearchReply) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is MessageRequestState) {
+    } else if (value is MessageNested) {
       buffer.putUint8(132);
-      writeValue(buffer, value.index);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -39,14 +39,14 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        return MessageSearchRequest.decode(readValue(buffer)!);
-      case 130:
-        return MessageSearchReply.decode(readValue(buffer)!);
-      case 131:
-        return MessageNested.decode(readValue(buffer)!);
-      case 132:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : MessageRequestState.values[value];
+      case 130:
+        return MessageSearchRequest.decode(readValue(buffer)!);
+      case 131:
+        return MessageSearchReply.decode(readValue(buffer)!);
+      case 132:
+        return MessageNested.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -77,17 +77,18 @@ abstract class TestHostApi {
     messageChannelSuffix =
         messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
               Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.initialize$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel, null);
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
       } else {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel,
                 (Object? message) async {
           try {
             api.initialize();
@@ -102,17 +103,18 @@ abstract class TestHostApi {
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
               Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel, null);
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
       } else {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel,
                 (Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search was null.');
@@ -155,17 +157,18 @@ abstract class TestNestedApi {
     messageChannelSuffix =
         messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
               Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel, null);
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
       } else {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel,
                 (Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search was null.');

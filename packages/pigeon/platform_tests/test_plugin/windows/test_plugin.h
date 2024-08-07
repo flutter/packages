@@ -88,6 +88,9 @@ class TestPlugin : public flutter::Plugin,
       const core_tests_pigeontest::AllClassesWrapper& wrapper) override;
   core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AnEnum> EchoEnum(
       const core_tests_pigeontest::AnEnum& an_enum) override;
+  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AnotherEnum>
+  EchoAnotherEnum(
+      const core_tests_pigeontest::AnotherEnum& another_enum) override;
   core_tests_pigeontest::ErrorOr<std::string> EchoNamedDefaultString(
       const std::string& a_string) override;
   core_tests_pigeontest::ErrorOr<double> EchoOptionalDefaultDouble(
@@ -127,6 +130,10 @@ class TestPlugin : public flutter::Plugin,
   EchoNullableMap(const flutter::EncodableMap* a_nullable_map) override;
   core_tests_pigeontest::ErrorOr<std::optional<core_tests_pigeontest::AnEnum>>
   EchoNullableEnum(const core_tests_pigeontest::AnEnum* an_enum) override;
+  core_tests_pigeontest::ErrorOr<
+      std::optional<core_tests_pigeontest::AnotherEnum>>
+  EchoAnotherNullableEnum(
+      const core_tests_pigeontest::AnotherEnum* another_enum) override;
   core_tests_pigeontest::ErrorOr<std::optional<int64_t>>
   EchoOptionalNullableInt(const int64_t* a_nullable_int) override;
   core_tests_pigeontest::ErrorOr<std::optional<std::string>>
@@ -208,6 +215,12 @@ class TestPlugin : public flutter::Plugin,
       std::function<void(
           core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AnEnum> reply)>
           result) override;
+  void EchoAnotherAsyncEnum(
+      const core_tests_pigeontest::AnotherEnum& another_enum,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AnotherEnum>
+              reply)>
+          result) override;
   void EchoAsyncNullableInt(
       const int64_t* an_int,
       std::function<
@@ -256,6 +269,12 @@ class TestPlugin : public flutter::Plugin,
       const core_tests_pigeontest::AnEnum* an_enum,
       std::function<void(core_tests_pigeontest::ErrorOr<
                          std::optional<core_tests_pigeontest::AnEnum>>
+                             reply)>
+          result) override;
+  void EchoAnotherAsyncNullableEnum(
+      const core_tests_pigeontest::AnotherEnum* another_enum,
+      std::function<void(core_tests_pigeontest::ErrorOr<
+                         std::optional<core_tests_pigeontest::AnotherEnum>>
                              reply)>
           result) override;
   void CallFlutterNoop(
@@ -341,6 +360,12 @@ class TestPlugin : public flutter::Plugin,
       std::function<void(
           core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AnEnum> reply)>
           result) override;
+  void CallFlutterEchoAnotherEnum(
+      const core_tests_pigeontest::AnotherEnum& another_enum,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AnotherEnum>
+              reply)>
+          result) override;
   void CallFlutterEchoNullableBool(
       const bool* a_bool,
       std::function<
@@ -383,6 +408,12 @@ class TestPlugin : public flutter::Plugin,
       const core_tests_pigeontest::AnEnum* an_enum,
       std::function<void(core_tests_pigeontest::ErrorOr<
                          std::optional<core_tests_pigeontest::AnEnum>>
+                             reply)>
+          result) override;
+  void CallFlutterEchoAnotherNullableEnum(
+      const core_tests_pigeontest::AnotherEnum* another_enum,
+      std::function<void(core_tests_pigeontest::ErrorOr<
+                         std::optional<core_tests_pigeontest::AnotherEnum>>
                              reply)>
           result) override;
   void CallFlutterSmallApiEchoString(
