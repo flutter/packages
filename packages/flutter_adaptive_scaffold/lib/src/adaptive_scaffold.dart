@@ -24,6 +24,12 @@ const double kMaterialMediumMinMargin = 12;
 /// design 3 spec.
 const double kMaterialExpandedMinMargin = 32;
 
+/// Converts a [NavigationDestination] to a [NavigationRailDestination].
+typedef NavigationRailDestinationBuilder = NavigationRailDestination Function(
+  int index,
+  NavigationDestination destination,
+);
+
 /// Implements the basic visual layout structure for
 /// [Material Design 3](https://m3.material.io/foundations/adaptive-design/overview)
 /// that adapts to a variety of screens.
@@ -252,10 +258,7 @@ class AdaptiveScaffold extends StatefulWidget {
   final double extendedNavigationRailWidth;
 
   /// Used to map NavigationDestination to NavigationRailDestination.
-  final NavigationRailDestination Function(
-    int index,
-    NavigationDestination destination,
-  )? navigationRailDestinationBuilder;
+  final NavigationRailDestinationBuilder? navigationRailDestinationBuilder;
 
   /// Callback function for when the index of a [NavigationRail] changes.
   static WidgetBuilder emptyBuilder = (_) => const SizedBox();
