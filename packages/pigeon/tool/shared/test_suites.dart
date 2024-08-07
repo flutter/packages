@@ -297,7 +297,7 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
   final int compileCode = await runFlutterBuild(
     examplePath,
     'ios',
-    flags: <String>['--simulator', '--no-codesign'],
+    flags: <String>['--simulator', '--no-codesign', '--verbose'],
   );
   if (compileCode != 0) {
     return compileCode;
