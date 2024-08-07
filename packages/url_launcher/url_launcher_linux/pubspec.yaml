@@ -19,12 +19,12 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  pigeon: ^21.1.0
   url_launcher_platform_interface: ^2.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  pigeon: ^21.1.0
   test: ^1.16.3
 
 topics:
