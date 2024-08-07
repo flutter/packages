@@ -130,8 +130,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           '--browser-name=chrome',
           if (useWasm)
             '--wasm'
-          else
-            '--web-renderer=canvaskit',
+          '--web-renderer=canvaskit'
           if (platform.environment.containsKey('CHROME_EXECUTABLE'))
             '--chrome-binary=${platform.environment['CHROME_EXECUTABLE']}',
         ],
