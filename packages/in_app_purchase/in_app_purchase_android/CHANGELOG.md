@@ -1,3 +1,8 @@
+## 0.3.6+6
+
+* Removes dependency on org.jetbrains.kotlin:kotlin-bom.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 0.3.6+5
 
 * Bumps com.android.billingclient:billing from 6.1.0 to 6.2.0.
