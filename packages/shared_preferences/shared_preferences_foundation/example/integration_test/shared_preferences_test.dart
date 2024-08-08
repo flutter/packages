@@ -489,7 +489,7 @@ void main() {
         SharedPreferencesAsyncFoundationOptions();
     final SharedPreferencesAsyncFoundationOptions optionsWithSuiteName =
         SharedPreferencesAsyncFoundationOptions(
-            suiteName: 'group.example.sharedPreferencesFoundationExample');
+            suiteName: 'group.example.sharedPreferencesFoundation');
 
     const String stringKey = 'testString';
     const String boolKey = 'testBool';
@@ -509,6 +509,9 @@ void main() {
       await preferences.clear(
           const ClearPreferencesParameters(filter: PreferencesFilters()),
           emptyOptions);
+      await preferences.clear(
+          const ClearPreferencesParameters(filter: PreferencesFilters()),
+          optionsWithSuiteName);
       return preferences;
     }
 
