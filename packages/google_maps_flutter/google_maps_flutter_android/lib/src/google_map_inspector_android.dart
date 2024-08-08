@@ -76,6 +76,9 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
   }
 
   @override
+  bool supportsGettingHeatmapInfo() => false;
+
+  @override
   Future<bool> isCompassEnabled({required int mapId}) async {
     return _inspectorProvider(mapId)!.isCompassEnabled();
   }

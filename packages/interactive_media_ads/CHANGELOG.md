@@ -1,6 +1,7 @@
 ## 0.1.2
 
 * Adds support for all `AdEventType`s and ad data. See `AdEvent.adData`.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.1.1+1
 

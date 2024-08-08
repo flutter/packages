@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
 ## 0.5.1+5
 
 * Bumps androidx.annotation:annotation from 1.8.0 to 1.8.1.

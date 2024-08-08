@@ -8,9 +8,7 @@ import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart'
 import 'package:interactive_media_ads/src/ios/interactive_media_ads_proxy.dart';
 import 'package:interactive_media_ads/src/ios/ios_ads_manager_delegate.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
-import 'package:mockito/annotations.dart';
 
-@GenerateNiceMocks(<MockSpec<Object>>[MockSpec<ima.IMAAdsManager>()])
 void main() {
   group('IOSAdsManagerDelegate', () {
     test('didReceiveAdEvent calls onAdEvent', () {
