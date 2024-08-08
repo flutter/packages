@@ -152,6 +152,25 @@
   XCTAssertEqualWithAccuracy(cameraPosition.viewingAngle, 5, accuracy);
 }
 
+- (void)testGetCameraPostionForPigeonCameraPosition {
+  FGMPlatformCameraPosition *pigeonCameraPosition = [FGMPlatformCameraPosition
+      makeWithBearing:1.0
+               target:[FGMPlatformLatLng makeWithLatitude:2.0 longitude:3.0]
+                 tilt:4.0
+                 zoom:5.0];
+
+  GMSCameraPosition *cameraPosition =
+      FGMGetCameraPositionForPigeonCameraPosition(pigeonCameraPosition);
+
+  XCTAssertEqualWithAccuracy(cameraPosition.target.latitude, pigeonCameraPosition.target.latitude,
+                             DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(cameraPosition.target.longitude, pigeonCameraPosition.target.longitude,
+                             DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(cameraPosition.zoom, pigeonCameraPosition.zoom, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(cameraPosition.bearing, pigeonCameraPosition.bearing, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(cameraPosition.viewingAngle, pigeonCameraPosition.tilt, DBL_EPSILON);
+}
+
 - (void)testCGPointForPigeonPoint {
   FGMPlatformPoint *pigeonPoint = [FGMPlatformPoint makeWithX:1.0 y:2.0];
 
@@ -175,12 +194,12 @@
   XCTAssertEqualWithAccuracy(bounds.northEast.longitude, 4, accuracy);
 }
 
-- (void)testMapViewTypeFromTypeValue {
-  XCTAssertEqual(kGMSTypeNormal, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@1]);
-  XCTAssertEqual(kGMSTypeSatellite, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@2]);
-  XCTAssertEqual(kGMSTypeTerrain, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@3]);
-  XCTAssertEqual(kGMSTypeHybrid, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@4]);
-  XCTAssertEqual(kGMSTypeNone, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@5]);
+- (void)testMapViewTypeFromPigeonType {
+  XCTAssertEqual(kGMSTypeNormal, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeNormal));
+  XCTAssertEqual(kGMSTypeSatellite, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeSatellite));
+  XCTAssertEqual(kGMSTypeTerrain, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeTerrain));
+  XCTAssertEqual(kGMSTypeHybrid, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeHybrid));
+  XCTAssertEqual(kGMSTypeNone, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeNone));
 }
 
 - (void)testCameraUpdateFromArrayNewCameraPosition {

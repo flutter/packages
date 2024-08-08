@@ -19,7 +19,6 @@
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler
                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-- (void)addJSONPolygons:(NSArray<NSDictionary<NSString *, id> *> *)polygonsToAdd;
 - (void)addPolygons:(NSArray<FGMPlatformPolygon *> *)polygonsToAdd;
 - (void)changePolygons:(NSArray<FGMPlatformPolygon *> *)polygonsToChange;
 - (void)removePolygonWithIdentifiers:(NSArray<NSString *> *)identifiers;

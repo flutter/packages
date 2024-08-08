@@ -43,18 +43,10 @@
       [FGMPlatformClusterManager makeWithIdentifier:clusterManagerId];
   [clusterManagersController addClusterManagers:@[ clusterManagerToAdd ]];
 
-  // Add cluster managers in JSON format.
-  NSString *JSONClusterManagerId = @"json_cm";
-  NSDictionary *JSONclusterManagerToAdd = @{@"clusterManagerId" : JSONClusterManagerId};
-  [clusterManagersController addJSONClusterManagers:@[ JSONclusterManagerToAdd ]];
-
   // Verify that cluster managers are available
   GMUClusterManager *clusterManager =
       [clusterManagersController clusterManagerWithIdentifier:clusterManagerId];
   XCTAssertNotNil(clusterManager, @"Cluster Manager should not be nil");
-  GMUClusterManager *JSONClusterManager =
-      [clusterManagersController clusterManagerWithIdentifier:JSONClusterManagerId];
-  XCTAssertNotNil(JSONClusterManager, @"Cluster Manager should not be nil");
 
   // Add markers
   NSString *markerId1 = @"m1";
@@ -65,11 +57,13 @@
     @"position" : @[ @0, @0 ],
     @"clusterManagerId" : clusterManagerId
   }];
-  NSDictionary *marker2 =
-      @{@"markerId" : markerId2, @"position" : @[ @0, @0 ], @"clusterManagerId" : clusterManagerId};
+  FGMPlatformMarker *marker2 = [FGMPlatformMarker makeWithJson:@{
+    @"markerId" : markerId2,
+    @"position" : @[ @0, @0 ],
+    @"clusterManagerId" : clusterManagerId
+  }];
 
-  [markersController addMarkers:@[ marker1 ]];
-  [markersController addJSONMarkers:@[ marker2 ]];
+  [markersController addMarkers:@[ marker1, marker2 ]];
 
   FlutterError *error = nil;
 

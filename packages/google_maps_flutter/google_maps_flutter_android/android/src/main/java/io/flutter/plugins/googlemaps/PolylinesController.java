@@ -36,16 +36,6 @@ class PolylinesController {
     this.googleMap = googleMap;
   }
 
-  void addJsonPolylines(List<Object> polylinesToAdd) {
-    if (polylinesToAdd != null) {
-      for (Object polylineToAdd : polylinesToAdd) {
-        @SuppressWarnings("unchecked")
-        Map<String, ?> polylineMap = (Map<String, ?>) polylineToAdd;
-        addJsonPolyline(polylineMap);
-      }
-    }
-  }
-
   void addPolylines(@NonNull List<Messages.PlatformPolyline> polylinesToAdd) {
     for (Messages.PlatformPolyline polylineToAdd : polylinesToAdd) {
       addJsonPolyline(polylineToAdd.getJson());

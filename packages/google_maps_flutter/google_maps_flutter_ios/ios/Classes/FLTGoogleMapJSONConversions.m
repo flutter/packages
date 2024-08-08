@@ -27,6 +27,12 @@ FGMPlatformLatLng *FGMGetPigeonLatLngForCoordinate(CLLocationCoordinate2D coord)
   return [FGMPlatformLatLng makeWithLatitude:coord.latitude longitude:coord.longitude];
 }
 
+GMSCoordinateBounds *FGMGetCoordinateBoundsForPigeonLatLngBounds(FGMPlatformLatLngBounds *bounds) {
+  return [[GMSCoordinateBounds alloc]
+      initWithCoordinate:FGMGetCoordinateForPigeonLatLng(bounds.northeast)
+              coordinate:FGMGetCoordinateForPigeonLatLng(bounds.southwest)];
+}
+
 FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(GMSCoordinateBounds *bounds) {
   return
       [FGMPlatformLatLngBounds makeWithNortheast:FGMGetPigeonLatLngForCoordinate(bounds.northEast)
@@ -38,6 +44,29 @@ FGMPlatformCameraPosition *FGMGetPigeonCameraPositionForPosition(GMSCameraPositi
                                              target:FGMGetPigeonLatLngForCoordinate(position.target)
                                                tilt:position.viewingAngle
                                                zoom:position.zoom];
+}
+
+GMSCameraPosition *FGMGetCameraPositionForPigeonCameraPosition(
+    FGMPlatformCameraPosition *position) {
+  return [GMSCameraPosition cameraWithTarget:FGMGetCoordinateForPigeonLatLng(position.target)
+                                        zoom:position.zoom
+                                     bearing:position.bearing
+                                viewingAngle:position.tilt];
+}
+
+extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type) {
+  switch (type) {
+    case FGMPlatformMapTypeNone:
+      return kGMSTypeNone;
+    case FGMPlatformMapTypeNormal:
+      return kGMSTypeNormal;
+    case FGMPlatformMapTypeSatellite:
+      return kGMSTypeSatellite;
+    case FGMPlatformMapTypeTerrain:
+      return kGMSTypeTerrain;
+    case FGMPlatformMapTypeHybrid:
+      return kGMSTypeHybrid;
+  }
 }
 
 FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
@@ -138,11 +167,6 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
   return [[GMSCoordinateBounds alloc]
       initWithCoordinate:[FLTGoogleMapJSONConversions locationFromLatLong:latlongs[0]]
               coordinate:[FLTGoogleMapJSONConversions locationFromLatLong:latlongs[1]]];
-}
-
-+ (GMSMapViewType)mapViewTypeFromTypeValue:(NSNumber *)typeValue {
-  int value = [typeValue intValue];
-  return (GMSMapViewType)(value == 0 ? 5 : value);
 }
 
 + (nullable GMSCameraUpdate *)cameraUpdateFromArray:(NSArray *)channelValue {

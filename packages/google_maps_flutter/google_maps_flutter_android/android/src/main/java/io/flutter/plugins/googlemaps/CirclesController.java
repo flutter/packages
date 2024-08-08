@@ -32,16 +32,6 @@ class CirclesController {
     this.googleMap = googleMap;
   }
 
-  void addJsonCircles(List<Object> circlesToAdd) {
-    if (circlesToAdd != null) {
-      for (Object circleToAdd : circlesToAdd) {
-        @SuppressWarnings("unchecked")
-        Map<String, ?> circleMap = (Map<String, ?>) circleToAdd;
-        addJsonCircle(circleMap);
-      }
-    }
-  }
-
   void addCircles(@NonNull List<Messages.PlatformCircle> circlesToAdd) {
     for (Messages.PlatformCircle circleToAdd : circlesToAdd) {
       addJsonCircle(circleToAdd.getJson());
