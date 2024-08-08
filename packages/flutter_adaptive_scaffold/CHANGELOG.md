@@ -8,6 +8,9 @@
 * Set `navRailTheme` when using the Drawer just like the other NavigationRails.
 * Add breakpoints for mediumLarge and extraLarge.
 * Add height and orientation based breakpoint checks.
+
+## 0.1.11+1
+
 * Allows custom animation duration for the NavigationRail and 
   BottomNavigationBar transitions. [flutter/flutter#112938](https://github.com/flutter/flutter/issues/112938)
 
