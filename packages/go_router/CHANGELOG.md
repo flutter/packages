@@ -1,6 +1,6 @@
 ## 14.2.5
 
-- Fixes an issue where android back button pops wrong page.
+- Fixes an issue where android back button pops pages in the wrong order.
 
 ## 14.2.4
 
