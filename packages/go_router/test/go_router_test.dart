@@ -398,6 +398,67 @@ void main() {
       expect(find.byKey(settings), findsOneWidget);
     });
 
+    testWidgets('android back button pop in correct order',
+        (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/141906.
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+            path: '/',
+            builder: (_, __) => const Text('home'),
+            routes: <RouteBase>[
+              ShellRoute(
+                builder: (
+                  BuildContext context,
+                  GoRouterState state,
+                  Widget child,
+                ) {
+                  return Column(
+                    children: <Widget>[
+                      const Text('shell'),
+                      child,
+                    ],
+                  );
+                },
+                routes: <GoRoute>[
+                  GoRoute(
+                    path: 'page',
+                    builder: (BuildContext context, __) {
+                      return TextButton(
+                        onPressed: () {
+                          Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute<void>(
+                                builder: (BuildContext context) {
+                              return const Text('pageless');
+                            }),
+                          );
+                        },
+                        child: const Text('page'),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ]),
+      ];
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/page');
+      expect(find.text('shell'), findsOneWidget);
+      expect(find.text('page'), findsOneWidget);
+
+      await tester.tap(find.text('page'));
+      await tester.pumpAndSettle();
+      expect(find.text('shell'), findsNothing);
+      expect(find.text('page'), findsNothing);
+      expect(find.text('pageless'), findsOneWidget);
+
+      final bool result = await router.routerDelegate.popRoute();
+      expect(result, isTrue);
+      await tester.pumpAndSettle();
+      expect(find.text('shell'), findsOneWidget);
+      expect(find.text('page'), findsOneWidget);
+      expect(find.text('pageless'), findsNothing);
+    });
+
     testWidgets('can correctly pop stacks of repeated pages',
         (WidgetTester tester) async {
       // Regression test for https://github.com/flutter/flutter/issues/#132229.
