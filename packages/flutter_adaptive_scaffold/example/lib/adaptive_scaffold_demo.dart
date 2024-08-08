@@ -86,14 +86,11 @@ class _MyHomePageState extends State<MyHomePage> {
       transitionDuration: Duration(milliseconds: _transitionDuration),
       // An option to override the default breakpoints used for small, medium,
       // mediumLarge, large, and extraLarge.
-      smallBreakpoint: const WidthPlatformBreakpoint(endWidth: 700),
-      mediumBreakpoint:
-          const WidthPlatformBreakpoint(beginWidth: 700, endWidth: 1000),
-      mediumLargeBreakpoint:
-          const WidthPlatformBreakpoint(beginWidth: 1000, endWidth: 1200),
-      largeBreakpoint:
-          const WidthPlatformBreakpoint(beginWidth: 1200, endWidth: 1600),
-      extraLargeBreakpoint: const WidthPlatformBreakpoint(beginWidth: 1600),
+      smallBreakpoint: const Breakpoint(endWidth: 700),
+      mediumBreakpoint: const Breakpoint(beginWidth: 700, endWidth: 1000),
+      mediumLargeBreakpoint: const Breakpoint(beginWidth: 1000, endWidth: 1200),
+      largeBreakpoint: const Breakpoint(beginWidth: 1200, endWidth: 1600),
+      extraLargeBreakpoint: const Breakpoint(beginWidth: 1600),
       useDrawer: false,
       selectedIndex: _selectedTab,
       onSelectedIndexChange: (int index) {
