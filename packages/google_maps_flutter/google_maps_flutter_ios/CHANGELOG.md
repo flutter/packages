@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
 ## 2.12.0
 
 * Adds support for marker clustering.
