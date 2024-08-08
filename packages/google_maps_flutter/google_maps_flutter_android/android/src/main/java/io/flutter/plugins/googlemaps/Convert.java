@@ -724,6 +724,18 @@ class Convert {
     }
   }
 
+  private static void interpretInfoWindowOptions(MarkerOptionsSink sink, Messages.PlatformInfoWindow infoWindow) {
+    String title = infoWindow.getTitle();
+    String snippet = infoWindow.getSnippet();
+    // snippet is nullable.
+    if (title != null) {
+      sink.setInfoWindowText(title, snippet);
+    }
+    Messages.PlatformOffset infoWindowAnchor = infoWindow.getAnchor();
+    final List<?> anchorData = toList(infoWindowAnchor);
+    sink.setInfoWindowAnchor(toFloat(anchorData.get(0)), toFloat(anchorData.get(1)));
+  }
+
   private static void interpretInfoWindowOptions(
       MarkerOptionsSink sink, Map<String, Object> infoWindow) {
     String title = (String) infoWindow.get("title");
