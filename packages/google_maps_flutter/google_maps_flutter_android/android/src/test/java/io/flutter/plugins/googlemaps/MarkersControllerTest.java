@@ -23,12 +23,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,9 +47,8 @@ public class MarkersControllerTest {
   private final float density = 1;
 
   private static Messages.PlatformMarker.Builder defaultBuilder() {
-    Map<String, Object> infoWindow = new HashMap<>();
-    List<Double> anchor = new ArrayList<>(Arrays.asList(0.5, 0.0));
-    infoWindow.put("anchor", anchor);
+    Messages.PlatformOffset anchor = new Messages.PlatformOffset.Builder().setDx(0.5).setDy(0.0).build();
+    Messages.PlatformInfoWindow infoWindow = new Messages.PlatformInfoWindow.Builder().setAnchor(anchor).build();
     return new Messages.PlatformMarker.Builder().setPosition(
             new Messages.PlatformLatLng.Builder().setLatitude(0.0).setLongitude(0.0).build()
     ).setAnchor(
