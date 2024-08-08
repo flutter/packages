@@ -1,3 +1,19 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 2.9.0
+
+* Adds clustering support.
+
+## 2.8.0
+
+* Adds support for heatmap layers.
+
+## 2.7.1
+
+* Updates the example app to use TLHC mode, per current package guidance.
+
 ## 2.7.0
 
 * Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.

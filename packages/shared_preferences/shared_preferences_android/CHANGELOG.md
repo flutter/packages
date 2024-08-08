@@ -1,3 +1,7 @@
+## 2.3.0
+
+* Adds new `SharedPreferencesAsyncAndroid` API.
+
 ## 2.2.4
 
 * Updates lint checks to ignore NewerVersionAvailable.

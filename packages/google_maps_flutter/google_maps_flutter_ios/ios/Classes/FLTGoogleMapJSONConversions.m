@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #import "FLTGoogleMapJSONConversions.h"
+#import "FGMMarkerUserData.h"
 
 /// Returns dict[key], or nil if dict[key] is NSNull.
 id FGMGetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
@@ -68,7 +69,37 @@ extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type)
   }
 }
 
+FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
+                                        NSString *clusterManagerIdentifier) {
+  NSMutableArray *markerIDs = [[NSMutableArray alloc] initWithCapacity:cluster.items.count];
+  GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] init];
+
+  for (GMSMarker *marker in cluster.items) {
+    [markerIDs addObject:FGMGetMarkerIdentifierFromMarker(marker)];
+    bounds = [bounds includingCoordinate:marker.position];
+  }
+
+  return [FGMPlatformCluster
+      makeWithClusterManagerId:clusterManagerIdentifier
+                      position:FGMGetPigeonLatLngForCoordinate(cluster.position)
+                        bounds:FGMGetPigeonLatLngBoundsForCoordinateBounds(bounds)
+                     markerIds:markerIDs];
+}
+
 @implementation FLTGoogleMapJSONConversions
+
+// These constants must match the corresponding constants in serialization.dart
+NSString *const kHeatmapsToAddKey = @"heatmapsToAdd";
+NSString *const kHeatmapIdKey = @"heatmapId";
+NSString *const kHeatmapDataKey = @"data";
+NSString *const kHeatmapGradientKey = @"gradient";
+NSString *const kHeatmapOpacityKey = @"opacity";
+NSString *const kHeatmapRadiusKey = @"radius";
+NSString *const kHeatmapMinimumZoomIntensityKey = @"minimumZoomIntensity";
+NSString *const kHeatmapMaximumZoomIntensityKey = @"maximumZoomIntensity";
+NSString *const kHeatmapGradientColorsKey = @"colors";
+NSString *const kHeatmapGradientStartPointsKey = @"startPoints";
+NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
 
 + (CLLocationCoordinate2D)locationFromLatLong:(NSArray *)latlong {
   return CLLocationCoordinate2DMake([latlong[0] doubleValue], [latlong[1] doubleValue]);
@@ -78,12 +109,24 @@ extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type)
   return CGPointMake([array[0] doubleValue], [array[1] doubleValue]);
 }
 
++ (NSArray *)arrayFromLocation:(CLLocationCoordinate2D)location {
+  return @[ @(location.latitude), @(location.longitude) ];
+}
+
 + (UIColor *)colorFromRGBA:(NSNumber *)numberColor {
   unsigned long value = [numberColor unsignedLongValue];
   return [UIColor colorWithRed:((float)((value & 0xFF0000) >> 16)) / 255.0
                          green:((float)((value & 0xFF00) >> 8)) / 255.0
                           blue:((float)(value & 0xFF)) / 255.0
                          alpha:((float)((value & 0xFF000000) >> 24)) / 255.0];
+}
+
++ (NSNumber *)RGBAFromColor:(UIColor *)color {
+  CGFloat red, green, blue, alpha;
+  [color getRed:&red green:&green blue:&blue alpha:&alpha];
+  unsigned long value = ((unsigned long)(alpha * 255) << 24) | ((unsigned long)(red * 255) << 16) |
+                        ((unsigned long)(green * 255) << 8) | ((unsigned long)(blue * 255));
+  return @(value);
 }
 
 + (NSArray<CLLocation *> *)pointsFromLatLongs:(NSArray *)data {
@@ -183,4 +226,69 @@ extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type)
 
   return lengths;
 }
+
++ (GMUWeightedLatLng *)weightedLatLngFromArray:(NSArray<id> *)data {
+  NSAssert(data.count == 2, @"WeightedLatLng data must have length of 2");
+  if (data.count != 2) {
+    return nil;
+  }
+  return [[GMUWeightedLatLng alloc]
+      initWithCoordinate:[FLTGoogleMapJSONConversions locationFromLatLong:data[0]]
+               intensity:[data[1] doubleValue]];
+}
+
++ (NSArray<id> *)arrayFromWeightedLatLng:(GMUWeightedLatLng *)weightedLatLng {
+  GMSMapPoint point = {weightedLatLng.point.x, weightedLatLng.point.y};
+  return @[
+    [FLTGoogleMapJSONConversions arrayFromLocation:GMSUnproject(point)], @(weightedLatLng.intensity)
+  ];
+}
+
++ (NSArray<GMUWeightedLatLng *> *)weightedDataFromArray:(NSArray<NSArray<id> *> *)data {
+  NSMutableArray<GMUWeightedLatLng *> *weightedData =
+      [[NSMutableArray alloc] initWithCapacity:data.count];
+  for (NSArray<id> *item in data) {
+    GMUWeightedLatLng *weightedLatLng = [FLTGoogleMapJSONConversions weightedLatLngFromArray:item];
+    if (weightedLatLng == nil) continue;
+    [weightedData addObject:weightedLatLng];
+  }
+
+  return weightedData;
+}
+
++ (NSArray<NSArray<id> *> *)arrayFromWeightedData:(NSArray<GMUWeightedLatLng *> *)weightedData {
+  NSMutableArray *data = [[NSMutableArray alloc] initWithCapacity:weightedData.count];
+  for (GMUWeightedLatLng *weightedLatLng in weightedData) {
+    [data addObject:[FLTGoogleMapJSONConversions arrayFromWeightedLatLng:weightedLatLng]];
+  }
+
+  return data;
+}
+
++ (GMUGradient *)gradientFromDictionary:(NSDictionary<NSString *, id> *)data {
+  NSArray *colorData = data[kHeatmapGradientColorsKey];
+  NSMutableArray<UIColor *> *colors = [[NSMutableArray alloc] initWithCapacity:colorData.count];
+  for (NSNumber *colorCode in colorData) {
+    [colors addObject:[FLTGoogleMapJSONConversions colorFromRGBA:colorCode]];
+  }
+
+  return [[GMUGradient alloc] initWithColors:colors
+                                 startPoints:data[kHeatmapGradientStartPointsKey]
+                                colorMapSize:[data[kHeatmapGradientColorMapSizeKey] intValue]];
+}
+
++ (NSDictionary<NSString *, id> *)dictionaryFromGradient:(GMUGradient *)gradient {
+  NSMutableArray<NSNumber *> *colorCodes =
+      [[NSMutableArray alloc] initWithCapacity:gradient.colors.count];
+  for (UIColor *color in gradient.colors) {
+    [colorCodes addObject:[FLTGoogleMapJSONConversions RGBAFromColor:color]];
+  }
+
+  return @{
+    kHeatmapGradientColorsKey : colorCodes,
+    kHeatmapGradientStartPointsKey : gradient.startPoints,
+    kHeatmapGradientColorMapSizeKey : @(gradient.mapSize)
+  };
+}
+
 @end

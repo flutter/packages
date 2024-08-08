@@ -31,6 +31,9 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 @class FGMPlatformCameraPosition;
 @class FGMPlatformCameraUpdate;
 @class FGMPlatformCircle;
+@class FGMPlatformHeatmap;
+@class FGMPlatformCluster;
+@class FGMPlatformClusterManager;
 @class FGMPlatformMarker;
 @class FGMPlatformPolygon;
 @class FGMPlatformPolyline;
@@ -66,7 +69,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithJson:(id)json;
 /// The update data, as JSON. This should only be set from
-/// CameraUpdate.toJson, and the native code must intepret it according to the
+/// CameraUpdate.toJson, and the native code must interpret it according to the
 /// internal implementation details of the CameraUpdate class.
 @property(nonatomic, strong) id json;
 @end
@@ -77,9 +80,42 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithJson:(id)json;
 /// The circle data, as JSON. This should only be set from
-/// Circle.toJson, and the native code must intepret it according to the
+/// Circle.toJson, and the native code must interpret it according to the
 /// internal implementation details of that method.
 @property(nonatomic, strong) id json;
+@end
+
+/// Pigeon equivalent of the Heatmap class.
+@interface FGMPlatformHeatmap : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithJson:(id)json;
+/// The heatmap data, as JSON. This should only be set from
+/// Heatmap.toJson, and the native code must interpret it according to the
+/// internal implementation details of that method.
+@property(nonatomic, strong) id json;
+@end
+
+/// Pigeon equivalent of Cluster.
+@interface FGMPlatformCluster : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithClusterManagerId:(NSString *)clusterManagerId
+                                position:(FGMPlatformLatLng *)position
+                                  bounds:(FGMPlatformLatLngBounds *)bounds
+                               markerIds:(NSArray<NSString *> *)markerIds;
+@property(nonatomic, copy) NSString *clusterManagerId;
+@property(nonatomic, strong) FGMPlatformLatLng *position;
+@property(nonatomic, strong) FGMPlatformLatLngBounds *bounds;
+@property(nonatomic, copy) NSArray<NSString *> *markerIds;
+@end
+
+/// Pigeon equivalent of the ClusterManager class.
+@interface FGMPlatformClusterManager : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithIdentifier:(NSString *)identifier;
+@property(nonatomic, copy) NSString *identifier;
 @end
 
 /// Pigeon equivalent of the Marker class.
@@ -88,7 +124,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithJson:(id)json;
 /// The marker data, as JSON. This should only be set from
-/// Marker.toJson, and the native code must intepret it according to the
+/// Marker.toJson, and the native code must interpret it according to the
 /// internal implementation details of that method.
 @property(nonatomic, strong) id json;
 @end
@@ -99,7 +135,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithJson:(id)json;
 /// The polygon data, as JSON. This should only be set from
-/// Polygon.toJson, and the native code must intepret it according to the
+/// Polygon.toJson, and the native code must interpret it according to the
 /// internal implementation details of that method.
 @property(nonatomic, strong) id json;
 @end
@@ -110,7 +146,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithJson:(id)json;
 /// The polyline data, as JSON. This should only be set from
-/// Polyline.toJson, and the native code must intepret it according to the
+/// Polyline.toJson, and the native code must interpret it according to the
 /// internal implementation details of that method.
 @property(nonatomic, strong) id json;
 @end
@@ -133,7 +169,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithJson:(id)json;
 /// The tile overlay data, as JSON. This should only be set from
-/// TileOverlay.toJson, and the native code must intepret it according to the
+/// TileOverlay.toJson, and the native code must interpret it according to the
 /// internal implementation details of that method.
 @property(nonatomic, strong) id json;
 @end
@@ -181,21 +217,25 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 @interface FGMPlatformMapViewCreationParams : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithInitialCameraPosition:(FGMPlatformCameraPosition *)initialCameraPosition
-                             mapConfiguration:(FGMPlatformMapConfiguration *)mapConfiguration
-                               initialCircles:(NSArray<FGMPlatformCircle *> *)initialCircles
-                               initialMarkers:(NSArray<FGMPlatformMarker *> *)initialMarkers
-                              initialPolygons:(NSArray<FGMPlatformPolygon *> *)initialPolygons
-                             initialPolylines:(NSArray<FGMPlatformPolyline *> *)initialPolylines
-                          initialTileOverlays:
-                              (NSArray<FGMPlatformTileOverlay *> *)initialTileOverlays;
++ (instancetype)
+    makeWithInitialCameraPosition:(FGMPlatformCameraPosition *)initialCameraPosition
+                 mapConfiguration:(FGMPlatformMapConfiguration *)mapConfiguration
+                   initialCircles:(NSArray<FGMPlatformCircle *> *)initialCircles
+                   initialMarkers:(NSArray<FGMPlatformMarker *> *)initialMarkers
+                  initialPolygons:(NSArray<FGMPlatformPolygon *> *)initialPolygons
+                 initialPolylines:(NSArray<FGMPlatformPolyline *> *)initialPolylines
+                  initialHeatmaps:(NSArray<FGMPlatformHeatmap *> *)initialHeatmaps
+              initialTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)initialTileOverlays
+           initialClusterManagers:(NSArray<FGMPlatformClusterManager *> *)initialClusterManagers;
 @property(nonatomic, strong) FGMPlatformCameraPosition *initialCameraPosition;
 @property(nonatomic, strong) FGMPlatformMapConfiguration *mapConfiguration;
 @property(nonatomic, copy) NSArray<FGMPlatformCircle *> *initialCircles;
 @property(nonatomic, copy) NSArray<FGMPlatformMarker *> *initialMarkers;
 @property(nonatomic, copy) NSArray<FGMPlatformPolygon *> *initialPolygons;
 @property(nonatomic, copy) NSArray<FGMPlatformPolyline *> *initialPolylines;
+@property(nonatomic, copy) NSArray<FGMPlatformHeatmap *> *initialHeatmaps;
 @property(nonatomic, copy) NSArray<FGMPlatformTileOverlay *> *initialTileOverlays;
+@property(nonatomic, copy) NSArray<FGMPlatformClusterManager *> *initialClusterManagers;
 @end
 
 /// Pigeon equivalent of MapConfiguration.
@@ -286,6 +326,15 @@ NSObject<FlutterMessageCodec> *FGMGetMessagesCodec(void);
                      changing:(NSArray<FGMPlatformCircle *> *)toChange
                      removing:(NSArray<NSString *> *)idsToRemove
                         error:(FlutterError *_Nullable *_Nonnull)error;
+/// Updates the set of heatmaps on the map.
+- (void)updateHeatmapsByAdding:(NSArray<FGMPlatformHeatmap *> *)toAdd
+                      changing:(NSArray<FGMPlatformHeatmap *> *)toChange
+                      removing:(NSArray<NSString *> *)idsToRemove
+                         error:(FlutterError *_Nullable *_Nonnull)error;
+/// Updates the set of custer managers for clusters on the map.
+- (void)updateClusterManagersByAdding:(NSArray<FGMPlatformClusterManager *> *)toAdd
+                             removing:(NSArray<NSString *> *)idsToRemove
+                                error:(FlutterError *_Nullable *_Nonnull)error;
 /// Updates the set of markers on the map.
 - (void)updateMarkersByAdding:(NSArray<FGMPlatformMarker *> *)toAdd
                      changing:(NSArray<FGMPlatformMarker *> *)toChange
@@ -410,6 +459,9 @@ extern void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
 /// Called when a circle is tapped.
 - (void)didTapCircleWithIdentifier:(NSString *)circleId
                         completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when a marker cluster is tapped.
+- (void)didTapCluster:(FGMPlatformCluster *)cluster
+           completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when a polygon is tapped.
 - (void)didTapPolygonWithIdentifier:(NSString *)polygonId
                          completion:(void (^)(FlutterError *_Nullable))completion;
@@ -457,11 +509,17 @@ extern void SetUpFGMMapsPlatformViewApiWithSuffix(id<FlutterBinaryMessenger> bin
 - (nullable NSNumber *)isMyLocationButtonEnabledWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable NSNumber *)isTrafficEnabledWithError:(FlutterError *_Nullable *_Nonnull)error;
-- (nullable FGMPlatformTileLayer *)
-    getInfoForTileOverlayWithIdentifier:(NSString *)tileOverlayId
-                                  error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable FGMPlatformTileLayer *)tileOverlayWithIdentifier:(NSString *)tileOverlayId
+                                                       error:
+                                                           (FlutterError *_Nullable *_Nonnull)error;
+- (nullable FGMPlatformHeatmap *)heatmapWithIdentifier:(NSString *)heatmapId
+                                                 error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable FGMPlatformZoomRange *)zoomRange:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<FGMPlatformCluster *> *)
+    clustersWithIdentifier:(NSString *)clusterManagerId
+                     error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFGMMapsInspectorApi(id<FlutterBinaryMessenger> binaryMessenger,

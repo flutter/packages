@@ -2,7 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+@import GoogleMapsUtils;
+
 #import "GoogleMapController.h"
+
+#import "FGMMarkerUserData.h"
+#import "FLTGoogleMapHeatmapController.h"
 #import "FLTGoogleMapJSONConversions.h"
 #import "FLTGoogleMapTileOverlayController.h"
 #import "messages.g.h"
@@ -115,10 +120,14 @@
 @property(nonatomic, strong) FGMMapsCallbackApi *dartCallbackHandler;
 @property(nonatomic, assign) BOOL trackCameraPosition;
 @property(nonatomic, weak) NSObject<FlutterPluginRegistrar> *registrar;
+@property(nonatomic, strong) FGMClusterManagersController *clusterManagersController;
 @property(nonatomic, strong) FLTMarkersController *markersController;
 @property(nonatomic, strong) FLTPolygonsController *polygonsController;
 @property(nonatomic, strong) FLTPolylinesController *polylinesController;
 @property(nonatomic, strong) FLTCirclesController *circlesController;
+
+// The controller that handles heatmaps
+@property(nonatomic, strong) FLTHeatmapsController *heatmapsController;
 @property(nonatomic, strong) FLTTileOverlaysController *tileOverlaysController;
 // The resulting error message, if any, from the last attempt to set the map style.
 // This is used to provide access to errors after the fact, since the map style is generally set at
@@ -174,8 +183,12 @@
     _mapView.delegate = self;
     _mapView.paddingAdjustmentBehavior = kGMSMapViewPaddingAdjustmentBehaviorNever;
     _registrar = registrar;
+    _clusterManagersController =
+        [[FGMClusterManagersController alloc] initWithMapView:_mapView
+                                              callbackHandler:_dartCallbackHandler];
     _markersController = [[FLTMarkersController alloc] initWithMapView:_mapView
                                                        callbackHandler:_dartCallbackHandler
+                                             clusterManagersController:_clusterManagersController
                                                              registrar:registrar];
     _polygonsController = [[FLTPolygonsController alloc] initWithMapView:_mapView
                                                          callbackHandler:_dartCallbackHandler
@@ -186,15 +199,21 @@
     _circlesController = [[FLTCirclesController alloc] initWithMapView:_mapView
                                                        callbackHandler:_dartCallbackHandler
                                                              registrar:registrar];
+    _heatmapsController = [[FLTHeatmapsController alloc] initWithMapView:_mapView];
     _tileOverlaysController =
         [[FLTTileOverlaysController alloc] initWithMapView:_mapView
                                            callbackHandler:_dartCallbackHandler
                                                  registrar:registrar];
+    [_clusterManagersController addClusterManagers:creationParameters.initialClusterManagers];
     [_markersController addMarkers:creationParameters.initialMarkers];
     [_polygonsController addPolygons:creationParameters.initialPolygons];
     [_polylinesController addPolylines:creationParameters.initialPolylines];
     [_circlesController addCircles:creationParameters.initialCircles];
+    [_heatmapsController addHeatmaps:creationParameters.initialHeatmaps];
     [_tileOverlaysController addTileOverlays:creationParameters.initialTileOverlays];
+
+    // Invoke clustering after markers are added.
+    [_clusterManagersController invokeClusteringForEachClusterManager];
 
     [_mapView addObserver:self forKeyPath:@"frame" options:0 context:nil];
 
@@ -365,28 +384,36 @@
 }
 
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  return [self.markersController didTapMarkerWithIdentifier:markerId];
+  if ([marker.userData isKindOfClass:[GMUStaticCluster class]]) {
+    GMUStaticCluster *cluster = marker.userData;
+    [self.clusterManagersController didTapCluster:cluster];
+    // When NO is returned, the map will focus on the cluster.
+    return NO;
+  }
+  return
+      [self.markersController didTapMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)];
 }
 
 - (void)mapView:(GMSMapView *)mapView didEndDraggingMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  [self.markersController didEndDraggingMarkerWithIdentifier:markerId location:marker.position];
+  [self.markersController
+      didEndDraggingMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)
+                                location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didBeginDraggingMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  [self.markersController didStartDraggingMarkerWithIdentifier:markerId location:marker.position];
+  [self.markersController
+      didStartDraggingMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)
+                                  location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didDragMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  [self.markersController didDragMarkerWithIdentifier:markerId location:marker.position];
+  [self.markersController didDragMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)
+                                             location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapInfoWindowOfMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  [self.markersController didTapInfoWindowOfMarkerWithIdentifier:markerId];
+  [self.markersController
+      didTapInfoWindowOfMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)];
 }
 - (void)mapView:(GMSMapView *)mapView didTapOverlay:(GMSOverlay *)overlay {
   NSString *overlayId = overlay.userData[0];
@@ -515,6 +542,15 @@
   [self.controller.circlesController removeCirclesWithIdentifiers:idsToRemove];
 }
 
+- (void)updateHeatmapsByAdding:(nonnull NSArray<FGMPlatformHeatmap *> *)toAdd
+                      changing:(nonnull NSArray<FGMPlatformHeatmap *> *)toChange
+                      removing:(nonnull NSArray<NSString *> *)idsToRemove
+                         error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [self.controller.heatmapsController addHeatmaps:toAdd];
+  [self.controller.heatmapsController changeHeatmaps:toChange];
+  [self.controller.heatmapsController removeHeatmapsWithIdentifiers:idsToRemove];
+}
+
 - (void)updateWithMapConfiguration:(nonnull FGMPlatformMapConfiguration *)configuration
                              error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   [self.controller interpretMapConfiguration:configuration];
@@ -527,6 +563,16 @@
   [self.controller.markersController addMarkers:toAdd];
   [self.controller.markersController changeMarkers:toChange];
   [self.controller.markersController removeMarkersWithIdentifiers:idsToRemove];
+
+  // Invoke clustering after markers are added.
+  [self.controller.clusterManagersController invokeClusteringForEachClusterManager];
+}
+
+- (void)updateClusterManagersByAdding:(nonnull NSArray<FGMPlatformClusterManager *> *)toAdd
+                             removing:(nonnull NSArray<NSString *> *)idsToRemove
+                                error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [self.controller.clusterManagersController addClusterManagers:toAdd];
+  [self.controller.clusterManagersController removeClusterManagersWithIdentifiers:idsToRemove];
 }
 
 - (void)updatePolygonsByAdding:(nonnull NSArray<FGMPlatformPolygon *> *)toAdd
@@ -724,8 +770,8 @@
 }
 
 - (nullable FGMPlatformTileLayer *)
-    getInfoForTileOverlayWithIdentifier:(nonnull NSString *)tileOverlayId
-                                  error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+    tileOverlayWithIdentifier:(nonnull NSString *)tileOverlayId
+                        error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   GMSTileLayer *layer =
       [self.controller.tileOverlaysController tileOverlayWithIdentifier:tileOverlayId].layer;
   if (!layer) {
@@ -735,6 +781,24 @@
                                         fadeIn:layer.fadeIn
                                        opacity:layer.opacity
                                         zIndex:layer.zIndex];
+}
+
+- (nullable FGMPlatformHeatmap *)
+    heatmapWithIdentifier:(nonnull NSString *)heatmapId
+                    error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  NSDictionary<NSString *, id> *heatmapInfo =
+      [self.controller.heatmapsController heatmapInfoWithIdentifier:heatmapId];
+  if (!heatmapInfo) {
+    return nil;
+  }
+  return [FGMPlatformHeatmap makeWithJson:heatmapInfo];
+}
+
+- (nullable NSArray<FGMPlatformCluster *> *)
+    clustersWithIdentifier:(NSString *)clusterManagerId
+                     error:(FlutterError *_Nullable *_Nonnull)error {
+  return [self.controller.clusterManagersController clustersWithIdentifier:clusterManagerId
+                                                                     error:error];
 }
 
 - (nullable NSNumber *)isCompassEnabledWithError:

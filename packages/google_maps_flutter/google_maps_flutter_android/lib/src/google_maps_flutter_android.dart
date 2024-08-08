@@ -14,6 +14,7 @@ import 'package:stream_transform/stream_transform.dart';
 
 import 'google_map_inspector_android.dart';
 import 'messages.g.dart';
+import 'serialization.dart';
 
 // TODO(stuartmorgan): Remove the dependency on platform interface toJson
 // methods. Channel serialization details should all be package-internal.
@@ -293,6 +294,20 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateHeatmaps(
+    HeatmapUpdates heatmapUpdates, {
+    required int mapId,
+  }) {
+    return _hostApi(mapId).updateHeatmaps(
+      heatmapUpdates.heatmapsToAdd.map(_platformHeatmapFromHeatmap).toList(),
+      heatmapUpdates.heatmapsToChange.map(_platformHeatmapFromHeatmap).toList(),
+      heatmapUpdates.heatmapIdsToRemove
+          .map((HeatmapId id) => id.value)
+          .toList(),
+    );
+  }
+
+  @override
   Future<void> updateTileOverlays({
     required Set<TileOverlay> newTileOverlays,
     required int mapId,
@@ -504,6 +519,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
           mapObjects.polylines.map(_platformPolylineFromPolyline).toList(),
       initialCircles:
           mapObjects.circles.map(_platformCircleFromCircle).toList(),
+      initialHeatmaps:
+          mapObjects.heatmaps.map(_platformHeatmapFromHeatmap).toList(),
       initialTileOverlays: mapObjects.tileOverlays
           .map(_platformTileOverlayFromTileOverlay)
           .toList(),
@@ -679,6 +696,10 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     // See the TODOs at the top of this file and on the 'json' field in
     // messages.dart.
     return PlatformCircle(json: circle.toJson() as Map<String, Object?>);
+  }
+
+  static PlatformHeatmap _platformHeatmapFromHeatmap(Heatmap heatmap) {
+    return PlatformHeatmap(json: serializeHeatmap(heatmap));
   }
 
   static PlatformClusterManager _platformClusterManagerFromClusterManager(

@@ -257,7 +257,7 @@ public class Messages {
   public static final class PlatformCameraUpdate {
     /**
      * The update data, as JSON. This should only be set from CameraUpdate.toJson, and the native
-     * code must intepret it according to the internal implementation details of the CameraUpdate
+     * code must interpret it according to the internal implementation details of the CameraUpdate
      * class.
      */
     private @NonNull Object json;
@@ -333,7 +333,7 @@ public class Messages {
   public static final class PlatformCircle {
     /**
      * The circle data, as JSON. This should only be set from Circle.toJson, and the native code
-     * must intepret it according to the internal implementation details of that method.
+     * must interpret it according to the internal implementation details of that method.
      */
     private @NonNull Map<String, Object> json;
 
@@ -394,6 +394,81 @@ public class Messages {
 
     static @NonNull PlatformCircle fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformCircle pigeonResult = new PlatformCircle();
+      Object json = __pigeon_list.get(0);
+      pigeonResult.setJson((Map<String, Object>) json);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Pigeon equivalent of the Heatmap class.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformHeatmap {
+    /**
+     * The heatmap data, as JSON. This should only be set from Heatmap.toJson, and the native code
+     * must interpret it according to the internal implementation details of that method.
+     */
+    private @NonNull Map<String, Object> json;
+
+    public @NonNull Map<String, Object> getJson() {
+      return json;
+    }
+
+    public void setJson(@NonNull Map<String, Object> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"json\" is null.");
+      }
+      this.json = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformHeatmap() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformHeatmap that = (PlatformHeatmap) o;
+      return json.equals(that.json);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(json);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Map<String, Object> json;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setJson(@NonNull Map<String, Object> setterArg) {
+        this.json = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformHeatmap build() {
+        PlatformHeatmap pigeonReturn = new PlatformHeatmap();
+        pigeonReturn.setJson(json);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(json);
+      return toListResult;
+    }
+
+    static @NonNull PlatformHeatmap fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformHeatmap pigeonResult = new PlatformHeatmap();
       Object json = __pigeon_list.get(0);
       pigeonResult.setJson((Map<String, Object>) json);
       return pigeonResult;
@@ -479,7 +554,7 @@ public class Messages {
   public static final class PlatformMarker {
     /**
      * The marker data, as JSON. This should only be set from Marker.toJson, and the native code
-     * must intepret it according to the internal implementation details of that method.
+     * must interpret it according to the internal implementation details of that method.
      */
     private @NonNull Map<String, Object> json;
 
@@ -554,7 +629,7 @@ public class Messages {
   public static final class PlatformPolygon {
     /**
      * The polygon data, as JSON. This should only be set from Polygon.toJson, and the native code
-     * must intepret it according to the internal implementation details of that method.
+     * must interpret it according to the internal implementation details of that method.
      */
     private @NonNull Map<String, Object> json;
 
@@ -629,7 +704,7 @@ public class Messages {
   public static final class PlatformPolyline {
     /**
      * The polyline data, as JSON. This should only be set from Polyline.toJson, and the native code
-     * must intepret it according to the internal implementation details of that method.
+     * must interpret it according to the internal implementation details of that method.
      */
     private @NonNull Map<String, Object> json;
 
@@ -830,7 +905,8 @@ public class Messages {
   public static final class PlatformTileOverlay {
     /**
      * The tile overlay data, as JSON. This should only be set from TileOverlay.toJson, and the
-     * native code must intepret it according to the internal implementation details of that method.
+     * native code must interpret it according to the internal implementation details of that
+     * method.
      */
     private @NonNull Map<String, Object> json;
 
@@ -1539,6 +1615,19 @@ public class Messages {
       this.initialPolylines = setterArg;
     }
 
+    private @NonNull List<PlatformHeatmap> initialHeatmaps;
+
+    public @NonNull List<PlatformHeatmap> getInitialHeatmaps() {
+      return initialHeatmaps;
+    }
+
+    public void setInitialHeatmaps(@NonNull List<PlatformHeatmap> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialHeatmaps\" is null.");
+      }
+      this.initialHeatmaps = setterArg;
+    }
+
     private @NonNull List<PlatformTileOverlay> initialTileOverlays;
 
     public @NonNull List<PlatformTileOverlay> getInitialTileOverlays() {
@@ -1583,6 +1672,7 @@ public class Messages {
           && initialMarkers.equals(that.initialMarkers)
           && initialPolygons.equals(that.initialPolygons)
           && initialPolylines.equals(that.initialPolylines)
+          && initialHeatmaps.equals(that.initialHeatmaps)
           && initialTileOverlays.equals(that.initialTileOverlays)
           && initialClusterManagers.equals(that.initialClusterManagers);
     }
@@ -1596,6 +1686,7 @@ public class Messages {
           initialMarkers,
           initialPolygons,
           initialPolylines,
+          initialHeatmaps,
           initialTileOverlays,
           initialClusterManagers);
     }
@@ -1650,6 +1741,14 @@ public class Messages {
         return this;
       }
 
+      private @Nullable List<PlatformHeatmap> initialHeatmaps;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialHeatmaps(@NonNull List<PlatformHeatmap> setterArg) {
+        this.initialHeatmaps = setterArg;
+        return this;
+      }
+
       private @Nullable List<PlatformTileOverlay> initialTileOverlays;
 
       @CanIgnoreReturnValue
@@ -1675,6 +1774,7 @@ public class Messages {
         pigeonReturn.setInitialMarkers(initialMarkers);
         pigeonReturn.setInitialPolygons(initialPolygons);
         pigeonReturn.setInitialPolylines(initialPolylines);
+        pigeonReturn.setInitialHeatmaps(initialHeatmaps);
         pigeonReturn.setInitialTileOverlays(initialTileOverlays);
         pigeonReturn.setInitialClusterManagers(initialClusterManagers);
         return pigeonReturn;
@@ -1683,13 +1783,14 @@ public class Messages {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(8);
+      ArrayList<Object> toListResult = new ArrayList<Object>(9);
       toListResult.add(initialCameraPosition);
       toListResult.add(mapConfiguration);
       toListResult.add(initialCircles);
       toListResult.add(initialMarkers);
       toListResult.add(initialPolygons);
       toListResult.add(initialPolylines);
+      toListResult.add(initialHeatmaps);
       toListResult.add(initialTileOverlays);
       toListResult.add(initialClusterManagers);
       return toListResult;
@@ -1710,9 +1811,11 @@ public class Messages {
       pigeonResult.setInitialPolygons((List<PlatformPolygon>) initialPolygons);
       Object initialPolylines = __pigeon_list.get(5);
       pigeonResult.setInitialPolylines((List<PlatformPolyline>) initialPolylines);
-      Object initialTileOverlays = __pigeon_list.get(6);
+      Object initialHeatmaps = __pigeon_list.get(6);
+      pigeonResult.setInitialHeatmaps((List<PlatformHeatmap>) initialHeatmaps);
+      Object initialTileOverlays = __pigeon_list.get(7);
       pigeonResult.setInitialTileOverlays((List<PlatformTileOverlay>) initialTileOverlays);
-      Object initialClusterManagers = __pigeon_list.get(7);
+      Object initialClusterManagers = __pigeon_list.get(8);
       pigeonResult.setInitialClusterManagers((List<PlatformClusterManager>) initialClusterManagers);
       return pigeonResult;
     }
@@ -2588,45 +2691,47 @@ public class Messages {
         case (byte) 131:
           return PlatformCircle.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return PlatformClusterManager.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformHeatmap.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformClusterManager.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
-          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
-          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
-          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 137:
-          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 138:
-          return PlatformEdgeInsets.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 139:
-          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformEdgeInsets.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 140:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 141:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 142:
-          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 143:
-          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 144:
-          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 145:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 146:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 147:
-          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 148:
+          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 149:
           // Manual edit to fix https://github.com/flutter/flutter/issues/150108
           // the way the generator will fix it once the PR lands.
           {
             Object value = readValue(buffer);
             return value == null ? null : PlatformMapType.values()[(int) value];
           }
-        case (byte) 149:
+        case (byte) 150:
           // Manual edit to fix https://github.com/flutter/flutter/issues/150108
           // the way the generator will fix it once the PR lands.
           {
@@ -2649,59 +2754,62 @@ public class Messages {
       } else if (value instanceof PlatformCircle) {
         stream.write(131);
         writeValue(stream, ((PlatformCircle) value).toList());
-      } else if (value instanceof PlatformClusterManager) {
+      } else if (value instanceof PlatformHeatmap) {
         stream.write(132);
+        writeValue(stream, ((PlatformHeatmap) value).toList());
+      } else if (value instanceof PlatformClusterManager) {
+        stream.write(133);
         writeValue(stream, ((PlatformClusterManager) value).toList());
       } else if (value instanceof PlatformMarker) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, ((PlatformMarker) value).toList());
       } else if (value instanceof PlatformPolygon) {
-        stream.write(134);
+        stream.write(135);
         writeValue(stream, ((PlatformPolygon) value).toList());
       } else if (value instanceof PlatformPolyline) {
-        stream.write(135);
+        stream.write(136);
         writeValue(stream, ((PlatformPolyline) value).toList());
       } else if (value instanceof PlatformTile) {
-        stream.write(136);
+        stream.write(137);
         writeValue(stream, ((PlatformTile) value).toList());
       } else if (value instanceof PlatformTileOverlay) {
-        stream.write(137);
+        stream.write(138);
         writeValue(stream, ((PlatformTileOverlay) value).toList());
       } else if (value instanceof PlatformEdgeInsets) {
-        stream.write(138);
+        stream.write(139);
         writeValue(stream, ((PlatformEdgeInsets) value).toList());
       } else if (value instanceof PlatformLatLng) {
-        stream.write(139);
+        stream.write(140);
         writeValue(stream, ((PlatformLatLng) value).toList());
       } else if (value instanceof PlatformLatLngBounds) {
-        stream.write(140);
+        stream.write(141);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(141);
+        stream.write(142);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformCameraTargetBounds) {
-        stream.write(142);
+        stream.write(143);
         writeValue(stream, ((PlatformCameraTargetBounds) value).toList());
       } else if (value instanceof PlatformMapViewCreationParams) {
-        stream.write(143);
+        stream.write(144);
         writeValue(stream, ((PlatformMapViewCreationParams) value).toList());
       } else if (value instanceof PlatformMapConfiguration) {
-        stream.write(144);
+        stream.write(145);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(145);
+        stream.write(146);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(146);
+        stream.write(147);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(147);
+        stream.write(148);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else if (value instanceof PlatformMapType) {
-        stream.write(148);
+        stream.write(149);
         writeValue(stream, value == null ? null : ((PlatformMapType) value).index);
       } else if (value instanceof PlatformRendererType) {
-        stream.write(149);
+        stream.write(150);
         writeValue(stream, value == null ? null : ((PlatformRendererType) value).index);
       } else {
         super.writeValue(stream, value);
@@ -2754,6 +2862,11 @@ public class Messages {
     void updateCircles(
         @NonNull List<PlatformCircle> toAdd,
         @NonNull List<PlatformCircle> toChange,
+        @NonNull List<String> idsToRemove);
+    /** Updates the set of heatmaps on the map. */
+    void updateHeatmaps(
+        @NonNull List<PlatformHeatmap> toAdd,
+        @NonNull List<PlatformHeatmap> toChange,
         @NonNull List<String> idsToRemove);
     /** Updates the set of custer managers for clusters on the map. */
     void updateClusterManagers(
@@ -2910,6 +3023,34 @@ public class Messages {
                 List<String> idsToRemoveArg = (List<String>) args.get(2);
                 try {
                   api.updateCircles(toAddArg, toChangeArg, idsToRemoveArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateHeatmaps"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<PlatformHeatmap> toAddArg = (List<PlatformHeatmap>) args.get(0);
+                List<PlatformHeatmap> toChangeArg = (List<PlatformHeatmap>) args.get(1);
+                List<String> idsToRemoveArg = (List<String>) args.get(2);
+                try {
+                  api.updateHeatmaps(toAddArg, toChangeArg, idsToRemoveArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

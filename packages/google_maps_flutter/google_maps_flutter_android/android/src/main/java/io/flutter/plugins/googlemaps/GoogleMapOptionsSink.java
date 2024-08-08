@@ -58,6 +58,8 @@ interface GoogleMapOptionsSink {
 
   void setInitialCircles(@NonNull List<Messages.PlatformCircle> initialCircles);
 
+  void setInitialHeatmaps(@NonNull List<Messages.PlatformHeatmap> initialHeatmaps);
+
   void setInitialTileOverlays(@NonNull List<Messages.PlatformTileOverlay> initialTileOverlays);
 
   void setMapStyle(@Nullable String style);

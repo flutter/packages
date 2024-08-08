@@ -28,30 +28,30 @@ import 'package:google_maps/google_maps.dart' as gmaps;
 /// (not of the whole screen/app).
 ///
 /// See: https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/Projection#public-point-toscreenlocation-latlng-location
-gmaps.Point toScreenLocation(gmaps.GMap map, gmaps.LatLng coords) {
-  final num? zoom = map.zoom;
-  final gmaps.LatLngBounds? bounds = map.bounds;
-  final gmaps.Projection? projection = map.projection;
-
-  assert(
-      bounds != null, 'Map Bounds required to compute screen x/y of LatLng.');
-  assert(projection != null,
+gmaps.Point toScreenLocation(gmaps.Map map, gmaps.LatLng coords) {
+  assert(map.bounds != null,
+      'Map Bounds required to compute screen x/y of LatLng.');
+  assert(map.projection != null,
       'Map Projection required to compute screen x/y of LatLng.');
-  assert(zoom != null,
+  assert(map.isZoomDefined(),
       'Current map zoom level required to compute screen x/y of LatLng.');
 
-  final gmaps.LatLng ne = bounds!.northEast;
+  final gmaps.LatLngBounds bounds = map.bounds!;
+  final gmaps.Projection projection = map.projection!;
+  final num zoom = map.zoom;
+
+  final gmaps.LatLng ne = bounds.northEast;
   final gmaps.LatLng sw = bounds.southWest;
 
-  final gmaps.Point topRight = projection!.fromLatLngToPoint!(ne)!;
-  final gmaps.Point bottomLeft = projection.fromLatLngToPoint!(sw)!;
+  final gmaps.Point topRight = projection.fromLatLngToPoint(ne)!;
+  final gmaps.Point bottomLeft = projection.fromLatLngToPoint(sw)!;
 
-  final int scale = 1 << (zoom!.toInt()); // 2 ^ zoom
+  final int scale = 1 << (zoom.toInt()); // 2 ^ zoom
 
-  final gmaps.Point worldPoint = projection.fromLatLngToPoint!(coords)!;
+  final gmaps.Point worldPoint = projection.fromLatLngToPoint(coords)!;
 
   return gmaps.Point(
-    ((worldPoint.x! - bottomLeft.x!) * scale).toInt(),
-    ((worldPoint.y! - topRight.y!) * scale).toInt(),
+    ((worldPoint.x - bottomLeft.x) * scale).toInt(),
+    ((worldPoint.y - topRight.y) * scale).toInt(),
   );
 }

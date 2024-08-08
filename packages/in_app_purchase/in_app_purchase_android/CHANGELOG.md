@@ -1,3 +1,7 @@
+## 0.3.6+5
+
+* Bumps com.android.billingclient:billing from 6.1.0 to 6.2.0.
+
 ## 0.3.6+4
 
 * Bumps androidx.annotation:annotation from 1.8.0 to 1.8.1.
