@@ -26,6 +26,10 @@ extern CLLocationCoordinate2D FGMGetCoordinateForPigeonLatLng(FGMPlatformLatLng 
 /// Converts a CLLocationCoordinate2D to its Pigeon representation.
 extern FGMPlatformLatLng *FGMGetPigeonLatLngForCoordinate(CLLocationCoordinate2D coord);
 
+/// Creates a GMSCoordinateBounds from its Pigeon representation.
+extern GMSCoordinateBounds *FGMGetCoordinateBoundsForPigeonLatLngBounds(
+    FGMPlatformLatLngBounds *bounds);
+
 /// Converts a GMSCoordinateBounds to its Pigeon representation.
 extern FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(
     GMSCoordinateBounds *bounds);
@@ -33,6 +37,13 @@ extern FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(
 /// Converts a GMSCameraPosition to its Pigeon representation.
 extern FGMPlatformCameraPosition *FGMGetPigeonCameraPositionForPosition(
     GMSCameraPosition *position);
+
+/// Creates a GMSCameraPosition from its Pigeon representation.
+extern GMSCameraPosition *FGMGetCameraPositionForPigeonCameraPosition(
+    FGMPlatformCameraPosition *position);
+
+/// Creates a GMSMapViewType from its Pigeon representation.
+extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type);
 
 /// Converts a GMUStaticCluster to its Pigeon representation.
 extern FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
@@ -61,7 +72,6 @@ extern NSString *const kHeatmapGradientColorMapSizeKey;
 + (NSArray<NSArray<CLLocation *> *> *)holesFromPointsArray:(NSArray *)data;
 + (nullable GMSCameraPosition *)cameraPostionFromDictionary:(nullable NSDictionary *)channelValue;
 + (GMSCoordinateBounds *)coordinateBoundsFromLatLongs:(NSArray *)latlongs;
-+ (GMSMapViewType)mapViewTypeFromTypeValue:(NSNumber *)value;
 + (nullable GMSCameraUpdate *)cameraUpdateFromArray:(NSArray *)channelValue;
 + (nullable GMUWeightedLatLng *)weightedLatLngFromArray:(NSArray<id> *)data;
 + (NSArray<id> *)arrayFromWeightedLatLng:(GMUWeightedLatLng *)weightedLatLng;

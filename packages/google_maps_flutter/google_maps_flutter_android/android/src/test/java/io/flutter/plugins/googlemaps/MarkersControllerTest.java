@@ -24,7 +24,6 @@ import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -72,7 +70,6 @@ public class MarkersControllerTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.openMocks(this);
     assetManager = ApplicationProvider.getApplicationContext().getAssets();
     context = ApplicationProvider.getApplicationContext();
     flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
@@ -136,6 +133,7 @@ public class MarkersControllerTest {
     final LatLng latLng = new LatLng(1.1, 2.2);
 
     final List<Messages.PlatformMarker> markers = Collections.singletonList(defaultBuilder().setMarkerId(googleMarkerId).build());
+
     controller.addMarkers(markers);
     controller.onMarkerDrag(googleMarkerId, latLng);
 
@@ -189,7 +187,7 @@ public class MarkersControllerTest {
     Mockito.verify(marker, times(1)).setPosition(latLng2);
 
     // Remove marker
-    controller.removeMarkers(Arrays.asList(googleMarkerId));
+    controller.removeMarkers(Collections.singletonList(googleMarkerId));
 
     Mockito.verify(clusterManagersController, times(1))
         .removeItem(
@@ -225,7 +223,7 @@ public class MarkersControllerTest {
     controller.changeMarkers(markerUpdates);
     Mockito.verify(marker, times(1)).setAlpha(alpha);
 
-    controller.removeMarkers(Arrays.asList(googleMarkerId));
+    controller.removeMarkers(Collections.singletonList(googleMarkerId));
 
     // clusterManagersController should not be called when removing the marker
     Mockito.verify(clusterManagersController, times(0)).removeItem(any());

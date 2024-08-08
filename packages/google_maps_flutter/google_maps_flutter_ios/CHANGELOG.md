@@ -1,5 +1,6 @@
-## NEXT
+## 2.13.0
 
+* Updates map configuration and platform view creation parameters to use Pigeon.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 2.12.0

@@ -20,11 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler;
 
-/// Creates cluster managers and initializes them form JSON data.
-///
-/// @param clusterManagersToAdd Array of cluster managers JSON data to add.
-- (void)addJSONClusterManagers:(NSArray<NSDictionary *> *)clusterManagersToAdd;
-
 /// Creates cluster managers and initializes them.
 ///
 /// @param clusterManagersToAdd Array of cluster managers to add.
