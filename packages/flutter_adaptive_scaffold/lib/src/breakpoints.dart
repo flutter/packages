@@ -86,7 +86,7 @@ class Breakpoints {
       Breakpoint.extraLarge(platform: Breakpoint.mobile);
 }
 
-/// An interface to define the conditions that distinguish between types of
+/// A class to define the conditions that distinguish between types of
 /// screens.
 ///
 /// Adaptive apps usually display differently depending on the screen type: a
