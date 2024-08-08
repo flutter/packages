@@ -21,7 +21,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_plugin_android_lifecycle: ^2.0.1
-  google_maps_flutter_platform_interface: ^2.9.1
+  google_maps_flutter_platform_interface: ^2.9.0
   stream_transform: ^2.0.0
 
 dev_dependencies:
@@ -37,8 +37,3 @@ topics:
   - google-maps
   - google-maps-flutter
   - map
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-   {google_maps_flutter_platform_interface: {path: ../../google_maps_flutter/google_maps_flutter_platform_interface}}
