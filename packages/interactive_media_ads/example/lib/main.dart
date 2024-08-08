@@ -129,6 +129,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
     return _adsLoader.requestAds(AdsRequest(
       adTagUrl: _adTagUrl,
       contentProgressProvider: _contentProgressProvider,
+      contentDuration: _contentVideoController.value.duration,
     ));
   }
 
