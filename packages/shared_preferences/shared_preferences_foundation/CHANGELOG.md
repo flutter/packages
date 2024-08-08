@@ -1,4 +1,4 @@
-## NEXT
+## 2.5.1
 * Fixes getting all preferences when suite name is used.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
