@@ -732,8 +732,7 @@ class Convert {
       sink.setInfoWindowText(title, snippet);
     }
     Messages.PlatformOffset infoWindowAnchor = infoWindow.getAnchor();
-    final List<?> anchorData = toList(infoWindowAnchor);
-    sink.setInfoWindowAnchor(toFloat(anchorData.get(0)), toFloat(anchorData.get(1)));
+    sink.setInfoWindowAnchor(infoWindowAnchor.getDx().floatValue(), infoWindowAnchor.getDy().floatValue());
   }
 
   private static void interpretInfoWindowOptions(
