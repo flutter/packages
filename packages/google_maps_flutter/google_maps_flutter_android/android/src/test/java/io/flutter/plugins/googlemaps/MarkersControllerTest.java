@@ -66,7 +66,7 @@ public class MarkersControllerTest {
             .setRotation(0.0)
             .setZIndex(0.0)
             .setConsumeTapEvents(false)
-            .setIcon(Collections.singletonList("defaultMarker"))
+            .setIcon(Collections.singletonList("null"))
             .setInfoWindow(infoWindow);
   }
 
@@ -143,14 +143,12 @@ public class MarkersControllerTest {
         .onMarkerDrag(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), any());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = IllegalStateException.class)
   public void controller_AddMarkerThrowsErrorIfMarkerIdIsNull() {
-    final Map<String, String> markerOptions = new HashMap<>();
-
     final List<Messages.PlatformMarker> markers = Collections.singletonList(defaultBuilder().build());
     try {
       controller.addMarkers(markers);
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalStateException e) {
       assertEquals("markerId was null", e.getMessage());
       throw e;
     }

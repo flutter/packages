@@ -107,6 +107,8 @@ class Convert {
         }
         final Map<?, ?> byteData = toMap(data.get(1));
         return getBitmapFromBytes(byteData, density, new BitmapDescriptorFactoryWrapper());
+      case "null":
+        return null;
       default:
         throw new IllegalArgumentException("Cannot interpret " + o + " as BitmapDescriptor");
     }
