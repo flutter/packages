@@ -23,7 +23,7 @@ void _addIfNonNull(Map<String, Object?> map, String fieldName, Object? value) {
 }
 
 /// Serialize [Heatmap]
-Object serializeHeatmap(Heatmap heatmap) {
+Map<String, Object?> serializeHeatmap(Heatmap heatmap) {
   final Map<String, Object> json = <String, Object>{};
 
   _addIfNonNull(json, _heatmapIdKey, heatmap.heatmapId.value);

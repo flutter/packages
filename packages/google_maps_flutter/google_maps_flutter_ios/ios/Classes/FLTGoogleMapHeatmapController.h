@@ -54,9 +54,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// Initializes the controller with a GMSMapView.
 - (instancetype)initWithMapView:(GMSMapView *)mapView;
 
-/// Adds heatmaps to the map from JSON data.
-- (void)addJSONHeatmaps:(NSArray<NSDictionary<NSString *, id> *> *)heatmapsToAdd;
-
 /// Adds heatmaps to the map.
 - (void)addHeatmaps:(NSArray<FGMPlatformHeatmap *> *)heatmapsToAdd;
 

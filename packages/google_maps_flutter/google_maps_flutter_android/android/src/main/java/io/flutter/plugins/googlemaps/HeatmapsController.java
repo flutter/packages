@@ -33,17 +33,6 @@ public class HeatmapsController {
     this.googleMap = googleMap;
   }
 
-  /** Adds heatmaps to the map from json data. */
-  void addJsonHeatmaps(List<Object> heatmapsToAdd) {
-    if (heatmapsToAdd != null) {
-      for (Object heatmapToAdd : heatmapsToAdd) {
-        @SuppressWarnings("unchecked")
-        Map<String, ?> heatmapMap = (Map<String, ?>) heatmapToAdd;
-        addJsonHeatmap(heatmapMap);
-      }
-    }
-  }
-
   /** Adds heatmaps to the map. */
   void addHeatmaps(@NonNull List<Messages.PlatformHeatmap> heatmapsToAdd) {
     for (Messages.PlatformHeatmap heatmapToAdd : heatmapsToAdd) {

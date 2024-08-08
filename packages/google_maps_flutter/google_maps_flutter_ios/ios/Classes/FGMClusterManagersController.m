@@ -33,13 +33,6 @@
   return self;
 }
 
-- (void)addJSONClusterManagers:(NSArray<NSDictionary *> *)clusterManagersToAdd {
-  for (NSDictionary *clusterDict in clusterManagersToAdd) {
-    NSString *identifier = clusterDict[@"clusterManagerId"];
-    [self addClusterManager:identifier];
-  }
-}
-
 - (void)addClusterManagers:(NSArray<FGMPlatformClusterManager *> *)clusterManagersToAdd {
   for (FGMPlatformClusterManager *clusterManager in clusterManagersToAdd) {
     NSString *identifier = clusterManager.identifier;

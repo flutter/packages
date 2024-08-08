@@ -472,12 +472,6 @@
   return self;
 }
 
-- (void)addJSONMarkers:(NSArray<NSDictionary<NSString *, id> *> *)markersToAdd {
-  for (NSDictionary<NSString *, id> *marker in markersToAdd) {
-    [self addJSONMarker:marker];
-  }
-}
-
 - (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd {
   for (FGMPlatformMarker *marker in markersToAdd) {
     [self addJSONMarker:marker.json];

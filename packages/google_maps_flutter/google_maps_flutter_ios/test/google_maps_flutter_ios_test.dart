@@ -209,10 +209,12 @@ void main() {
         setUpMockMap(mapId: mapId);
 
     // Set some arbitrary options.
-    const MapConfiguration config = MapConfiguration(
+    final CameraTargetBounds cameraBounds = CameraTargetBounds(LatLngBounds(
+        southwest: const LatLng(10, 20), northeast: const LatLng(30, 40)));
+    final MapConfiguration config = MapConfiguration(
       compassEnabled: true,
-      liteModeEnabled: false,
       mapType: MapType.terrain,
+      cameraTargetBounds: cameraBounds,
     );
     await maps.updateMapConfiguration(config, mapId: mapId);
 
@@ -220,16 +222,21 @@ void main() {
         verify(api.updateMapConfiguration(captureAny));
     final PlatformMapConfiguration passedConfig =
         verification.captured[0] as PlatformMapConfiguration;
-    final Map<String, Object?> passedConfigJson =
-        passedConfig.json as Map<String, Object?>;
     // Each set option should be present.
-    expect(passedConfigJson['compassEnabled'], true);
-    expect(passedConfigJson['liteModeEnabled'], false);
-    expect(passedConfigJson['mapType'], MapType.terrain.index);
+    expect(passedConfig.compassEnabled, true);
+    expect(passedConfig.mapType, PlatformMapType.terrain);
+    expect(passedConfig.cameraTargetBounds?.bounds?.northeast.latitude,
+        cameraBounds.bounds?.northeast.latitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.northeast.longitude,
+        cameraBounds.bounds?.northeast.longitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.southwest.latitude,
+        cameraBounds.bounds?.southwest.latitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.southwest.longitude,
+        cameraBounds.bounds?.southwest.longitude);
     // Spot-check that unset options are not be present.
-    expect(passedConfigJson['myLocationEnabled'], isNull);
-    expect(passedConfigJson['cameraTargetBounds'], isNull);
-    expect(passedConfigJson['padding'], isNull);
+    expect(passedConfig.myLocationEnabled, isNull);
+    expect(passedConfig.minMaxZoomPreference, isNull);
+    expect(passedConfig.padding, isNull);
   });
 
   test('updateMapOptions passes expected arguments', () async {
@@ -238,10 +245,12 @@ void main() {
         setUpMockMap(mapId: mapId);
 
     // Set some arbitrary options.
+    final CameraTargetBounds cameraBounds = CameraTargetBounds(LatLngBounds(
+        southwest: const LatLng(10, 20), northeast: const LatLng(30, 40)));
     final Map<String, Object?> config = <String, Object?>{
       'compassEnabled': true,
-      'liteModeEnabled': false,
       'mapType': MapType.terrain.index,
+      'cameraTargetBounds': cameraBounds.toJson(),
     };
     await maps.updateMapOptions(config, mapId: mapId);
 
@@ -249,16 +258,21 @@ void main() {
         verify(api.updateMapConfiguration(captureAny));
     final PlatformMapConfiguration passedConfig =
         verification.captured[0] as PlatformMapConfiguration;
-    final Map<String, Object?> passedConfigJson =
-        passedConfig.json as Map<String, Object?>;
     // Each set option should be present.
-    expect(passedConfigJson['compassEnabled'], true);
-    expect(passedConfigJson['liteModeEnabled'], false);
-    expect(passedConfigJson['mapType'], MapType.terrain.index);
+    expect(passedConfig.compassEnabled, true);
+    expect(passedConfig.mapType, PlatformMapType.terrain);
+    expect(passedConfig.cameraTargetBounds?.bounds?.northeast.latitude,
+        cameraBounds.bounds?.northeast.latitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.northeast.longitude,
+        cameraBounds.bounds?.northeast.longitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.southwest.latitude,
+        cameraBounds.bounds?.southwest.latitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.southwest.longitude,
+        cameraBounds.bounds?.southwest.longitude);
     // Spot-check that unset options are not be present.
-    expect(passedConfigJson['myLocationEnabled'], isNull);
-    expect(passedConfigJson['cameraTargetBounds'], isNull);
-    expect(passedConfigJson['padding'], isNull);
+    expect(passedConfig.myLocationEnabled, isNull);
+    expect(passedConfig.minMaxZoomPreference, isNull);
+    expect(passedConfig.padding, isNull);
   });
 
   test('updateCircles passes expected arguments', () async {
@@ -536,17 +550,15 @@ void main() {
               methodCall.arguments as Map<dynamic, dynamic>);
           if (args.containsKey('params')) {
             final Uint8List paramsUint8List = args['params'] as Uint8List;
-            const StandardMessageCodec codec = StandardMessageCodec();
             final ByteData byteData = ByteData.sublistView(paramsUint8List);
-            final Map<String, dynamic> creationParams =
-                Map<String, dynamic>.from(
-                    codec.decodeMessage(byteData) as Map<dynamic, dynamic>);
-            if (creationParams.containsKey('options')) {
-              final Map<String, dynamic> options = Map<String, dynamic>.from(
-                  creationParams['options'] as Map<dynamic, dynamic>);
-              if (options.containsKey('cloudMapId')) {
-                passedCloudMapIdCompleter
-                    .complete(options['cloudMapId'] as String);
+            final PlatformMapViewCreationParams? creationParams =
+                MapsApi.pigeonChannelCodec.decodeMessage(byteData)
+                    as PlatformMapViewCreationParams?;
+            if (creationParams != null) {
+              final String? passedMapId =
+                  creationParams.mapConfiguration.cloudMapId;
+              if (passedMapId != null) {
+                passedCloudMapIdCompleter.complete(passedMapId);
               }
             }
           }
