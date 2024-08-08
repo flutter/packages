@@ -4,6 +4,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../flutter_adaptive_scaffold.dart';
+
 const Set<TargetPlatform> _desktop = <TargetPlatform>{
   TargetPlatform.linux,
   TargetPlatform.macOS,
@@ -128,4 +130,50 @@ abstract class Breakpoint {
   /// A method that returns true based on conditions related to the context of
   /// the screen such as MediaQuery.sizeOf(context).width.
   bool isActive(BuildContext context);
+}
+
+/// An extension on [BuildContext] that returns the active [Breakpoint] based on
+/// an available [SlotLayout] ancestor or the default breakpoints.
+extension BreakpointExtension on BuildContext {
+  /// Returns the currently active [Breakpoint].
+  Breakpoint get activeBreakpoint {
+    final SlotLayout? slotLayout = findAncestorWidgetOfExactType<SlotLayout>();
+    if (slotLayout != null) {
+      for (final MapEntry<Breakpoint, SlotLayoutConfig?> config
+          in slotLayout.config.entries) {
+        if (config.key.isActive(this)) {
+          return config.key;
+        }
+      }
+    }
+
+    final TargetPlatform platform = Theme.of(this).platform;
+
+    if (Breakpoint.desktop.contains(platform)) {
+      if (Breakpoints.extraLarge.isActive(this)) {
+        return Breakpoints.extraLargeDesktop;
+      } else if (Breakpoints.large.isActive(this)) {
+        return Breakpoints.largeDesktop;
+      } else if (Breakpoints.mediumLarge.isActive(this)) {
+        return Breakpoints.mediumLargeDesktop;
+      } else if (Breakpoints.medium.isActive(this)) {
+        return Breakpoints.mediumDesktop;
+      } else if (Breakpoints.small.isActive(this)) {
+        return Breakpoints.smallDesktop;
+      }
+    } else if (Breakpoint.mobile.contains(platform)) {
+      if (Breakpoints.extraLarge.isActive(this)) {
+        return Breakpoints.extraLargeMobile;
+      } else if (Breakpoints.large.isActive(this)) {
+        return Breakpoints.largeMobile;
+      } else if (Breakpoints.mediumLarge.isActive(this)) {
+        return Breakpoints.mediumLargeMobile;
+      } else if (Breakpoints.medium.isActive(this)) {
+        return Breakpoints.mediumMobile;
+      } else if (Breakpoints.small.isActive(this)) {
+        return Breakpoints.smallMobile;
+      }
+    }
+    return Breakpoints.standard;
+  }
 }
