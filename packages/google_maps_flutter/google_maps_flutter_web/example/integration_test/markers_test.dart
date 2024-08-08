@@ -214,7 +214,6 @@ void main() {
 
     testWidgets('markers with custom asset icon work',
         (WidgetTester tester) async {
-      tester.view.devicePixelRatio = 2.0;
       final Set<Marker> markers = <Marker>{
         Marker(
             markerId: const MarkerId('1'),
@@ -246,7 +245,6 @@ void main() {
 
     testWidgets('markers with custom asset icon and pixelratio work',
         (WidgetTester tester) async {
-      tester.view.devicePixelRatio = 2.0;
       final Set<Marker> markers = <Marker>{
         Marker(
             markerId: const MarkerId('1'),
@@ -278,8 +276,6 @@ void main() {
     });
     testWidgets('markers with custom asset icon with width and height work',
         (WidgetTester tester) async {
-      tester.view.devicePixelRatio = 2.0;
-
       final Set<Marker> markers = <Marker>{
         Marker(
             markerId: const MarkerId('1'),
@@ -314,7 +310,6 @@ void main() {
 
     testWidgets('markers with missing asset icon should not set size',
         (WidgetTester tester) async {
-      tester.view.devicePixelRatio = 2.0;
       final Set<Marker> markers = <Marker>{
         Marker(
             markerId: const MarkerId('1'),
@@ -342,7 +337,6 @@ void main() {
     // https://github.com/flutter/flutter/issues/66622
     testWidgets('markers with custom bitmap icon work',
         (WidgetTester tester) async {
-      tester.view.devicePixelRatio = 2.0;
       final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
       final Set<Marker> markers = <Marker>{
         Marker(
@@ -384,7 +378,6 @@ void main() {
 
     testWidgets('markers with custom bitmap icon and pixelratio work',
         (WidgetTester tester) async {
-      tester.view.devicePixelRatio = 2.0;
       final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
       final Set<Marker> markers = <Marker>{
         Marker(
@@ -418,7 +411,6 @@ void main() {
     // https://github.com/flutter/flutter/issues/73789
     testWidgets('markers with custom bitmap icon pass size to sdk',
         (WidgetTester tester) async {
-      tester.view.devicePixelRatio = 2.0;
       final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
       final Set<Marker> markers = <Marker>{
         Marker(
