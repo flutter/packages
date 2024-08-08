@@ -26,7 +26,9 @@ void main() {
 
   setUpAll(() {
     setUpTolerantComparator(
-        testPath: 'test/material_widget_test.dart', precisionTolerance: 0.01);
+      testPath: 'test/material_widget_test.dart',
+      precisionTolerance: 0.00002,
+    );
   });
 
   testWidgets('Material widgets', (WidgetTester tester) async {
