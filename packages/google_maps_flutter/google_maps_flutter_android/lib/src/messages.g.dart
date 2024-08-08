@@ -204,7 +204,7 @@ class PlatformClusterManager {
   }
 }
 
-/// Pigeon equivalent of the Offset class
+/// Pigeon equivalent of the Offset class.
 class PlatformOffset {
   PlatformOffset({
     required this.dx,
@@ -231,6 +231,38 @@ class PlatformOffset {
   }
 }
 
+/// Pigeon equivalent of the InfoWindow class.
+class PlatformInfoWindow {
+  PlatformInfoWindow({
+    this.title,
+    this.snippet,
+    required this.anchor,
+  });
+
+  String? title;
+
+  String? snippet;
+
+  PlatformOffset anchor;
+
+  Object encode() {
+    return <Object?>[
+      title,
+      snippet,
+      anchor,
+    ];
+  }
+
+  static PlatformInfoWindow decode(Object result) {
+    result as List<Object?>;
+    return PlatformInfoWindow(
+      title: result[0] as String?,
+      snippet: result[1] as String?,
+      anchor: result[2]! as PlatformOffset,
+    );
+  }
+}
+
 /// Pigeon equivalent of the Marker class.
 class PlatformMarker {
   PlatformMarker({
@@ -240,7 +272,7 @@ class PlatformMarker {
     this.draggable = false,
     this.flat = false,
     this.icon = const <Object>['defaultMarker'],
-    this.infoWindow = const <String?, Object>{'anchor' : <Object>[0.5, 0.0]},
+    required this.infoWindow,
     required this.position,
     this.rotation = 0.0,
     this.visible = true,
@@ -261,7 +293,7 @@ class PlatformMarker {
 
   Object icon;
 
-  Map<String?, Object?> infoWindow;
+  PlatformInfoWindow infoWindow;
 
   PlatformLatLng position;
 
@@ -302,7 +334,7 @@ class PlatformMarker {
       draggable: result[3]! as bool,
       flat: result[4]! as bool,
       icon: result[5]!,
-      infoWindow: (result[6] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
+      infoWindow: result[6]! as PlatformInfoWindow,
       position: result[7]! as PlatformLatLng,
       rotation: result[8]! as double,
       visible: result[9]! as bool,
@@ -650,44 +682,47 @@ class _PigeonCodec extends StandardMessageCodec {
     } else     if (value is PlatformOffset) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformMarker) {
+    } else     if (value is PlatformInfoWindow) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformPolygon) {
+    } else     if (value is PlatformMarker) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformPolyline) {
+    } else     if (value is PlatformPolygon) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformTile) {
+    } else     if (value is PlatformPolyline) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformTileOverlay) {
+    } else     if (value is PlatformTile) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformLatLng) {
+    } else     if (value is PlatformTileOverlay) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformLatLngBounds) {
+    } else     if (value is PlatformLatLng) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformCluster) {
+    } else     if (value is PlatformLatLngBounds) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformMapConfiguration) {
+    } else     if (value is PlatformCluster) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformPoint) {
+    } else     if (value is PlatformMapConfiguration) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformTileLayer) {
+    } else     if (value is PlatformPoint) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformZoomRange) {
+    } else     if (value is PlatformTileLayer) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformRendererType) {
+    } else     if (value is PlatformZoomRange) {
       buffer.putUint8(147);
+      writeValue(buffer, value.encode());
+    } else     if (value is PlatformRendererType) {
+      buffer.putUint8(148);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -710,30 +745,32 @@ class _PigeonCodec extends StandardMessageCodec {
       case 134: 
         return PlatformOffset.decode(readValue(buffer)!);
       case 135: 
-        return PlatformMarker.decode(readValue(buffer)!);
+        return PlatformInfoWindow.decode(readValue(buffer)!);
       case 136: 
-        return PlatformPolygon.decode(readValue(buffer)!);
+        return PlatformMarker.decode(readValue(buffer)!);
       case 137: 
-        return PlatformPolyline.decode(readValue(buffer)!);
+        return PlatformPolygon.decode(readValue(buffer)!);
       case 138: 
-        return PlatformTile.decode(readValue(buffer)!);
+        return PlatformPolyline.decode(readValue(buffer)!);
       case 139: 
-        return PlatformTileOverlay.decode(readValue(buffer)!);
+        return PlatformTile.decode(readValue(buffer)!);
       case 140: 
-        return PlatformLatLng.decode(readValue(buffer)!);
+        return PlatformTileOverlay.decode(readValue(buffer)!);
       case 141: 
-        return PlatformLatLngBounds.decode(readValue(buffer)!);
+        return PlatformLatLng.decode(readValue(buffer)!);
       case 142: 
-        return PlatformCluster.decode(readValue(buffer)!);
+        return PlatformLatLngBounds.decode(readValue(buffer)!);
       case 143: 
-        return PlatformMapConfiguration.decode(readValue(buffer)!);
+        return PlatformCluster.decode(readValue(buffer)!);
       case 144: 
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformMapConfiguration.decode(readValue(buffer)!);
       case 145: 
-        return PlatformTileLayer.decode(readValue(buffer)!);
+        return PlatformPoint.decode(readValue(buffer)!);
       case 146: 
-        return PlatformZoomRange.decode(readValue(buffer)!);
+        return PlatformTileLayer.decode(readValue(buffer)!);
       case 147: 
+        return PlatformZoomRange.decode(readValue(buffer)!);
+      case 148: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformRendererType.values[value];
       default:

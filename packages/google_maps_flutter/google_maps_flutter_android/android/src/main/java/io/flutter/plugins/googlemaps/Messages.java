@@ -707,7 +707,7 @@ public class Messages {
   }
 
   /**
-   * Pigeon equivalent of the Offset class
+   * Pigeon equivalent of the Offset class.
    *
    * Generated class from Pigeon that represents data sent in messages.
    */
@@ -799,6 +799,117 @@ public class Messages {
   }
 
   /**
+   * Pigeon equivalent of the InfoWindow class.
+   *
+   * Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformInfoWindow {
+    private @Nullable String title;
+
+    public @Nullable String getTitle() {
+      return title;
+    }
+
+    public void setTitle(@Nullable String setterArg) {
+      this.title = setterArg;
+    }
+
+    private @Nullable String snippet;
+
+    public @Nullable String getSnippet() {
+      return snippet;
+    }
+
+    public void setSnippet(@Nullable String setterArg) {
+      this.snippet = setterArg;
+    }
+
+    private @NonNull PlatformOffset anchor;
+
+    public @NonNull PlatformOffset getAnchor() {
+      return anchor;
+    }
+
+    public void setAnchor(@NonNull PlatformOffset setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"anchor\" is null.");
+      }
+      this.anchor = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformInfoWindow() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) { return true; }
+      if (o == null || getClass() != o.getClass()) { return false; }
+      PlatformInfoWindow that = (PlatformInfoWindow) o;
+      return Objects.equals(title, that.title) && Objects.equals(snippet, that.snippet) && anchor.equals(that.anchor);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(title, snippet, anchor);
+    }
+
+    public static final class Builder {
+
+      private @Nullable String title;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTitle(@Nullable String setterArg) {
+        this.title = setterArg;
+        return this;
+      }
+
+      private @Nullable String snippet;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setSnippet(@Nullable String setterArg) {
+        this.snippet = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformOffset anchor;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAnchor(@NonNull PlatformOffset setterArg) {
+        this.anchor = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformInfoWindow build() {
+        PlatformInfoWindow pigeonReturn = new PlatformInfoWindow();
+        pigeonReturn.setTitle(title);
+        pigeonReturn.setSnippet(snippet);
+        pigeonReturn.setAnchor(anchor);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(3);
+      toListResult.add(title);
+      toListResult.add(snippet);
+      toListResult.add(anchor);
+      return toListResult;
+    }
+
+    static @NonNull PlatformInfoWindow fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformInfoWindow pigeonResult = new PlatformInfoWindow();
+      Object title = __pigeon_list.get(0);
+      pigeonResult.setTitle((String) title);
+      Object snippet = __pigeon_list.get(1);
+      pigeonResult.setSnippet((String) snippet);
+      Object anchor = __pigeon_list.get(2);
+      pigeonResult.setAnchor((PlatformOffset) anchor);
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon equivalent of the Marker class.
    *
    * Generated class from Pigeon that represents data sent in messages.
@@ -882,13 +993,13 @@ public class Messages {
       this.icon = setterArg;
     }
 
-    private @NonNull Map<String, Object> infoWindow;
+    private @NonNull PlatformInfoWindow infoWindow;
 
-    public @NonNull Map<String, Object> getInfoWindow() {
+    public @NonNull PlatformInfoWindow getInfoWindow() {
       return infoWindow;
     }
 
-    public void setInfoWindow(@NonNull Map<String, Object> setterArg) {
+    public void setInfoWindow(@NonNull PlatformInfoWindow setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"infoWindow\" is null.");
       }
@@ -1036,10 +1147,10 @@ public class Messages {
         return this;
       }
 
-      private @Nullable Map<String, Object> infoWindow;
+      private @Nullable PlatformInfoWindow infoWindow;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setInfoWindow(@NonNull Map<String, Object> setterArg) {
+      public @NonNull Builder setInfoWindow(@NonNull PlatformInfoWindow setterArg) {
         this.infoWindow = setterArg;
         return this;
       }
@@ -1145,7 +1256,7 @@ public class Messages {
       Object icon = __pigeon_list.get(5);
       pigeonResult.setIcon(icon);
       Object infoWindow = __pigeon_list.get(6);
-      pigeonResult.setInfoWindow((Map<String, Object>) infoWindow);
+      pigeonResult.setInfoWindow((PlatformInfoWindow) infoWindow);
       Object position = __pigeon_list.get(7);
       pigeonResult.setPosition((PlatformLatLng) position);
       Object rotation = __pigeon_list.get(8);
@@ -2239,30 +2350,32 @@ public class Messages {
         case (byte) 134:
           return PlatformOffset.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
-          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformInfoWindow.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
-          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 137:
-          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 138:
-          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 139:
-          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 140:
-          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 141:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 142:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 143:
-          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 144:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 145:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 146:
-          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 147:
+          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 148:
           Object value = readValue(buffer);
           return value == null ? null : PlatformRendererType.values()[(int) value];
         default:
@@ -2290,44 +2403,47 @@ public class Messages {
       } else if (value instanceof PlatformOffset) {
         stream.write(134);
         writeValue(stream, ((PlatformOffset) value).toList());
-      } else if (value instanceof PlatformMarker) {
+      } else if (value instanceof PlatformInfoWindow) {
         stream.write(135);
+        writeValue(stream, ((PlatformInfoWindow) value).toList());
+      } else if (value instanceof PlatformMarker) {
+        stream.write(136);
         writeValue(stream, ((PlatformMarker) value).toList());
       } else if (value instanceof PlatformPolygon) {
-        stream.write(136);
+        stream.write(137);
         writeValue(stream, ((PlatformPolygon) value).toList());
       } else if (value instanceof PlatformPolyline) {
-        stream.write(137);
+        stream.write(138);
         writeValue(stream, ((PlatformPolyline) value).toList());
       } else if (value instanceof PlatformTile) {
-        stream.write(138);
+        stream.write(139);
         writeValue(stream, ((PlatformTile) value).toList());
       } else if (value instanceof PlatformTileOverlay) {
-        stream.write(139);
+        stream.write(140);
         writeValue(stream, ((PlatformTileOverlay) value).toList());
       } else if (value instanceof PlatformLatLng) {
-        stream.write(140);
+        stream.write(141);
         writeValue(stream, ((PlatformLatLng) value).toList());
       } else if (value instanceof PlatformLatLngBounds) {
-        stream.write(141);
+        stream.write(142);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(142);
+        stream.write(143);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformMapConfiguration) {
-        stream.write(143);
+        stream.write(144);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(144);
+        stream.write(145);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(145);
+        stream.write(146);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(146);
+        stream.write(147);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else if (value instanceof PlatformRendererType) {
-        stream.write(147);
+        stream.write(148);
         writeValue(stream, value == null ? null : ((PlatformRendererType) value).index);
       } else {
         super.writeValue(stream, value);

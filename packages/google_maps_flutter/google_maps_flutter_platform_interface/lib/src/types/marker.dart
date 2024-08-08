@@ -64,8 +64,7 @@ class InfoWindow {
     );
   }
 
-  /// Converts this object to something serializable in JSON.
-  Object toJson() {
+  Object _toJson() {
     final Map<String, Object> json = <String, Object>{};
 
     void addIfPresent(String fieldName, Object? value) {
@@ -297,7 +296,7 @@ class Marker implements MapsObject<Marker> {
     addIfPresent('draggable', draggable);
     addIfPresent('flat', flat);
     addIfPresent('icon', icon.toJson());
-    addIfPresent('infoWindow', infoWindow.toJson());
+    addIfPresent('infoWindow', infoWindow._toJson());
     addIfPresent('position', position.toJson());
     addIfPresent('rotation', rotation);
     addIfPresent('visible', visible);

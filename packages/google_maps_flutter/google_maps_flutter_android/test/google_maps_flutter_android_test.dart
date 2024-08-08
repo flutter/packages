@@ -389,14 +389,18 @@ void main() {
       final PlatformOffset? offset = encoded?[1] as PlatformOffset?;
       expect(offset?.dx, object2new.anchor.dx);
       expect(offset?.dy, object2new.anchor.dy);
-      expect(encoded?.getRange(2, 7).toList(), <Object?>[
+      expect(encoded?.getRange(2, 6).toList(), <Object?>[
         object2new.consumeTapEvents,
         object2new.draggable,
         object2new.flat,
         object2new.icon.toJson(),
-        object2new.infoWindow.toJson(),
       ]
       );
+      final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
+      expect(window?.title, object2new.infoWindow.title);
+      expect(window?.snippet, object2new.infoWindow.snippet);
+      expect(window?.anchor.dx, object2new.infoWindow.anchor.dx);
+      expect(window?.anchor.dy, object2new.infoWindow.anchor.dy);
       final PlatformLatLng? latLng = encoded?[7] as PlatformLatLng?;
       expect(latLng?.latitude, object2new.position.latitude);
       expect(latLng?.longitude, object2new.position.longitude);
@@ -416,14 +420,18 @@ void main() {
       final PlatformOffset? offset = encoded?[1] as PlatformOffset?;
       expect(offset?.dx, object3.anchor.dx);
       expect(offset?.dy, object3.anchor.dy);
-      expect(encoded?.getRange(2, 7).toList(), <Object?>[
+      expect(encoded?.getRange(2, 6).toList(), <Object?>[
         object3.consumeTapEvents,
         object3.draggable,
         object3.flat,
         object3.icon.toJson(),
-        object3.infoWindow.toJson(),
       ]
       );
+      final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
+      expect(window?.title, object3.infoWindow.title);
+      expect(window?.snippet, object3.infoWindow.snippet);
+      expect(window?.anchor.dx, object3.infoWindow.anchor.dx);
+      expect(window?.anchor.dy, object3.infoWindow.anchor.dy);
       final PlatformLatLng? latLng = encoded?[7] as PlatformLatLng?;
       expect(latLng?.latitude, object3.position.latitude);
       expect(latLng?.longitude, object3.position.longitude);

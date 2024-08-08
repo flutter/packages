@@ -718,6 +718,10 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         identifier: clusterManager.clusterManagerId.value);
   }
 
+  static PlatformInfoWindow _platformInfoWindowFromInfoWindow(InfoWindow window) {
+    return PlatformInfoWindow(title: window.title, snippet: window.snippet, anchor: _platformOffsetFromOffset(window.anchor));
+  }
+
   static PlatformMarker _platformMarkerFromMarker(Marker marker) {
     // This cast is not ideal, but the Java code already assumes this format.
     // See the TODOs at the top of this file and on the 'json' field in
@@ -729,7 +733,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       draggable: marker.draggable,
       flat: marker.flat,
       icon: marker.icon.toJson(),
-      infoWindow: marker.infoWindow.toJson() as Map<String?, Object?>,
+      infoWindow: _platformInfoWindowFromInfoWindow(marker.infoWindow),
       position: _platformLatLngFromLatLng(marker.position),
       rotation: marker.rotation,
       visible: marker.visible,

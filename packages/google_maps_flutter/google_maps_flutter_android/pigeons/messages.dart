@@ -88,12 +88,25 @@ class PlatformClusterManager {
   final String identifier;
 }
 
-/// Pigeon equivalent of the Offset class
+/// Pigeon equivalent of the Offset class.
 class PlatformOffset {
   PlatformOffset(this.dx, this.dy);
 
   final double dx;
   final double dy;
+}
+
+/// Pigeon equivalent of the InfoWindow class.
+class PlatformInfoWindow {
+  PlatformInfoWindow({
+    required this.anchor,
+    this.title,
+    this.snippet,
+  });
+
+  final String? title;
+  final String? snippet;
+  final PlatformOffset anchor;
 }
 
 /// Pigeon equivalent of the Marker class.
@@ -106,7 +119,7 @@ class PlatformMarker {
     this.draggable = false,
     this.flat = false,
     this.icon = const <Object>['defaultMarker'],
-    this.infoWindow = const <String?, Object>{'anchor': <Object>[0.5, 0.0]},
+    required this.infoWindow,
     required this.position,
     this.rotation = 0.0,
     this.visible = true,
@@ -120,7 +133,7 @@ class PlatformMarker {
   final bool draggable;
   final bool flat;
   final Object icon;
-  final Map<String?, Object?> infoWindow;
+  final PlatformInfoWindow infoWindow;
   final PlatformLatLng position;
   final double rotation;
   final bool visible;
