@@ -1623,7 +1623,7 @@ public class Messages {
   /**
    * Pigeon equivalent of Flutter's EdgeInsets.
    *
-   * <p>Generated class from Pigeon that represents data sent in messages.
+   * Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformEdgeInsets {
     private @NonNull Double top;
@@ -1683,17 +1683,10 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
+      if (this == o) { return true; }
+      if (o == null || getClass() != o.getClass()) { return false; }
       PlatformEdgeInsets that = (PlatformEdgeInsets) o;
-      return top.equals(that.top)
-          && bottom.equals(that.bottom)
-          && left.equals(that.left)
-          && right.equals(that.right);
+      return top.equals(that.top) && bottom.equals(that.bottom) && left.equals(that.left) && right.equals(that.right);
     }
 
     @Override
@@ -2016,17 +2009,10 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
+      if (this == o) { return true; }
+      if (o == null || getClass() != o.getClass()) { return false; }
       PlatformCluster that = (PlatformCluster) o;
-      return clusterManagerId.equals(that.clusterManagerId)
-          && position.equals(that.position)
-          && bounds.equals(that.bounds)
-          && markerIds.equals(that.markerIds);
+      return clusterManagerId.equals(that.clusterManagerId) && position.equals(that.position) && bounds.equals(that.bounds) && markerIds.equals(that.markerIds);
     }
 
     @Override
@@ -2105,10 +2091,10 @@ public class Messages {
   /**
    * Pigeon equivalent of CameraTargetBounds.
    *
-   * <p>As with the Dart version, it exists to distinguish between not setting a a target, and
-   * having an explicitly unbounded target (null [bounds]).
+   * As with the Dart version, it exists to distinguish between not setting a
+   * a target, and having an explicitly unbounded target (null [bounds]).
    *
-   * <p>Generated class from Pigeon that represents data sent in messages.
+   * Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformCameraTargetBounds {
     private @Nullable PlatformLatLngBounds bounds;
@@ -2123,12 +2109,8 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
+      if (this == o) { return true; }
+      if (o == null || getClass() != o.getClass()) { return false; }
       PlatformCameraTargetBounds that = (PlatformCameraTargetBounds) o;
       return Objects.equals(bounds, that.bounds);
     }
@@ -2173,7 +2155,7 @@ public class Messages {
   /**
    * Information passed to the platform view creation.
    *
-   * <p>Generated class from Pigeon that represents data sent in messages.
+   * Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformMapViewCreationParams {
     private @NonNull PlatformCameraPosition initialCameraPosition;
@@ -2298,36 +2280,15 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
+      if (this == o) { return true; }
+      if (o == null || getClass() != o.getClass()) { return false; }
       PlatformMapViewCreationParams that = (PlatformMapViewCreationParams) o;
-      return initialCameraPosition.equals(that.initialCameraPosition)
-          && mapConfiguration.equals(that.mapConfiguration)
-          && initialCircles.equals(that.initialCircles)
-          && initialMarkers.equals(that.initialMarkers)
-          && initialPolygons.equals(that.initialPolygons)
-          && initialPolylines.equals(that.initialPolylines)
-          && initialHeatmaps.equals(that.initialHeatmaps)
-          && initialTileOverlays.equals(that.initialTileOverlays)
-          && initialClusterManagers.equals(that.initialClusterManagers);
+      return initialCameraPosition.equals(that.initialCameraPosition) && mapConfiguration.equals(that.mapConfiguration) && initialCircles.equals(that.initialCircles) && initialMarkers.equals(that.initialMarkers) && initialPolygons.equals(that.initialPolygons) && initialPolylines.equals(that.initialPolylines) && initialHeatmaps.equals(that.initialHeatmaps) && initialTileOverlays.equals(that.initialTileOverlays) && initialClusterManagers.equals(that.initialClusterManagers);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(
-          initialCameraPosition,
-          mapConfiguration,
-          initialCircles,
-          initialMarkers,
-          initialPolygons,
-          initialPolylines,
-          initialHeatmaps,
-          initialTileOverlays,
-          initialClusterManagers);
+      return Objects.hash(initialCameraPosition, mapConfiguration, initialCircles, initialMarkers, initialPolygons, initialPolylines, initialHeatmaps, initialTileOverlays, initialClusterManagers);
     }
 
     public static final class Builder {
@@ -2399,8 +2360,7 @@ public class Messages {
       private @Nullable List<PlatformClusterManager> initialClusterManagers;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setInitialClusterManagers(
-          @NonNull List<PlatformClusterManager> setterArg) {
+      public @NonNull Builder setInitialClusterManagers(@NonNull List<PlatformClusterManager> setterArg) {
         this.initialClusterManagers = setterArg;
         return this;
       }
@@ -2435,8 +2395,7 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PlatformMapViewCreationParams fromList(
-        @NonNull ArrayList<Object> __pigeon_list) {
+    static @NonNull PlatformMapViewCreationParams fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformMapViewCreationParams pigeonResult = new PlatformMapViewCreationParams();
       Object initialCameraPosition = __pigeon_list.get(0);
       pigeonResult.setInitialCameraPosition((PlatformCameraPosition) initialCameraPosition);
@@ -2463,7 +2422,7 @@ public class Messages {
   /**
    * Pigeon equivalent of MapConfiguration.
    *
-   * <p>Generated class from Pigeon that represents data sent in messages.
+   * Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformMapConfiguration {
     private @Nullable Boolean compassEnabled;
@@ -2668,58 +2627,15 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
+      if (this == o) { return true; }
+      if (o == null || getClass() != o.getClass()) { return false; }
       PlatformMapConfiguration that = (PlatformMapConfiguration) o;
-      return Objects.equals(compassEnabled, that.compassEnabled)
-          && Objects.equals(cameraTargetBounds, that.cameraTargetBounds)
-          && Objects.equals(mapType, that.mapType)
-          && Objects.equals(minMaxZoomPreference, that.minMaxZoomPreference)
-          && Objects.equals(mapToolbarEnabled, that.mapToolbarEnabled)
-          && Objects.equals(rotateGesturesEnabled, that.rotateGesturesEnabled)
-          && Objects.equals(scrollGesturesEnabled, that.scrollGesturesEnabled)
-          && Objects.equals(tiltGesturesEnabled, that.tiltGesturesEnabled)
-          && Objects.equals(trackCameraPosition, that.trackCameraPosition)
-          && Objects.equals(zoomControlsEnabled, that.zoomControlsEnabled)
-          && Objects.equals(zoomGesturesEnabled, that.zoomGesturesEnabled)
-          && Objects.equals(myLocationEnabled, that.myLocationEnabled)
-          && Objects.equals(myLocationButtonEnabled, that.myLocationButtonEnabled)
-          && Objects.equals(padding, that.padding)
-          && Objects.equals(indoorViewEnabled, that.indoorViewEnabled)
-          && Objects.equals(trafficEnabled, that.trafficEnabled)
-          && Objects.equals(buildingsEnabled, that.buildingsEnabled)
-          && Objects.equals(liteModeEnabled, that.liteModeEnabled)
-          && Objects.equals(cloudMapId, that.cloudMapId)
-          && Objects.equals(style, that.style);
+      return Objects.equals(compassEnabled, that.compassEnabled) && Objects.equals(cameraTargetBounds, that.cameraTargetBounds) && Objects.equals(mapType, that.mapType) && Objects.equals(minMaxZoomPreference, that.minMaxZoomPreference) && Objects.equals(mapToolbarEnabled, that.mapToolbarEnabled) && Objects.equals(rotateGesturesEnabled, that.rotateGesturesEnabled) && Objects.equals(scrollGesturesEnabled, that.scrollGesturesEnabled) && Objects.equals(tiltGesturesEnabled, that.tiltGesturesEnabled) && Objects.equals(trackCameraPosition, that.trackCameraPosition) && Objects.equals(zoomControlsEnabled, that.zoomControlsEnabled) && Objects.equals(zoomGesturesEnabled, that.zoomGesturesEnabled) && Objects.equals(myLocationEnabled, that.myLocationEnabled) && Objects.equals(myLocationButtonEnabled, that.myLocationButtonEnabled) && Objects.equals(padding, that.padding) && Objects.equals(indoorViewEnabled, that.indoorViewEnabled) && Objects.equals(trafficEnabled, that.trafficEnabled) && Objects.equals(buildingsEnabled, that.buildingsEnabled) && Objects.equals(liteModeEnabled, that.liteModeEnabled) && Objects.equals(cloudMapId, that.cloudMapId) && Objects.equals(style, that.style);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(
-          compassEnabled,
-          cameraTargetBounds,
-          mapType,
-          minMaxZoomPreference,
-          mapToolbarEnabled,
-          rotateGesturesEnabled,
-          scrollGesturesEnabled,
-          tiltGesturesEnabled,
-          trackCameraPosition,
-          zoomControlsEnabled,
-          zoomGesturesEnabled,
-          myLocationEnabled,
-          myLocationButtonEnabled,
-          padding,
-          indoorViewEnabled,
-          trafficEnabled,
-          buildingsEnabled,
-          liteModeEnabled,
-          cloudMapId,
-          style);
+      return Objects.hash(compassEnabled, cameraTargetBounds, mapType, minMaxZoomPreference, mapToolbarEnabled, rotateGesturesEnabled, scrollGesturesEnabled, tiltGesturesEnabled, trackCameraPosition, zoomControlsEnabled, zoomGesturesEnabled, myLocationEnabled, myLocationButtonEnabled, padding, indoorViewEnabled, trafficEnabled, buildingsEnabled, liteModeEnabled, cloudMapId, style);
     }
 
     public static final class Builder {
@@ -2735,8 +2651,7 @@ public class Messages {
       private @Nullable PlatformCameraTargetBounds cameraTargetBounds;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setCameraTargetBounds(
-          @Nullable PlatformCameraTargetBounds setterArg) {
+      public @NonNull Builder setCameraTargetBounds(@Nullable PlatformCameraTargetBounds setterArg) {
         this.cameraTargetBounds = setterArg;
         return this;
       }
@@ -3329,39 +3244,35 @@ public class Messages {
         case (byte) 138:
           return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 139:
-          return PlatformEdgeInsets.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 140:
-          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 141:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformEdgeInsets.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 142:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 143:
-          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 144:
-          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 145:
-          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 146:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 147:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 148:
-          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 149:
-          // Manual edit to fix https://github.com/flutter/flutter/issues/150108
-          // the way the generator will fix it once the PR lands.
-          {
-            Object value = readValue(buffer);
-            return value == null ? null : PlatformMapType.values()[(int) value];
-          }
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 150:
-          // Manual edit to fix https://github.com/flutter/flutter/issues/150108
-          // the way the generator will fix it once the PR lands.
-          {
-            Object value = readValue(buffer);
-            return value == null ? null : PlatformRendererType.values()[(int) value];
-          }
+          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 151:
+          Object value = readValue(buffer);
+          return value == null ? null : PlatformMapType.values()[(int) value];
+        case (byte) 152:
+          Object value = readValue(buffer);
+          return value == null ? null : PlatformRendererType.values()[(int) value];
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -3406,40 +3317,40 @@ public class Messages {
         stream.write(140);
         writeValue(stream, ((PlatformTileOverlay) value).toList());
       } else if (value instanceof PlatformEdgeInsets) {
-        stream.write(139);
+        stream.write(141);
         writeValue(stream, ((PlatformEdgeInsets) value).toList());
       } else if (value instanceof PlatformLatLng) {
-        stream.write(140);
+        stream.write(142);
         writeValue(stream, ((PlatformLatLng) value).toList());
       } else if (value instanceof PlatformLatLngBounds) {
-        stream.write(141);
+        stream.write(143);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(142);
+        stream.write(144);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformCameraTargetBounds) {
-        stream.write(143);
+        stream.write(145);
         writeValue(stream, ((PlatformCameraTargetBounds) value).toList());
       } else if (value instanceof PlatformMapViewCreationParams) {
-        stream.write(144);
+        stream.write(146);
         writeValue(stream, ((PlatformMapViewCreationParams) value).toList());
       } else if (value instanceof PlatformMapConfiguration) {
-        stream.write(145);
+        stream.write(147);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(146);
+        stream.write(148);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(147);
+        stream.write(149);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(148);
+        stream.write(150);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else if (value instanceof PlatformMapType) {
-        stream.write(149);
+        stream.write(151);
         writeValue(stream, value == null ? null : ((PlatformMapType) value).index);
       } else if (value instanceof PlatformRendererType) {
-        stream.write(150);
+        stream.write(152);
         writeValue(stream, value == null ? null : ((PlatformRendererType) value).index);
       } else {
         super.writeValue(stream, value);
@@ -4504,10 +4415,11 @@ public class Messages {
     }
   }
   /**
-   * Dummy interface to force generation of the platform view creation params, which are not used in
-   * any Pigeon calls, only the platform view creation call made internally by Flutter.
+   * Dummy interface to force generation of the platform view creation params,
+   * which are not used in any Pigeon calls, only the platform view creation
+   * call made internally by Flutter.
    *
-   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
+   * Generated interface from Pigeon that represents a handler of messages from Flutter.
    */
   public interface MapsPlatformViewApi {
 
@@ -4517,26 +4429,16 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**
-     * Sets up an instance of `MapsPlatformViewApi` to handle messages through the
-     * `binaryMessenger`.
-     */
+    /**Sets up an instance of `MapsPlatformViewApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable MapsPlatformViewApi api) {
       setUp(binaryMessenger, "", api);
     }
-
-    static void setUp(
-        @NonNull BinaryMessenger binaryMessenger,
-        @NonNull String messageChannelSuffix,
-        @Nullable MapsPlatformViewApi api) {
+    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable MapsPlatformViewApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger,
-                "dev.flutter.pigeon.google_maps_flutter_android.MapsPlatformViewApi.createView"
-                    + messageChannelSuffix,
-                getCodec());
+                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsPlatformViewApi.createView" + messageChannelSuffix, getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4546,7 +4448,8 @@ public class Messages {
                 try {
                   api.createView(typeArg);
                   wrapped.add(0, null);
-                } catch (Throwable exception) {
+                }
+ catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }

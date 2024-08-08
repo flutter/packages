@@ -668,13 +668,10 @@ class PlatformMapViewCreationParams {
       initialCircles: (result[2] as List<Object?>?)!.cast<PlatformCircle?>(),
       initialMarkers: (result[3] as List<Object?>?)!.cast<PlatformMarker?>(),
       initialPolygons: (result[4] as List<Object?>?)!.cast<PlatformPolygon?>(),
-      initialPolylines:
-          (result[5] as List<Object?>?)!.cast<PlatformPolyline?>(),
+      initialPolylines: (result[5] as List<Object?>?)!.cast<PlatformPolyline?>(),
       initialHeatmaps: (result[6] as List<Object?>?)!.cast<PlatformHeatmap?>(),
-      initialTileOverlays:
-          (result[7] as List<Object?>?)!.cast<PlatformTileOverlay?>(),
-      initialClusterManagers:
-          (result[8] as List<Object?>?)!.cast<PlatformClusterManager?>(),
+      initialTileOverlays: (result[7] as List<Object?>?)!.cast<PlatformTileOverlay?>(),
+      initialClusterManagers: (result[8] as List<Object?>?)!.cast<PlatformClusterManager?>(),
     );
   }
 }
@@ -922,41 +919,47 @@ class _PigeonCodec extends StandardMessageCodec {
     } else     if (value is PlatformPolyline) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformEdgeInsets) {
+    } else     if (value is PlatformTile) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLng) {
+    } else     if (value is PlatformTileOverlay) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLngBounds) {
+    } else     if (value is PlatformEdgeInsets) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCluster) {
+    } else     if (value is PlatformLatLng) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraTargetBounds) {
+    } else     if (value is PlatformLatLngBounds) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapViewCreationParams) {
+    } else     if (value is PlatformCluster) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapConfiguration) {
+    } else     if (value is PlatformCameraTargetBounds) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else     if (value is PlatformMapViewCreationParams) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileLayer) {
+    } else     if (value is PlatformMapConfiguration) {
       buffer.putUint8(147);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformZoomRange) {
+    } else     if (value is PlatformPoint) {
       buffer.putUint8(148);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapType) {
+    } else     if (value is PlatformTileLayer) {
       buffer.putUint8(149);
-      writeValue(buffer, value.index);
-    } else if (value is PlatformRendererType) {
+      writeValue(buffer, value.encode());
+    } else     if (value is PlatformZoomRange) {
       buffer.putUint8(150);
+      writeValue(buffer, value.encode());
+    } else     if (value is PlatformMapType) {
+      buffer.putUint8(151);
+      writeValue(buffer, value.index);
+    } else     if (value is PlatformRendererType) {
+      buffer.putUint8(152);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -990,30 +993,30 @@ class _PigeonCodec extends StandardMessageCodec {
         return PlatformTile.decode(readValue(buffer)!);
       case 140: 
         return PlatformTileOverlay.decode(readValue(buffer)!);
-      case 139:
+      case 141: 
         return PlatformEdgeInsets.decode(readValue(buffer)!);
-      case 140:
+      case 142: 
         return PlatformLatLng.decode(readValue(buffer)!);
-      case 141:
+      case 143: 
         return PlatformLatLngBounds.decode(readValue(buffer)!);
-      case 142:
+      case 144: 
         return PlatformCluster.decode(readValue(buffer)!);
-      case 143:
+      case 145: 
         return PlatformCameraTargetBounds.decode(readValue(buffer)!);
-      case 144:
+      case 146: 
         return PlatformMapViewCreationParams.decode(readValue(buffer)!);
-      case 145:
+      case 147: 
         return PlatformMapConfiguration.decode(readValue(buffer)!);
-      case 146:
+      case 148: 
         return PlatformPoint.decode(readValue(buffer)!);
-      case 147:
+      case 149: 
         return PlatformTileLayer.decode(readValue(buffer)!);
-      case 148:
+      case 150: 
         return PlatformZoomRange.decode(readValue(buffer)!);
-      case 149:
+      case 151: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformMapType.values[value];
-      case 150:
+      case 152: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformRendererType.values[value];
       default:
@@ -2084,11 +2087,9 @@ class MapsPlatformViewApi {
   /// Constructor for [MapsPlatformViewApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MapsPlatformViewApi(
-      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  MapsPlatformViewApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : __pigeon_binaryMessenger = binaryMessenger,
-        __pigeon_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+        __pigeon_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -2096,10 +2097,8 @@ class MapsPlatformViewApi {
   final String __pigeon_messageChannelSuffix;
 
   Future<void> createView(PlatformMapViewCreationParams? type) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.google_maps_flutter_android.MapsPlatformViewApi.createView$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsPlatformViewApi.createView$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
