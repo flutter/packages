@@ -5,10 +5,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application android:label="google_maps_flutter_example" android:icon="@mipmap/ic_launcher">
-        <!-- Temporary workaround for https://github.com/flutter/flutter/issues/152691 -->
-        <meta-data
-            android:name="io.flutter.embedding.android.EnableImpeller"
-            android:value="false" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
