@@ -3268,11 +3268,19 @@ public class Messages {
         case (byte) 150:
           return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 151:
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformMapType.values()[(int) value];
+          // Manual edit to fix https://github.com/flutter/flutter/issues/150108
+          // the way the generator will fix it once the PR lands.
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformMapType.values()[(int) value];
+          }
         case (byte) 152:
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformRendererType.values()[(int) value];
+          // Manual edit to fix https://github.com/flutter/flutter/issues/150108
+          // the way the generator will fix it once the PR lands.
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformRendererType.values()[(int) value];
+          }
         default:
           return super.readValueOfType(type, buffer);
       }
