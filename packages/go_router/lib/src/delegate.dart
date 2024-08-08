@@ -99,8 +99,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     }
     RouteMatchBase walker = currentConfiguration.matches.last;
     while (walker is ShellRouteMatch) {
-      final NavigatorState potentialCandidate = walker.navigatorKey.currentState!;
-      if (!ModalRoute.isCurrentOf(potentialCandidate.context)!) {
+      final NavigatorState potentialCandidate =
+          walker.navigatorKey.currentState!;
+      if (!ModalRoute.of(potentialCandidate.context)!.isCurrent) {
         // There is a pageless route on top of the shell route. it needs to be
         // popped first.
         break;
