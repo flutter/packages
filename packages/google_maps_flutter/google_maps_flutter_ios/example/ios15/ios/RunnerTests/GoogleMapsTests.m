@@ -101,7 +101,9 @@
                      initialMarkers:@[]
                     initialPolygons:@[]
                    initialPolylines:@[]
-                initialTileOverlays:@[]];
+                     initialHeatmap:@[]
+                initialTileOverlays:@[]
+             initialClusterManagers:@[]];
 }
 
 @end
