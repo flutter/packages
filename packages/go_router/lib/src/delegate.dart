@@ -52,22 +52,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   @override
   Future<bool> popRoute() async {
-    NavigatorState? state = navigatorKey.currentState;
-    if (state == null) {
-      return false;
-    }
-    if (!state.canPop()) {
-      state = null;
-    }
-    RouteMatchBase walker = currentConfiguration.matches.last;
-    while (walker is ShellRouteMatch) {
-      if (walker.navigatorKey.currentState?.canPop() ?? false) {
-        state = walker.navigatorKey.currentState;
-      }
-      walker = walker.matches.last;
-    }
-    assert(walker is RouteMatch);
+    final NavigatorState? state = _findCurrentNavigator();
     if (state != null) {
+      // now we have to figure out whether we are the last
       return state.maybePop();
     }
     // This should be the only place where the last GoRoute exit the screen.
@@ -75,7 +62,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     if (lastRoute.onExit != null && navigatorKey.currentContext != null) {
       return !(await lastRoute.onExit!(
         navigatorKey.currentContext!,
-        walker.buildState(_configuration, currentConfiguration),
+        currentConfiguration.last
+            .buildState(_configuration, currentConfiguration),
       ));
     }
     return false;
@@ -98,6 +86,14 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   /// Pops the top-most route.
   void pop<T extends Object?>([T? result]) {
+    final NavigatorState? state = _findCurrentNavigator();
+    if (state == null) {
+      throw GoError('There is nothing to pop');
+    }
+    state.pop(result);
+  }
+
+  NavigatorState? _findCurrentNavigator() {
     NavigatorState? state;
     if (navigatorKey.currentState?.canPop() ?? false) {
       state = navigatorKey.currentState;
@@ -110,9 +106,16 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       walker = walker.matches.last;
     }
     if (state == null) {
-      throw GoError('There is nothing to pop');
+      return null;
     }
-    state.pop(result);
+    NavigatorState currentState = state;
+    bool isNavigatorCurrent = ModalRoute.isCurrentOf(state.context) ?? true;
+    while (!isNavigatorCurrent) {
+      currentState =
+          currentState.context.findAncestorStateOfType<NavigatorState>()!;
+      isNavigatorCurrent = ModalRoute.isCurrentOf(currentState.context) ?? true;
+    }
+    return currentState;
   }
 
   void _debugAssertMatchListNotEmpty() {
