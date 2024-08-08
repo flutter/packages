@@ -54,7 +54,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   Future<bool> popRoute() async {
     final NavigatorState? state = _findCurrentNavigator();
     if (state != null) {
-      // now we have to figure out whether we are the last
       return state.maybePop();
     }
     // This should be the only place where the last GoRoute exit the screen.
@@ -100,22 +99,18 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     }
     RouteMatchBase walker = currentConfiguration.matches.last;
     while (walker is ShellRouteMatch) {
-      if (walker.navigatorKey.currentState?.canPop() ?? false) {
+      final NavigatorState potentialCandidate = walker.navigatorKey.currentState!;
+      if (!ModalRoute.isCurrentOf(potentialCandidate.context)!) {
+        // There is a pageless route on top of the shell route. it needs to be
+        // popped first.
+        break;
+      }
+      if (potentialCandidate.canPop()) {
         state = walker.navigatorKey.currentState;
       }
       walker = walker.matches.last;
     }
-    if (state == null) {
-      return null;
-    }
-    NavigatorState currentState = state;
-    bool isNavigatorCurrent = ModalRoute.isCurrentOf(state.context) ?? true;
-    while (!isNavigatorCurrent) {
-      currentState =
-          currentState.context.findAncestorStateOfType<NavigatorState>()!;
-      isNavigatorCurrent = ModalRoute.isCurrentOf(currentState.context) ?? true;
-    }
-    return currentState;
+    return state;
   }
 
   void _debugAssertMatchListNotEmpty() {
