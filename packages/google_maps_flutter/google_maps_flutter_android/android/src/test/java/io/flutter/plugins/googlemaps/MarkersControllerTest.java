@@ -24,6 +24,7 @@ import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
