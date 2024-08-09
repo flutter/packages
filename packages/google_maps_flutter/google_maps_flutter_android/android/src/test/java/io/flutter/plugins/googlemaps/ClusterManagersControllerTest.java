@@ -175,6 +175,7 @@ public class ClusterManagersControllerTest {
     byteData.put("byteData", byteArray);
     byteData.put("bitmapScaling", "none");
     byteData.put("imagePixelRatio", "");
+    Messages.PlatformOffset anchor = new Messages.PlatformOffset.Builder().setDx(0.0).setDy(0.0).build();
     return new Messages.PlatformMarker.Builder()
             .setMarkerId(markerId)
             .setConsumeTapEvents(false)
@@ -187,8 +188,8 @@ public class ClusterManagersControllerTest {
             .setZIndex(0.0)
             .setPosition(new Messages.PlatformLatLng.Builder().setLatitude(location.get(0)).setLongitude(location.get(1)).build())
             .setClusterManagerId(clusterManagerId)
-            .setAnchor(new Messages.PlatformOffset())
-            .setInfoWindow(new Messages.PlatformInfoWindow())
+            .setAnchor(anchor)
+            .setInfoWindow(new Messages.PlatformInfoWindow.Builder().setAnchor(anchor).build())
             .build();
   }
 }
