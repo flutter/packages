@@ -687,10 +687,8 @@ class Convert {
   private static void interpretInfoWindowOptions(
       MarkerOptionsSink sink, Messages.PlatformInfoWindow infoWindow) {
     String title = infoWindow.getTitle();
-    String snippet = infoWindow.getSnippet();
-    // snippet is nullable.
     if (title != null) {
-      sink.setInfoWindowText(title, snippet);
+      sink.setInfoWindowText(title, infoWindow.getSnippet());
     }
     Messages.PlatformOffset infoWindowAnchor = infoWindow.getAnchor();
     sink.setInfoWindowAnchor(
