@@ -696,9 +696,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformCircle _platformCircleFromCircle(Circle circle) {
-    // This cast is not ideal, but the Java code already assumes this format.
-    // See the TODOs at the top of this file and on the 'json' field in
-    // messages.dart.
     return PlatformCircle(
       consumeTapEvents: circle.consumeTapEvents,
       fillColor: circle.fillColor.value,
@@ -731,9 +728,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformMarker _platformMarkerFromMarker(Marker marker) {
-    // This cast is not ideal, but the Java code already assumes this format.
-    // See the TODOs at the top of this file and on the 'json' field in
-    // messages.dart.
     return PlatformMarker(
       alpha: marker.alpha,
       anchor: _platformOffsetFromOffset(marker.anchor),
