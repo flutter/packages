@@ -1479,11 +1479,14 @@ open class PigeonApiContentProgressProvider(
 abstract class PigeonApiAdsManager(
     open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
 ) {
+<<<<<<< HEAD
   /** List of content time offsets in seconds at which ad breaks are scheduled. */
   abstract fun adCuePoints(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManager
   ): List<Double>
 
+=======
+>>>>>>> e890769ab377a9323f135554c3f5ea1e053eabdd
   /** Discards current ad break and resumes content. */
   abstract fun discardAdBreak(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManager)
 
@@ -1563,6 +1566,7 @@ abstract class PigeonApiAdsManager(
                 try {
                   api.start(pigeon_instanceArg)
                   listOf(null)
+<<<<<<< HEAD
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1607,6 +1611,8 @@ abstract class PigeonApiAdsManager(
                 try {
                   api.skip(pigeon_instanceArg)
                   listOf(null)
+=======
+>>>>>>> e890769ab377a9323f135554c3f5ea1e053eabdd
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1842,6 +1848,11 @@ abstract class PigeonApiAdEvent(
   /** The type of event that occurred. */
   abstract fun type(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdEvent): AdEventType
 
+  /** A map containing any extra ad data for the event, if needed. */
+  abstract fun adData(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdEvent
+  ): Map<String, String>?
+
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of AdEvent and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
@@ -1861,11 +1872,16 @@ abstract class PigeonApiAdEvent(
     val pigeon_identifierArg =
         pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val typeArg = type(pigeon_instanceArg)
+    val adDataArg = adData(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.AdEvent.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+<<<<<<< HEAD
     channel.send(listOf(pigeon_identifierArg, typeArg)) {
+=======
+    channel.send(listOf(pigeon_identifierArg, typeArg, adDataArg)) {
+>>>>>>> e890769ab377a9323f135554c3f5ea1e053eabdd
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))

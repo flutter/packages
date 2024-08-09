@@ -1,3 +1,12 @@
+## 0.1.12
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Expose `labelType` for NavigationRails.
+* Add `navigationRailDestinationBuilder` to apply custom Destinations.
+* Add `groupAlignment` property to change alignment.
+* Set `navRailTheme` when using the Drawer just like the other NavigationRails.
+
 ## 0.1.11+1
 
 * Allows custom animation duration for the NavigationRail and 

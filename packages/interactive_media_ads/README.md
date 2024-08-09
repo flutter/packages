@@ -210,7 +210,7 @@ Future<void> _requestAds(AdDisplayContainer container) {
 
       manager.setAdsManagerDelegate(AdsManagerDelegate(
         onAdEvent: (AdEvent event) {
-          debugPrint('OnAdEvent: ${event.type}');
+          debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
           switch (event.type) {
             case AdEventType.loaded:
               manager.start();
@@ -223,6 +223,7 @@ Future<void> _requestAds(AdDisplayContainer container) {
               _adsManager = null;
             case AdEventType.clicked:
             case AdEventType.complete:
+            case _:
           }
         },
         onAdErrorEvent: (AdErrorEvent event) {

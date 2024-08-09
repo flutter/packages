@@ -1878,16 +1878,23 @@ class AdEvent extends PigeonProxyApiBaseClass {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required this.type,
+    this.adData,
   });
 
   /// The type of event that occurred.
   final AdEventType type;
 
+  /// A map containing any extra ad data for the event, if needed.
+  final Map<String?, String?>? adData;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    AdEvent Function(AdEventType type)? pigeon_newInstance,
+    AdEvent Function(
+      AdEventType type,
+      Map<String?, String?>? adData,
+    )? pigeon_newInstance,
   }) {
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
         _PigeonProxyApiBaseCodec(
@@ -1912,14 +1919,17 @@ class AdEvent extends PigeonProxyApiBaseClass {
           final AdEventType? arg_type = (args[1] as AdEventType?);
           assert(arg_type != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.AdEvent.pigeon_newInstance was null, expected non-null AdEventType.');
+          final Map<String?, String?>? arg_adData =
+              (args[2] as Map<Object?, Object?>?)?.cast<String?, String?>();
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_type!) ??
+              pigeon_newInstance?.call(arg_type!, arg_adData) ??
                   AdEvent.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     type: arg_type!,
+                    adData: arg_adData,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -1941,6 +1951,7 @@ class AdEvent extends PigeonProxyApiBaseClass {
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       type: type,
+      adData: adData,
     );
   }
 }
