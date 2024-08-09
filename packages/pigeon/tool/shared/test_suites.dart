@@ -297,7 +297,7 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
   final int compileCode = await runFlutterBuild(
     examplePath,
     'ios',
-    flags: <String>['--simulator', '--no-codesign'],
+    flags: <String>['--simulator', '--no-codesign', '--verbose'],
   );
   if (compileCode != 0) {
     return compileCode;
@@ -305,8 +305,8 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
 
   const String deviceName = 'Pigeon-Test-iPhone';
   const String deviceType = 'com.apple.CoreSimulator.SimDeviceType.iPhone-14';
-  const String deviceRuntime = 'com.apple.CoreSimulator.SimRuntime.iOS-17-0';
-  const String deviceOS = '17.0';
+  const String deviceRuntime = 'com.apple.CoreSimulator.SimRuntime.iOS-18-0';
+  const String deviceOS = '18.0';
   await _createSimulator(deviceName, deviceType, deviceRuntime);
   return runXcodeBuild(
     '$examplePath/ios',
