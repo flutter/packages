@@ -60,8 +60,12 @@ class Convert {
   public static final String HEATMAP_GRADIENT_START_POINTS_KEY = "startPoints";
   public static final String HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY = "colorMapSize";
 
+  private static BitmapDescriptor toBitmapDescriptor(Object o, AssetManager assetManager, float density) {
+    return toBitmapDescriptor(o, assetManager, density, new BitmapDescriptorFactoryWrapper());
+  }
+
   private static BitmapDescriptor toBitmapDescriptor(
-      Object o, AssetManager assetManager, float density) {
+      Object o, AssetManager assetManager, float density, BitmapDescriptorFactoryWrapper wrapper) {
     final List<?> data = toList(o);
     final String descriptorType = toString(data.get(0));
     switch (descriptorType) {
@@ -104,14 +108,14 @@ class Convert {
             assetData,
             assetManager,
             density,
-            new BitmapDescriptorFactoryWrapper(),
+            wrapper,
             new FlutterInjectorWrapper());
       case "bytes":
         if (!(data.get(1) instanceof Map)) {
           throw new IllegalArgumentException("'bytes' expected a map as the second parameter");
         }
         final Map<?, ?> byteData = toMap(data.get(1));
-        return getBitmapFromBytes(byteData, density, new BitmapDescriptorFactoryWrapper());
+        return getBitmapFromBytes(byteData, density, wrapper);
       case "null":
         return null;
       default:
@@ -664,14 +668,15 @@ class Convert {
       Messages.PlatformMarker marker,
       MarkerOptionsSink sink,
       AssetManager assetManager,
-      float density) {
+      float density,
+      BitmapDescriptorFactoryWrapper wrapper) {
     sink.setAlpha(marker.getAlpha().floatValue());
     sink.setAnchor(
         marker.getAnchor().getDx().floatValue(), marker.getAnchor().getDy().floatValue());
     sink.setConsumeTapEvents(marker.getConsumeTapEvents());
     sink.setDraggable(marker.getDraggable());
     sink.setFlat(marker.getFlat());
-    sink.setIcon(toBitmapDescriptor(marker.getIcon(), assetManager, density));
+    sink.setIcon(toBitmapDescriptor(marker.getIcon(), assetManager, density, wrapper));
     interpretInfoWindowOptions(sink, marker.getInfoWindow());
     sink.setPosition(toLatLng(marker.getPosition().toList()));
     sink.setRotation(marker.getRotation().floatValue());
@@ -1009,7 +1014,6 @@ class Convert {
     return new Tile(tile.getWidth().intValue(), tile.getHeight().intValue(), tile.getData());
   }
 
-  @VisibleForTesting
   static class BitmapDescriptorFactoryWrapper {
     /**
      * Creates a BitmapDescriptor from the provided asset key using the {@link

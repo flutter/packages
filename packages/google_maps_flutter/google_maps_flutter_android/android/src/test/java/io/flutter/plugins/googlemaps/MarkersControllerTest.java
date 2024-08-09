@@ -25,11 +25,15 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.Collections;
 import java.util.List;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -45,6 +49,9 @@ public class MarkersControllerTest {
   private MarkerManager.Collection markerCollection;
   private AssetManager assetManager;
   private final float density = 1;
+  private AutoCloseable mocksClosable;
+
+  @Mock private final Convert.BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper;
 
   private static Messages.PlatformMarker.Builder defaultMarkerBuilder() {
     Messages.PlatformOffset anchor =
@@ -68,17 +75,23 @@ public class MarkersControllerTest {
 
   @Before
   public void setUp() {
+    mocksClosable = MockitoAnnotations.openMocks(this);
     assetManager = ApplicationProvider.getApplicationContext().getAssets();
     context = ApplicationProvider.getApplicationContext();
     flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
     clusterManagersController = spy(new ClusterManagersController(flutterApi, context));
     controller =
-        new MarkersController(flutterApi, clusterManagersController, assetManager, density);
+        new MarkersController(flutterApi, clusterManagersController, assetManager, density, bitmapDescriptorFactoryWrapper);
     googleMap = mock(GoogleMap.class);
     markerManager = new MarkerManager(googleMap);
     markerCollection = markerManager.newCollection();
     controller.setCollection(markerCollection);
     clusterManagersController.init(googleMap, markerManager);
+  }
+
+  @After
+  public void close() {
+    mocksClosable.close();
   }
 
   @Test
