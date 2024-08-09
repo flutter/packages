@@ -82,14 +82,20 @@ class TestScaffoldState extends State<TestScaffold> {
       internalAnimations: widget.isAnimated,
       smallBreakpoint: TestBreakpoint0(),
       mediumBreakpoint: TestBreakpoint800(),
-      largeBreakpoint: TestBreakpoint1000(),
+      mediumLargeBreakpoint: TestBreakpoint1000(),
+      largeBreakpoint: TestBreakpoint1200(),
+      extraLargeBreakpoint: TestBreakpoint1600(),
       destinations: TestScaffold.destinations,
       smallBody: (_) => Container(color: Colors.red),
       body: (_) => Container(color: Colors.green),
-      largeBody: (_) => Container(color: Colors.blue),
+      mediumLargeBody: (_) => Container(color: Colors.blue),
+      largeBody: (_) => Container(color: Colors.yellow),
+      extraLargeBody: (_) => Container(color: Colors.purple),
       smallSecondaryBody: (_) => Container(color: Colors.red),
       secondaryBody: (_) => Container(color: Colors.green),
-      largeSecondaryBody: (_) => Container(color: Colors.blue),
+      mediumLargeSecondaryBody: (_) => Container(color: Colors.blue),
+      largeSecondaryBody: (_) => Container(color: Colors.yellow),
+      extraLargeSecondaryBody: (_) => Container(color: Colors.purple),
       leadingExtendedNavRail: const Text('leading_extended'),
       leadingUnextendedNavRail: const Text('leading_unextended'),
       trailingNavRail: const Text('trailing'),
@@ -100,7 +106,9 @@ class TestScaffoldState extends State<TestScaffold> {
 enum SimulatedLayout {
   small(width: 400, navSlotKey: 'bottomNavigation'),
   medium(width: 800, navSlotKey: 'primaryNavigation'),
-  large(width: 1100, navSlotKey: 'primaryNavigation1');
+  mediumLarge(width: 1000, navSlotKey: 'primaryNavigation1'),
+  large(width: 1200, navSlotKey: 'primaryNavigation2'),
+  extraLarge(width: 1600, navSlotKey: 'primaryNavigation3');
 
   const SimulatedLayout({
     required double width,
@@ -108,7 +116,7 @@ enum SimulatedLayout {
   }) : _width = width;
 
   final double _width;
-  final double _height = 800;
+  final double _height = 2000;
   final String navSlotKey;
 
   static const Color navigationRailThemeBgColor = Colors.white;
@@ -184,6 +192,18 @@ enum SimulatedLayout {
                 key: const Key('Breakpoints.mediumDesktop'),
                 builder: (BuildContext context) => Container(),
               ),
+              Breakpoints.mediumLarge: SlotLayout.from(
+                key: const Key('Breakpoints.mediumLarge'),
+                builder: (BuildContext context) => Container(),
+              ),
+              Breakpoints.mediumLargeMobile: SlotLayout.from(
+                key: const Key('Breakpoints.mediumLargeMobile'),
+                builder: (BuildContext context) => Container(),
+              ),
+              Breakpoints.mediumLargeDesktop: SlotLayout.from(
+                key: const Key('Breakpoints.mediumLargeDesktop'),
+                builder: (BuildContext context) => Container(),
+              ),
               Breakpoints.large: SlotLayout.from(
                 key: const Key('Breakpoints.large'),
                 builder: (BuildContext context) => Container(),
@@ -194,6 +214,18 @@ enum SimulatedLayout {
               ),
               Breakpoints.largeDesktop: SlotLayout.from(
                 key: const Key('Breakpoints.largeDesktop'),
+                builder: (BuildContext context) => Container(),
+              ),
+              Breakpoints.extraLarge: SlotLayout.from(
+                key: const Key('Breakpoints.extraLarge'),
+                builder: (BuildContext context) => Container(),
+              ),
+              Breakpoints.extraLargeMobile: SlotLayout.from(
+                key: const Key('Breakpoints.extraLargeMobile'),
+                builder: (BuildContext context) => Container(),
+              ),
+              Breakpoints.extraLargeDesktop: SlotLayout.from(
+                key: const Key('Breakpoints.extraLargeDesktop'),
                 builder: (BuildContext context) => Container(),
               ),
             },

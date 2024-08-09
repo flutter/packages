@@ -17,19 +17,19 @@ flutter run --release
 
 ## AdaptiveScaffold
 
-AdaptiveScaffold implements the basic visual layout structure for Material
+`AdaptiveScaffold` implements the basic visual layout structure for Material
 Design 3 that adapts to a variety of screens. It provides a preset of layout,
 including positions and animations, by handling macro changes in navigational
 elements and bodies based on the current features of the screen, namely screen
 width and platform. For example, the navigational elements would be a
-BottomNavigationBar on a small mobile device and a NavigationRail on larger
+`BottomNavigationBar` on a small mobile device and a `NavigationRail` on larger
 devices. The body is the primary screen that takes up the space left by the
 navigational elements. The secondaryBody acts as an option to split the space
 between two panes for purposes such as having a detail view. There is some
 automatic functionality with foldables to handle the split between panels
-properly. AdaptiveScaffold is much simpler to use but is not the best if you
+properly. `AdaptiveScaffold` is much simpler to use but is not the best if you
 would like high customizability. Apps that would like more refined layout and/or
-animation should use AdaptiveLayout.
+animation should use `AdaptiveLayout`.
 
 ### Example Usage
 
@@ -52,10 +52,12 @@ Widget build(BuildContext context) {
     // An option to override the default transition duration.
     transitionDuration: Duration(milliseconds: _transitionDuration),
     // An option to override the default breakpoints used for small, medium,
-    // and large.
-    smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
-    mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
-    largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
+    // mediumLarge, large, and extraLarge.
+    smallBreakpoint: const Breakpoint(endWidth: 700),
+    mediumBreakpoint: const Breakpoint(beginWidth: 700, endWidth: 1000),
+    mediumLargeBreakpoint: const Breakpoint(beginWidth: 1000, endWidth: 1200),
+    largeBreakpoint: const Breakpoint(beginWidth: 1200, endWidth: 1600),
+    extraLargeBreakpoint: const Breakpoint(beginWidth: 1600),
     useDrawer: false,
     selectedIndex: _selectedTab,
     onSelectedIndexChange: (int index) {
@@ -90,19 +92,33 @@ Widget build(BuildContext context) {
         label: 'Inbox',
       ),
     ],
-    body: (_) => GridView.count(crossAxisCount: 2, children: children),
     smallBody: (_) => ListView.builder(
       itemCount: children.length,
       itemBuilder: (_, int idx) => children[idx],
     ),
+    body: (_) => GridView.count(crossAxisCount: 2, children: children),
+    mediumLargeBody: (_) =>
+        GridView.count(crossAxisCount: 3, children: children),
+    largeBody: (_) => GridView.count(crossAxisCount: 4, children: children),
+    extraLargeBody: (_) =>
+        GridView.count(crossAxisCount: 5, children: children),
     // Define a default secondaryBody.
-    secondaryBody: (_) => Container(
-      color: const Color.fromARGB(255, 234, 158, 192),
-    ),
     // Override the default secondaryBody during the smallBreakpoint to be
     // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
     // overridden.
     smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
+    secondaryBody: (_) => Container(
+      color: const Color.fromARGB(255, 234, 158, 192),
+    ),
+    mediumLargeSecondaryBody: (_) => Container(
+      color: const Color.fromARGB(255, 234, 158, 192),
+    ),
+    largeSecondaryBody: (_) => Container(
+      color: const Color.fromARGB(255, 234, 158, 192),
+    ),
+    extraLargeSecondaryBody: (_) => Container(
+      color: const Color.fromARGB(255, 234, 158, 192),
+    ),
   );
 }
 ```
@@ -115,16 +131,16 @@ customizability at a cost of more lines of code.
 ### AdaptiveLayout
 
 !["AdaptiveLayout's Assigned Slots Displayed on Screen"](example/demo_files/screenSlots.png)
-AdaptiveLayout is the top-level widget class that arranges the layout of the
+`AdaptiveLayout` is the top-level widget class that arranges the layout of the
 slots and their animation, similar to Scaffold. It takes in several LayoutSlots
-and returns an appropriate layout based on the diagram above. AdaptiveScaffold
-is built upon AdaptiveLayout internally but abstracts some of the complexity
+and returns an appropriate layout based on the diagram above. `AdaptiveScaffold`
+is built upon `AdaptiveLayout` internally but abstracts some of the complexity
 with presets based on the Material 3 Design specification.
 
 ### SlotLayout
 
-SlotLayout handles the adaptivity or the changes between widgets at certain
-Breakpoints. It also holds the logic for animating between breakpoints. It takes
+`SlotLayout` handles the adaptivity or the changes between widgets at certain
+`Breakpoints`. It also holds the logic for animating between breakpoints. It takes
 SlotLayoutConfigs mapped to Breakpoints in a config and displays a widget based
 on that information.
 
@@ -169,6 +185,39 @@ return AdaptiveLayout(
           unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
         ),
       ),
+      Breakpoints.mediumLarge: SlotLayout.from(
+        key: const Key('Primary Navigation MediumLarge'),
+        inAnimation: AdaptiveScaffold.leftOutIn,
+        builder: (_) => AdaptiveScaffold.standardNavigationRail(
+          selectedIndex: selectedNavigation,
+          onDestinationSelected: (int newIndex) {
+            setState(() {
+              selectedNavigation = newIndex;
+            });
+          },
+          extended: true,
+          leading: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Text(
+                'REPLY',
+                style: headerColor,
+              ),
+              const Icon(Icons.menu_open)
+            ],
+          ),
+          destinations: destinations
+              .map((NavigationDestination destination) =>
+                  AdaptiveScaffold.toRailDestination(destination))
+              .toList(),
+          trailing: trailingNavRail,
+          backgroundColor: navRailTheme.backgroundColor,
+          selectedIconTheme: navRailTheme.selectedIconTheme,
+          unselectedIconTheme: navRailTheme.unselectedIconTheme,
+          selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+          unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+        ),
+      ),
       Breakpoints.large: SlotLayout.from(
         key: const Key('Primary Navigation Large'),
         inAnimation: AdaptiveScaffold.leftOutIn,
@@ -180,14 +229,47 @@ return AdaptiveLayout(
             });
           },
           extended: true,
-          leading: const Row(
+          leading: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Text(
                 'REPLY',
-                style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
+                style: headerColor,
               ),
-              Icon(Icons.menu_open)
+              const Icon(Icons.menu_open)
+            ],
+          ),
+          destinations: destinations
+              .map((NavigationDestination destination) =>
+                  AdaptiveScaffold.toRailDestination(destination))
+              .toList(),
+          trailing: trailingNavRail,
+          backgroundColor: navRailTheme.backgroundColor,
+          selectedIconTheme: navRailTheme.selectedIconTheme,
+          unselectedIconTheme: navRailTheme.unselectedIconTheme,
+          selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+          unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+        ),
+      ),
+      Breakpoints.extraLarge: SlotLayout.from(
+        key: const Key('Primary Navigation ExtraLarge'),
+        inAnimation: AdaptiveScaffold.leftOutIn,
+        builder: (_) => AdaptiveScaffold.standardNavigationRail(
+          selectedIndex: selectedNavigation,
+          onDestinationSelected: (int newIndex) {
+            setState(() {
+              selectedNavigation = newIndex;
+            });
+          },
+          extended: true,
+          leading: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Text(
+                'REPLY',
+                style: headerColor,
+              ),
+              const Icon(Icons.menu_open)
             ],
           ),
           destinations: destinations
@@ -215,11 +297,26 @@ return AdaptiveLayout(
           itemBuilder: (BuildContext context, int index) => children[index],
         ),
       ),
-      Breakpoints.mediumAndUp: SlotLayout.from(
+      Breakpoints.medium: SlotLayout.from(
         key: const Key('Body Medium'),
         builder: (_) =>
             GridView.count(crossAxisCount: 2, children: children),
-      )
+      ),
+      Breakpoints.mediumLarge: SlotLayout.from(
+        key: const Key('Body MediumLarge'),
+        builder: (_) =>
+            GridView.count(crossAxisCount: 3, children: children),
+      ),
+      Breakpoints.large: SlotLayout.from(
+        key: const Key('Body Large'),
+        builder: (_) =>
+            GridView.count(crossAxisCount: 4, children: children),
+      ),
+      Breakpoints.extraLarge: SlotLayout.from(
+        key: const Key('Body ExtraLarge'),
+        builder: (_) =>
+            GridView.count(crossAxisCount: 5, children: children),
+      ),
     },
   ),
   // BottomNavigation is only active in small views defined as under 600 dp

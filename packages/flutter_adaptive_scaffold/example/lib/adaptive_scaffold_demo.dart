@@ -85,10 +85,12 @@ class _MyHomePageState extends State<MyHomePage> {
       // An option to override the default transition duration.
       transitionDuration: Duration(milliseconds: _transitionDuration),
       // An option to override the default breakpoints used for small, medium,
-      // and large.
-      smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
-      mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
-      largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
+      // mediumLarge, large, and extraLarge.
+      smallBreakpoint: const Breakpoint(endWidth: 700),
+      mediumBreakpoint: const Breakpoint(beginWidth: 700, endWidth: 1000),
+      mediumLargeBreakpoint: const Breakpoint(beginWidth: 1000, endWidth: 1200),
+      largeBreakpoint: const Breakpoint(beginWidth: 1200, endWidth: 1600),
+      extraLargeBreakpoint: const Breakpoint(beginWidth: 1600),
       useDrawer: false,
       selectedIndex: _selectedTab,
       onSelectedIndexChange: (int index) {
@@ -123,19 +125,33 @@ class _MyHomePageState extends State<MyHomePage> {
           label: 'Inbox',
         ),
       ],
-      body: (_) => GridView.count(crossAxisCount: 2, children: children),
       smallBody: (_) => ListView.builder(
         itemCount: children.length,
         itemBuilder: (_, int idx) => children[idx],
       ),
+      body: (_) => GridView.count(crossAxisCount: 2, children: children),
+      mediumLargeBody: (_) =>
+          GridView.count(crossAxisCount: 3, children: children),
+      largeBody: (_) => GridView.count(crossAxisCount: 4, children: children),
+      extraLargeBody: (_) =>
+          GridView.count(crossAxisCount: 5, children: children),
       // Define a default secondaryBody.
-      secondaryBody: (_) => Container(
-        color: const Color.fromARGB(255, 234, 158, 192),
-      ),
       // Override the default secondaryBody during the smallBreakpoint to be
       // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
       // overridden.
       smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
+      secondaryBody: (_) => Container(
+        color: const Color.fromARGB(255, 234, 158, 192),
+      ),
+      mediumLargeSecondaryBody: (_) => Container(
+        color: const Color.fromARGB(255, 234, 158, 192),
+      ),
+      largeSecondaryBody: (_) => Container(
+        color: const Color.fromARGB(255, 234, 158, 192),
+      ),
+      extraLargeSecondaryBody: (_) => Container(
+        color: const Color.fromARGB(255, 234, 158, 192),
+      ),
     );
   }
 // #enddocregion Example
