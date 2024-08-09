@@ -397,6 +397,24 @@ void main() {
       await preferences.setStringList(listKey, testList, emptyOptions);
       expect(await preferences.getStringList(listKey, emptyOptions), testList);
     });
+    testWidgets('getStringList does not throw cast error',
+        (WidgetTester _) async {
+      SharedPreferencesAsyncPlatform preferences = await getPreferences();
+
+      await preferences.setStringList(listKey, testList, emptyOptions);
+      preferences = await getPreferences();
+      expect(await preferences.getStringList(listKey, emptyOptions), testList);
+    });
+
+    testWidgets('getStringList returns mutable list', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
+
+      await preferences.setStringList(listKey, testList, emptyOptions);
+      final List<String>? list =
+          await preferences.getStringList(listKey, emptyOptions);
+      list?.add('value');
+      expect(list?.length, testList.length + 1);
+    });
 
     testWidgets('getPreferences', (WidgetTester _) async {
       final SharedPreferencesAsyncPlatform preferences = await getPreferences();

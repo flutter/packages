@@ -254,7 +254,7 @@ base class SharedPreferencesAsyncWindows
     SharedPreferencesOptions options,
   ) async {
     final Map<String, Object> data = await _readAll(<String>{key}, options);
-    return (data[key] as List<String>?)?.toList();
+    return (data[key] as List<Object?>?)?.cast<String>().toList();
   }
 
   @override
