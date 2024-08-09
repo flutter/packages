@@ -55,7 +55,7 @@ void main() {
         IOSAdsManagerDelegateCreationParams(
           onAdEvent: expectAsync1((AdEvent event) {
             expect(event.type, AdEventType.allAdsCompleted);
-            expect(event.adData, <String, String>{'hawk': 'tuah'});
+            expect(event.adData, <String, String>{'hello': 'world'});
           }),
           proxy: imaProxy,
         ),
