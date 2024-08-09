@@ -4,3 +4,5 @@
 *.kt
 !TestPlugin.kt
 !CoreTests.gen.kt
+!ProxyApiTestApiImpls.kt
+!ProxyApiTests.gen.kt
