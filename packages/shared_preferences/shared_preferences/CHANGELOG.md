@@ -1,5 +1,6 @@
-## NEXT
+## 2.4.0
 
+* Adds shared preferences devtools extension
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
