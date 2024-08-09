@@ -1,6 +1,7 @@
-## NEXT
+## 14.2.4
 
-* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+- Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+- Fixes an issue where android back button pops pages in the wrong order.
 
 ## 14.2.3
 
