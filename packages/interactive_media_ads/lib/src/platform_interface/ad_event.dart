@@ -102,7 +102,7 @@ enum AdEventType {
   /// Fired when the ad playhead crosses third quartile.
   thirdQuartile,
 
-  /// An unexpected event occurred and the type is not know.
+  /// An unexpected event occurred and the type is not known.
   ///
   /// Refer to the inner error for more information.
   unknown,

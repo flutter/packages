@@ -73,7 +73,7 @@ void main() {
         ima.IMAAdEvent.pigeon_detached(
           type: ima.AdEventType.allAdsCompleted,
           typeString: 'typeString',
-          adData: const <String, String>{'hawk': 'tuah'},
+          adData: const <String, String>{'hello': 'world'},
           pigeon_instanceManager: instanceManager,
         ),
       );
