@@ -1,3 +1,10 @@
+## 0.2.0
+
+* Adds support for pausing and resuming Ad playback. See `AdsManager.pause` and `AdsManager.resume`.
+* Adds support to skip an Ad. See `AdsManager.skip` and `AdsManager.discardAdBreak`.
+* **Breaking Change** To keep platform consistency, Android no longer continues playing an Ad 
+  whenever it returns from an Ad click. Call `AdsManager.resume` to resume Ad playback.
+
 ## 0.1.2
 
 * Adds support for all `AdEventType`s and ad data. See `AdEvent.adData`.

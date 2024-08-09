@@ -1462,16 +1462,20 @@ class AdsManager extends BaseManager {
   AdsManager.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    required this.adCuePoints,
   }) : super.pigeon_detached();
 
   late final _PigeonProxyApiBaseCodec __pigeon_codecAdsManager =
       _PigeonProxyApiBaseCodec(pigeon_instanceManager);
 
+  /// List of content time offsets in seconds at which ad breaks are scheduled.
+  final List<double?> adCuePoints;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    AdsManager Function()? pigeon_newInstance,
+    AdsManager Function(List<double?> adCuePoints)? pigeon_newInstance,
   }) {
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
         _PigeonProxyApiBaseCodec(
@@ -1493,13 +1497,18 @@ class AdsManager extends BaseManager {
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.AdsManager.pigeon_newInstance was null, expected non-null int.');
+          final List<double?>? arg_adCuePoints =
+              (args[1] as List<Object?>?)?.cast<double?>();
+          assert(arg_adCuePoints != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.AdsManager.pigeon_newInstance was null, expected non-null List<double?>.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
+              pigeon_newInstance?.call(arg_adCuePoints!) ??
                   AdsManager.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
+                    adCuePoints: arg_adCuePoints!,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -1599,11 +1608,70 @@ class AdsManager extends BaseManager {
     }
   }
 
+  /// Resumes the current ad.
+  Future<void> resume() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsManager;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsManager.resume';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Skips the current ad.
+  ///
+  /// This only skips ads if IMA does not render the 'Skip ad' button.
+  Future<void> skip() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsManager;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsManager.skip';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
   @override
   AdsManager pigeon_copy() {
     return AdsManager.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      adCuePoints: adCuePoints,
     );
   }
 }

@@ -48,6 +48,38 @@ void main() {
       verify(mockAdsManager.start());
     });
 
+    test('discardAdBreak', () {
+      final MockAdsManager mockAdsManager = MockAdsManager();
+      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
+      adsManager.discardAdBreak();
+
+      verify(mockAdsManager.discardAdBreak());
+    });
+
+    test('pause', () {
+      final MockAdsManager mockAdsManager = MockAdsManager();
+      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
+      adsManager.pause();
+
+      verify(mockAdsManager.pause());
+    });
+
+    test('skip', () {
+      final MockAdsManager mockAdsManager = MockAdsManager();
+      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
+      adsManager.skip();
+
+      verify(mockAdsManager.skip());
+    });
+
+    test('resume', () {
+      final MockAdsManager mockAdsManager = MockAdsManager();
+      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
+      adsManager.resume();
+
+      verify(mockAdsManager.resume());
+    });
+
     test('onAdEvent', () async {
       final MockAdsManager mockAdsManager = MockAdsManager();
 

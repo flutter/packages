@@ -1479,6 +1479,14 @@ open class PigeonApiContentProgressProvider(
 abstract class PigeonApiAdsManager(
     open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
 ) {
+<<<<<<< HEAD
+  /** List of content time offsets in seconds at which ad breaks are scheduled. */
+  abstract fun adCuePoints(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManager
+  ): List<Double>
+
+=======
+>>>>>>> e890769ab377a9323f135554c3f5ea1e053eabdd
   /** Discards current ad break and resumes content. */
   abstract fun discardAdBreak(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManager)
 
@@ -1487,6 +1495,16 @@ abstract class PigeonApiAdsManager(
 
   /** Starts playing the ads. */
   abstract fun start(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManager)
+
+  /** Resumes the current ad. */
+  abstract fun resume(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManager)
+
+  /**
+   * Skips the current ad.
+   *
+   * This only skips ads if IMA does not render the 'Skip ad' button.
+   */
+  abstract fun skip(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManager)
 
   companion object {
     @Suppress("LocalVariableName")
@@ -1548,6 +1566,53 @@ abstract class PigeonApiAdsManager(
                 try {
                   api.start(pigeon_instanceArg)
                   listOf(null)
+<<<<<<< HEAD
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.AdsManager.resume",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsManager
+            val wrapped: List<Any?> =
+                try {
+                  api.resume(pigeon_instanceArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsManager.skip", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsManager
+            val wrapped: List<Any?> =
+                try {
+                  api.skip(pigeon_instanceArg)
+                  listOf(null)
+=======
+>>>>>>> e890769ab377a9323f135554c3f5ea1e053eabdd
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1578,11 +1643,12 @@ abstract class PigeonApiAdsManager(
     }
     val pigeon_identifierArg =
         pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val adCuePointsArg = adCuePoints(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.AdsManager.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_identifierArg)) {
+    channel.send(listOf(pigeon_identifierArg, adCuePointsArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -1811,7 +1877,11 @@ abstract class PigeonApiAdEvent(
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.AdEvent.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+<<<<<<< HEAD
+    channel.send(listOf(pigeon_identifierArg, typeArg)) {
+=======
     channel.send(listOf(pigeon_identifierArg, typeArg, adDataArg)) {
+>>>>>>> e890769ab377a9323f135554c3f5ea1e053eabdd
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
