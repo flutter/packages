@@ -285,8 +285,8 @@ base class SharedPreferencesAsyncLinux extends SharedPreferencesAsyncPlatform {
   ///
   Future<void> reload(
     SharedPreferencesLinuxOptions options,
-  ) {
-    return _reload(options.fileName);
+  ) async {
+    _cachedPreferences = await _reload(options.fileName);
   }
 
   Future<Map<String, Object>> _readAll(
