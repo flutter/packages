@@ -400,6 +400,7 @@ void main() {
       await preferences.setStringList(listKey, testList, emptyOptions);
       expect(await preferences.getStringList(listKey, emptyOptions), testList);
     });
+
     testWidgets('getStringList does not throw cast error',
         (WidgetTester _) async {
       final SharedPreferencesAsyncPlatform preferences = await getPreferences();
