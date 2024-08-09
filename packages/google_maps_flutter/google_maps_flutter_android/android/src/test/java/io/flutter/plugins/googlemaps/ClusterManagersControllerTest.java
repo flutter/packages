@@ -26,7 +26,6 @@ import com.google.maps.android.clustering.algo.StaticCluster;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
-
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +35,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,8 +57,7 @@ public class ClusterManagersControllerTest {
   private AssetManager assetManager;
   private final float density = 1;
 
-  @Mock
-  Convert.BitmapDescriptorFactoryWrapper bitmapFactory;
+  @Mock Convert.BitmapDescriptorFactoryWrapper bitmapFactory;
 
   private AutoCloseable mocksClosable;
 
@@ -114,8 +111,10 @@ public class ClusterManagersControllerTest {
     final Messages.PlatformMarker markerData2 =
         createPlatformMarker(markerId2, location2, clusterManagerId);
 
-    Convert.interpretMarkerOptions(markerData1, markerBuilder1, assetManager, density, bitmapFactory);
-    Convert.interpretMarkerOptions(markerData2, markerBuilder2, assetManager, density, bitmapFactory);
+    Convert.interpretMarkerOptions(
+        markerData1, markerBuilder1, assetManager, density, bitmapFactory);
+    Convert.interpretMarkerOptions(
+        markerData2, markerBuilder2, assetManager, density, bitmapFactory);
 
     controller.addItem(markerBuilder1);
     controller.addItem(markerBuilder2);
@@ -190,21 +189,26 @@ public class ClusterManagersControllerTest {
     byteData.put("byteData", byteArray);
     byteData.put("bitmapScaling", "none");
     byteData.put("imagePixelRatio", "");
-    Messages.PlatformOffset anchor = new Messages.PlatformOffset.Builder().setDx(0.0).setDy(0.0).build();
+    Messages.PlatformOffset anchor =
+        new Messages.PlatformOffset.Builder().setDx(0.0).setDy(0.0).build();
     return new Messages.PlatformMarker.Builder()
-            .setMarkerId(markerId)
-            .setConsumeTapEvents(false)
-            .setIcon(Arrays.asList("bytes", byteData))
-            .setAlpha(1.0)
-            .setDraggable(false)
-            .setFlat(false)
-            .setVisible(true)
-            .setRotation(0.0)
-            .setZIndex(0.0)
-            .setPosition(new Messages.PlatformLatLng.Builder().setLatitude(location.get(0)).setLongitude(location.get(1)).build())
-            .setClusterManagerId(clusterManagerId)
-            .setAnchor(anchor)
-            .setInfoWindow(new Messages.PlatformInfoWindow.Builder().setAnchor(anchor).build())
-            .build();
+        .setMarkerId(markerId)
+        .setConsumeTapEvents(false)
+        .setIcon(Arrays.asList("bytes", byteData))
+        .setAlpha(1.0)
+        .setDraggable(false)
+        .setFlat(false)
+        .setVisible(true)
+        .setRotation(0.0)
+        .setZIndex(0.0)
+        .setPosition(
+            new Messages.PlatformLatLng.Builder()
+                .setLatitude(location.get(0))
+                .setLongitude(location.get(1))
+                .build())
+        .setClusterManagerId(clusterManagerId)
+        .setAnchor(anchor)
+        .setInfoWindow(new Messages.PlatformInfoWindow.Builder().setAnchor(anchor).build())
+        .build();
   }
 }

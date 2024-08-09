@@ -24,14 +24,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
-
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import org.junit.After;
 import java.util.Map;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -94,7 +93,12 @@ public class MarkersControllerTest {
     flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
     clusterManagersController = spy(new ClusterManagersController(flutterApi, context));
     controller =
-        new MarkersController(flutterApi, clusterManagersController, assetManager, density, bitmapDescriptorFactoryWrapper);
+        new MarkersController(
+            flutterApi,
+            clusterManagersController,
+            assetManager,
+            density,
+            bitmapDescriptorFactoryWrapper);
     googleMap = mock(GoogleMap.class);
     markerManager = new MarkerManager(googleMap);
     markerCollection = markerManager.newCollection();
@@ -210,7 +214,10 @@ public class MarkersControllerTest {
     final LatLng latLng2 = new LatLng(3.3, 4.4);
 
     builder.setPosition(
-        new Messages.PlatformLatLng.Builder().setLatitude(latLng2.latitude).setLongitude(latLng2.longitude).build());
+        new Messages.PlatformLatLng.Builder()
+            .setLatitude(latLng2.latitude)
+            .setLongitude(latLng2.longitude)
+            .build());
     final List<Messages.PlatformMarker> updatedMarkers = Collections.singletonList(builder.build());
 
     controller.changeMarkers(updatedMarkers);

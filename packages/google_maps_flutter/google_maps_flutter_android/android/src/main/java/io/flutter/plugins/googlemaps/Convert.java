@@ -60,7 +60,8 @@ class Convert {
   public static final String HEATMAP_GRADIENT_START_POINTS_KEY = "startPoints";
   public static final String HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY = "colorMapSize";
 
-  private static BitmapDescriptor toBitmapDescriptor(Object o, AssetManager assetManager, float density) {
+  private static BitmapDescriptor toBitmapDescriptor(
+      Object o, AssetManager assetManager, float density) {
     return toBitmapDescriptor(o, assetManager, density, new BitmapDescriptorFactoryWrapper());
   }
 
@@ -105,11 +106,7 @@ class Convert {
         }
         final Map<?, ?> assetData = toMap(data.get(1));
         return getBitmapFromAsset(
-            assetData,
-            assetManager,
-            density,
-            wrapper,
-            new FlutterInjectorWrapper());
+            assetData, assetManager, density, wrapper, new FlutterInjectorWrapper());
       case "bytes":
         if (!(data.get(1) instanceof Map)) {
           throw new IllegalArgumentException("'bytes' expected a map as the second parameter");
