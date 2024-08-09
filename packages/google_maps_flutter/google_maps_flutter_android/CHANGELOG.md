@@ -1,3 +1,7 @@
+## 2.14.1
+
+* Converts `PlatformCircle` and `PlatformMarker` to pigeon.
+
 ## 2.14.0
 
 * Updates map configuration and platform view creation parameters to use Pigeon.

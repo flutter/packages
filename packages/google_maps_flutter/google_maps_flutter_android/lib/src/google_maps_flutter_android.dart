@@ -681,6 +681,10 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         latitude: latLng.latitude, longitude: latLng.longitude);
   }
 
+  static PlatformOffset _platformOffsetFromOffset(Offset offset) {
+    return PlatformOffset(dx: offset.dx, dy: offset.dy);
+  }
+
   static ScreenCoordinate _screenCoordinateFromPlatformPoint(
       PlatformPoint point) {
     return ScreenCoordinate(x: point.x, y: point.y);
@@ -692,10 +696,17 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformCircle _platformCircleFromCircle(Circle circle) {
-    // This cast is not ideal, but the Java code already assumes this format.
-    // See the TODOs at the top of this file and on the 'json' field in
-    // messages.dart.
-    return PlatformCircle(json: circle.toJson() as Map<String, Object?>);
+    return PlatformCircle(
+      consumeTapEvents: circle.consumeTapEvents,
+      fillColor: circle.fillColor.value,
+      strokeColor: circle.strokeColor.value,
+      visible: circle.visible,
+      strokeWidth: circle.strokeWidth,
+      zIndex: circle.zIndex.toDouble(),
+      center: _platformLatLngFromLatLng(circle.center),
+      radius: circle.radius,
+      circleId: circle.circleId.value,
+    );
   }
 
   static PlatformHeatmap _platformHeatmapFromHeatmap(Heatmap heatmap) {
@@ -708,11 +719,30 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         identifier: clusterManager.clusterManagerId.value);
   }
 
+  static PlatformInfoWindow _platformInfoWindowFromInfoWindow(
+      InfoWindow window) {
+    return PlatformInfoWindow(
+        title: window.title,
+        snippet: window.snippet,
+        anchor: _platformOffsetFromOffset(window.anchor));
+  }
+
   static PlatformMarker _platformMarkerFromMarker(Marker marker) {
-    // This cast is not ideal, but the Java code already assumes this format.
-    // See the TODOs at the top of this file and on the 'json' field in
-    // messages.dart.
-    return PlatformMarker(json: marker.toJson() as Map<String, Object?>);
+    return PlatformMarker(
+      alpha: marker.alpha,
+      anchor: _platformOffsetFromOffset(marker.anchor),
+      consumeTapEvents: marker.consumeTapEvents,
+      draggable: marker.draggable,
+      flat: marker.flat,
+      icon: marker.icon.toJson(),
+      infoWindow: _platformInfoWindowFromInfoWindow(marker.infoWindow),
+      position: _platformLatLngFromLatLng(marker.position),
+      rotation: marker.rotation,
+      visible: marker.visible,
+      zIndex: marker.zIndex,
+      markerId: marker.markerId.value,
+      clusterManagerId: marker.clusterManagerId?.value,
+    );
   }
 
   static PlatformPolygon _platformPolygonFromPolygon(Polygon polygon) {

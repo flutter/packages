@@ -331,21 +331,121 @@ public class Messages {
    * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformCircle {
-    /**
-     * The circle data, as JSON. This should only be set from Circle.toJson, and the native code
-     * must interpret it according to the internal implementation details of that method.
-     */
-    private @NonNull Map<String, Object> json;
+    private @NonNull Boolean consumeTapEvents;
 
-    public @NonNull Map<String, Object> getJson() {
-      return json;
+    public @NonNull Boolean getConsumeTapEvents() {
+      return consumeTapEvents;
     }
 
-    public void setJson(@NonNull Map<String, Object> setterArg) {
+    public void setConsumeTapEvents(@NonNull Boolean setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"json\" is null.");
+        throw new IllegalStateException("Nonnull field \"consumeTapEvents\" is null.");
       }
-      this.json = setterArg;
+      this.consumeTapEvents = setterArg;
+    }
+
+    private @NonNull Long fillColor;
+
+    public @NonNull Long getFillColor() {
+      return fillColor;
+    }
+
+    public void setFillColor(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"fillColor\" is null.");
+      }
+      this.fillColor = setterArg;
+    }
+
+    private @NonNull Long strokeColor;
+
+    public @NonNull Long getStrokeColor() {
+      return strokeColor;
+    }
+
+    public void setStrokeColor(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"strokeColor\" is null.");
+      }
+      this.strokeColor = setterArg;
+    }
+
+    private @NonNull Boolean visible;
+
+    public @NonNull Boolean getVisible() {
+      return visible;
+    }
+
+    public void setVisible(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"visible\" is null.");
+      }
+      this.visible = setterArg;
+    }
+
+    private @NonNull Long strokeWidth;
+
+    public @NonNull Long getStrokeWidth() {
+      return strokeWidth;
+    }
+
+    public void setStrokeWidth(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"strokeWidth\" is null.");
+      }
+      this.strokeWidth = setterArg;
+    }
+
+    private @NonNull Double zIndex;
+
+    public @NonNull Double getZIndex() {
+      return zIndex;
+    }
+
+    public void setZIndex(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"zIndex\" is null.");
+      }
+      this.zIndex = setterArg;
+    }
+
+    private @NonNull PlatformLatLng center;
+
+    public @NonNull PlatformLatLng getCenter() {
+      return center;
+    }
+
+    public void setCenter(@NonNull PlatformLatLng setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"center\" is null.");
+      }
+      this.center = setterArg;
+    }
+
+    private @NonNull Double radius;
+
+    public @NonNull Double getRadius() {
+      return radius;
+    }
+
+    public void setRadius(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"radius\" is null.");
+      }
+      this.radius = setterArg;
+    }
+
+    private @NonNull String circleId;
+
+    public @NonNull String getCircleId() {
+      return circleId;
+    }
+
+    public void setCircleId(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"circleId\" is null.");
+      }
+      this.circleId = setterArg;
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
@@ -360,42 +460,164 @@ public class Messages {
         return false;
       }
       PlatformCircle that = (PlatformCircle) o;
-      return json.equals(that.json);
+      return consumeTapEvents.equals(that.consumeTapEvents)
+          && fillColor.equals(that.fillColor)
+          && strokeColor.equals(that.strokeColor)
+          && visible.equals(that.visible)
+          && strokeWidth.equals(that.strokeWidth)
+          && zIndex.equals(that.zIndex)
+          && center.equals(that.center)
+          && radius.equals(that.radius)
+          && circleId.equals(that.circleId);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(json);
+      return Objects.hash(
+          consumeTapEvents,
+          fillColor,
+          strokeColor,
+          visible,
+          strokeWidth,
+          zIndex,
+          center,
+          radius,
+          circleId);
     }
 
     public static final class Builder {
 
-      private @Nullable Map<String, Object> json;
+      private @Nullable Boolean consumeTapEvents;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setJson(@NonNull Map<String, Object> setterArg) {
-        this.json = setterArg;
+      public @NonNull Builder setConsumeTapEvents(@NonNull Boolean setterArg) {
+        this.consumeTapEvents = setterArg;
+        return this;
+      }
+
+      private @Nullable Long fillColor;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setFillColor(@NonNull Long setterArg) {
+        this.fillColor = setterArg;
+        return this;
+      }
+
+      private @Nullable Long strokeColor;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setStrokeColor(@NonNull Long setterArg) {
+        this.strokeColor = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean visible;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setVisible(@NonNull Boolean setterArg) {
+        this.visible = setterArg;
+        return this;
+      }
+
+      private @Nullable Long strokeWidth;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setStrokeWidth(@NonNull Long setterArg) {
+        this.strokeWidth = setterArg;
+        return this;
+      }
+
+      private @Nullable Double zIndex;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setZIndex(@NonNull Double setterArg) {
+        this.zIndex = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformLatLng center;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setCenter(@NonNull PlatformLatLng setterArg) {
+        this.center = setterArg;
+        return this;
+      }
+
+      private @Nullable Double radius;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setRadius(@NonNull Double setterArg) {
+        this.radius = setterArg;
+        return this;
+      }
+
+      private @Nullable String circleId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setCircleId(@NonNull String setterArg) {
+        this.circleId = setterArg;
         return this;
       }
 
       public @NonNull PlatformCircle build() {
         PlatformCircle pigeonReturn = new PlatformCircle();
-        pigeonReturn.setJson(json);
+        pigeonReturn.setConsumeTapEvents(consumeTapEvents);
+        pigeonReturn.setFillColor(fillColor);
+        pigeonReturn.setStrokeColor(strokeColor);
+        pigeonReturn.setVisible(visible);
+        pigeonReturn.setStrokeWidth(strokeWidth);
+        pigeonReturn.setZIndex(zIndex);
+        pigeonReturn.setCenter(center);
+        pigeonReturn.setRadius(radius);
+        pigeonReturn.setCircleId(circleId);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(1);
-      toListResult.add(json);
+      ArrayList<Object> toListResult = new ArrayList<Object>(9);
+      toListResult.add(consumeTapEvents);
+      toListResult.add(fillColor);
+      toListResult.add(strokeColor);
+      toListResult.add(visible);
+      toListResult.add(strokeWidth);
+      toListResult.add(zIndex);
+      toListResult.add(center);
+      toListResult.add(radius);
+      toListResult.add(circleId);
       return toListResult;
     }
 
     static @NonNull PlatformCircle fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformCircle pigeonResult = new PlatformCircle();
-      Object json = __pigeon_list.get(0);
-      pigeonResult.setJson((Map<String, Object>) json);
+      Object consumeTapEvents = __pigeon_list.get(0);
+      pigeonResult.setConsumeTapEvents((Boolean) consumeTapEvents);
+      Object fillColor = __pigeon_list.get(1);
+      pigeonResult.setFillColor(
+          (fillColor == null)
+              ? null
+              : ((fillColor instanceof Integer) ? (Integer) fillColor : (Long) fillColor));
+      Object strokeColor = __pigeon_list.get(2);
+      pigeonResult.setStrokeColor(
+          (strokeColor == null)
+              ? null
+              : ((strokeColor instanceof Integer) ? (Integer) strokeColor : (Long) strokeColor));
+      Object visible = __pigeon_list.get(3);
+      pigeonResult.setVisible((Boolean) visible);
+      Object strokeWidth = __pigeon_list.get(4);
+      pigeonResult.setStrokeWidth(
+          (strokeWidth == null)
+              ? null
+              : ((strokeWidth instanceof Integer) ? (Integer) strokeWidth : (Long) strokeWidth));
+      Object zIndex = __pigeon_list.get(5);
+      pigeonResult.setZIndex((Double) zIndex);
+      Object center = __pigeon_list.get(6);
+      pigeonResult.setCenter((PlatformLatLng) center);
+      Object radius = __pigeon_list.get(7);
+      pigeonResult.setRadius((Double) radius);
+      Object circleId = __pigeon_list.get(8);
+      pigeonResult.setCircleId((String) circleId);
       return pigeonResult;
     }
   }
@@ -547,26 +769,388 @@ public class Messages {
   }
 
   /**
+   * Pigeon equivalent of the Offset class.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformOffset {
+    private @NonNull Double dx;
+
+    public @NonNull Double getDx() {
+      return dx;
+    }
+
+    public void setDx(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"dx\" is null.");
+      }
+      this.dx = setterArg;
+    }
+
+    private @NonNull Double dy;
+
+    public @NonNull Double getDy() {
+      return dy;
+    }
+
+    public void setDy(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"dy\" is null.");
+      }
+      this.dy = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformOffset() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformOffset that = (PlatformOffset) o;
+      return dx.equals(that.dx) && dy.equals(that.dy);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(dx, dy);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Double dx;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setDx(@NonNull Double setterArg) {
+        this.dx = setterArg;
+        return this;
+      }
+
+      private @Nullable Double dy;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setDy(@NonNull Double setterArg) {
+        this.dy = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformOffset build() {
+        PlatformOffset pigeonReturn = new PlatformOffset();
+        pigeonReturn.setDx(dx);
+        pigeonReturn.setDy(dy);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add(dx);
+      toListResult.add(dy);
+      return toListResult;
+    }
+
+    static @NonNull PlatformOffset fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformOffset pigeonResult = new PlatformOffset();
+      Object dx = __pigeon_list.get(0);
+      pigeonResult.setDx((Double) dx);
+      Object dy = __pigeon_list.get(1);
+      pigeonResult.setDy((Double) dy);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Pigeon equivalent of the InfoWindow class.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformInfoWindow {
+    private @Nullable String title;
+
+    public @Nullable String getTitle() {
+      return title;
+    }
+
+    public void setTitle(@Nullable String setterArg) {
+      this.title = setterArg;
+    }
+
+    private @Nullable String snippet;
+
+    public @Nullable String getSnippet() {
+      return snippet;
+    }
+
+    public void setSnippet(@Nullable String setterArg) {
+      this.snippet = setterArg;
+    }
+
+    private @NonNull PlatformOffset anchor;
+
+    public @NonNull PlatformOffset getAnchor() {
+      return anchor;
+    }
+
+    public void setAnchor(@NonNull PlatformOffset setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"anchor\" is null.");
+      }
+      this.anchor = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformInfoWindow() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformInfoWindow that = (PlatformInfoWindow) o;
+      return Objects.equals(title, that.title)
+          && Objects.equals(snippet, that.snippet)
+          && anchor.equals(that.anchor);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(title, snippet, anchor);
+    }
+
+    public static final class Builder {
+
+      private @Nullable String title;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTitle(@Nullable String setterArg) {
+        this.title = setterArg;
+        return this;
+      }
+
+      private @Nullable String snippet;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setSnippet(@Nullable String setterArg) {
+        this.snippet = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformOffset anchor;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAnchor(@NonNull PlatformOffset setterArg) {
+        this.anchor = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformInfoWindow build() {
+        PlatformInfoWindow pigeonReturn = new PlatformInfoWindow();
+        pigeonReturn.setTitle(title);
+        pigeonReturn.setSnippet(snippet);
+        pigeonReturn.setAnchor(anchor);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(3);
+      toListResult.add(title);
+      toListResult.add(snippet);
+      toListResult.add(anchor);
+      return toListResult;
+    }
+
+    static @NonNull PlatformInfoWindow fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformInfoWindow pigeonResult = new PlatformInfoWindow();
+      Object title = __pigeon_list.get(0);
+      pigeonResult.setTitle((String) title);
+      Object snippet = __pigeon_list.get(1);
+      pigeonResult.setSnippet((String) snippet);
+      Object anchor = __pigeon_list.get(2);
+      pigeonResult.setAnchor((PlatformOffset) anchor);
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon equivalent of the Marker class.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformMarker {
-    /**
-     * The marker data, as JSON. This should only be set from Marker.toJson, and the native code
-     * must interpret it according to the internal implementation details of that method.
-     */
-    private @NonNull Map<String, Object> json;
+    private @NonNull Double alpha;
 
-    public @NonNull Map<String, Object> getJson() {
-      return json;
+    public @NonNull Double getAlpha() {
+      return alpha;
     }
 
-    public void setJson(@NonNull Map<String, Object> setterArg) {
+    public void setAlpha(@NonNull Double setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"json\" is null.");
+        throw new IllegalStateException("Nonnull field \"alpha\" is null.");
       }
-      this.json = setterArg;
+      this.alpha = setterArg;
+    }
+
+    private @NonNull PlatformOffset anchor;
+
+    public @NonNull PlatformOffset getAnchor() {
+      return anchor;
+    }
+
+    public void setAnchor(@NonNull PlatformOffset setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"anchor\" is null.");
+      }
+      this.anchor = setterArg;
+    }
+
+    private @NonNull Boolean consumeTapEvents;
+
+    public @NonNull Boolean getConsumeTapEvents() {
+      return consumeTapEvents;
+    }
+
+    public void setConsumeTapEvents(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"consumeTapEvents\" is null.");
+      }
+      this.consumeTapEvents = setterArg;
+    }
+
+    private @NonNull Boolean draggable;
+
+    public @NonNull Boolean getDraggable() {
+      return draggable;
+    }
+
+    public void setDraggable(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"draggable\" is null.");
+      }
+      this.draggable = setterArg;
+    }
+
+    private @NonNull Boolean flat;
+
+    public @NonNull Boolean getFlat() {
+      return flat;
+    }
+
+    public void setFlat(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"flat\" is null.");
+      }
+      this.flat = setterArg;
+    }
+
+    private @NonNull Object icon;
+
+    public @NonNull Object getIcon() {
+      return icon;
+    }
+
+    public void setIcon(@NonNull Object setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"icon\" is null.");
+      }
+      this.icon = setterArg;
+    }
+
+    private @NonNull PlatformInfoWindow infoWindow;
+
+    public @NonNull PlatformInfoWindow getInfoWindow() {
+      return infoWindow;
+    }
+
+    public void setInfoWindow(@NonNull PlatformInfoWindow setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"infoWindow\" is null.");
+      }
+      this.infoWindow = setterArg;
+    }
+
+    private @NonNull PlatformLatLng position;
+
+    public @NonNull PlatformLatLng getPosition() {
+      return position;
+    }
+
+    public void setPosition(@NonNull PlatformLatLng setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"position\" is null.");
+      }
+      this.position = setterArg;
+    }
+
+    private @NonNull Double rotation;
+
+    public @NonNull Double getRotation() {
+      return rotation;
+    }
+
+    public void setRotation(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"rotation\" is null.");
+      }
+      this.rotation = setterArg;
+    }
+
+    private @NonNull Boolean visible;
+
+    public @NonNull Boolean getVisible() {
+      return visible;
+    }
+
+    public void setVisible(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"visible\" is null.");
+      }
+      this.visible = setterArg;
+    }
+
+    private @NonNull Double zIndex;
+
+    public @NonNull Double getZIndex() {
+      return zIndex;
+    }
+
+    public void setZIndex(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"zIndex\" is null.");
+      }
+      this.zIndex = setterArg;
+    }
+
+    private @NonNull String markerId;
+
+    public @NonNull String getMarkerId() {
+      return markerId;
+    }
+
+    public void setMarkerId(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"markerId\" is null.");
+      }
+      this.markerId = setterArg;
+    }
+
+    private @Nullable String clusterManagerId;
+
+    public @Nullable String getClusterManagerId() {
+      return clusterManagerId;
+    }
+
+    public void setClusterManagerId(@Nullable String setterArg) {
+      this.clusterManagerId = setterArg;
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
@@ -581,42 +1165,211 @@ public class Messages {
         return false;
       }
       PlatformMarker that = (PlatformMarker) o;
-      return json.equals(that.json);
+      return alpha.equals(that.alpha)
+          && anchor.equals(that.anchor)
+          && consumeTapEvents.equals(that.consumeTapEvents)
+          && draggable.equals(that.draggable)
+          && flat.equals(that.flat)
+          && icon.equals(that.icon)
+          && infoWindow.equals(that.infoWindow)
+          && position.equals(that.position)
+          && rotation.equals(that.rotation)
+          && visible.equals(that.visible)
+          && zIndex.equals(that.zIndex)
+          && markerId.equals(that.markerId)
+          && Objects.equals(clusterManagerId, that.clusterManagerId);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(json);
+      return Objects.hash(
+          alpha,
+          anchor,
+          consumeTapEvents,
+          draggable,
+          flat,
+          icon,
+          infoWindow,
+          position,
+          rotation,
+          visible,
+          zIndex,
+          markerId,
+          clusterManagerId);
     }
 
     public static final class Builder {
 
-      private @Nullable Map<String, Object> json;
+      private @Nullable Double alpha;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setJson(@NonNull Map<String, Object> setterArg) {
-        this.json = setterArg;
+      public @NonNull Builder setAlpha(@NonNull Double setterArg) {
+        this.alpha = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformOffset anchor;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAnchor(@NonNull PlatformOffset setterArg) {
+        this.anchor = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean consumeTapEvents;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setConsumeTapEvents(@NonNull Boolean setterArg) {
+        this.consumeTapEvents = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean draggable;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setDraggable(@NonNull Boolean setterArg) {
+        this.draggable = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean flat;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setFlat(@NonNull Boolean setterArg) {
+        this.flat = setterArg;
+        return this;
+      }
+
+      private @Nullable Object icon;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setIcon(@NonNull Object setterArg) {
+        this.icon = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformInfoWindow infoWindow;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInfoWindow(@NonNull PlatformInfoWindow setterArg) {
+        this.infoWindow = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformLatLng position;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPosition(@NonNull PlatformLatLng setterArg) {
+        this.position = setterArg;
+        return this;
+      }
+
+      private @Nullable Double rotation;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setRotation(@NonNull Double setterArg) {
+        this.rotation = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean visible;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setVisible(@NonNull Boolean setterArg) {
+        this.visible = setterArg;
+        return this;
+      }
+
+      private @Nullable Double zIndex;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setZIndex(@NonNull Double setterArg) {
+        this.zIndex = setterArg;
+        return this;
+      }
+
+      private @Nullable String markerId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMarkerId(@NonNull String setterArg) {
+        this.markerId = setterArg;
+        return this;
+      }
+
+      private @Nullable String clusterManagerId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setClusterManagerId(@Nullable String setterArg) {
+        this.clusterManagerId = setterArg;
         return this;
       }
 
       public @NonNull PlatformMarker build() {
         PlatformMarker pigeonReturn = new PlatformMarker();
-        pigeonReturn.setJson(json);
+        pigeonReturn.setAlpha(alpha);
+        pigeonReturn.setAnchor(anchor);
+        pigeonReturn.setConsumeTapEvents(consumeTapEvents);
+        pigeonReturn.setDraggable(draggable);
+        pigeonReturn.setFlat(flat);
+        pigeonReturn.setIcon(icon);
+        pigeonReturn.setInfoWindow(infoWindow);
+        pigeonReturn.setPosition(position);
+        pigeonReturn.setRotation(rotation);
+        pigeonReturn.setVisible(visible);
+        pigeonReturn.setZIndex(zIndex);
+        pigeonReturn.setMarkerId(markerId);
+        pigeonReturn.setClusterManagerId(clusterManagerId);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(1);
-      toListResult.add(json);
+      ArrayList<Object> toListResult = new ArrayList<Object>(13);
+      toListResult.add(alpha);
+      toListResult.add(anchor);
+      toListResult.add(consumeTapEvents);
+      toListResult.add(draggable);
+      toListResult.add(flat);
+      toListResult.add(icon);
+      toListResult.add(infoWindow);
+      toListResult.add(position);
+      toListResult.add(rotation);
+      toListResult.add(visible);
+      toListResult.add(zIndex);
+      toListResult.add(markerId);
+      toListResult.add(clusterManagerId);
       return toListResult;
     }
 
     static @NonNull PlatformMarker fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformMarker pigeonResult = new PlatformMarker();
-      Object json = __pigeon_list.get(0);
-      pigeonResult.setJson((Map<String, Object>) json);
+      Object alpha = __pigeon_list.get(0);
+      pigeonResult.setAlpha((Double) alpha);
+      Object anchor = __pigeon_list.get(1);
+      pigeonResult.setAnchor((PlatformOffset) anchor);
+      Object consumeTapEvents = __pigeon_list.get(2);
+      pigeonResult.setConsumeTapEvents((Boolean) consumeTapEvents);
+      Object draggable = __pigeon_list.get(3);
+      pigeonResult.setDraggable((Boolean) draggable);
+      Object flat = __pigeon_list.get(4);
+      pigeonResult.setFlat((Boolean) flat);
+      Object icon = __pigeon_list.get(5);
+      pigeonResult.setIcon(icon);
+      Object infoWindow = __pigeon_list.get(6);
+      pigeonResult.setInfoWindow((PlatformInfoWindow) infoWindow);
+      Object position = __pigeon_list.get(7);
+      pigeonResult.setPosition((PlatformLatLng) position);
+      Object rotation = __pigeon_list.get(8);
+      pigeonResult.setRotation((Double) rotation);
+      Object visible = __pigeon_list.get(9);
+      pigeonResult.setVisible((Boolean) visible);
+      Object zIndex = __pigeon_list.get(10);
+      pigeonResult.setZIndex((Double) zIndex);
+      Object markerId = __pigeon_list.get(11);
+      pigeonResult.setMarkerId((String) markerId);
+      Object clusterManagerId = __pigeon_list.get(12);
+      pigeonResult.setClusterManagerId((String) clusterManagerId);
       return pigeonResult;
     }
   }
@@ -2695,43 +3448,47 @@ public class Messages {
         case (byte) 133:
           return PlatformClusterManager.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
-          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformOffset.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
-          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformInfoWindow.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
-          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 137:
-          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 138:
-          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 139:
-          return PlatformEdgeInsets.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 140:
-          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 141:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformEdgeInsets.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 142:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 143:
-          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 144:
-          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 145:
-          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 146:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 147:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 148:
-          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 149:
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 150:
+          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 151:
           // Manual edit to fix https://github.com/flutter/flutter/issues/150108
           // the way the generator will fix it once the PR lands.
           {
             Object value = readValue(buffer);
             return value == null ? null : PlatformMapType.values()[(int) value];
           }
-        case (byte) 150:
+        case (byte) 152:
           // Manual edit to fix https://github.com/flutter/flutter/issues/150108
           // the way the generator will fix it once the PR lands.
           {
@@ -2760,56 +3517,62 @@ public class Messages {
       } else if (value instanceof PlatformClusterManager) {
         stream.write(133);
         writeValue(stream, ((PlatformClusterManager) value).toList());
-      } else if (value instanceof PlatformMarker) {
+      } else if (value instanceof PlatformOffset) {
         stream.write(134);
+        writeValue(stream, ((PlatformOffset) value).toList());
+      } else if (value instanceof PlatformInfoWindow) {
+        stream.write(135);
+        writeValue(stream, ((PlatformInfoWindow) value).toList());
+      } else if (value instanceof PlatformMarker) {
+        stream.write(136);
         writeValue(stream, ((PlatformMarker) value).toList());
       } else if (value instanceof PlatformPolygon) {
-        stream.write(135);
+        stream.write(137);
         writeValue(stream, ((PlatformPolygon) value).toList());
       } else if (value instanceof PlatformPolyline) {
-        stream.write(136);
+        stream.write(138);
         writeValue(stream, ((PlatformPolyline) value).toList());
       } else if (value instanceof PlatformTile) {
-        stream.write(137);
+        stream.write(139);
         writeValue(stream, ((PlatformTile) value).toList());
       } else if (value instanceof PlatformTileOverlay) {
-        stream.write(138);
+        stream.write(140);
         writeValue(stream, ((PlatformTileOverlay) value).toList());
       } else if (value instanceof PlatformEdgeInsets) {
-        stream.write(139);
+        stream.write(141);
         writeValue(stream, ((PlatformEdgeInsets) value).toList());
       } else if (value instanceof PlatformLatLng) {
-        stream.write(140);
+        stream.write(142);
         writeValue(stream, ((PlatformLatLng) value).toList());
       } else if (value instanceof PlatformLatLngBounds) {
-        stream.write(141);
+        stream.write(143);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(142);
+        stream.write(144);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformCameraTargetBounds) {
-        stream.write(143);
+        stream.write(145);
         writeValue(stream, ((PlatformCameraTargetBounds) value).toList());
       } else if (value instanceof PlatformMapViewCreationParams) {
-        stream.write(144);
+        stream.write(146);
         writeValue(stream, ((PlatformMapViewCreationParams) value).toList());
       } else if (value instanceof PlatformMapConfiguration) {
-        stream.write(145);
+        stream.write(147);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(146);
+        stream.write(148);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(147);
+        stream.write(149);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(148);
+        stream.write(150);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else if (value instanceof PlatformMapType) {
-        stream.write(149);
+        stream.write(151);
         writeValue(stream, value == null ? null : ((PlatformMapType) value).index);
       } else if (value instanceof PlatformRendererType) {
-        stream.write(150);
+        stream.write(152);
         writeValue(stream, value == null ? null : ((PlatformRendererType) value).index);
       } else {
         super.writeValue(stream, value);

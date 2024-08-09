@@ -300,11 +300,46 @@ void main() {
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.circleId.value);
     // Object two should be changed.
-    expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    {
+      expect(toChange.length, 1);
+      final List<Object?>? encoded = toChange.first?.encode() as List<Object?>?;
+      expect(encoded?.getRange(0, 6), <Object?>[
+        object2new.consumeTapEvents,
+        object2new.fillColor.value,
+        object2new.strokeColor.value,
+        object2new.visible,
+        object2new.strokeWidth,
+        object2new.zIndex.toDouble(),
+      ]);
+      final PlatformLatLng? latLng = encoded?[6] as PlatformLatLng?;
+      expect(latLng?.latitude, object2new.center.latitude);
+      expect(latLng?.longitude, object2new.center.longitude);
+      expect(encoded?.getRange(7, 9), <Object?>[
+        object2new.radius,
+        object2new.circleId.value,
+      ]);
+    }
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    {
+      expect(toAdd.length, 1);
+      final List<Object?>? encoded = toAdd.first?.encode() as List<Object?>?;
+      expect(encoded?.getRange(0, 6), <Object?>[
+        object3.consumeTapEvents,
+        object3.fillColor.value,
+        object3.strokeColor.value,
+        object3.visible,
+        object3.strokeWidth,
+        object3.zIndex.toDouble(),
+      ]);
+      final PlatformLatLng? latLng = encoded?[6] as PlatformLatLng?;
+      expect(latLng?.latitude, object3.center.latitude);
+      expect(latLng?.longitude, object3.center.longitude);
+      expect(encoded?.getRange(7, 9), <Object?>[
+        object3.radius,
+        object3.circleId.value,
+      ]);
+    }
   });
 
   test('updateClusterManagers passes expected arguments', () async {
@@ -361,11 +396,65 @@ void main() {
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.markerId.value);
     // Object two should be changed.
-    expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    {
+      expect(toChange.length, 1);
+      final List<Object?>? encoded = toChange.first?.encode() as List<Object?>?;
+      expect(encoded?[0], object2new.alpha);
+      final PlatformOffset? offset = encoded?[1] as PlatformOffset?;
+      expect(offset?.dx, object2new.anchor.dx);
+      expect(offset?.dy, object2new.anchor.dy);
+      expect(encoded?.getRange(2, 6).toList(), <Object?>[
+        object2new.consumeTapEvents,
+        object2new.draggable,
+        object2new.flat,
+        object2new.icon.toJson(),
+      ]);
+      final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
+      expect(window?.title, object2new.infoWindow.title);
+      expect(window?.snippet, object2new.infoWindow.snippet);
+      expect(window?.anchor.dx, object2new.infoWindow.anchor.dx);
+      expect(window?.anchor.dy, object2new.infoWindow.anchor.dy);
+      final PlatformLatLng? latLng = encoded?[7] as PlatformLatLng?;
+      expect(latLng?.latitude, object2new.position.latitude);
+      expect(latLng?.longitude, object2new.position.longitude);
+      expect(encoded?.getRange(8, 13), <Object?>[
+        object2new.rotation,
+        object2new.visible,
+        object2new.zIndex,
+        object2new.markerId.value,
+        object2new.clusterManagerId?.value,
+      ]);
+    }
     // Object 3 should be added.
-    expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    {
+      expect(toAdd.length, 1);
+      final List<Object?>? encoded = toAdd.first?.encode() as List<Object?>?;
+      expect(encoded?[0], object3.alpha);
+      final PlatformOffset? offset = encoded?[1] as PlatformOffset?;
+      expect(offset?.dx, object3.anchor.dx);
+      expect(offset?.dy, object3.anchor.dy);
+      expect(encoded?.getRange(2, 6).toList(), <Object?>[
+        object3.consumeTapEvents,
+        object3.draggable,
+        object3.flat,
+        object3.icon.toJson(),
+      ]);
+      final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
+      expect(window?.title, object3.infoWindow.title);
+      expect(window?.snippet, object3.infoWindow.snippet);
+      expect(window?.anchor.dx, object3.infoWindow.anchor.dx);
+      expect(window?.anchor.dy, object3.infoWindow.anchor.dy);
+      final PlatformLatLng? latLng = encoded?[7] as PlatformLatLng?;
+      expect(latLng?.latitude, object3.position.latitude);
+      expect(latLng?.longitude, object3.position.longitude);
+      expect(encoded?.getRange(8, 13), <Object?>[
+        object3.rotation,
+        object3.visible,
+        object3.zIndex,
+        object3.markerId.value,
+        object3.clusterManagerId?.value,
+      ]);
+    }
   });
 
   test('updatePolygons passes expected arguments', () async {
