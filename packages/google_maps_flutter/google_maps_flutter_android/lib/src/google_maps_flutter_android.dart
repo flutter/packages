@@ -722,8 +722,12 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         identifier: clusterManager.clusterManagerId.value);
   }
 
-  static PlatformInfoWindow _platformInfoWindowFromInfoWindow(InfoWindow window) {
-    return PlatformInfoWindow(title: window.title, snippet: window.snippet, anchor: _platformOffsetFromOffset(window.anchor));
+  static PlatformInfoWindow _platformInfoWindowFromInfoWindow(
+      InfoWindow window) {
+    return PlatformInfoWindow(
+        title: window.title,
+        snippet: window.snippet,
+        anchor: _platformOffsetFromOffset(window.anchor));
   }
 
   static PlatformMarker _platformMarkerFromMarker(Marker marker) {

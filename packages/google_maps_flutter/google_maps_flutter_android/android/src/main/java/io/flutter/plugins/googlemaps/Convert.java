@@ -659,9 +659,14 @@ class Convert {
     }
   }
 
-  static void interpretMarkerOptions(Messages.PlatformMarker marker, MarkerOptionsSink sink, AssetManager assetManager, float density) {
+  static void interpretMarkerOptions(
+      Messages.PlatformMarker marker,
+      MarkerOptionsSink sink,
+      AssetManager assetManager,
+      float density) {
     sink.setAlpha(marker.getAlpha().floatValue());
-    sink.setAnchor(marker.getAnchor().getDx().floatValue(), marker.getAnchor().getDy().floatValue());
+    sink.setAnchor(
+        marker.getAnchor().getDx().floatValue(), marker.getAnchor().getDy().floatValue());
     sink.setConsumeTapEvents(marker.getConsumeTapEvents());
     sink.setDraggable(marker.getDraggable());
     sink.setFlat(marker.getFlat());
@@ -724,7 +729,8 @@ class Convert {
     }
   }
 
-  private static void interpretInfoWindowOptions(MarkerOptionsSink sink, Messages.PlatformInfoWindow infoWindow) {
+  private static void interpretInfoWindowOptions(
+      MarkerOptionsSink sink, Messages.PlatformInfoWindow infoWindow) {
     String title = infoWindow.getTitle();
     String snippet = infoWindow.getSnippet();
     // snippet is nullable.
@@ -732,7 +738,8 @@ class Convert {
       sink.setInfoWindowText(title, snippet);
     }
     Messages.PlatformOffset infoWindowAnchor = infoWindow.getAnchor();
-    sink.setInfoWindowAnchor(infoWindowAnchor.getDx().floatValue(), infoWindowAnchor.getDy().floatValue());
+    sink.setInfoWindowAnchor(
+        infoWindowAnchor.getDx().floatValue(), infoWindowAnchor.getDy().floatValue());
   }
 
   private static void interpretInfoWindowOptions(
