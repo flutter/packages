@@ -15,6 +15,7 @@ import static org.mockito.Mockito.when;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,10 +26,15 @@ import com.google.maps.android.clustering.algo.StaticCluster;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
+
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -161,10 +167,18 @@ public class ClusterManagersControllerTest {
 
   private Messages.PlatformMarker createPlatformMarker(
       String markerId, List<Double> location, String clusterManagerId) {
+    Bitmap fakeBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    fakeBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+    byte[] byteArray = byteArrayOutputStream.toByteArray();
+    Map<String, Object> byteData = new HashMap<>();
+    byteData.put("byteData", byteArray);
+    byteData.put("bitmapScaling", "none");
+    byteData.put("imagePixelRatio", "");
     return new Messages.PlatformMarker.Builder()
             .setMarkerId(markerId)
             .setConsumeTapEvents(false)
-            .setIcon(Collections.singletonList("null"))
+            .setIcon(Arrays.asList("bytes", byteData))
             .setAlpha(1.0)
             .setDraggable(false)
             .setFlat(false)

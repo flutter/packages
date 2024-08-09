@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,10 +24,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
-import java.util.Collections;
-import java.util.List;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import org.junit.After;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,6 +60,14 @@ public class MarkersControllerTest {
   @Mock private final Convert.BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper;
 
   private static Messages.PlatformMarker.Builder defaultMarkerBuilder() {
+    Bitmap fakeBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    fakeBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+    byte[] byteArray = byteArrayOutputStream.toByteArray();
+    Map<String, Object> byteData = new HashMap<>();
+    byteData.put("byteData", byteArray);
+    byteData.put("bitmapScaling", "none");
+    byteData.put("imagePixelRatio", "");
     Messages.PlatformOffset anchor =
         new Messages.PlatformOffset.Builder().setDx(0.5).setDy(0.0).build();
     Messages.PlatformInfoWindow infoWindow =
@@ -69,7 +83,7 @@ public class MarkersControllerTest {
         .setRotation(0.0)
         .setZIndex(0.0)
         .setConsumeTapEvents(false)
-        .setIcon(Collections.singletonList("null"))
+        .setIcon(Arrays.asList("bytes", byteData))
         .setInfoWindow(infoWindow);
   }
 
