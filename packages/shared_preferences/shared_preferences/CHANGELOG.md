@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 2.3.1
+
+* Fixes `getStringList` bug with `List<Object?>` cast exception.
+
 ## 2.3.0
 
 * Adds `SharedPreferencesAsync` and `SharedPreferencesWithCache` APIs.

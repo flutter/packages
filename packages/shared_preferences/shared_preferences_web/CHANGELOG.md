@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 2.4.1
+
+* Adds support for `web: ^1.0.0`.
+
 ## 2.4.0
 
 * Adds `SharedPreferencesAsyncWeb` API.

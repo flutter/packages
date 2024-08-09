@@ -1,6 +1,7 @@
 ## 21.2.0
 
 * [kotlin] Adds implementation for `@ProxyApi`.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 21.1.0
 
