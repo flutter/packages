@@ -90,9 +90,9 @@ public class ClusterManagersControllerTest {
     MarkerBuilder markerBuilder1 = new MarkerBuilder(markerId1, clusterManagerId);
     MarkerBuilder markerBuilder2 = new MarkerBuilder(markerId2, clusterManagerId);
 
-    final Map<String, Object> markerData1 =
+    final Messages.PlatformMarker markerData1 =
         createMarkerData(markerId1, location1, clusterManagerId);
-    final Map<String, Object> markerData2 =
+    final Messages.PlatformMarker markerData2 =
         createMarkerData(markerId2, location2, clusterManagerId);
 
     Convert.interpretMarkerOptions(markerData1, markerBuilder1, assetManager, density);
@@ -161,12 +161,26 @@ public class ClusterManagersControllerTest {
         () -> controller.getClustersWithClusterManagerId(clusterManagerId));
   }
 
-  private Map<String, Object> createMarkerData(
+  private Messages.PlatformMarker createMarkerData(
       String markerId, List<Double> location, String clusterManagerId) {
     Map<String, Object> markerData = new HashMap<>();
     markerData.put("markerId", markerId);
     markerData.put("position", location);
     markerData.put("clusterManagerId", clusterManagerId);
-    return markerData;
+    return new Messages.PlatformMarker.Builder()
+            .setMarkerId(markerId)
+            .setConsumeTapEvents(false)
+            .setIcon(Collections.singletonList("null"))
+            .setAlpha(1.0)
+            .setDraggable(false)
+            .setFlat(false)
+            .setVisible(true)
+            .setRotation(0.0)
+            .setZIndex(0.0)
+            .setPosition(new Messages.PlatformLatLng.Builder().setLatitude(location.get(0)).setLongitude(location.get(1)).build())
+            .setClusterManagerId(clusterManagerId)
+            .setAnchor(new Messages.PlatformOffset())
+            .setInfoWindow(new Messages.PlatformInfoWindow())
+            .build();
   }
 }

@@ -659,6 +659,7 @@ class Convert {
     }
   }
 
+  /** Set the options in the given object to marker options sink. */
   static void interpretMarkerOptions(
       Messages.PlatformMarker marker,
       MarkerOptionsSink sink,
@@ -678,57 +679,6 @@ class Convert {
     sink.setZIndex(marker.getZIndex().floatValue());
   }
 
-  /** Set the options in the given object to marker options sink. */
-  static void interpretMarkerOptions(
-      Map<String, ?> data, MarkerOptionsSink sink, AssetManager assetManager, float density) {
-    final Object alpha = data.get("alpha");
-    if (alpha != null) {
-      sink.setAlpha(toFloat(alpha));
-    }
-    final Object anchor = data.get("anchor");
-    if (anchor != null) {
-      final List<?> anchorData = toList(anchor);
-      sink.setAnchor(toFloat(anchorData.get(0)), toFloat(anchorData.get(1)));
-    }
-    final Object consumeTapEvents = data.get("consumeTapEvents");
-    if (consumeTapEvents != null) {
-      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
-    }
-    final Object draggable = data.get("draggable");
-    if (draggable != null) {
-      sink.setDraggable(toBoolean(draggable));
-    }
-    final Object flat = data.get("flat");
-    if (flat != null) {
-      sink.setFlat(toBoolean(flat));
-    }
-    final Object icon = data.get("icon");
-    if (icon != null) {
-      sink.setIcon(toBitmapDescriptor(icon, assetManager, density));
-    }
-
-    final Object infoWindow = data.get("infoWindow");
-    if (infoWindow != null) {
-      interpretInfoWindowOptions(sink, toObjectMap(infoWindow));
-    }
-    final Object position = data.get("position");
-    if (position != null) {
-      sink.setPosition(toLatLng(position));
-    }
-    final Object rotation = data.get("rotation");
-    if (rotation != null) {
-      sink.setRotation(toFloat(rotation));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
-  }
-
   private static void interpretInfoWindowOptions(
       MarkerOptionsSink sink, Messages.PlatformInfoWindow infoWindow) {
     String title = infoWindow.getTitle();
@@ -740,21 +690,6 @@ class Convert {
     Messages.PlatformOffset infoWindowAnchor = infoWindow.getAnchor();
     sink.setInfoWindowAnchor(
         infoWindowAnchor.getDx().floatValue(), infoWindowAnchor.getDy().floatValue());
-  }
-
-  private static void interpretInfoWindowOptions(
-      MarkerOptionsSink sink, Map<String, Object> infoWindow) {
-    String title = (String) infoWindow.get("title");
-    String snippet = (String) infoWindow.get("snippet");
-    // snippet is nullable.
-    if (title != null) {
-      sink.setInfoWindowText(title, snippet);
-    }
-    Object infoWindowAnchor = infoWindow.get("anchor");
-    if (infoWindowAnchor != null) {
-      final List<?> anchorData = toList(infoWindowAnchor);
-      sink.setInfoWindowAnchor(toFloat(anchorData.get(0)), toFloat(anchorData.get(1)));
-    }
   }
 
   static String interpretPolygonOptions(Map<String, ?> data, PolygonOptionsSink sink) {
