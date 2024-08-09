@@ -115,6 +115,8 @@ class RunnerTests: XCTestCase {
   // Async system tests.
 
   let emptyOptions = SharedPreferencesPigeonOptions()
+  let optionsWithSuiteName = SharedPreferencesPigeonOptions(
+    suiteName: "group.example.sharedPreferencesFoundationExample")
 
   func testAsyncSetAndGet() throws {
     let plugin = SharedPreferencesPlugin()
@@ -152,6 +154,19 @@ class RunnerTests: XCTestCase {
     XCTAssertEqual(storedValues["aString"] as? String, "hello world")
     XCTAssertEqual(storedValues["aStringList"] as? [String], ["hello", "world"])
 
+  }
+
+  func testAsyncGetAllWithAndWithoutSuiteName() throws {
+    let plugin = SharedPreferencesPlugin()
+
+    try plugin.set(key: "aKey", value: "hello world", options: emptyOptions)
+    try plugin.set(key: "aKeySuite", value: "hello world with suite", options: optionsWithSuiteName)
+
+    let storedValues = try plugin.getAll(allowList: nil, options: emptyOptions)
+    XCTAssertEqual(storedValues["aKey"] as? String, "hello world")
+
+    let storedValuesWithGroup = try plugin.getAll(allowList: nil, options: optionsWithSuiteName)
+    XCTAssertEqual(storedValuesWithGroup["aKeySuite"] as? String, "hello world with suite")
   }
 
   func testAsyncGetAllWithAllowList() throws {
