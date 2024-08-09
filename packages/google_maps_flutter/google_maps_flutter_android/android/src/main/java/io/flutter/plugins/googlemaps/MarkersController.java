@@ -212,10 +212,7 @@ class MarkersController {
     googleMapsMarkerIdToDartMarkerId.put(marker.getId(), markerId);
   }
 
-  private void changeMarker(Messages.PlatformMarker marker) {
-    if (marker == null) {
-      return;
-    }
+  private void changeMarker(@NonNull Messages.PlatformMarker marker) {
     String markerId = marker.getMarkerId();
 
     MarkerBuilder markerBuilder = markerIdToMarkerBuilder.get(markerId);

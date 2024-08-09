@@ -27,10 +27,8 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -91,9 +89,9 @@ public class ClusterManagersControllerTest {
     MarkerBuilder markerBuilder2 = new MarkerBuilder(markerId2, clusterManagerId);
 
     final Messages.PlatformMarker markerData1 =
-        createMarkerData(markerId1, location1, clusterManagerId);
+        createPlatformMarker(markerId1, location1, clusterManagerId);
     final Messages.PlatformMarker markerData2 =
-        createMarkerData(markerId2, location2, clusterManagerId);
+        createPlatformMarker(markerId2, location2, clusterManagerId);
 
     Convert.interpretMarkerOptions(markerData1, markerBuilder1, assetManager, density);
     Convert.interpretMarkerOptions(markerData2, markerBuilder2, assetManager, density);
@@ -161,12 +159,8 @@ public class ClusterManagersControllerTest {
         () -> controller.getClustersWithClusterManagerId(clusterManagerId));
   }
 
-  private Messages.PlatformMarker createMarkerData(
+  private Messages.PlatformMarker createPlatformMarker(
       String markerId, List<Double> location, String clusterManagerId) {
-    Map<String, Object> markerData = new HashMap<>();
-    markerData.put("markerId", markerId);
-    markerData.put("position", location);
-    markerData.put("clusterManagerId", clusterManagerId);
     return new Messages.PlatformMarker.Builder()
             .setMarkerId(markerId)
             .setConsumeTapEvents(false)
