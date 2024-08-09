@@ -36,11 +36,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -55,8 +59,14 @@ public class ClusterManagersControllerTest {
   private AssetManager assetManager;
   private final float density = 1;
 
+  @Mock
+  Convert.BitmapDescriptorFactoryWrapper bitmapFactory;
+
+  private AutoCloseable mocksClosable;
+
   @Before
   public void setUp() {
+    mocksClosable = MockitoAnnotations.openMocks(this);
     context = ApplicationProvider.getApplicationContext();
     assetManager = context.getAssets();
     flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
@@ -64,6 +74,11 @@ public class ClusterManagersControllerTest {
     googleMap = mock(GoogleMap.class);
     markerManager = new MarkerManager(googleMap);
     controller.init(googleMap, markerManager);
+  }
+
+  @After
+  public void close() throws Exception {
+    mocksClosable.close();
   }
 
   @Test
@@ -99,8 +114,8 @@ public class ClusterManagersControllerTest {
     final Messages.PlatformMarker markerData2 =
         createPlatformMarker(markerId2, location2, clusterManagerId);
 
-    Convert.interpretMarkerOptions(markerData1, markerBuilder1, assetManager, density);
-    Convert.interpretMarkerOptions(markerData2, markerBuilder2, assetManager, density);
+    Convert.interpretMarkerOptions(markerData1, markerBuilder1, assetManager, density, bitmapFactory);
+    Convert.interpretMarkerOptions(markerData2, markerBuilder2, assetManager, density, bitmapFactory);
 
     controller.addItem(markerBuilder1);
     controller.addItem(markerBuilder2);

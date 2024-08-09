@@ -25,7 +25,6 @@ import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,7 +56,7 @@ public class MarkersControllerTest {
   private final float density = 1;
   private AutoCloseable mocksClosable;
 
-  @Mock private final Convert.BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper;
+  @Mock private Convert.BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper;
 
   private static Messages.PlatformMarker.Builder defaultMarkerBuilder() {
     Bitmap fakeBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
@@ -104,7 +103,7 @@ public class MarkersControllerTest {
   }
 
   @After
-  public void close() {
+  public void close() throws Exception {
     mocksClosable.close();
   }
 
