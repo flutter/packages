@@ -868,47 +868,6 @@ class Convert {
     return circle.getCircleId();
   }
 
-  static String interpretCircleOptions(Map<String, ?> data, CircleOptionsSink sink) {
-    final Object consumeTapEvents = data.get("consumeTapEvents");
-    if (consumeTapEvents != null) {
-      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
-    }
-    final Object fillColor = data.get("fillColor");
-    if (fillColor != null) {
-      sink.setFillColor(toInt(fillColor));
-    }
-    final Object strokeColor = data.get("strokeColor");
-    if (strokeColor != null) {
-      sink.setStrokeColor(toInt(strokeColor));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final Object strokeWidth = data.get("strokeWidth");
-    if (strokeWidth != null) {
-      sink.setStrokeWidth(toInt(strokeWidth));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
-    final Object center = data.get("center");
-    if (center != null) {
-      sink.setCenter(toLatLng(center));
-    }
-    final Object radius = data.get("radius");
-    if (radius != null) {
-      sink.setRadius(toDouble(radius));
-    }
-    final String circleId = (String) data.get("circleId");
-    if (circleId == null) {
-      throw new IllegalArgumentException("circleId was null");
-    } else {
-      return circleId;
-    }
-  }
-
   /**
    * Set the options in the given heatmap object to the given sink.
    *

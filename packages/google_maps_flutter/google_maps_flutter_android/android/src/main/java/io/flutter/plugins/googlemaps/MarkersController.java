@@ -169,20 +169,6 @@ class MarkersController {
     }
   }
 
-  private void addJsonMarker(Map<String, ?> marker) {
-    if (marker == null) {
-      return;
-    }
-    String markerId = getMarkerId(marker);
-    if (markerId == null) {
-      throw new IllegalArgumentException("markerId was null");
-    }
-    String clusterManagerId = getClusterManagerId(marker);
-    MarkerBuilder markerBuilder = new MarkerBuilder(markerId, clusterManagerId);
-    Convert.interpretMarkerOptions(marker, markerBuilder, assetManager, density);
-    addMarker(markerBuilder);
-  }
-
   private void addMarker(Messages.PlatformMarker marker) {
     if (marker == null) {
       return;
@@ -256,13 +242,5 @@ class MarkersController {
     if (markerController != null) {
       Convert.interpretMarkerOptions(marker, markerController, assetManager, density);
     }
-  }
-
-  private static String getMarkerId(Map<String, ?> marker) {
-    return (String) marker.get("markerId");
-  }
-
-  private static String getClusterManagerId(Map<String, ?> marker) {
-    return (String) marker.get("clusterManagerId");
   }
 }
