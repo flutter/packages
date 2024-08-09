@@ -1,6 +1,7 @@
-## NEXT
+## 14.2.4
 
-* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+- Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+- Fixes issue so that the parseRouteInformationWithContext can handle non-http Uris.
 
 ## 14.2.3
 
