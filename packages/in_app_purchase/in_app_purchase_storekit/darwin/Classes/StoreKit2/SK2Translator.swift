@@ -6,7 +6,7 @@
 
 import Foundation
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 extension Product {
   func convertToPigeon() -> SK2ProductMessage {
 
@@ -17,13 +17,13 @@ extension Product {
       price: NSDecimalNumber(decimal: price).doubleValue,
       displayPrice: displayPrice,
       type: type.convertToPigeon(),
-      subscription: subscription?.convertToPigeon(), 
+      subscription: subscription?.convertToPigeon(),
       priceLocale: priceFormatStyle.locale.convertToPigeon()
     )
   }
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 extension Product.ProductType {
   func convertToPigeon() -> SK2ProductTypeMessage {
     switch self {
@@ -41,7 +41,7 @@ extension Product.ProductType {
   }
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 extension Product.SubscriptionInfo {
   func convertToPigeon() -> SK2SubscriptionInfoMessage {
     return SK2SubscriptionInfoMessage(
@@ -51,7 +51,7 @@ extension Product.SubscriptionInfo {
   }
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 extension Product.SubscriptionOffer {
   func convertToPigeon() -> SK2SubscriptionOfferMessage {
     return SK2SubscriptionOfferMessage(
@@ -66,7 +66,7 @@ extension Product.SubscriptionOffer {
   }
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 extension Product.SubscriptionOffer.OfferType {
   func convertToPigeon() -> SK2SubscriptionOfferTypeMessage {
     switch self {
@@ -80,7 +80,7 @@ extension Product.SubscriptionOffer.OfferType {
   }
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 extension Product.SubscriptionPeriod {
   func convertToPigeon() -> SK2SubscriptionPeriodMessage {
     return SK2SubscriptionPeriodMessage(
@@ -89,7 +89,7 @@ extension Product.SubscriptionPeriod {
   }
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 extension Product.SubscriptionPeriod.Unit {
   func convertToPigeon() -> SK2SubscriptionPeriodUnitMessage {
     switch self {
@@ -107,7 +107,7 @@ extension Product.SubscriptionPeriod.Unit {
   }
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 extension Product.SubscriptionOffer.PaymentMode {
   func convertToPigeon() -> SK2SubscriptionOfferPaymentModeMessage {
     switch self {
@@ -123,7 +123,7 @@ extension Product.SubscriptionOffer.PaymentMode {
   }
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 extension Transaction {
   func convertToPigeon() -> SK2TransactionMessage {
 
@@ -143,9 +143,25 @@ extension Transaction {
 
 extension Locale {
   func convertToPigeon() -> SK2PriceLocaleMessage {
-    return SK2PriceLocaleMessage (
+    return SK2PriceLocaleMessage(
       currencyCode: currencyCode ?? "",
       currencySymbol: currencySymbol ?? ""
     )
+  }
+}
+
+@available(iOS 15.0, macOS 12.0, *)
+extension Product.PurchaseResult {
+  func convertToPigeon() -> SK2ProductPurchaseResultMessage {
+    switch self {
+    case .success(_):
+      return SK2ProductPurchaseResultMessage.success
+    case .userCancelled:
+      return SK2ProductPurchaseResultMessage.userCancelled
+    case .pending:
+      return SK2ProductPurchaseResultMessage.pending
+    @unknown default:
+      fatalError()
+    }
   }
 }

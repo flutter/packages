@@ -12,7 +12,6 @@ import StoreKit
 #endif
 
 public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InAppPurchase2API {
-
   private let receiptManager: FIAPReceiptManager
   private var productsCache: NSMutableDictionary = [:]
   private var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
@@ -27,6 +26,8 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
   public var registrar: FlutterPluginRegistrar?
   // This property is optional, as it requires self to exist to be initialized.
   public var paymentQueueHandler: FLTPaymentQueueHandlerProtocol?
+  var updateListenerTask: Any? = nil
+  var transactionListenerAPI : TransactionCallbacks? = nil;
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
@@ -56,6 +57,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
     self.receiptManager = receiptManager
     self.handlerFactory = handlerFactory
     self.transactionObserverCallbackChannel = transactionCallbackChannel
+
     super.init()
   }
 
@@ -92,6 +94,12 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
       let messenger = registrar.messenger
     #endif
     setupTransactionObserverChannelIfNeeded(withMessenger: messenger)
+    self.transactionListenerAPI = TransactionCallbacks.init(binaryMessenger: messenger)
+    if #available(iOS 15.0, *) {
+      self.updateListenerTask = listenForTransactions()
+    } else {
+      // Fallback on earlier versions
+    };
   }
 
   // MARK: - Pigeon Functions
@@ -450,18 +458,43 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
 
   // Gets the appropriate product, then calls purchase on it.
   // https://developer.apple.com/documentation/storekit/product/3791971-purchase
-  func purchase(id: String, completion: @escaping (Result<Void, any Error>) -> Void) {
+  func purchase(id: String, options: SK2ProductPurchaseOptionsMessage?, completion: @escaping (Result<SK2ProductPurchaseResultMessage, any Error>) -> Void) {
     if #available(iOS 15.0, macOS 12.0, *) {
       Task {
         do {
-          let product = try await fetchProducts(identifiers: [id]).first
+          let product = try await rawProducts(identifiers: [id]).first
           guard let product = product else {
             throw PigeonError(
-              code: "storekit2_purchase_error", message: "failed to make purchase", details: "")
+              code: "storekit2_failed_to_fetch_product", message: "failed to make purchase",
+              details: "")
           }
 
-          let success = try await product.purchase()
-          completion(.success(()))
+          let result = try await product.purchase()
+
+          switch result {
+          case .success(let verification):
+            switch verification {
+            case .verified(let transaction):
+              completion(.success(result.convertToPigeon()))
+            case .unverified(_, let error):
+              completion(.failure(error))
+            }
+          case .pending:
+            completion(
+              .failure(
+                PigeonError(
+                  code: "storekit2_purchase_pending", message: "this transaction is still pending",
+                  details: "")))
+          case .userCancelled:
+            // The user cancelled the transaction
+            completion(
+              .failure(
+                PigeonError(
+                  code: "storekit2_purchase_cancelled",
+                  message: "this transaction has been cancelled", details: "")))
+          @unknown default:
+            fatalError()
+          }
         } catch {
           completion(.failure(error))
         }
@@ -476,7 +509,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
     if #available(iOS 15.0, macOS 12.0, *) {
       Task {
         do {
-          let products = try await fetchProducts(identifiers: identifiers)
+          let products = try await rawProducts(identifiers: identifiers)
           let productMessages = products.map { product in
             product.convertToPigeon()
           }
@@ -488,7 +521,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
     }
   }
 
-  func transactionsUnfinished(
+  func transactions(
     completion: @escaping (Result<[SK2TransactionMessage], any Error>) -> Void
   ) {
     if #available(iOS 15.0, macOS 12, *) {
@@ -503,9 +536,34 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
     }
   }
 
-  // raw products call that returns Products
+  func finish(completion: @escaping (Result<Void, any Error>) -> Void) {
+    return;
+  }
+
+  @available(iOS 15.0, *)
+  func listenForTransactions() -> Task<Void, Error> {
+      return Task.detached {
+        print("hiya")
+        var verfiedArray:[Transaction] = [];
+        var unverifiedArray = [];
+        for await verificationResult in Transaction.updates {
+          print("hiya2")
+             switch verificationResult {
+             case .verified(let transaction):
+               verfiedArray.append(transaction)
+             case .unverified(let transaction, let error):
+               unverifiedArray.append(transaction)
+             }
+         }
+        self.transactionListenerAPI?.transactionUpdated(updatedTransactions: verfiedArray)
+        }
+      }
+  }
+
+  // Raw storekit calls
+
   @available(iOS 15.0, macOS 12.0, *)
-  func fetchProducts(identifiers: [String]) async throws -> [Product] {
+  func rawProducts(identifiers: [String]) async throws -> [Product] {
     return try await Product.products(for: identifiers)
   }
 
@@ -525,4 +583,4 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
 
     return transactions
   }
-}
+

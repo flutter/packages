@@ -192,19 +192,44 @@ extension on SK2SubscriptionOfferPaymentModeMessage {
 }
 
 class SK2PriceLocale {
-  SK2PriceLocale({
-    required this.currencyCode,
-    required this.currencySymbol
-});
-final String currencyCode;
+  SK2PriceLocale({required this.currencyCode, required this.currencySymbol});
+  final String currencyCode;
   final String currencySymbol;
 }
 
 extension on SK2PriceLocaleMessage {
   SK2PriceLocale convertFromPigeon() {
     return SK2PriceLocale(
-        currencyCode: currencyCode,
-        currencySymbol: currencySymbol);
+        currencyCode: currencyCode, currencySymbol: currencySymbol);
+  }
+}
+
+class SK2ProductPurchaseOptions {
+  SK2ProductPurchaseOptions({this.appAccountToken, this.quantity});
+  // this.appAccountToken
+
+  final String? appAccountToken;
+  final int? quantity;
+
+  SK2ProductPurchaseOptionsMessage convertToPigeon() {
+    return SK2ProductPurchaseOptionsMessage();
+  }
+}
+
+enum SK2ProductPurchaseError { invalid }
+
+enum SK2ProductPurchaseResult { success, userCancelled, pending }
+
+extension on SK2ProductPurchaseResultMessage {
+  SK2ProductPurchaseResult convertFromPigeon() {
+    switch (this) {
+      case SK2ProductPurchaseResultMessage.success:
+        return SK2ProductPurchaseResult.success;
+      case SK2ProductPurchaseResultMessage.userCancelled:
+        return SK2ProductPurchaseResult.userCancelled;
+      case SK2ProductPurchaseResultMessage.pending:
+        return SK2ProductPurchaseResult.pending;
+    }
   }
 }
 
@@ -268,8 +293,20 @@ class SK2Product {
         .map((SK2ProductMessage product) => product.convertFromPigeon())
         .toList();
   }
+
+  static Future<SK2ProductPurchaseResult> purchase(String id,
+      {SK2ProductPurchaseOptions? options}) async {
+    SK2ProductPurchaseResultMessage result;
+    if (options != null) {
+      result = await _hostApi.purchase(id, options: options.convertToPigeon());
+    } else {
+      result = await _hostApi.purchase(id);
+    }
+    return result.convertFromPigeon();
+  }
 }
 
+// let me test what i wanted you to type
 extension on SK2ProductMessage {
   SK2Product convertFromPigeon() {
     return SK2Product(

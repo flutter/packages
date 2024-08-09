@@ -145,6 +145,18 @@ class SK2TransactionMessage {
   final String? appAccountToken;
 }
 
+// Link the correct dart class
+enum SK2ProductPurchaseResultMessage { success, userCancelled, pending }
+
+class SK2ProductPurchaseOptionsMessage {
+  SK2ProductPurchaseOptionsMessage({
+    this.appAccountToken,
+    this.quantity = 1,
+  });
+  final String? appAccountToken;
+  final int? quantity;
+}
+
 @HostApi()
 abstract class InAppPurchase2API {
   // https://developer.apple.com/documentation/storekit/appstore/3822277-canmakepayments
@@ -153,8 +165,10 @@ abstract class InAppPurchase2API {
 
   // https://developer.apple.com/documentation/storekit/product/3791971-purchase
   // SK1 addPayment
+  // needs id to reference product, and also purchaseOptions
   @async
-  void purchase(String id);
+  SK2ProductPurchaseResultMessage purchase(String id,
+      {SK2ProductPurchaseOptionsMessage? options});
 
   // https://developer.apple.com/documentation/storekit/product/3851116-products
   // SK1 startProductRequest
@@ -163,5 +177,12 @@ abstract class InAppPurchase2API {
 
   // Note that the sk1 version of this only returns unfinished transactions.
   @async
-  List<SK2TransactionMessage> transactionsUnfinished();
+  List<SK2TransactionMessage> transactions();
+
+  @async void finish();
+}
+
+@FlutterApi()
+abstract class InAppPurchase2CallbackAPI {
+  void onTransactionsUpdated(List<SK2TransactionMessage?> updatedTransactions);
 }

@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../messages2.g.dart';
+
+InAppPurchase2API _hostapi = InAppPurchase2API();
+
 /// Note that in StoreKit2, a Transaction encompasses the data contained by
 /// SKPayment and SKTransaction in StoreKit1
 /// Dart wrapper around StoreKit2's [Transaction](https://developer.apple.com/documentation/storekit/transaction)
@@ -32,4 +36,20 @@ class SK2Transaction {
   final String? appAccountToken;
   final String subscriptionGroupID;
   final double price;
+
+  Future<void> finish() async {
+  }
+
+  List<SK2> transactions() {
+
+  }
+}
+
+class SK2TransactionCallbacks implements InAppPurchase2CallbackAPI {
+  @override
+  void onTransactionsUpdated(List<SK2TransactionMessage?> updatedTransactions) {
+    print('Transaction received');
+  }
+
+  
 }

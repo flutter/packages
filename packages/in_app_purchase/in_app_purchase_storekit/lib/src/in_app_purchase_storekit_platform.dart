@@ -10,8 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 
 import '../in_app_purchase_storekit.dart';
-import '../store_kit_wrappers.dart';
 import '../store_kit_2_wrappers.dart';
+import '../store_kit_wrappers.dart';
+import 'messages2.g.dart';
 
 /// [IAPError.code] code for failed purchases.
 const String kPurchaseErrorCode = 'purchase_error';
@@ -66,6 +67,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
     );
     _observer = _TransactionObserver(updateController);
     _skPaymentQueueWrapper.setTransactionObserver(observer);
+    InAppPurchase2CallbackAPI.setUp(SK2TransactionCallbacks());
   }
 
   @override
@@ -79,6 +81,11 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   @override
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {
+    if (useStoreKit2) {
+      print("hewwo 3");
+      await SK2Product.purchase(purchaseParam.productDetails.id);
+      return true;
+    }
     await _skPaymentQueueWrapper.addPayment(SKPaymentWrapper(
         productIdentifier: purchaseParam.productDetails.id,
         quantity:
@@ -106,6 +113,10 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
       purchase is AppStorePurchaseDetails,
       'On iOS, the `purchase` should always be of type `AppStorePurchaseDetails`.',
     );
+
+    if (useStoreKit2) {
+
+    }
 
     return _skPaymentQueueWrapper.finishTransaction(
       (purchase as AppStorePurchaseDetails).skPaymentTransaction,
@@ -135,13 +146,11 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
       Set<String> invalidProductIdentifiers;
       PlatformException? exception;
       try {
-        products =
-            await SK2Product.products(identifiers.toList());
+        products = await SK2Product.products(identifiers.toList());
         // Storekit 2 no longer automatically returns a list of invalid identifiers,
         // so get the difference between given identifiers and returned products
-        invalidProductIdentifiers = identifiers
-            .difference(products.map((SK2Product product) => product.id)
-            .toSet());
+        invalidProductIdentifiers = identifiers.difference(
+            products.map((SK2Product product) => product.id).toSet());
       } on PlatformException catch (e) {
         exception = e;
         invalidProductIdentifiers = identifiers;
@@ -149,7 +158,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
       List<AppStoreProduct2Details> productDetails;
       productDetails = products
           .map((SK2Product productWrapper) =>
-          AppStoreProduct2Details.fromSK2Product(productWrapper))
+              AppStoreProduct2Details.fromSK2Product(productWrapper))
           .toList();
       final ProductDetailsResponse response = ProductDetailsResponse(
           productDetails: productDetails,
