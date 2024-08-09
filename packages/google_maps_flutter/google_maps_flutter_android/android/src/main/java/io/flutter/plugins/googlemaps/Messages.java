@@ -74,6 +74,21 @@ public class Messages {
   @Retention(CLASS)
   @interface CanIgnoreReturnValue {}
 
+  /** Pigeon equivalent of MapType */
+  public enum PlatformMapType {
+    NONE(0),
+    NORMAL(1),
+    SATELLITE(2),
+    TERRAIN(3),
+    HYBRID(4);
+
+    final int index;
+
+    private PlatformMapType(final int index) {
+      this.index = index;
+    }
+  }
+
   public enum PlatformRendererType {
     LEGACY(0),
     LATEST(1);
@@ -959,6 +974,155 @@ public class Messages {
   }
 
   /**
+   * Pigeon equivalent of Flutter's EdgeInsets.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformEdgeInsets {
+    private @NonNull Double top;
+
+    public @NonNull Double getTop() {
+      return top;
+    }
+
+    public void setTop(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"top\" is null.");
+      }
+      this.top = setterArg;
+    }
+
+    private @NonNull Double bottom;
+
+    public @NonNull Double getBottom() {
+      return bottom;
+    }
+
+    public void setBottom(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"bottom\" is null.");
+      }
+      this.bottom = setterArg;
+    }
+
+    private @NonNull Double left;
+
+    public @NonNull Double getLeft() {
+      return left;
+    }
+
+    public void setLeft(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"left\" is null.");
+      }
+      this.left = setterArg;
+    }
+
+    private @NonNull Double right;
+
+    public @NonNull Double getRight() {
+      return right;
+    }
+
+    public void setRight(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"right\" is null.");
+      }
+      this.right = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformEdgeInsets() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformEdgeInsets that = (PlatformEdgeInsets) o;
+      return top.equals(that.top)
+          && bottom.equals(that.bottom)
+          && left.equals(that.left)
+          && right.equals(that.right);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(top, bottom, left, right);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Double top;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTop(@NonNull Double setterArg) {
+        this.top = setterArg;
+        return this;
+      }
+
+      private @Nullable Double bottom;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBottom(@NonNull Double setterArg) {
+        this.bottom = setterArg;
+        return this;
+      }
+
+      private @Nullable Double left;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setLeft(@NonNull Double setterArg) {
+        this.left = setterArg;
+        return this;
+      }
+
+      private @Nullable Double right;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setRight(@NonNull Double setterArg) {
+        this.right = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformEdgeInsets build() {
+        PlatformEdgeInsets pigeonReturn = new PlatformEdgeInsets();
+        pigeonReturn.setTop(top);
+        pigeonReturn.setBottom(bottom);
+        pigeonReturn.setLeft(left);
+        pigeonReturn.setRight(right);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(4);
+      toListResult.add(top);
+      toListResult.add(bottom);
+      toListResult.add(left);
+      toListResult.add(right);
+      return toListResult;
+    }
+
+    static @NonNull PlatformEdgeInsets fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformEdgeInsets pigeonResult = new PlatformEdgeInsets();
+      Object top = __pigeon_list.get(0);
+      pigeonResult.setTop((Double) top);
+      Object bottom = __pigeon_list.get(1);
+      pigeonResult.setBottom((Double) bottom);
+      Object left = __pigeon_list.get(2);
+      pigeonResult.setLeft((Double) left);
+      Object right = __pigeon_list.get(3);
+      pigeonResult.setRight((Double) right);
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon equivalent of LatLng.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
@@ -1300,31 +1464,568 @@ public class Messages {
   }
 
   /**
+   * Pigeon equivalent of CameraTargetBounds.
+   *
+   * <p>As with the Dart version, it exists to distinguish between not setting a a target, and
+   * having an explicitly unbounded target (null [bounds]).
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformCameraTargetBounds {
+    private @Nullable PlatformLatLngBounds bounds;
+
+    public @Nullable PlatformLatLngBounds getBounds() {
+      return bounds;
+    }
+
+    public void setBounds(@Nullable PlatformLatLngBounds setterArg) {
+      this.bounds = setterArg;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformCameraTargetBounds that = (PlatformCameraTargetBounds) o;
+      return Objects.equals(bounds, that.bounds);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(bounds);
+    }
+
+    public static final class Builder {
+
+      private @Nullable PlatformLatLngBounds bounds;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBounds(@Nullable PlatformLatLngBounds setterArg) {
+        this.bounds = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformCameraTargetBounds build() {
+        PlatformCameraTargetBounds pigeonReturn = new PlatformCameraTargetBounds();
+        pigeonReturn.setBounds(bounds);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(bounds);
+      return toListResult;
+    }
+
+    static @NonNull PlatformCameraTargetBounds fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformCameraTargetBounds pigeonResult = new PlatformCameraTargetBounds();
+      Object bounds = __pigeon_list.get(0);
+      pigeonResult.setBounds((PlatformLatLngBounds) bounds);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Information passed to the platform view creation.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformMapViewCreationParams {
+    private @NonNull PlatformCameraPosition initialCameraPosition;
+
+    public @NonNull PlatformCameraPosition getInitialCameraPosition() {
+      return initialCameraPosition;
+    }
+
+    public void setInitialCameraPosition(@NonNull PlatformCameraPosition setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialCameraPosition\" is null.");
+      }
+      this.initialCameraPosition = setterArg;
+    }
+
+    private @NonNull PlatformMapConfiguration mapConfiguration;
+
+    public @NonNull PlatformMapConfiguration getMapConfiguration() {
+      return mapConfiguration;
+    }
+
+    public void setMapConfiguration(@NonNull PlatformMapConfiguration setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"mapConfiguration\" is null.");
+      }
+      this.mapConfiguration = setterArg;
+    }
+
+    private @NonNull List<PlatformCircle> initialCircles;
+
+    public @NonNull List<PlatformCircle> getInitialCircles() {
+      return initialCircles;
+    }
+
+    public void setInitialCircles(@NonNull List<PlatformCircle> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialCircles\" is null.");
+      }
+      this.initialCircles = setterArg;
+    }
+
+    private @NonNull List<PlatformMarker> initialMarkers;
+
+    public @NonNull List<PlatformMarker> getInitialMarkers() {
+      return initialMarkers;
+    }
+
+    public void setInitialMarkers(@NonNull List<PlatformMarker> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialMarkers\" is null.");
+      }
+      this.initialMarkers = setterArg;
+    }
+
+    private @NonNull List<PlatformPolygon> initialPolygons;
+
+    public @NonNull List<PlatformPolygon> getInitialPolygons() {
+      return initialPolygons;
+    }
+
+    public void setInitialPolygons(@NonNull List<PlatformPolygon> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialPolygons\" is null.");
+      }
+      this.initialPolygons = setterArg;
+    }
+
+    private @NonNull List<PlatformPolyline> initialPolylines;
+
+    public @NonNull List<PlatformPolyline> getInitialPolylines() {
+      return initialPolylines;
+    }
+
+    public void setInitialPolylines(@NonNull List<PlatformPolyline> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialPolylines\" is null.");
+      }
+      this.initialPolylines = setterArg;
+    }
+
+    private @NonNull List<PlatformHeatmap> initialHeatmaps;
+
+    public @NonNull List<PlatformHeatmap> getInitialHeatmaps() {
+      return initialHeatmaps;
+    }
+
+    public void setInitialHeatmaps(@NonNull List<PlatformHeatmap> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialHeatmaps\" is null.");
+      }
+      this.initialHeatmaps = setterArg;
+    }
+
+    private @NonNull List<PlatformTileOverlay> initialTileOverlays;
+
+    public @NonNull List<PlatformTileOverlay> getInitialTileOverlays() {
+      return initialTileOverlays;
+    }
+
+    public void setInitialTileOverlays(@NonNull List<PlatformTileOverlay> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialTileOverlays\" is null.");
+      }
+      this.initialTileOverlays = setterArg;
+    }
+
+    private @NonNull List<PlatformClusterManager> initialClusterManagers;
+
+    public @NonNull List<PlatformClusterManager> getInitialClusterManagers() {
+      return initialClusterManagers;
+    }
+
+    public void setInitialClusterManagers(@NonNull List<PlatformClusterManager> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialClusterManagers\" is null.");
+      }
+      this.initialClusterManagers = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformMapViewCreationParams() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformMapViewCreationParams that = (PlatformMapViewCreationParams) o;
+      return initialCameraPosition.equals(that.initialCameraPosition)
+          && mapConfiguration.equals(that.mapConfiguration)
+          && initialCircles.equals(that.initialCircles)
+          && initialMarkers.equals(that.initialMarkers)
+          && initialPolygons.equals(that.initialPolygons)
+          && initialPolylines.equals(that.initialPolylines)
+          && initialHeatmaps.equals(that.initialHeatmaps)
+          && initialTileOverlays.equals(that.initialTileOverlays)
+          && initialClusterManagers.equals(that.initialClusterManagers);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(
+          initialCameraPosition,
+          mapConfiguration,
+          initialCircles,
+          initialMarkers,
+          initialPolygons,
+          initialPolylines,
+          initialHeatmaps,
+          initialTileOverlays,
+          initialClusterManagers);
+    }
+
+    public static final class Builder {
+
+      private @Nullable PlatformCameraPosition initialCameraPosition;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialCameraPosition(@NonNull PlatformCameraPosition setterArg) {
+        this.initialCameraPosition = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformMapConfiguration mapConfiguration;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMapConfiguration(@NonNull PlatformMapConfiguration setterArg) {
+        this.mapConfiguration = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformCircle> initialCircles;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialCircles(@NonNull List<PlatformCircle> setterArg) {
+        this.initialCircles = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformMarker> initialMarkers;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialMarkers(@NonNull List<PlatformMarker> setterArg) {
+        this.initialMarkers = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformPolygon> initialPolygons;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialPolygons(@NonNull List<PlatformPolygon> setterArg) {
+        this.initialPolygons = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformPolyline> initialPolylines;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialPolylines(@NonNull List<PlatformPolyline> setterArg) {
+        this.initialPolylines = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformHeatmap> initialHeatmaps;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialHeatmaps(@NonNull List<PlatformHeatmap> setterArg) {
+        this.initialHeatmaps = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformTileOverlay> initialTileOverlays;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialTileOverlays(@NonNull List<PlatformTileOverlay> setterArg) {
+        this.initialTileOverlays = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformClusterManager> initialClusterManagers;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialClusterManagers(
+          @NonNull List<PlatformClusterManager> setterArg) {
+        this.initialClusterManagers = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformMapViewCreationParams build() {
+        PlatformMapViewCreationParams pigeonReturn = new PlatformMapViewCreationParams();
+        pigeonReturn.setInitialCameraPosition(initialCameraPosition);
+        pigeonReturn.setMapConfiguration(mapConfiguration);
+        pigeonReturn.setInitialCircles(initialCircles);
+        pigeonReturn.setInitialMarkers(initialMarkers);
+        pigeonReturn.setInitialPolygons(initialPolygons);
+        pigeonReturn.setInitialPolylines(initialPolylines);
+        pigeonReturn.setInitialHeatmaps(initialHeatmaps);
+        pigeonReturn.setInitialTileOverlays(initialTileOverlays);
+        pigeonReturn.setInitialClusterManagers(initialClusterManagers);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(9);
+      toListResult.add(initialCameraPosition);
+      toListResult.add(mapConfiguration);
+      toListResult.add(initialCircles);
+      toListResult.add(initialMarkers);
+      toListResult.add(initialPolygons);
+      toListResult.add(initialPolylines);
+      toListResult.add(initialHeatmaps);
+      toListResult.add(initialTileOverlays);
+      toListResult.add(initialClusterManagers);
+      return toListResult;
+    }
+
+    static @NonNull PlatformMapViewCreationParams fromList(
+        @NonNull ArrayList<Object> __pigeon_list) {
+      PlatformMapViewCreationParams pigeonResult = new PlatformMapViewCreationParams();
+      Object initialCameraPosition = __pigeon_list.get(0);
+      pigeonResult.setInitialCameraPosition((PlatformCameraPosition) initialCameraPosition);
+      Object mapConfiguration = __pigeon_list.get(1);
+      pigeonResult.setMapConfiguration((PlatformMapConfiguration) mapConfiguration);
+      Object initialCircles = __pigeon_list.get(2);
+      pigeonResult.setInitialCircles((List<PlatformCircle>) initialCircles);
+      Object initialMarkers = __pigeon_list.get(3);
+      pigeonResult.setInitialMarkers((List<PlatformMarker>) initialMarkers);
+      Object initialPolygons = __pigeon_list.get(4);
+      pigeonResult.setInitialPolygons((List<PlatformPolygon>) initialPolygons);
+      Object initialPolylines = __pigeon_list.get(5);
+      pigeonResult.setInitialPolylines((List<PlatformPolyline>) initialPolylines);
+      Object initialHeatmaps = __pigeon_list.get(6);
+      pigeonResult.setInitialHeatmaps((List<PlatformHeatmap>) initialHeatmaps);
+      Object initialTileOverlays = __pigeon_list.get(7);
+      pigeonResult.setInitialTileOverlays((List<PlatformTileOverlay>) initialTileOverlays);
+      Object initialClusterManagers = __pigeon_list.get(8);
+      pigeonResult.setInitialClusterManagers((List<PlatformClusterManager>) initialClusterManagers);
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon equivalent of MapConfiguration.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformMapConfiguration {
-    /**
-     * The configuration options, as JSON. This should only be set from _jsonForMapConfiguration,
-     * and the native code must interpret it according to the internal implementation details of
-     * that method.
-     */
-    private @NonNull Map<String, Object> json;
+    private @Nullable Boolean compassEnabled;
 
-    public @NonNull Map<String, Object> getJson() {
-      return json;
+    public @Nullable Boolean getCompassEnabled() {
+      return compassEnabled;
     }
 
-    public void setJson(@NonNull Map<String, Object> setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"json\" is null.");
-      }
-      this.json = setterArg;
+    public void setCompassEnabled(@Nullable Boolean setterArg) {
+      this.compassEnabled = setterArg;
     }
 
-    /** Constructor is non-public to enforce null safety; use Builder. */
-    PlatformMapConfiguration() {}
+    private @Nullable PlatformCameraTargetBounds cameraTargetBounds;
+
+    public @Nullable PlatformCameraTargetBounds getCameraTargetBounds() {
+      return cameraTargetBounds;
+    }
+
+    public void setCameraTargetBounds(@Nullable PlatformCameraTargetBounds setterArg) {
+      this.cameraTargetBounds = setterArg;
+    }
+
+    private @Nullable PlatformMapType mapType;
+
+    public @Nullable PlatformMapType getMapType() {
+      return mapType;
+    }
+
+    public void setMapType(@Nullable PlatformMapType setterArg) {
+      this.mapType = setterArg;
+    }
+
+    private @Nullable PlatformZoomRange minMaxZoomPreference;
+
+    public @Nullable PlatformZoomRange getMinMaxZoomPreference() {
+      return minMaxZoomPreference;
+    }
+
+    public void setMinMaxZoomPreference(@Nullable PlatformZoomRange setterArg) {
+      this.minMaxZoomPreference = setterArg;
+    }
+
+    private @Nullable Boolean mapToolbarEnabled;
+
+    public @Nullable Boolean getMapToolbarEnabled() {
+      return mapToolbarEnabled;
+    }
+
+    public void setMapToolbarEnabled(@Nullable Boolean setterArg) {
+      this.mapToolbarEnabled = setterArg;
+    }
+
+    private @Nullable Boolean rotateGesturesEnabled;
+
+    public @Nullable Boolean getRotateGesturesEnabled() {
+      return rotateGesturesEnabled;
+    }
+
+    public void setRotateGesturesEnabled(@Nullable Boolean setterArg) {
+      this.rotateGesturesEnabled = setterArg;
+    }
+
+    private @Nullable Boolean scrollGesturesEnabled;
+
+    public @Nullable Boolean getScrollGesturesEnabled() {
+      return scrollGesturesEnabled;
+    }
+
+    public void setScrollGesturesEnabled(@Nullable Boolean setterArg) {
+      this.scrollGesturesEnabled = setterArg;
+    }
+
+    private @Nullable Boolean tiltGesturesEnabled;
+
+    public @Nullable Boolean getTiltGesturesEnabled() {
+      return tiltGesturesEnabled;
+    }
+
+    public void setTiltGesturesEnabled(@Nullable Boolean setterArg) {
+      this.tiltGesturesEnabled = setterArg;
+    }
+
+    private @Nullable Boolean trackCameraPosition;
+
+    public @Nullable Boolean getTrackCameraPosition() {
+      return trackCameraPosition;
+    }
+
+    public void setTrackCameraPosition(@Nullable Boolean setterArg) {
+      this.trackCameraPosition = setterArg;
+    }
+
+    private @Nullable Boolean zoomControlsEnabled;
+
+    public @Nullable Boolean getZoomControlsEnabled() {
+      return zoomControlsEnabled;
+    }
+
+    public void setZoomControlsEnabled(@Nullable Boolean setterArg) {
+      this.zoomControlsEnabled = setterArg;
+    }
+
+    private @Nullable Boolean zoomGesturesEnabled;
+
+    public @Nullable Boolean getZoomGesturesEnabled() {
+      return zoomGesturesEnabled;
+    }
+
+    public void setZoomGesturesEnabled(@Nullable Boolean setterArg) {
+      this.zoomGesturesEnabled = setterArg;
+    }
+
+    private @Nullable Boolean myLocationEnabled;
+
+    public @Nullable Boolean getMyLocationEnabled() {
+      return myLocationEnabled;
+    }
+
+    public void setMyLocationEnabled(@Nullable Boolean setterArg) {
+      this.myLocationEnabled = setterArg;
+    }
+
+    private @Nullable Boolean myLocationButtonEnabled;
+
+    public @Nullable Boolean getMyLocationButtonEnabled() {
+      return myLocationButtonEnabled;
+    }
+
+    public void setMyLocationButtonEnabled(@Nullable Boolean setterArg) {
+      this.myLocationButtonEnabled = setterArg;
+    }
+
+    private @Nullable PlatformEdgeInsets padding;
+
+    public @Nullable PlatformEdgeInsets getPadding() {
+      return padding;
+    }
+
+    public void setPadding(@Nullable PlatformEdgeInsets setterArg) {
+      this.padding = setterArg;
+    }
+
+    private @Nullable Boolean indoorViewEnabled;
+
+    public @Nullable Boolean getIndoorViewEnabled() {
+      return indoorViewEnabled;
+    }
+
+    public void setIndoorViewEnabled(@Nullable Boolean setterArg) {
+      this.indoorViewEnabled = setterArg;
+    }
+
+    private @Nullable Boolean trafficEnabled;
+
+    public @Nullable Boolean getTrafficEnabled() {
+      return trafficEnabled;
+    }
+
+    public void setTrafficEnabled(@Nullable Boolean setterArg) {
+      this.trafficEnabled = setterArg;
+    }
+
+    private @Nullable Boolean buildingsEnabled;
+
+    public @Nullable Boolean getBuildingsEnabled() {
+      return buildingsEnabled;
+    }
+
+    public void setBuildingsEnabled(@Nullable Boolean setterArg) {
+      this.buildingsEnabled = setterArg;
+    }
+
+    private @Nullable Boolean liteModeEnabled;
+
+    public @Nullable Boolean getLiteModeEnabled() {
+      return liteModeEnabled;
+    }
+
+    public void setLiteModeEnabled(@Nullable Boolean setterArg) {
+      this.liteModeEnabled = setterArg;
+    }
+
+    private @Nullable String cloudMapId;
+
+    public @Nullable String getCloudMapId() {
+      return cloudMapId;
+    }
+
+    public void setCloudMapId(@Nullable String setterArg) {
+      this.cloudMapId = setterArg;
+    }
+
+    private @Nullable String style;
+
+    public @Nullable String getStyle() {
+      return style;
+    }
+
+    public void setStyle(@Nullable String setterArg) {
+      this.style = setterArg;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -1335,42 +2036,310 @@ public class Messages {
         return false;
       }
       PlatformMapConfiguration that = (PlatformMapConfiguration) o;
-      return json.equals(that.json);
+      return Objects.equals(compassEnabled, that.compassEnabled)
+          && Objects.equals(cameraTargetBounds, that.cameraTargetBounds)
+          && Objects.equals(mapType, that.mapType)
+          && Objects.equals(minMaxZoomPreference, that.minMaxZoomPreference)
+          && Objects.equals(mapToolbarEnabled, that.mapToolbarEnabled)
+          && Objects.equals(rotateGesturesEnabled, that.rotateGesturesEnabled)
+          && Objects.equals(scrollGesturesEnabled, that.scrollGesturesEnabled)
+          && Objects.equals(tiltGesturesEnabled, that.tiltGesturesEnabled)
+          && Objects.equals(trackCameraPosition, that.trackCameraPosition)
+          && Objects.equals(zoomControlsEnabled, that.zoomControlsEnabled)
+          && Objects.equals(zoomGesturesEnabled, that.zoomGesturesEnabled)
+          && Objects.equals(myLocationEnabled, that.myLocationEnabled)
+          && Objects.equals(myLocationButtonEnabled, that.myLocationButtonEnabled)
+          && Objects.equals(padding, that.padding)
+          && Objects.equals(indoorViewEnabled, that.indoorViewEnabled)
+          && Objects.equals(trafficEnabled, that.trafficEnabled)
+          && Objects.equals(buildingsEnabled, that.buildingsEnabled)
+          && Objects.equals(liteModeEnabled, that.liteModeEnabled)
+          && Objects.equals(cloudMapId, that.cloudMapId)
+          && Objects.equals(style, that.style);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(json);
+      return Objects.hash(
+          compassEnabled,
+          cameraTargetBounds,
+          mapType,
+          minMaxZoomPreference,
+          mapToolbarEnabled,
+          rotateGesturesEnabled,
+          scrollGesturesEnabled,
+          tiltGesturesEnabled,
+          trackCameraPosition,
+          zoomControlsEnabled,
+          zoomGesturesEnabled,
+          myLocationEnabled,
+          myLocationButtonEnabled,
+          padding,
+          indoorViewEnabled,
+          trafficEnabled,
+          buildingsEnabled,
+          liteModeEnabled,
+          cloudMapId,
+          style);
     }
 
     public static final class Builder {
 
-      private @Nullable Map<String, Object> json;
+      private @Nullable Boolean compassEnabled;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setJson(@NonNull Map<String, Object> setterArg) {
-        this.json = setterArg;
+      public @NonNull Builder setCompassEnabled(@Nullable Boolean setterArg) {
+        this.compassEnabled = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformCameraTargetBounds cameraTargetBounds;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setCameraTargetBounds(
+          @Nullable PlatformCameraTargetBounds setterArg) {
+        this.cameraTargetBounds = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformMapType mapType;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMapType(@Nullable PlatformMapType setterArg) {
+        this.mapType = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformZoomRange minMaxZoomPreference;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMinMaxZoomPreference(@Nullable PlatformZoomRange setterArg) {
+        this.minMaxZoomPreference = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean mapToolbarEnabled;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMapToolbarEnabled(@Nullable Boolean setterArg) {
+        this.mapToolbarEnabled = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean rotateGesturesEnabled;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setRotateGesturesEnabled(@Nullable Boolean setterArg) {
+        this.rotateGesturesEnabled = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean scrollGesturesEnabled;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setScrollGesturesEnabled(@Nullable Boolean setterArg) {
+        this.scrollGesturesEnabled = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean tiltGesturesEnabled;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTiltGesturesEnabled(@Nullable Boolean setterArg) {
+        this.tiltGesturesEnabled = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean trackCameraPosition;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTrackCameraPosition(@Nullable Boolean setterArg) {
+        this.trackCameraPosition = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean zoomControlsEnabled;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setZoomControlsEnabled(@Nullable Boolean setterArg) {
+        this.zoomControlsEnabled = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean zoomGesturesEnabled;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setZoomGesturesEnabled(@Nullable Boolean setterArg) {
+        this.zoomGesturesEnabled = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean myLocationEnabled;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMyLocationEnabled(@Nullable Boolean setterArg) {
+        this.myLocationEnabled = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean myLocationButtonEnabled;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMyLocationButtonEnabled(@Nullable Boolean setterArg) {
+        this.myLocationButtonEnabled = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformEdgeInsets padding;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPadding(@Nullable PlatformEdgeInsets setterArg) {
+        this.padding = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean indoorViewEnabled;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setIndoorViewEnabled(@Nullable Boolean setterArg) {
+        this.indoorViewEnabled = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean trafficEnabled;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTrafficEnabled(@Nullable Boolean setterArg) {
+        this.trafficEnabled = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean buildingsEnabled;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBuildingsEnabled(@Nullable Boolean setterArg) {
+        this.buildingsEnabled = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean liteModeEnabled;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setLiteModeEnabled(@Nullable Boolean setterArg) {
+        this.liteModeEnabled = setterArg;
+        return this;
+      }
+
+      private @Nullable String cloudMapId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setCloudMapId(@Nullable String setterArg) {
+        this.cloudMapId = setterArg;
+        return this;
+      }
+
+      private @Nullable String style;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setStyle(@Nullable String setterArg) {
+        this.style = setterArg;
         return this;
       }
 
       public @NonNull PlatformMapConfiguration build() {
         PlatformMapConfiguration pigeonReturn = new PlatformMapConfiguration();
-        pigeonReturn.setJson(json);
+        pigeonReturn.setCompassEnabled(compassEnabled);
+        pigeonReturn.setCameraTargetBounds(cameraTargetBounds);
+        pigeonReturn.setMapType(mapType);
+        pigeonReturn.setMinMaxZoomPreference(minMaxZoomPreference);
+        pigeonReturn.setMapToolbarEnabled(mapToolbarEnabled);
+        pigeonReturn.setRotateGesturesEnabled(rotateGesturesEnabled);
+        pigeonReturn.setScrollGesturesEnabled(scrollGesturesEnabled);
+        pigeonReturn.setTiltGesturesEnabled(tiltGesturesEnabled);
+        pigeonReturn.setTrackCameraPosition(trackCameraPosition);
+        pigeonReturn.setZoomControlsEnabled(zoomControlsEnabled);
+        pigeonReturn.setZoomGesturesEnabled(zoomGesturesEnabled);
+        pigeonReturn.setMyLocationEnabled(myLocationEnabled);
+        pigeonReturn.setMyLocationButtonEnabled(myLocationButtonEnabled);
+        pigeonReturn.setPadding(padding);
+        pigeonReturn.setIndoorViewEnabled(indoorViewEnabled);
+        pigeonReturn.setTrafficEnabled(trafficEnabled);
+        pigeonReturn.setBuildingsEnabled(buildingsEnabled);
+        pigeonReturn.setLiteModeEnabled(liteModeEnabled);
+        pigeonReturn.setCloudMapId(cloudMapId);
+        pigeonReturn.setStyle(style);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(1);
-      toListResult.add(json);
+      ArrayList<Object> toListResult = new ArrayList<Object>(20);
+      toListResult.add(compassEnabled);
+      toListResult.add(cameraTargetBounds);
+      toListResult.add(mapType);
+      toListResult.add(minMaxZoomPreference);
+      toListResult.add(mapToolbarEnabled);
+      toListResult.add(rotateGesturesEnabled);
+      toListResult.add(scrollGesturesEnabled);
+      toListResult.add(tiltGesturesEnabled);
+      toListResult.add(trackCameraPosition);
+      toListResult.add(zoomControlsEnabled);
+      toListResult.add(zoomGesturesEnabled);
+      toListResult.add(myLocationEnabled);
+      toListResult.add(myLocationButtonEnabled);
+      toListResult.add(padding);
+      toListResult.add(indoorViewEnabled);
+      toListResult.add(trafficEnabled);
+      toListResult.add(buildingsEnabled);
+      toListResult.add(liteModeEnabled);
+      toListResult.add(cloudMapId);
+      toListResult.add(style);
       return toListResult;
     }
 
     static @NonNull PlatformMapConfiguration fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformMapConfiguration pigeonResult = new PlatformMapConfiguration();
-      Object json = __pigeon_list.get(0);
-      pigeonResult.setJson((Map<String, Object>) json);
+      Object compassEnabled = __pigeon_list.get(0);
+      pigeonResult.setCompassEnabled((Boolean) compassEnabled);
+      Object cameraTargetBounds = __pigeon_list.get(1);
+      pigeonResult.setCameraTargetBounds((PlatformCameraTargetBounds) cameraTargetBounds);
+      Object mapType = __pigeon_list.get(2);
+      pigeonResult.setMapType((PlatformMapType) mapType);
+      Object minMaxZoomPreference = __pigeon_list.get(3);
+      pigeonResult.setMinMaxZoomPreference((PlatformZoomRange) minMaxZoomPreference);
+      Object mapToolbarEnabled = __pigeon_list.get(4);
+      pigeonResult.setMapToolbarEnabled((Boolean) mapToolbarEnabled);
+      Object rotateGesturesEnabled = __pigeon_list.get(5);
+      pigeonResult.setRotateGesturesEnabled((Boolean) rotateGesturesEnabled);
+      Object scrollGesturesEnabled = __pigeon_list.get(6);
+      pigeonResult.setScrollGesturesEnabled((Boolean) scrollGesturesEnabled);
+      Object tiltGesturesEnabled = __pigeon_list.get(7);
+      pigeonResult.setTiltGesturesEnabled((Boolean) tiltGesturesEnabled);
+      Object trackCameraPosition = __pigeon_list.get(8);
+      pigeonResult.setTrackCameraPosition((Boolean) trackCameraPosition);
+      Object zoomControlsEnabled = __pigeon_list.get(9);
+      pigeonResult.setZoomControlsEnabled((Boolean) zoomControlsEnabled);
+      Object zoomGesturesEnabled = __pigeon_list.get(10);
+      pigeonResult.setZoomGesturesEnabled((Boolean) zoomGesturesEnabled);
+      Object myLocationEnabled = __pigeon_list.get(11);
+      pigeonResult.setMyLocationEnabled((Boolean) myLocationEnabled);
+      Object myLocationButtonEnabled = __pigeon_list.get(12);
+      pigeonResult.setMyLocationButtonEnabled((Boolean) myLocationButtonEnabled);
+      Object padding = __pigeon_list.get(13);
+      pigeonResult.setPadding((PlatformEdgeInsets) padding);
+      Object indoorViewEnabled = __pigeon_list.get(14);
+      pigeonResult.setIndoorViewEnabled((Boolean) indoorViewEnabled);
+      Object trafficEnabled = __pigeon_list.get(15);
+      pigeonResult.setTrafficEnabled((Boolean) trafficEnabled);
+      Object buildingsEnabled = __pigeon_list.get(16);
+      pigeonResult.setBuildingsEnabled((Boolean) buildingsEnabled);
+      Object liteModeEnabled = __pigeon_list.get(17);
+      pigeonResult.setLiteModeEnabled((Boolean) liteModeEnabled);
+      Object cloudMapId = __pigeon_list.get(18);
+      pigeonResult.setCloudMapId((String) cloudMapId);
+      Object style = __pigeon_list.get(19);
+      pigeonResult.setStyle((String) style);
       return pigeonResult;
     }
   }
@@ -1626,34 +2595,25 @@ public class Messages {
    * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformZoomRange {
-    private @NonNull Double min;
+    private @Nullable Double min;
 
-    public @NonNull Double getMin() {
+    public @Nullable Double getMin() {
       return min;
     }
 
-    public void setMin(@NonNull Double setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"min\" is null.");
-      }
+    public void setMin(@Nullable Double setterArg) {
       this.min = setterArg;
     }
 
-    private @NonNull Double max;
+    private @Nullable Double max;
 
-    public @NonNull Double getMax() {
+    public @Nullable Double getMax() {
       return max;
     }
 
-    public void setMax(@NonNull Double setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"max\" is null.");
-      }
+    public void setMax(@Nullable Double setterArg) {
       this.max = setterArg;
     }
-
-    /** Constructor is non-public to enforce null safety; use Builder. */
-    PlatformZoomRange() {}
 
     @Override
     public boolean equals(Object o) {
@@ -1664,7 +2624,7 @@ public class Messages {
         return false;
       }
       PlatformZoomRange that = (PlatformZoomRange) o;
-      return min.equals(that.min) && max.equals(that.max);
+      return Objects.equals(min, that.min) && Objects.equals(max, that.max);
     }
 
     @Override
@@ -1677,7 +2637,7 @@ public class Messages {
       private @Nullable Double min;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setMin(@NonNull Double setterArg) {
+      public @NonNull Builder setMin(@Nullable Double setterArg) {
         this.min = setterArg;
         return this;
       }
@@ -1685,7 +2645,7 @@ public class Messages {
       private @Nullable Double max;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setMax(@NonNull Double setterArg) {
+      public @NonNull Builder setMax(@Nullable Double setterArg) {
         this.max = setterArg;
         return this;
       }
@@ -1745,22 +2705,39 @@ public class Messages {
         case (byte) 138:
           return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 139:
-          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformEdgeInsets.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 140:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 141:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 142:
-          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 143:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 144:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 145:
-          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 146:
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformRendererType.values()[(int) value];
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 147:
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 148:
+          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 149:
+          // Manual edit to fix https://github.com/flutter/flutter/issues/150108
+          // the way the generator will fix it once the PR lands.
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformMapType.values()[(int) value];
+          }
+        case (byte) 150:
+          // Manual edit to fix https://github.com/flutter/flutter/issues/150108
+          // the way the generator will fix it once the PR lands.
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformRendererType.values()[(int) value];
+          }
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -1798,29 +2775,41 @@ public class Messages {
       } else if (value instanceof PlatformTileOverlay) {
         stream.write(138);
         writeValue(stream, ((PlatformTileOverlay) value).toList());
-      } else if (value instanceof PlatformLatLng) {
+      } else if (value instanceof PlatformEdgeInsets) {
         stream.write(139);
+        writeValue(stream, ((PlatformEdgeInsets) value).toList());
+      } else if (value instanceof PlatformLatLng) {
+        stream.write(140);
         writeValue(stream, ((PlatformLatLng) value).toList());
       } else if (value instanceof PlatformLatLngBounds) {
-        stream.write(140);
+        stream.write(141);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(141);
-        writeValue(stream, ((PlatformCluster) value).toList());
-      } else if (value instanceof PlatformMapConfiguration) {
         stream.write(142);
+        writeValue(stream, ((PlatformCluster) value).toList());
+      } else if (value instanceof PlatformCameraTargetBounds) {
+        stream.write(143);
+        writeValue(stream, ((PlatformCameraTargetBounds) value).toList());
+      } else if (value instanceof PlatformMapViewCreationParams) {
+        stream.write(144);
+        writeValue(stream, ((PlatformMapViewCreationParams) value).toList());
+      } else if (value instanceof PlatformMapConfiguration) {
+        stream.write(145);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(143);
+        stream.write(146);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(144);
+        stream.write(147);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(145);
+        stream.write(148);
         writeValue(stream, ((PlatformZoomRange) value).toList());
+      } else if (value instanceof PlatformMapType) {
+        stream.write(149);
+        writeValue(stream, value == null ? null : ((PlatformMapType) value).index);
       } else if (value instanceof PlatformRendererType) {
-        stream.write(146);
+        stream.write(150);
         writeValue(stream, value == null ? null : ((PlatformRendererType) value).index);
       } else {
         super.writeValue(stream, value);
@@ -3042,6 +4031,61 @@ public class Messages {
                     };
 
                 api.initializeWithPreferredRenderer(typeArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /**
+   * Dummy interface to force generation of the platform view creation params, which are not used in
+   * any Pigeon calls, only the platform view creation call made internally by Flutter.
+   *
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
+   */
+  public interface MapsPlatformViewApi {
+
+    void createView(@Nullable PlatformMapViewCreationParams type);
+
+    /** The codec used by MapsPlatformViewApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return PigeonCodec.INSTANCE;
+    }
+    /**
+     * Sets up an instance of `MapsPlatformViewApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable MapsPlatformViewApi api) {
+      setUp(binaryMessenger, "", api);
+    }
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable MapsPlatformViewApi api) {
+      messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsPlatformViewApi.createView"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                PlatformMapViewCreationParams typeArg = (PlatformMapViewCreationParams) args.get(0);
+                try {
+                  api.createView(typeArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);

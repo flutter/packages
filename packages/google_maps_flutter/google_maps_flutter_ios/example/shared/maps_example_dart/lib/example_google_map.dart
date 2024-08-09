@@ -224,7 +224,6 @@ class ExampleGoogleMap extends StatefulWidget {
     this.onMapCreated,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
     this.compassEnabled = true,
-    this.mapToolbarEnabled = true,
     this.cameraTargetBounds = CameraTargetBounds.unbounded,
     this.mapType = MapType.normal,
     this.minMaxZoomPreference = MinMaxZoomPreference.unbounded,
@@ -232,7 +231,6 @@ class ExampleGoogleMap extends StatefulWidget {
     this.scrollGesturesEnabled = true,
     this.zoomControlsEnabled = true,
     this.zoomGesturesEnabled = true,
-    this.liteModeEnabled = false,
     this.tiltGesturesEnabled = true,
     this.myLocationEnabled = false,
     this.myLocationButtonEnabled = true,
@@ -269,9 +267,6 @@ class ExampleGoogleMap extends StatefulWidget {
   /// True if the map should show a compass when rotated.
   final bool compassEnabled;
 
-  /// True if the map should show a toolbar when you interact with the map. Android only.
-  final bool mapToolbarEnabled;
-
   /// Geographical bounding box for the camera target.
   final CameraTargetBounds cameraTargetBounds;
 
@@ -298,9 +293,6 @@ class ExampleGoogleMap extends StatefulWidget {
 
   /// True if the map view should respond to zoom gestures.
   final bool zoomGesturesEnabled;
-
-  /// True if the map view should be in lite mode. Android only.
-  final bool liteModeEnabled;
 
   /// True if the map view should respond to tilt gestures.
   final bool tiltGesturesEnabled;
@@ -556,7 +548,6 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
 MapConfiguration _configurationFromMapWidget(ExampleGoogleMap map) {
   return MapConfiguration(
     compassEnabled: map.compassEnabled,
-    mapToolbarEnabled: map.mapToolbarEnabled,
     cameraTargetBounds: map.cameraTargetBounds,
     mapType: map.mapType,
     minMaxZoomPreference: map.minMaxZoomPreference,
@@ -566,7 +557,6 @@ MapConfiguration _configurationFromMapWidget(ExampleGoogleMap map) {
     trackCameraPosition: map.onCameraMove != null,
     zoomControlsEnabled: map.zoomControlsEnabled,
     zoomGesturesEnabled: map.zoomGesturesEnabled,
-    liteModeEnabled: map.liteModeEnabled,
     myLocationEnabled: map.myLocationEnabled,
     myLocationButtonEnabled: map.myLocationButtonEnabled,
     padding: map.padding,

@@ -39,6 +39,17 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
+/// Pigeon equivalent of MapType
+@implementation FGMPlatformMapTypeBox
+- (instancetype)initWithValue:(FGMPlatformMapType)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
 @interface FGMPlatformCameraPosition ()
 + (FGMPlatformCameraPosition *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformCameraPosition *)nullableFromList:(NSArray<id> *)list;
@@ -60,6 +71,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @interface FGMPlatformHeatmap ()
 + (FGMPlatformHeatmap *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformHeatmap *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FGMPlatformCluster ()
++ (FGMPlatformCluster *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformCluster *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
@@ -99,6 +116,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FGMPlatformEdgeInsets ()
++ (FGMPlatformEdgeInsets *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformEdgeInsets *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @interface FGMPlatformLatLng ()
 + (FGMPlatformLatLng *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformLatLng *)nullableFromList:(NSArray<id> *)list;
@@ -111,9 +134,15 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
-@interface FGMPlatformCluster ()
-+ (FGMPlatformCluster *)fromList:(NSArray<id> *)list;
-+ (nullable FGMPlatformCluster *)nullableFromList:(NSArray<id> *)list;
+@interface FGMPlatformCameraTargetBounds ()
++ (FGMPlatformCameraTargetBounds *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformCameraTargetBounds *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FGMPlatformMapViewCreationParams ()
++ (FGMPlatformMapViewCreationParams *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformMapViewCreationParams *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
@@ -233,6 +262,39 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList {
   return @[
     self.json ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation FGMPlatformCluster
++ (instancetype)makeWithClusterManagerId:(NSString *)clusterManagerId
+                                position:(FGMPlatformLatLng *)position
+                                  bounds:(FGMPlatformLatLngBounds *)bounds
+                               markerIds:(NSArray<NSString *> *)markerIds {
+  FGMPlatformCluster *pigeonResult = [[FGMPlatformCluster alloc] init];
+  pigeonResult.clusterManagerId = clusterManagerId;
+  pigeonResult.position = position;
+  pigeonResult.bounds = bounds;
+  pigeonResult.markerIds = markerIds;
+  return pigeonResult;
+}
++ (FGMPlatformCluster *)fromList:(NSArray<id> *)list {
+  FGMPlatformCluster *pigeonResult = [[FGMPlatformCluster alloc] init];
+  pigeonResult.clusterManagerId = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.position = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.bounds = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.markerIds = GetNullableObjectAtIndex(list, 3);
+  return pigeonResult;
+}
++ (nullable FGMPlatformCluster *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformCluster fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.clusterManagerId ?: [NSNull null],
+    self.position ?: [NSNull null],
+    self.bounds ?: [NSNull null],
+    self.markerIds ?: [NSNull null],
   ];
 }
 @end
@@ -371,6 +433,39 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FGMPlatformEdgeInsets
++ (instancetype)makeWithTop:(double)top
+                     bottom:(double)bottom
+                       left:(double)left
+                      right:(double)right {
+  FGMPlatformEdgeInsets *pigeonResult = [[FGMPlatformEdgeInsets alloc] init];
+  pigeonResult.top = top;
+  pigeonResult.bottom = bottom;
+  pigeonResult.left = left;
+  pigeonResult.right = right;
+  return pigeonResult;
+}
++ (FGMPlatformEdgeInsets *)fromList:(NSArray<id> *)list {
+  FGMPlatformEdgeInsets *pigeonResult = [[FGMPlatformEdgeInsets alloc] init];
+  pigeonResult.top = [GetNullableObjectAtIndex(list, 0) doubleValue];
+  pigeonResult.bottom = [GetNullableObjectAtIndex(list, 1) doubleValue];
+  pigeonResult.left = [GetNullableObjectAtIndex(list, 2) doubleValue];
+  pigeonResult.right = [GetNullableObjectAtIndex(list, 3) doubleValue];
+  return pigeonResult;
+}
++ (nullable FGMPlatformEdgeInsets *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformEdgeInsets fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.top),
+    @(self.bottom),
+    @(self.left),
+    @(self.right),
+  ];
+}
+@end
+
 @implementation FGMPlatformLatLng
 + (instancetype)makeWithLatitude:(double)latitude longitude:(double)longitude {
   FGMPlatformLatLng *pigeonResult = [[FGMPlatformLatLng alloc] init];
@@ -420,48 +515,138 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation FGMPlatformCluster
-+ (instancetype)makeWithClusterManagerId:(NSString *)clusterManagerId
-                                position:(FGMPlatformLatLng *)position
-                                  bounds:(FGMPlatformLatLngBounds *)bounds
-                               markerIds:(NSArray<NSString *> *)markerIds {
-  FGMPlatformCluster *pigeonResult = [[FGMPlatformCluster alloc] init];
-  pigeonResult.clusterManagerId = clusterManagerId;
-  pigeonResult.position = position;
+@implementation FGMPlatformCameraTargetBounds
++ (instancetype)makeWithBounds:(nullable FGMPlatformLatLngBounds *)bounds {
+  FGMPlatformCameraTargetBounds *pigeonResult = [[FGMPlatformCameraTargetBounds alloc] init];
   pigeonResult.bounds = bounds;
-  pigeonResult.markerIds = markerIds;
   return pigeonResult;
 }
-+ (FGMPlatformCluster *)fromList:(NSArray<id> *)list {
-  FGMPlatformCluster *pigeonResult = [[FGMPlatformCluster alloc] init];
-  pigeonResult.clusterManagerId = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.position = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.bounds = GetNullableObjectAtIndex(list, 2);
-  pigeonResult.markerIds = GetNullableObjectAtIndex(list, 3);
++ (FGMPlatformCameraTargetBounds *)fromList:(NSArray<id> *)list {
+  FGMPlatformCameraTargetBounds *pigeonResult = [[FGMPlatformCameraTargetBounds alloc] init];
+  pigeonResult.bounds = GetNullableObjectAtIndex(list, 0);
   return pigeonResult;
 }
-+ (nullable FGMPlatformCluster *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [FGMPlatformCluster fromList:list] : nil;
++ (nullable FGMPlatformCameraTargetBounds *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformCameraTargetBounds fromList:list] : nil;
 }
 - (NSArray<id> *)toList {
   return @[
-    self.clusterManagerId ?: [NSNull null],
-    self.position ?: [NSNull null],
     self.bounds ?: [NSNull null],
-    self.markerIds ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation FGMPlatformMapViewCreationParams
++ (instancetype)
+    makeWithInitialCameraPosition:(FGMPlatformCameraPosition *)initialCameraPosition
+                 mapConfiguration:(FGMPlatformMapConfiguration *)mapConfiguration
+                   initialCircles:(NSArray<FGMPlatformCircle *> *)initialCircles
+                   initialMarkers:(NSArray<FGMPlatformMarker *> *)initialMarkers
+                  initialPolygons:(NSArray<FGMPlatformPolygon *> *)initialPolygons
+                 initialPolylines:(NSArray<FGMPlatformPolyline *> *)initialPolylines
+                  initialHeatmaps:(NSArray<FGMPlatformHeatmap *> *)initialHeatmaps
+              initialTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)initialTileOverlays
+           initialClusterManagers:(NSArray<FGMPlatformClusterManager *> *)initialClusterManagers {
+  FGMPlatformMapViewCreationParams *pigeonResult = [[FGMPlatformMapViewCreationParams alloc] init];
+  pigeonResult.initialCameraPosition = initialCameraPosition;
+  pigeonResult.mapConfiguration = mapConfiguration;
+  pigeonResult.initialCircles = initialCircles;
+  pigeonResult.initialMarkers = initialMarkers;
+  pigeonResult.initialPolygons = initialPolygons;
+  pigeonResult.initialPolylines = initialPolylines;
+  pigeonResult.initialHeatmaps = initialHeatmaps;
+  pigeonResult.initialTileOverlays = initialTileOverlays;
+  pigeonResult.initialClusterManagers = initialClusterManagers;
+  return pigeonResult;
+}
++ (FGMPlatformMapViewCreationParams *)fromList:(NSArray<id> *)list {
+  FGMPlatformMapViewCreationParams *pigeonResult = [[FGMPlatformMapViewCreationParams alloc] init];
+  pigeonResult.initialCameraPosition = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.mapConfiguration = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.initialCircles = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.initialMarkers = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.initialPolygons = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.initialPolylines = GetNullableObjectAtIndex(list, 5);
+  pigeonResult.initialHeatmaps = GetNullableObjectAtIndex(list, 6);
+  pigeonResult.initialTileOverlays = GetNullableObjectAtIndex(list, 7);
+  pigeonResult.initialClusterManagers = GetNullableObjectAtIndex(list, 8);
+  return pigeonResult;
+}
++ (nullable FGMPlatformMapViewCreationParams *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformMapViewCreationParams fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.initialCameraPosition ?: [NSNull null],
+    self.mapConfiguration ?: [NSNull null],
+    self.initialCircles ?: [NSNull null],
+    self.initialMarkers ?: [NSNull null],
+    self.initialPolygons ?: [NSNull null],
+    self.initialPolylines ?: [NSNull null],
+    self.initialHeatmaps ?: [NSNull null],
+    self.initialTileOverlays ?: [NSNull null],
+    self.initialClusterManagers ?: [NSNull null],
   ];
 }
 @end
 
 @implementation FGMPlatformMapConfiguration
-+ (instancetype)makeWithJson:(id)json {
++ (instancetype)makeWithCompassEnabled:(nullable NSNumber *)compassEnabled
+                    cameraTargetBounds:(nullable FGMPlatformCameraTargetBounds *)cameraTargetBounds
+                               mapType:(nullable FGMPlatformMapTypeBox *)mapType
+                  minMaxZoomPreference:(nullable FGMPlatformZoomRange *)minMaxZoomPreference
+                 rotateGesturesEnabled:(nullable NSNumber *)rotateGesturesEnabled
+                 scrollGesturesEnabled:(nullable NSNumber *)scrollGesturesEnabled
+                   tiltGesturesEnabled:(nullable NSNumber *)tiltGesturesEnabled
+                   trackCameraPosition:(nullable NSNumber *)trackCameraPosition
+                   zoomGesturesEnabled:(nullable NSNumber *)zoomGesturesEnabled
+                     myLocationEnabled:(nullable NSNumber *)myLocationEnabled
+               myLocationButtonEnabled:(nullable NSNumber *)myLocationButtonEnabled
+                               padding:(nullable FGMPlatformEdgeInsets *)padding
+                     indoorViewEnabled:(nullable NSNumber *)indoorViewEnabled
+                        trafficEnabled:(nullable NSNumber *)trafficEnabled
+                      buildingsEnabled:(nullable NSNumber *)buildingsEnabled
+                            cloudMapId:(nullable NSString *)cloudMapId
+                                 style:(nullable NSString *)style {
   FGMPlatformMapConfiguration *pigeonResult = [[FGMPlatformMapConfiguration alloc] init];
-  pigeonResult.json = json;
+  pigeonResult.compassEnabled = compassEnabled;
+  pigeonResult.cameraTargetBounds = cameraTargetBounds;
+  pigeonResult.mapType = mapType;
+  pigeonResult.minMaxZoomPreference = minMaxZoomPreference;
+  pigeonResult.rotateGesturesEnabled = rotateGesturesEnabled;
+  pigeonResult.scrollGesturesEnabled = scrollGesturesEnabled;
+  pigeonResult.tiltGesturesEnabled = tiltGesturesEnabled;
+  pigeonResult.trackCameraPosition = trackCameraPosition;
+  pigeonResult.zoomGesturesEnabled = zoomGesturesEnabled;
+  pigeonResult.myLocationEnabled = myLocationEnabled;
+  pigeonResult.myLocationButtonEnabled = myLocationButtonEnabled;
+  pigeonResult.padding = padding;
+  pigeonResult.indoorViewEnabled = indoorViewEnabled;
+  pigeonResult.trafficEnabled = trafficEnabled;
+  pigeonResult.buildingsEnabled = buildingsEnabled;
+  pigeonResult.cloudMapId = cloudMapId;
+  pigeonResult.style = style;
   return pigeonResult;
 }
 + (FGMPlatformMapConfiguration *)fromList:(NSArray<id> *)list {
   FGMPlatformMapConfiguration *pigeonResult = [[FGMPlatformMapConfiguration alloc] init];
-  pigeonResult.json = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.compassEnabled = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.cameraTargetBounds = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.mapType = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.minMaxZoomPreference = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.rotateGesturesEnabled = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.scrollGesturesEnabled = GetNullableObjectAtIndex(list, 5);
+  pigeonResult.tiltGesturesEnabled = GetNullableObjectAtIndex(list, 6);
+  pigeonResult.trackCameraPosition = GetNullableObjectAtIndex(list, 7);
+  pigeonResult.zoomGesturesEnabled = GetNullableObjectAtIndex(list, 8);
+  pigeonResult.myLocationEnabled = GetNullableObjectAtIndex(list, 9);
+  pigeonResult.myLocationButtonEnabled = GetNullableObjectAtIndex(list, 10);
+  pigeonResult.padding = GetNullableObjectAtIndex(list, 11);
+  pigeonResult.indoorViewEnabled = GetNullableObjectAtIndex(list, 12);
+  pigeonResult.trafficEnabled = GetNullableObjectAtIndex(list, 13);
+  pigeonResult.buildingsEnabled = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.cloudMapId = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.style = GetNullableObjectAtIndex(list, 16);
   return pigeonResult;
 }
 + (nullable FGMPlatformMapConfiguration *)nullableFromList:(NSArray<id> *)list {
@@ -469,7 +654,23 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 - (NSArray<id> *)toList {
   return @[
-    self.json ?: [NSNull null],
+    self.compassEnabled ?: [NSNull null],
+    self.cameraTargetBounds ?: [NSNull null],
+    self.mapType ?: [NSNull null],
+    self.minMaxZoomPreference ?: [NSNull null],
+    self.rotateGesturesEnabled ?: [NSNull null],
+    self.scrollGesturesEnabled ?: [NSNull null],
+    self.tiltGesturesEnabled ?: [NSNull null],
+    self.trackCameraPosition ?: [NSNull null],
+    self.zoomGesturesEnabled ?: [NSNull null],
+    self.myLocationEnabled ?: [NSNull null],
+    self.myLocationButtonEnabled ?: [NSNull null],
+    self.padding ?: [NSNull null],
+    self.indoorViewEnabled ?: [NSNull null],
+    self.trafficEnabled ?: [NSNull null],
+    self.buildingsEnabled ?: [NSNull null],
+    self.cloudMapId ?: [NSNull null],
+    self.style ?: [NSNull null],
   ];
 }
 @end
@@ -532,7 +733,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformZoomRange
-+ (instancetype)makeWithMin:(double)min max:(double)max {
++ (instancetype)makeWithMin:(nullable NSNumber *)min max:(nullable NSNumber *)max {
   FGMPlatformZoomRange *pigeonResult = [[FGMPlatformZoomRange alloc] init];
   pigeonResult.min = min;
   pigeonResult.max = max;
@@ -540,8 +741,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 + (FGMPlatformZoomRange *)fromList:(NSArray<id> *)list {
   FGMPlatformZoomRange *pigeonResult = [[FGMPlatformZoomRange alloc] init];
-  pigeonResult.min = [GetNullableObjectAtIndex(list, 0) doubleValue];
-  pigeonResult.max = [GetNullableObjectAtIndex(list, 1) doubleValue];
+  pigeonResult.min = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.max = GetNullableObjectAtIndex(list, 1);
   return pigeonResult;
 }
 + (nullable FGMPlatformZoomRange *)nullableFromList:(NSArray<id> *)list {
@@ -549,8 +750,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 - (NSArray<id> *)toList {
   return @[
-    @(self.min),
-    @(self.max),
+    self.min ?: [NSNull null],
+    self.max ?: [NSNull null],
   ];
 }
 @end
@@ -569,31 +770,43 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 132:
       return [FGMPlatformHeatmap fromList:[self readValue]];
     case 133:
-      return [FGMPlatformClusterManager fromList:[self readValue]];
-    case 134:
-      return [FGMPlatformMarker fromList:[self readValue]];
-    case 135:
-      return [FGMPlatformPolygon fromList:[self readValue]];
-    case 136:
-      return [FGMPlatformPolyline fromList:[self readValue]];
-    case 137:
-      return [FGMPlatformTile fromList:[self readValue]];
-    case 138:
-      return [FGMPlatformTileOverlay fromList:[self readValue]];
-    case 139:
-      return [FGMPlatformLatLng fromList:[self readValue]];
-    case 140:
-      return [FGMPlatformLatLngBounds fromList:[self readValue]];
-    case 141:
       return [FGMPlatformCluster fromList:[self readValue]];
+    case 134:
+      return [FGMPlatformClusterManager fromList:[self readValue]];
+    case 135:
+      return [FGMPlatformMarker fromList:[self readValue]];
+    case 136:
+      return [FGMPlatformPolygon fromList:[self readValue]];
+    case 137:
+      return [FGMPlatformPolyline fromList:[self readValue]];
+    case 138:
+      return [FGMPlatformTile fromList:[self readValue]];
+    case 139:
+      return [FGMPlatformTileOverlay fromList:[self readValue]];
+    case 140:
+      return [FGMPlatformEdgeInsets fromList:[self readValue]];
+    case 141:
+      return [FGMPlatformLatLng fromList:[self readValue]];
     case 142:
-      return [FGMPlatformMapConfiguration fromList:[self readValue]];
+      return [FGMPlatformLatLngBounds fromList:[self readValue]];
     case 143:
-      return [FGMPlatformPoint fromList:[self readValue]];
+      return [FGMPlatformCameraTargetBounds fromList:[self readValue]];
     case 144:
-      return [FGMPlatformTileLayer fromList:[self readValue]];
+      return [FGMPlatformMapViewCreationParams fromList:[self readValue]];
     case 145:
+      return [FGMPlatformMapConfiguration fromList:[self readValue]];
+    case 146:
+      return [FGMPlatformPoint fromList:[self readValue]];
+    case 147:
+      return [FGMPlatformTileLayer fromList:[self readValue]];
+    case 148:
       return [FGMPlatformZoomRange fromList:[self readValue]];
+    case 149: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FGMPlatformMapTypeBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
     default:
       return [super readValueOfType:type];
   }
@@ -616,45 +829,58 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FGMPlatformHeatmap class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformClusterManager class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCluster class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMarker class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformClusterManager class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPolygon class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMarker class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPolyline class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPolygon class]]) {
     [self writeByte:136];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTile class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPolyline class]]) {
     [self writeByte:137];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileOverlay class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTile class]]) {
     [self writeByte:138];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTileOverlay class]]) {
     [self writeByte:139];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformEdgeInsets class]]) {
     [self writeByte:140];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformCluster class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
     [self writeByte:141];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
     [self writeByte:142];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCameraTargetBounds class]]) {
     [self writeByte:143];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMapViewCreationParams class]]) {
     [self writeByte:144];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
     [self writeByte:145];
     [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
+    [self writeByte:146];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
+    [self writeByte:147];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+    [self writeByte:148];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformMapTypeBox class]]) {
+    FGMPlatformMapTypeBox *box = (FGMPlatformMapTypeBox *)value;
+    [self writeByte:149];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
   } else {
     [super writeValue:value];
   }
@@ -1681,6 +1907,42 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
 }
 @end
 
+void SetUpFGMMapsPlatformViewApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                 NSObject<FGMMapsPlatformViewApi> *api) {
+  SetUpFGMMapsPlatformViewApiWithSuffix(binaryMessenger, api, @"");
+}
+
+void SetUpFGMMapsPlatformViewApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                           NSObject<FGMMapsPlatformViewApi> *api,
+                                           NSString *messageChannelSuffix) {
+  messageChannelSuffix = messageChannelSuffix.length > 0
+                             ? [NSString stringWithFormat:@".%@", messageChannelSuffix]
+                             : @"";
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsPlatformViewApi.createView",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FGMGetMessagesCodec()];
+    if (api) {
+      NSCAssert(
+          [api respondsToSelector:@selector(createViewType:error:)],
+          @"FGMMapsPlatformViewApi api (%@) doesn't respond to @selector(createViewType:error:)",
+          api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FGMPlatformMapViewCreationParams *arg_type = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        [api createViewType:arg_type error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+}
 void SetUpFGMMapsInspectorApi(id<FlutterBinaryMessenger> binaryMessenger,
                               NSObject<FGMMapsInspectorApi> *api) {
   SetUpFGMMapsInspectorApiWithSuffix(binaryMessenger, api, @"");

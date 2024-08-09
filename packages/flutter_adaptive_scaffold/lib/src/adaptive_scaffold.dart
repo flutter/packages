@@ -24,6 +24,13 @@ const double kMaterialMediumMinMargin = 12;
 /// design 3 spec.
 const double kMaterialExpandedMinMargin = 32;
 
+/// Signature for a builder used by [AdaptiveScaffold.navigationRailDestinationBuilder] that converts a
+/// [NavigationDestination] to a [NavigationRailDestination].
+typedef NavigationRailDestinationBuilder = NavigationRailDestination Function(
+  int index,
+  NavigationDestination destination,
+);
+
 /// Implements the basic visual layout structure for
 /// [Material Design 3](https://m3.material.io/foundations/adaptive-design/overview)
 /// that adapts to a variety of screens.
@@ -103,6 +110,8 @@ class AdaptiveScaffold extends StatefulWidget {
     this.navigationRailWidth = 72,
     this.extendedNavigationRailWidth = 192,
     this.appBarBreakpoint,
+    this.navigationRailDestinationBuilder,
+    this.groupAlignment,
   }) : assert(
           destinations.length >= 2,
           'At least two destinations are required',
@@ -128,6 +137,9 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Option to display a trailing widget below the destinations of the
   /// navigation rail at the largest breakpoint.
   final Widget? trailingNavRail;
+
+  /// The alignment of the destinations in the navigation rail.
+  final double? groupAlignment;
 
   /// Widget to be displayed in the body slot at the smallest breakpoint.
   ///
@@ -246,6 +258,9 @@ class AdaptiveScaffold extends StatefulWidget {
   /// [Breakpoint].
   final double extendedNavigationRailWidth;
 
+  /// Used to map NavigationDestination to NavigationRailDestination.
+  final NavigationRailDestinationBuilder? navigationRailDestinationBuilder;
+
   /// Callback function for when the index of a [NavigationRail] changes.
   static WidgetBuilder emptyBuilder = (_) => const SizedBox();
 
@@ -267,6 +282,9 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Takes in a [selectedIndex] property for the current selected item in
   /// the [NavigationRail] and [extended] for whether the [NavigationRail]
   /// is extended or not.
+  ///
+  /// If [labelType] is null, then the default value is
+  /// [NavigationRailLabelType.none].
   static Builder standardNavigationRail({
     required List<NavigationRailDestination> destinations,
     double width = 72,
@@ -282,7 +300,7 @@ class AdaptiveScaffold extends StatefulWidget {
     IconThemeData? unselectedIconTheme,
     TextStyle? selectedLabelTextStyle,
     TextStyle? unSelectedLabelTextStyle,
-    NavigationRailLabelType labelType = NavigationRailLabelType.none,
+    NavigationRailLabelType? labelType = NavigationRailLabelType.none,
   }) {
     if (extended && width == 72) {
       width = 192;
@@ -513,6 +531,13 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
     final NavigationRailThemeData navRailTheme =
         Theme.of(context).navigationRailTheme;
 
+    final List<NavigationRailDestination> destinations = widget.destinations
+        .map((NavigationDestination destination) =>
+            widget.navigationRailDestinationBuilder
+                ?.call(widget.destinations.indexOf(destination), destination) ??
+            AdaptiveScaffold.toRailDestination(destination))
+        .toList();
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: widget.drawerBreakpoint.isActive(context) && widget.useDrawer ||
@@ -526,11 +551,15 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 leading: widget.leadingExtendedNavRail,
                 trailing: widget.trailingNavRail,
                 selectedIndex: widget.selectedIndex,
-                destinations: widget.destinations
-                    .map((NavigationDestination destination) =>
-                        AdaptiveScaffold.toRailDestination(destination))
-                    .toList(),
+                destinations: destinations,
                 onDestinationSelected: _onDrawerDestinationSelected,
+                backgroundColor: navRailTheme.backgroundColor,
+                selectedIconTheme: navRailTheme.selectedIconTheme,
+                unselectedIconTheme: navRailTheme.unselectedIconTheme,
+                selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+                unselectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+                groupAlignment: widget.groupAlignment,
+                labelType: navRailTheme.labelType,
               ),
             )
           : null,
@@ -548,16 +577,15 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 leading: widget.leadingUnextendedNavRail,
                 trailing: widget.trailingNavRail,
                 selectedIndex: widget.selectedIndex,
-                destinations: widget.destinations
-                    .map((NavigationDestination destination) =>
-                        AdaptiveScaffold.toRailDestination(destination))
-                    .toList(),
+                destinations: destinations,
                 onDestinationSelected: widget.onSelectedIndexChange,
                 backgroundColor: navRailTheme.backgroundColor,
                 selectedIconTheme: navRailTheme.selectedIconTheme,
                 unselectedIconTheme: navRailTheme.unselectedIconTheme,
                 selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
                 unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+                labelType: navRailTheme.labelType,
+                groupAlignment: widget.groupAlignment,
               ),
             ),
             widget.largeBreakpoint: SlotLayout.from(
@@ -568,16 +596,15 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 leading: widget.leadingExtendedNavRail,
                 trailing: widget.trailingNavRail,
                 selectedIndex: widget.selectedIndex,
-                destinations: widget.destinations
-                    .map((NavigationDestination destination) =>
-                        AdaptiveScaffold.toRailDestination(destination))
-                    .toList(),
+                destinations: destinations,
                 onDestinationSelected: widget.onSelectedIndexChange,
                 backgroundColor: navRailTheme.backgroundColor,
                 selectedIconTheme: navRailTheme.selectedIconTheme,
                 unselectedIconTheme: navRailTheme.unselectedIconTheme,
                 selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
                 unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+                labelType: navRailTheme.labelType,
+                groupAlignment: widget.groupAlignment,
               ),
             ),
           },

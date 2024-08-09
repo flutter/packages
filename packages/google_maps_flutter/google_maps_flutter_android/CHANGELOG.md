@@ -1,3 +1,7 @@
+## 2.14.0
+
+* Updates map configuration and platform view creation parameters to use Pigeon.
+
 ## 2.13.0
 
 * Adds support for heatmap layers.

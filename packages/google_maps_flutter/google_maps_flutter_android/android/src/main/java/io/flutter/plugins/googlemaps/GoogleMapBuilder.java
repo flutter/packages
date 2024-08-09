@@ -6,13 +6,13 @@ package io.flutter.plugins.googlemaps;
 
 import android.content.Context;
 import android.graphics.Rect;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLngBounds;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.List;
-import java.util.Map;
 
 class GoogleMapBuilder implements GoogleMapOptionsSink {
   private final GoogleMapOptions options = new GoogleMapOptions();
@@ -22,13 +22,13 @@ class GoogleMapBuilder implements GoogleMapOptionsSink {
   private boolean indoorEnabled = true;
   private boolean trafficEnabled = false;
   private boolean buildingsEnabled = true;
-  private Object initialMarkers;
-  private Object initialClusterManagers;
-  private Object initialPolygons;
-  private Object initialPolylines;
-  private Object initialCircles;
-  private Object initialHeatmaps;
-  private List<Map<String, ?>> initialTileOverlays;
+  private List<Messages.PlatformMarker> initialMarkers;
+  private List<Messages.PlatformClusterManager> initialClusterManagers;
+  private List<Messages.PlatformPolygon> initialPolygons;
+  private List<Messages.PlatformPolyline> initialPolylines;
+  private List<Messages.PlatformCircle> initialCircles;
+  private List<Messages.PlatformHeatmap> initialHeatmaps;
+  private List<Messages.PlatformTileOverlay> initialTileOverlays;
   private Rect padding = new Rect(0, 0, 0, 0);
   private @Nullable String style;
 
@@ -162,37 +162,38 @@ class GoogleMapBuilder implements GoogleMapOptionsSink {
   }
 
   @Override
-  public void setInitialMarkers(Object initialMarkers) {
+  public void setInitialMarkers(@NonNull List<Messages.PlatformMarker> initialMarkers) {
     this.initialMarkers = initialMarkers;
   }
 
   @Override
-  public void setInitialClusterManagers(Object initialClusterManagers) {
+  public void setInitialClusterManagers(
+      @NonNull List<Messages.PlatformClusterManager> initialClusterManagers) {
     this.initialClusterManagers = initialClusterManagers;
   }
 
   @Override
-  public void setInitialPolygons(Object initialPolygons) {
+  public void setInitialPolygons(@NonNull List<Messages.PlatformPolygon> initialPolygons) {
     this.initialPolygons = initialPolygons;
   }
 
   @Override
-  public void setInitialPolylines(Object initialPolylines) {
+  public void setInitialPolylines(@NonNull List<Messages.PlatformPolyline> initialPolylines) {
     this.initialPolylines = initialPolylines;
   }
 
   @Override
-  public void setInitialCircles(Object initialCircles) {
+  public void setInitialCircles(@NonNull List<Messages.PlatformCircle> initialCircles) {
     this.initialCircles = initialCircles;
   }
 
   @Override
-  public void setInitialHeatmaps(Object initialHeatmaps) {
+  public void setInitialHeatmaps(@NonNull List<Messages.PlatformHeatmap> initialHeatmaps) {
     this.initialHeatmaps = initialHeatmaps;
   }
 
-  @Override
-  public void setInitialTileOverlays(List<Map<String, ?>> initialTileOverlays) {
+  public void setInitialTileOverlays(
+      @NonNull List<Messages.PlatformTileOverlay> initialTileOverlays) {
     this.initialTileOverlays = initialTileOverlays;
   }
 
