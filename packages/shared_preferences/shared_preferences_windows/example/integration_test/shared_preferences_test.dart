@@ -402,10 +402,10 @@ void main() {
     });
     testWidgets('getStringList does not throw cast error',
         (WidgetTester _) async {
-      SharedPreferencesAsyncPlatform preferences = await getPreferences();
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
 
       await preferences.setStringList(listKey, testList, emptyOptions);
-      preferences = await getPreferences(clear: false);
+      await (preferences as SharedPreferencesAsyncWindows).reload(emptyOptions);
       expect(await preferences.getStringList(listKey, emptyOptions), testList);
     });
 
