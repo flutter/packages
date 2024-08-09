@@ -17,7 +17,7 @@ AdErrorType toInterfaceErrorType(ima.AdErrorType type) {
 /// Attempts to convert an [ima.AdEventType] to [AdEventType].
 ///
 /// Returns null is the type is not supported by the platform interface.
-AdEventType? toInterfaceEventType(ima.AdEventType type) {
+AdEventType toInterfaceEventType(ima.AdEventType type) {
   return switch (type) {
     ima.AdEventType.allAdsCompleted => AdEventType.allAdsCompleted,
     ima.AdEventType.completed => AdEventType.complete,
@@ -26,7 +26,29 @@ AdEventType? toInterfaceEventType(ima.AdEventType type) {
       AdEventType.contentResumeRequested,
     ima.AdEventType.loaded => AdEventType.loaded,
     ima.AdEventType.clicked => AdEventType.clicked,
-    _ => null,
+    ima.AdEventType.adBreakEnded => AdEventType.adBreakEnded,
+    ima.AdEventType.adBreakFetchError => AdEventType.adBreakFetchError,
+    ima.AdEventType.adBreakReady => AdEventType.adBreakReady,
+    ima.AdEventType.adBreakStarted => AdEventType.adBreakStarted,
+    ima.AdEventType.adBuffering => AdEventType.adBuffering,
+    ima.AdEventType.adPeriodEnded => AdEventType.adPeriodEnded,
+    ima.AdEventType.adPeriodStarted => AdEventType.adPeriodStarted,
+    ima.AdEventType.adProgress => AdEventType.adProgress,
+    ima.AdEventType.cuepointsChanged => AdEventType.cuepointsChanged,
+    ima.AdEventType.firstQuartile => AdEventType.firstQuartile,
+    ima.AdEventType.iconFallbackImageClosed =>
+      AdEventType.iconFallbackImageClosed,
+    ima.AdEventType.iconTapped => AdEventType.iconTapped,
+    ima.AdEventType.log => AdEventType.log,
+    ima.AdEventType.midpoint => AdEventType.midpoint,
+    ima.AdEventType.paused => AdEventType.paused,
+    ima.AdEventType.resumed => AdEventType.resumed,
+    ima.AdEventType.skippableStateChanged => AdEventType.skippableStateChanged,
+    ima.AdEventType.skipped => AdEventType.skipped,
+    ima.AdEventType.started => AdEventType.started,
+    ima.AdEventType.tapped => AdEventType.tapped,
+    ima.AdEventType.thirdQuartile => AdEventType.thirdQuartile,
+    ima.AdEventType.unknown => AdEventType.unknown,
   };
 }
 
