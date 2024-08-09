@@ -354,12 +354,15 @@ void main() {
     const double testDouble = 3.14159;
     const List<String> testList = <String>['foo', 'bar'];
 
-    Future<SharedPreferencesAsyncPlatform> getPreferences() async {
+    Future<SharedPreferencesAsyncPlatform> getPreferences(
+        {bool clear = true}) async {
       final SharedPreferencesAsyncPlatform preferences =
           SharedPreferencesAsyncPlatform.instance!;
-      await preferences.clear(
-          const ClearPreferencesParameters(filter: PreferencesFilters()),
-          emptyOptions);
+      if (clear) {
+        await preferences.clear(
+            const ClearPreferencesParameters(filter: PreferencesFilters()),
+            emptyOptions);
+      }
       return preferences;
     }
 
@@ -402,7 +405,7 @@ void main() {
       SharedPreferencesAsyncPlatform preferences = await getPreferences();
 
       await preferences.setStringList(listKey, testList, emptyOptions);
-      preferences = await getPreferences();
+      preferences = await getPreferences(clear: false);
       expect(await preferences.getStringList(listKey, emptyOptions), testList);
     });
 
