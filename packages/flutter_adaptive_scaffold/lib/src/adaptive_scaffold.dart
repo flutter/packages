@@ -173,7 +173,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// empty.
   final WidgetBuilder? largeBody;
 
-  /// Widget to be displayed in the body slot at the extra large breakpoint.
+  /// Widget to be displayed in the body slot at the extraLarge breakpoint.
   ///
   /// If nothing is entered for this property, then the default [body] is
   /// displayed in the slot. If null is entered for this slot, the slot stays
@@ -209,7 +209,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// empty.
   final WidgetBuilder? largeSecondaryBody;
 
-  /// Widget to be displayed in the secondaryBody slot at the extra large
+  /// Widget to be displayed in the secondaryBody slot at the extraLarge
   /// breakpoint.
   ///
   /// If nothing is entered for this property, then the default [secondaryBody]
@@ -250,7 +250,7 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Defaults to [Breakpoints.large].
   final Breakpoint largeBreakpoint;
 
-  /// The breakpoint defined for the extra large size, associated with ultra-wide
+  /// The breakpoint defined for the extraLarge size, associated with ultra-wide
   /// features.
   ///
   /// Defaults to [Breakpoints.extraLarge].

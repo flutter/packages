@@ -297,7 +297,7 @@ void main() {
   );
 
   testWidgets(
-    'when view in extra large screen, navigation rail must be visible as per theme data values.',
+    'when view in extraLarge screen, navigation rail must be visible as per theme data values.',
     (WidgetTester tester) async {
       final Finder primaryNavigationExtraLarge = find.byKey(
         const Key('Primary Navigation ExtraLarge'),

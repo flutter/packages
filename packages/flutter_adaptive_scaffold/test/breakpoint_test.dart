@@ -37,7 +37,7 @@ void main() {
     expect(find.byKey(const Key('Breakpoints.largeMobile')), findsOneWidget);
     expect(find.byKey(const Key('Breakpoints.largeDesktop')), findsNothing);
 
-    // Do the same with an extra large layout on a mobile.
+    // Do the same with an extraLarge layout on a mobile.
     await tester.pumpWidget(SimulatedLayout.extraLarge.slot(tester));
     await tester.pumpAndSettle();
     expect(
@@ -61,7 +61,7 @@ void main() {
     expect(find.byKey(const Key('Breakpoints.mediumDesktop')), findsOneWidget);
     expect(find.byKey(const Key('Breakpoints.mediumMobile')), findsNothing);
 
-    // Do the same with an mediumLarge layout on a desktop
+    // Do the same with an mediumLarge layout on a desktop.
     await tester.pumpWidget(SimulatedLayout.mediumLarge.slot(tester));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('Breakpoints.mediumLargeDesktop')),

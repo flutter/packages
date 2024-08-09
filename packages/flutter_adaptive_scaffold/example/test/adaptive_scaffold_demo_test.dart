@@ -35,7 +35,7 @@ void main() {
 
   testWidgets('displays correct item of config based on screen width',
       (WidgetTester tester) async {
-    //Small
+    // Small
     await updateScreen(300, tester);
     await tester.pumpAndSettle();
     expect(smallBody, findsOneWidget);

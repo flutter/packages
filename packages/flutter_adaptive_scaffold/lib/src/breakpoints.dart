@@ -146,8 +146,8 @@ class Breakpoint {
   /// Returns a [Breakpoint] with the given constraints for an extraLarge screen.
   const Breakpoint.extraLarge({this.andUp = false, this.platform})
       : beginWidth = 1600,
-        beginHeight = 900,
         endWidth = null,
+        beginHeight = 900,
         endHeight = null;
 
   /// A set of [TargetPlatform]s that the [Breakpoint] will be active on desktop.
