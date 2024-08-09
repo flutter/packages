@@ -282,6 +282,13 @@ base class SharedPreferencesAsyncLinux extends SharedPreferencesAsyncPlatform {
     return _readAll(parameters.filter.allowList, options);
   }
 
+  ///
+  Future<void> reload(
+    SharedPreferencesLinuxOptions options,
+  ) {
+    return _reload(options.fileName);
+  }
+
   Future<Map<String, Object>> _readAll(
     Set<String>? allowList,
     SharedPreferencesOptions options,
