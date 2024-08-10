@@ -352,57 +352,45 @@ class RouteConfiguration {
       BuildContext context, FutureOr<RouteMatchList> prevMatchListFuture,
       {required List<RouteMatchList> redirectHistory}) {
     FutureOr<RouteMatchList> processRedirect(RouteMatchList prevMatchList) {
-      final Uri prevLocation = prevMatchList.uri;
-      FutureOr<RouteMatchList> handleRedirect(String redirectLocation) {
-        final RouteMatchList newMatch = findMatch(redirectLocation);
-        // When a redirect is performed according to the browser's backward/forward button,
-        // at least one redirect action is required to cancel the browser's backward/forward processing.
-        // If the same redirect processing is included in the history, it will be an infinite loop.
-        // So the number of times the redirect is performed is limited (only once).
-        if (redirectHistory.contains(newMatch)) {
-          // To break the redirect loop, return [prevMatchList].
-          return prevMatchList;
-        }
-
-        // If the number of redirects exceeds the limit, an error RouteMatchList is returned.
-        if (redirectHistory.length > _routingConfig.value.redirectLimit) {
-          final GoException e = GoException(
-              'too many redirects ${_formatRedirectionHistory(<RouteMatchList>[
-                ...redirectHistory,
-                newMatch
-              ])}');
-          log('Redirection exception: ${e.message}');
-          return _errorRouteMatchList(prevLocation, e);
-        }
-
-        // Add the newMatch to the redirectHistory
-        redirectHistory.add(newMatch);
-        log('redirecting to $newMatch');
-
-        if (newMatch.isError) {
-          return newMatch;
-        }
-        return redirect(
-          context,
-          newMatch,
-          redirectHistory: redirectHistory,
-        );
-      }
-
+      final String prevLocation = prevMatchList.uri.toString();
       FutureOr<RouteMatchList> processTopLevelRedirect(
-        String? topRedirectLocation,
-      ) {
-        if (topRedirectLocation != null) {
-          return handleRedirect(topRedirectLocation);
+          String? topRedirectLocation) {
+        if (topRedirectLocation != null &&
+            topRedirectLocation != prevLocation) {
+          final RouteMatchList newMatch = _getNewMatches(
+            topRedirectLocation,
+            prevMatchList.uri,
+            redirectHistory,
+          );
+          if (newMatch.isError) {
+            return newMatch;
+          }
+          return redirect(
+            context,
+            newMatch,
+            redirectHistory: redirectHistory,
+          );
         }
 
         FutureOr<RouteMatchList> processRouteLevelRedirect(
-          String? routeRedirectLocation,
-        ) {
-          if (routeRedirectLocation != null) {
-            return handleRedirect(routeRedirectLocation);
-          }
+            String? routeRedirectLocation) {
+          if (routeRedirectLocation != null &&
+              routeRedirectLocation != prevLocation) {
+            final RouteMatchList newMatch = _getNewMatches(
+              routeRedirectLocation,
+              prevMatchList.uri,
+              redirectHistory,
+            );
 
+            if (newMatch.isError) {
+              return newMatch;
+            }
+            return redirect(
+              context,
+              newMatch,
+              redirectHistory: redirectHistory,
+            );
+          }
           return prevMatchList;
         }
 
@@ -465,6 +453,49 @@ class RouteConfiguration {
       return processRouteRedirect(routeRedirectResult);
     }
     return routeRedirectResult.then<String?>(processRouteRedirect);
+  }
+
+  RouteMatchList _getNewMatches(
+    String newLocation,
+    Uri previousLocation,
+    List<RouteMatchList> redirectHistory,
+  ) {
+    try {
+      final RouteMatchList newMatch = findMatch(newLocation);
+      _addRedirect(redirectHistory, newMatch, previousLocation);
+      return newMatch;
+    } on GoException catch (e) {
+      log('Redirection exception: ${e.message}');
+      return _errorRouteMatchList(previousLocation, e);
+    }
+  }
+
+  /// Adds the redirect to [redirects] if it is valid.
+  ///
+  /// Throws if a loop is detected or the redirection limit is reached.
+  void _addRedirect(
+    List<RouteMatchList> redirects,
+    RouteMatchList newMatch,
+    Uri prevLocation,
+  ) {
+    if (redirects.contains(newMatch)) {
+      throw GoException(
+          'redirect loop detected ${_formatRedirectionHistory(<RouteMatchList>[
+            ...redirects,
+            newMatch
+          ])}');
+    }
+    if (redirects.length > _routingConfig.value.redirectLimit) {
+      throw GoException(
+          'too many redirects ${_formatRedirectionHistory(<RouteMatchList>[
+            ...redirects,
+            newMatch
+          ])}');
+    }
+
+    redirects.add(newMatch);
+
+    log('redirecting to $newMatch');
   }
 
   String _formatRedirectionHistory(List<RouteMatchList> redirections) {

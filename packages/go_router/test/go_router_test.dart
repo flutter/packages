@@ -2158,12 +2158,17 @@ void main() {
           ),
         ],
         tester,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
       );
 
       final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
-      expect(matches, hasLength(1));
-      expect(find.byType(DummyScreen), findsOneWidget);
+      expect(matches, hasLength(0));
+      expect(find.byType(TestErrorScreen), findsOneWidget);
+      final TestErrorScreen screen =
+          tester.widget<TestErrorScreen>(find.byType(TestErrorScreen));
+      expect(screen.ex, isNotNull);
     });
 
     testWidgets('mixed redirect loop', (WidgetTester tester) async {
