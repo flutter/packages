@@ -5,7 +5,7 @@
 * **BREAKING CHANGES**:
   * Removes `WidthPlatformBreakpoint`
   * Breakpoints can now be constructed directly with `Breakpoint`
-  * Checks for andUp or platform can be done as parameter: `Breakpoint.small(andUp: true, platform: Breakpoint.mobile)`
+  * Checks for `andUp` or `platform` can be done as parameter: `Breakpoint.small(andUp: true, platform: Breakpoint.mobile)`
 
 ## 0.1.12
 
