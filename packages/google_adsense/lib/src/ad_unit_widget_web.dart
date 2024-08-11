@@ -6,18 +6,18 @@ import 'dart:developer';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
 import '../google_adsense.dart';
 import 'ad_unit_params.dart';
+import 'ad_unit_widget_interface.dart';
 
 /// Widget displaying an ad unit
-class AdUnitWidget extends StatefulWidget {
+class AdUnitWidgetWeb extends AdUnitWidget {
   // TODO(sokoloff06): consider builder?
-  /// Constructs [AdUnitWidget]
-  AdUnitWidget(
+  /// Constructs [AdUnitWidgetWeb]
+  AdUnitWidgetWeb(
       {required String adClient,
       required String adSlot,
       required bool isAdTest,
@@ -52,19 +52,19 @@ class AdUnitWidget extends StatefulWidget {
 
   static const String _AD_TEST_KEY = 'adtest';
 
-  /// See [AdUnitParams.AD_CLIENT]
+  @override
   String get adClient => _adClient;
   final String _adClient;
 
-  /// See [AdUnitParams.AD_SLOT]
+  @override
   String get adSlot => _adSlot;
   final String _adSlot;
 
-  /// When 'true' adUnit is more likely to be filled but might not generate impressions/clicks data and therefore any ad revenue
+  @override
   bool get isAdTest => _isAdTest;
   final bool _isAdTest;
 
-  /// Set of required/recommended params depend on ad unit formats. See [AdUnitParams] for some of the most popular ones and links to documentation.
+  @override
   Map<String, dynamic> get additionalParams => _additionalParams;
   final Map<String, dynamic> _additionalParams;
 
@@ -72,10 +72,10 @@ class AdUnitWidget extends StatefulWidget {
       web.document.createElement('ins') as web.HTMLElement;
 
   @override
-  State<AdUnitWidget> createState() => _AdUnitWidgetState();
+  State<AdUnitWidgetWeb> createState() => _AdUnitWidgetWebState();
 }
 
-class _AdUnitWidgetState extends State<AdUnitWidget>
+class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
     with AutomaticKeepAliveClientMixin {
   static int adUnitCounter = 0;
   double adHeight = 1.0;

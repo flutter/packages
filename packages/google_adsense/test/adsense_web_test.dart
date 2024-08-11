@@ -7,9 +7,10 @@
 @TestOn('chrome')
 library;
 
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_adsense/google_adsense.dart';
-import 'package:google_adsense/src/ad_unit_widget.dart';
+import 'package:google_adsense/src/ad_unit_widget_interface.dart';
 import 'package:web/web.dart' as web;
 
 void main() {
@@ -48,11 +49,11 @@ void main() {
     expect(injected.async, true);
   });
 
-  testWidgets('AdUnitWidget is created (not checking rendering here)',
+  testWidgets('AdUnitWidget is created (not checking rendering)',
       (WidgetTester tester) async {
     // When
     Adsense().initialize(testClient);
-    final AdUnitWidget adUnitWidget = Adsense().adUnit(adSlot: testSlot);
+    final Widget adUnitWidget = Adsense().adUnit(adSlot: testSlot);
     await tester.pumpWidget(adUnitWidget);
     expect(find.byWidget(adUnitWidget), findsOneWidget);
 

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'ad_unit_widget.dart';
+import 'ad_unit_widget_interface.dart';
 
 /// Main class to work with the library
 class Adsense {

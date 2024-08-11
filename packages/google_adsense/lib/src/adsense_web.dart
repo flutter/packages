@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:web/web.dart' as web;
-
-import 'ad_unit_widget.dart';
+import 'ad_unit_widget_interface.dart';
+import 'ad_unit_widget_web.dart';
 
 /// Main class to work with the library
 class Adsense {
@@ -37,7 +37,7 @@ class Adsense {
       String adClient = '',
       bool isAdTest = false,
       Map<String, dynamic> adUnitParams = const <String, dynamic>{}}) {
-    return AdUnitWidget(
+    return AdUnitWidgetWeb(
       adSlot: adSlot,
       adClient: adClient.isNotEmpty ? adClient : _adClient,
       isAdTest: isAdTest,
