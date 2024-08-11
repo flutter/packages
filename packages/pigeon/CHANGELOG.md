@@ -1,3 +1,7 @@
+## 21.1.0
+
+* Adds GObject (Linux) support.
+
 ## 21.0.0
 
 * **Breaking Change** [cpp] Fixes style of enum names. References to enum values

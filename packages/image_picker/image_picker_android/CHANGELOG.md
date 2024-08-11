@@ -1,3 +1,19 @@
+## 0.8.12+10
+
+* Bumps androidx.activity:activity from 1.9.0 to 1.9.1.
+
+## 0.8.12+9
+
+* Bumps androidx.annotation:annotation from 1.7.1 to 1.8.0.
+
+## 0.8.12+8
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 0.8.12+7
+
+* Bumps androidx.activity:activity from 1.8.2 to 1.9.0.
+
 ## 0.8.12+6
 
 * Bumps androidx.activity:activity from 1.7.2 to 1.8.2.
