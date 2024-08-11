@@ -138,6 +138,8 @@ class PigeonInstanceManager {
     _PigeonInstanceManagerApi.setUpMessageHandlers(
         instanceManager: instanceManager);
     Ad.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CuePoint.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
     CompanionAd.pigeon_setUpMessageHandlers(
         pigeon_instanceManager: instanceManager);
     UniversalAdId.pigeon_setUpMessageHandlers(
@@ -1069,6 +1071,109 @@ class Ad extends PigeonProxyApiBaseClass {
       width: width,
       isLinear: isLinear,
       isSkippable: isSkippable,
+    );
+  }
+}
+
+/// Represents a cuepoint within a VOD stream.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CuePoint.html.
+class CuePoint extends PigeonProxyApiBaseClass {
+  /// Constructs [CuePoint] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  CuePoint.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.endTimeMs,
+    required this.startTimeMs,
+    required this.isPlayed,
+  });
+
+  /// The end time of the cuepoint in milliseconds.
+  final int endTimeMs;
+
+  /// The start time of the cuepoint in milliseconds.
+  final int startTimeMs;
+
+  /// Whether the corresponding ad break was played.
+  final bool isPlayed;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    CuePoint Function(
+      int endTimeMs,
+      int startTimeMs,
+      bool isPlayed,
+    )? pigeon_newInstance,
+  }) {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.CuePoint.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.CuePoint.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.CuePoint.pigeon_newInstance was null, expected non-null int.');
+          final int? arg_endTimeMs = (args[1] as int?);
+          assert(arg_endTimeMs != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.CuePoint.pigeon_newInstance was null, expected non-null int.');
+          final int? arg_startTimeMs = (args[2] as int?);
+          assert(arg_startTimeMs != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.CuePoint.pigeon_newInstance was null, expected non-null int.');
+          final bool? arg_isPlayed = (args[3] as bool?);
+          assert(arg_isPlayed != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.CuePoint.pigeon_newInstance was null, expected non-null bool.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call(
+                      arg_endTimeMs!, arg_startTimeMs!, arg_isPlayed!) ??
+                  CuePoint.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    endTimeMs: arg_endTimeMs!,
+                    startTimeMs: arg_startTimeMs!,
+                    isPlayed: arg_isPlayed!,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  CuePoint pigeon_copy() {
+    return CuePoint.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      endTimeMs: endTimeMs,
+      startTimeMs: startTimeMs,
+      isPlayed: isPlayed,
     );
   }
 }

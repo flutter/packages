@@ -321,6 +321,25 @@ abstract class Ad {
   late final bool isSkippable;
 }
 
+/// Represents a cuepoint within a VOD stream.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CuePoint.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.CuePoint',
+  ),
+)
+abstract class CuePoint {
+  /// The end time of the cuepoint in milliseconds.
+  late final int endTimeMs;
+
+  /// The start time of the cuepoint in milliseconds.
+  late final int startTimeMs;
+
+  /// Whether the corresponding ad break was played.
+  late final bool isPlayed;
+}
+
 /// An object that holds data corresponding to the companion Ad.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAd.html.

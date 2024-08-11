@@ -26,6 +26,10 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
     return AdProxyApi(this)
   }
 
+  override fun getPigeonApiCuePoint(): PigeonApiCuePoint {
+    return CuePointProxyApi(this)
+  }
+
   override fun getPigeonApiCompanionAd(): PigeonApiCompanionAd {
     return CompanionAdProxyApi(this)
   }

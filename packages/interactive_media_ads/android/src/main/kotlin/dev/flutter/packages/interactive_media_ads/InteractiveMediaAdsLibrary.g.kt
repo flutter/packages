@@ -380,6 +380,12 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
   abstract fun getPigeonApiAd(): PigeonApiAd
 
   /**
+   * An implementation of [PigeonApiCuePoint] used to add a new Dart instance of `CuePoint` to the
+   * Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiCuePoint(): PigeonApiCuePoint
+
+  /**
    * An implementation of [PigeonApiCompanionAd] used to add a new Dart instance of `CompanionAd` to
    * the Dart `InstanceManager`.
    */
@@ -637,6 +643,8 @@ private class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
 
     if (value is com.google.ads.interactivemedia.v3.api.Ad) {
       registrar.getPigeonApiAd().pigeon_newInstance(value) {}
+    } else if (value is com.google.ads.interactivemedia.v3.api.CuePoint) {
+      registrar.getPigeonApiCuePoint().pigeon_newInstance(value) {}
     } else if (value is com.google.ads.interactivemedia.v3.api.CompanionAd) {
       registrar.getPigeonApiCompanionAd().pigeon_newInstance(value) {}
     } else if (value is com.google.ads.interactivemedia.v3.api.UniversalAdId) {
@@ -1157,7 +1165,11 @@ abstract class PigeonApiAd(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.Ad
+import com.google.ads.interactivemedia.v3.api.CompanionAd
+import com.google.ads.interactivemedia.v3.api.UniversalAdId
 import com.google.ads.interactivemedia.v3.api.AdPodInfo
 
 /**
@@ -1167,90 +1179,115 @@ import com.google.ads.interactivemedia.v3.api.AdPodInfo
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class AdProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAd(pigeonRegistrar) {
-  internal class AdImpl(val api: AdProxyApi) : Ad {
-  }
 
   override fun adId(pigeon_instance: Ad): String {
     return pigeon_instance.adId
   }
+
   override fun adPodInfo(pigeon_instance: Ad): com.google.ads.interactivemedia.v3.api.AdPodInfo {
     return pigeon_instance.adPodInfo
   }
+
   override fun adSystem(pigeon_instance: Ad): String {
     return pigeon_instance.adSystem
   }
+
   override fun adWrapperCreativeIds(pigeon_instance: Ad): List<String> {
     return pigeon_instance.adWrapperCreativeIds
   }
+
   override fun adWrapperIds(pigeon_instance: Ad): List<String> {
     return pigeon_instance.adWrapperIds
   }
+
   override fun adWrapperSystems(pigeon_instance: Ad): List<String> {
     return pigeon_instance.adWrapperSystems
   }
+
   override fun advertiserName(pigeon_instance: Ad): String {
     return pigeon_instance.advertiserName
   }
+
   override fun companionAds(pigeon_instance: Ad): List<com.google.ads.interactivemedia.v3.api.CompanionAd> {
     return pigeon_instance.companionAds
   }
+
   override fun contentType(pigeon_instance: Ad): String? {
     return pigeon_instance.contentType
   }
+
   override fun creativeAdId(pigeon_instance: Ad): String {
     return pigeon_instance.creativeAdId
   }
+
   override fun creativeId(pigeon_instance: Ad): String {
     return pigeon_instance.creativeId
   }
+
   override fun dealId(pigeon_instance: Ad): String {
     return pigeon_instance.dealId
   }
+
   override fun description(pigeon_instance: Ad): String? {
     return pigeon_instance.description
   }
+
   override fun duration(pigeon_instance: Ad): Double {
     return pigeon_instance.duration
   }
+
   override fun height(pigeon_instance: Ad): Long {
     return pigeon_instance.height
   }
+
   override fun skipTimeOffset(pigeon_instance: Ad): Double {
     return pigeon_instance.skipTimeOffset
   }
+
   override fun surveyUrl(pigeon_instance: Ad): String {
     return pigeon_instance.surveyUrl
   }
+
   override fun title(pigeon_instance: Ad): String? {
     return pigeon_instance.title
   }
+
   override fun traffickingParameters(pigeon_instance: Ad): String {
     return pigeon_instance.traffickingParameters
   }
+
   override fun uiElements(pigeon_instance: Ad): List<UiElement> {
     return pigeon_instance.uiElements
   }
+
   override fun universalAdIds(pigeon_instance: Ad): List<com.google.ads.interactivemedia.v3.api.UniversalAdId> {
     return pigeon_instance.universalAdIds
   }
+
   override fun vastMediaBitrate(pigeon_instance: Ad): Long {
     return pigeon_instance.vastMediaBitrate
   }
+
   override fun vastMediaHeight(pigeon_instance: Ad): Long {
     return pigeon_instance.vastMediaHeight
   }
+
   override fun vastMediaWidth(pigeon_instance: Ad): Long {
     return pigeon_instance.vastMediaWidth
   }
+
   override fun width(pigeon_instance: Ad): Long {
     return pigeon_instance.width
   }
+
   override fun isLinear(pigeon_instance: Ad): Boolean {
     return pigeon_instance.isLinear
   }
+
   override fun isSkippable(pigeon_instance: Ad): Boolean {
     return pigeon_instance.isSkippable
   }
+
 }
 */
 
@@ -1259,7 +1296,11 @@ class AdProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAd(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.Ad
+import com.google.ads.interactivemedia.v3.api.CompanionAd
+import com.google.ads.interactivemedia.v3.api.UniversalAdId
 import com.google.ads.interactivemedia.v3.api.AdPodInfo
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -1485,7 +1526,7 @@ class AdProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiAd()
 
     val instance = mock<Ad>()
-    val value = listOf(UiElement.AD_ATTRIBUTION)
+    val value = listOf(dev.flutter.packages.interactive_media_ads.UiElement.AD_ATTRIBUTION)
     whenever(instance.uiElements).thenReturn(value)
 
     assertEquals(value, api.uiElements(instance))
@@ -1571,6 +1612,149 @@ class AdProxyApiTest {
 }
 */
 /**
+ * Represents a cuepoint within a VOD stream.
+ *
+ * See
+ * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CuePoint.html.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiCuePoint(
+    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+) {
+  /** The end time of the cuepoint in milliseconds. */
+  abstract fun endTimeMs(pigeon_instance: com.google.ads.interactivemedia.v3.api.CuePoint): Long
+
+  /** The start time of the cuepoint in milliseconds. */
+  abstract fun startTimeMs(pigeon_instance: com.google.ads.interactivemedia.v3.api.CuePoint): Long
+
+  /** Whether the corresponding ad break was played. */
+  abstract fun isPlayed(pigeon_instance: com.google.ads.interactivemedia.v3.api.CuePoint): Boolean
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of CuePoint and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.CuePoint,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg =
+        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val endTimeMsArg = endTimeMs(pigeon_instanceArg)
+    val startTimeMsArg = startTimeMs(pigeon_instanceArg)
+    val isPlayedArg = isPlayed(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.CuePoint.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg, endTimeMsArg, startTimeMsArg, isPlayedArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.CuePoint
+
+/**
+ * ProxyApi implementation for [CuePoint].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class CuePointProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiCuePoint(pigeonRegistrar) {
+
+  override fun endTimeMs(pigeon_instance: CuePoint): Long {
+    return pigeon_instance.endTimeMs
+  }
+
+  override fun startTimeMs(pigeon_instance: CuePoint): Long {
+    return pigeon_instance.startTimeMs
+  }
+
+  override fun isPlayed(pigeon_instance: CuePoint): Boolean {
+    return pigeon_instance.isPlayed
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.CuePoint
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
+
+class CuePointProxyApiTest {
+  @Test
+  fun endTimeMs() {
+    val api = TestProxyApiRegistrar().getPigeonApiCuePoint()
+
+    val instance = mock<CuePoint>()
+    val value = 0
+    whenever(instance.endTimeMs).thenReturn(value)
+
+    assertEquals(value, api.endTimeMs(instance))
+  }
+
+  @Test
+  fun startTimeMs() {
+    val api = TestProxyApiRegistrar().getPigeonApiCuePoint()
+
+    val instance = mock<CuePoint>()
+    val value = 0
+    whenever(instance.startTimeMs).thenReturn(value)
+
+    assertEquals(value, api.startTimeMs(instance))
+  }
+
+  @Test
+  fun isPlayed() {
+    val api = TestProxyApiRegistrar().getPigeonApiCuePoint()
+
+    val instance = mock<CuePoint>()
+    val value = true
+    whenever(instance.isPlayed).thenReturn(value)
+
+    assertEquals(value, api.isPlayed(instance))
+  }
+
+}
+*/
+/**
  * An object that holds data corresponding to the companion Ad.
  *
  * See
@@ -1651,6 +1835,8 @@ abstract class PigeonApiCompanionAd(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.CompanionAd
 
 /**
@@ -1660,21 +1846,23 @@ import com.google.ads.interactivemedia.v3.api.CompanionAd
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class CompanionAdProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiCompanionAd(pigeonRegistrar) {
-  internal class CompanionAdImpl(val api: CompanionAdProxyApi) : CompanionAd {
-  }
 
   override fun apiFramework(pigeon_instance: CompanionAd): String? {
     return pigeon_instance.apiFramework
   }
+
   override fun height(pigeon_instance: CompanionAd): Long {
     return pigeon_instance.height
   }
+
   override fun resourceValue(pigeon_instance: CompanionAd): String {
     return pigeon_instance.resourceValue
   }
+
   override fun width(pigeon_instance: CompanionAd): Long {
     return pigeon_instance.width
   }
+
 }
 */
 
@@ -1682,6 +1870,8 @@ class CompanionAdProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pig
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.CompanionAd
 import kotlin.test.Test
@@ -1811,6 +2001,8 @@ abstract class PigeonApiUniversalAdId(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.UniversalAdId
 
 /**
@@ -1820,15 +2012,15 @@ import com.google.ads.interactivemedia.v3.api.UniversalAdId
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class UniversalAdIdProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiUniversalAdId(pigeonRegistrar) {
-  internal class UniversalAdIdImpl(val api: UniversalAdIdProxyApi) : UniversalAdId {
-  }
 
   override fun adIdRegistry(pigeon_instance: UniversalAdId): String {
     return pigeon_instance.adIdRegistry
   }
+
   override fun adIdValue(pigeon_instance: UniversalAdId): String {
     return pigeon_instance.adIdValue
   }
+
 }
 */
 
@@ -1836,6 +2028,8 @@ class UniversalAdIdProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : P
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.UniversalAdId
 import kotlin.test.Test
@@ -1924,6 +2118,8 @@ open class PigeonApiBaseDisplayContainer(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
 
 /**
@@ -1933,8 +2129,6 @@ import com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class BaseDisplayContainerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiBaseDisplayContainer(pigeonRegistrar) {
-  internal class BaseDisplayContainerImpl(val api: BaseDisplayContainerProxyApi) : BaseDisplayContainer {
-  }
 
 }
 */
@@ -1943,6 +2137,8 @@ class BaseDisplayContainerProxyApi(override val pigeonRegistrar: ProxyApiRegistr
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
 import kotlin.test.Test
@@ -2015,6 +2211,8 @@ open class PigeonApiAdDisplayContainer(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer
 
 /**
@@ -2024,8 +2222,6 @@ import com.google.ads.interactivemedia.v3.api.AdDisplayContainer
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class AdDisplayContainerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAdDisplayContainer(pigeonRegistrar) {
-  internal class AdDisplayContainerImpl(val api: AdDisplayContainerProxyApi) : AdDisplayContainer {
-  }
 
 }
 */
@@ -2034,6 +2230,8 @@ class AdDisplayContainerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer
 import kotlin.test.Test
@@ -2199,6 +2397,8 @@ abstract class PigeonApiAdsLoader(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.AdsLoader
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
 import com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener
@@ -2211,8 +2411,6 @@ import com.google.ads.interactivemedia.v3.api.AdsRequest
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class AdsLoaderProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAdsLoader(pigeonRegistrar) {
-  internal class AdsLoaderImpl(val api: AdsLoaderProxyApi) : AdsLoader {
-  }
 
   override fun addAdErrorListener(pigeon_instance: AdsLoader,listener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener) {
     return pigeon_instance.addAdErrorListener(listener)
@@ -2233,6 +2431,8 @@ class AdsLoaderProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pigeo
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdsLoader
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
@@ -2344,6 +2544,8 @@ abstract class PigeonApiAdsManagerLoadedEvent(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent
 import com.google.ads.interactivemedia.v3.api.AdsManager
 
@@ -2354,12 +2556,11 @@ import com.google.ads.interactivemedia.v3.api.AdsManager
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class AdsManagerLoadedEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAdsManagerLoadedEvent(pigeonRegistrar) {
-  internal class AdsManagerLoadedEventImpl(val api: AdsManagerLoadedEventProxyApi) : AdsManagerLoadedEvent {
-  }
 
   override fun manager(pigeon_instance: AdsManagerLoadedEvent): com.google.ads.interactivemedia.v3.api.AdsManager {
     return pigeon_instance.manager
   }
+
 }
 */
 
@@ -2367,6 +2568,8 @@ class AdsManagerLoadedEventProxyApi(override val pigeonRegistrar: ProxyApiRegist
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent
 import com.google.ads.interactivemedia.v3.api.AdsManager
@@ -2450,6 +2653,8 @@ abstract class PigeonApiAdErrorEvent(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdError
 
@@ -2460,12 +2665,11 @@ import com.google.ads.interactivemedia.v3.api.AdError
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class AdErrorEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAdErrorEvent(pigeonRegistrar) {
-  internal class AdErrorEventImpl(val api: AdErrorEventProxyApi) : AdErrorEvent {
-  }
 
   override fun error(pigeon_instance: AdErrorEvent): com.google.ads.interactivemedia.v3.api.AdError {
     return pigeon_instance.error
   }
+
 }
 */
 
@@ -2473,6 +2677,8 @@ class AdErrorEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pi
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdError
@@ -2574,6 +2780,8 @@ abstract class PigeonApiAdError(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.AdError
 
 /**
@@ -2583,50 +2791,52 @@ import com.google.ads.interactivemedia.v3.api.AdError
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class AdErrorProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAdError(pigeonRegistrar) {
-  internal class AdErrorImpl(val api: AdErrorProxyApi) : AdError {
-  }
 
   override fun errorCode(pigeon_instance: AdError): AdErrorCode {
     return when (pigeon_instance.errorCode) {
-      AdErrorCode.ADS_PLAYER_WAS_NOT_PROVIDED -> AdErrorCode.ADS_PLAYER_WAS_NOT_PROVIDED
-      AdErrorCode.ADS_REQUEST_NETWORK_ERROR -> AdErrorCode.ADS_REQUEST_NETWORK_ERROR
-      AdErrorCode.COMPANION_AD_LOADING_FAILED -> AdErrorCode.COMPANION_AD_LOADING_FAILED
-      AdErrorCode.FAILED_TO_REQUEST_ADS -> AdErrorCode.FAILED_TO_REQUEST_ADS
-      AdErrorCode.INTERNAL_ERROR -> AdErrorCode.INTERNAL_ERROR
-      AdErrorCode.INVALID_ARGUMENTS -> AdErrorCode.INVALID_ARGUMENTS
-      AdErrorCode.OVERLAY_AD_LOADING_FAILED -> AdErrorCode.OVERLAY_AD_LOADING_FAILED
-      AdErrorCode.OVERLAY_AD_PLAYING_FAILED -> AdErrorCode.OVERLAY_AD_PLAYING_FAILED
-      AdErrorCode.PLAYLIST_NO_CONTENT_TRACKING -> AdErrorCode.PLAYLIST_NO_CONTENT_TRACKING
-      AdErrorCode.UNEXPECTED_ADS_LOADED_EVENT -> AdErrorCode.UNEXPECTED_ADS_LOADED_EVENT
-      AdErrorCode.UNKNOWN_AD_RESPONSE -> AdErrorCode.UNKNOWN_AD_RESPONSE
-      AdErrorCode.UNKNOWN_ERROR -> AdErrorCode.UNKNOWN_ERROR
-      AdErrorCode.VAST_ASSET_NOT_FOUND -> AdErrorCode.VAST_ASSET_NOT_FOUND
-      AdErrorCode.VAST_EMPTY_RESPONSE -> AdErrorCode.VAST_EMPTY_RESPONSE
-      AdErrorCode.VAST_LINEAR_ASSET_MISMATCH -> AdErrorCode.VAST_LINEAR_ASSET_MISMATCH
-      AdErrorCode.VAST_LOAD_TIMEOUT -> AdErrorCode.VAST_LOAD_TIMEOUT
-      AdErrorCode.VAST_MALFORMED_RESPONSE -> AdErrorCode.VAST_MALFORMED_RESPONSE
-      AdErrorCode.VAST_MEDIA_LOAD_TIMEOUT -> AdErrorCode.VAST_MEDIA_LOAD_TIMEOUT
-      AdErrorCode.VAST_NONLINEAR_ASSET_MISMATCH -> AdErrorCode.VAST_NONLINEAR_ASSET_MISMATCH
-      AdErrorCode.VAST_NO_ADS_AFTER_WRAPPER -> AdErrorCode.VAST_NO_ADS_AFTER_WRAPPER
-      AdErrorCode.VAST_TOO_MANY_REDIRECTS -> AdErrorCode.VAST_TOO_MANY_REDIRECTS
-      AdErrorCode.VAST_TRAFFICKING_ERROR -> AdErrorCode.VAST_TRAFFICKING_ERROR
-      AdErrorCode.VIDEO_PLAY_ERROR -> AdErrorCode.VIDEO_PLAY_ERROR
-      else -> AdErrorCode.UNKNOWN
+      AdErrorCode.ADS_PLAYER_WAS_NOT_PROVIDED -> dev.flutter.packages.interactive_media_ads.AdErrorCode.ADS_PLAYER_WAS_NOT_PROVIDED
+      AdErrorCode.ADS_REQUEST_NETWORK_ERROR -> dev.flutter.packages.interactive_media_ads.AdErrorCode.ADS_REQUEST_NETWORK_ERROR
+      AdErrorCode.COMPANION_AD_LOADING_FAILED -> dev.flutter.packages.interactive_media_ads.AdErrorCode.COMPANION_AD_LOADING_FAILED
+      AdErrorCode.FAILED_TO_REQUEST_ADS -> dev.flutter.packages.interactive_media_ads.AdErrorCode.FAILED_TO_REQUEST_ADS
+      AdErrorCode.INTERNAL_ERROR -> dev.flutter.packages.interactive_media_ads.AdErrorCode.INTERNAL_ERROR
+      AdErrorCode.INVALID_ARGUMENTS -> dev.flutter.packages.interactive_media_ads.AdErrorCode.INVALID_ARGUMENTS
+      AdErrorCode.OVERLAY_AD_LOADING_FAILED -> dev.flutter.packages.interactive_media_ads.AdErrorCode.OVERLAY_AD_LOADING_FAILED
+      AdErrorCode.OVERLAY_AD_PLAYING_FAILED -> dev.flutter.packages.interactive_media_ads.AdErrorCode.OVERLAY_AD_PLAYING_FAILED
+      AdErrorCode.PLAYLIST_NO_CONTENT_TRACKING -> dev.flutter.packages.interactive_media_ads.AdErrorCode.PLAYLIST_NO_CONTENT_TRACKING
+      AdErrorCode.UNEXPECTED_ADS_LOADED_EVENT -> dev.flutter.packages.interactive_media_ads.AdErrorCode.UNEXPECTED_ADS_LOADED_EVENT
+      AdErrorCode.UNKNOWN_AD_RESPONSE -> dev.flutter.packages.interactive_media_ads.AdErrorCode.UNKNOWN_AD_RESPONSE
+      AdErrorCode.UNKNOWN_ERROR -> dev.flutter.packages.interactive_media_ads.AdErrorCode.UNKNOWN_ERROR
+      AdErrorCode.VAST_ASSET_NOT_FOUND -> dev.flutter.packages.interactive_media_ads.AdErrorCode.VAST_ASSET_NOT_FOUND
+      AdErrorCode.VAST_EMPTY_RESPONSE -> dev.flutter.packages.interactive_media_ads.AdErrorCode.VAST_EMPTY_RESPONSE
+      AdErrorCode.VAST_LINEAR_ASSET_MISMATCH -> dev.flutter.packages.interactive_media_ads.AdErrorCode.VAST_LINEAR_ASSET_MISMATCH
+      AdErrorCode.VAST_LOAD_TIMEOUT -> dev.flutter.packages.interactive_media_ads.AdErrorCode.VAST_LOAD_TIMEOUT
+      AdErrorCode.VAST_MALFORMED_RESPONSE -> dev.flutter.packages.interactive_media_ads.AdErrorCode.VAST_MALFORMED_RESPONSE
+      AdErrorCode.VAST_MEDIA_LOAD_TIMEOUT -> dev.flutter.packages.interactive_media_ads.AdErrorCode.VAST_MEDIA_LOAD_TIMEOUT
+      AdErrorCode.VAST_NONLINEAR_ASSET_MISMATCH -> dev.flutter.packages.interactive_media_ads.AdErrorCode.VAST_NONLINEAR_ASSET_MISMATCH
+      AdErrorCode.VAST_NO_ADS_AFTER_WRAPPER -> dev.flutter.packages.interactive_media_ads.AdErrorCode.VAST_NO_ADS_AFTER_WRAPPER
+      AdErrorCode.VAST_TOO_MANY_REDIRECTS -> dev.flutter.packages.interactive_media_ads.AdErrorCode.VAST_TOO_MANY_REDIRECTS
+      AdErrorCode.VAST_TRAFFICKING_ERROR -> dev.flutter.packages.interactive_media_ads.AdErrorCode.VAST_TRAFFICKING_ERROR
+      AdErrorCode.VIDEO_PLAY_ERROR -> dev.flutter.packages.interactive_media_ads.AdErrorCode.VIDEO_PLAY_ERROR
+      else -> dev.flutter.packages.interactive_media_ads.AdErrorCode.UNKNOWN
     }
   }
+
   override fun errorCodeNumber(pigeon_instance: AdError): Long {
     return pigeon_instance.errorCodeNumber
   }
+
   override fun errorType(pigeon_instance: AdError): AdErrorType {
     return when (pigeon_instance.errorType) {
-      AdErrorType.LOAD -> AdErrorType.LOAD
-      AdErrorType.PLAY -> AdErrorType.PLAY
-      else -> AdErrorType.UNKNOWN
+      AdErrorType.LOAD -> dev.flutter.packages.interactive_media_ads.AdErrorType.LOAD
+      AdErrorType.PLAY -> dev.flutter.packages.interactive_media_ads.AdErrorType.PLAY
+      else -> dev.flutter.packages.interactive_media_ads.AdErrorType.UNKNOWN
     }
   }
+
   override fun message(pigeon_instance: AdError): String {
     return pigeon_instance.message
   }
+
 }
 */
 
@@ -2634,6 +2844,8 @@ class AdErrorProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonA
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdError
 import kotlin.test.Test
@@ -2651,7 +2863,7 @@ class AdErrorProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiAdError()
 
     val instance = mock<AdError>()
-    val value = AdErrorCode.ADS_PLAYER_WAS_NOT_PROVIDED
+    val value = dev.flutter.packages.interactive_media_ads.AdErrorCode.ADS_PLAYER_WAS_NOT_PROVIDED
     whenever(instance.errorCode).thenReturn(value)
 
     assertEquals(value, api.errorCode(instance))
@@ -2673,7 +2885,7 @@ class AdErrorProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiAdError()
 
     val instance = mock<AdError>()
-    val value = AdErrorType.LOAD
+    val value = dev.flutter.packages.interactive_media_ads.AdErrorType.LOAD
     whenever(instance.errorType).thenReturn(value)
 
     assertEquals(value, api.errorType(instance))
@@ -2814,6 +3026,8 @@ abstract class PigeonApiAdsRequest(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.AdsRequest
 import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
 
@@ -2824,8 +3038,6 @@ import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAdsRequest(pigeonRegistrar) {
-  internal class AdsRequestImpl(val api: AdsRequestProxyApi) : AdsRequest {
-  }
 
   override fun setAdTagUrl(pigeon_instance: AdsRequest,adTagUrl: String) {
     return pigeon_instance.setAdTagUrl(adTagUrl)
@@ -2842,6 +3054,8 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pige
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdsRequest
 import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
@@ -2931,6 +3145,8 @@ open class PigeonApiContentProgressProvider(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
 
 /**
@@ -2940,8 +3156,6 @@ import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class ContentProgressProviderProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiContentProgressProvider(pigeonRegistrar) {
-  internal class ContentProgressProviderImpl(val api: ContentProgressProviderProxyApi) : ContentProgressProvider {
-  }
 
 }
 */
@@ -2950,6 +3164,8 @@ class ContentProgressProviderProxyApi(override val pigeonRegistrar: ProxyApiRegi
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
 import kotlin.test.Test
@@ -3102,6 +3318,8 @@ abstract class PigeonApiAdsManager(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.AdsManager
 
 /**
@@ -3111,8 +3329,6 @@ import com.google.ads.interactivemedia.v3.api.AdsManager
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class AdsManagerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAdsManager(pigeonRegistrar) {
-  internal class AdsManagerImpl(val api: AdsManagerProxyApi) : AdsManager {
-  }
 
   override fun discardAdBreak(pigeon_instance: AdsManager) {
     return pigeon_instance.discardAdBreak()
@@ -3133,6 +3349,8 @@ class AdsManagerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pige
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdsManager
 import kotlin.test.Test
@@ -3351,6 +3569,8 @@ abstract class PigeonApiBaseManager(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.BaseManager
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
 import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
@@ -3362,8 +3582,6 @@ import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class BaseManagerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiBaseManager(pigeonRegistrar) {
-  internal class BaseManagerImpl(val api: BaseManagerProxyApi) : BaseManager {
-  }
 
   override fun addAdErrorListener(pigeon_instance: BaseManager,errorListener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener) {
     return pigeon_instance.addAdErrorListener(errorListener)
@@ -3388,6 +3606,8 @@ class BaseManagerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pig
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.BaseManager
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
@@ -3507,6 +3727,8 @@ abstract class PigeonApiAdEvent(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.AdEvent
 
 /**
@@ -3516,44 +3738,44 @@ import com.google.ads.interactivemedia.v3.api.AdEvent
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class AdEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAdEvent(pigeonRegistrar) {
-  internal class AdEventImpl(val api: AdEventProxyApi) : AdEvent {
-  }
 
   override fun type(pigeon_instance: AdEvent): AdEventType {
     return when (pigeon_instance.type) {
-      AdEventType.AD_BREAK_ENDED -> AdEventType.AD_BREAK_ENDED
-      AdEventType.AD_BREAK_FETCH_ERROR -> AdEventType.AD_BREAK_FETCH_ERROR
-      AdEventType.AD_BREAK_READY -> AdEventType.AD_BREAK_READY
-      AdEventType.AD_BREAK_STARTED -> AdEventType.AD_BREAK_STARTED
-      AdEventType.AD_BUFFERING -> AdEventType.AD_BUFFERING
-      AdEventType.AD_PERIOD_ENDED -> AdEventType.AD_PERIOD_ENDED
-      AdEventType.AD_PERIOD_STARTED -> AdEventType.AD_PERIOD_STARTED
-      AdEventType.AD_PROGRESS -> AdEventType.AD_PROGRESS
-      AdEventType.ALL_ADS_COMPLETED -> AdEventType.ALL_ADS_COMPLETED
-      AdEventType.CLICKED -> AdEventType.CLICKED
-      AdEventType.COMPLETED -> AdEventType.COMPLETED
-      AdEventType.CONTENT_PAUSE_REQUESTED -> AdEventType.CONTENT_PAUSE_REQUESTED
-      AdEventType.CONTENT_RESUME_REQUESTED -> AdEventType.CONTENT_RESUME_REQUESTED
-      AdEventType.CUEPOINTS_CHANGED -> AdEventType.CUEPOINTS_CHANGED
-      AdEventType.FIRST_QUARTILE -> AdEventType.FIRST_QUARTILE
-      AdEventType.ICON_FALLBACK_IMAGE_CLOSED -> AdEventType.ICON_FALLBACK_IMAGE_CLOSED
-      AdEventType.ICON_TAPPED -> AdEventType.ICON_TAPPED
-      AdEventType.LOADED -> AdEventType.LOADED
-      AdEventType.LOG -> AdEventType.LOG
-      AdEventType.MIDPOINT -> AdEventType.MIDPOINT
-      AdEventType.PAUSED -> AdEventType.PAUSED
-      AdEventType.RESUMED -> AdEventType.RESUMED
-      AdEventType.SKIPPABLE_STATE_CHANGED -> AdEventType.SKIPPABLE_STATE_CHANGED
-      AdEventType.SKIPPED -> AdEventType.SKIPPED
-      AdEventType.STARTED -> AdEventType.STARTED
-      AdEventType.TAPPED -> AdEventType.TAPPED
-      AdEventType.THIRD_QUARTILE -> AdEventType.THIRD_QUARTILE
-      else -> AdEventType.UNKNOWN
+      AdEventType.AD_BREAK_ENDED -> dev.flutter.packages.interactive_media_ads.AdEventType.AD_BREAK_ENDED
+      AdEventType.AD_BREAK_FETCH_ERROR -> dev.flutter.packages.interactive_media_ads.AdEventType.AD_BREAK_FETCH_ERROR
+      AdEventType.AD_BREAK_READY -> dev.flutter.packages.interactive_media_ads.AdEventType.AD_BREAK_READY
+      AdEventType.AD_BREAK_STARTED -> dev.flutter.packages.interactive_media_ads.AdEventType.AD_BREAK_STARTED
+      AdEventType.AD_BUFFERING -> dev.flutter.packages.interactive_media_ads.AdEventType.AD_BUFFERING
+      AdEventType.AD_PERIOD_ENDED -> dev.flutter.packages.interactive_media_ads.AdEventType.AD_PERIOD_ENDED
+      AdEventType.AD_PERIOD_STARTED -> dev.flutter.packages.interactive_media_ads.AdEventType.AD_PERIOD_STARTED
+      AdEventType.AD_PROGRESS -> dev.flutter.packages.interactive_media_ads.AdEventType.AD_PROGRESS
+      AdEventType.ALL_ADS_COMPLETED -> dev.flutter.packages.interactive_media_ads.AdEventType.ALL_ADS_COMPLETED
+      AdEventType.CLICKED -> dev.flutter.packages.interactive_media_ads.AdEventType.CLICKED
+      AdEventType.COMPLETED -> dev.flutter.packages.interactive_media_ads.AdEventType.COMPLETED
+      AdEventType.CONTENT_PAUSE_REQUESTED -> dev.flutter.packages.interactive_media_ads.AdEventType.CONTENT_PAUSE_REQUESTED
+      AdEventType.CONTENT_RESUME_REQUESTED -> dev.flutter.packages.interactive_media_ads.AdEventType.CONTENT_RESUME_REQUESTED
+      AdEventType.CUEPOINTS_CHANGED -> dev.flutter.packages.interactive_media_ads.AdEventType.CUEPOINTS_CHANGED
+      AdEventType.FIRST_QUARTILE -> dev.flutter.packages.interactive_media_ads.AdEventType.FIRST_QUARTILE
+      AdEventType.ICON_FALLBACK_IMAGE_CLOSED -> dev.flutter.packages.interactive_media_ads.AdEventType.ICON_FALLBACK_IMAGE_CLOSED
+      AdEventType.ICON_TAPPED -> dev.flutter.packages.interactive_media_ads.AdEventType.ICON_TAPPED
+      AdEventType.LOADED -> dev.flutter.packages.interactive_media_ads.AdEventType.LOADED
+      AdEventType.LOG -> dev.flutter.packages.interactive_media_ads.AdEventType.LOG
+      AdEventType.MIDPOINT -> dev.flutter.packages.interactive_media_ads.AdEventType.MIDPOINT
+      AdEventType.PAUSED -> dev.flutter.packages.interactive_media_ads.AdEventType.PAUSED
+      AdEventType.RESUMED -> dev.flutter.packages.interactive_media_ads.AdEventType.RESUMED
+      AdEventType.SKIPPABLE_STATE_CHANGED -> dev.flutter.packages.interactive_media_ads.AdEventType.SKIPPABLE_STATE_CHANGED
+      AdEventType.SKIPPED -> dev.flutter.packages.interactive_media_ads.AdEventType.SKIPPED
+      AdEventType.STARTED -> dev.flutter.packages.interactive_media_ads.AdEventType.STARTED
+      AdEventType.TAPPED -> dev.flutter.packages.interactive_media_ads.AdEventType.TAPPED
+      AdEventType.THIRD_QUARTILE -> dev.flutter.packages.interactive_media_ads.AdEventType.THIRD_QUARTILE
+      else -> dev.flutter.packages.interactive_media_ads.AdEventType.UNKNOWN
     }
   }
+
   override fun adData(pigeon_instance: AdEvent): Map<String, String>? {
     return pigeon_instance.adData
   }
+
 }
 */
 
@@ -3561,6 +3783,8 @@ class AdEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonA
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import kotlin.test.Test
@@ -3578,7 +3802,7 @@ class AdEventProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiAdEvent()
 
     val instance = mock<AdEvent>()
-    val value = AdEventType.AD_BREAK_ENDED
+    val value = dev.flutter.packages.interactive_media_ads.AdEventType.AD_BREAK_ENDED
     whenever(instance.type).thenReturn(value)
 
     assertEquals(value, api.type(instance))
@@ -3795,6 +4019,8 @@ abstract class PigeonApiImaSdkFactory(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory
 import android.view.ViewGroup
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
@@ -3808,12 +4034,11 @@ import com.google.ads.interactivemedia.v3.api.AdDisplayContainer
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class ImaSdkFactoryProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiImaSdkFactory(pigeonRegistrar) {
-  internal class ImaSdkFactoryImpl(val api: ImaSdkFactoryProxyApi) : ImaSdkFactory {
-  }
 
   override fun instance(): com.google.ads.interactivemedia.v3.api.ImaSdkFactory {
     return ImaSdkFactory.instance
   }
+
   override fun createAdDisplayContainer(container: android.view.ViewGroup, player: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer): com.google.ads.interactivemedia.v3.api.AdDisplayContainer {
     return ImaSdkFactory.createAdDisplayContainer(container, player)
   }
@@ -3837,6 +4062,8 @@ class ImaSdkFactoryProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : P
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory
 import android.view.ViewGroup
@@ -3941,6 +4168,8 @@ open class PigeonApiImaSdkSettings(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings
 
 /**
@@ -3950,8 +4179,6 @@ import com.google.ads.interactivemedia.v3.api.ImaSdkSettings
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class ImaSdkSettingsProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiImaSdkSettings(pigeonRegistrar) {
-  internal class ImaSdkSettingsImpl(val api: ImaSdkSettingsProxyApi) : ImaSdkSettings {
-  }
 
 }
 */
@@ -3960,6 +4187,8 @@ class ImaSdkSettingsProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : 
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings
 import kotlin.test.Test
@@ -4096,6 +4325,8 @@ abstract class PigeonApiVideoProgressUpdate(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 
 /**
@@ -4105,8 +4336,6 @@ import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class VideoProgressUpdateProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiVideoProgressUpdate(pigeonRegistrar) {
-  internal class VideoProgressUpdateImpl(val api: VideoProgressUpdateProxyApi) : VideoProgressUpdate {
-  }
 
   override fun pigeon_defaultConstructor(currentTimeMs: Long, durationMs: Long): VideoProgressUpdate {
     return VideoProgressUpdate(currentTimeMs, durationMs)
@@ -4115,6 +4344,7 @@ class VideoProgressUpdateProxyApi(override val pigeonRegistrar: ProxyApiRegistra
   override fun videoTimeNotReady(): com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate {
     return VideoProgressUpdate.videoTimeNotReady
   }
+
 }
 */
 
@@ -4122,6 +4352,8 @@ class VideoProgressUpdateProxyApi(override val pigeonRegistrar: ProxyApiRegistra
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 import kotlin.test.Test
@@ -4199,6 +4431,8 @@ abstract class PigeonApiAdMediaInfo(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
 
 /**
@@ -4208,12 +4442,11 @@ import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class AdMediaInfoProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAdMediaInfo(pigeonRegistrar) {
-  internal class AdMediaInfoImpl(val api: AdMediaInfoProxyApi) : AdMediaInfo {
-  }
 
   override fun url(pigeon_instance: AdMediaInfo): String {
     return pigeon_instance.url
   }
+
 }
 */
 
@@ -4221,6 +4454,8 @@ class AdMediaInfoProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pig
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
 import kotlin.test.Test
@@ -4347,6 +4582,8 @@ abstract class PigeonApiAdPodInfo(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.AdPodInfo
 
 /**
@@ -4356,27 +4593,31 @@ import com.google.ads.interactivemedia.v3.api.AdPodInfo
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class AdPodInfoProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAdPodInfo(pigeonRegistrar) {
-  internal class AdPodInfoImpl(val api: AdPodInfoProxyApi) : AdPodInfo {
-  }
 
   override fun adPosition(pigeon_instance: AdPodInfo): Long {
     return pigeon_instance.adPosition
   }
+
   override fun maxDuration(pigeon_instance: AdPodInfo): Double {
     return pigeon_instance.maxDuration
   }
+
   override fun podIndex(pigeon_instance: AdPodInfo): Long {
     return pigeon_instance.podIndex
   }
+
   override fun timeOffset(pigeon_instance: AdPodInfo): Double {
     return pigeon_instance.timeOffset
   }
+
   override fun totalAds(pigeon_instance: AdPodInfo): Long {
     return pigeon_instance.totalAds
   }
+
   override fun isBumper(pigeon_instance: AdPodInfo): Boolean {
     return pigeon_instance.isBumper
   }
+
 }
 */
 
@@ -4384,6 +4625,8 @@ class AdPodInfoProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pigeo
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdPodInfo
 import kotlin.test.Test
@@ -4554,6 +4797,8 @@ abstract class PigeonApiFrameLayout(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import android.widget.FrameLayout
 
 /**
@@ -4563,8 +4808,6 @@ import android.widget.FrameLayout
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class FrameLayoutProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiFrameLayout(pigeonRegistrar) {
-  internal class FrameLayoutImpl(val api: FrameLayoutProxyApi) : FrameLayout {
-  }
 
   override fun pigeon_defaultConstructor(): FrameLayout {
     return FrameLayout()
@@ -4577,6 +4820,8 @@ class FrameLayoutProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pig
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import android.widget.FrameLayout
 import kotlin.test.Test
@@ -4687,6 +4932,8 @@ abstract class PigeonApiViewGroup(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import android.view.ViewGroup
 import android.view.View
 
@@ -4697,8 +4944,6 @@ import android.view.View
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class ViewGroupProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiViewGroup(pigeonRegistrar) {
-  internal class ViewGroupImpl(val api: ViewGroupProxyApi) : ViewGroup {
-  }
 
   override fun addView(pigeon_instance: ViewGroup,view: android.view.View) {
     return pigeon_instance.addView(view)
@@ -4711,6 +4956,8 @@ class ViewGroupProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pigeo
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import android.view.ViewGroup
 import android.view.View
@@ -4957,6 +5204,8 @@ abstract class PigeonApiVideoView(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import android.widget.VideoView
 import android.media.MediaPlayer
 
@@ -4998,6 +5247,8 @@ class VideoViewProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pigeo
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import android.widget.VideoView
 import android.media.MediaPlayer
@@ -5127,6 +5378,8 @@ open class PigeonApiView(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import android.view.View
 
 /**
@@ -5136,8 +5389,6 @@ import android.view.View
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class ViewProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiView(pigeonRegistrar) {
-  internal class ViewImpl(val api: ViewProxyApi) : View {
-  }
 
 }
 */
@@ -5146,6 +5397,8 @@ class ViewProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiV
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import android.view.View
 import kotlin.test.Test
@@ -5345,6 +5598,8 @@ abstract class PigeonApiMediaPlayer(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import android.media.MediaPlayer
 
 /**
@@ -5354,8 +5609,6 @@ import android.media.MediaPlayer
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class MediaPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiMediaPlayer(pigeonRegistrar) {
-  internal class MediaPlayerImpl(val api: MediaPlayerProxyApi) : MediaPlayer {
-  }
 
   override fun getDuration(pigeon_instance: MediaPlayer): Long {
     return pigeon_instance.getDuration()
@@ -5384,6 +5637,8 @@ class MediaPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pig
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import android.media.MediaPlayer
 import kotlin.test.Test
@@ -5865,6 +6120,8 @@ abstract class PigeonApiVideoAdPlayerCallback(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
@@ -5876,8 +6133,6 @@ import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class VideoAdPlayerCallbackProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiVideoAdPlayerCallback(pigeonRegistrar) {
-  internal class VideoAdPlayerCallbackImpl(val api: VideoAdPlayerCallbackProxyApi) : VideoAdPlayerCallback {
-  }
 
   override fun onAdProgress(pigeon_instance: VideoAdPlayerCallback,adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo, videoProgressUpdate: com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate) {
     return pigeon_instance.onAdProgress(adMediaInfo, videoProgressUpdate)
@@ -5926,6 +6181,8 @@ class VideoAdPlayerCallbackProxyApi(override val pigeonRegistrar: ProxyApiRegist
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
@@ -6396,6 +6653,8 @@ abstract class PigeonApiVideoAdPlayer(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
@@ -6452,6 +6711,8 @@ class VideoAdPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : P
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
@@ -6684,6 +6945,8 @@ abstract class PigeonApiAdsLoadedListener(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener
 import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent
 
@@ -6711,6 +6974,8 @@ class AdsLoadedListenerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar)
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener
 import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent
@@ -6845,6 +7110,8 @@ abstract class PigeonApiAdErrorListener(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 
@@ -6872,6 +7139,8 @@ class AdErrorListenerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
@@ -7006,6 +7275,8 @@ abstract class PigeonApiAdEventListener(
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package dev.flutter.packages.interactive_media_ads
+
 import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
 import com.google.ads.interactivemedia.v3.api.AdEvent
 
@@ -7033,6 +7304,8 @@ class AdEventListenerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
 import com.google.ads.interactivemedia.v3.api.AdEvent
