@@ -2,15 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/widgets.dart';
+import 'ad_unit_widget.dart';
 
 /// Main class to work with the library
 class Adsense {
   /// Returns a singleton instance of Adsense library public interface
-  factory Adsense() => _instance;
-  Adsense._internal();
+  factory Adsense() => _instance ?? Adsense._internal();
 
-  static final Adsense _instance = Adsense._internal();
+  Adsense._internal() {
+    _instance = this;
+  }
+
+  static Adsense? _instance = Adsense._internal();
 
   /// Initialization API. Should be called ASAP, ideally in the main method of your app.
   void initialize(String adClient) {
@@ -18,11 +21,16 @@ class Adsense {
   }
 
   /// Returns a configurable [AdUnitWidget]
-  Widget adUnit(
+  AdUnitWidget adUnit(
       {required String adSlot,
       String adClient = '',
       bool isAdTest = false,
       Map<String, dynamic> adUnitParams = const <String, dynamic>{}}) {
     throw UnsupportedError('Only supported on web');
+  }
+
+  /// Only for use in tests
+  static void resetForTesting() {
+    _instance = null;
   }
 }

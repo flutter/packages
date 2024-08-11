@@ -26,7 +26,7 @@ void main() {
 
 ```
 #### Display AdUnitWidget
-<?code-excerpt "example/lib/main.dart (adView)"?>
+<?code-excerpt "example/lib/main.dart (adUnit)"?>
 ```dart
 Adsense().adUnit(
   adSlot: 'your_ad_slot_id',
@@ -46,7 +46,7 @@ Make sure to replace `your_ad_client_id` and `your_ad_slot_id` with the relevant
 Ad units are only filled when requested from an authorized domain. If you are willing to test them before deploying to production you can specify addition run arguments in IDE my editing Run/Debug Configuration or by passing them directly to `flutter run` command:
 
 `--web-port=8080`  
-`--web-hostname=your-domain.com`
+`--web-hostname=your-domain.com
 
 ### Ad unfilled  
 
@@ -56,4 +56,4 @@ There is no deterministic way to make sure your ads are 100% filled even when te
 - Add AD_TEST parameter with value `true`  
 - Make sure AD_FORMAT is `auto` (default setting)
 - Make sure FULL_WIDTH_RESPONSIVE is `true` (default setting)
-- Try resizing the window or making sure that adView widget width is less than ~1300px 
+- Try resizing the window or making sure that adUnitWidget width is less than ~1300px 

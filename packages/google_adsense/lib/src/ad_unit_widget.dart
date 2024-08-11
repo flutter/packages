@@ -13,8 +13,9 @@ import 'package:web/web.dart' as web;
 import '../google_adsense.dart';
 import 'ad_unit_params.dart';
 
-/// Widget containing an ad slot
+/// Widget displaying an ad unit
 class AdUnitWidget extends StatefulWidget {
+  // TODO(sokoloff06): consider builder?
   /// Constructs [AdUnitWidget]
   AdUnitWidget(
       {required String adClient,
@@ -50,10 +51,23 @@ class AdUnitWidget extends StatefulWidget {
   }
 
   static const String _AD_TEST_KEY = 'adtest';
+
+  /// See [AdUnitParams.AD_CLIENT]
+  String get adClient => _adClient;
   final String _adClient;
+
+  /// See [AdUnitParams.AD_SLOT]
+  String get adSlot => _adSlot;
   final String _adSlot;
+
+  /// When 'true' adUnit is more likely to be filled but might not generate impressions/clicks data and therefore any ad revenue
+  bool get isAdTest => _isAdTest;
   final bool _isAdTest;
+
+  /// Set of required/recommended params depend on ad unit formats. See [AdUnitParams] for some of the most popular ones and links to documentation.
+  Map<String, dynamic> get additionalParams => _additionalParams;
   final Map<String, dynamic> _additionalParams;
+
   final web.HTMLElement _insElement =
       web.document.createElement('ins') as web.HTMLElement;
 
@@ -78,16 +92,6 @@ class _AdUnitWidgetState extends State<AdUnitWidget>
       child: HtmlElementView.fromTagName(
           tagName: 'div', onElementCreated: onElementCreated),
     );
-  }
-
-  static void onElementAttached(web.HTMLElement element) {
-    log('Element ${element.id} attached with style: height=${element.offsetHeight} and width=${element.offsetWidth}');
-    // TODO(sokoloff06): replace with proper js_interop
-    final web.HTMLScriptElement pushAdsScript = web.HTMLScriptElement();
-    pushAdsScript.innerText =
-        '(adsbygoogle = window.adsbygoogle || []).push({});';
-    log('Adding push ads script');
-    element.append(pushAdsScript);
   }
 
   void onElementCreated(Object element) {
@@ -146,6 +150,16 @@ class _AdUnitWidgetState extends State<AdUnitWidget>
                 attributes: true,
                 attributeFilter:
                     <String>['data-ad-status'].jsify()! as JSArray<JSString>));
+  }
+
+  void onElementAttached(web.HTMLElement element) {
+    log('Element ${element.id} attached with style: height=${element.offsetHeight} and width=${element.offsetWidth}');
+    // TODO(sokoloff06): replace with proper js_interop
+    final web.HTMLScriptElement pushAdsScript = web.HTMLScriptElement();
+    pushAdsScript.innerText =
+        '(adsbygoogle = window.adsbygoogle || []).push({});';
+    log('Adding push ads script');
+    element.append(pushAdsScript);
   }
 
   bool isLoaded(web.HTMLElement target) {
