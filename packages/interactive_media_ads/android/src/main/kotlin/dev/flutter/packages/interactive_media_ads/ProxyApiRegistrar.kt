@@ -22,6 +22,18 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
     Handler(Looper.getMainLooper()).post { callback.run() }
   }
 
+  override fun getPigeonApiAd(): PigeonApiAd {
+    return AdProxyApi(this)
+  }
+
+  override fun getPigeonApiCompanionAd(): PigeonApiCompanionAd {
+    return CompanionAdProxyApi(this)
+  }
+
+  override fun getPigeonApiUniversalAdId(): PigeonApiUniversalAdId {
+    return UniversalAdIdProxyApi(this)
+  }
+
   override fun getPigeonApiBaseDisplayContainer(): PigeonApiBaseDisplayContainer {
     return BaseDisplayContainerProxyApi(this)
   }

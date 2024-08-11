@@ -6,7 +6,7 @@
 // https://github.com/flutter/packages/pull/6371 lands. This file uses the
 // Kotlin ProxyApi feature from pigeon.
 // ignore_for_file: avoid_unused_constructor_parameters
-/*
+
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
@@ -208,6 +208,163 @@ enum AdEventType {
 
   /// The event type is not recognized by this wrapper.
   unknown,
+}
+
+/// Describes an element of the ad UI, to be requested or rendered by the SDK.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/UiElement.html.
+enum UiElement {
+  /// The ad attribution UI element, for example, "Ad".
+  adAttribution,
+
+  /// Ad attribution is required for a countdown timer to be displayed.
+  countdown,
+
+  /// The element is not recognized by this wrapper.
+  unknown,
+}
+
+/// An object that holds data corresponding to the main Ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/Ad.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.Ad',
+  ),
+)
+abstract class Ad {
+  /// Returns the ad ID as specified in the VAST response.
+  late final String adId;
+
+  /// Returns the pod metadata object.
+  late final AdPodInfo adPodInfo;
+
+  /// Returns the ad system as specified in the VAST response.
+  late final String adSystem;
+
+  /// Returns the IDs of the ads' creatives, starting with the first wrapper ad.
+  late final List<String> adWrapperCreativeIds;
+
+  /// Returns the wrapper ad IDs as specified in the VAST response.
+  late final List<String> adWrapperIds;
+
+  /// Returns the wrapper ad systems as specified in the VAST response.
+  late final List<String> adWrapperSystems;
+
+  /// Returns the advertiser name as defined by the serving party.
+  late final String advertiserName;
+
+  /// Returns the companions for the current ad while using DAI.
+  ///
+  /// Returns an empty list in any other scenario.
+  late final List<CompanionAd> companionAds;
+
+  /// Returns the content type of the currently selected creative, or null if no
+  /// creative is selected or the content type is unavailable.
+  late final String? contentType;
+
+  /// Returns the ISCI (Industry Standard Commercial Identifier) code for an ad.
+  late final String creativeAdId;
+
+  /// Returns the ID of the selected creative for the ad,
+  late final String creativeId;
+
+  /// Returns the first deal ID present in the wrapper chain for the current ad,
+  /// starting from the top.
+  late final String dealId;
+
+  /// Returns the description of this ad from the VAST response.
+  late final String? description;
+
+  /// Returns the duration of the ad in seconds, -1 if not available.
+  late final double duration;
+
+  /// Returns the height of the selected creative if non-linear, else returns 0.
+  late final int height;
+
+  /// Returns the number of seconds of playback before the ad becomes skippable.
+  late final double skipTimeOffset;
+
+  /// Returns the URL associated with the survey for the given ad.
+  late final String surveyUrl;
+
+  /// Returns the title of this ad from the VAST response.
+  late final String? title;
+
+  /// Returns custom parameters associated with the ad at the time of ad
+  /// trafficking.
+  late final String traffickingParameters;
+
+  /// Returns the set of ad UI elements rendered by the IMA SDK for this ad.
+  late final List<UiElement> uiElements;
+
+  /// The list of all universal ad IDs for this ad.
+  late final List<UniversalAdId> universalAdIds;
+
+  /// Returns the VAST bitrate in Kbps of the selected creative.
+  late final int vastMediaBitrate;
+
+  /// Returns the VAST media height in pixels of the selected creative.
+  late final int vastMediaHeight;
+
+  /// Returns the VAST media width in pixels of the selected creative.
+  late final int vastMediaWidth;
+
+  /// Returns the width of the selected creative if non-linear, else returns 0.
+  late final int width;
+
+  /// Indicates whether the ad’s current mode of operation is linear or
+  /// non-linear.
+  late final bool isLinear;
+
+  /// Indicates whether the ad can be skipped by the user.
+  late final bool isSkippable;
+}
+
+/// An object that holds data corresponding to the companion Ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAd.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.CompanionAd',
+  ),
+)
+abstract class CompanionAd {
+  /// The API needed to execute this ad, or null if unavailable.
+  late final String? apiFramework;
+
+  /// The height of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  late final int height;
+
+  /// The URL for the static resource of this companion.
+  late final String resourceValue;
+
+  /// The width of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  late final int width;
+}
+
+/// This object exposes information about the universal ad ID.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/UniversalAdId.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.UniversalAdId',
+  ),
+)
+abstract class UniversalAdId {
+  /// Returns the ad ID registry associated with the ad ID value.
+  ///
+  /// Returns "unknown" if the registry is not known.
+  late final String adIdRegistry;
+
+  /// Returns the universal ad ID value.
+  ///
+  /// Returns "unknown" if the value is not known.
+  late final String adIdValue;
 }
 
 /// A base class for more specialized container interfaces.
@@ -724,4 +881,3 @@ abstract class AdEventListener {
   /// Respond to an occurrence of an AdEvent.
   late final void Function(AdEvent event) onAdEvent;
 }
-*/

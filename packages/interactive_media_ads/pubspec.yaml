@@ -31,6 +31,11 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: 5.4.4
+  pigeon:
+    git:
+      url: git@github.com:bparrishMines/packages.git
+      ref: kotlin_test_helper
+      path: packages/pigeon
 
 topics:
   - ads
