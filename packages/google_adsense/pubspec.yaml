@@ -5,7 +5,7 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 0.0.1
 
 environment:
-  sdk: ^3.2.0
+  sdk: ^3.3.0
   flutter: ">=3.16.0"
 
 dependencies:
@@ -16,7 +16,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
 
 topics:
   - monetization
