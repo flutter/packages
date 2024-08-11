@@ -5,13 +5,13 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 0.0.1
 
 environment:
-  sdk: ^3.3.0
+  sdk: ^3.4.0
   flutter: ">=3.16.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  web: ^0.5.1
+  web: ^1.0.0
 
 dev_dependencies:
   flutter_test:
