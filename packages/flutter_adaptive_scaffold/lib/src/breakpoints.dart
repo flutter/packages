@@ -215,47 +215,43 @@ class Breakpoint {
 
     return isWidthActive && isHeightActive && isRightPlatform;
   }
-}
 
-/// An extension on [BuildContext] that returns the active [Breakpoint] based on
-/// an available [SlotLayout] ancestor or the default breakpoints.
-extension BreakpointExtension on BuildContext {
   /// Returns the currently active [Breakpoint].
-  Breakpoint get activeBreakpoint {
+  Breakpoint activeBreakpointOf(BuildContext context) {
     final SlotLayout? slotLayout = findAncestorWidgetOfExactType<SlotLayout>();
     if (slotLayout != null) {
       for (final MapEntry<Breakpoint, SlotLayoutConfig?> config
           in slotLayout.config.entries) {
-        if (config.key.isActive(this)) {
+        if (config.key.isActive(context)) {
           return config.key;
         }
       }
     }
 
-    final TargetPlatform platform = Theme.of(this).platform;
+    final TargetPlatform platform = Theme.of(context).platform;
 
     if (Breakpoint.desktop.contains(platform)) {
-      if (Breakpoints.extraLarge.isActive(this)) {
+      if (Breakpoints.extraLarge.isActive(context)) {
         return Breakpoints.extraLargeDesktop;
-      } else if (Breakpoints.large.isActive(this)) {
+      } else if (Breakpoints.large.isActive(context)) {
         return Breakpoints.largeDesktop;
-      } else if (Breakpoints.mediumLarge.isActive(this)) {
+      } else if (Breakpoints.mediumLarge.isActive(context)) {
         return Breakpoints.mediumLargeDesktop;
-      } else if (Breakpoints.medium.isActive(this)) {
+      } else if (Breakpoints.medium.isActive(context)) {
         return Breakpoints.mediumDesktop;
-      } else if (Breakpoints.small.isActive(this)) {
+      } else if (Breakpoints.small.isActive(context)) {
         return Breakpoints.smallDesktop;
       }
     } else if (Breakpoint.mobile.contains(platform)) {
-      if (Breakpoints.extraLarge.isActive(this)) {
+      if (Breakpoints.extraLarge.isActive(context)) {
         return Breakpoints.extraLargeMobile;
-      } else if (Breakpoints.large.isActive(this)) {
+      } else if (Breakpoints.large.isActive(context)) {
         return Breakpoints.largeMobile;
-      } else if (Breakpoints.mediumLarge.isActive(this)) {
+      } else if (Breakpoints.mediumLarge.isActive(context)) {
         return Breakpoints.mediumLargeMobile;
-      } else if (Breakpoints.medium.isActive(this)) {
+      } else if (Breakpoints.medium.isActive(context)) {
         return Breakpoints.mediumMobile;
-      } else if (Breakpoints.small.isActive(this)) {
+      } else if (Breakpoints.small.isActive(context)) {
         return Breakpoints.smallMobile;
       }
     }
