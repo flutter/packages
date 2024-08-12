@@ -520,12 +520,28 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
   abstract fun getPigeonApiImaSdkFactory(): PigeonApiImaSdkFactory
 
   /**
+   * An implementation of [PigeonApiStreamDisplayContainer] used to add a new Dart instance of
+   * `StreamDisplayContainer` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiStreamDisplayContainer(): PigeonApiStreamDisplayContainer
+
+  /**
+   * An implementation of [PigeonApiVideoStreamPlayer] used to add a new Dart instance of
+   * `VideoStreamPlayer` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiVideoStreamPlayer(): PigeonApiVideoStreamPlayer
+
+  /**
+   * An implementation of [PigeonApiVideoStreamPlayerCallback] used to add a new Dart instance of
+   * `VideoStreamPlayerCallback` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiVideoStreamPlayerCallback(): PigeonApiVideoStreamPlayerCallback
+
+  /**
    * An implementation of [PigeonApiImaSdkSettings] used to add a new Dart instance of
    * `ImaSdkSettings` to the Dart `InstanceManager`.
    */
-  open fun getPigeonApiImaSdkSettings(): PigeonApiImaSdkSettings {
-    return PigeonApiImaSdkSettings(this)
-  }
+  abstract fun getPigeonApiImaSdkSettings(): PigeonApiImaSdkSettings
 
   /**
    * An implementation of [PigeonApiVideoProgressUpdate] used to add a new Dart instance of
@@ -627,6 +643,13 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
     PigeonApiAdsRenderingSettings.setUpMessageHandlers(
         binaryMessenger, getPigeonApiAdsRenderingSettings())
     PigeonApiImaSdkFactory.setUpMessageHandlers(binaryMessenger, getPigeonApiImaSdkFactory())
+    PigeonApiStreamDisplayContainer.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiStreamDisplayContainer())
+    PigeonApiVideoStreamPlayer.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiVideoStreamPlayer())
+    PigeonApiVideoStreamPlayerCallback.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiVideoStreamPlayerCallback())
+    PigeonApiImaSdkSettings.setUpMessageHandlers(binaryMessenger, getPigeonApiImaSdkSettings())
     PigeonApiVideoProgressUpdate.setUpMessageHandlers(
         binaryMessenger, getPigeonApiVideoProgressUpdate())
     PigeonApiFrameLayout.setUpMessageHandlers(binaryMessenger, getPigeonApiFrameLayout())
@@ -657,6 +680,10 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
     PigeonApiBaseManager.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiAdsRenderingSettings.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiImaSdkFactory.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiStreamDisplayContainer.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiVideoStreamPlayer.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiVideoStreamPlayerCallback.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiImaSdkSettings.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiVideoProgressUpdate.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiFrameLayout.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiViewGroup.setUpMessageHandlers(binaryMessenger, null)
@@ -723,8 +750,6 @@ private class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
       registrar.getPigeonApiFriendlyObstruction().pigeon_newInstance(value) {}
     } else if (value is com.google.ads.interactivemedia.v3.api.AdDisplayContainer) {
       registrar.getPigeonApiAdDisplayContainer().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.BaseDisplayContainer) {
-      registrar.getPigeonApiBaseDisplayContainer().pigeon_newInstance(value) {}
     } else if (value is com.google.ads.interactivemedia.v3.api.AdsLoader) {
       registrar.getPigeonApiAdsLoader().pigeon_newInstance(value) {}
     } else if (value is com.google.ads.interactivemedia.v3.api.signals.SecureSignals) {
@@ -755,6 +780,16 @@ private class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
       registrar.getPigeonApiAdEvent().pigeon_newInstance(value) {}
     } else if (value is com.google.ads.interactivemedia.v3.api.ImaSdkFactory) {
       registrar.getPigeonApiImaSdkFactory().pigeon_newInstance(value) {}
+    } else if (value is com.google.ads.interactivemedia.v3.api.StreamDisplayContainer) {
+      registrar.getPigeonApiStreamDisplayContainer().pigeon_newInstance(value) {}
+    } else if (value is com.google.ads.interactivemedia.v3.api.BaseDisplayContainer) {
+      registrar.getPigeonApiBaseDisplayContainer().pigeon_newInstance(value) {}
+    } else if (value is com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer) {
+      registrar.getPigeonApiVideoStreamPlayer().pigeon_newInstance(value) {}
+    } else if (value
+        is
+        com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback) {
+      registrar.getPigeonApiVideoStreamPlayerCallback().pigeon_newInstance(value) {}
     } else if (value is com.google.ads.interactivemedia.v3.api.ImaSdkSettings) {
       registrar.getPigeonApiImaSdkSettings().pigeon_newInstance(value) {}
     } else if (value is com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate) {
@@ -2450,15 +2485,15 @@ class BaseDisplayContainerProxyApi(override val pigeonRegistrar: ProxyApiRegistr
   }
 
   override fun registerFriendlyObstruction(pigeon_instance: BaseDisplayContainer,friendlyObstruction: com.google.ads.interactivemedia.v3.api.FriendlyObstruction) {
-    return pigeon_instance.registerFriendlyObstruction(friendlyObstruction)
+    pigeon_instance.registerFriendlyObstruction(friendlyObstruction)
   }
 
   override fun setCompanionSlots(pigeon_instance: BaseDisplayContainer,companionSlots: List<com.google.ads.interactivemedia.v3.api.CompanionAdSlot>?) {
-    return pigeon_instance.setCompanionSlots(companionSlots)
+    pigeon_instance.setCompanionSlots(companionSlots)
   }
 
   override fun unregisterAllFriendlyObstructions(pigeon_instance: BaseDisplayContainer) {
-    return pigeon_instance.unregisterAllFriendlyObstructions()
+    pigeon_instance.unregisterAllFriendlyObstructions()
   }
 
 }
@@ -2863,7 +2898,7 @@ import android.view.ViewGroup
 class CompanionAdSlotProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiCompanionAdSlot(pigeonRegistrar) {
 
   override fun addClickListener(pigeon_instance: CompanionAdSlot,clickListener: com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener) {
-    return pigeon_instance.addClickListener(clickListener)
+    pigeon_instance.addClickListener(clickListener)
   }
 
   override fun getContainer(pigeon_instance: CompanionAdSlot): android.view.ViewGroup {
@@ -2883,15 +2918,15 @@ class CompanionAdSlotProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   }
 
   override fun removeClickListener(pigeon_instance: CompanionAdSlot,clickListener: com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener) {
-    return pigeon_instance.removeClickListener(clickListener)
+    pigeon_instance.removeClickListener(clickListener)
   }
 
   override fun setContainer(pigeon_instance: CompanionAdSlot,container: android.view.ViewGroup) {
-    return pigeon_instance.setContainer(container)
+    pigeon_instance.setContainer(container)
   }
 
   override fun setSize(pigeon_instance: CompanionAdSlot,width: Long, height: Long) {
-    return pigeon_instance.setSize(width, height)
+    pigeon_instance.setSize(width, height)
   }
 
 }
@@ -3806,15 +3841,15 @@ import com.google.ads.interactivemedia.v3.api.ImaSdkSettings
 class AdsLoaderProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAdsLoader(pigeonRegistrar) {
 
   override fun addAdErrorListener(pigeon_instance: AdsLoader,listener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener) {
-    return pigeon_instance.addAdErrorListener(listener)
+    pigeon_instance.addAdErrorListener(listener)
   }
 
   override fun addAdsLoadedListener(pigeon_instance: AdsLoader,listener: com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener) {
-    return pigeon_instance.addAdsLoadedListener(listener)
+    pigeon_instance.addAdsLoadedListener(listener)
   }
 
   override fun requestAds(pigeon_instance: AdsLoader,request: com.google.ads.interactivemedia.v3.api.AdsRequest) {
-    return pigeon_instance.requestAds(request)
+    pigeon_instance.requestAds(request)
   }
 
   override fun getSettings(pigeon_instance: AdsLoader): com.google.ads.interactivemedia.v3.api.ImaSdkSettings {
@@ -3822,15 +3857,15 @@ class AdsLoaderProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pigeo
   }
 
   override fun release(pigeon_instance: AdsLoader) {
-    return pigeon_instance.release()
+    pigeon_instance.release()
   }
 
   override fun removeAdErrorListener(pigeon_instance: AdsLoader,errorListener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener) {
-    return pigeon_instance.removeAdErrorListener(errorListener)
+    pigeon_instance.removeAdErrorListener(errorListener)
   }
 
   override fun removeAdsLoadedListener(pigeon_instance: AdsLoader,loadedListener: com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener) {
-    return pigeon_instance.removeAdsLoadedListener(loadedListener)
+    pigeon_instance.removeAdsLoadedListener(loadedListener)
   }
 
   override fun requestStream(pigeon_instance: AdsLoader,streamRequest: com.google.ads.interactivemedia.v3.api.StreamRequest): String {
@@ -4209,15 +4244,15 @@ class BaseRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pig
   }
 
   override fun setContentUrl(pigeon_instance: BaseRequest,url: String) {
-    return pigeon_instance.setContentUrl(url)
+    pigeon_instance.setContentUrl(url)
   }
 
   override fun setSecureSignals(pigeon_instance: BaseRequest,signal: com.google.ads.interactivemedia.v3.api.signals.SecureSignals?) {
-    return pigeon_instance.setSecureSignals(signal)
+    pigeon_instance.setSecureSignals(signal)
   }
 
   override fun setUserRequestContext(pigeon_instance: BaseRequest,userRequestContext: Any) {
-    return pigeon_instance.setUserRequestContext(userRequestContext)
+    pigeon_instance.setUserRequestContext(userRequestContext)
   }
 
 }
@@ -5370,11 +5405,11 @@ import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
 class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAdsRequest(pigeonRegistrar) {
 
   override fun setAdTagUrl(pigeon_instance: AdsRequest,adTagUrl: String) {
-    return pigeon_instance.setAdTagUrl(adTagUrl)
+    pigeon_instance.setAdTagUrl(adTagUrl)
   }
 
   override fun setContentProgressProvider(pigeon_instance: AdsRequest,provider: com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider) {
-    return pigeon_instance.setContentProgressProvider(provider)
+    pigeon_instance.setContentProgressProvider(provider)
   }
 
   override fun getAdTagUrl(pigeon_instance: AdsRequest): String {
@@ -5386,39 +5421,39 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pige
   }
 
   override fun setAdWillAutoPlay(pigeon_instance: AdsRequest,willAutoPlay: Boolean) {
-    return pigeon_instance.setAdWillAutoPlay(willAutoPlay)
+    pigeon_instance.setAdWillAutoPlay(willAutoPlay)
   }
 
   override fun setAdWillPlayMuted(pigeon_instance: AdsRequest,willPlayMuted: Boolean) {
-    return pigeon_instance.setAdWillPlayMuted(willPlayMuted)
+    pigeon_instance.setAdWillPlayMuted(willPlayMuted)
   }
 
   override fun setAdsResponse(pigeon_instance: AdsRequest,cannedAdResponse: String) {
-    return pigeon_instance.setAdsResponse(cannedAdResponse)
+    pigeon_instance.setAdsResponse(cannedAdResponse)
   }
 
   override fun setContentDuration(pigeon_instance: AdsRequest,duration: Double) {
-    return pigeon_instance.setContentDuration(duration)
+    pigeon_instance.setContentDuration(duration)
   }
 
   override fun setContentKeywords(pigeon_instance: AdsRequest,keywords: List<String>) {
-    return pigeon_instance.setContentKeywords(keywords)
+    pigeon_instance.setContentKeywords(keywords)
   }
 
   override fun setContentTitle(pigeon_instance: AdsRequest,title: String) {
-    return pigeon_instance.setContentTitle(title)
+    pigeon_instance.setContentTitle(title)
   }
 
   override fun setContinuousPlayback(pigeon_instance: AdsRequest,continuousPlayback: Boolean) {
-    return pigeon_instance.setContinuousPlayback(continuousPlayback)
+    pigeon_instance.setContinuousPlayback(continuousPlayback)
   }
 
   override fun setLiveStreamPrefetchSeconds(pigeon_instance: AdsRequest,prefetchTime: Double) {
-    return pigeon_instance.setLiveStreamPrefetchSeconds(prefetchTime)
+    pigeon_instance.setLiveStreamPrefetchSeconds(prefetchTime)
   }
 
   override fun setVastLoadTimeout(pigeon_instance: AdsRequest,timeout: Double) {
-    return pigeon_instance.setVastLoadTimeout(timeout)
+    pigeon_instance.setVastLoadTimeout(timeout)
   }
 
 }
@@ -6326,27 +6361,27 @@ class StreamRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : P
   }
 
   override fun setAdTagParameters(pigeon_instance: StreamRequest,adTagParameters: Map<String, String>) {
-    return pigeon_instance.setAdTagParameters(adTagParameters)
+    pigeon_instance.setAdTagParameters(adTagParameters)
   }
 
   override fun setAuthToken(pigeon_instance: StreamRequest,authToken: String) {
-    return pigeon_instance.setAuthToken(authToken)
+    pigeon_instance.setAuthToken(authToken)
   }
 
   override fun setFormat(pigeon_instance: StreamRequest,format: StreamFormat) {
-    return pigeon_instance.setFormat(format)
+    pigeon_instance.setFormat(format)
   }
 
   override fun setManifestSuffix(pigeon_instance: StreamRequest,manifestSuffix: String) {
-    return pigeon_instance.setManifestSuffix(manifestSuffix)
+    pigeon_instance.setManifestSuffix(manifestSuffix)
   }
 
   override fun setStreamActivityMonitorId(pigeon_instance: StreamRequest,streamActivityMonitorId: String) {
-    return pigeon_instance.setStreamActivityMonitorId(streamActivityMonitorId)
+    pigeon_instance.setStreamActivityMonitorId(streamActivityMonitorId)
   }
 
   override fun setVideoStitcherSessionOptions(pigeon_instance: StreamRequest,videoStitcherSessionOptions: Map<String, Any>) {
-    return pigeon_instance.setVideoStitcherSessionOptions(videoStitcherSessionOptions)
+    pigeon_instance.setVideoStitcherSessionOptions(videoStitcherSessionOptions)
   }
 
 }
@@ -6376,7 +6411,7 @@ class StreamRequestProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiStreamRequest()
 
     val instance = mock<StreamRequest>()
-    val value = mapOf("myString" to "myString"})
+    val value = mapOf("myString" to "myString")
     whenever(instance.getAdTagParameters()).thenReturn(value)
 
     assertEquals(value, api.getAdTagParameters(instance ))
@@ -6508,7 +6543,7 @@ class StreamRequestProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiStreamRequest()
 
     val instance = mock<StreamRequest>()
-    val value = mapOf("myString" to -1})
+    val value = mapOf("myString" to -1)
     whenever(instance.getVideoStitcherSessionOptions()).thenReturn(value)
 
     assertEquals(value, api.getVideoStitcherSessionOptions(instance ))
@@ -6530,7 +6565,7 @@ class StreamRequestProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiStreamRequest()
 
     val instance = mock<StreamRequest>()
-    val adTagParameters = mapOf("myString" to "myString"})
+    val adTagParameters = mapOf("myString" to "myString")
     api.setAdTagParameters(instance, adTagParameters)
 
     verify(instance).setAdTagParameters(adTagParameters)
@@ -6585,7 +6620,7 @@ class StreamRequestProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiStreamRequest()
 
     val instance = mock<StreamRequest>()
-    val videoStitcherSessionOptions = mapOf("myString" to -1})
+    val videoStitcherSessionOptions = mapOf("myString" to -1)
     api.setVideoStitcherSessionOptions(instance, videoStitcherSessionOptions)
 
     verify(instance).setVideoStitcherSessionOptions(videoStitcherSessionOptions)
@@ -6917,15 +6952,15 @@ import com.google.ads.interactivemedia.v3.api.AdsManager
 class AdsManagerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAdsManager(pigeonRegistrar) {
 
   override fun discardAdBreak(pigeon_instance: AdsManager) {
-    return pigeon_instance.discardAdBreak()
+    pigeon_instance.discardAdBreak()
   }
 
   override fun pause(pigeon_instance: AdsManager) {
-    return pigeon_instance.pause()
+    pigeon_instance.pause()
   }
 
   override fun start(pigeon_instance: AdsManager) {
-    return pigeon_instance.start()
+    pigeon_instance.start()
   }
 
   override fun getAdCuePoints(pigeon_instance: AdsManager): List<Double> {
@@ -6933,11 +6968,11 @@ class AdsManagerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pige
   }
 
   override fun resume(pigeon_instance: AdsManager) {
-    return pigeon_instance.resume()
+    pigeon_instance.resume()
   }
 
   override fun skip(pigeon_instance: AdsManager) {
-    return pigeon_instance.skip()
+    pigeon_instance.skip()
   }
 
 }
@@ -7364,23 +7399,23 @@ import com.google.ads.interactivemedia.v3.api.Ad
 class BaseManagerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiBaseManager(pigeonRegistrar) {
 
   override fun addAdErrorListener(pigeon_instance: BaseManager,errorListener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener) {
-    return pigeon_instance.addAdErrorListener(errorListener)
+    pigeon_instance.addAdErrorListener(errorListener)
   }
 
   override fun addAdEventListener(pigeon_instance: BaseManager,adEventListener: com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener) {
-    return pigeon_instance.addAdEventListener(adEventListener)
+    pigeon_instance.addAdEventListener(adEventListener)
   }
 
   override fun destroy(pigeon_instance: BaseManager) {
-    return pigeon_instance.destroy()
+    pigeon_instance.destroy()
   }
 
   override fun init(pigeon_instance: BaseManager,settings: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings?) {
-    return pigeon_instance.init(settings)
+    pigeon_instance.init(settings)
   }
 
   override fun focus(pigeon_instance: BaseManager) {
-    return pigeon_instance.focus()
+    pigeon_instance.focus()
   }
 
   override fun getAdProgressInfo(pigeon_instance: BaseManager): com.google.ads.interactivemedia.v3.api.AdProgressInfo? {
@@ -7392,11 +7427,11 @@ class BaseManagerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pig
   }
 
   override fun removeAdErrorListener(pigeon_instance: BaseManager,errorListener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener) {
-    return pigeon_instance.removeAdErrorListener(errorListener)
+    pigeon_instance.removeAdErrorListener(errorListener)
   }
 
   override fun removeAdEventListener(pigeon_instance: BaseManager,adEventListener: com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener) {
-    return pigeon_instance.removeAdEventListener(adEventListener)
+    pigeon_instance.removeAdEventListener(adEventListener)
   }
 
 }
@@ -8044,35 +8079,35 @@ class AdsRenderingSettingsProxyApi(override val pigeonRegistrar: ProxyApiRegistr
   }
 
   override fun setBitrateKbps(pigeon_instance: AdsRenderingSettings,bitrate: Long) {
-    return pigeon_instance.setBitrateKbps(bitrate)
+    pigeon_instance.setBitrateKbps(bitrate)
   }
 
   override fun setEnableCustomTabs(pigeon_instance: AdsRenderingSettings,enableCustomTabs: Boolean) {
-    return pigeon_instance.setEnableCustomTabs(enableCustomTabs)
+    pigeon_instance.setEnableCustomTabs(enableCustomTabs)
   }
 
   override fun setEnablePreloading(pigeon_instance: AdsRenderingSettings,enablePreloading: Boolean) {
-    return pigeon_instance.setEnablePreloading(enablePreloading)
+    pigeon_instance.setEnablePreloading(enablePreloading)
   }
 
   override fun setFocusSkipButtonWhenAvailable(pigeon_instance: AdsRenderingSettings,enableFocusSkipButton: Boolean) {
-    return pigeon_instance.setFocusSkipButtonWhenAvailable(enableFocusSkipButton)
+    pigeon_instance.setFocusSkipButtonWhenAvailable(enableFocusSkipButton)
   }
 
   override fun setLoadVideoTimeout(pigeon_instance: AdsRenderingSettings,loadVideoTimeout: Long) {
-    return pigeon_instance.setLoadVideoTimeout(loadVideoTimeout)
+    pigeon_instance.setLoadVideoTimeout(loadVideoTimeout)
   }
 
   override fun setMimeTypes(pigeon_instance: AdsRenderingSettings,mimeTypes: List<String>) {
-    return pigeon_instance.setMimeTypes(mimeTypes)
+    pigeon_instance.setMimeTypes(mimeTypes)
   }
 
   override fun setPlayAdsAfterTime(pigeon_instance: AdsRenderingSettings,time: Double) {
-    return pigeon_instance.setPlayAdsAfterTime(time)
+    pigeon_instance.setPlayAdsAfterTime(time)
   }
 
   override fun setUiElements(pigeon_instance: AdsRenderingSettings,uiElements: List<UiElement>) {
-    return pigeon_instance.setUiElements(uiElements)
+    pigeon_instance.setUiElements(uiElements)
   }
 
 }
@@ -8482,6 +8517,11 @@ abstract class PigeonApiAdEvent(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.AdEvent
   ): Map<String, String>?
 
+  /** The ad with which this event is associated. */
+  abstract fun ad(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdEvent
+  ): com.google.ads.interactivemedia.v3.api.Ad
+
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of AdEvent and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
@@ -8502,11 +8542,12 @@ abstract class PigeonApiAdEvent(
         pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val typeArg = type(pigeon_instanceArg)
     val adDataArg = adData(pigeon_instanceArg)
+    val adArg = ad(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.AdEvent.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_identifierArg, typeArg, adDataArg)) {
+    channel.send(listOf(pigeon_identifierArg, typeArg, adDataArg, adArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -8528,6 +8569,7 @@ abstract class PigeonApiAdEvent(
 package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdEvent
+import com.google.ads.interactivemedia.v3.api.Ad
 
 /**
  * ProxyApi implementation for [AdEvent].
@@ -8574,6 +8616,10 @@ class AdEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonA
     return pigeon_instance.adData
   }
 
+  override fun ad(pigeon_instance: AdEvent): com.google.ads.interactivemedia.v3.api.Ad {
+    return pigeon_instance.ad
+  }
+
 }
 */
 
@@ -8585,6 +8631,7 @@ class AdEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonA
 package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdEvent
+import com.google.ads.interactivemedia.v3.api.Ad
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -8612,10 +8659,21 @@ class AdEventProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiAdEvent()
 
     val instance = mock<AdEvent>()
-    val value = mapOf("myString" to "myString"})
+    val value = mapOf("myString" to "myString")
     whenever(instance.adData).thenReturn(value)
 
     assertEquals(value, api.adData(instance))
+  }
+
+  @Test
+  fun ad() {
+    val api = TestProxyApiRegistrar().getPigeonApiAdEvent()
+
+    val instance = mock<AdEvent>()
+    val value = mock<Ad>()
+    whenever(instance.ad).thenReturn(value)
+
+    assertEquals(value, api.ad(instance))
   }
 
 }
@@ -8630,8 +8688,13 @@ class AdEventProxyApiTest {
 abstract class PigeonApiImaSdkFactory(
     open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
 ) {
+  /** The global ImaSdkFactory object. */
   abstract fun instance(): com.google.ads.interactivemedia.v3.api.ImaSdkFactory
 
+  /**
+   * Creates an `AdDisplayContainer` to hold the player for video ads, a container for non-linear
+   * ads, and slots for companion ads.
+   */
   abstract fun createAdDisplayContainer(
       container: android.view.ViewGroup,
       player: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
@@ -8653,6 +8716,139 @@ abstract class PigeonApiImaSdkFactory(
   abstract fun createAdsRequest(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory
   ): com.google.ads.interactivemedia.v3.api.AdsRequest
+
+  /**
+   * Creates an AdsLoader for requesting server-side ad insertion ads using the specified settings
+   * object.
+   */
+  abstract fun createStreamAdsLoader(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
+      settings: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
+      container: com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
+  ): com.google.ads.interactivemedia.v3.api.AdsLoader
+
+  /**
+   * Creates an `AdsRenderingSettings` object to give the `AdsManager` parameters that control the
+   * rendering of ads.
+   */
+  abstract fun createAdsRenderingSettings(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory
+  ): com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+
+  /** Creates an `AdDisplayContainer` for audio ads. */
+  abstract fun createAudioAdDisplayContainer(
+      player: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
+  ): com.google.ads.interactivemedia.v3.api.AdDisplayContainer
+
+  /** Creates a `CompanionAdSlot` for the SDK to fill with companion ads. */
+  abstract fun createCompanionAdSlot(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory
+  ): com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+
+  /**
+   * Creates a `FriendlyObstruction` object to describe an obstruction considered "friendly" for
+   * viewability measurement purposes.
+   *
+   * If the detailedReason is not null, it must follow the IAB standard by being 50 characters or
+   * less and only containing characters A-z , 0-9, or spaces.
+   */
+  abstract fun createFriendlyObstruction(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
+      view: android.view.View,
+      purpose: FriendlyObstructionPurpose,
+      detailedReason: String?
+  ): com.google.ads.interactivemedia.v3.api.FriendlyObstruction
+
+  /**
+   * Creates a `StreamRequest` object to contain the data used to request a server-side ad insertion
+   * live stream.
+   */
+  abstract fun createLiveStreamRequest(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
+      assetKey: String,
+      apiKey: String
+  ): com.google.ads.interactivemedia.v3.api.StreamRequest
+
+  /**
+   * Creates a StreamRequest object to contain the data used to request a server-side ad insertion
+   * pod serving live stream.
+   */
+  abstract fun createPodStreamRequest(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
+      networkCode: String,
+      customAssetKey: String,
+      apiKey: String
+  ): com.google.ads.interactivemedia.v3.api.StreamRequest
+
+  /**
+   * Creates a StreamRequest object to contain the data used to request a 3rd party stitched
+   * server-side ad insertion pod serving vod stream.
+   */
+  abstract fun createPodVodStreamRequest(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
+      networkCode: String
+  ): com.google.ads.interactivemedia.v3.api.StreamRequest
+
+  /**
+   * Creates a `StreamDisplayContainer` to hold the player for server-side ad insertion streams and
+   * slots for companion ads.
+   */
+  abstract fun createStreamDisplayContainer(
+      container: android.view.ViewGroup,
+      player: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
+  ): com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
+
+  /**
+   * Creates a `StreamRequest` object to contain the data used to request a cloud video stitcher
+   * server-side ad insertion pod live serving stream.
+   */
+  abstract fun createVideoStitcherLiveStreamRequest(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
+      networkCode: String,
+      customAssetKey: String,
+      liveStreamEventId: String,
+      region: String,
+      projectNumber: String,
+      oAuthToken: String
+  ): com.google.ads.interactivemedia.v3.api.StreamRequest
+
+  /**
+   * Creates a `StreamRequest` object to contain the data used to request a cloud video stitcher
+   * server-side ad insertion pod serving vod stream.
+   */
+  abstract fun createContentSourceVideoStitcherVodStreamRequest(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
+      contentSourceUrl: String,
+      networkCode: String,
+      region: String,
+      projectNumber: String,
+      oAuthToken: String,
+      adTagUrl: String
+  ): com.google.ads.interactivemedia.v3.api.StreamRequest
+
+  /**
+   * Creates a `StreamRequest` object to contain the data used to request a cloud video stitcher
+   * server-side ad insertion pod serving vod stream, with a vod config flow.
+   */
+  abstract fun createVideoStitcherVodStreamRequest(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
+      networkCode: String,
+      region: String,
+      projectNumber: String,
+      oAuthToken: String,
+      vodConfigId: String
+  ): com.google.ads.interactivemedia.v3.api.StreamRequest
+
+  /**
+   * Creates a StreamRequest object to contain the data used to request a server-side ad insertion
+   * video on demand stream.
+   */
+  abstract fun createVodStreamRequest(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
+      contentSourceId: String,
+      videoId: String,
+      apiKey: String
+  ): com.google.ads.interactivemedia.v3.api.StreamRequest
 
   companion object {
     @Suppress("LocalVariableName")
@@ -8774,6 +8970,355 @@ abstract class PigeonApiImaSdkFactory(
           channel.setMessageHandler(null)
         }
       }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createStreamAdsLoader",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
+            val settingsArg = args[1] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val containerArg =
+                args[2] as com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.createStreamAdsLoader(pigeon_instanceArg, settingsArg, containerArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAdsRenderingSettings",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.createAdsRenderingSettings(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAudioAdDisplayContainer",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val playerArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.createAudioAdDisplayContainer(playerArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createCompanionAdSlot",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.createCompanionAdSlot(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createFriendlyObstruction",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
+            val viewArg = args[1] as android.view.View
+            val purposeArg = args[2] as FriendlyObstructionPurpose
+            val detailedReasonArg = args[3] as String?
+            val wrapped: List<Any?> =
+                try {
+                  listOf(
+                      api.createFriendlyObstruction(
+                          pigeon_instanceArg, viewArg, purposeArg, detailedReasonArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createLiveStreamRequest",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
+            val assetKeyArg = args[1] as String
+            val apiKeyArg = args[2] as String
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.createLiveStreamRequest(pigeon_instanceArg, assetKeyArg, apiKeyArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createPodStreamRequest",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
+            val networkCodeArg = args[1] as String
+            val customAssetKeyArg = args[2] as String
+            val apiKeyArg = args[3] as String
+            val wrapped: List<Any?> =
+                try {
+                  listOf(
+                      api.createPodStreamRequest(
+                          pigeon_instanceArg, networkCodeArg, customAssetKeyArg, apiKeyArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createPodVodStreamRequest",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
+            val networkCodeArg = args[1] as String
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.createPodVodStreamRequest(pigeon_instanceArg, networkCodeArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createStreamDisplayContainer",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val containerArg = args[0] as android.view.ViewGroup
+            val playerArg =
+                args[1] as com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.createStreamDisplayContainer(containerArg, playerArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createVideoStitcherLiveStreamRequest",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
+            val networkCodeArg = args[1] as String
+            val customAssetKeyArg = args[2] as String
+            val liveStreamEventIdArg = args[3] as String
+            val regionArg = args[4] as String
+            val projectNumberArg = args[5] as String
+            val oAuthTokenArg = args[6] as String
+            val wrapped: List<Any?> =
+                try {
+                  listOf(
+                      api.createVideoStitcherLiveStreamRequest(
+                          pigeon_instanceArg,
+                          networkCodeArg,
+                          customAssetKeyArg,
+                          liveStreamEventIdArg,
+                          regionArg,
+                          projectNumberArg,
+                          oAuthTokenArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createContentSourceVideoStitcherVodStreamRequest",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
+            val contentSourceUrlArg = args[1] as String
+            val networkCodeArg = args[2] as String
+            val regionArg = args[3] as String
+            val projectNumberArg = args[4] as String
+            val oAuthTokenArg = args[5] as String
+            val adTagUrlArg = args[6] as String
+            val wrapped: List<Any?> =
+                try {
+                  listOf(
+                      api.createContentSourceVideoStitcherVodStreamRequest(
+                          pigeon_instanceArg,
+                          contentSourceUrlArg,
+                          networkCodeArg,
+                          regionArg,
+                          projectNumberArg,
+                          oAuthTokenArg,
+                          adTagUrlArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createVideoStitcherVodStreamRequest",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
+            val networkCodeArg = args[1] as String
+            val regionArg = args[2] as String
+            val projectNumberArg = args[3] as String
+            val oAuthTokenArg = args[4] as String
+            val vodConfigIdArg = args[5] as String
+            val wrapped: List<Any?> =
+                try {
+                  listOf(
+                      api.createVideoStitcherVodStreamRequest(
+                          pigeon_instanceArg,
+                          networkCodeArg,
+                          regionArg,
+                          projectNumberArg,
+                          oAuthTokenArg,
+                          vodConfigIdArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createVodStreamRequest",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
+            val contentSourceIdArg = args[1] as String
+            val videoIdArg = args[2] as String
+            val apiKeyArg = args[3] as String
+            val wrapped: List<Any?> =
+                try {
+                  listOf(
+                      api.createVodStreamRequest(
+                          pigeon_instanceArg, contentSourceIdArg, videoIdArg, apiKeyArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
     }
   }
 
@@ -8825,8 +9370,15 @@ import android.view.ViewGroup
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer
+import com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
+import android.view.View
+import com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
 import com.google.ads.interactivemedia.v3.api.AdsLoader
 import com.google.ads.interactivemedia.v3.api.AdsRequest
+import com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+import com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+import com.google.ads.interactivemedia.v3.api.FriendlyObstruction
+import com.google.ads.interactivemedia.v3.api.StreamRequest
 
 /**
  * ProxyApi implementation for [ImaSdkFactory].
@@ -8856,6 +9408,58 @@ class ImaSdkFactoryProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : P
     return pigeon_instance.createAdsRequest()
   }
 
+  override fun createStreamAdsLoader(pigeon_instance: ImaSdkFactory,settings: com.google.ads.interactivemedia.v3.api.ImaSdkSettings, container: com.google.ads.interactivemedia.v3.api.StreamDisplayContainer): com.google.ads.interactivemedia.v3.api.AdsLoader {
+    return pigeon_instance.createStreamAdsLoader(settings, container)
+  }
+
+  override fun createAdsRenderingSettings(pigeon_instance: ImaSdkFactory): com.google.ads.interactivemedia.v3.api.AdsRenderingSettings {
+    return pigeon_instance.createAdsRenderingSettings()
+  }
+
+  override fun createAudioAdDisplayContainer(player: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer): com.google.ads.interactivemedia.v3.api.AdDisplayContainer {
+    return ImaSdkFactory.createAudioAdDisplayContainer(player)
+  }
+
+  override fun createCompanionAdSlot(pigeon_instance: ImaSdkFactory): com.google.ads.interactivemedia.v3.api.CompanionAdSlot {
+    return pigeon_instance.createCompanionAdSlot()
+  }
+
+  override fun createFriendlyObstruction(pigeon_instance: ImaSdkFactory,view: android.view.View, purpose: FriendlyObstructionPurpose, detailedReason: String?): com.google.ads.interactivemedia.v3.api.FriendlyObstruction {
+    return pigeon_instance.createFriendlyObstruction(view, purpose, detailedReason)
+  }
+
+  override fun createLiveStreamRequest(pigeon_instance: ImaSdkFactory,assetKey: String, apiKey: String): com.google.ads.interactivemedia.v3.api.StreamRequest {
+    return pigeon_instance.createLiveStreamRequest(assetKey, apiKey)
+  }
+
+  override fun createPodStreamRequest(pigeon_instance: ImaSdkFactory,networkCode: String, customAssetKey: String, apiKey: String): com.google.ads.interactivemedia.v3.api.StreamRequest {
+    return pigeon_instance.createPodStreamRequest(networkCode, customAssetKey, apiKey)
+  }
+
+  override fun createPodVodStreamRequest(pigeon_instance: ImaSdkFactory,networkCode: String): com.google.ads.interactivemedia.v3.api.StreamRequest {
+    return pigeon_instance.createPodVodStreamRequest(networkCode)
+  }
+
+  override fun createStreamDisplayContainer(container: android.view.ViewGroup, player: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer): com.google.ads.interactivemedia.v3.api.StreamDisplayContainer {
+    return ImaSdkFactory.createStreamDisplayContainer(container, player)
+  }
+
+  override fun createVideoStitcherLiveStreamRequest(pigeon_instance: ImaSdkFactory,networkCode: String, customAssetKey: String, liveStreamEventId: String, region: String, projectNumber: String, oAuthToken: String): com.google.ads.interactivemedia.v3.api.StreamRequest {
+    return pigeon_instance.createVideoStitcherLiveStreamRequest(networkCode, customAssetKey, liveStreamEventId, region, projectNumber, oAuthToken)
+  }
+
+  override fun createContentSourceVideoStitcherVodStreamRequest(pigeon_instance: ImaSdkFactory,contentSourceUrl: String, networkCode: String, region: String, projectNumber: String, oAuthToken: String, adTagUrl: String): com.google.ads.interactivemedia.v3.api.StreamRequest {
+    return pigeon_instance.createContentSourceVideoStitcherVodStreamRequest(contentSourceUrl, networkCode, region, projectNumber, oAuthToken, adTagUrl)
+  }
+
+  override fun createVideoStitcherVodStreamRequest(pigeon_instance: ImaSdkFactory,networkCode: String, region: String, projectNumber: String, oAuthToken: String, vodConfigId: String): com.google.ads.interactivemedia.v3.api.StreamRequest {
+    return pigeon_instance.createVideoStitcherVodStreamRequest(networkCode, region, projectNumber, oAuthToken, vodConfigId)
+  }
+
+  override fun createVodStreamRequest(pigeon_instance: ImaSdkFactory,contentSourceId: String, videoId: String, apiKey: String): com.google.ads.interactivemedia.v3.api.StreamRequest {
+    return pigeon_instance.createVodStreamRequest(contentSourceId, videoId, apiKey)
+  }
+
 }
 */
 
@@ -8871,8 +9475,15 @@ import android.view.ViewGroup
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer
+import com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
+import android.view.View
+import com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
 import com.google.ads.interactivemedia.v3.api.AdsLoader
 import com.google.ads.interactivemedia.v3.api.AdsRequest
+import com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+import com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+import com.google.ads.interactivemedia.v3.api.FriendlyObstruction
+import com.google.ads.interactivemedia.v3.api.StreamRequest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -8919,6 +9530,1309 @@ class ImaSdkFactoryProxyApiTest {
     assertEquals(value, api.createAdsRequest(instance ))
   }
 
+  @Test
+  fun createStreamAdsLoader() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkFactory()
+
+    val instance = mock<ImaSdkFactory>()
+    val settings = mock<ImaSdkSettings>()
+    val container = mock<StreamDisplayContainer>()
+    val value = mock<AdsLoader>()
+    whenever(instance.createStreamAdsLoader(settings, container)).thenReturn(value)
+
+    assertEquals(value, api.createStreamAdsLoader(instance, settings, container))
+  }
+
+  @Test
+  fun createAdsRenderingSettings() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkFactory()
+
+    val instance = mock<ImaSdkFactory>()
+    val value = mock<AdsRenderingSettings>()
+    whenever(instance.createAdsRenderingSettings()).thenReturn(value)
+
+    assertEquals(value, api.createAdsRenderingSettings(instance ))
+  }
+
+  @Test
+  fun createCompanionAdSlot() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkFactory()
+
+    val instance = mock<ImaSdkFactory>()
+    val value = mock<CompanionAdSlot>()
+    whenever(instance.createCompanionAdSlot()).thenReturn(value)
+
+    assertEquals(value, api.createCompanionAdSlot(instance ))
+  }
+
+  @Test
+  fun createFriendlyObstruction() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkFactory()
+
+    val instance = mock<ImaSdkFactory>()
+    val view = mock<View>()
+    val purpose = dev.flutter.packages.interactive_media_ads.FriendlyObstructionPurpose.CLOSE_AD
+    val detailedReason = "myString"
+    val value = mock<FriendlyObstruction>()
+    whenever(instance.createFriendlyObstruction(view, purpose, detailedReason)).thenReturn(value)
+
+    assertEquals(value, api.createFriendlyObstruction(instance, view, purpose, detailedReason))
+  }
+
+  @Test
+  fun createLiveStreamRequest() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkFactory()
+
+    val instance = mock<ImaSdkFactory>()
+    val assetKey = "myString"
+    val apiKey = "myString"
+    val value = mock<StreamRequest>()
+    whenever(instance.createLiveStreamRequest(assetKey, apiKey)).thenReturn(value)
+
+    assertEquals(value, api.createLiveStreamRequest(instance, assetKey, apiKey))
+  }
+
+  @Test
+  fun createPodStreamRequest() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkFactory()
+
+    val instance = mock<ImaSdkFactory>()
+    val networkCode = "myString"
+    val customAssetKey = "myString"
+    val apiKey = "myString"
+    val value = mock<StreamRequest>()
+    whenever(instance.createPodStreamRequest(networkCode, customAssetKey, apiKey)).thenReturn(value)
+
+    assertEquals(value, api.createPodStreamRequest(instance, networkCode, customAssetKey, apiKey))
+  }
+
+  @Test
+  fun createPodVodStreamRequest() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkFactory()
+
+    val instance = mock<ImaSdkFactory>()
+    val networkCode = "myString"
+    val value = mock<StreamRequest>()
+    whenever(instance.createPodVodStreamRequest(networkCode)).thenReturn(value)
+
+    assertEquals(value, api.createPodVodStreamRequest(instance, networkCode))
+  }
+
+  @Test
+  fun createVideoStitcherLiveStreamRequest() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkFactory()
+
+    val instance = mock<ImaSdkFactory>()
+    val networkCode = "myString"
+    val customAssetKey = "myString"
+    val liveStreamEventId = "myString"
+    val region = "myString"
+    val projectNumber = "myString"
+    val oAuthToken = "myString"
+    val value = mock<StreamRequest>()
+    whenever(instance.createVideoStitcherLiveStreamRequest(networkCode, customAssetKey, liveStreamEventId, region, projectNumber, oAuthToken)).thenReturn(value)
+
+    assertEquals(value, api.createVideoStitcherLiveStreamRequest(instance, networkCode, customAssetKey, liveStreamEventId, region, projectNumber, oAuthToken))
+  }
+
+  @Test
+  fun createContentSourceVideoStitcherVodStreamRequest() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkFactory()
+
+    val instance = mock<ImaSdkFactory>()
+    val contentSourceUrl = "myString"
+    val networkCode = "myString"
+    val region = "myString"
+    val projectNumber = "myString"
+    val oAuthToken = "myString"
+    val adTagUrl = "myString"
+    val value = mock<StreamRequest>()
+    whenever(instance.createContentSourceVideoStitcherVodStreamRequest(contentSourceUrl, networkCode, region, projectNumber, oAuthToken, adTagUrl)).thenReturn(value)
+
+    assertEquals(value, api.createContentSourceVideoStitcherVodStreamRequest(instance, contentSourceUrl, networkCode, region, projectNumber, oAuthToken, adTagUrl))
+  }
+
+  @Test
+  fun createVideoStitcherVodStreamRequest() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkFactory()
+
+    val instance = mock<ImaSdkFactory>()
+    val networkCode = "myString"
+    val region = "myString"
+    val projectNumber = "myString"
+    val oAuthToken = "myString"
+    val vodConfigId = "myString"
+    val value = mock<StreamRequest>()
+    whenever(instance.createVideoStitcherVodStreamRequest(networkCode, region, projectNumber, oAuthToken, vodConfigId)).thenReturn(value)
+
+    assertEquals(value, api.createVideoStitcherVodStreamRequest(instance, networkCode, region, projectNumber, oAuthToken, vodConfigId))
+  }
+
+  @Test
+  fun createVodStreamRequest() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkFactory()
+
+    val instance = mock<ImaSdkFactory>()
+    val contentSourceId = "myString"
+    val videoId = "myString"
+    val apiKey = "myString"
+    val value = mock<StreamRequest>()
+    whenever(instance.createVodStreamRequest(contentSourceId, videoId, apiKey)).thenReturn(value)
+
+    assertEquals(value, api.createVodStreamRequest(instance, contentSourceId, videoId, apiKey))
+  }
+
+}
+*/
+/**
+ * A display container specific to server-side ad insertion.
+ *
+ * See
+ * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/StreamDisplayContainer.html.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiStreamDisplayContainer(
+    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+) {
+  /**
+   * Returns the previously set player used for server-side ad insertion, or null if none has been
+   * set.
+   */
+  abstract fun getVideoStreamPlayer(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
+  ): com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer?
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(
+        binaryMessenger: BinaryMessenger,
+        api: PigeonApiStreamDisplayContainer?
+    ) {
+      val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.StreamDisplayContainer.getVideoStreamPlayer",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getVideoStreamPlayer(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of StreamDisplayContainer and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.StreamDisplayContainer,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg =
+        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.interactive_media_ads.StreamDisplayContainer.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  @Suppress("FunctionName")
+  /** An implementation of [PigeonApiBaseDisplayContainer] used to access callback methods */
+  fun pigeon_getPigeonApiBaseDisplayContainer(): PigeonApiBaseDisplayContainer {
+    return pigeonRegistrar.getPigeonApiBaseDisplayContainer()
+  }
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
+import com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
+
+/**
+ * ProxyApi implementation for [StreamDisplayContainer].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class StreamDisplayContainerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiStreamDisplayContainer(pigeonRegistrar) {
+
+  override fun getVideoStreamPlayer(pigeon_instance: StreamDisplayContainer): com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer? {
+    return pigeon_instance.getVideoStreamPlayer()
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
+import com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+
+class StreamDisplayContainerProxyApiTest {
+  @Test
+  fun getVideoStreamPlayer() {
+    val api = TestProxyApiRegistrar().getPigeonApiStreamDisplayContainer()
+
+    val instance = mock<StreamDisplayContainer>()
+    val value = mock<VideoStreamPlayer>()
+    whenever(instance.getVideoStreamPlayer()).thenReturn(value)
+
+    assertEquals(value, api.getVideoStreamPlayer(instance ))
+  }
+
+}
+*/
+/**
+ * Defines a set of methods that a video player must implement to be used by the IMA SDK for dynamic
+ * ad insertion.
+ *
+ * See
+ * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoStreamPlayer.html.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiVideoStreamPlayer(
+    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+) {
+  abstract fun pigeon_defaultConstructor():
+      com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
+
+  /** The volume of the player as a percentage from 0 to 100. */
+  abstract fun setVolume(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
+      value: Long
+  )
+
+  /** The `VideoProgressUpdate` describing playback progress of the current video. */
+  abstract fun setContentProgress(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
+      progress: com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
+  )
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiVideoStreamPlayer?) {
+      val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.pigeon_defaultConstructor",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg =
+                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> =
+                try {
+                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.setVolume",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
+            val valueArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> =
+                try {
+                  api.setVolume(pigeon_instanceArg, valueArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.setContentProgress",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
+            val progressArg =
+                args[1] as com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
+            val wrapped: List<Any?> =
+                try {
+                  api.setContentProgress(pigeon_instanceArg, progressArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of VideoStreamPlayer and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    throw IllegalStateException(
+        "Attempting to create a new Dart instance of VideoStreamPlayer, but the class has a nonnull callback method.")
+  }
+
+  /** Adds a callback so that listeners can react to events from the `VideoStreamPlayer`. */
+  fun addCallback(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
+      callbackArg:
+          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.addCallback"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, callbackArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Loads a stream with dynamic ad insertion given the stream url and subtitles array. */
+  fun loadUrl(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
+      urlArg: String,
+      subtitlesArg: List<Map<String, String>>,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.loadUrl"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, urlArg, subtitlesArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** The SDK will call this method the first time each ad break ends. */
+  fun onAdBreakEnded(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.onAdBreakEnded"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** The SDK will call this method the first time each ad break begins playback. */
+  fun onAdBreakStarted(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.onAdBreakStarted"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /**
+   * The SDK will call this method every time the stream switches from advertising or slate to
+   * content.
+   */
+  fun onAdPeriodEnded(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.onAdPeriodEnded"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /**
+   * The SDK will call this method every time the stream switches from content to advertising or
+   * slate.
+   */
+  fun onAdPeriodStarted(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.onAdPeriodStarted"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Pauses the current stream. */
+  fun pause(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.pause"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Removes a callback. */
+  fun removeCallback(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
+      callbackArg:
+          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.removeCallback"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, callbackArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Resumes playing the stream. */
+  fun resume(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.resume"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Seeks the stream to the given time in milliseconds. */
+  fun seek(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
+      timeArg: Long,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.seek"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, timeArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
+import com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
+
+/**
+ * ProxyApi implementation for [VideoStreamPlayer].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class VideoStreamPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiVideoStreamPlayer(pigeonRegistrar) {
+  internal class VideoStreamPlayerImpl(val api: VideoStreamPlayerProxyApi) : VideoStreamPlayer {
+    override fun addCallback(callback: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback) {
+      api.pigeonRegistrar.runOnMainThread { api.addCallback(this, callback) {} }
+    }
+    override fun loadUrl(url: String, subtitles: List<Map<String, String>>) {
+      api.pigeonRegistrar.runOnMainThread { api.loadUrl(this, url, subtitles) {} }
+    }
+    override fun onAdBreakEnded() {
+      api.pigeonRegistrar.runOnMainThread { api.onAdBreakEnded(this ) {} }
+    }
+    override fun onAdBreakStarted() {
+      api.pigeonRegistrar.runOnMainThread { api.onAdBreakStarted(this ) {} }
+    }
+    override fun onAdPeriodEnded() {
+      api.pigeonRegistrar.runOnMainThread { api.onAdPeriodEnded(this ) {} }
+    }
+    override fun onAdPeriodStarted() {
+      api.pigeonRegistrar.runOnMainThread { api.onAdPeriodStarted(this ) {} }
+    }
+    override fun pause() {
+      api.pigeonRegistrar.runOnMainThread { api.pause(this ) {} }
+    }
+    override fun removeCallback(callback: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback) {
+      api.pigeonRegistrar.runOnMainThread { api.removeCallback(this, callback) {} }
+    }
+    override fun resume() {
+      api.pigeonRegistrar.runOnMainThread { api.resume(this ) {} }
+    }
+    override fun seek(time: Long) {
+      api.pigeonRegistrar.runOnMainThread { api.seek(this, time) {} }
+    }
+  }
+
+  override fun pigeon_defaultConstructor(): VideoStreamPlayer {
+    return VideoStreamPlayerImpl()
+  }
+
+  override fun setVolume(pigeon_instance: VideoStreamPlayer,value: Long) {
+    pigeon_instance.setVolume(value)
+  }
+
+  override fun setContentProgress(pigeon_instance: VideoStreamPlayer,progress: com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate) {
+    pigeon_instance.setContentProgress(progress)
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
+import com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+
+class VideoStreamPlayerProxyApiTest {
+  @Test
+  fun pigeon_defaultConstructor() {
+    val api = TestProxyApiRegistrar().getPigeonApiVideoStreamPlayer()
+
+    assertTrue(api.pigeon_defaultConstructor() is VideoStreamPlayerProxyApi.VideoStreamPlayer)
+  }
+
+  @Test
+  fun setVolume() {
+    val api = TestProxyApiRegistrar().getPigeonApiVideoStreamPlayer()
+
+    val instance = mock<VideoStreamPlayer>()
+    val value = 0
+    api.setVolume(instance, value)
+
+    verify(instance).setVolume(value)
+  }
+
+  @Test
+  fun setContentProgress() {
+    val api = TestProxyApiRegistrar().getPigeonApiVideoStreamPlayer()
+
+    val instance = mock<VideoStreamPlayer>()
+    val progress = mock<VideoProgressUpdate>()
+    api.setContentProgress(instance, progress)
+
+    verify(instance).setContentProgress(progress)
+  }
+
+  @Test
+  fun addCallback() {
+    val mockApi = mock<VideoStreamPlayerProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = VideoStreamPlayerImpl(mockApi)
+    val callback = mock<VideoStreamPlayerCallback>()
+    instance.addCallback(callback)
+
+    verify(mockApi).addCallback(eq(instance), eq(callback), any())
+  }
+
+  @Test
+  fun loadUrl() {
+    val mockApi = mock<VideoStreamPlayerProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = VideoStreamPlayerImpl(mockApi)
+    val url = "myString"
+    val subtitles = listOf(mapOf("myString" to "myString"))
+    instance.loadUrl(url, subtitles)
+
+    verify(mockApi).loadUrl(eq(instance), eq(url), eq(subtitles), any())
+  }
+
+  @Test
+  fun onAdBreakEnded() {
+    val mockApi = mock<VideoStreamPlayerProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = VideoStreamPlayerImpl(mockApi)
+    instance.onAdBreakEnded()
+
+    verify(mockApi).onAdBreakEnded(eq(instance) , any())
+  }
+
+  @Test
+  fun onAdBreakStarted() {
+    val mockApi = mock<VideoStreamPlayerProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = VideoStreamPlayerImpl(mockApi)
+    instance.onAdBreakStarted()
+
+    verify(mockApi).onAdBreakStarted(eq(instance) , any())
+  }
+
+  @Test
+  fun onAdPeriodEnded() {
+    val mockApi = mock<VideoStreamPlayerProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = VideoStreamPlayerImpl(mockApi)
+    instance.onAdPeriodEnded()
+
+    verify(mockApi).onAdPeriodEnded(eq(instance) , any())
+  }
+
+  @Test
+  fun onAdPeriodStarted() {
+    val mockApi = mock<VideoStreamPlayerProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = VideoStreamPlayerImpl(mockApi)
+    instance.onAdPeriodStarted()
+
+    verify(mockApi).onAdPeriodStarted(eq(instance) , any())
+  }
+
+  @Test
+  fun pause() {
+    val mockApi = mock<VideoStreamPlayerProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = VideoStreamPlayerImpl(mockApi)
+    instance.pause()
+
+    verify(mockApi).pause(eq(instance) , any())
+  }
+
+  @Test
+  fun removeCallback() {
+    val mockApi = mock<VideoStreamPlayerProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = VideoStreamPlayerImpl(mockApi)
+    val callback = mock<VideoStreamPlayerCallback>()
+    instance.removeCallback(callback)
+
+    verify(mockApi).removeCallback(eq(instance), eq(callback), any())
+  }
+
+  @Test
+  fun resume() {
+    val mockApi = mock<VideoStreamPlayerProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = VideoStreamPlayerImpl(mockApi)
+    instance.resume()
+
+    verify(mockApi).resume(eq(instance) , any())
+  }
+
+  @Test
+  fun seek() {
+    val mockApi = mock<VideoStreamPlayerProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = VideoStreamPlayerImpl(mockApi)
+    val time = 0
+    instance.seek(time)
+
+    verify(mockApi).seek(eq(instance), eq(time), any())
+  }
+
+}
+*/
+/**
+ * Defines a set of methods that a video player must implement to be used by the IMA SDK for dynamic
+ * ad insertion.
+ *
+ * See
+ * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoStreamPlayer.VideoStreamPlayerCallback.html.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiVideoStreamPlayerCallback(
+    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+) {
+  /** Fire this callback when all content has finished playing. */
+  abstract fun onContentComplete(
+      pigeon_instance:
+          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+  )
+
+  /** Fire this callback when the video is paused. */
+  abstract fun onPause(
+      pigeon_instance:
+          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+  )
+
+  /** Fire this callback when the video is resumed. */
+  abstract fun onResume(
+      pigeon_instance:
+          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+  )
+
+  /**
+   * Fire this callback when a timed metadata ID3 event corresponding to user-defined text is
+   * received.
+   *
+   * For more information about user text events, see http://id3.org/id3v2.4.0-frames.
+   */
+  abstract fun onUserTextReceived(
+      pigeon_instance:
+          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback,
+      userText: String
+  )
+
+  /** Fire this callback when the video player volume changes. */
+  abstract fun onVolumeChanged(
+      pigeon_instance:
+          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback,
+      percentage: Long
+  )
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(
+        binaryMessenger: BinaryMessenger,
+        api: PigeonApiVideoStreamPlayerCallback?
+    ) {
+      val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onContentComplete",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0]
+                    as
+                    com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+            val wrapped: List<Any?> =
+                try {
+                  api.onContentComplete(pigeon_instanceArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onPause",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0]
+                    as
+                    com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+            val wrapped: List<Any?> =
+                try {
+                  api.onPause(pigeon_instanceArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onResume",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0]
+                    as
+                    com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+            val wrapped: List<Any?> =
+                try {
+                  api.onResume(pigeon_instanceArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onUserTextReceived",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0]
+                    as
+                    com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+            val userTextArg = args[1] as String
+            val wrapped: List<Any?> =
+                try {
+                  api.onUserTextReceived(pigeon_instanceArg, userTextArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onVolumeChanged",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0]
+                    as
+                    com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+            val percentageArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> =
+                try {
+                  api.onVolumeChanged(pigeon_instanceArg, percentageArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /**
+   * Creates a Dart instance of VideoStreamPlayerCallback and attaches it to [pigeon_instanceArg].
+   */
+  fun pigeon_newInstance(
+      pigeon_instanceArg:
+          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg =
+        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+
+/**
+ * ProxyApi implementation for [VideoStreamPlayerCallback].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class VideoStreamPlayerCallbackProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiVideoStreamPlayerCallback(pigeonRegistrar) {
+
+  override fun onContentComplete(pigeon_instance: VideoStreamPlayerCallback) {
+    pigeon_instance.onContentComplete()
+  }
+
+  override fun onPause(pigeon_instance: VideoStreamPlayerCallback) {
+    pigeon_instance.onPause()
+  }
+
+  override fun onResume(pigeon_instance: VideoStreamPlayerCallback) {
+    pigeon_instance.onResume()
+  }
+
+  override fun onUserTextReceived(pigeon_instance: VideoStreamPlayerCallback,userText: String) {
+    pigeon_instance.onUserTextReceived(userText)
+  }
+
+  override fun onVolumeChanged(pigeon_instance: VideoStreamPlayerCallback,percentage: Long) {
+    pigeon_instance.onVolumeChanged(percentage)
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+
+class VideoStreamPlayerCallbackProxyApiTest {
+  @Test
+  fun onContentComplete() {
+    val api = TestProxyApiRegistrar().getPigeonApiVideoStreamPlayerCallback()
+
+    val instance = mock<VideoStreamPlayerCallback>()
+    api.onContentComplete(instance )
+
+    verify(instance).onContentComplete()
+  }
+
+  @Test
+  fun onPause() {
+    val api = TestProxyApiRegistrar().getPigeonApiVideoStreamPlayerCallback()
+
+    val instance = mock<VideoStreamPlayerCallback>()
+    api.onPause(instance )
+
+    verify(instance).onPause()
+  }
+
+  @Test
+  fun onResume() {
+    val api = TestProxyApiRegistrar().getPigeonApiVideoStreamPlayerCallback()
+
+    val instance = mock<VideoStreamPlayerCallback>()
+    api.onResume(instance )
+
+    verify(instance).onResume()
+  }
+
+  @Test
+  fun onUserTextReceived() {
+    val api = TestProxyApiRegistrar().getPigeonApiVideoStreamPlayerCallback()
+
+    val instance = mock<VideoStreamPlayerCallback>()
+    val userText = "myString"
+    api.onUserTextReceived(instance, userText)
+
+    verify(instance).onUserTextReceived(userText)
+  }
+
+  @Test
+  fun onVolumeChanged() {
+    val api = TestProxyApiRegistrar().getPigeonApiVideoStreamPlayerCallback()
+
+    val instance = mock<VideoStreamPlayerCallback>()
+    val percentage = 0
+    api.onVolumeChanged(instance, percentage)
+
+    verify(instance).onVolumeChanged(percentage)
+  }
+
 }
 */
 /**
@@ -8928,9 +10842,570 @@ class ImaSdkFactoryProxyApiTest {
  * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/ImaSdkSettings.html.
  */
 @Suppress("UNCHECKED_CAST")
-open class PigeonApiImaSdkSettings(
+abstract class PigeonApiImaSdkSettings(
     open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
 ) {
+  /**
+   * Specifies whether VMAP and ad rules ad breaks are automatically played.
+   *
+   * Default is true.
+   */
+  abstract fun getAutoPlayAdBreaks(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+  ): Boolean
+
+  /** Returns the feature flags and their states as set by the `setFeatureFlags(Map)` function. */
+  abstract fun getFeatureFlags(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+  ): Map<String, String>
+
+  /**
+   * Gets the current ISO 639-1 language code.
+   *
+   * Defaults to "en" for English.
+   */
+  abstract fun getLanguage(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+  ): String
+
+  /** Returns the maximum number of VAST redirects. */
+  abstract fun getMaxRedirects(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+  ): Long
+
+  /** Returns the partner provided player type. */
+  abstract fun getPlayerType(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+  ): String
+
+  /** Returns the partner provided player version. */
+  abstract fun getPlayerVersion(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+  ): String
+
+  /** Returns the PPID. */
+  abstract fun getPpid(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+  ): String
+
+  /** Returns the session ID if set. */
+  abstract fun getSessionId(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+  ): String?
+
+  /**
+   * Gets the debug mode.
+   *
+   * Default is false.
+   */
+  abstract fun isDebugMode(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+  ): Boolean
+
+  /** Sets whether to automatically play VMAP and ad rules ad breaks. */
+  abstract fun setAutoPlayAdBreaks(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
+      autoPlayAdBreaks: Boolean
+  )
+
+  /** Enables and disables the debug mode, which is disabled by default. */
+  abstract fun setDebugMode(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
+      debugMode: Boolean
+  )
+
+  /** Sets the feature flags and their states to control experimental features. */
+  abstract fun setFeatureFlags(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
+      featureFlags: Map<String, String>
+  )
+
+  /**
+   * Sets the preferred language for the ad UI.
+   *
+   * The supported codes are closely related to the two-letter ISO 639-1 language codes. See
+   * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/localization.
+   *
+   * Once the AdsLoader object has been created, using this setter will have no effect.
+   */
+  abstract fun setLanguage(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
+      language: String
+  )
+
+  /**
+   * Specifies the maximum number of redirects before the subsequent redirects will be denied and
+   * the ad load aborted. In this case, the ad will raise an error with error code 302.
+   */
+  abstract fun setMaxRedirects(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
+      maxRedirects: Long
+  )
+
+  /** Sets the partner provided player type. */
+  abstract fun setPlayerType(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
+      playerType: String
+  )
+
+  /** Sets the partner provided player version. */
+  abstract fun setPlayerVersion(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
+      playerVersion: String
+  )
+
+  /** Sets the publisher provided ID used for tracking. */
+  abstract fun setPpid(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
+      ppid: String
+  )
+
+  /** Session ID is a temporary random ID. It is used exclusively for frequency capping. */
+  abstract fun setSessionId(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
+      sessionId: String
+  )
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiImaSdkSettings?) {
+      val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getAutoPlayAdBreaks",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getAutoPlayAdBreaks(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getFeatureFlags",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getFeatureFlags(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getLanguage",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getLanguage(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getMaxRedirects",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getMaxRedirects(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getPlayerType",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getPlayerType(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getPlayerVersion",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getPlayerVersion(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getPpid",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getPpid(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getSessionId",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getSessionId(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.isDebugMode",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.isDebugMode(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setAutoPlayAdBreaks",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val autoPlayAdBreaksArg = args[1] as Boolean
+            val wrapped: List<Any?> =
+                try {
+                  api.setAutoPlayAdBreaks(pigeon_instanceArg, autoPlayAdBreaksArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setDebugMode",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val debugModeArg = args[1] as Boolean
+            val wrapped: List<Any?> =
+                try {
+                  api.setDebugMode(pigeon_instanceArg, debugModeArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setFeatureFlags",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val featureFlagsArg = args[1] as Map<String, String>
+            val wrapped: List<Any?> =
+                try {
+                  api.setFeatureFlags(pigeon_instanceArg, featureFlagsArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setLanguage",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val languageArg = args[1] as String
+            val wrapped: List<Any?> =
+                try {
+                  api.setLanguage(pigeon_instanceArg, languageArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setMaxRedirects",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val maxRedirectsArg =
+                args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> =
+                try {
+                  api.setMaxRedirects(pigeon_instanceArg, maxRedirectsArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setPlayerType",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val playerTypeArg = args[1] as String
+            val wrapped: List<Any?> =
+                try {
+                  api.setPlayerType(pigeon_instanceArg, playerTypeArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setPlayerVersion",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val playerVersionArg = args[1] as String
+            val wrapped: List<Any?> =
+                try {
+                  api.setPlayerVersion(pigeon_instanceArg, playerVersionArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setPpid",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val ppidArg = args[1] as String
+            val wrapped: List<Any?> =
+                try {
+                  api.setPpid(pigeon_instanceArg, ppidArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setSessionId",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val sessionIdArg = args[1] as String
+            val wrapped: List<Any?> =
+                try {
+                  api.setSessionId(pigeon_instanceArg, sessionIdArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ImaSdkSettings and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
@@ -8984,6 +11459,78 @@ import com.google.ads.interactivemedia.v3.api.ImaSdkSettings
  */
 class ImaSdkSettingsProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiImaSdkSettings(pigeonRegistrar) {
 
+  override fun getAutoPlayAdBreaks(pigeon_instance: ImaSdkSettings): Boolean {
+    return pigeon_instance.getAutoPlayAdBreaks()
+  }
+
+  override fun getFeatureFlags(pigeon_instance: ImaSdkSettings): Map<String, String> {
+    return pigeon_instance.getFeatureFlags()
+  }
+
+  override fun getLanguage(pigeon_instance: ImaSdkSettings): String {
+    return pigeon_instance.getLanguage()
+  }
+
+  override fun getMaxRedirects(pigeon_instance: ImaSdkSettings): Long {
+    return pigeon_instance.getMaxRedirects()
+  }
+
+  override fun getPlayerType(pigeon_instance: ImaSdkSettings): String {
+    return pigeon_instance.getPlayerType()
+  }
+
+  override fun getPlayerVersion(pigeon_instance: ImaSdkSettings): String {
+    return pigeon_instance.getPlayerVersion()
+  }
+
+  override fun getPpid(pigeon_instance: ImaSdkSettings): String {
+    return pigeon_instance.getPpid()
+  }
+
+  override fun getSessionId(pigeon_instance: ImaSdkSettings): String? {
+    return pigeon_instance.getSessionId()
+  }
+
+  override fun isDebugMode(pigeon_instance: ImaSdkSettings): Boolean {
+    return pigeon_instance.isDebugMode()
+  }
+
+  override fun setAutoPlayAdBreaks(pigeon_instance: ImaSdkSettings,autoPlayAdBreaks: Boolean) {
+    pigeon_instance.setAutoPlayAdBreaks(autoPlayAdBreaks)
+  }
+
+  override fun setDebugMode(pigeon_instance: ImaSdkSettings,debugMode: Boolean) {
+    pigeon_instance.setDebugMode(debugMode)
+  }
+
+  override fun setFeatureFlags(pigeon_instance: ImaSdkSettings,featureFlags: Map<String, String>) {
+    pigeon_instance.setFeatureFlags(featureFlags)
+  }
+
+  override fun setLanguage(pigeon_instance: ImaSdkSettings,language: String) {
+    pigeon_instance.setLanguage(language)
+  }
+
+  override fun setMaxRedirects(pigeon_instance: ImaSdkSettings,maxRedirects: Long) {
+    pigeon_instance.setMaxRedirects(maxRedirects)
+  }
+
+  override fun setPlayerType(pigeon_instance: ImaSdkSettings,playerType: String) {
+    pigeon_instance.setPlayerType(playerType)
+  }
+
+  override fun setPlayerVersion(pigeon_instance: ImaSdkSettings,playerVersion: String) {
+    pigeon_instance.setPlayerVersion(playerVersion)
+  }
+
+  override fun setPpid(pigeon_instance: ImaSdkSettings,ppid: String) {
+    pigeon_instance.setPpid(ppid)
+  }
+
+  override fun setSessionId(pigeon_instance: ImaSdkSettings,sessionId: String) {
+    pigeon_instance.setSessionId(sessionId)
+  }
+
 }
 */
 
@@ -9006,6 +11553,204 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 class ImaSdkSettingsProxyApiTest {
+  @Test
+  fun getAutoPlayAdBreaks() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val value = true
+    whenever(instance.getAutoPlayAdBreaks()).thenReturn(value)
+
+    assertEquals(value, api.getAutoPlayAdBreaks(instance ))
+  }
+
+  @Test
+  fun getFeatureFlags() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val value = mapOf("myString" to "myString")
+    whenever(instance.getFeatureFlags()).thenReturn(value)
+
+    assertEquals(value, api.getFeatureFlags(instance ))
+  }
+
+  @Test
+  fun getLanguage() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val value = "myString"
+    whenever(instance.getLanguage()).thenReturn(value)
+
+    assertEquals(value, api.getLanguage(instance ))
+  }
+
+  @Test
+  fun getMaxRedirects() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val value = 0
+    whenever(instance.getMaxRedirects()).thenReturn(value)
+
+    assertEquals(value, api.getMaxRedirects(instance ))
+  }
+
+  @Test
+  fun getPlayerType() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val value = "myString"
+    whenever(instance.getPlayerType()).thenReturn(value)
+
+    assertEquals(value, api.getPlayerType(instance ))
+  }
+
+  @Test
+  fun getPlayerVersion() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val value = "myString"
+    whenever(instance.getPlayerVersion()).thenReturn(value)
+
+    assertEquals(value, api.getPlayerVersion(instance ))
+  }
+
+  @Test
+  fun getPpid() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val value = "myString"
+    whenever(instance.getPpid()).thenReturn(value)
+
+    assertEquals(value, api.getPpid(instance ))
+  }
+
+  @Test
+  fun getSessionId() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val value = "myString"
+    whenever(instance.getSessionId()).thenReturn(value)
+
+    assertEquals(value, api.getSessionId(instance ))
+  }
+
+  @Test
+  fun isDebugMode() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val value = true
+    whenever(instance.isDebugMode()).thenReturn(value)
+
+    assertEquals(value, api.isDebugMode(instance ))
+  }
+
+  @Test
+  fun setAutoPlayAdBreaks() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val autoPlayAdBreaks = true
+    api.setAutoPlayAdBreaks(instance, autoPlayAdBreaks)
+
+    verify(instance).setAutoPlayAdBreaks(autoPlayAdBreaks)
+  }
+
+  @Test
+  fun setDebugMode() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val debugMode = true
+    api.setDebugMode(instance, debugMode)
+
+    verify(instance).setDebugMode(debugMode)
+  }
+
+  @Test
+  fun setFeatureFlags() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val featureFlags = mapOf("myString" to "myString")
+    api.setFeatureFlags(instance, featureFlags)
+
+    verify(instance).setFeatureFlags(featureFlags)
+  }
+
+  @Test
+  fun setLanguage() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val language = "myString"
+    api.setLanguage(instance, language)
+
+    verify(instance).setLanguage(language)
+  }
+
+  @Test
+  fun setMaxRedirects() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val maxRedirects = 0
+    api.setMaxRedirects(instance, maxRedirects)
+
+    verify(instance).setMaxRedirects(maxRedirects)
+  }
+
+  @Test
+  fun setPlayerType() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val playerType = "myString"
+    api.setPlayerType(instance, playerType)
+
+    verify(instance).setPlayerType(playerType)
+  }
+
+  @Test
+  fun setPlayerVersion() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val playerVersion = "myString"
+    api.setPlayerVersion(instance, playerVersion)
+
+    verify(instance).setPlayerVersion(playerVersion)
+  }
+
+  @Test
+  fun setPpid() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val ppid = "myString"
+    api.setPpid(instance, ppid)
+
+    verify(instance).setPpid(ppid)
+  }
+
+  @Test
+  fun setSessionId() {
+    val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
+
+    val instance = mock<ImaSdkSettings>()
+    val sessionId = "myString"
+    api.setSessionId(instance, sessionId)
+
+    verify(instance).setSessionId(sessionId)
+  }
+
 }
 */
 /**
@@ -9755,7 +12500,7 @@ import android.view.View
 class ViewGroupProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiViewGroup(pigeonRegistrar) {
 
   override fun addView(pigeon_instance: ViewGroup,view: android.view.View) {
-    return pigeon_instance.addView(view)
+    pigeon_instance.addView(view)
   }
 
 }
@@ -10043,7 +12788,7 @@ class VideoViewProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pigeo
   }
 
   override fun setVideoUri(pigeon_instance: VideoView,uri: String) {
-    return pigeon_instance.setVideoUri(uri)
+    pigeon_instance.setVideoUri(uri)
   }
 
   override fun getCurrentPosition(pigeon_instance: VideoView): Long {
@@ -10427,19 +13172,19 @@ class MediaPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pig
   }
 
   override fun seekTo(pigeon_instance: MediaPlayer,mSec: Long) {
-    return pigeon_instance.seekTo(mSec)
+    pigeon_instance.seekTo(mSec)
   }
 
   override fun start(pigeon_instance: MediaPlayer) {
-    return pigeon_instance.start()
+    pigeon_instance.start()
   }
 
   override fun pause(pigeon_instance: MediaPlayer) {
-    return pigeon_instance.pause()
+    pigeon_instance.pause()
   }
 
   override fun stop(pigeon_instance: MediaPlayer) {
-    return pigeon_instance.stop()
+    pigeon_instance.stop()
   }
 
 }
@@ -10948,43 +13693,43 @@ import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 class VideoAdPlayerCallbackProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiVideoAdPlayerCallback(pigeonRegistrar) {
 
   override fun onAdProgress(pigeon_instance: VideoAdPlayerCallback,adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo, videoProgressUpdate: com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate) {
-    return pigeon_instance.onAdProgress(adMediaInfo, videoProgressUpdate)
+    pigeon_instance.onAdProgress(adMediaInfo, videoProgressUpdate)
   }
 
   override fun onBuffering(pigeon_instance: VideoAdPlayerCallback,adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo) {
-    return pigeon_instance.onBuffering(adMediaInfo)
+    pigeon_instance.onBuffering(adMediaInfo)
   }
 
   override fun onContentComplete(pigeon_instance: VideoAdPlayerCallback) {
-    return pigeon_instance.onContentComplete()
+    pigeon_instance.onContentComplete()
   }
 
   override fun onEnded(pigeon_instance: VideoAdPlayerCallback,adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo) {
-    return pigeon_instance.onEnded(adMediaInfo)
+    pigeon_instance.onEnded(adMediaInfo)
   }
 
   override fun onError(pigeon_instance: VideoAdPlayerCallback,adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo) {
-    return pigeon_instance.onError(adMediaInfo)
+    pigeon_instance.onError(adMediaInfo)
   }
 
   override fun onLoaded(pigeon_instance: VideoAdPlayerCallback,adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo) {
-    return pigeon_instance.onLoaded(adMediaInfo)
+    pigeon_instance.onLoaded(adMediaInfo)
   }
 
   override fun onPause(pigeon_instance: VideoAdPlayerCallback,adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo) {
-    return pigeon_instance.onPause(adMediaInfo)
+    pigeon_instance.onPause(adMediaInfo)
   }
 
   override fun onPlay(pigeon_instance: VideoAdPlayerCallback,adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo) {
-    return pigeon_instance.onPlay(adMediaInfo)
+    pigeon_instance.onPlay(adMediaInfo)
   }
 
   override fun onResume(pigeon_instance: VideoAdPlayerCallback,adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo) {
-    return pigeon_instance.onResume(adMediaInfo)
+    pigeon_instance.onResume(adMediaInfo)
   }
 
   override fun onVolumeChanged(pigeon_instance: VideoAdPlayerCallback,adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo, percentage: Long) {
-    return pigeon_instance.onVolumeChanged(adMediaInfo, percentage)
+    pigeon_instance.onVolumeChanged(adMediaInfo, percentage)
   }
 
 }
@@ -11511,11 +14256,11 @@ class VideoAdPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : P
   }
 
   override fun setVolume(pigeon_instance: VideoAdPlayer,value: Long) {
-    return pigeon_instance.setVolume(value)
+    pigeon_instance.setVolume(value)
   }
 
   override fun setAdProgress(pigeon_instance: VideoAdPlayer,progress: com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate) {
-    return pigeon_instance.setAdProgress(progress)
+    pigeon_instance.setAdProgress(progress)
   }
 
 }

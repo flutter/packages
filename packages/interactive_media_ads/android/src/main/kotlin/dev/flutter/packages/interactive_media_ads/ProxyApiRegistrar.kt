@@ -130,6 +130,18 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
     return ImaSdkFactoryProxyApi(this)
   }
 
+  override fun getPigeonApiStreamDisplayContainer(): PigeonApiStreamDisplayContainer {
+    return StreamDisplayContainerProxyApi(this)
+  }
+
+  override fun getPigeonApiVideoStreamPlayer(): PigeonApiVideoStreamPlayer {
+    return VideoStreamPlayerProxyApi(this)
+  }
+
+  override fun getPigeonApiVideoStreamPlayerCallback(): PigeonApiVideoStreamPlayerCallback {
+    return VideoStreamPlayerCallbackProxyApi(this)
+  }
+
   override fun getPigeonApiImaSdkSettings(): PigeonApiImaSdkSettings {
     return ImaSdkSettingsProxyApi(this)
   }

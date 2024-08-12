@@ -50,4 +50,8 @@ class AdEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   override fun adData(pigeon_instance: AdEvent): Map<String, String>? {
     return pigeon_instance.adData
   }
+
+  override fun ad(pigeon_instance: AdEvent): com.google.ads.interactivemedia.v3.api.Ad {
+    return pigeon_instance.ad
+  }
 }

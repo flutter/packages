@@ -1034,6 +1034,9 @@ abstract class AdEvent {
 
   /// A map containing any extra ad data for the event, if needed.
   late final Map<String, String>? adData;
+
+  /// The ad with which this event is associated.
+  late final Ad ad;
 }
 
 /// Factory class for creating SDK objects.
@@ -1045,10 +1048,13 @@ abstract class AdEvent {
   ),
 )
 abstract class ImaSdkFactory {
+  /// The global ImaSdkFactory object.
   @static
   @attached
   late final ImaSdkFactory instance;
 
+  /// Creates an `AdDisplayContainer` to hold the player for video ads, a
+  /// container for non-linear ads, and slots for companion ads.
   @static
   AdDisplayContainer createAdDisplayContainer(
     ViewGroup container,
@@ -1067,6 +1073,203 @@ abstract class ImaSdkFactory {
 
   /// Creates an AdsRequest object to contain the data used to request ads.
   AdsRequest createAdsRequest();
+
+  /// Creates an AdsLoader for requesting server-side ad insertion ads using the
+  /// specified settings object.
+  AdsLoader createStreamAdsLoader(
+    ImaSdkSettings settings,
+    StreamDisplayContainer container,
+  );
+
+  /// Creates an `AdsRenderingSettings` object to give the `AdsManager`
+  /// parameters that control the rendering of ads.
+  AdsRenderingSettings createAdsRenderingSettings();
+
+  /// Creates an `AdDisplayContainer` for audio ads.
+  @static
+  AdDisplayContainer createAudioAdDisplayContainer(VideoAdPlayer player);
+
+  /// Creates a `CompanionAdSlot` for the SDK to fill with companion ads.
+  CompanionAdSlot createCompanionAdSlot();
+
+  /// Creates a `FriendlyObstruction` object to describe an obstruction
+  /// considered "friendly" for viewability measurement purposes.
+  ///
+  /// If the detailedReason is not null, it must follow the IAB standard by
+  /// being 50 characters or less and only containing characters A-z , 0-9, or
+  /// spaces.
+  FriendlyObstruction createFriendlyObstruction(
+    View view,
+    FriendlyObstructionPurpose purpose,
+    String? detailedReason,
+  );
+
+  /// Creates a `StreamRequest` object to contain the data used to request a
+  /// server-side ad insertion live stream.
+  StreamRequest createLiveStreamRequest(String assetKey, String apiKey);
+
+  /// Creates a StreamRequest object to contain the data used to request a
+  /// server-side ad insertion pod serving live stream.
+  StreamRequest createPodStreamRequest(
+    String networkCode,
+    String customAssetKey,
+    String apiKey,
+  );
+
+  /// Creates a StreamRequest object to contain the data used to request a 3rd
+  /// party stitched server-side ad insertion pod serving vod stream.
+  StreamRequest createPodVodStreamRequest(String networkCode);
+
+  /// Creates a `StreamDisplayContainer` to hold the player for server-side ad
+  /// insertion streams and slots for companion ads.
+  @static
+  StreamDisplayContainer createStreamDisplayContainer(
+    ViewGroup container,
+    VideoStreamPlayer player,
+  );
+
+  /// Creates a `StreamRequest` object to contain the data used to request a
+  /// cloud video stitcher server-side ad insertion pod live serving stream.
+  StreamRequest createVideoStitcherLiveStreamRequest(
+    String networkCode,
+    String customAssetKey,
+    String liveStreamEventId,
+    String region,
+    String projectNumber,
+    String oAuthToken,
+  );
+
+  /// Creates a `StreamRequest` object to contain the data used to request a
+  /// cloud video stitcher server-side ad insertion pod serving vod stream.
+  StreamRequest createContentSourceVideoStitcherVodStreamRequest(
+    String contentSourceUrl,
+    String networkCode,
+    String region,
+    String projectNumber,
+    String oAuthToken,
+    String adTagUrl,
+  );
+
+  /// Creates a `StreamRequest` object to contain the data used to request a
+  /// cloud video stitcher server-side ad insertion pod serving vod stream, with
+  /// a vod config flow.
+  StreamRequest createVideoStitcherVodStreamRequest(
+    String networkCode,
+    String region,
+    String projectNumber,
+    String oAuthToken,
+    String vodConfigId,
+  );
+
+  /// Creates a StreamRequest object to contain the data used to request a
+  /// server-side ad insertion video on demand stream.
+  StreamRequest createVodStreamRequest(
+    String contentSourceId,
+    String videoId,
+    String apiKey,
+  );
+}
+
+/// A display container specific to server-side ad insertion.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/StreamDisplayContainer.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.StreamDisplayContainer',
+  ),
+)
+abstract class StreamDisplayContainer extends BaseDisplayContainer {
+  /// Returns the previously set player used for server-side ad insertion, or
+  /// null if none has been set.
+  VideoStreamPlayer? getVideoStreamPlayer();
+}
+
+/// Defines a set of methods that a video player must implement to be used by
+/// the IMA SDK for dynamic ad insertion.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoStreamPlayer.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer',
+  ),
+)
+abstract class VideoStreamPlayer {
+  VideoStreamPlayer();
+
+  /// Adds a callback so that listeners can react to events from the
+  /// `VideoStreamPlayer`.
+  late final void Function(VideoStreamPlayerCallback callback) addCallback;
+
+  /// Loads a stream with dynamic ad insertion given the stream url and
+  /// subtitles array.
+  late final void Function(String url, List<Map<String, String>> subtitles)
+      loadUrl;
+
+  /// The SDK will call this method the first time each ad break ends.
+  late final void Function() onAdBreakEnded;
+
+  /// The SDK will call this method the first time each ad break begins playback.
+  late final void Function() onAdBreakStarted;
+
+  /// The SDK will call this method every time the stream switches from
+  /// advertising or slate to content.
+  late final void Function() onAdPeriodEnded;
+
+  /// The SDK will call this method every time the stream switches from content
+  /// to advertising or slate.
+  late final void Function() onAdPeriodStarted;
+
+  /// Pauses the current stream.
+  late final void Function() pause;
+
+  /// Removes a callback.
+  late final void Function(VideoStreamPlayerCallback callback) removeCallback;
+
+  /// Resumes playing the stream.
+  late final void Function() resume;
+
+  /// Seeks the stream to the given time in milliseconds.
+  late final void Function(int time) seek;
+
+  /// The volume of the player as a percentage from 0 to 100.
+  void setVolume(int value);
+
+  /// The `VideoProgressUpdate` describing playback progress of the current
+  /// video.
+  void setContentProgress(VideoProgressUpdate progress);
+}
+
+/// Defines a set of methods that a video player must implement to be used by
+/// the IMA SDK for dynamic ad insertion.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoStreamPlayer.VideoStreamPlayerCallback.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback',
+  ),
+)
+abstract class VideoStreamPlayerCallback {
+  /// Fire this callback when all content has finished playing.
+  void onContentComplete();
+
+  /// Fire this callback when the video is paused.
+  void onPause();
+
+  /// Fire this callback when the video is resumed.
+  void onResume();
+
+  /// Fire this callback when a timed metadata ID3 event corresponding to
+  /// user-defined text is received.
+  ///
+  /// For more information about user text events, see
+  /// http://id3.org/id3v2.4.0-frames.
+  void onUserTextReceived(String userText);
+
+  /// Fire this callback when the video player volume changes.
+  void onVolumeChanged(int percentage);
 }
 
 /// Defines general SDK settings that are used when creating an `AdsLoader`.
@@ -1077,7 +1280,78 @@ abstract class ImaSdkFactory {
     fullClassName: 'com.google.ads.interactivemedia.v3.api.ImaSdkSettings',
   ),
 )
-abstract class ImaSdkSettings {}
+abstract class ImaSdkSettings {
+  /// Specifies whether VMAP and ad rules ad breaks are automatically played.
+  ///
+  /// Default is true.
+  bool getAutoPlayAdBreaks();
+
+  /// Returns the feature flags and their states as set by the
+  /// `setFeatureFlags(Map)` function.
+  Map<String, String> getFeatureFlags();
+
+  /// Gets the current ISO 639-1 language code.
+  ///
+  /// Defaults to "en" for English.
+  String getLanguage();
+
+  /// Returns the maximum number of VAST redirects.
+  int getMaxRedirects();
+
+  /// Returns the partner provided player type.
+  String getPlayerType();
+
+  /// Returns the partner provided player version.
+  String getPlayerVersion();
+
+  /// Returns the PPID.
+  String getPpid();
+
+  /// Returns the session ID if set.
+  String? getSessionId();
+
+  /// Gets the debug mode.
+  ///
+  /// Default is false.
+  bool isDebugMode();
+
+  /// Sets whether to automatically play VMAP and ad rules ad breaks.
+  void setAutoPlayAdBreaks(bool autoPlayAdBreaks);
+
+  /// Enables and disables the debug mode, which is disabled by default.
+  void setDebugMode(bool debugMode);
+
+  /// Sets the feature flags and their states to control experimental features.
+  void setFeatureFlags(Map<String, String> featureFlags);
+
+  /// Sets the preferred language for the ad UI.
+  ///
+  /// The supported codes  are closely related to the two-letter ISO 639-1
+  /// language codes. See
+  /// https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/localization.
+  ///
+  /// Once the AdsLoader object has been created, using this setter will have no
+  /// effect.
+  void setLanguage(String language);
+
+  /// Specifies the maximum number of redirects before the subsequent redirects
+  /// will be denied and the ad load aborted. In this case, the ad will raise an
+  /// error with error code 302.
+  void setMaxRedirects(int maxRedirects);
+
+  /// Sets the partner provided player type.
+  void setPlayerType(String playerType);
+
+  /// Sets the partner provided player version.
+  void setPlayerVersion(String playerVersion);
+
+  /// Sets the publisher provided ID used for tracking.
+  void setPpid(String ppid);
+
+  /// Session ID is a temporary random ID. It is used exclusively for frequency
+  /// capping.
+  void setSessionId(String sessionId);
+}
 
 /// Defines an update to the video's progress.
 ///
