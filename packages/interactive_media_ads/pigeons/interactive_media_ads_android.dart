@@ -859,9 +859,23 @@ abstract class AdsManager extends BaseManager {
 
   /// Starts playing the ads.
   void start();
+
+  /// List of content time offsets in seconds at which ad breaks are scheduled.
+  ///
+  /// The list will be empty if no ad breaks are scheduled.
+  List<double> getAdCuePoints();
+
+  /// Resumes the current ad.
+  void resume();
+
+  /// Skips the current ad.
+  ///
+  /// `AdsManager.skip()` only skips ads if IMA does not render the 'Skip ad'
+  /// button.
+  void skip();
 }
 
-/// Base interface for managing ads..
+/// Base interface for managing ads.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseManager.html.
 @ProxyApi(
@@ -882,8 +896,128 @@ abstract class BaseManager {
   /// to play the ad.
   void destroy();
 
-  /// Initializes the ad experience using default rendering settings
-  void init();
+  /// Initializes the ad experience on the manager.
+  void init(AdsRenderingSettings? settings);
+
+  /// Generic focus endpoint that puts focus on the skip button if present.
+  void focus();
+
+  /// Returns the latest AdProgressInfo for the current playing ad.
+  AdProgressInfo? getAdProgressInfo();
+
+  /// Get currently playing ad.
+  Ad? getCurrentAd();
+
+  /// Removes a listener for error events.
+  void removeAdErrorListener(AdErrorListener errorListener);
+
+  /// Removes a listener for ad events.
+  void removeAdEventListener(AdEventListener adEventListener);
+}
+
+/// Defines parameters that control the rendering of ads.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsRenderingSettings.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdsRenderingSettings',
+  ),
+)
+abstract class AdsRenderingSettings {
+  /// Maximum recommended bitrate.
+  int getBitrateKbps();
+
+  /// Returns whether the click-through URL will be opened using Custom Tabs
+  /// feature.
+  bool getEnableCustomTabs();
+
+  /// Whether the SDK will instruct the player to load the creative in response
+  /// to `BaseManager.init()`.
+  bool getEnablePreloading();
+
+  /// Whether to focus on the skip button when the skippable ad can be skipped
+  /// on Android TV.
+  ///
+  /// This is a no-op on non-Android TV devices.
+  bool getFocusSkipButtonWhenAvailable();
+
+  /// The SDK will prioritize the media with MIME type on the list.
+  List<String> getMimeTypes();
+
+  /// Maximum recommended bitrate.
+  ///
+  /// The value is in kbit/s. Default value, -1, means the bitrate will be
+  /// selected by the SDK.
+  void setBitrateKbps(int bitrate);
+
+  /// Notifies the SDK whether to launch the click-through URL using Custom Tabs
+  /// feature.
+  ///
+  ///  Default is false.
+  void setEnableCustomTabs(bool enableCustomTabs);
+
+  /// If set, the SDK will instruct the player to load the creative in response
+  /// to `BaseManager.init()`.
+  ///
+  /// This allows the player to preload the ad at any point before calling
+  /// `AdsManager.start()`.
+  void setEnablePreloading(bool enablePreloading);
+
+  /// Set whether to focus on the skip button when the skippable ad can be
+  /// skipped on Android TV.
+  ///
+  /// This is a no-op on non-Android TV devices.
+  ///
+  /// Default is true.
+  void setFocusSkipButtonWhenAvailable(bool enableFocusSkipButton);
+
+  /// Specifies a non-default amount of time to wait for media to load before
+  /// timing out, in milliseconds.
+  ///
+  /// This only applies to the IMA client-side SDK.
+  ///
+  /// Default time is 8000 ms.
+  void setLoadVideoTimeout(int loadVideoTimeout);
+
+  /// If specified, the SDK will prioritize the media with MIME type on the
+  /// list.
+  void setMimeTypes(List<String> mimeTypes);
+
+  /// For VMAP and ad rules playlists, only play ad breaks scheduled after this
+  /// time (in seconds).
+  void setPlayAdsAfterTime(double time);
+
+  /// Sets the ad UI elements to be rendered by the IMA SDK.
+  void setUiElements(List<UiElement> uiElements);
+}
+
+/// Represents the progress within this ad break.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdProgressInfo.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdProgressInfo',
+  ),
+)
+abstract class AdProgressInfo {
+  /// Total ad break duration (in seconds).
+  late final double adBreakDuration;
+
+  /// Total ad period duration (in seconds).
+  late final double adPeriodDuration;
+
+  /// The position of current ad within the ad break, starting with 1.
+  late final int adPosition;
+
+  /// Current time within the ad (in seconds).
+  late final double currentTime;
+
+  /// Duration of current ad (in seconds).
+  late final double duration;
+
+  /// The total number of ads in this ad break.
+  late final int totalAds;
 }
 
 /// Event to notify publisher that an event occurred with an Ad.

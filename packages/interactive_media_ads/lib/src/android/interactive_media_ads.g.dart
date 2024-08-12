@@ -176,6 +176,10 @@ class PigeonInstanceManager {
         pigeon_instanceManager: instanceManager);
     BaseManager.pigeon_setUpMessageHandlers(
         pigeon_instanceManager: instanceManager);
+    AdsRenderingSettings.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    AdProgressInfo.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
     AdEvent.pigeon_setUpMessageHandlers(
         pigeon_instanceManager: instanceManager);
     ImaSdkFactory.pigeon_setUpMessageHandlers(
@@ -4655,6 +4659,100 @@ class AdsManager extends BaseManager {
     }
   }
 
+  /// List of content time offsets in seconds at which ad breaks are scheduled.
+  ///
+  /// The list will be empty if no ad breaks are scheduled.
+  Future<List<double?>> getAdCuePoints() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsManager;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsManager.getAdCuePoints';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as List<Object?>?)!.cast<double?>();
+    }
+  }
+
+  /// Resumes the current ad.
+  Future<void> resume() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsManager;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsManager.resume';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Skips the current ad.
+  ///
+  /// `AdsManager.skip()` only skips ads if IMA does not render the 'Skip ad'
+  /// button.
+  Future<void> skip() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsManager;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsManager.skip';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
   @override
   AdsManager pigeon_copy() {
     return AdsManager.pigeon_detached(
@@ -4664,7 +4762,7 @@ class AdsManager extends BaseManager {
   }
 }
 
-/// Base interface for managing ads..
+/// Base interface for managing ads.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseManager.html.
 class BaseManager extends PigeonProxyApiBaseClass {
@@ -4816,13 +4914,41 @@ class BaseManager extends PigeonProxyApiBaseClass {
     }
   }
 
-  /// Initializes the ad experience using default rendering settings
-  Future<void> init() async {
+  /// Initializes the ad experience on the manager.
+  Future<void> init(AdsRenderingSettings? settings) async {
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
         __pigeon_codecBaseManager;
     final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
     const String __pigeon_channelName =
         'dev.flutter.pigeon.interactive_media_ads.BaseManager.init';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[this, settings]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Generic focus endpoint that puts focus on the skip button if present.
+  Future<void> focus() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecBaseManager;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.BaseManager.focus';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -4844,11 +4970,752 @@ class BaseManager extends PigeonProxyApiBaseClass {
     }
   }
 
+  /// Returns the latest AdProgressInfo for the current playing ad.
+  Future<AdProgressInfo?> getAdProgressInfo() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecBaseManager;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.BaseManager.getAdProgressInfo';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as AdProgressInfo?);
+    }
+  }
+
+  /// Get currently playing ad.
+  Future<Ad?> getCurrentAd() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecBaseManager;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.BaseManager.getCurrentAd';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as Ad?);
+    }
+  }
+
+  /// Removes a listener for error events.
+  Future<void> removeAdErrorListener(AdErrorListener errorListener) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecBaseManager;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.BaseManager.removeAdErrorListener';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[this, errorListener]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Removes a listener for ad events.
+  Future<void> removeAdEventListener(AdEventListener adEventListener) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecBaseManager;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.BaseManager.removeAdEventListener';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[this, adEventListener]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
   @override
   BaseManager pigeon_copy() {
     return BaseManager.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+    );
+  }
+}
+
+/// Defines parameters that control the rendering of ads.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsRenderingSettings.html.
+class AdsRenderingSettings extends PigeonProxyApiBaseClass {
+  /// Constructs [AdsRenderingSettings] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  AdsRenderingSettings.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
+
+  late final _PigeonProxyApiBaseCodec __pigeon_codecAdsRenderingSettings =
+      _PigeonProxyApiBaseCodec(pigeon_instanceManager);
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    AdsRenderingSettings Function()? pigeon_newInstance,
+  }) {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.pigeon_newInstance was null, expected non-null int.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  AdsRenderingSettings.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  /// Maximum recommended bitrate.
+  Future<int> getBitrateKbps() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsRenderingSettings;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getBitrateKbps';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as int?)!;
+    }
+  }
+
+  /// Returns whether the click-through URL will be opened using Custom Tabs
+  /// feature.
+  Future<bool> getEnableCustomTabs() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsRenderingSettings;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getEnableCustomTabs';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as bool?)!;
+    }
+  }
+
+  /// Whether the SDK will instruct the player to load the creative in response
+  /// to `BaseManager.init()`.
+  Future<bool> getEnablePreloading() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsRenderingSettings;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getEnablePreloading';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as bool?)!;
+    }
+  }
+
+  /// Whether to focus on the skip button when the skippable ad can be skipped
+  /// on Android TV.
+  ///
+  /// This is a no-op on non-Android TV devices.
+  Future<bool> getFocusSkipButtonWhenAvailable() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsRenderingSettings;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getFocusSkipButtonWhenAvailable';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as bool?)!;
+    }
+  }
+
+  /// The SDK will prioritize the media with MIME type on the list.
+  Future<List<String?>> getMimeTypes() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsRenderingSettings;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getMimeTypes';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as List<Object?>?)!.cast<String?>();
+    }
+  }
+
+  /// Maximum recommended bitrate.
+  ///
+  /// The value is in kbit/s. Default value, -1, means the bitrate will be
+  /// selected by the SDK.
+  Future<void> setBitrateKbps(int bitrate) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsRenderingSettings;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setBitrateKbps';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this, bitrate]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Notifies the SDK whether to launch the click-through URL using Custom Tabs
+  /// feature.
+  ///
+  ///  Default is false.
+  Future<void> setEnableCustomTabs(bool enableCustomTabs) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsRenderingSettings;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setEnableCustomTabs';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[this, enableCustomTabs]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// If set, the SDK will instruct the player to load the creative in response
+  /// to `BaseManager.init()`.
+  ///
+  /// This allows the player to preload the ad at any point before calling
+  /// `AdsManager.start()`.
+  Future<void> setEnablePreloading(bool enablePreloading) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsRenderingSettings;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setEnablePreloading';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[this, enablePreloading]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Set whether to focus on the skip button when the skippable ad can be
+  /// skipped on Android TV.
+  ///
+  /// This is a no-op on non-Android TV devices.
+  ///
+  /// Default is true.
+  Future<void> setFocusSkipButtonWhenAvailable(
+      bool enableFocusSkipButton) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsRenderingSettings;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setFocusSkipButtonWhenAvailable';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[this, enableFocusSkipButton]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Specifies a non-default amount of time to wait for media to load before
+  /// timing out, in milliseconds.
+  ///
+  /// This only applies to the IMA client-side SDK.
+  ///
+  /// Default time is 8000 ms.
+  Future<void> setLoadVideoTimeout(int loadVideoTimeout) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsRenderingSettings;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setLoadVideoTimeout';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[this, loadVideoTimeout]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// If specified, the SDK will prioritize the media with MIME type on the
+  /// list.
+  Future<void> setMimeTypes(List<String?> mimeTypes) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsRenderingSettings;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setMimeTypes';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[this, mimeTypes]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// For VMAP and ad rules playlists, only play ad breaks scheduled after this
+  /// time (in seconds).
+  Future<void> setPlayAdsAfterTime(double time) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsRenderingSettings;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setPlayAdsAfterTime';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this, time]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Sets the ad UI elements to be rendered by the IMA SDK.
+  Future<void> setUiElements(List<UiElement?> uiElements) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecAdsRenderingSettings;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setUiElements';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[this, uiElements]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  @override
+  AdsRenderingSettings pigeon_copy() {
+    return AdsRenderingSettings.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+  }
+}
+
+/// Represents the progress within this ad break.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdProgressInfo.html.
+class AdProgressInfo extends PigeonProxyApiBaseClass {
+  /// Constructs [AdProgressInfo] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  AdProgressInfo.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.adBreakDuration,
+    required this.adPeriodDuration,
+    required this.adPosition,
+    required this.currentTime,
+    required this.duration,
+    required this.totalAds,
+  });
+
+  /// Total ad break duration (in seconds).
+  final double adBreakDuration;
+
+  /// Total ad period duration (in seconds).
+  final double adPeriodDuration;
+
+  /// The position of current ad within the ad break, starting with 1.
+  final int adPosition;
+
+  /// Current time within the ad (in seconds).
+  final double currentTime;
+
+  /// Duration of current ad (in seconds).
+  final double duration;
+
+  /// The total number of ads in this ad break.
+  final int totalAds;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    AdProgressInfo Function(
+      double adBreakDuration,
+      double adPeriodDuration,
+      int adPosition,
+      double currentTime,
+      double duration,
+      int totalAds,
+    )? pigeon_newInstance,
+  }) {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.AdProgressInfo.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.AdProgressInfo.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.AdProgressInfo.pigeon_newInstance was null, expected non-null int.');
+          final double? arg_adBreakDuration = (args[1] as double?);
+          assert(arg_adBreakDuration != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.AdProgressInfo.pigeon_newInstance was null, expected non-null double.');
+          final double? arg_adPeriodDuration = (args[2] as double?);
+          assert(arg_adPeriodDuration != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.AdProgressInfo.pigeon_newInstance was null, expected non-null double.');
+          final int? arg_adPosition = (args[3] as int?);
+          assert(arg_adPosition != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.AdProgressInfo.pigeon_newInstance was null, expected non-null int.');
+          final double? arg_currentTime = (args[4] as double?);
+          assert(arg_currentTime != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.AdProgressInfo.pigeon_newInstance was null, expected non-null double.');
+          final double? arg_duration = (args[5] as double?);
+          assert(arg_duration != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.AdProgressInfo.pigeon_newInstance was null, expected non-null double.');
+          final int? arg_totalAds = (args[6] as int?);
+          assert(arg_totalAds != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.AdProgressInfo.pigeon_newInstance was null, expected non-null int.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call(
+                      arg_adBreakDuration!,
+                      arg_adPeriodDuration!,
+                      arg_adPosition!,
+                      arg_currentTime!,
+                      arg_duration!,
+                      arg_totalAds!) ??
+                  AdProgressInfo.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    adBreakDuration: arg_adBreakDuration!,
+                    adPeriodDuration: arg_adPeriodDuration!,
+                    adPosition: arg_adPosition!,
+                    currentTime: arg_currentTime!,
+                    duration: arg_duration!,
+                    totalAds: arg_totalAds!,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  AdProgressInfo pigeon_copy() {
+    return AdProgressInfo.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      adBreakDuration: adBreakDuration,
+      adPeriodDuration: adPeriodDuration,
+      adPosition: adPosition,
+      currentTime: currentTime,
+      duration: duration,
+      totalAds: totalAds,
     );
   }
 }
