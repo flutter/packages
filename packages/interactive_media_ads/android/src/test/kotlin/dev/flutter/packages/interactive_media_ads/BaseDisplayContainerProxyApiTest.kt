@@ -6,14 +6,10 @@ package dev.flutter.packages.interactive_media_ads
 
 import android.view.ViewGroup
 import com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
-import com.google.ads.interactivemedia.v3.api.FriendlyObstruction
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+import com.google.ads.interactivemedia.v3.api.FriendlyObstruction
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import org.mockito.Mockito
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -27,7 +23,7 @@ class BaseDisplayContainerProxyApiTest {
     val value = mock<ViewGroup>()
     whenever(instance.adContainer).thenReturn(value)
 
-    assertEquals(value, api.getAdContainer(instance ))
+    assertEquals(value, api.getAdContainer(instance))
   }
 
   @Test
@@ -38,7 +34,7 @@ class BaseDisplayContainerProxyApiTest {
     val value = listOf(mock<CompanionAdSlot>())
     whenever(instance.companionSlots).thenReturn(value)
 
-    assertEquals(value, api.getCompanionSlots(instance ))
+    assertEquals(value, api.getCompanionSlots(instance))
   }
 
   @Test
@@ -68,7 +64,7 @@ class BaseDisplayContainerProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiBaseDisplayContainer()
 
     val instance = mock<BaseDisplayContainer>()
-    api.unregisterAllFriendlyObstructions(instance )
+    api.unregisterAllFriendlyObstructions(instance)
 
     verify(instance).unregisterAllFriendlyObstructions()
   }

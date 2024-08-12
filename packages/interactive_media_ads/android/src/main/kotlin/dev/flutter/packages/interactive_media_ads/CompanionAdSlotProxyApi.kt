@@ -16,10 +16,7 @@ import com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener
  */
 class CompanionAdSlotProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiCompanionAdSlot(pigeonRegistrar) {
-  override fun addClickListener(
-      pigeon_instance: CompanionAdSlot,
-      clickListener: ClickListener
-  ) {
+  override fun addClickListener(pigeon_instance: CompanionAdSlot, clickListener: ClickListener) {
     return pigeon_instance.addClickListener(clickListener)
   }
 
@@ -39,10 +36,7 @@ class CompanionAdSlotProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     return pigeon_instance.isFilled()
   }
 
-  override fun removeClickListener(
-      pigeon_instance: CompanionAdSlot,
-      clickListener: ClickListener
-  ) {
+  override fun removeClickListener(pigeon_instance: CompanionAdSlot, clickListener: ClickListener) {
     return pigeon_instance.removeClickListener(clickListener)
   }
 

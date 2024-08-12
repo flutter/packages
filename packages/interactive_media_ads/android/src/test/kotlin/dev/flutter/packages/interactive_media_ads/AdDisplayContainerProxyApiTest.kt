@@ -8,10 +8,6 @@ import com.google.ads.interactivemedia.v3.api.AdDisplayContainer
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import org.mockito.Mockito
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
@@ -24,6 +20,6 @@ class AdDisplayContainerProxyApiTest {
     val value = mock<VideoAdPlayer>()
     whenever(instance.player).thenReturn(value)
 
-    assertEquals(value, api.getPlayer(instance ))
+    assertEquals(value, api.getPlayer(instance))
   }
 }

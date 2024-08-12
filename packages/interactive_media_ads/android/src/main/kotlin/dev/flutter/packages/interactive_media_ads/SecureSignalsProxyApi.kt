@@ -12,7 +12,8 @@ import com.google.ads.interactivemedia.v3.api.signals.SecureSignals
  * <p>This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
-class SecureSignalsProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiSecureSignals(pigeonRegistrar) {
+class SecureSignalsProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
+    PigeonApiSecureSignals(pigeonRegistrar) {
 
   override fun secureSignal(pigeon_instance: SecureSignals): String {
     return pigeon_instance.secureSignal

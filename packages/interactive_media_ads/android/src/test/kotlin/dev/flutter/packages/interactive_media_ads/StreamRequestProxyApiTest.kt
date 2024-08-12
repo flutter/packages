@@ -8,10 +8,6 @@ import com.google.ads.interactivemedia.v3.api.StreamRequest
 import com.google.ads.interactivemedia.v3.api.StreamRequest.StreamFormat
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import org.mockito.Mockito
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -25,7 +21,7 @@ class StreamRequestProxyApiTest {
     val value = mapOf("myString" to "myString")
     whenever(instance.adTagParameters).thenReturn(value)
 
-    assertEquals(value, api.getAdTagParameters(instance ))
+    assertEquals(value, api.getAdTagParameters(instance))
   }
 
   @Test
@@ -36,7 +32,7 @@ class StreamRequestProxyApiTest {
     val value = "myString"
     whenever(instance.adTagUrl).thenReturn(value)
 
-    assertEquals(value, api.getAdTagUrl(instance ))
+    assertEquals(value, api.getAdTagUrl(instance))
   }
 
   @Test
@@ -47,7 +43,7 @@ class StreamRequestProxyApiTest {
     val value = "myString"
     whenever(instance.apiKey).thenReturn(value)
 
-    assertEquals(value, api.getApiKey(instance ))
+    assertEquals(value, api.getApiKey(instance))
   }
 
   @Test
@@ -58,7 +54,7 @@ class StreamRequestProxyApiTest {
     val value = "myString"
     whenever(instance.assetKey).thenReturn(value)
 
-    assertEquals(value, api.getAssetKey(instance ))
+    assertEquals(value, api.getAssetKey(instance))
   }
 
   @Test
@@ -69,7 +65,7 @@ class StreamRequestProxyApiTest {
     val value = "myString"
     whenever(instance.authToken).thenReturn(value)
 
-    assertEquals(value, api.getAuthToken(instance ))
+    assertEquals(value, api.getAuthToken(instance))
   }
 
   @Test
@@ -80,7 +76,7 @@ class StreamRequestProxyApiTest {
     val value = "myString"
     whenever(instance.contentSourceId).thenReturn(value)
 
-    assertEquals(value, api.getContentSourceId(instance ))
+    assertEquals(value, api.getContentSourceId(instance))
   }
 
   @Test
@@ -91,7 +87,7 @@ class StreamRequestProxyApiTest {
     val value = "myString"
     whenever(instance.contentSourceUrl).thenReturn(value)
 
-    assertEquals(value, api.getContentSourceUrl(instance ))
+    assertEquals(value, api.getContentSourceUrl(instance))
   }
 
   @Test
@@ -102,7 +98,7 @@ class StreamRequestProxyApiTest {
     val value = "myString"
     whenever(instance.customAssetKey).thenReturn(value)
 
-    assertEquals(value, api.getCustomAssetKey(instance ))
+    assertEquals(value, api.getCustomAssetKey(instance))
   }
 
   @Test
@@ -124,7 +120,7 @@ class StreamRequestProxyApiTest {
     val value = "myString"
     whenever(instance.manifestSuffix).thenReturn(value)
 
-    assertEquals(value, api.getManifestSuffix(instance ))
+    assertEquals(value, api.getManifestSuffix(instance))
   }
 
   @Test
@@ -135,7 +131,7 @@ class StreamRequestProxyApiTest {
     val value = "myString"
     whenever(instance.networkCode).thenReturn(value)
 
-    assertEquals(value, api.getNetworkCode(instance ))
+    assertEquals(value, api.getNetworkCode(instance))
   }
 
   @Test
@@ -146,7 +142,7 @@ class StreamRequestProxyApiTest {
     val value = "myString"
     whenever(instance.videoId).thenReturn(value)
 
-    assertEquals(value, api.getVideoId(instance ))
+    assertEquals(value, api.getVideoId(instance))
   }
 
   @Test
@@ -157,7 +153,7 @@ class StreamRequestProxyApiTest {
     val value = mapOf("myString" to -1)
     whenever(instance.videoStitcherSessionOptions).thenReturn(value)
 
-    assertEquals(value, api.getVideoStitcherSessionOptions(instance ))
+    assertEquals(value, api.getVideoStitcherSessionOptions(instance))
   }
 
   @Test
@@ -168,7 +164,7 @@ class StreamRequestProxyApiTest {
     val value = "myString"
     whenever(instance.vodConfigId).thenReturn(value)
 
-    assertEquals(value, api.getVodConfigId(instance ))
+    assertEquals(value, api.getVodConfigId(instance))
   }
 
   @Test

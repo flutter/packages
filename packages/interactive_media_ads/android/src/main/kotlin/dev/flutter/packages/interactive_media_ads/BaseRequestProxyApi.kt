@@ -13,7 +13,8 @@ import com.google.ads.interactivemedia.v3.api.signals.SecureSignals
  * <p>This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
-class BaseRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiBaseRequest(pigeonRegistrar) {
+class BaseRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
+    PigeonApiBaseRequest(pigeonRegistrar) {
 
   override fun getContentUrl(pigeon_instance: BaseRequest): String {
     return pigeon_instance.contentUrl
@@ -27,15 +28,18 @@ class BaseRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pig
     return pigeon_instance.userRequestContext
   }
 
-  override fun setContentUrl(pigeon_instance: BaseRequest,url: String) {
+  override fun setContentUrl(pigeon_instance: BaseRequest, url: String) {
     return pigeon_instance.setContentUrl(url)
   }
 
-  override fun setSecureSignals(pigeon_instance: BaseRequest,signal: com.google.ads.interactivemedia.v3.api.signals.SecureSignals?) {
+  override fun setSecureSignals(
+      pigeon_instance: BaseRequest,
+      signal: com.google.ads.interactivemedia.v3.api.signals.SecureSignals?
+  ) {
     return pigeon_instance.setSecureSignals(signal)
   }
 
-  override fun setUserRequestContext(pigeon_instance: BaseRequest,userRequestContext: Any) {
+  override fun setUserRequestContext(pigeon_instance: BaseRequest, userRequestContext: Any) {
     return pigeon_instance.setUserRequestContext(userRequestContext)
   }
 }

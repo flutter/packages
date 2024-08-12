@@ -4,11 +4,8 @@
 
 package dev.flutter.packages.interactive_media_ads
 
-import com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -20,7 +17,8 @@ class CompanionAdSlotClickListenerProxyApiTest {
   fun pigeon_defaultConstructor() {
     val api = TestProxyApiRegistrar().getPigeonApiCompanionAdSlotClickListener()
 
-    assertTrue(api.pigeon_defaultConstructor() is CompanionAdSlotClickListenerProxyApi.ClickListenerImpl)
+    assertTrue(
+        api.pigeon_defaultConstructor() is CompanionAdSlotClickListenerProxyApi.ClickListenerImpl)
   }
 
   @Test

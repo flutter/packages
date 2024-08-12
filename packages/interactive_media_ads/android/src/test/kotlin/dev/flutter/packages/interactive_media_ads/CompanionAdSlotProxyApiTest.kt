@@ -4,15 +4,11 @@
 
 package dev.flutter.packages.interactive_media_ads
 
+import android.view.ViewGroup
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener
-import android.view.ViewGroup
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import org.mockito.Mockito
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -37,7 +33,7 @@ class CompanionAdSlotProxyApiTest {
     val value = mock<ViewGroup>()
     whenever(instance.container).thenReturn(value)
 
-    assertEquals(value, api.getContainer(instance ))
+    assertEquals(value, api.getContainer(instance))
   }
 
   @Test
@@ -58,7 +54,7 @@ class CompanionAdSlotProxyApiTest {
     val value = 0
     whenever(instance.width).thenReturn(value)
 
-    assertEquals(value.toLong(), api.getWidth(instance ))
+    assertEquals(value.toLong(), api.getWidth(instance))
   }
 
   @Test
@@ -69,7 +65,7 @@ class CompanionAdSlotProxyApiTest {
     val value = true
     whenever(instance.isFilled).thenReturn(value)
 
-    assertEquals(value, api.isFilled(instance ))
+    assertEquals(value, api.isFilled(instance))
   }
 
   @Test

@@ -12,7 +12,8 @@ import com.google.ads.interactivemedia.v3.api.StreamRequest
  * <p>This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
-class StreamRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiStreamRequest(pigeonRegistrar) {
+class StreamRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
+    PigeonApiStreamRequest(pigeonRegistrar) {
 
   override fun getAdTagParameters(pigeon_instance: StreamRequest): Map<String, String>? {
     return pigeon_instance.adTagParameters
@@ -47,7 +48,7 @@ class StreamRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : P
   }
 
   override fun getFormat(pigeon_instance: StreamRequest): StreamFormat {
-    return when(pigeon_instance.format) {
+    return when (pigeon_instance.format) {
       StreamRequest.StreamFormat.DASH -> StreamFormat.DASH
       StreamRequest.StreamFormat.HLS -> StreamFormat.HLS
       else -> StreamFormat.UNKNOWN
@@ -74,32 +75,41 @@ class StreamRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : P
     return pigeon_instance.vodConfigId
   }
 
-  override fun setAdTagParameters(pigeon_instance: StreamRequest,adTagParameters: Map<String, String>) {
+  override fun setAdTagParameters(
+      pigeon_instance: StreamRequest,
+      adTagParameters: Map<String, String>
+  ) {
     return pigeon_instance.setAdTagParameters(adTagParameters)
   }
 
-  override fun setAuthToken(pigeon_instance: StreamRequest,authToken: String) {
+  override fun setAuthToken(pigeon_instance: StreamRequest, authToken: String) {
     return pigeon_instance.setAuthToken(authToken)
   }
 
-  override fun setFormat(pigeon_instance: StreamRequest,format: StreamFormat) {
-    return pigeon_instance.setFormat(when(format) {
-      StreamFormat.DASH -> StreamRequest.StreamFormat.DASH
-      StreamFormat.HLS -> StreamRequest.StreamFormat.HLS
-      StreamFormat.UNKNOWN -> throw UnsupportedOperationException()
-    })
+  override fun setFormat(pigeon_instance: StreamRequest, format: StreamFormat) {
+    return pigeon_instance.setFormat(
+        when (format) {
+          StreamFormat.DASH -> StreamRequest.StreamFormat.DASH
+          StreamFormat.HLS -> StreamRequest.StreamFormat.HLS
+          StreamFormat.UNKNOWN -> throw UnsupportedOperationException()
+        })
   }
 
-  override fun setManifestSuffix(pigeon_instance: StreamRequest,manifestSuffix: String) {
+  override fun setManifestSuffix(pigeon_instance: StreamRequest, manifestSuffix: String) {
     return pigeon_instance.setManifestSuffix(manifestSuffix)
   }
 
-  override fun setStreamActivityMonitorId(pigeon_instance: StreamRequest,streamActivityMonitorId: String) {
+  override fun setStreamActivityMonitorId(
+      pigeon_instance: StreamRequest,
+      streamActivityMonitorId: String
+  ) {
     return pigeon_instance.setStreamActivityMonitorId(streamActivityMonitorId)
   }
 
-  override fun setVideoStitcherSessionOptions(pigeon_instance: StreamRequest,videoStitcherSessionOptions: Map<String, Any>) {
+  override fun setVideoStitcherSessionOptions(
+      pigeon_instance: StreamRequest,
+      videoStitcherSessionOptions: Map<String, Any>
+  ) {
     return pigeon_instance.setVideoStitcherSessionOptions(videoStitcherSessionOptions)
   }
-
 }

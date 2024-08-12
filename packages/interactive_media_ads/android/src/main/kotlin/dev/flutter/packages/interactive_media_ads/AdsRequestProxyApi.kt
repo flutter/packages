@@ -47,39 +47,39 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     return pigeon_instance.contentProgressProvider
   }
 
-  override fun setAdWillAutoPlay(pigeon_instance: AdsRequest,willAutoPlay: Boolean) {
+  override fun setAdWillAutoPlay(pigeon_instance: AdsRequest, willAutoPlay: Boolean) {
     return pigeon_instance.setAdWillAutoPlay(willAutoPlay)
   }
 
-  override fun setAdWillPlayMuted(pigeon_instance: AdsRequest,willPlayMuted: Boolean) {
+  override fun setAdWillPlayMuted(pigeon_instance: AdsRequest, willPlayMuted: Boolean) {
     return pigeon_instance.setAdWillPlayMuted(willPlayMuted)
   }
 
-  override fun setAdsResponse(pigeon_instance: AdsRequest,cannedAdResponse: String) {
+  override fun setAdsResponse(pigeon_instance: AdsRequest, cannedAdResponse: String) {
     return pigeon_instance.setAdsResponse(cannedAdResponse)
   }
 
-  override fun setContentDuration(pigeon_instance: AdsRequest,duration: Double) {
+  override fun setContentDuration(pigeon_instance: AdsRequest, duration: Double) {
     return pigeon_instance.setContentDuration(duration.toFloat())
   }
 
-  override fun setContentKeywords(pigeon_instance: AdsRequest,keywords: List<String>) {
+  override fun setContentKeywords(pigeon_instance: AdsRequest, keywords: List<String>) {
     return pigeon_instance.setContentKeywords(keywords)
   }
 
-  override fun setContentTitle(pigeon_instance: AdsRequest,title: String) {
+  override fun setContentTitle(pigeon_instance: AdsRequest, title: String) {
     return pigeon_instance.setContentTitle(title)
   }
 
-  override fun setContinuousPlayback(pigeon_instance: AdsRequest,continuousPlayback: Boolean) {
+  override fun setContinuousPlayback(pigeon_instance: AdsRequest, continuousPlayback: Boolean) {
     return pigeon_instance.setContinuousPlayback(continuousPlayback)
   }
 
-  override fun setLiveStreamPrefetchSeconds(pigeon_instance: AdsRequest,prefetchTime: Double) {
+  override fun setLiveStreamPrefetchSeconds(pigeon_instance: AdsRequest, prefetchTime: Double) {
     return pigeon_instance.setLiveStreamPrefetchSeconds(prefetchTime.toFloat())
   }
 
-  override fun setVastLoadTimeout(pigeon_instance: AdsRequest,timeout: Double) {
+  override fun setVastLoadTimeout(pigeon_instance: AdsRequest, timeout: Double) {
     return pigeon_instance.setVastLoadTimeout(timeout.toFloat())
   }
 }

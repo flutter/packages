@@ -21,9 +21,7 @@ class BaseDisplayContainerProxyApi(override val pigeonRegistrar: ProxyApiRegistr
     return pigeon_instance.getAdContainer()
   }
 
-  override fun getCompanionSlots(
-      pigeon_instance: BaseDisplayContainer
-  ): List<CompanionAdSlot> {
+  override fun getCompanionSlots(pigeon_instance: BaseDisplayContainer): List<CompanionAdSlot> {
     return pigeon_instance.getCompanionSlots().toList()
   }
 

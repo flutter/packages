@@ -7,10 +7,10 @@ package dev.flutter.packages.interactive_media_ads
 import com.google.ads.interactivemedia.v3.api.AdsRequest
 import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import kotlin.test.assertEquals
 
 class AdsRequestProxyApiTest {
   @Test
@@ -43,7 +43,7 @@ class AdsRequestProxyApiTest {
     val value = "myString"
     whenever(instance.getAdTagUrl()).thenReturn(value)
 
-    assertEquals(value, api.getAdTagUrl(instance ))
+    assertEquals(value, api.getAdTagUrl(instance))
   }
 
   @Test
@@ -54,7 +54,7 @@ class AdsRequestProxyApiTest {
     val value = mock<ContentProgressProvider>()
     whenever(instance.getContentProgressProvider()).thenReturn(value)
 
-    assertEquals(value, api.getContentProgressProvider(instance ))
+    assertEquals(value, api.getContentProgressProvider(instance))
   }
 
   @Test

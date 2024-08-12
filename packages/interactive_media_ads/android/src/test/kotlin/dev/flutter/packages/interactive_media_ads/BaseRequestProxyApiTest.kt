@@ -8,10 +8,6 @@ import com.google.ads.interactivemedia.v3.api.BaseRequest
 import com.google.ads.interactivemedia.v3.api.signals.SecureSignals
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import org.mockito.Mockito
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -25,7 +21,7 @@ class BaseRequestProxyApiTest {
     val value = "myString"
     whenever(instance.contentUrl).thenReturn(value)
 
-    assertEquals(value, api.getContentUrl(instance ))
+    assertEquals(value, api.getContentUrl(instance))
   }
 
   @Test
@@ -36,7 +32,7 @@ class BaseRequestProxyApiTest {
     val value = mock<SecureSignals>()
     whenever(instance.secureSignals).thenReturn(value)
 
-    assertEquals(value, api.getSecureSignals(instance ))
+    assertEquals(value, api.getSecureSignals(instance))
   }
 
   @Test
@@ -47,7 +43,7 @@ class BaseRequestProxyApiTest {
     val value = -1
     whenever(instance.userRequestContext).thenReturn(value)
 
-    assertEquals(value, api.getUserRequestContext(instance ))
+    assertEquals(value, api.getUserRequestContext(instance))
   }
 
   @Test
@@ -82,5 +78,4 @@ class BaseRequestProxyApiTest {
 
     verify(instance).userRequestContext = userRequestContext
   }
-
 }

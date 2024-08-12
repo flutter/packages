@@ -15,7 +15,7 @@ import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
  */
 class AdDisplayContainerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdDisplayContainer(pigeonRegistrar) {
-    override fun getPlayer(pigeon_instance: AdDisplayContainer): VideoAdPlayer {
-        return pigeon_instance.player
-    }
+  override fun getPlayer(pigeon_instance: AdDisplayContainer): VideoAdPlayer {
+    return pigeon_instance.player
+  }
 }

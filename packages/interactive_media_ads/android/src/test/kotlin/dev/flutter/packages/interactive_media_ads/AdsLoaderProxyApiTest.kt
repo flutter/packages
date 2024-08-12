@@ -10,10 +10,10 @@ import com.google.ads.interactivemedia.v3.api.AdsRequest
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings
 import com.google.ads.interactivemedia.v3.api.StreamRequest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import kotlin.test.assertEquals
 
 class AdsLoaderProxyApiTest {
   @Test
@@ -57,7 +57,7 @@ class AdsLoaderProxyApiTest {
     val value = mock<ImaSdkSettings>()
     whenever(instance.getSettings()).thenReturn(value)
 
-    assertEquals(value, api.getSettings(instance ))
+    assertEquals(value, api.getSettings(instance))
   }
 
   @Test
@@ -65,7 +65,7 @@ class AdsLoaderProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiAdsLoader()
 
     val instance = mock<AdsLoader>()
-    api.release(instance )
+    api.release(instance)
 
     verify(instance).release()
   }
