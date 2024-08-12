@@ -7,6 +7,8 @@ package dev.flutter.packages.interactive_media_ads
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdsLoader
 import com.google.ads.interactivemedia.v3.api.AdsRequest
+import com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+import com.google.ads.interactivemedia.v3.api.StreamRequest
 
 /**
  * ProxyApi implementation for [AdsLoader].
@@ -32,5 +34,25 @@ class AdsLoaderProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
 
   override fun requestAds(pigeon_instance: AdsLoader, request: AdsRequest) {
     pigeon_instance.requestAds(request)
+  }
+
+  override fun getSettings(pigeon_instance: AdsLoader): ImaSdkSettings {
+    return pigeon_instance.settings
+  }
+
+  override fun release(pigeon_instance: AdsLoader) {
+    return pigeon_instance.release()
+  }
+
+  override fun removeAdErrorListener(pigeon_instance: AdsLoader,errorListener: AdErrorEvent.AdErrorListener) {
+    return pigeon_instance.removeAdErrorListener(errorListener)
+  }
+
+  override fun removeAdsLoadedListener(pigeon_instance: AdsLoader,loadedListener: AdsLoader.AdsLoadedListener) {
+    return pigeon_instance.removeAdsLoadedListener(loadedListener)
+  }
+
+  override fun requestStream(pigeon_instance: AdsLoader,streamRequest: StreamRequest): String {
+    return pigeon_instance.requestStream(streamRequest)
   }
 }

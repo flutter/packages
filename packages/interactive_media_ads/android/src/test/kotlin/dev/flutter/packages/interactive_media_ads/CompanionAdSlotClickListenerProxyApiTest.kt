@@ -31,7 +31,6 @@ class CompanionAdSlotClickListenerProxyApiTest {
     val instance = CompanionAdSlotClickListenerProxyApi.ClickListenerImpl(mockApi)
     instance.onCompanionAdClick()
 
-    verify(mockApi).onCompanionAdClick(eq(instance) , any())
+    verify(mockApi).onCompanionAdClick(eq(instance), any())
   }
-
 }

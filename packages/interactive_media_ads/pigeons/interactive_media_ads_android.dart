@@ -235,6 +235,15 @@ enum FriendlyObstructionPurpose {
   unknown,
 }
 
+/// Enum of possible stream formats.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/StreamRequest.StreamFormat.html.
+enum StreamFormat {
+  dash,
+  hls,
+  unknown,
+}
+
 /// An object that holds data corresponding to the main Ad.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/Ad.html.
@@ -533,6 +542,77 @@ abstract class AdsLoader {
 
   /// Requests ads from a server.
   void requestAds(AdsRequest request);
+
+  /// Returns the IMA SDK settings instance.
+  ///
+  /// To change the settings, just call the methods on the instance. The changes
+  /// will apply for all ad requests made with this ads loader.
+  ImaSdkSettings getSettings();
+
+  /// Frees resources from the BaseDisplayContainer as well as the underlying
+  /// WebView.
+  ///
+  /// This should occur after disposing of the `BaseManager` using
+  /// `BaseManager.destroy()` and after the manager has finished its own
+  /// cleanup, as indicated by `AdEventType.ALL_ADS_COMPLETED`
+  void release();
+
+  /// Removes a listener for error events.
+  void removeAdErrorListener(AdErrorListener errorListener);
+
+  /// Removes a listener for the ads manager loaded event.
+  void removeAdsLoadedListener(AdsLoadedListener loadedListener);
+
+  /// Initiates a stream session with server-side ad insertion.
+  String requestStream(StreamRequest streamRequest);
+}
+
+/// Base interface for requesting ads.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseRequest.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.BaseRequest',
+  ),
+)
+abstract class BaseRequest {
+  /// Returns the deep link to the content's screen provided in
+  /// `setContentUrl()`.
+  String getContentUrl();
+
+  /// Returns the Secure Signals with custom data.
+  SecureSignals? getSecureSignals();
+
+  /// Returns the user-provided object that is associated with the request.
+  Object getUserRequestContext();
+
+  /// Specifies the deep link to the content's screen.
+  void setContentUrl(String url);
+
+  /// Specifies the Secure Signals with custom data for this request.
+  void setSecureSignals(SecureSignals? signal);
+
+  /// Sets the user-provided object that is associated with the request.
+  void setUserRequestContext(Object userRequestContext);
+}
+
+/// Base interface for requesting ads.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseRequest.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.signals.SecureSignals',
+  ),
+)
+abstract class SecureSignals {
+  /// Creates a new SecureSignals object that will contain all the necessary
+  /// information for a secure signal.
+  @static
+  SecureSignals create(String customData);
+
+  /// Secure Signal.
+  late final String secureSignal;
 }
 
 /// An event raised when ads are successfully loaded from the ad server through an AdsLoader.
@@ -593,13 +673,161 @@ abstract class AdError {
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdsRequest',
   ),
 )
-abstract class AdsRequest {
+abstract class AdsRequest extends BaseRequest {
   /// Sets the URL from which ads will be requested.
   void setAdTagUrl(String adTagUrl);
 
   /// Attaches a ContentProgressProvider instance to allow scheduling ad breaks
   /// based on content progress (cue points).
   void setContentProgressProvider(ContentProgressProvider provider);
+
+  /// Returns the URL from which ads will be requested.
+  String getAdTagUrl();
+
+  /// Returns the progress provider that will be used to schedule ad breaks.
+  ContentProgressProvider getContentProgressProvider();
+
+  /// Notifies the SDK whether the player intends to start the content and ad in
+  /// response to a user action or whether it will be automatically played.
+  ///
+  /// Not calling this function leaves the setting as unknown.
+  void setAdWillAutoPlay(bool willAutoPlay);
+
+  /// Notifies the SDK whether the player intends to start the content and ad
+  /// while muted.
+  void setAdWillPlayMuted(bool willPlayMuted);
+
+  /// Specifies a VAST, VMAP, or ad rules response to be used instead of making
+  /// a request through an ad tag URL.
+  void setAdsResponse(String cannedAdResponse);
+
+  /// Specifies the duration of the content in seconds to be shown
+  void setContentDuration(double duration);
+
+  /// Specifies the keywords used to describe the content to be shown.
+  void setContentKeywords(List<String> keywords);
+
+  /// Specifies the title of the content to be shown.
+  void setContentTitle(String title);
+
+  /// Notifies the SDK whether the player intends to continuously play the
+  /// content videos one after another similar to TV broadcast.
+  ///
+  /// Not calling this function leaves the setting as unknown.
+  void setContinuousPlayback(bool continuousPlayback);
+
+  /// Specifies the maximum amount of time to wait in seconds, after calling
+  /// requestAds, before requesting the ad tag URL.
+  void setLiveStreamPrefetchSeconds(double prefetchTime);
+
+  /// Specifies the VAST load timeout in milliseconds for a single wrapper.
+  ///
+  /// This parameter is optional and will override the default timeout,
+  /// currently set to 5000ms.
+  void setVastLoadTimeout(double timeout);
+}
+
+/// An object containing the data used to request a stream with server-side ad
+/// insertion.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/StreamRequest.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.StreamRequest',
+  ),
+)
+abstract class StreamRequest extends BaseRequest {
+  /// Returns any parameters that the SDK will attempt to add to ad tags based
+  /// on a call to setAdTagParameters().
+  Map<String, String>? getAdTagParameters();
+
+  /// Returns the ad tag associated with this stream request.
+  ///
+  /// Returns null for all stream requests other than cloud based video on
+  /// demand request.
+  String? getAdTagUrl();
+
+  /// Returns the API key for the ad server.
+  String getApiKey();
+
+  /// Returns the asset key for server-side ad insertion streams.
+  ///
+  /// Returns null for video on demand streams and pod streams.
+  String? getAssetKey();
+
+  /// Returns the stream request authorization token.
+  String getAuthToken();
+
+  /// Returns the content source ID for video on demand server-side ad insertion
+  /// streams.
+  ///
+  /// Returns null for live streams and pod streams.
+  String? getContentSourceId();
+
+  /// Returns the source of the content for this stream request.
+  ///
+  /// Returns null for all stream requests other than cloud based video on
+  /// demand request
+  String? getContentSourceUrl();
+
+  /// Returns the custom asset key for a pod serving request.
+  ///
+  /// Returns null for live and video on demand streams.
+  String? getCustomAssetKey();
+
+  /// Returns the format of the stream request.
+  StreamFormat getFormat();
+
+  /// Returns the suffix that the SDK will append to the query of the stream
+  /// manifest URL.
+  String getManifestSuffix();
+
+  /// Returns the network code for a pod serving request.
+  ///
+  /// Returns null for live and video on demand streams.
+  String? getNetworkCode();
+
+  /// Returns the video ID for video on demand server-side ad insertion streams.
+  ///
+  /// Returns null for live and pod streams.
+  String? getVideoId();
+
+  /// Returns the associated Video Stitcher-specific session options for a Video
+  /// Stitcher stream request.
+  ///
+  /// This method will return null unless `setVideoStitcherSessionOptions` was
+  /// called with some value(s).
+  Map<String, Object>? getVideoStitcherSessionOptions();
+
+  /// The vodConfig ID for the VOD stream, as set up on the Video Stitcher.
+  String? getVodConfigId();
+
+  /// Sets the overridable ad tag parameters on the stream request.
+  ///
+  /// See https://support.google.com/admanager/answer/7320899.
+  void setAdTagParameters(Map<String, String> adTagParameters);
+
+  /// Sets the stream request authorization token.
+  void setAuthToken(String authToken);
+
+  /// Sets the format of the stream request.
+  void setFormat(StreamFormat format);
+
+  /// Sets the stream manifest's suffix, which will be appended to the stream
+  /// manifest's URL.
+  ///
+  /// This setting is optional.
+  void setManifestSuffix(String manifestSuffix);
+
+  /// Sets the ID to be used to debug the stream with the stream activity
+  /// monitor.
+  void setStreamActivityMonitorId(String streamActivityMonitorId);
+
+  /// Sets Video Stitcher-specific session options for a Video Stitcher stream
+  /// request.
+  void setVideoStitcherSessionOptions(
+    Map<String, Object> videoStitcherSessionOptions,
+  );
 }
 
 /// Defines an interface to allow SDK to track progress of the content video.

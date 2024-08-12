@@ -62,6 +62,14 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
     return AdsLoaderProxyApi(this)
   }
 
+  override fun getPigeonApiBaseRequest(): PigeonApiBaseRequest {
+    return BaseRequestProxyApi(this)
+  }
+
+  override fun getPigeonApiSecureSignals(): PigeonApiSecureSignals {
+    return SecureSignalsProxyApi(this)
+  }
+
   override fun getPigeonApiAdsManagerLoadedEvent(): PigeonApiAdsManagerLoadedEvent {
     return AdsManagerLoadedEventProxyApi(this)
   }
@@ -84,6 +92,10 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
 
   override fun getPigeonApiAdsRequest(): PigeonApiAdsRequest {
     return AdsRequestProxyApi(this)
+  }
+
+  override fun getPigeonApiStreamRequest(): PigeonApiStreamRequest {
+    return StreamRequestProxyApi(this)
   }
 
   override fun getPigeonApiContentProgressProvider(): PigeonApiContentProgressProvider {
