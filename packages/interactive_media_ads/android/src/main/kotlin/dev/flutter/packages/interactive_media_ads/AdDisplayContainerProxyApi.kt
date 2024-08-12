@@ -4,6 +4,9 @@
 
 package dev.flutter.packages.interactive_media_ads
 
+import com.google.ads.interactivemedia.v3.api.AdDisplayContainer
+import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
+
 /**
  * ProxyApi implementation for [com.google.ads.interactivemedia.v3.api.AdDisplayContainer].
  *
@@ -11,4 +14,8 @@ package dev.flutter.packages.interactive_media_ads
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class AdDisplayContainerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
-    PigeonApiAdDisplayContainer(pigeonRegistrar)
+    PigeonApiAdDisplayContainer(pigeonRegistrar) {
+    override fun getPlayer(pigeon_instance: AdDisplayContainer): VideoAdPlayer {
+        return pigeon_instance.player
+    }
+}

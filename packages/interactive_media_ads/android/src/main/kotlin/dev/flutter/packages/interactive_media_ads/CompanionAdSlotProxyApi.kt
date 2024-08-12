@@ -18,12 +18,12 @@ class CompanionAdSlotProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiCompanionAdSlot(pigeonRegistrar) {
   override fun addClickListener(
       pigeon_instance: CompanionAdSlot,
-      clickListener: com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener
+      clickListener: ClickListener
   ) {
     return pigeon_instance.addClickListener(clickListener)
   }
 
-  override fun getContainer(pigeon_instance: CompanionAdSlot): android.view.ViewGroup {
+  override fun getContainer(pigeon_instance: CompanionAdSlot): ViewGroup {
     return pigeon_instance.getContainer()
   }
 
@@ -41,12 +41,12 @@ class CompanionAdSlotProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
 
   override fun removeClickListener(
       pigeon_instance: CompanionAdSlot,
-      clickListener: com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener
+      clickListener: ClickListener
   ) {
     return pigeon_instance.removeClickListener(clickListener)
   }
 
-  override fun setContainer(pigeon_instance: CompanionAdSlot, container: android.view.ViewGroup) {
+  override fun setContainer(pigeon_instance: CompanionAdSlot, container: ViewGroup) {
     return pigeon_instance.setContainer(container)
   }
 

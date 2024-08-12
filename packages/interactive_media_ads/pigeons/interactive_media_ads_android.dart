@@ -510,7 +510,10 @@ abstract class FriendlyObstruction {
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdDisplayContainer',
   ),
 )
-abstract class AdDisplayContainer extends BaseDisplayContainer {}
+abstract class AdDisplayContainer extends BaseDisplayContainer {
+  /// The previously set player, or null if none has been set.
+  VideoAdPlayer getPlayer();
+}
 
 /// An object which allows publishers to request ads from ad servers or a
 /// dynamic ad insertion stream.
