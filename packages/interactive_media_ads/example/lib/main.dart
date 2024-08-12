@@ -92,7 +92,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
 
         manager.setAdsManagerDelegate(AdsManagerDelegate(
           onAdEvent: (AdEvent event) {
-            debugPrint('OnAdEvent: ${event.type}');
+            debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
             switch (event.type) {
               case AdEventType.loaded:
                 manager.start();
@@ -105,6 +105,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
                 _adsManager = null;
               case AdEventType.clicked:
               case AdEventType.complete:
+              case _:
             }
           },
           onAdErrorEvent: (AdErrorEvent event) {
