@@ -171,10 +171,7 @@ class MarkersController {
     }
   }
 
-  private void addMarker(Messages.PlatformMarker marker) {
-    if (marker == null) {
-      return;
-    }
+  private void addMarker(@NonNull Messages.PlatformMarker marker) {
     String markerId = marker.getMarkerId();
     String clusterManagerId = marker.getClusterManagerId();
     MarkerBuilder markerBuilder = new MarkerBuilder(markerId, clusterManagerId);
