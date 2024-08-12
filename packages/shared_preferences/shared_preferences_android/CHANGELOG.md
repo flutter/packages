@@ -1,3 +1,7 @@
+## 2.3.1
+
+* Fixes `getStringList` returning immutable list.
+
 ## 2.3.0
 
 * Adds new `SharedPreferencesAsyncAndroid` API.
