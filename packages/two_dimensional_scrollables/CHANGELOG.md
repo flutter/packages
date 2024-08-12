@@ -1,3 +1,7 @@
+## 0.3.2
+
+* Fix problem of cannot collapse TreeView in web.
+
 ## 0.3.1
 
 * Adds generics to the callbacks and builders of TreeView.
