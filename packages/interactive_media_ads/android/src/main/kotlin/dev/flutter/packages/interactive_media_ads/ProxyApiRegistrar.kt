@@ -42,6 +42,18 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
     return BaseDisplayContainerProxyApi(this)
   }
 
+  override fun getPigeonApiCompanionAdSlot(): PigeonApiCompanionAdSlot {
+    return CompanionAdSlotProxyApi(this)
+  }
+
+  override fun getPigeonApiCompanionAdSlotClickListener(): PigeonApiCompanionAdSlotClickListener {
+    return CompanionAdSlotClickListenerProxyApi(this)
+  }
+
+  override fun getPigeonApiFriendlyObstruction(): PigeonApiFriendlyObstruction {
+    return FriendlyObstructionProxyApi(this)
+  }
+
   override fun getPigeonApiAdDisplayContainer(): PigeonApiAdDisplayContainer {
     return AdDisplayContainerProxyApi(this)
   }

@@ -224,6 +224,17 @@ enum UiElement {
   unknown,
 }
 
+/// A list of purposes for which an obstruction would be registered as friendly.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/FriendlyObstructionPurpose.html.
+enum FriendlyObstructionPurpose {
+  closeAd,
+  notVisible,
+  other,
+  videoControls,
+  unknown,
+}
+
 /// An object that holds data corresponding to the main Ad.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/Ad.html.
@@ -395,7 +406,101 @@ abstract class UniversalAdId {
         'com.google.ads.interactivemedia.v3.api.BaseDisplayContainer',
   ),
 )
-abstract class BaseDisplayContainer {}
+abstract class BaseDisplayContainer {
+  /// Returns the previously set container, or null if none has been set.
+  ViewGroup? getAdContainer();
+
+  /// Gets the companion slots that have been set.
+  ///
+  /// Returns an empty list if none have been set.
+  List<CompanionAdSlot> getCompanionSlots();
+
+  /// Registers a view that overlays or obstructs this container as "friendly"
+  /// for viewability measurement purposes.
+  void registerFriendlyObstruction(FriendlyObstruction friendlyObstruction);
+
+  /// Sets slots for displaying companions.
+  ///
+  /// Passing null will reset the container to having no companion slots.
+  void setCompanionSlots(List<CompanionAdSlot>? companionSlots);
+
+  /// Unregisters all previously registered friendly obstructions.
+  void unregisterAllFriendlyObstructions();
+}
+
+/// A companion ad slot for which the SDK should retrieve ads.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAdSlot.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.CompanionAdSlot',
+  ),
+)
+abstract class CompanionAdSlot {
+  /// Registers a listener for companion clicks.
+  void addClickListener(CompanionAdSlotClickListener clickListener);
+
+  /// Returns the ViewGroup into which the companion will be rendered.
+  ViewGroup getContainer();
+
+  /// Returns the height of the companion slot.
+  int getHeight();
+
+  /// Returns the width of the companion slot.
+  int getWidth();
+
+  /// Returns true if the companion slot is filled, false otherwise.
+  bool isFilled();
+
+  /// Removes a listener for companion clicks.
+  void removeClickListener(CompanionAdSlotClickListener clickListener);
+
+  /// Sets the ViewGroup into which the companion will be rendered.
+  ///
+  /// Required.
+  void setContainer(ViewGroup container);
+
+  /// Sets the size of the slot.
+  ///
+  /// Only companions matching the slot size will be displayed in the slot.
+  void setSize(int width, int height);
+}
+
+/// Listener interface for click events.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAdSlot.ClickListener.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener',
+  ),
+)
+abstract class CompanionAdSlotClickListener {
+  CompanionAdSlotClickListener();
+
+  /// Respond to a click on this companion ad slot.
+  late final void Function() onCompanionAdClick;
+}
+
+/// An obstruction that is marked as "friendly" for viewability measurement
+/// purposes.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/FriendlyObstruction.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.FriendlyObstruction',
+  ),
+)
+abstract class FriendlyObstruction {
+  ///  The optional, detailed reasoning for registering this obstruction as friendly.
+  late final String? detailedReason;
+
+  /// The purpose for registering the obstruction as friendly.
+  late final FriendlyObstructionPurpose purpose;
+
+  /// The view causing the obstruction.
+  late final View view;
+}
 
 /// A container in which to display the ads.
 ///
@@ -405,7 +510,7 @@ abstract class BaseDisplayContainer {}
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdDisplayContainer',
   ),
 )
-abstract class AdDisplayContainer implements BaseDisplayContainer {}
+abstract class AdDisplayContainer extends BaseDisplayContainer {}
 
 /// An object which allows publishers to request ads from ad servers or a
 /// dynamic ad insertion stream.
