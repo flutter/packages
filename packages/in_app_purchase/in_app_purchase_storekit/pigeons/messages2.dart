@@ -179,7 +179,8 @@ abstract class InAppPurchase2API {
   @async
   List<SK2TransactionMessage> transactions();
 
-  @async void finish();
+  @async
+  void finish(int id);
 }
 
 @FlutterApi()

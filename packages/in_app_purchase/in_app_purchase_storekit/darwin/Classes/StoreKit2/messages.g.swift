@@ -467,7 +467,7 @@ protocol InAppPurchase2API {
   func purchase(id: String, options: SK2ProductPurchaseOptionsMessage?, completion: @escaping (Result<SK2ProductPurchaseResultMessage, Error>) -> Void)
   func products(identifiers: [String], completion: @escaping (Result<[SK2ProductMessage], Error>) -> Void)
   func transactions(completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
-  func finish(completion: @escaping (Result<Void, Error>) -> Void)
+  func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -541,8 +541,10 @@ class InAppPurchase2APISetup {
     }
     let finishChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      finishChannel.setMessageHandler { _, reply in
-        api.finish { result in
+      finishChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let idArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        api.finish(id: idArg) { result in
           switch result {
           case .success:
             reply(wrapResult(nil))

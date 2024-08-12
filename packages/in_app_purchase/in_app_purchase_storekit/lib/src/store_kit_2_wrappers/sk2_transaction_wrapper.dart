@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../../store_kit_wrappers.dart';
 import '../messages2.g.dart';
 
 InAppPurchase2API _hostapi = InAppPurchase2API();
@@ -18,8 +19,10 @@ class SK2Transaction {
     required this.purchaseDate,
     this.quantity = 1,
     required this.appAccountToken,
-    required this.subscriptionGroupID,
-    required this.price,
+    this.subscriptionGroupID,
+    this.price,
+    this.transactionState,
+    this.error
   });
 
   // SKTransaction
@@ -34,14 +37,34 @@ class SK2Transaction {
   final String purchaseDate;
   final int quantity;
   final String? appAccountToken;
-  final String subscriptionGroupID;
-  final double price;
+  final String? subscriptionGroupID;
+  final double? price;
 
-  Future<void> finish() async {
+  final SKError? error;
+  final SKPaymentTransactionStateWrapper transactionState;
+  static Future<void> finish(int id) async {
+    await _hostapi.finish(id);
   }
 
-  List<SK2> transactions() {
+  static Future<List<SK2Transaction>> transactions() async {
+    List<SK2TransactionMessage?> msgs =  await _hostapi.transactions();
+    List<SK2Transaction> transactions = msgs
+        .map((SK2TransactionMessage? e) => e?.convertFromPigeon())
+        .cast<SK2Transaction>()
+        .toList();
+    return transactions;
+  }
+}
 
+extension on SK2TransactionMessage {
+  SK2Transaction convertFromPigeon() {
+    return SK2Transaction(
+        id: id.toString(),
+        originalId: originalId.toString(),
+        productId: productId,
+        purchaseDate: purchaseDate,
+        appAccountToken: appAccountToken
+    );
   }
 }
 

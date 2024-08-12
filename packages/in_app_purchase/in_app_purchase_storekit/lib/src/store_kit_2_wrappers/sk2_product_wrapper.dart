@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
+import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import '../messages2.g.dart';
 
 InAppPurchase2API _hostApi = InAppPurchase2API();
@@ -229,6 +230,17 @@ extension on SK2ProductPurchaseResultMessage {
         return SK2ProductPurchaseResult.userCancelled;
       case SK2ProductPurchaseResultMessage.pending:
         return SK2ProductPurchaseResult.pending;
+    }
+  }
+
+  PurchaseStatus convertToPurchaseStatus() {
+    switch (this) {
+      case SK2ProductPurchaseResultMessage.success:
+        return PurchaseStatus.purchased;
+      case SK2ProductPurchaseResultMessage.userCancelled:
+        return PurchaseStatus.canceled;
+      case SK2ProductPurchaseResultMessage.pending:
+        return PurchaseStatus.pending;
     }
   }
 }

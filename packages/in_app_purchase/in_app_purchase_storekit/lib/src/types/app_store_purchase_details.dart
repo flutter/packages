@@ -6,6 +6,7 @@ import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_inte
 
 import '../../in_app_purchase_storekit.dart';
 import '../../store_kit_wrappers.dart';
+import '../store_kit_2_wrappers/sk2_transaction_wrapper.dart';
 import '../store_kit_wrappers/enum_converters.dart';
 
 /// The class represents the information of a purchase made with the Apple
@@ -67,6 +68,69 @@ class AppStorePurchaseDetails extends PurchaseDetails {
   /// The status that this [PurchaseDetails] is currently on.
   @override
   PurchaseStatus get status => _status;
+  @override
+  set status(PurchaseStatus status) {
+    _pendingCompletePurchase = status != PurchaseStatus.pending;
+    _status = status;
+  }
+
+  bool _pendingCompletePurchase = false;
+  @override
+  bool get pendingCompletePurchase => _pendingCompletePurchase;
+}
+
+class AppStorePurchaseDetails2 extends PurchaseDetails {
+  AppStorePurchaseDetails2({
+    super.purchaseID,
+    required super.productID,
+    required super.verificationData,
+    required super.transactionDate,
+    required this.sk2transaction,
+    required PurchaseStatus status,
+  }) : super(status: status) {
+    this.status = status;
+  }
+
+  factory AppStorePurchaseDetails2.fromSK2Transaction(
+      SK2Transaction transaction,
+      String base64EncodedReceipt,
+      ) {
+    final AppStorePurchaseDetails2 purchaseDetails = AppStorePurchaseDetails2(
+      productID: transaction.productId,
+      purchaseID: transaction.id,
+      sk2transaction: transaction,
+      status: const SKTransactionStatusConverter()
+          .toPurchaseStatus(transaction.transactionState, transaction.error),
+      transactionDate: (transaction.purchaseDate * 1000),
+      verificationData: PurchaseVerificationData(
+          localVerificationData: base64EncodedReceipt,
+          serverVerificationData: base64EncodedReceipt,
+          source: kIAPSource),
+    );
+
+    if (purchaseDetails.status == PurchaseStatus.error ||
+        purchaseDetails.status == PurchaseStatus.canceled) {
+      purchaseDetails.error = IAPError(
+        source: kIAPSource,
+        code: kPurchaseErrorCode,
+        message: transaction.error?.domain ?? '',
+        details: transaction.error?.userInfo,
+      );
+    }
+
+    return purchaseDetails;
+  }
+
+  /// Points back to the [SK2Transaction] which was used to
+  /// generate this [AppStorePurchaseDetails2] object.
+  final SK2Transaction sk2transaction;
+
+  late PurchaseStatus _status;
+
+  /// The status that this [PurchaseDetails] is currently on.
+  @override
+  PurchaseStatus get status => _status;
+
   @override
   set status(PurchaseStatus status) {
     _pendingCompletePurchase = status != PurchaseStatus.pending;

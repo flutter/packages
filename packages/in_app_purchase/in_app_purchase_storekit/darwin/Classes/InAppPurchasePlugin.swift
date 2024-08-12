@@ -28,6 +28,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
   public var paymentQueueHandler: FLTPaymentQueueHandlerProtocol?
   var updateListenerTask: Any? = nil
   var transactionListenerAPI : TransactionCallbacks? = nil;
+  var cache : Any? = nil;
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
@@ -94,12 +95,12 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
       let messenger = registrar.messenger
     #endif
     setupTransactionObserverChannelIfNeeded(withMessenger: messenger)
-    self.transactionListenerAPI = TransactionCallbacks.init(binaryMessenger: messenger)
     if #available(iOS 15.0, *) {
+      self.cache = TransactionCache()
       self.updateListenerTask = listenForTransactions()
-    } else {
-      // Fallback on earlier versions
-    };
+    }
+    self.transactionListenerAPI = TransactionCallbacks.init(binaryMessenger: messenger)
+
   }
 
   // MARK: - Pigeon Functions
@@ -468,7 +469,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
               code: "storekit2_failed_to_fetch_product", message: "failed to make purchase",
               details: "")
           }
-
+          print("native purchase")
           let result = try await product.purchase()
 
           switch result {
@@ -536,12 +537,23 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
     }
   }
 
-  func finish(completion: @escaping (Result<Void, any Error>) -> Void) {
-    return;
+
+  func finish(id : Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
+    if #available(iOS 15.0, *) {
+      Task {
+        let transactionCache = self.cache as! TransactionCache;
+        let transaction = transactionCache.get(id: Int(id))
+        transactionCache.remove(transactionToRemove: transaction)
+        await transaction.finish()
+        print("native finish");
+        completion(.success(()));
+      }
+      }
   }
 
   @available(iOS 15.0, *)
   func listenForTransactions() -> Task<Void, Error> {
+    let transactionCache = self.cache as! TransactionCache
       return Task.detached {
         print("hiya")
         var verfiedArray:[Transaction] = [];
@@ -551,7 +563,8 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
              switch verificationResult {
              case .verified(let transaction):
                verfiedArray.append(transaction)
-             case .unverified(let transaction, let error):
+               transactionCache.add(transaction: transaction)
+             case .unverified(let transaction, _):
                unverifiedArray.append(transaction)
              }
          }

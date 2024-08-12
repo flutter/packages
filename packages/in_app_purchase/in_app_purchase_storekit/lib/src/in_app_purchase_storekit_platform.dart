@@ -82,8 +82,9 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @override
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {
     if (useStoreKit2) {
-      print("hewwo 3");
-      await SK2Product.purchase(purchaseParam.productDetails.id);
+      print("dart purchase");
+      var result = await SK2Product.purchase(purchaseParam.productDetails.id);
+      print("dart purchasereturn ${result}");
       return true;
     }
     await _skPaymentQueueWrapper.addPayment(SKPaymentWrapper(
@@ -115,7 +116,8 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
     );
 
     if (useStoreKit2) {
-
+      print('dart finishing${purchase.productID}');
+      return SK2Transaction.finish(purchase.purchaseID! as int);
     }
 
     return _skPaymentQueueWrapper.finishTransaction(
