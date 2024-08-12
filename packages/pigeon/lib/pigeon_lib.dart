@@ -846,7 +846,7 @@ class GObjectGeneratorAdapter implements GeneratorAdapter {
   List<Error> validate(PigeonOptions options, Root root) {
     final List<Error> errors = <Error>[];
     // TODO(tarrinneal): Remove once overflow class is added to gobject generator.
-    // https://github.com/flutter/packages/pull/6840
+    // https://github.com/flutter/flutter/issues/152916
     if (root.classes.length + root.enums.length > totalCustomCodecKeysAllowed) {
       errors.add(Error(
           message:

@@ -35,7 +35,7 @@ Future<void> runTests(
     await _runGenerate(baseDir, includeOverflow: true);
 
     // TODO(tarrinneal): Remove linux filter once overflow class is added to gobject generator.
-    // https://github.com/flutter/packages/pull/6840
+    // https://github.com/flutter/flutter/issues/152916
     await _runTests(testsToRun
         .where((String test) =>
             test.contains('integration') && !test.contains('linux'))
