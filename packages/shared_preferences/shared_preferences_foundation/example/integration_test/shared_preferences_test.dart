@@ -487,6 +487,9 @@ void main() {
   group('shared_preferences_async', () {
     final SharedPreferencesAsyncFoundationOptions emptyOptions =
         SharedPreferencesAsyncFoundationOptions();
+    final SharedPreferencesAsyncFoundationOptions optionsWithSuiteName =
+        SharedPreferencesAsyncFoundationOptions(
+            suiteName: 'group.example.sharedPreferencesFoundation');
 
     const String stringKey = 'testString';
     const String boolKey = 'testBool';
@@ -506,6 +509,9 @@ void main() {
       await preferences.clear(
           const ClearPreferencesParameters(filter: PreferencesFilters()),
           emptyOptions);
+      await preferences.clear(
+          const ClearPreferencesParameters(filter: PreferencesFilters()),
+          optionsWithSuiteName);
       return preferences;
     }
 
@@ -577,6 +583,39 @@ void main() {
       expect(gotAll[listKey], testList);
     });
 
+    testWidgets('getPreferences with options', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
+      await Future.wait(<Future<void>>[
+        preferences.setString(stringKey, testString, optionsWithSuiteName),
+        preferences.setBool(boolKey, testBool, emptyOptions),
+        preferences.setInt(intKey, testInt, optionsWithSuiteName),
+        preferences.setDouble(doubleKey, testDouble, emptyOptions),
+        preferences.setStringList(listKey, testList, optionsWithSuiteName)
+      ]);
+
+      final Map<String, Object?> preferencesWithEmptyOptions =
+          await preferences.getPreferences(
+        const GetPreferencesParameters(filter: PreferencesFilters()),
+        emptyOptions,
+      );
+
+      final Map<String, Object?> preferencesWithSuiteName =
+          await preferences.getPreferences(
+        const GetPreferencesParameters(filter: PreferencesFilters()),
+        optionsWithSuiteName,
+      );
+
+      expect(preferencesWithEmptyOptions.length, 2);
+      expect(preferencesWithSuiteName.length, 3);
+
+      expect(preferencesWithEmptyOptions[boolKey], testBool);
+      expect(preferencesWithEmptyOptions[doubleKey], testDouble);
+
+      expect(preferencesWithSuiteName[stringKey], testString);
+      expect(preferencesWithSuiteName[intKey], testInt);
+      expect(preferencesWithSuiteName[listKey], testList);
+    });
+
     testWidgets('getPreferences with filter', (WidgetTester _) async {
       final SharedPreferencesAsyncPlatform preferences = await getPreferences();
       await Future.wait(<Future<void>>[
@@ -620,6 +659,37 @@ void main() {
       expect(keys, contains(intKey));
       expect(keys, contains(doubleKey));
       expect(keys, contains(listKey));
+    });
+
+    testWidgets('getKeys with options', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
+      await Future.wait(<Future<void>>[
+        preferences.setString(stringKey, testString, optionsWithSuiteName),
+        preferences.setBool(boolKey, testBool, emptyOptions),
+        preferences.setInt(intKey, testInt, optionsWithSuiteName),
+        preferences.setDouble(doubleKey, testDouble, emptyOptions),
+        preferences.setStringList(listKey, testList, optionsWithSuiteName)
+      ]);
+
+      final Set<String> keysWithEmptyOptions = await preferences.getKeys(
+        const GetPreferencesParameters(filter: PreferencesFilters()),
+        emptyOptions,
+      );
+
+      final Set<String> keysWithSuiteName = await preferences.getKeys(
+        const GetPreferencesParameters(filter: PreferencesFilters()),
+        optionsWithSuiteName,
+      );
+
+      expect(keysWithEmptyOptions.length, 2);
+      expect(keysWithSuiteName.length, 3);
+
+      expect(keysWithEmptyOptions, contains(boolKey));
+      expect(keysWithEmptyOptions, contains(doubleKey));
+
+      expect(keysWithSuiteName, contains(stringKey));
+      expect(keysWithSuiteName, contains(intKey));
+      expect(keysWithSuiteName, contains(listKey));
     });
 
     testWidgets('getKeys with filter', (WidgetTester _) async {

@@ -1,3 +1,7 @@
+## 2.5.2
+
+* Fixes getting all preferences when suite name is used.
+
 ## 2.5.1
 
 * Fixes `getStringList` returning immutable list.
