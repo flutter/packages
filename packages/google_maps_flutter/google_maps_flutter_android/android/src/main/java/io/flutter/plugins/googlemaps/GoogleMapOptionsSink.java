@@ -4,10 +4,10 @@
 
 package io.flutter.plugins.googlemaps;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.List;
-import java.util.Map;
 
 /** Receiver of GoogleMap configuration options. */
 interface GoogleMapOptionsSink {
@@ -47,19 +47,20 @@ interface GoogleMapOptionsSink {
 
   void setBuildingsEnabled(boolean buildingsEnabled);
 
-  void setInitialMarkers(Object initialMarkers);
+  void setInitialMarkers(@NonNull List<Messages.PlatformMarker> initialMarkers);
 
-  void setInitialClusterManagers(Object initialClusterManagers);
+  void setInitialClusterManagers(
+      @NonNull List<Messages.PlatformClusterManager> initialClusterManagers);
 
-  void setInitialPolygons(Object initialPolygons);
+  void setInitialPolygons(@NonNull List<Messages.PlatformPolygon> initialPolygons);
 
-  void setInitialPolylines(Object initialPolylines);
+  void setInitialPolylines(@NonNull List<Messages.PlatformPolyline> initialPolylines);
 
-  void setInitialCircles(Object initialCircles);
+  void setInitialCircles(@NonNull List<Messages.PlatformCircle> initialCircles);
 
-  void setInitialHeatmaps(Object initialHeatmaps);
+  void setInitialHeatmaps(@NonNull List<Messages.PlatformHeatmap> initialHeatmaps);
 
-  void setInitialTileOverlays(List<Map<String, ?>> initialTileOverlays);
+  void setInitialTileOverlays(@NonNull List<Messages.PlatformTileOverlay> initialTileOverlays);
 
   void setMapStyle(@Nullable String style);
 }

@@ -2791,6 +2791,7 @@ class IMAAdEvent extends NSObject {
     super.pigeon_instanceManager,
     required this.type,
     required this.typeString,
+    this.adData,
   }) : super.pigeon_detached();
 
   /// Type of the event.
@@ -2799,6 +2800,9 @@ class IMAAdEvent extends NSObject {
   /// Stringified type of the event.
   final String typeString;
 
+  /// Extra data about the ad.
+  final Map<String?, Object?>? adData;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
@@ -2806,6 +2810,7 @@ class IMAAdEvent extends NSObject {
     IMAAdEvent Function(
       AdEventType type,
       String typeString,
+      Map<String?, Object?>? adData,
     )? pigeon_newInstance,
   }) {
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
@@ -2834,15 +2839,19 @@ class IMAAdEvent extends NSObject {
           final String? arg_typeString = (args[2] as String?);
           assert(arg_typeString != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAdEvent.pigeon_newInstance was null, expected non-null String.');
+          final Map<String?, Object?>? arg_adData =
+              (args[3] as Map<Object?, Object?>?)?.cast<String?, Object?>();
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_type!, arg_typeString!) ??
+              pigeon_newInstance?.call(
+                      arg_type!, arg_typeString!, arg_adData) ??
                   IMAAdEvent.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     type: arg_type!,
                     typeString: arg_typeString!,
+                    adData: arg_adData,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -2865,6 +2874,7 @@ class IMAAdEvent extends NSObject {
       pigeon_instanceManager: pigeon_instanceManager,
       type: type,
       typeString: typeString,
+      adData: adData,
     );
   }
 }

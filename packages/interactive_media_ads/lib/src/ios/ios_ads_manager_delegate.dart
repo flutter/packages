@@ -64,13 +64,17 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
   ) {
     return interfaceDelegate.target!._iosParams._proxy.newIMAAdsManagerDelegate(
       didReceiveAdEvent: (_, __, ima.IMAAdEvent event) {
-        late final AdEventType? eventType = toInterfaceEventType(event.type);
-        if (eventType == null) {
-          return;
-        }
-
-        interfaceDelegate.target?.params.onAdEvent
-            ?.call(AdEvent(type: eventType));
+        interfaceDelegate.target?.params.onAdEvent?.call(
+          AdEvent(
+            type: toInterfaceEventType(event.type),
+            adData: event.adData?.map(
+                  (String? key, Object? value) {
+                    return MapEntry<String, String>(key!, value.toString());
+                  },
+                ) ??
+                <String, String>{},
+          ),
+        );
       },
       didReceiveAdError: (_, __, ima.IMAAdError event) {
         interfaceDelegate.target?.params.onAdErrorEvent?.call(

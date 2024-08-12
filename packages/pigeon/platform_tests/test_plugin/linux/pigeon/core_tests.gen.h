@@ -30,6 +30,15 @@ typedef enum {
 } CoreTestsPigeonTestAnEnum;
 
 /**
+ * CoreTestsPigeonTestAnotherEnum:
+ * PIGEON_INTEGRATION_TESTS_ANOTHER_ENUM_JUST_IN_CASE:
+ *
+ */
+typedef enum {
+  PIGEON_INTEGRATION_TESTS_ANOTHER_ENUM_JUST_IN_CASE = 0
+} CoreTestsPigeonTestAnotherEnum;
+
+/**
  * CoreTestsPigeonTestAllTypes:
  *
  * A class containing all supported types.
@@ -54,6 +63,7 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAllTypes,
  * a_float_array: field in this object.
  * a_float_array_length: length of @a_float_array.
  * an_enum: field in this object.
+ * another_enum: field in this object.
  * a_string: field in this object.
  * an_object: field in this object.
  * list: field in this object.
@@ -73,7 +83,8 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
     const int32_t* a4_byte_array, size_t a4_byte_array_length,
     const int64_t* a8_byte_array, size_t a8_byte_array_length,
     const double* a_float_array, size_t a_float_array_length,
-    CoreTestsPigeonTestAnEnum an_enum, const gchar* a_string,
+    CoreTestsPigeonTestAnEnum an_enum,
+    CoreTestsPigeonTestAnotherEnum another_enum, const gchar* a_string,
     FlValue* an_object, FlValue* list, FlValue* string_list, FlValue* int_list,
     FlValue* double_list, FlValue* bool_list, FlValue* map);
 
@@ -178,6 +189,18 @@ const double* core_tests_pigeon_test_all_types_get_a_float_array(
  * Returns: the field value.
  */
 CoreTestsPigeonTestAnEnum core_tests_pigeon_test_all_types_get_an_enum(
+    CoreTestsPigeonTestAllTypes* object);
+
+/**
+ * core_tests_pigeon_test_all_types_get_another_enum
+ * @object: a #CoreTestsPigeonTestAllTypes.
+ *
+ * Gets the value of the anotherEnum field of @object.
+ *
+ * Returns: the field value.
+ */
+CoreTestsPigeonTestAnotherEnum
+core_tests_pigeon_test_all_types_get_another_enum(
     CoreTestsPigeonTestAllTypes* object);
 
 /**
@@ -296,6 +319,7 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAllNullableTypes,
  * nullable_map_with_annotations: field in this object.
  * nullable_map_with_object: field in this object.
  * a_nullable_enum: field in this object.
+ * another_nullable_enum: field in this object.
  * a_nullable_string: field in this object.
  * a_nullable_object: field in this object.
  * all_nullable_types: field in this object.
@@ -321,8 +345,9 @@ core_tests_pigeon_test_all_nullable_types_new(
     const double* a_nullable_float_array, size_t a_nullable_float_array_length,
     FlValue* nullable_nested_list, FlValue* nullable_map_with_annotations,
     FlValue* nullable_map_with_object,
-    CoreTestsPigeonTestAnEnum* a_nullable_enum, const gchar* a_nullable_string,
-    FlValue* a_nullable_object,
+    CoreTestsPigeonTestAnEnum* a_nullable_enum,
+    CoreTestsPigeonTestAnotherEnum* another_nullable_enum,
+    const gchar* a_nullable_string, FlValue* a_nullable_object,
     CoreTestsPigeonTestAllNullableTypes* all_nullable_types, FlValue* list,
     FlValue* string_list, FlValue* int_list, FlValue* double_list,
     FlValue* bool_list, FlValue* nested_class_list, FlValue* map);
@@ -470,6 +495,18 @@ core_tests_pigeon_test_all_nullable_types_get_a_nullable_enum(
     CoreTestsPigeonTestAllNullableTypes* object);
 
 /**
+ * core_tests_pigeon_test_all_nullable_types_get_another_nullable_enum
+ * @object: a #CoreTestsPigeonTestAllNullableTypes.
+ *
+ * Gets the value of the anotherNullableEnum field of @object.
+ *
+ * Returns: the field value.
+ */
+CoreTestsPigeonTestAnotherEnum*
+core_tests_pigeon_test_all_nullable_types_get_another_nullable_enum(
+    CoreTestsPigeonTestAllNullableTypes* object);
+
+/**
  * core_tests_pigeon_test_all_nullable_types_get_a_nullable_string
  * @object: a #CoreTestsPigeonTestAllNullableTypes.
  *
@@ -611,6 +648,7 @@ G_DECLARE_FINAL_TYPE(
  * nullable_map_with_annotations: field in this object.
  * nullable_map_with_object: field in this object.
  * a_nullable_enum: field in this object.
+ * another_nullable_enum: field in this object.
  * a_nullable_string: field in this object.
  * a_nullable_object: field in this object.
  * list: field in this object.
@@ -634,9 +672,11 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
     const double* a_nullable_float_array, size_t a_nullable_float_array_length,
     FlValue* nullable_nested_list, FlValue* nullable_map_with_annotations,
     FlValue* nullable_map_with_object,
-    CoreTestsPigeonTestAnEnum* a_nullable_enum, const gchar* a_nullable_string,
-    FlValue* a_nullable_object, FlValue* list, FlValue* string_list,
-    FlValue* int_list, FlValue* double_list, FlValue* bool_list, FlValue* map);
+    CoreTestsPigeonTestAnEnum* a_nullable_enum,
+    CoreTestsPigeonTestAnotherEnum* another_nullable_enum,
+    const gchar* a_nullable_string, FlValue* a_nullable_object, FlValue* list,
+    FlValue* string_list, FlValue* int_list, FlValue* double_list,
+    FlValue* bool_list, FlValue* map);
 
 /**
  * core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_bool
@@ -788,6 +828,18 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_get_nullable_map_wit
  */
 CoreTestsPigeonTestAnEnum*
 core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_enum(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
+
+/**
+ * core_tests_pigeon_test_all_nullable_types_without_recursion_get_another_nullable_enum
+ * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
+ *
+ * Gets the value of the anotherNullableEnum field of @object.
+ *
+ * Returns: the field value.
+ */
+CoreTestsPigeonTestAnotherEnum*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_another_nullable_enum(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
 
 /**
@@ -1459,6 +1511,39 @@ core_tests_pigeon_test_host_integration_core_api_echo_enum_response_new_error(
     const gchar* code, const gchar* message, FlValue* details);
 
 G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherEnumResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_another_enum_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_ECHO_ANOTHER_ENUM_RESPONSE, GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_another_enum_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.echoAnotherEnum.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherEnumResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherEnumResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_another_enum_response_new(
+    CoreTestsPigeonTestAnotherEnum return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_another_enum_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to HostIntegrationCoreApi.echoAnotherEnum.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherEnumResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherEnumResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_another_enum_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
     CoreTestsPigeonTestHostIntegrationCoreApiEchoNamedDefaultStringResponse,
     core_tests_pigeon_test_host_integration_core_api_echo_named_default_string_response,
     CORE_TESTS_PIGEON_TEST,
@@ -2064,6 +2149,40 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_enum_response_new
     const gchar* code, const gchar* message, FlValue* details);
 
 G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherNullableEnumResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_another_nullable_enum_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_ECHO_ANOTHER_NULLABLE_ENUM_RESPONSE, GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_another_nullable_enum_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.echoAnotherNullableEnum.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherNullableEnumResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherNullableEnumResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_another_nullable_enum_response_new(
+    CoreTestsPigeonTestAnotherEnum* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_another_nullable_enum_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to
+ * HostIntegrationCoreApi.echoAnotherNullableEnum.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherNullableEnumResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherNullableEnumResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_another_nullable_enum_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
     CoreTestsPigeonTestHostIntegrationCoreApiEchoOptionalNullableIntResponse,
     core_tests_pigeon_test_host_integration_core_api_echo_optional_nullable_int_response,
     CORE_TESTS_PIGEON_TEST,
@@ -2171,6 +2290,9 @@ typedef struct {
                            gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoEnumResponse* (*echo_enum)(
       CoreTestsPigeonTestAnEnum an_enum, gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherEnumResponse* (
+      *echo_another_enum)(CoreTestsPigeonTestAnotherEnum another_enum,
+                          gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoNamedDefaultStringResponse* (
       *echo_named_default_string)(const gchar* a_string, gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoOptionalDefaultDoubleResponse* (
@@ -2221,6 +2343,9 @@ typedef struct {
   CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableEnumResponse* (
       *echo_nullable_enum)(CoreTestsPigeonTestAnEnum* an_enum,
                            gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherNullableEnumResponse* (
+      *echo_another_nullable_enum)(CoreTestsPigeonTestAnotherEnum* another_enum,
+                                   gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoOptionalNullableIntResponse* (
       *echo_optional_nullable_int)(int64_t* a_nullable_int, gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoNamedNullableStringResponse* (
@@ -2263,6 +2388,10 @@ typedef struct {
       gpointer user_data);
   void (*echo_async_enum)(
       CoreTestsPigeonTestAnEnum an_enum,
+      CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+      gpointer user_data);
+  void (*echo_another_async_enum)(
+      CoreTestsPigeonTestAnotherEnum another_enum,
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
       gpointer user_data);
   void (*throw_async_error)(
@@ -2320,6 +2449,10 @@ typedef struct {
       gpointer user_data);
   void (*echo_async_nullable_enum)(
       CoreTestsPigeonTestAnEnum* an_enum,
+      CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+      gpointer user_data);
+  void (*echo_another_async_nullable_enum)(
+      CoreTestsPigeonTestAnotherEnum* another_enum,
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
       gpointer user_data);
   void (*call_flutter_noop)(
@@ -2385,6 +2518,10 @@ typedef struct {
       CoreTestsPigeonTestAnEnum an_enum,
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
       gpointer user_data);
+  void (*call_flutter_echo_another_enum)(
+      CoreTestsPigeonTestAnotherEnum another_enum,
+      CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+      gpointer user_data);
   void (*call_flutter_echo_nullable_bool)(
       gboolean* a_bool,
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
@@ -2415,6 +2552,10 @@ typedef struct {
       gpointer user_data);
   void (*call_flutter_echo_nullable_enum)(
       CoreTestsPigeonTestAnEnum* an_enum,
+      CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+      gpointer user_data);
+  void (*call_flutter_echo_another_nullable_enum)(
+      CoreTestsPigeonTestAnotherEnum* another_enum,
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
       gpointer user_data);
   void (*call_flutter_small_api_echo_string)(
@@ -2688,6 +2829,30 @@ void core_tests_pigeon_test_host_integration_core_api_respond_echo_async_enum(
  * Responds with an error to HostIntegrationCoreApi.echoAsyncEnum.
  */
 void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_async_enum(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_echo_another_async_enum:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to HostIntegrationCoreApi.echoAnotherAsyncEnum.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_echo_another_async_enum(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    CoreTestsPigeonTestAnotherEnum return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_error_echo_another_async_enum:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to HostIntegrationCoreApi.echoAnotherAsyncEnum.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_another_async_enum(
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
     const gchar* code, const gchar* message, FlValue* details);
 
@@ -3051,6 +3216,31 @@ void core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullabl
  * Responds with an error to HostIntegrationCoreApi.echoAsyncNullableEnum.
  */
 void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_async_nullable_enum(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_echo_another_async_nullable_enum:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to HostIntegrationCoreApi.echoAnotherAsyncNullableEnum.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_echo_another_async_nullable_enum(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    CoreTestsPigeonTestAnotherEnum* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_error_echo_another_async_nullable_enum:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to
+ * HostIntegrationCoreApi.echoAnotherAsyncNullableEnum.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_another_async_nullable_enum(
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
     const gchar* code, const gchar* message, FlValue* details);
 
@@ -3444,6 +3634,30 @@ void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter
     const gchar* code, const gchar* message, FlValue* details);
 
 /**
+ * core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_another_enum:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to HostIntegrationCoreApi.callFlutterEchoAnotherEnum.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_another_enum(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    CoreTestsPigeonTestAnotherEnum return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_another_enum:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to HostIntegrationCoreApi.callFlutterEchoAnotherEnum.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_another_enum(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
+/**
  * core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_bool:
  * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
  * @return_value: location to write the value returned by this method.
@@ -3637,6 +3851,31 @@ void core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_
  * Responds with an error to HostIntegrationCoreApi.callFlutterEchoNullableEnum.
  */
 void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_enum(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_another_nullable_enum:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to HostIntegrationCoreApi.callFlutterEchoAnotherNullableEnum.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_another_nullable_enum(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    CoreTestsPigeonTestAnotherEnum* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_another_nullable_enum:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to
+ * HostIntegrationCoreApi.callFlutterEchoAnotherNullableEnum.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_another_nullable_enum(
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
     const gchar* code, const gchar* message, FlValue* details);
 
@@ -4770,6 +5009,83 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_enum_response_get_retur
     CoreTestsPigeonTestFlutterIntegrationCoreApiEchoEnumResponse* response);
 
 G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherEnumResponse,
+    core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response,
+    CORE_TESTS_PIGEON_TEST,
+    FLUTTER_INTEGRATION_CORE_API_ECHO_ANOTHER_ENUM_RESPONSE, GObject)
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_is_error:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherEnumResponse.
+ *
+ * Checks if a response to FlutterIntegrationCoreApi.echoAnotherEnum is an
+ * error.
+ *
+ * Returns: a %TRUE if this response is an error.
+ */
+gboolean
+core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_is_error(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherEnumResponse*
+        response);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_get_error_code:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherEnumResponse.
+ *
+ * Get the error code for this response.
+ *
+ * Returns: an error code or %NULL if not an error.
+ */
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_get_error_code(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherEnumResponse*
+        response);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_get_error_message:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherEnumResponse.
+ *
+ * Get the error message for this response.
+ *
+ * Returns: an error message.
+ */
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_get_error_message(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherEnumResponse*
+        response);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_get_error_details:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherEnumResponse.
+ *
+ * Get the error details for this response.
+ *
+ * Returns: (allow-none): an error details or %NULL.
+ */
+FlValue*
+core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_get_error_details(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherEnumResponse*
+        response);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_get_return_value:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherEnumResponse.
+ *
+ * Get the return value for this response.
+ *
+ * Returns: a return value.
+ */
+CoreTestsPigeonTestAnotherEnum
+core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_get_return_value(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherEnumResponse*
+        response);
+
+G_DECLARE_FINAL_TYPE(
     CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableBoolResponse,
     core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_response,
     CORE_TESTS_PIGEON_TEST,
@@ -5386,6 +5702,83 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_response_
 CoreTestsPigeonTestAnEnum*
 core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_response_get_return_value(
     CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableEnumResponse*
+        response);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherNullableEnumResponse,
+    core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response,
+    CORE_TESTS_PIGEON_TEST,
+    FLUTTER_INTEGRATION_CORE_API_ECHO_ANOTHER_NULLABLE_ENUM_RESPONSE, GObject)
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_is_error:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherNullableEnumResponse.
+ *
+ * Checks if a response to FlutterIntegrationCoreApi.echoAnotherNullableEnum is
+ * an error.
+ *
+ * Returns: a %TRUE if this response is an error.
+ */
+gboolean
+core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_is_error(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherNullableEnumResponse*
+        response);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_get_error_code:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherNullableEnumResponse.
+ *
+ * Get the error code for this response.
+ *
+ * Returns: an error code or %NULL if not an error.
+ */
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_get_error_code(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherNullableEnumResponse*
+        response);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_get_error_message:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherNullableEnumResponse.
+ *
+ * Get the error message for this response.
+ *
+ * Returns: an error message.
+ */
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_get_error_message(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherNullableEnumResponse*
+        response);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_get_error_details:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherNullableEnumResponse.
+ *
+ * Get the error details for this response.
+ *
+ * Returns: (allow-none): an error details or %NULL.
+ */
+FlValue*
+core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_get_error_details(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherNullableEnumResponse*
+        response);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_get_return_value:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherNullableEnumResponse.
+ *
+ * Get the return value for this response.
+ *
+ * Returns: (allow-none): a return value or %NULL.
+ */
+CoreTestsPigeonTestAnotherEnum*
+core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_response_get_return_value(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherNullableEnumResponse*
         response);
 
 G_DECLARE_FINAL_TYPE(
@@ -6108,6 +6501,41 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_enum_finish(
     GError** error);
 
 /**
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum:
+ * @api: a #CoreTestsPigeonTestFlutterIntegrationCoreApi.
+ * @another_enum: parameter for this method.
+ * @cancellable: (allow-none): a #GCancellable or %NULL.
+ * @callback: (scope async): (allow-none): a #GAsyncReadyCallback to call when
+ * the call is complete or %NULL to ignore the response.
+ * @user_data: (closure): user data to pass to @callback.
+ *
+ * Returns the passed enum to test serialization and deserialization.
+ */
+void core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* api,
+    CoreTestsPigeonTestAnotherEnum another_enum, GCancellable* cancellable,
+    GAsyncReadyCallback callback, gpointer user_data);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_finish:
+ * @api: a #CoreTestsPigeonTestFlutterIntegrationCoreApi.
+ * @result: a #GAsyncResult.
+ * @error: (allow-none): #GError location to store the error occurring, or %NULL
+ * to ignore.
+ *
+ * Completes a
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum() call.
+ *
+ * Returns: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherEnumResponse or %NULL
+ * on error.
+ */
+CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherEnumResponse*
+core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_finish(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* api, GAsyncResult* result,
+    GError** error);
+
+/**
  * core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool:
  * @api: a #CoreTestsPigeonTestFlutterIntegrationCoreApi.
  * @a_bool: (allow-none): parameter for this method.
@@ -6391,6 +6819,42 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum(
  */
 CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableEnumResponse*
 core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_finish(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* api, GAsyncResult* result,
+    GError** error);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum:
+ * @api: a #CoreTestsPigeonTestFlutterIntegrationCoreApi.
+ * @another_enum: (allow-none): parameter for this method.
+ * @cancellable: (allow-none): a #GCancellable or %NULL.
+ * @callback: (scope async): (allow-none): a #GAsyncReadyCallback to call when
+ * the call is complete or %NULL to ignore the response.
+ * @user_data: (closure): user data to pass to @callback.
+ *
+ * Returns the passed enum to test serialization and deserialization.
+ */
+void core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* api,
+    CoreTestsPigeonTestAnotherEnum* another_enum, GCancellable* cancellable,
+    GAsyncReadyCallback callback, gpointer user_data);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_finish:
+ * @api: a #CoreTestsPigeonTestFlutterIntegrationCoreApi.
+ * @result: a #GAsyncResult.
+ * @error: (allow-none): #GError location to store the error occurring, or %NULL
+ * to ignore.
+ *
+ * Completes a
+ * core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum()
+ * call.
+ *
+ * Returns: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherNullableEnumResponse
+ * or %NULL on error.
+ */
+CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAnotherNullableEnumResponse*
+core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* api, GAsyncResult* result,
     GError** error);
 

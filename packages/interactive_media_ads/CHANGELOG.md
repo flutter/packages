@@ -1,7 +1,11 @@
-## 0.1.1+2
+## 0.1.2+1
 
 * Removes dependency on org.jetbrains.kotlin:kotlin-bom.
 * Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 0.1.2
+
+* Adds support for all `AdEventType`s and ad data. See `AdEvent.adData`.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.1.1+1
