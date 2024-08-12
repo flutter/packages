@@ -901,7 +901,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
             case AnimationStatus.completed:
               _currentAnimationForParent[node]!.controller.dispose();
               _currentAnimationForParent.remove(node);
-              _updateActiveAnimations();
+            // _updateActiveAnimations();
             case AnimationStatus.forward:
             case AnimationStatus.reverse:
           }
