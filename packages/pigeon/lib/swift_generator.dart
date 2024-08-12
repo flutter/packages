@@ -262,11 +262,16 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     indent.newln();
   }
 
-  void _writeDataClassSignature(Indent indent, Class classDefinition) {
+  void _writeDataClassSignature(
+    Indent indent,
+    Class classDefinition, {
+    bool private = false,
+  }) {
+    final String privateString = private ? 'private ' : '';
     if (classDefinition.isSwiftClass) {
-      indent.write('class ${classDefinition.name} ');
+      indent.write('${privateString}class ${classDefinition.name} ');
     } else {
-      indent.write('struct ${classDefinition.name} ');
+      indent.write('${privateString}struct ${classDefinition.name} ');
     }
 
     indent.addScoped('{', '', () {
@@ -307,8 +312,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     final Class overflowClass =
         Class(name: _overflowClassName, fields: overflowFields);
     indent.newln();
-    indent.writeln('// swift-format-ignore: TypeNamesShouldBeCapitalized');
-    _writeDataClassSignature(indent, overflowClass);
+    _writeDataClassSignature(indent, overflowClass, private: true);
     indent.addScoped('', '}', () {
       writeClassEncode(
         generatorOptions,

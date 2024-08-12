@@ -30,7 +30,7 @@ final List<NamedType> _overflowFields = <NamedType>[
 final Class _overflowClass =
     Class(name: _overflowClassName, fields: _overflowFields);
 final EnumeratedType _enumeratedOverflow = EnumeratedType(
-    _overflowClassName, 255, CustomTypes.customClass,
+    _overflowClassName, maximumCodecFieldKey, CustomTypes.customClass,
     associatedClass: _overflowClass);
 
 /// Options that control how Objective-C code will be generated.
@@ -215,15 +215,6 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       indent,
       dartPackageName: dartPackageName,
     );
-    if (root.requiresOverflowClass) {
-      writeDataClass(
-        generatorOptions,
-        root,
-        indent,
-        _overflowClass,
-        dartPackageName: dartPackageName,
-      );
-    }
   }
 
   @override
@@ -234,56 +225,12 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     Class classDefinition, {
     required String dartPackageName,
   }) {
-    final String? prefix = generatorOptions.prefix;
-
-    addDocumentationComments(
-        indent, classDefinition.documentationComments, _docCommentSpec);
-
-    indent.writeln(
-        '@interface ${_className(prefix, classDefinition.name)} : NSObject');
-    if (getFieldsInSerializationOrder(classDefinition).isNotEmpty) {
-      if (getFieldsInSerializationOrder(classDefinition)
-          .map((NamedType e) => !e.type.isNullable)
-          .any((bool e) => e)) {
-        indent.writeln(
-            '$_docCommentPrefix `init` unavailable to enforce nonnull fields, see the `make` class method.');
-        indent.writeln('- (instancetype)init NS_UNAVAILABLE;');
-      }
-      _writeObjcSourceClassInitializerDeclaration(
-        indent,
-        generatorOptions,
-        root,
-        classDefinition,
-        prefix,
-      );
-      indent.addln(';');
-    }
-    for (final NamedType field
-        in getFieldsInSerializationOrder(classDefinition)) {
-      final HostDatatype hostDatatype = getFieldHostDatatype(
-          field,
-          (TypeDeclaration x) => _objcTypeStringForPrimitiveDartType(prefix, x,
-              beforeString: true),
-          customResolver: field.type.isEnum
-              ? (String x) => _enumName(x, prefix: prefix)
-              : (String x) => '${_className(prefix, x)} *');
-      late final String propertyType;
-      addDocumentationComments(
-          indent, field.documentationComments, _docCommentSpec);
-      propertyType = _propertyTypeForDartType(field.type,
-          isNullable: field.type.isNullable, isEnum: field.type.isEnum);
-      final String nullability = field.type.isNullable ? ', nullable' : '';
-      final String fieldType = field.type.isEnum && field.type.isNullable
-          ? _enumName(field.type.baseName,
-              suffix: ' *',
-              prefix: generatorOptions.prefix,
-              box: field.type.isNullable)
-          : hostDatatype.datatype;
-      indent.writeln(
-          '@property(nonatomic, $propertyType$nullability) $fieldType ${field.name};');
-    }
-    indent.writeln('@end');
-    indent.newln();
+    _writeDataClassDeclaration(
+      generatorOptions,
+      root,
+      indent,
+      classDefinition,
+    );
   }
 
   @override
@@ -618,14 +565,16 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
             _nsnumberExtractionMethod(field.type);
         final String ivarValueExpression;
         if (field.type.isEnum && !field.type.isNullable) {
+          final String varName =
+              'boxed${_enumName(field.type.baseName, prefix: generatorOptions.prefix)}';
           _writeEnumBoxToEnum(
             indent,
             field,
+            varName,
             valueGetter,
             prefix: generatorOptions.prefix,
           );
-          ivarValueExpression =
-              'boxed${_enumName(field.type.baseName, prefix: generatorOptions.prefix)}.value';
+          ivarValueExpression = '$varName.value';
         } else if (primitiveExtractionMethod != null) {
           ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
         } else {
@@ -774,7 +723,7 @@ if (self.wrapped == nil) {
           }
         }
         if (root.requiresOverflowClass) {
-          indent.write('case 255: ');
+          indent.write('case $maximumCodecFieldKey: ');
           _writeCodecDecode(
             indent,
             _enumeratedOverflow,
@@ -971,6 +920,15 @@ if (self.wrapped == nil) {
     if (hasHostApi || hasFlutterApi) {
       _writeGetNullableObjectAtIndex(indent);
     }
+
+    if (root.requiresOverflowClass) {
+      _writeDataClassDeclaration(
+        generatorOptions,
+        root,
+        indent,
+        _overflowClass,
+      );
+    }
   }
 
   void _writeWrapError(Indent indent) {
@@ -1017,14 +975,16 @@ static FlutterError *createConnectionError(NSString *channelName) {
         final String ivarValueExpression;
         String beforeString = objcArgType.beforeString;
         if (arg.type.isEnum && !arg.type.isNullable) {
+          final String varName =
+              'boxed${_enumName(arg.type.baseName, prefix: generatorOptions.prefix)}';
           _writeEnumBoxToEnum(
             indent,
             arg,
+            varName,
             valueGetter,
             prefix: generatorOptions.prefix,
           );
-          ivarValueExpression =
-              'boxed${_enumName(arg.type.baseName, prefix: generatorOptions.prefix)}.value';
+          ivarValueExpression = '$varName.value';
         } else if (primitiveExtractionMethod != null) {
           ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
         } else {
@@ -1711,11 +1671,12 @@ List<Error> validateObjc(ObjcOptions options, Root root) {
 void _writeEnumBoxToEnum(
   Indent indent,
   NamedType field,
+  String varName,
   String valueGetter, {
   String? prefix = '',
 }) {
   indent.writeln(
-      '${_enumName(field.type.baseName, prefix: prefix, box: true, suffix: ' *')}boxed${_enumName(field.type.baseName, prefix: prefix)} = $valueGetter;');
+      '${_enumName(field.type.baseName, prefix: prefix, box: true, suffix: ' *')}$varName = $valueGetter;');
 }
 
 String _getEnumToEnumBox(
@@ -1724,4 +1685,62 @@ String _getEnumToEnumBox(
   String? prefix = '',
 }) {
   return '[[${_enumName(field.type.baseName, prefix: prefix, box: true)} alloc] initWithValue:$valueSetter]';
+}
+
+void _writeDataClassDeclaration(
+  ObjcOptions generatorOptions,
+  Root root,
+  Indent indent,
+  Class classDefinition,
+) {
+  final String? prefix = generatorOptions.prefix;
+
+  addDocumentationComments(
+      indent, classDefinition.documentationComments, _docCommentSpec);
+
+  indent.writeln(
+      '@interface ${_className(prefix, classDefinition.name)} : NSObject');
+  if (getFieldsInSerializationOrder(classDefinition).isNotEmpty) {
+    if (getFieldsInSerializationOrder(classDefinition)
+        .map((NamedType e) => !e.type.isNullable)
+        .any((bool e) => e)) {
+      indent.writeln(
+          '$_docCommentPrefix `init` unavailable to enforce nonnull fields, see the `make` class method.');
+      indent.writeln('- (instancetype)init NS_UNAVAILABLE;');
+    }
+    _writeObjcSourceClassInitializerDeclaration(
+      indent,
+      generatorOptions,
+      root,
+      classDefinition,
+      prefix,
+    );
+    indent.addln(';');
+  }
+  for (final NamedType field
+      in getFieldsInSerializationOrder(classDefinition)) {
+    final HostDatatype hostDatatype = getFieldHostDatatype(
+        field,
+        (TypeDeclaration x) =>
+            _objcTypeStringForPrimitiveDartType(prefix, x, beforeString: true),
+        customResolver: field.type.isEnum
+            ? (String x) => _enumName(x, prefix: prefix)
+            : (String x) => '${_className(prefix, x)} *');
+    late final String propertyType;
+    addDocumentationComments(
+        indent, field.documentationComments, _docCommentSpec);
+    propertyType = _propertyTypeForDartType(field.type,
+        isNullable: field.type.isNullable, isEnum: field.type.isEnum);
+    final String nullability = field.type.isNullable ? ', nullable' : '';
+    final String fieldType = field.type.isEnum && field.type.isNullable
+        ? _enumName(field.type.baseName,
+            suffix: ' *',
+            prefix: generatorOptions.prefix,
+            box: field.type.isNullable)
+        : hostDatatype.datatype;
+    indent.writeln(
+        '@property(nonatomic, $propertyType$nullability) $fieldType ${field.name};');
+  }
+  indent.writeln('@end');
+  indent.newln();
 }

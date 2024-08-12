@@ -86,7 +86,6 @@ data class AllTypes(
     val map: Map<Any, Any?>
 ) {
   companion object {
-    @Suppress("LocalVariableName")
     fun fromList(pigeonVar_list: List<Any?>): AllTypes {
       val aBool = pigeonVar_list[0] as Boolean
       val anInt = pigeonVar_list[1].let { num -> if (num is Int) num.toLong() else num as Long }
@@ -183,7 +182,6 @@ data class AllNullableTypes(
     val map: Map<Any, Any?>? = null
 ) {
   companion object {
-    @Suppress("LocalVariableName")
     fun fromList(pigeonVar_list: List<Any?>): AllNullableTypes {
       val aNullableBool = pigeonVar_list[0] as Boolean?
       val aNullableInt =
@@ -296,7 +294,6 @@ data class AllNullableTypesWithoutRecursion(
     val map: Map<Any, Any?>? = null
 ) {
   companion object {
-    @Suppress("LocalVariableName")
     fun fromList(pigeonVar_list: List<Any?>): AllNullableTypesWithoutRecursion {
       val aNullableBool = pigeonVar_list[0] as Boolean?
       val aNullableInt =
@@ -388,7 +385,6 @@ data class AllClassesWrapper(
     val allTypes: AllTypes? = null
 ) {
   companion object {
-    @Suppress("LocalVariableName")
     fun fromList(pigeonVar_list: List<Any?>): AllClassesWrapper {
       val allNullableTypes = pigeonVar_list[0] as AllNullableTypes
       val allNullableTypesWithoutRecursion = pigeonVar_list[1] as AllNullableTypesWithoutRecursion?
@@ -413,7 +409,6 @@ data class AllClassesWrapper(
  */
 data class TestMessage(val testList: List<Any?>? = null) {
   companion object {
-    @Suppress("LocalVariableName")
     fun fromList(pigeonVar_list: List<Any?>): TestMessage {
       val testList = pigeonVar_list[0] as List<Any?>?
       return TestMessage(testList)

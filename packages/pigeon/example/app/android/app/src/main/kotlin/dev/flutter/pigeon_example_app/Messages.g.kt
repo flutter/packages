@@ -65,7 +65,6 @@ data class MessageData(
     val data: Map<String?, String?>
 ) {
   companion object {
-    @Suppress("LocalVariableName")
     fun fromList(pigeonVar_list: List<Any?>): MessageData {
       val name = pigeonVar_list[0] as String?
       val description = pigeonVar_list[1] as String?

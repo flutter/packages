@@ -256,7 +256,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
     indent.write('companion object ');
     indent.addScoped('{', '}', () {
-      indent.writeln('@Suppress("LocalVariableName")');
       indent
           .write('fun fromList(${varNamePrefix}list: List<Any?>): $className ');
 
@@ -432,8 +431,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             '${generatorOptions.fileSpecificClassNameComponent}$_overflowClassName',
         fields: overflowFields);
 
-    indent.writeln('@Suppress("ClassName")');
-    _writeDataClassSignature(indent, overflowClass);
+    _writeDataClassSignature(indent, overflowClass, private: true);
     indent.addScoped(' {', '}', () {
       writeClassEncode(
         generatorOptions,
@@ -445,7 +443,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
       indent.format('''
 companion object {
-  @Suppress("LocalVariableName")
   fun fromList(${varNamePrefix}list: List<Any?>): Any? {
     val wrapper = ${generatorOptions.fileSpecificClassNameComponent}$_overflowClassName(
       type = ${varNamePrefix}list[0] as Int,

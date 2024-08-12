@@ -38,7 +38,7 @@ final List<NamedType> _overflowFields = <NamedType>[
 final Class _overflowClass =
     Class(name: _overflowClassName, fields: _overflowFields);
 final EnumeratedType _enumeratedOverflow = EnumeratedType(
-    _overflowClassName, 255, CustomTypes.customClass,
+    _overflowClassName, maximumCodecFieldKey, CustomTypes.customClass,
     associatedClass: _overflowClass);
 
 /// Options that control how C++ code will be generated.
@@ -1033,7 +1033,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
           }
         }
         if (root.requiresOverflowClass) {
-          indent.write('case 255:');
+          indent.write('case $maximumCodecFieldKey:');
           _writeCodecDecode(indent, _enumeratedOverflow, 'ReadValue(stream)');
         }
         indent.writeln('default:');
@@ -1064,10 +1064,10 @@ EncodableValue $_overflowClassName::FromEncodableList(
                     CustomTypes.customClass
                 ? 'std::any_cast<${customType.name}>(*custom_value).ToEncodableList()'
                 : 'static_cast<int>(std::any_cast<${customType.name}>(*custom_value))';
-            final String valueString = customType.enumeration <
-                    maximumCodecFieldKey
-                ? encodeString
-                : 'std::any_cast<$_overflowClassName>(wrap).ToEncodableList()';
+            final String valueString =
+                customType.enumeration < maximumCodecFieldKey
+                    ? encodeString
+                    : 'wrap.ToEncodableList()';
             final int enumeration =
                 customType.enumeration < maximumCodecFieldKey
                     ? customType.enumeration
@@ -1078,7 +1078,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
               indent.writeln('stream->WriteByte($enumeration);');
               if (enumeration == maximumCodecFieldKey) {
                 indent.writeln(
-                    'const auto& wrap = $_overflowClassName(${customType.enumeration - maximumCodecFieldKey}, $encodeString);');
+                    'const auto wrap = $_overflowClassName(${customType.enumeration - maximumCodecFieldKey}, $encodeString);');
               }
               indent
                   .writeln('WriteValue(EncodableValue($valueString), stream);');
