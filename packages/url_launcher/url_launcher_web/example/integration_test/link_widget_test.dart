@@ -936,7 +936,7 @@ void main() {
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
-        ..setAttribute('semantic-identifier', 'test-link-27')
+        ..setAttribute('flt-semantics-identifier', 'test-link-27')
         ..setAttribute('href', '/foobar');
       semanticsHost.append(semanticsAnchor);
       final html.Element semanticsContainer = html.document.createElement('flt-semantics-container');
@@ -1002,7 +1002,7 @@ void main() {
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
-        ..setAttribute('semantic-identifier', 'test-link-71')
+        ..setAttribute('flt-semantics-identifier', 'test-link-71')
         ..setAttribute('href', '/foobar')
         ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);

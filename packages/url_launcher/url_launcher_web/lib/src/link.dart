@@ -555,6 +555,8 @@ class LinkViewController extends PlatformViewController {
   ///
   /// Returns null if [target] is not a semantics element for one of our Links.
   static int? _getViewIdFromSemanticsLink(html.Element? target) {
+    // TODO: The whole <flutter-view> could be inside a shadow root. In that case,
+    //       the target is always the shadow root (because we are listening on window).
     if (target == null) {
       return null;
     }
@@ -567,7 +569,7 @@ class LinkViewController extends PlatformViewController {
       return null;
     }
 
-    final String? semanticsIdentifier = semanticsLink.getAttribute('semantic-identifier');
+    final String? semanticsIdentifier = semanticsLink.getAttribute('flt-semantics-identifier');
     if (semanticsIdentifier == null) {
       return null;
     }
