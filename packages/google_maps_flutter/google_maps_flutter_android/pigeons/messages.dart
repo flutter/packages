@@ -183,14 +183,35 @@ class PlatformPolygon {
 
 /// Pigeon equivalent of the Polyline class.
 class PlatformPolyline {
-  PlatformPolyline(this.json);
+  PlatformPolyline({
+    required this.polylineId,
+    required this.consumesTapEvents,
+    required this.color,
+    required this.geodesic,
+    required this.jointType,
+    required this.patterns,
+    required this.points,
+    required this.startCap,
+    required this.endCap,
+    required this.visible,
+    required this.width,
+    required this.zIndex,
+  });
 
-  /// The polyline data, as JSON. This should only be set from
-  /// Polyline.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Map<String?, Object?> json;
+  final int polylineId;
+  final bool consumesTapEvents;
+  final int color;
+  final bool geodesic;
+  // TODO(schectman): convert to structured data.
+  final Object jointType;
+  // TODO(schectman): convert to structured data.
+  final List<Object?> patterns;
+  final List<PlatformLatLng?> points;
+  final Object startCap;
+  final Object endCap;
+  final bool visible;
+  final int width;
+  final int zIndex;
 }
 
 /// Pigeon equivalent of the Tile class.
