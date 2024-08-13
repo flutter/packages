@@ -37,7 +37,7 @@ void main() {
       final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
       adsManager.init(AdsManagerInitParams());
 
-      verify(mockAdsManager.init());
+      verify(mockAdsManager.init(null));
     });
 
     test('start', () {
