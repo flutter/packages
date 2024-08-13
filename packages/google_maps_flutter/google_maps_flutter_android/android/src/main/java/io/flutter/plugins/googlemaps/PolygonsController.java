@@ -34,13 +34,13 @@ class PolygonsController {
 
   void addPolygons(@NonNull List<Messages.PlatformPolygon> polygonsToAdd) {
     for (Messages.PlatformPolygon polygonToAdd : polygonsToAdd) {
-      addJsonPolygon(polygonToAdd.getJson());
+      addPolygon(polygonToAdd);
     }
   }
 
   void changePolygons(@NonNull List<Messages.PlatformPolygon> polygonsToChange) {
     for (Messages.PlatformPolygon polygonToChange : polygonsToChange) {
-      changeJsonPolygon(polygonToChange.getJson());
+      changePolygon(polygonToChange);
     }
   }
 
@@ -77,6 +77,13 @@ class PolygonsController {
     addPolygon(polygonId, options, polygonBuilder.consumeTapEvents());
   }
 
+  private void addPolygon(@NonNull Messages.PlatformPolygon polygon) {
+    PolygonBuilder polygonBuilder = new PolygonBuilder(density);
+    String polygonId = Convert.interpretPolygonOptions(polygon, polygonBuilder);
+    PolygonOptions options = polygonBuilder.build();
+    addPolygon(polygonId, options, polygonBuilder.consumeTapEvents());
+  }
+
   private void addPolygon(
       String polygonId, PolygonOptions polygonOptions, boolean consumeTapEvents) {
     final Polygon polygon = googleMap.addPolygon(polygonOptions);
@@ -91,6 +98,13 @@ class PolygonsController {
     }
     String polygonId = getPolygonId(polygon);
     PolygonController polygonController = polygonIdToController.get(polygonId);
+    if (polygonController != null) {
+      Convert.interpretPolygonOptions(polygon, polygonController);
+    }
+  }
+
+  private void changePolygon(@NonNull Messages.PlatformPolygon polygon) {
+    PolygonController polygonController = polygonIdToController.get(polygon.getPolygonId());
     if (polygonController != null) {
       Convert.interpretPolygonOptions(polygon, polygonController);
     }
