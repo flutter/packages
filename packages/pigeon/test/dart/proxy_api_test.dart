@@ -80,18 +80,19 @@ void main() {
       final String collapsedCode = _collapseNewlineAndIndentation(code);
 
       // Instance Manager
-      expect(code, contains(r'class PigeonInstanceManager'));
-      expect(code, contains(r'class _PigeonInstanceManagerApi'));
+      expect(code, contains(r'class PigeonInternalInstanceManager'));
+      expect(code, contains(r'class _PigeonInternalInstanceManagerApi'));
 
       // Base Api class
       expect(
         code,
-        contains(r'abstract class PigeonProxyApiBaseClass'),
+        contains(r'abstract class PigeonInternalProxyApiBaseClass'),
       );
 
       // Codec and class
-      expect(code, contains('class _PigeonProxyApiBaseCodec'));
-      expect(code, contains(r'class Api extends PigeonProxyApiBaseClass'));
+      expect(code, contains('class _PigeonInternalProxyApiBaseCodec'));
+      expect(
+          code, contains(r'class Api extends PigeonInternalProxyApiBaseClass'));
 
       // Constructors
       expect(
@@ -146,7 +147,7 @@ void main() {
       final String code = sink.toString();
       final String collapsedCode = _collapseNewlineAndIndentation(code);
 
-      expect(code, contains(r'class _PigeonInstanceManagerApi'));
+      expect(code, contains(r'class _PigeonInternalInstanceManagerApi'));
 
       expect(
         code,
@@ -157,13 +158,13 @@ void main() {
       expect(
         code,
         contains(
-          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInstanceManagerApi.removeStrongReference',
+          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInternalInstanceManagerApi.removeStrongReference',
         ),
       );
       expect(
         collapsedCode,
         contains(
-          '(instanceManager ?? PigeonInstanceManager.instance) .remove(arg_identifier!);',
+          '(instanceManager ?? PigeonInternalInstanceManager.instance) .remove(arg_identifier!);',
         ),
       );
 
@@ -171,7 +172,7 @@ void main() {
       expect(
         code,
         contains(
-          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInstanceManagerApi.clear',
+          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInternalInstanceManagerApi.clear',
         ),
       );
     });
@@ -252,7 +253,7 @@ void main() {
         expect(
           code,
           contains(
-            r'class Api extends PigeonProxyApiBaseClass implements Api2',
+            r'class Api extends PigeonInternalProxyApiBaseClass implements Api2',
           ),
         );
       });
@@ -304,7 +305,7 @@ void main() {
         expect(
           code,
           contains(
-            r'class Api extends PigeonProxyApiBaseClass implements Api2, Api3',
+            r'class Api extends PigeonInternalProxyApiBaseClass implements Api2, Api3',
           ),
         );
       });
@@ -359,7 +360,7 @@ void main() {
         expect(
           code,
           contains(
-            r'class Api extends PigeonProxyApiBaseClass implements Api2',
+            r'class Api extends PigeonInternalProxyApiBaseClass implements Api2',
           ),
         );
         expect(
@@ -409,13 +410,13 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r"const String __pigeon_channelName = 'dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor';",
+            r"const String pigeonVar_channelName = 'dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor';",
           ),
         );
         expect(
           collapsedCode,
           contains(
-            r'__pigeon_channel .send(<Object?>[__pigeon_instanceIdentifier])',
+            r'pigeonVar_channel .send(<Object?>[pigeonVar_instanceIdentifier])',
           ),
         );
       });
@@ -515,8 +516,8 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'__pigeon_channel.send(<Object?>[ '
-            r'__pigeon_instanceIdentifier, '
+            r'pigeonVar_channel.send(<Object?>[ '
+            r'pigeonVar_instanceIdentifier, '
             r'validType, enumType, proxyApiType, '
             r'nullableValidType, nullableEnumType, nullableProxyApiType ])',
           ),
@@ -625,8 +626,8 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'__pigeon_channel.send(<Object?>[ '
-            r'__pigeon_instanceIdentifier, '
+            r'pigeonVar_channel.send(<Object?>[ '
+            r'pigeonVar_instanceIdentifier, '
             r'validType, enumType, proxyApiType, '
             r'nullableValidType, nullableEnumType, nullableProxyApiType ])',
           ),
@@ -697,8 +698,8 @@ void main() {
         );
         final String code = sink.toString();
         expect(code, contains('class Api'));
-        expect(code, contains(r'late final Api2 aField = __pigeon_aField();'));
-        expect(code, contains(r'Api2 __pigeon_aField()'));
+        expect(code, contains(r'late final Api2 aField = pigeonVar_aField();'));
+        expect(code, contains(r'Api2 pigeonVar_aField()'));
       });
 
       test('static attached field', () {
@@ -743,8 +744,8 @@ void main() {
         final String code = sink.toString();
         expect(code, contains('class Api'));
         expect(
-            code, contains(r'static final Api2 aField = __pigeon_aField();'));
-        expect(code, contains(r'static Api2 __pigeon_aField()'));
+            code, contains(r'static final Api2 aField = pigeonVar_aField();'));
+        expect(code, contains(r'static Api2 pigeonVar_aField()'));
       });
     });
 
@@ -846,7 +847,7 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'await __pigeon_channel.send(<Object?>[ this, validType, '
+            r'await pigeonVar_channel.send(<Object?>[ this, validType, '
             r'enumType, proxyApiType, nullableValidType, '
             r'nullableEnumType, nullableProxyApiType ])',
           ),
@@ -889,12 +890,12 @@ void main() {
           collapsedCode,
           contains(
             r'static Future<void> doSomething({ BinaryMessenger? pigeon_binaryMessenger, '
-            r'PigeonInstanceManager? pigeon_instanceManager, })',
+            r'PigeonInternalInstanceManager? pigeon_instanceManager, })',
           ),
         );
         expect(
           collapsedCode,
-          contains(r'await __pigeon_channel.send(null)'),
+          contains(r'await pigeonVar_channel.send(null)'),
         );
       });
     });

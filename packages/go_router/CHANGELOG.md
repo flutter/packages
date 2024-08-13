@@ -1,3 +1,19 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 14.2.3
+
+- Fixes redirect example's signature in `route.dart`.
+
+## 14.2.2
+
+- Adds section for "Stateful nested navigation" to configuration.md.
+
+## 14.2.1
+
+- Makes GoRouterState lookup more robust.
+
 ## 14.2.0
 
 - Added proper `redirect` handling for `ShellRoute.$route` and `StatefulShellRoute.$route` for proper redirection handling in case of code generation.

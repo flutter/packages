@@ -1,3 +1,22 @@
+## 21.2.0
+
+* Removes restriction on number of custom types.
+* [java] Fixes bug with multiple enums.
+* [java] Removes `Object` from generics.
+* [objc] Fixes bug with multiple enums per data class.
+* Updates `varPrefix` and `classMemberNamePrefix`.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 21.1.0
+
+* Adds GObject (Linux) support.
+
+## 21.0.0
+
+* **Breaking Change** [cpp] Fixes style of enum names. References to enum values
+  will need to be updated to `EnumType.kValue` style, instead of the previous
+  `EnumType.value`.
+
 ## 20.0.2
 
 * [java] Adds `equals` and `hashCode` support for data classes.

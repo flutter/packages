@@ -12,6 +12,8 @@ class VideoCaptureOptions {
   /// Constructs a new instance.
   const VideoCaptureOptions(
     this.cameraId, {
+    @Deprecated(
+        'This parameter is unused, and will be ignored on all platforms')
     this.maxDuration,
     this.streamCallback,
     this.streamOptions,
@@ -24,8 +26,9 @@ class VideoCaptureOptions {
   final int cameraId;
 
   /// The maximum time to perform capturing for.
-  ///
-  /// By default there is no maximum on the capture time.
+  @Deprecated('This parameter is unused, and will be ignored on all platforms')
+  // Platform implementations should not implement this, as it will never be
+  // passed from the app-facing layer.
   final Duration? maxDuration;
 
   /// An optional callback to enable streaming.

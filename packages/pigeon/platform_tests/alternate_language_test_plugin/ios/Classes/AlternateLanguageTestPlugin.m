@@ -110,6 +110,11 @@
   return [[FLTAnEnumBox alloc] initWithValue:anEnum];
 }
 
+- (FLTAnotherEnumBox *_Nullable)echoAnotherEnum:(FLTAnotherEnum)anotherEnum
+                                          error:(FlutterError *_Nullable *_Nonnull)error {
+  return [[FLTAnotherEnumBox alloc] initWithValue:anotherEnum];
+}
+
 - (nullable NSString *)echoNamedDefaultString:(NSString *)aString
                                         error:(FlutterError *_Nullable *_Nonnull)error {
   return aString;
@@ -214,6 +219,12 @@
   return AnEnumBoxed;
 }
 
+- (FLTAnotherEnumBox *_Nullable)echoAnotherNullableEnum:
+                                    (nullable FLTAnotherEnumBox *)AnotherEnumBoxed
+                                                  error:(FlutterError *_Nullable *_Nonnull)error {
+  return AnotherEnumBoxed;
+}
+
 - (nullable NSNumber *)echoOptionalNullableInt:(nullable NSNumber *)aNullableInt
                                          error:(FlutterError *_Nullable *_Nonnull)error {
   return aNullableInt;
@@ -309,6 +320,12 @@
   completion([[FLTAnEnumBox alloc] initWithValue:anEnum], nil);
 }
 
+- (void)echoAnotherAsyncEnum:(FLTAnotherEnum)anotherEnum
+                  completion:
+                      (void (^)(FLTAnotherEnumBox *_Nullable, FlutterError *_Nullable))completion {
+  completion([[FLTAnotherEnumBox alloc] initWithValue:anotherEnum], nil);
+}
+
 - (void)echoAsyncNullableInt:(nullable NSNumber *)anInt
                   completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   completion(anInt, nil);
@@ -356,6 +373,12 @@
                    completion:
                        (void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion {
   completion(AnEnumBoxed, nil);
+}
+
+- (void)echoAnotherAsyncNullableEnum:(nullable FLTAnotherEnumBox *)AnotherEnumBoxed
+                          completion:(void (^)(FLTAnotherEnumBox *_Nullable,
+                                               FlutterError *_Nullable))completion {
+  completion(AnotherEnumBoxed, nil);
 }
 
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
@@ -485,6 +508,15 @@
                  }];
 }
 
+- (void)callFlutterEchoAnotherEnum:(FLTAnotherEnum)anotherEnum
+                        completion:(void (^)(FLTAnotherEnumBox *_Nullable,
+                                             FlutterError *_Nullable))completion {
+  [self.flutterAPI echoAnotherEnum:anotherEnum
+                        completion:^(FLTAnotherEnumBox *value, FlutterError *error) {
+                          completion(value, error);
+                        }];
+}
+
 - (void)callFlutterEchoAllNullableTypes:(nullable FLTAllNullableTypes *)everything
                              completion:(void (^)(FLTAllNullableTypes *_Nullable,
                                                   FlutterError *_Nullable))completion {
@@ -578,6 +610,15 @@
                          completion:^(FLTAnEnumBox *value, FlutterError *error) {
                            completion(value, error);
                          }];
+}
+
+- (void)callFlutterEchoAnotherNullableEnum:(nullable FLTAnotherEnumBox *)AnotherEnumBoxed
+                                completion:(void (^)(FLTAnotherEnumBox *_Nullable,
+                                                     FlutterError *_Nullable))completion {
+  [self.flutterAPI echoAnotherNullableEnum:AnotherEnumBoxed
+                                completion:^(FLTAnotherEnumBox *value, FlutterError *error) {
+                                  completion(value, error);
+                                }];
 }
 
 - (void)callFlutterSmallApiEchoString:(nonnull NSString *)aString

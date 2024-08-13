@@ -1,6 +1,7 @@
-## NEXT
+## 3.2.0
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Updates platform channels to use Pigeon.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 3.1.1
 

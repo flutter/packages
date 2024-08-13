@@ -11,6 +11,9 @@ import 'package:pigeon/pigeon.dart';
   cppOptions: CppOptions(namespace: 'pigeon_example'),
   cppHeaderOut: 'windows/runner/messages.g.h',
   cppSourceOut: 'windows/runner/messages.g.cpp',
+  gobjectHeaderOut: 'linux/messages.g.h',
+  gobjectSourceOut: 'linux/messages.g.cc',
+  gobjectOptions: GObjectOptions(),
   kotlinOut:
       'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
   kotlinOptions: KotlinOptions(),

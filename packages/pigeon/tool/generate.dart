@@ -23,6 +23,7 @@ const String _noFormatFlag = 'no-format';
 const String _files = 'files';
 const String _test = 'test';
 const String _example = 'example';
+const String _overflowFiller = 'overflow';
 
 const List<String> _fileGroups = <String>[_test, _example];
 
@@ -43,6 +44,13 @@ Future<void> main(List<String> args) async {
     )
     ..addFlag(_helpFlag,
         negatable: false, abbr: 'h', help: 'Print this reference.')
+    ..addFlag(
+      _overflowFiller,
+      abbr: 'o',
+      help:
+          'Injects 120 Enums into the pigeon ast, used for testing overflow utilities.',
+      hide: true,
+    )
     ..addMultiOption(_files,
         help:
             'Select specific groups of files to generate; $_test or $_example. Defaults to both.',
@@ -59,13 +67,16 @@ ${parser.usage}''');
 
   final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
 
+  final bool includeOverflow = argResults.wasParsed(_overflowFiller);
+
   final List<String> toGenerate = argResults.wasParsed(_files)
       ? argResults[_files] as List<String>
       : _fileGroups;
 
   if (toGenerate.contains(_test)) {
     print('Generating platform_test/ output...');
-    final int generateExitCode = await generateTestPigeons(baseDir: baseDir);
+    final int generateExitCode = await generateTestPigeons(
+        baseDir: baseDir, includeOverflow: includeOverflow);
     if (generateExitCode == 0) {
       print('Generation complete!');
     } else {

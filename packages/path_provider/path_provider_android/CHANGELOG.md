@@ -1,3 +1,19 @@
+## 2.2.10
+
+* Updates annotations lib to 1.8.2.
+
+## 2.2.9
+
+* Updates annotations lib to 1.8.1.
+
+## 2.2.8
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 2.2.7
+
+* Updates AGP version to 8.5.0.
+
 ## 2.2.6
 
 * Updates annotations lib to 1.8.0.

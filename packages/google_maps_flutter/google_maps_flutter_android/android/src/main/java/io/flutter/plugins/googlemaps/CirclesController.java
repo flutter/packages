@@ -5,39 +5,31 @@
 package io.flutter.plugins.googlemaps;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 class CirclesController {
-
-  private final Map<String, CircleController> circleIdToController;
+  @VisibleForTesting final Map<String, CircleController> circleIdToController;
   private final Map<String, String> googleMapsCircleIdToDartCircleId;
-  private final MethodChannel methodChannel;
+  private final @NonNull MapsCallbackApi flutterApi;
   private final float density;
   private GoogleMap googleMap;
 
-  CirclesController(MethodChannel methodChannel, float density) {
+  CirclesController(@NonNull MapsCallbackApi flutterApi, float density) {
     this.circleIdToController = new HashMap<>();
     this.googleMapsCircleIdToDartCircleId = new HashMap<>();
-    this.methodChannel = methodChannel;
+    this.flutterApi = flutterApi;
     this.density = density;
   }
 
   void setGoogleMap(GoogleMap googleMap) {
     this.googleMap = googleMap;
-  }
-
-  void addJsonCircles(List<Object> circlesToAdd) {
-    if (circlesToAdd != null) {
-      for (Object circleToAdd : circlesToAdd) {
-        addJsonCircle(circleToAdd);
-      }
-    }
   }
 
   void addCircles(@NonNull List<Messages.PlatformCircle> circlesToAdd) {
@@ -47,8 +39,8 @@ class CirclesController {
   }
 
   void changeCircles(@NonNull List<Messages.PlatformCircle> circlesToChange) {
-    for (Object circleToChange : circlesToChange) {
-      changeCircle(circleToChange);
+    for (Messages.PlatformCircle circleToChange : circlesToChange) {
+      changeJsonCircle(circleToChange.getJson());
     }
   }
 
@@ -67,7 +59,7 @@ class CirclesController {
     if (circleId == null) {
       return false;
     }
-    methodChannel.invokeMethod("circle#onTap", Convert.circleIdToJson(circleId));
+    flutterApi.onCircleTap(circleId, new NoOpVoidResult());
     CircleController circleController = circleIdToController.get(circleId);
     if (circleController != null) {
       return circleController.consumeTapEvents();
@@ -75,7 +67,7 @@ class CirclesController {
     return false;
   }
 
-  private void addJsonCircle(Object circle) {
+  private void addJsonCircle(Map<String, ?> circle) {
     if (circle == null) {
       return;
     }
@@ -92,7 +84,7 @@ class CirclesController {
     googleMapsCircleIdToDartCircleId.put(circle.getId(), circleId);
   }
 
-  private void changeCircle(Object circle) {
+  private void changeJsonCircle(Map<String, ?> circle) {
     if (circle == null) {
       return;
     }
@@ -103,9 +95,7 @@ class CirclesController {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private static String getCircleId(Object circle) {
-    Map<String, Object> circleMap = (Map<String, Object>) circle;
-    return (String) circleMap.get("circleId");
+  private static String getCircleId(Map<String, ?> circle) {
+    return (String) circle.get("circleId");
   }
 }
