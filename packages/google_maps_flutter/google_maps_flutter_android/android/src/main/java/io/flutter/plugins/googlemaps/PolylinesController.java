@@ -71,17 +71,6 @@ class PolylinesController {
     return false;
   }
 
-  private void addJsonPolyline(Map<String, ?> polyline) {
-    if (polyline == null) {
-      return;
-    }
-    PolylineBuilder polylineBuilder = new PolylineBuilder(density);
-    String polylineId =
-        Convert.interpretPolylineOptions(polyline, polylineBuilder, assetManager, density);
-    PolylineOptions options = polylineBuilder.build();
-    addPolyline(polylineId, options, polylineBuilder.consumeTapEvents());
-  }
-
   private void addPolyline(@NonNull Messages.PlatformPolyline polyline) {
     PolylineBuilder polylineBuilder = new PolylineBuilder(density);
     String polylineId =
@@ -96,17 +85,6 @@ class PolylinesController {
     PolylineController controller = new PolylineController(polyline, consumeTapEvents, density);
     polylineIdToController.put(polylineId, controller);
     googleMapsPolylineIdToDartPolylineId.put(polyline.getId(), polylineId);
-  }
-
-  private void changeJsonPolyline(Map<String, ?> polyline) {
-    if (polyline == null) {
-      return;
-    }
-    String polylineId = getPolylineId(polyline);
-    PolylineController polylineController = polylineIdToController.get(polylineId);
-    if (polylineController != null) {
-      Convert.interpretPolylineOptions(polyline, polylineController, assetManager, density);
-    }
   }
 
   private void changePolyline(@NonNull Messages.PlatformPolyline polyline) {

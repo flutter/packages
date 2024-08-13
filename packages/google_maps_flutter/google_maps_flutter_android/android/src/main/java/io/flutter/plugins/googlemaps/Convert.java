@@ -722,60 +722,6 @@ class Convert {
     return polyline.getPolylineId();
   }
 
-  static String interpretPolylineOptions(
-      Map<String, ?> data, PolylineOptionsSink sink, AssetManager assetManager, float density) {
-    final Object consumeTapEvents = data.get("consumeTapEvents");
-    if (consumeTapEvents != null) {
-      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
-    }
-    final Object color = data.get("color");
-    if (color != null) {
-      sink.setColor(toInt(color));
-    }
-    final Object endCap = data.get("endCap");
-    if (endCap != null) {
-      sink.setEndCap(toCap(endCap, assetManager, density));
-    }
-    final Object geodesic = data.get("geodesic");
-    if (geodesic != null) {
-      sink.setGeodesic(toBoolean(geodesic));
-    }
-    final Object jointType = data.get("jointType");
-    if (jointType != null) {
-      sink.setJointType(toInt(jointType));
-    }
-    final Object startCap = data.get("startCap");
-    if (startCap != null) {
-      sink.setStartCap(toCap(startCap, assetManager, density));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final Object width = data.get("width");
-    if (width != null) {
-      sink.setWidth(toInt(width));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
-    final Object points = data.get("points");
-    if (points != null) {
-      sink.setPoints(toPoints(points));
-    }
-    final Object pattern = data.get("pattern");
-    if (pattern != null) {
-      sink.setPattern(toPattern(pattern));
-    }
-    final String polylineId = (String) data.get("polylineId");
-    if (polylineId == null) {
-      throw new IllegalArgumentException("polylineId was null");
-    } else {
-      return polylineId;
-    }
-  }
-
   static String interpretCircleOptions(Messages.PlatformCircle circle, CircleOptionsSink sink) {
     sink.setConsumeTapEvents(circle.getConsumeTapEvents());
     sink.setFillColor(circle.getFillColor().intValue());
