@@ -425,24 +425,76 @@ class PlatformPolygon {
 /// Pigeon equivalent of the Polyline class.
 class PlatformPolyline {
   PlatformPolyline({
-    required this.json,
+    required this.polylineId,
+    required this.consumesTapEvents,
+    required this.color,
+    required this.geodesic,
+    required this.jointType,
+    required this.patterns,
+    required this.points,
+    required this.startCap,
+    required this.endCap,
+    required this.visible,
+    required this.width,
+    required this.zIndex,
   });
 
-  /// The polyline data, as JSON. This should only be set from
-  /// Polyline.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  Map<String?, Object?> json;
+  String polylineId;
+
+  bool consumesTapEvents;
+
+  int color;
+
+  bool geodesic;
+
+  int jointType;
+
+  List<Object?> patterns;
+
+  List<PlatformLatLng?> points;
+
+  Object startCap;
+
+  Object endCap;
+
+  bool visible;
+
+  int width;
+
+  int zIndex;
 
   Object encode() {
     return <Object?>[
-      json,
+      polylineId,
+      consumesTapEvents,
+      color,
+      geodesic,
+      jointType,
+      patterns,
+      points,
+      startCap,
+      endCap,
+      visible,
+      width,
+      zIndex,
     ];
   }
 
   static PlatformPolyline decode(Object result) {
     result as List<Object?>;
     return PlatformPolyline(
-      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
+      polylineId: result[0]! as String,
+      consumesTapEvents: result[1]! as bool,
+      color: result[2]! as int,
+      geodesic: result[3]! as bool,
+      jointType: result[4]! as int,
+      patterns: (result[5] as List<Object?>?)!.cast<Object?>(),
+      points: (result[6] as List<Object?>?)!.cast<PlatformLatLng?>(),
+      startCap: result[7]!,
+      endCap: result[8]!,
+      visible: result[9]! as bool,
+      width: result[10]! as int,
+      zIndex: result[11]! as int,
     );
   }
 }

@@ -763,10 +763,22 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformPolyline _platformPolylineFromPolyline(Polyline polyline) {
-    // This cast is not ideal, but the Java code already assumes this format.
-    // See the TODOs at the top of this file and on the 'json' field in
-    // messages.dart.
-    return PlatformPolyline(json: polyline.toJson() as Map<String, Object?>);
+    final List<PlatformLatLng?> points = polyline.points.map(_platformLatLngFromLatLng).toList();
+    final List<Object?> pattern = polyline.patterns.map((PatternItem item) {return item.toJson();}).toList();
+    return PlatformPolyline(
+      polylineId: polyline.polylineId.value,
+      consumesTapEvents: polyline.consumeTapEvents,
+      color: polyline.color.value,
+      startCap: polyline.startCap.toJson(),
+      endCap: polyline.endCap.toJson(),
+      geodesic: polyline.geodesic,
+      visible: polyline.visible,
+      width: polyline.width,
+      zIndex: polyline.zIndex,
+      points: points,
+      jointType: polyline.jointType.value,
+      patterns: pattern,
+    );
   }
 
   static PlatformTileOverlay _platformTileOverlayFromTileOverlay(

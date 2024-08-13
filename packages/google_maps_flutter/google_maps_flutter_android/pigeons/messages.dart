@@ -198,12 +198,11 @@ class PlatformPolyline {
     required this.zIndex,
   });
 
-  final int polylineId;
+  final String polylineId;
   final bool consumesTapEvents;
   final int color;
   final bool geodesic;
-  // TODO(schectman): convert to structured data.
-  final Object jointType;
+  final int jointType;
   // TODO(schectman): convert to structured data.
   final List<Object?> patterns;
   final List<PlatformLatLng?> points;
