@@ -1,3 +1,7 @@
+## 2.14.2
+
+* Converts `PlatformPolygon` and `PlatformPolyline` to pigeon.
+
 ## 2.14.1
 
 * Converts `PlatformCircle` and `PlatformMarker` to pigeon.
