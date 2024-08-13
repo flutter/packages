@@ -155,12 +155,21 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
 
 final JSAny _useCapture = <String, Object>{'capture': true}.jsify()!;
 
+typedef _TriggerLinkCallback = void Function(int viewId, html.MouseEvent? mouseEvent);
+
 /// Keeps track of the signals required to trigger a link.
 ///
 /// Automatically resets the signals after a certain delay. This is to prevent
 /// the signals from getting stale.
 class LinkTriggerSignals {
-  LinkTriggerSignals({required this.staleTimeout});
+  LinkTriggerSignals({
+    required this.triggerLink,
+    required this.staleTimeout,
+  });
+
+  /// The function to be called when all signals have been received and the link
+  /// is ready to be triggered.
+  final _TriggerLinkCallback triggerLink;
 
   /// Specifies the duration after which the signals are considered stale.
   ///
@@ -168,12 +177,27 @@ class LinkTriggerSignals {
   /// considered valid. If they don't, the signals are reset.
   final Duration staleTimeout;
 
-  /// Whether the we got all the signals required to trigger the link.
-  bool get isReadyToTrigger => _hasFollowLink && _hasDomEvent;
+  /// Whether we got all the signals required to trigger the link.
+  bool get _isReadyToTrigger => _hasFollowLink && _hasDomEvent;
 
-  int? get viewId {
-    assert(isValid);
-    return _viewIdFromFollowLink;
+  int? get _viewId {
+    assert(!isViewIdMismatched);
+    return _viewIdFromFollowLink ?? _viewIdFromDomEvent;
+  }
+
+  void triggerLinkIfReady() {
+    if (isViewIdMismatched) {
+      // When view IDs from signals are mismatched, let's reset the signals and
+      // prevent the browser from navigating.
+      _mouseEvent?.preventDefault();
+      reset();
+      return;
+    }
+
+    if (_isReadyToTrigger) {
+      triggerLink(_viewId!, _mouseEvent);
+      reset();
+    }
   }
 
   void registerFollowLink({required int viewId}) {
@@ -191,7 +215,7 @@ class LinkTriggerSignals {
     }
     _hasDomEvent = true;
     _viewIdFromDomEvent = viewId;
-    this.mouseEvent = mouseEvent;
+    _mouseEvent = mouseEvent;
     _didUpdate();
   }
 
@@ -201,18 +225,18 @@ class LinkTriggerSignals {
   int? _viewIdFromFollowLink;
   int? _viewIdFromDomEvent;
 
-  html.MouseEvent? mouseEvent;
+  html.MouseEvent? _mouseEvent;
 
-  // The signals state is considered invalid if the view IDs from the follow
-  // link and the DOM event don't match.
-  bool get isValid {
+  /// Whether the view ID from various signals have a mismatch.
+  ///
+  /// When a signal's view ID is missing, it's not considered a mismatch.
+  bool get isViewIdMismatched {
     if (_viewIdFromFollowLink == null || _viewIdFromDomEvent == null) {
-      // We haven't received all view IDs yet, so we can't determine if the
-      // signals are valid.
-      return true;
+      // A missing view ID is not considered a mismatch.
+      return false;
     }
 
-    return _viewIdFromFollowLink == _viewIdFromDomEvent;
+    return _viewIdFromFollowLink != _viewIdFromDomEvent;
   }
 
   Timer? _resetTimer;
@@ -233,7 +257,7 @@ class LinkTriggerSignals {
     _viewIdFromFollowLink = null;
     _viewIdFromDomEvent = null;
 
-    mouseEvent = null;
+    _mouseEvent = null;
   }
 }
 
@@ -280,7 +304,10 @@ class LinkViewController extends PlatformViewController {
   }
 
   static final LinkTriggerSignals _triggerSignals =
-      LinkTriggerSignals(staleTimeout: const Duration(milliseconds: 500));
+      LinkTriggerSignals(
+        triggerLink: _triggerLink,
+        staleTimeout: const Duration(milliseconds: 500),
+      );
 
   static final JSFunction _jsGlobalKeydownListener = _onGlobalKeydown.toJS;
   static final JSFunction _jsGlobalClickListener = _onGlobalClick.toJS;
@@ -362,10 +389,7 @@ class LinkViewController extends PlatformViewController {
     // The keydown event is not directly associated with the target Link, so
     // we can't find the `viewId` from the event.
     _triggerSignals.registerDomEvent(viewId: null, mouseEvent: null);
-
-    if (_triggerSignals.isReadyToTrigger) {
-      _triggerLink();
-    }
+    _triggerSignals.triggerLinkIfReady();
   }
 
   static void _onGlobalClick(html.MouseEvent event) {
@@ -406,18 +430,7 @@ class LinkViewController extends PlatformViewController {
       mouseEvent: event,
     );
 
-    if (!_triggerSignals.isValid) {
-      // The view ID from the target doesn't match the view ID from the follow
-      // link. Let's prevent the browser from navigating, and let's reset the
-      // signals so we start fresh on the next event.
-      event.preventDefault();
-      _triggerSignals.reset();
-      return;
-    }
-
-    if (_triggerSignals.isReadyToTrigger) {
-      _triggerLink();
-    }
+    _triggerSignals.triggerLinkIfReady();
   }
 
   /// Call this method to indicate that a hit test has been registered for the
@@ -427,19 +440,7 @@ class LinkViewController extends PlatformViewController {
   /// `click` from the browser.
   static void onFollowLink(int viewId) {
     _triggerSignals.registerFollowLink(viewId: viewId);
-
-    if (!_triggerSignals.isValid) {
-      // The view ID from follow link doesn't match the view ID from the event
-      // target. Let's prevent the browser from navigating, and let's reset the
-      // signals so we start fresh on the next event.
-      _triggerSignals.mouseEvent?.preventDefault();
-      _triggerSignals.reset();
-      return;
-    }
-
-    if (_triggerSignals.isReadyToTrigger) {
-      _triggerLink();
-    }
+    _triggerSignals.triggerLinkIfReady();
   }
 
   @override
@@ -477,14 +478,8 @@ class LinkViewController extends PlatformViewController {
   ///
   /// It also handles logic for external vs internal links, triggered by a mouse
   /// vs keyboard event.
-  static void _triggerLink() {
-    assert(_triggerSignals.isReadyToTrigger);
-
-    final LinkViewController controller = _instancesByViewId[_triggerSignals.viewId!]!;
-    final html.MouseEvent? mouseEvent = _triggerSignals.mouseEvent;
-
-    // Make sure to reset no matter what code path we end up taking.
-    _triggerSignals.reset();
+  static void _triggerLink(int viewId, html.MouseEvent? mouseEvent) {
+    final LinkViewController controller = _instancesByViewId[viewId]!;
 
     if (mouseEvent != null && _isModifierKey(mouseEvent)) {
       return;
