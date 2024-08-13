@@ -118,7 +118,7 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
     return Semantics(
       link: true,
       identifier: _semanticsIdentifier,
-      value: widget.link.uri?.getHref(),
+      linkUrl: widget.link.uri,
       child: widget.link.builder(
         context,
         widget.link.isDisabled ? null : _followLink,

@@ -847,11 +847,12 @@ void main() {
         matchesSemantics(
           isLink: true,
           identifier: 'test-link-12',
-          value: 'https://foobar/example?q=1',
+          // linkUrl: 'https://foobar/example?q=1',
           children: <Matcher>[
             matchesSemantics(
               hasTapAction: true,
               hasEnabledState: true,
+              hasFocusAction: true,
               isEnabled: true,
               isButton: true,
               isFocusable: true,
@@ -897,7 +898,7 @@ void main() {
           isLink: true,
           hasTapAction: true,
           identifier: 'test-link-43',
-          value: 'https://foobar/example?q=1',
+          // linkUrl: 'https://foobar/example?q=1',
           label: 'Link Text',
         ),
       );
