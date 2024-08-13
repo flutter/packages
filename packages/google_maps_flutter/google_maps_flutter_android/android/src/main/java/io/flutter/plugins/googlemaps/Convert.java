@@ -690,6 +690,19 @@ class Convert {
         infoWindowAnchor.getDx().floatValue(), infoWindowAnchor.getDy().floatValue());
   }
 
+  static String interpretPolygonOptions(Messages.PlatformPolygon polygon, PolygonOptionsSink sink) {
+    sink.setConsumeTapEvents(polygon.getConsumesTapEvents());
+    sink.setGeodesic(polygon.getGeodesic());
+    sink.setVisible(polygon.getVisible());
+    sink.setFillColor(polygon.getFillColor().intValue());
+    sink.setStrokeColor(polygon.getStrokeColor().intValue());
+    sink.setStrokeWidth(polygon.getStrokeWidth());
+    sink.setZIndex(polygon.getZIndex());
+    sink.setPoints(toPoints(polygon.getPoints()));
+    sink.setHoles(toHoles(polygon.getHoles()));
+    return polygon.getPolygonId();
+  }
+
   static String interpretPolygonOptions(Map<String, ?> data, PolygonOptionsSink sink) {
     final Object consumeTapEvents = data.get("consumeTapEvents");
     if (consumeTapEvents != null) {
@@ -862,6 +875,15 @@ class Convert {
     return points;
   }
 
+  static List<LatLng> toPoints(List<Messages.PlatformLatLng> data) {
+    final List<LatLng> points = new ArrayList<>(data.size());
+
+    for (Messages.PlatformLatLng rawPoint : data) {
+      points.add(new LatLng(rawPoint.getLatitude(), rawPoint.getLongitude()));
+    }
+    return points;
+  }
+
   /**
    * Converts the given object to a list of WeightedLatLng objects.
    *
@@ -923,6 +945,15 @@ class Convert {
     final List<List<LatLng>> holes = new ArrayList<>(data.size());
 
     for (Object rawHole : data) {
+      holes.add(toPoints(rawHole));
+    }
+    return holes;
+  }
+
+  private static List<List<LatLng>> toHoles(List<List<Messages.PlatformLatLng>> data) {
+    final List<List<LatLng>> holes = new ArrayList<>(data.size());
+
+    for (List<Messages.PlatformLatLng> rawHole : data) {
       holes.add(toPoints(rawHole));
     }
     return holes;
