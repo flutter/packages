@@ -20,6 +20,6 @@ class AdsManagerLoadedEventProxyApiTest {
     val mockManager = Mockito.mock<AdsManager>()
     whenever(instance.adsManager).thenReturn(mockManager)
 
-    assertEquals(mockManager, api.manager(instance))
+    assertEquals(mockManager, api.adsManager(instance))
   }
 }

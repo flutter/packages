@@ -615,7 +615,8 @@ abstract class SecureSignals {
   late final String secureSignal;
 }
 
-/// An event raised when ads are successfully loaded from the ad server through an AdsLoader.
+/// An event raised when ads are successfully loaded from the ad server through
+/// an AdsLoader.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsManagerLoadedEvent.html.
 @ProxyApi(
@@ -627,7 +628,59 @@ abstract class SecureSignals {
 abstract class AdsManagerLoadedEvent {
   /// The ads manager that will control playback of the loaded ads, or null when
   /// using dynamic ad insertion.
-  late final AdsManager manager;
+  late final AdsManager? adsManager;
+
+  /// the stream manager for the current dynamic ad insertion stream, or null
+  /// when requesting ads directly.
+  late final StreamManager? streamManager;
+
+  /// The user-provided object that is associated with the ads request.
+  late final Object userRequestContext;
+}
+
+/// An object which manages dynamic ad insertion streams.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/StreamManager.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.StreamManager',
+  ),
+)
+abstract class StreamManager extends BaseManager {
+  /// Converts time offset within the stream to time offset of the underlying
+  /// content, excluding ads.
+  int getContentTimeMsForStreamTimeMs(int streamTimeMs);
+
+  /// Returns the CuePoints for the current VOD stream, which are available
+  /// after cuepointsChanged is broadcast
+  List<CuePoint> getCuePoints();
+
+  /// Returns the previous cuepoint for the given VOD stream time.
+  ///
+  /// Returns null if there is no previous cue point, or if called for a live
+  /// stream.
+  CuePoint? getPreviousCuePointForStreamTimeMs(int streamTimeMs);
+
+  /// Get the identifier used during server side ad insertion to uniquely
+  /// identify a stream.
+  ///
+  /// Returns null if server side ad insertion was not used.
+  String getStreamId();
+
+  /// Converts time offset within the content to time offset of the underlying
+  /// stream, including ads.
+  int getStreamTimeMsForContentTimeMs(int contentTimeMs);
+
+  /// Requests SDK to retrieve the ad metadata and then load the provided
+  /// streamManifestUrl and streamSubtitles into player.
+  void loadThirdPartyStream(
+    String streamUrl,
+    List<Map<String, String>> streamSubtitles,
+  );
+
+  /// Replaces all the ad tag parameters used for the upcoming ad requests for a
+  /// live stream.
+  void replaceAdTagParameters(Map<String, String> adTagParameters);
 }
 
 /// An event raised when there is an error loading or playing ads.

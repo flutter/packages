@@ -74,6 +74,10 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
     return AdsManagerLoadedEventProxyApi(this)
   }
 
+  override fun getPigeonApiStreamManager(): PigeonApiStreamManager {
+    return StreamManagerProxyApi(this)
+  }
+
   override fun getPigeonApiAdsLoadedListener(): PigeonApiAdsLoadedListener {
     return AdsLoadedListenerProxyApi(this)
   }

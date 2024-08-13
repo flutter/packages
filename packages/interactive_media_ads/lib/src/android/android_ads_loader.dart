@@ -119,7 +119,7 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
           weakThis.target?.params.onAdsLoaded(
             PlatformOnAdsLoadedData(
               manager: AndroidAdsManager(
-                event.manager,
+                event.adsManager!,
                 proxy: weakThis.target?._androidParams._proxy,
               ),
             ),

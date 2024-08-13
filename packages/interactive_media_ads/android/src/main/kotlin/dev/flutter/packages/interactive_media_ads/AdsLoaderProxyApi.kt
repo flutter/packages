@@ -41,21 +41,21 @@ class AdsLoaderProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   }
 
   override fun release(pigeon_instance: AdsLoader) {
-    return pigeon_instance.release()
+    pigeon_instance.release()
   }
 
   override fun removeAdErrorListener(
       pigeon_instance: AdsLoader,
       errorListener: AdErrorEvent.AdErrorListener
   ) {
-    return pigeon_instance.removeAdErrorListener(errorListener)
+    pigeon_instance.removeAdErrorListener(errorListener)
   }
 
   override fun removeAdsLoadedListener(
       pigeon_instance: AdsLoader,
       loadedListener: AdsLoader.AdsLoadedListener
   ) {
-    return pigeon_instance.removeAdsLoadedListener(loadedListener)
+    pigeon_instance.removeAdsLoadedListener(loadedListener)
   }
 
   override fun requestStream(pigeon_instance: AdsLoader, streamRequest: StreamRequest): String {

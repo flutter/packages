@@ -164,7 +164,7 @@ void main() {
 
       final MockAdsManagerLoadedEvent mockLoadedEvent =
           MockAdsManagerLoadedEvent();
-      when(mockLoadedEvent.manager).thenReturn(MockAdsManager());
+      when(mockLoadedEvent.adsManager).thenReturn(MockAdsManager());
 
       await addEventListenerCompleter.future;
 
