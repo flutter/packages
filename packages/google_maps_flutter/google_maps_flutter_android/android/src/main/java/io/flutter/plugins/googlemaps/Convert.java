@@ -703,7 +703,11 @@ class Convert {
     return polygon.getPolygonId();
   }
 
-  static String interpretPolylineOptions(Messages.PlatformPolyline polyline, PolylineOptionsSink sink, AssetManager assetManager, float density) {
+  static String interpretPolylineOptions(
+      Messages.PlatformPolyline polyline,
+      PolylineOptionsSink sink,
+      AssetManager assetManager,
+      float density) {
     sink.setConsumeTapEvents(polyline.getConsumesTapEvents());
     sink.setColor(polyline.getColor().intValue());
     sink.setEndCap(toCap(polyline.getEndCap(), assetManager, density));

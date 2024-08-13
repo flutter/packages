@@ -509,6 +509,7 @@ void main() {
         expected.zIndex,
       ]);
     }
+
     // Object two should be changed.
     expect(toChange.length, 1);
     expectPolygon(toChange.first!, object2new);
@@ -562,6 +563,7 @@ void main() {
         expect(pattern, expected.patterns[i].toJson());
       }
     }
+
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.polylineId.value);

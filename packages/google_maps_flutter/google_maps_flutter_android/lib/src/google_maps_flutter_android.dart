@@ -746,8 +746,12 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformPolygon _platformPolygonFromPolygon(Polygon polygon) {
-    final List<PlatformLatLng?> points = polygon.points.map(_platformLatLngFromLatLng).toList();
-    final List<List<PlatformLatLng?>?> holes = polygon.holes.map((List<LatLng> hole) {return hole.map(_platformLatLngFromLatLng).toList();}).toList();
+    final List<PlatformLatLng?> points =
+        polygon.points.map(_platformLatLngFromLatLng).toList();
+    final List<List<PlatformLatLng?>?> holes =
+        polygon.holes.map((List<LatLng> hole) {
+      return hole.map(_platformLatLngFromLatLng).toList();
+    }).toList();
     return PlatformPolygon(
       polygonId: polygon.polygonId.value,
       fillColor: polygon.fillColor.value,
@@ -763,8 +767,11 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformPolyline _platformPolylineFromPolyline(Polyline polyline) {
-    final List<PlatformLatLng?> points = polyline.points.map(_platformLatLngFromLatLng).toList();
-    final List<Object?> pattern = polyline.patterns.map((PatternItem item) {return item.toJson();}).toList();
+    final List<PlatformLatLng?> points =
+        polyline.points.map(_platformLatLngFromLatLng).toList();
+    final List<Object?> pattern = polyline.patterns.map((PatternItem item) {
+      return item.toJson();
+    }).toList();
     return PlatformPolyline(
       polylineId: polyline.polylineId.value,
       consumesTapEvents: polyline.consumeTapEvents,
