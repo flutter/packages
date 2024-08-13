@@ -156,14 +156,29 @@ class PlatformMarker {
 
 /// Pigeon equivalent of the Polygon class.
 class PlatformPolygon {
-  PlatformPolygon(this.json);
+  PlatformPolygon({
+    required this.polygonId,
+    required this.consumesTapEvents,
+    required this.fillColor,
+    required this.geodesic,
+    required this.points,
+    required this.holes,
+    required this.visible,
+    required this.strokeColor,
+    required this.strokeWidth,
+    required this.zIndex,
+  });
 
-  /// The polygon data, as JSON. This should only be set from
-  /// Polygon.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Map<String?, Object?> json;
+  final String polygonId;
+  final bool consumesTapEvents;
+  final int fillColor;
+  final bool geodesic;
+  final List<PlatformLatLng?> points;
+  final List<List<PlatformLatLng?>?> holes;
+  final bool visible;
+  final int strokeColor;
+  final int strokeWidth;
+  final int zIndex;
 }
 
 /// Pigeon equivalent of the Polyline class.
