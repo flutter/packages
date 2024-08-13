@@ -224,7 +224,7 @@ class Breakpoint {
         context.findAncestorWidgetOfExactType<SlotLayout>();
 
     if (slotLayout != null) {
-      Breakpoint? fallbackBreakpoint;
+      Breakpoint? nonPlatformBreakpoint;
 
       for (final MapEntry<Breakpoint, SlotLayoutConfig?> config
           in slotLayout.config.entries) {
@@ -232,42 +232,60 @@ class Breakpoint {
           if (config.key.platform != null) {
             return config.key;
           } else {
-            fallbackBreakpoint ??= config.key;
+            nonPlatformBreakpoint ??= config.key;
           }
         }
       }
-
-      // If no breakpoint with a platform is found, return the fallback breakpoint.
-      if (fallbackBreakpoint != null) {
-        return fallbackBreakpoint;
+      if (nonPlatformBreakpoint != null) {
+        return nonPlatformBreakpoint;
       }
     }
 
     final TargetPlatform platform = Theme.of(context).platform;
+    final bool isDesktop = Breakpoint.desktop.contains(platform);
+    final bool isMobile = Breakpoint.mobile.contains(platform);
 
-    if (Breakpoint.desktop.contains(platform)) {
-      if (Breakpoints.extraLarge.isActive(context)) {
-        return Breakpoints.extraLargeDesktop;
-      } else if (Breakpoints.large.isActive(context)) {
-        return Breakpoints.largeDesktop;
-      } else if (Breakpoints.mediumLarge.isActive(context)) {
-        return Breakpoints.mediumLargeDesktop;
-      } else if (Breakpoints.medium.isActive(context)) {
-        return Breakpoints.mediumDesktop;
-      } else if (Breakpoints.small.isActive(context)) {
-        return Breakpoints.smallDesktop;
-      }
-    } else if (Breakpoint.mobile.contains(platform)) {
-      if (Breakpoints.extraLarge.isActive(context)) {
-        return Breakpoints.extraLargeMobile;
-      } else if (Breakpoints.large.isActive(context)) {
-        return Breakpoints.largeMobile;
-      } else if (Breakpoints.mediumLarge.isActive(context)) {
-        return Breakpoints.mediumLargeMobile;
-      } else if (Breakpoints.medium.isActive(context)) {
-        return Breakpoints.mediumMobile;
-      } else if (Breakpoints.small.isActive(context)) {
-        return Breakpoints.smallMobile;
+    for (final Breakpoint breakpoint in <Breakpoint>[
+      Breakpoints.extraLarge,
+      Breakpoints.large,
+      Breakpoints.mediumLarge,
+      Breakpoints.medium,
+      Breakpoints.small,
+    ]) {
+      if (breakpoint.isActive(context)) {
+        if (isDesktop) {
+          switch (breakpoint) {
+            case Breakpoints.extraLarge:
+              return Breakpoints.extraLargeDesktop;
+            case Breakpoints.large:
+              return Breakpoints.largeDesktop;
+            case Breakpoints.mediumLarge:
+              return Breakpoints.mediumLargeDesktop;
+            case Breakpoints.medium:
+              return Breakpoints.mediumDesktop;
+            case Breakpoints.small:
+              return Breakpoints.smallDesktop;
+            default:
+              return Breakpoints.standard;
+          }
+        } else if (isMobile) {
+          switch (breakpoint) {
+            case Breakpoints.extraLarge:
+              return Breakpoints.extraLargeMobile;
+            case Breakpoints.large:
+              return Breakpoints.largeMobile;
+            case Breakpoints.mediumLarge:
+              return Breakpoints.mediumLargeMobile;
+            case Breakpoints.medium:
+              return Breakpoints.mediumMobile;
+            case Breakpoints.small:
+              return Breakpoints.smallMobile;
+            default:
+              return Breakpoints.standard;
+          }
+        } else {
+          return breakpoint;
+        }
       }
     }
     return Breakpoints.standard;
