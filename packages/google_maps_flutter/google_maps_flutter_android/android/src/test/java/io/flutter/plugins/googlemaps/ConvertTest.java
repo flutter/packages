@@ -44,6 +44,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,6 +96,17 @@ public class ConvertTest {
     ArrayList<ArrayList<Double>> pointsList = new ArrayList<>();
     pointsList.add(point);
     List<LatLng> latLngs = Convert.toPoints(pointsList);
+    LatLng latLng = latLngs.get(0);
+    Assert.assertEquals(latitude, latLng.latitude, 1e-15);
+    Assert.assertEquals(longitude, latLng.longitude, 1e-15);
+  }
+
+  @Test
+  public void ConvertToPointsPlatformConvertsThePointsWithFullPrecision() {
+    double latitude = 43.03725568057;
+    double longitude = -87.90466904649;
+    Messages.PlatformLatLng platLng = new Messages.PlatformLatLng.Builder().build();
+    List<LatLng> latLngs = Convert.toPoints(Collections.singletonList(platLng));
     LatLng latLng = latLngs.get(0);
     Assert.assertEquals(latitude, latLng.latitude, 1e-15);
     Assert.assertEquals(longitude, latLng.longitude, 1e-15);

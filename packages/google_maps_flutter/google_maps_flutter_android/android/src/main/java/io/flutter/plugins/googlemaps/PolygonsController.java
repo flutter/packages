@@ -67,16 +67,6 @@ class PolygonsController {
     return false;
   }
 
-  private void addJsonPolygon(Map<String, ?> polygon) {
-    if (polygon == null) {
-      return;
-    }
-    PolygonBuilder polygonBuilder = new PolygonBuilder(density);
-    String polygonId = Convert.interpretPolygonOptions(polygon, polygonBuilder);
-    PolygonOptions options = polygonBuilder.build();
-    addPolygon(polygonId, options, polygonBuilder.consumeTapEvents());
-  }
-
   private void addPolygon(@NonNull Messages.PlatformPolygon polygon) {
     PolygonBuilder polygonBuilder = new PolygonBuilder(density);
     String polygonId = Convert.interpretPolygonOptions(polygon, polygonBuilder);
@@ -90,17 +80,6 @@ class PolygonsController {
     PolygonController controller = new PolygonController(polygon, consumeTapEvents, density);
     polygonIdToController.put(polygonId, controller);
     googleMapsPolygonIdToDartPolygonId.put(polygon.getId(), polygonId);
-  }
-
-  private void changeJsonPolygon(Map<String, ?> polygon) {
-    if (polygon == null) {
-      return;
-    }
-    String polygonId = getPolygonId(polygon);
-    PolygonController polygonController = polygonIdToController.get(polygonId);
-    if (polygonController != null) {
-      Convert.interpretPolygonOptions(polygon, polygonController);
-    }
   }
 
   private void changePolygon(@NonNull Messages.PlatformPolygon polygon) {

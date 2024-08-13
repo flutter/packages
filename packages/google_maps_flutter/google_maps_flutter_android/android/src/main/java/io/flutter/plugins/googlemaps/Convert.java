@@ -703,51 +703,6 @@ class Convert {
     return polygon.getPolygonId();
   }
 
-  static String interpretPolygonOptions(Map<String, ?> data, PolygonOptionsSink sink) {
-    final Object consumeTapEvents = data.get("consumeTapEvents");
-    if (consumeTapEvents != null) {
-      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
-    }
-    final Object geodesic = data.get("geodesic");
-    if (geodesic != null) {
-      sink.setGeodesic(toBoolean(geodesic));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final Object fillColor = data.get("fillColor");
-    if (fillColor != null) {
-      sink.setFillColor(toInt(fillColor));
-    }
-    final Object strokeColor = data.get("strokeColor");
-    if (strokeColor != null) {
-      sink.setStrokeColor(toInt(strokeColor));
-    }
-    final Object strokeWidth = data.get("strokeWidth");
-    if (strokeWidth != null) {
-      sink.setStrokeWidth(toInt(strokeWidth));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
-    final Object points = data.get("points");
-    if (points != null) {
-      sink.setPoints(toPoints(points));
-    }
-    final Object holes = data.get("holes");
-    if (holes != null) {
-      sink.setHoles(toHoles(holes));
-    }
-    final String polygonId = (String) data.get("polygonId");
-    if (polygonId == null) {
-      throw new IllegalArgumentException("polygonId was null");
-    } else {
-      return polygonId;
-    }
-  }
-
   static String interpretPolylineOptions(
       Map<String, ?> data, PolylineOptionsSink sink, AssetManager assetManager, float density) {
     final Object consumeTapEvents = data.get("consumeTapEvents");
@@ -938,16 +893,6 @@ class Convert {
     final int colorMapSize = toInt(data.get(HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY));
 
     return new Gradient(colors, startPoints, colorMapSize);
-  }
-
-  private static List<List<LatLng>> toHoles(Object o) {
-    final List<?> data = toList(o);
-    final List<List<LatLng>> holes = new ArrayList<>(data.size());
-
-    for (Object rawHole : data) {
-      holes.add(toPoints(rawHole));
-    }
-    return holes;
   }
 
   private static List<List<LatLng>> toHoles(List<List<Messages.PlatformLatLng>> data) {
