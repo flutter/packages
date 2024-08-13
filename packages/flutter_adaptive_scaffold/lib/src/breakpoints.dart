@@ -219,7 +219,10 @@ class Breakpoint {
   }
 
   /// Returns the currently active [Breakpoint].
-  static Breakpoint activeBreakpointOf(BuildContext context) {
+  static Breakpoint activeBreakpointOf(
+    BuildContext context, {
+    bool andUp = false,
+  }) {
     final SlotLayout? slotLayout =
         context.findAncestorWidgetOfExactType<SlotLayout>();
 
@@ -246,40 +249,55 @@ class Breakpoint {
     final bool isMobile = Breakpoint.mobile.contains(platform);
 
     for (final Breakpoint breakpoint in <Breakpoint>[
-      Breakpoints.extraLarge,
-      Breakpoints.large,
-      Breakpoints.mediumLarge,
-      Breakpoints.medium,
       Breakpoints.small,
+      Breakpoints.medium,
+      Breakpoints.mediumLarge,
+      Breakpoints.large,
+      Breakpoints.extraLarge,
     ]) {
       if (breakpoint.isActive(context)) {
-        if (isDesktop) {
+        if (andUp) {
           switch (breakpoint) {
-            case Breakpoints.extraLarge:
-              return Breakpoints.extraLargeDesktop;
-            case Breakpoints.large:
-              return Breakpoints.largeDesktop;
-            case Breakpoints.mediumLarge:
-              return Breakpoints.mediumLargeDesktop;
+            case Breakpoints.small:
+              return Breakpoints.smallAndUp;
             case Breakpoints.medium:
-              return Breakpoints.mediumDesktop;
+              return Breakpoints.mediumAndUp;
+            case Breakpoints.mediumLarge:
+              return Breakpoints.mediumLargeAndUp;
+            case Breakpoints.large:
+              return Breakpoints.largeAndUp;
+            case Breakpoints.extraLarge:
+              return Breakpoints.extraLarge;
+            default:
+              return Breakpoints.standard;
+          }
+        } else if (isDesktop) {
+          switch (breakpoint) {
             case Breakpoints.small:
               return Breakpoints.smallDesktop;
+            case Breakpoints.medium:
+              return Breakpoints.mediumDesktop;
+            case Breakpoints.mediumLarge:
+              return Breakpoints.mediumLargeDesktop;
+            case Breakpoints.large:
+              return Breakpoints.largeDesktop;
+            case Breakpoints.extraLarge:
+              return Breakpoints.extraLargeDesktop;
             default:
               return Breakpoints.standard;
           }
         } else if (isMobile) {
           switch (breakpoint) {
-            case Breakpoints.extraLarge:
-              return Breakpoints.extraLargeMobile;
-            case Breakpoints.large:
-              return Breakpoints.largeMobile;
-            case Breakpoints.mediumLarge:
-              return Breakpoints.mediumLargeMobile;
-            case Breakpoints.medium:
-              return Breakpoints.mediumMobile;
             case Breakpoints.small:
               return Breakpoints.smallMobile;
+            case Breakpoints.medium:
+              return Breakpoints.mediumMobile;
+            case Breakpoints.mediumLarge:
+              return Breakpoints.mediumLargeMobile;
+            case Breakpoints.large:
+              return Breakpoints.largeMobile;
+            case Breakpoints.extraLarge:
+              return Breakpoints.extraLargeMobile;
             default:
               return Breakpoints.standard;
           }
