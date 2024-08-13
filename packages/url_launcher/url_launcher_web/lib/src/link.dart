@@ -43,6 +43,10 @@ class WebLinkDelegate extends StatefulWidget {
   /// Information about the link built by the app.
   final LinkInfo link;
 
+  /// A user-provided identifier to be as the [SemanticsProperties.identifier]
+  /// for the link.
+  ///
+  /// This identifier is optional and is only useful for testing purposes.
   final String? semanticsIdentifier;
 
   @override
@@ -155,13 +159,30 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
 
 final JSAny _useCapture = <String, Object>{'capture': true}.jsify()!;
 
-typedef _TriggerLinkCallback = void Function(int viewId, html.MouseEvent? mouseEvent);
+/// Signature for the function that triggers a link.
+typedef TriggerLinkCallback = void Function(int viewId, html.MouseEvent? mouseEvent);
 
 /// Keeps track of the signals required to trigger a link.
 ///
-/// Automatically resets the signals after a certain delay. This is to prevent
-/// the signals from getting stale.
+/// Currently, the signals required are:
+///
+/// 1. A FollowLink signal. This signal indicates that a hit test for the link
+///    was registered on the app/framework side.
+///
+/// 2. A DOM event signal. This signal indicates that a click or keyboard event
+///    was received on the link's corresponding DOM element.
+///
+/// These signals can arrive at any order depending on how the user triggers
+/// the link.
+///
+/// Each signal may be accompanied by a view ID. The view IDs, when present,
+/// must match in order for the trigger to be considered valid.
+///
+/// The signals are reset after a certain delay to prevent them from getting
+/// stale. The delay is specified by [staleTimeout].
 class LinkTriggerSignals {
+  /// Creates a [LinkTriggerSignals] instance that calls [triggerLink] when all
+  /// the signals are received within a [staleTimeout] duration.
   LinkTriggerSignals({
     required this.triggerLink,
     required this.staleTimeout,
@@ -169,7 +190,7 @@ class LinkTriggerSignals {
 
   /// The function to be called when all signals have been received and the link
   /// is ready to be triggered.
-  final _TriggerLinkCallback triggerLink;
+  final TriggerLinkCallback triggerLink;
 
   /// Specifies the duration after which the signals are considered stale.
   ///
@@ -177,14 +198,20 @@ class LinkTriggerSignals {
   /// considered valid. If they don't, the signals are reset.
   final Duration staleTimeout;
 
-  /// Whether we got all the signals required to trigger the link.
-  bool get _isReadyToTrigger => _hasFollowLink && _hasDomEvent;
+  bool get _hasAllSignals => _hasFollowLink && _hasDomEvent;
 
   int? get _viewId {
     assert(!isViewIdMismatched);
     return _viewIdFromFollowLink ?? _viewIdFromDomEvent;
   }
 
+  /// Triggers the link if all signals are ready and there's no view ID
+  /// mismatch.
+  ///
+  /// If the view IDs from the signals are mismatched, the signals are reset and
+  /// the browser is prevented from navigating.
+  ///
+  /// If the signals are ready, the link is triggered and the signals are reset.
   void triggerLinkIfReady() {
     if (isViewIdMismatched) {
       // When view IDs from signals are mismatched, let's reset the signals and
@@ -194,18 +221,26 @@ class LinkTriggerSignals {
       return;
     }
 
-    if (_isReadyToTrigger) {
+    if (_hasAllSignals) {
       triggerLink(_viewId!, _mouseEvent);
       reset();
     }
   }
 
+  /// Registers a FollowLink signal with the given [viewId].
   void registerFollowLink({required int viewId}) {
     _hasFollowLink = true;
     _viewIdFromFollowLink = viewId;
     _didUpdate();
   }
 
+  /// Registers a DOM event signal with the given [viewId] and [mouseEvent].
+  ///
+  /// The [viewId] is optional because it cannot be determined from some DOM
+  /// events.
+  ///
+  /// The [mouseEvent] is optional because the signal may be from a keyboard
+  /// event.
   void registerDomEvent({
     required int? viewId,
     required html.MouseEvent? mouseEvent,
@@ -335,6 +370,9 @@ class LinkViewController extends PlatformViewController {
     handleGlobalKeydown(event: event);
   }
 
+  /// Global keydown handler that's called for every keydown event on the
+  /// window.
+  @visibleForTesting
   static void handleGlobalKeydown({required html.KeyboardEvent event}) {
     // Why not use `event.target`?
     //
@@ -399,19 +437,13 @@ class LinkViewController extends PlatformViewController {
     );
   }
 
-  /// Global click handler that triggers on the `capture` phase. We use `capture`
-  /// because some events may be consumed and prevent further propagation at the
-  /// target. This may lead to issues (see: https://github.com/flutter/flutter/issues/143164)
-  /// where a followLink was executed but the event never bubbles back up to the
-  /// window (e.g. when button semantics obscure the platform view). We make sure
-  /// to only trigger the link if a hit test was registered and remains valid at
-  /// the time the click handler executes.
+  /// Global click handler that's called for every click event on the window.
   @visibleForTesting
   static void handleGlobalClick({
     required html.MouseEvent event,
     required html.Element? target,
   }) {
-    // We only want to handle clicks that land on *our* links, whether that's a
+    // We only want to handle clicks that land on *our* links. That could be a
     // platform view link or a semantics link.
     final int? viewIdFromTarget = _getViewIdFromLink(target) ??
         _getViewIdFromSemanticsLink(target);
@@ -420,7 +452,8 @@ class LinkViewController extends PlatformViewController {
       // The click target was not one of our links, so we don't want to
       // interfere with it.
       //
-      // We also want to reset the signals in this case.
+      // We also want to reset the signals to make sure we start fresh on the
+      // next click.
       _triggerSignals.reset();
       return;
     }
@@ -434,10 +467,7 @@ class LinkViewController extends PlatformViewController {
   }
 
   /// Call this method to indicate that a hit test has been registered for the
-  /// given [controller].
-  ///
-  /// The [onClick] callback is invoked when the anchor element receives a
-  /// `click` from the browser.
+  /// given [viewId].
   static void onFollowLink(int viewId) {
     _triggerSignals.registerFollowLink(viewId: viewId);
     _triggerSignals.triggerLinkIfReady();
@@ -482,12 +512,15 @@ class LinkViewController extends PlatformViewController {
     final LinkViewController controller = _instancesByViewId[viewId]!;
 
     if (mouseEvent != null && _isModifierKey(mouseEvent)) {
+      // When the click is accompanied by a modifier key (e.g. cmd+click or
+      // shift+click), we want to let the browser do its thing (e.g. open a new
+      // tab or a new window).
       return;
     }
 
     if (controller._isExternalLink) {
       if (mouseEvent == null) {
-        // When external links are trigger by keyboard, they are not handled by
+        // When external links are triggered by keyboard, they are not handled by
         // the browser. So we have to launch the url manually.
         UrlLauncherPlatform.instance
             .launchUrl(controller._uri.toString(), const LaunchOptions());
@@ -498,9 +531,8 @@ class LinkViewController extends PlatformViewController {
       return;
     }
 
-    // A uri that doesn't have a scheme is an internal route name. In this
-    // case, we push it via Flutter's navigation system instead of letting the
-    // browser handle it.
+    // Internal links are pushed through Flutter's navigation system instead of
+    // letting the browser handle it.
     mouseEvent?.preventDefault();
     final String routeName = controller._uri.toString();
     pushRouteToFrameworkFunction(routeName);
@@ -604,6 +636,7 @@ class LinkViewController extends PlatformViewController {
     await SystemChannels.platform_views.invokeMethod<void>('dispose', viewId);
   }
 
+  /// Resets all link-related state.
   @visibleForTesting
   static Future<void> debugReset() async {
     _triggerSignals.reset();
