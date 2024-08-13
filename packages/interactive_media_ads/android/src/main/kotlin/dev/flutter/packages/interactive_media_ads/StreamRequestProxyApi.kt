@@ -79,37 +79,37 @@ class StreamRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
       pigeon_instance: StreamRequest,
       adTagParameters: Map<String, String>
   ) {
-    return pigeon_instance.setAdTagParameters(adTagParameters)
+    pigeon_instance.setAdTagParameters(adTagParameters)
   }
 
   override fun setAuthToken(pigeon_instance: StreamRequest, authToken: String) {
-    return pigeon_instance.setAuthToken(authToken)
+    pigeon_instance.authToken = authToken
   }
 
   override fun setFormat(pigeon_instance: StreamRequest, format: StreamFormat) {
-    return pigeon_instance.setFormat(
+    pigeon_instance.format =
         when (format) {
           StreamFormat.DASH -> StreamRequest.StreamFormat.DASH
           StreamFormat.HLS -> StreamRequest.StreamFormat.HLS
           StreamFormat.UNKNOWN -> throw UnsupportedOperationException()
-        })
+        }
   }
 
   override fun setManifestSuffix(pigeon_instance: StreamRequest, manifestSuffix: String) {
-    return pigeon_instance.setManifestSuffix(manifestSuffix)
+    pigeon_instance.manifestSuffix = manifestSuffix
   }
 
   override fun setStreamActivityMonitorId(
       pigeon_instance: StreamRequest,
       streamActivityMonitorId: String
   ) {
-    return pigeon_instance.setStreamActivityMonitorId(streamActivityMonitorId)
+    pigeon_instance.streamActivityMonitorId = streamActivityMonitorId
   }
 
   override fun setVideoStitcherSessionOptions(
       pigeon_instance: StreamRequest,
       videoStitcherSessionOptions: Map<String, Any>
   ) {
-    return pigeon_instance.setVideoStitcherSessionOptions(videoStitcherSessionOptions)
+    pigeon_instance.setVideoStitcherSessionOptions(videoStitcherSessionOptions)
   }
 }

@@ -36,7 +36,7 @@ class FriendlyObstructionProxyApi(override val pigeonRegistrar: ProxyApiRegistra
     }
   }
 
-  override fun view(pigeon_instance: FriendlyObstruction): android.view.View {
+  override fun view(pigeon_instance: FriendlyObstruction): View {
     return pigeon_instance.view
   }
 }

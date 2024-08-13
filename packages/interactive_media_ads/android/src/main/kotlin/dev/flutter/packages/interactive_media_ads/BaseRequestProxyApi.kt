@@ -29,17 +29,17 @@ class BaseRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   }
 
   override fun setContentUrl(pigeon_instance: BaseRequest, url: String) {
-    return pigeon_instance.setContentUrl(url)
+    pigeon_instance.contentUrl = url
   }
 
   override fun setSecureSignals(
       pigeon_instance: BaseRequest,
-      signal: com.google.ads.interactivemedia.v3.api.signals.SecureSignals?
+      signal: SecureSignals?
   ) {
-    return pigeon_instance.setSecureSignals(signal)
+    pigeon_instance.secureSignals = signal
   }
 
   override fun setUserRequestContext(pigeon_instance: BaseRequest, userRequestContext: Any) {
-    return pigeon_instance.setUserRequestContext(userRequestContext)
+    pigeon_instance.userRequestContext = userRequestContext
   }
 }

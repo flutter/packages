@@ -18,7 +18,7 @@ class StreamRequestProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiStreamRequest()
 
     val instance = mock<StreamRequest>()
-    val value = mapOf("myString" to "myString")
+    val value = mapOf("myString" to "myString1")
     whenever(instance.adTagParameters).thenReturn(value)
 
     assertEquals(value, api.getAdTagParameters(instance))
@@ -172,7 +172,7 @@ class StreamRequestProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiStreamRequest()
 
     val instance = mock<StreamRequest>()
-    val adTagParameters = mapOf("myString" to "myString")
+    val adTagParameters = mapOf("myString" to "myString1")
     api.setAdTagParameters(instance, adTagParameters)
 
     verify(instance).setAdTagParameters(adTagParameters)

@@ -122,7 +122,7 @@ class ImaSdkFactoryProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   override fun createStreamDisplayContainer(
       container: ViewGroup,
       player: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
-  ): com.google.ads.interactivemedia.v3.api.StreamDisplayContainer {
+  ): StreamDisplayContainer {
     return ImaSdkFactory.createStreamDisplayContainer(container, player)
   }
 

@@ -21,30 +21,30 @@ class CompanionAdSlotProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   }
 
   override fun getContainer(pigeon_instance: CompanionAdSlot): ViewGroup {
-    return pigeon_instance.getContainer()
+    return pigeon_instance.container
   }
 
   override fun getHeight(pigeon_instance: CompanionAdSlot): Long {
-    return pigeon_instance.getHeight().toLong()
+    return pigeon_instance.height.toLong()
   }
 
   override fun getWidth(pigeon_instance: CompanionAdSlot): Long {
-    return pigeon_instance.getWidth().toLong()
+    return pigeon_instance.width.toLong()
   }
 
   override fun isFilled(pigeon_instance: CompanionAdSlot): Boolean {
-    return pigeon_instance.isFilled()
+    return pigeon_instance.isFilled
   }
 
   override fun removeClickListener(pigeon_instance: CompanionAdSlot, clickListener: ClickListener) {
-    return pigeon_instance.removeClickListener(clickListener)
+    pigeon_instance.removeClickListener(clickListener)
   }
 
   override fun setContainer(pigeon_instance: CompanionAdSlot, container: ViewGroup) {
-    return pigeon_instance.setContainer(container)
+    pigeon_instance.container = container
   }
 
   override fun setSize(pigeon_instance: CompanionAdSlot, width: Long, height: Long) {
-    return pigeon_instance.setSize(width.toInt(), height.toInt())
+    pigeon_instance.setSize(width.toInt(), height.toInt())
   }
 }

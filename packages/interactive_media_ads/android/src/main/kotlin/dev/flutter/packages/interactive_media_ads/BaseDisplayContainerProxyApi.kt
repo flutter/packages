@@ -18,28 +18,28 @@ import com.google.ads.interactivemedia.v3.api.FriendlyObstruction
 class BaseDisplayContainerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiBaseDisplayContainer(pigeonRegistrar) {
   override fun getAdContainer(pigeon_instance: BaseDisplayContainer): ViewGroup? {
-    return pigeon_instance.getAdContainer()
+    return pigeon_instance.adContainer
   }
 
   override fun getCompanionSlots(pigeon_instance: BaseDisplayContainer): List<CompanionAdSlot> {
-    return pigeon_instance.getCompanionSlots().toList()
+    return pigeon_instance.companionSlots.toList()
   }
 
   override fun registerFriendlyObstruction(
       pigeon_instance: BaseDisplayContainer,
       friendlyObstruction: FriendlyObstruction
   ) {
-    return pigeon_instance.registerFriendlyObstruction(friendlyObstruction)
+    pigeon_instance.registerFriendlyObstruction(friendlyObstruction)
   }
 
   override fun setCompanionSlots(
       pigeon_instance: BaseDisplayContainer,
       companionSlots: List<CompanionAdSlot>?
   ) {
-    return pigeon_instance.setCompanionSlots(companionSlots)
+    pigeon_instance.setCompanionSlots(companionSlots)
   }
 
   override fun unregisterAllFriendlyObstructions(pigeon_instance: BaseDisplayContainer) {
-    return pigeon_instance.unregisterAllFriendlyObstructions()
+    pigeon_instance.unregisterAllFriendlyObstructions()
   }
 }

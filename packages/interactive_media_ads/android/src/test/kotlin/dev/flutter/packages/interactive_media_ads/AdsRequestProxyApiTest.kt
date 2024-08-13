@@ -41,7 +41,7 @@ class AdsRequestProxyApiTest {
 
     val instance = mock<AdsRequest>()
     val value = "myString"
-    whenever(instance.getAdTagUrl()).thenReturn(value)
+    whenever(instance.adTagUrl).thenReturn(value)
 
     assertEquals(value, api.getAdTagUrl(instance))
   }
@@ -52,7 +52,7 @@ class AdsRequestProxyApiTest {
 
     val instance = mock<AdsRequest>()
     val value = mock<ContentProgressProvider>()
-    whenever(instance.getContentProgressProvider()).thenReturn(value)
+    whenever(instance.contentProgressProvider).thenReturn(value)
 
     assertEquals(value, api.getContentProgressProvider(instance))
   }
@@ -87,7 +87,7 @@ class AdsRequestProxyApiTest {
     val cannedAdResponse = "myString"
     api.setAdsResponse(instance, cannedAdResponse)
 
-    verify(instance).setAdsResponse(cannedAdResponse)
+    verify(instance).adsResponse = cannedAdResponse
   }
 
   @Test

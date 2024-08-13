@@ -76,8 +76,8 @@ class StreamManagerProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiStreamManager()
 
     val instance = mock<StreamManager>()
-    val streamUrl = "myString"
-    val streamSubtitles = listOf(mapOf("myString" to "myString"))
+    val streamUrl = "myString1"
+    val streamSubtitles = listOf(mapOf("myString" to "myString2"))
     api.loadThirdPartyStream(instance, streamUrl, streamSubtitles)
 
     verify(instance).loadThirdPartyStream(streamUrl, streamSubtitles)
@@ -88,7 +88,7 @@ class StreamManagerProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiStreamManager()
 
     val instance = mock<StreamManager>()
-    val adTagParameters = mapOf("myString" to "myString")
+    val adTagParameters = mapOf("myString" to "myString1")
     api.replaceAdTagParameters(instance, adTagParameters)
 
     verify(instance).replaceAdTagParameters(adTagParameters)

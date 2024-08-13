@@ -138,7 +138,7 @@ class ImaSdkSettingsProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiImaSdkSettings()
 
     val instance = mock<ImaSdkSettings>()
-    val featureFlags = mapOf("myString" to "myString")
+    val featureFlags = mapOf("myString" to "myString1")
     api.setFeatureFlags(instance, featureFlags)
 
     verify(instance).featureFlags = featureFlags
