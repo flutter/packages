@@ -1129,37 +1129,37 @@ private open class InteractiveMediaAdsLibraryPigeonCodec : StandardMessageCodec(
 abstract class PigeonApiAd(
     open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
 ) {
-  /** Returns the ad ID as specified in the VAST response. */
+  /** The ad ID as specified in the VAST response. */
   abstract fun adId(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String
 
-  /** Returns the pod metadata object. */
+  /** The pod metadata object. */
   abstract fun adPodInfo(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
   ): com.google.ads.interactivemedia.v3.api.AdPodInfo
 
-  /** Returns the ad system as specified in the VAST response. */
+  /** The ad system as specified in the VAST response. */
   abstract fun adSystem(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String
 
-  /** Returns the IDs of the ads' creatives, starting with the first wrapper ad. */
+  /** The IDs of the ads' creatives, starting with the first wrapper ad. */
   abstract fun adWrapperCreativeIds(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
   ): List<String>
 
-  /** Returns the wrapper ad IDs as specified in the VAST response. */
+  /** The wrapper ad IDs as specified in the VAST response. */
   abstract fun adWrapperIds(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
   ): List<String>
 
-  /** Returns the wrapper ad systems as specified in the VAST response. */
+  /** The wrapper ad systems as specified in the VAST response. */
   abstract fun adWrapperSystems(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
   ): List<String>
 
-  /** Returns the advertiser name as defined by the serving party. */
+  /** The advertiser name as defined by the serving party. */
   abstract fun advertiserName(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String
 
   /**
-   * Returns the companions for the current ad while using DAI.
+   * The companions for the current ad while using DAI.
    *
    * Returns an empty list in any other scenario.
    */
@@ -1168,47 +1168,44 @@ abstract class PigeonApiAd(
   ): List<com.google.ads.interactivemedia.v3.api.CompanionAd>
 
   /**
-   * Returns the content type of the currently selected creative, or null if no creative is selected
-   * or the content type is unavailable.
+   * The content type of the currently selected creative, or null if no creative is selected or the
+   * content type is unavailable.
    */
   abstract fun contentType(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String?
 
-  /** Returns the ISCI (Industry Standard Commercial Identifier) code for an ad. */
+  /** The ISCI (Industry Standard Commercial Identifier) code for an ad. */
   abstract fun creativeAdId(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String
 
-  /** Returns the ID of the selected creative for the ad, */
+  /** The ID of the selected creative for the ad, */
   abstract fun creativeId(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String
 
-  /**
-   * Returns the first deal ID present in the wrapper chain for the current ad, starting from the
-   * top.
-   */
+  /** The first deal ID present in the wrapper chain for the current ad, starting from the top. */
   abstract fun dealId(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String
 
-  /** Returns the description of this ad from the VAST response. */
+  /** The description of this ad from the VAST response. */
   abstract fun description(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String?
 
-  /** Returns the duration of the ad in seconds, -1 if not available. */
+  /** The duration of the ad in seconds, -1 if not available. */
   abstract fun duration(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): Double
 
-  /** Returns the height of the selected creative if non-linear, else returns 0. */
+  /** The height of the selected creative if non-linear, else returns 0. */
   abstract fun height(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): Long
 
-  /** Returns the number of seconds of playback before the ad becomes skippable. */
+  /** The number of seconds of playback before the ad becomes skippable. */
   abstract fun skipTimeOffset(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): Double
 
-  /** Returns the URL associated with the survey for the given ad. */
+  /** The URL associated with the survey for the given ad. */
   abstract fun surveyUrl(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String
 
-  /** Returns the title of this ad from the VAST response. */
+  /** The title of this ad from the VAST response. */
   abstract fun title(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String?
 
-  /** Returns custom parameters associated with the ad at the time of ad trafficking. */
+  /** The custom parameters associated with the ad at the time of ad trafficking. */
   abstract fun traffickingParameters(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
   ): String
 
-  /** Returns the set of ad UI elements rendered by the IMA SDK for this ad. */
+  /** Te set of ad UI elements rendered by the IMA SDK for this ad. */
   abstract fun uiElements(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
   ): List<UiElement>
@@ -1218,16 +1215,16 @@ abstract class PigeonApiAd(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
   ): List<com.google.ads.interactivemedia.v3.api.UniversalAdId>
 
-  /** Returns the VAST bitrate in Kbps of the selected creative. */
+  /** The VAST bitrate in Kbps of the selected creative. */
   abstract fun vastMediaBitrate(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): Long
 
-  /** Returns the VAST media height in pixels of the selected creative. */
+  /** The VAST media height in pixels of the selected creative. */
   abstract fun vastMediaHeight(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): Long
 
-  /** Returns the VAST media width in pixels of the selected creative. */
+  /** The VAST media width in pixels of the selected creative. */
   abstract fun vastMediaWidth(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): Long
 
-  /** Returns the width of the selected creative if non-linear, else returns 0. */
+  /** The width of the selected creative if non-linear, else returns 0. */
   abstract fun width(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): Long
 
   /** Indicates whether the ad’s current mode of operation is linear or non-linear. */
@@ -4624,6 +4621,11 @@ abstract class PigeonApiAdErrorEvent(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.AdErrorEvent
   ): com.google.ads.interactivemedia.v3.api.AdError
 
+  /** The user-provided object that is associated with the ads request. */
+  abstract fun userRequestContext(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdErrorEvent
+  ): Any
+
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of AdErrorEvent and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
@@ -4643,11 +4645,12 @@ abstract class PigeonApiAdErrorEvent(
     val pigeon_identifierArg =
         pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val errorArg = error(pigeon_instanceArg)
+    val userRequestContextArg = userRequestContext(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.AdErrorEvent.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_identifierArg, errorArg)) {
+    channel.send(listOf(pigeon_identifierArg, errorArg, userRequestContextArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -4683,6 +4686,10 @@ class AdErrorEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pi
     return pigeon_instance.error
   }
 
+  override fun userRequestContext(pigeon_instance: AdErrorEvent): Any {
+    return pigeon_instance.userRequestContext
+  }
+
 }
 */
 
@@ -4715,6 +4722,17 @@ class AdErrorEventProxyApiTest {
     whenever(instance.error).thenReturn(value)
 
     assertEquals(value, api.error(instance))
+  }
+
+  @Test
+  fun userRequestContext() {
+    val api = TestProxyApiRegistrar().getPigeonApiAdErrorEvent()
+
+    val instance = mock<AdErrorEvent>()
+    val value = -1
+    whenever(instance.userRequestContext).thenReturn(value)
+
+    assertEquals(value, api.userRequestContext(instance))
   }
 
 }

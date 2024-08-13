@@ -8,7 +8,7 @@ import com.google.ads.interactivemedia.v3.api.AdDisplayContainer
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
 
 /**
- * ProxyApi implementation for [com.google.ads.interactivemedia.v3.api.AdDisplayContainer].
+ * ProxyApi implementation for [AdDisplayContainer].
  *
  * <p>This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.

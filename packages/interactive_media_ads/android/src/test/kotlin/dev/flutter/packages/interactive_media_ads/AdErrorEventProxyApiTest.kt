@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.whenever
 
-internal class AdErrorEventProxyApiTest {
+class AdErrorEventProxyApiTest {
   @Test
   fun error() {
     val api = TestProxyApiRegistrar().getPigeonApiAdErrorEvent()
@@ -21,5 +21,16 @@ internal class AdErrorEventProxyApiTest {
     whenever(instance.error).thenReturn(mockError)
 
     assertEquals(mockError, api.error(instance))
+  }
+
+  @Test
+  fun userRequestContext() {
+    val api = TestProxyApiRegistrar().getPigeonApiAdErrorEvent()
+
+    val instance = mock<AdErrorEvent>()
+    val value = -1
+    whenever(instance.userRequestContext).thenReturn(value)
+
+    assertEquals(value, api.userRequestContext(instance))
   }
 }

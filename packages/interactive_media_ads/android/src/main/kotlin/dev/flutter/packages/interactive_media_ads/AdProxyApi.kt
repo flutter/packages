@@ -20,7 +20,7 @@ class AdProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAd(
     return pigeon_instance.adId
   }
 
-  override fun adPodInfo(pigeon_instance: Ad): com.google.ads.interactivemedia.v3.api.AdPodInfo {
+  override fun adPodInfo(pigeon_instance: Ad): AdPodInfo {
     return pigeon_instance.adPodInfo
   }
 

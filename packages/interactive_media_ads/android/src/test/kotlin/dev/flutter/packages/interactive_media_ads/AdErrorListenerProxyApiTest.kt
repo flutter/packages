@@ -13,7 +13,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 
-internal class AdErrorListenerProxyApiTest {
+class AdErrorListenerProxyApiTest {
   @Test
   fun pigeon_defaultConstructor() {
     val api = TestProxyApiRegistrar().getPigeonApiAdErrorListener()

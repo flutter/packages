@@ -253,84 +253,84 @@ enum StreamFormat {
   ),
 )
 abstract class Ad {
-  /// Returns the ad ID as specified in the VAST response.
+  /// The ad ID as specified in the VAST response.
   late final String adId;
 
-  /// Returns the pod metadata object.
+  /// The pod metadata object.
   late final AdPodInfo adPodInfo;
 
-  /// Returns the ad system as specified in the VAST response.
+  /// The ad system as specified in the VAST response.
   late final String adSystem;
 
-  /// Returns the IDs of the ads' creatives, starting with the first wrapper ad.
+  /// The IDs of the ads' creatives, starting with the first wrapper ad.
   late final List<String> adWrapperCreativeIds;
 
-  /// Returns the wrapper ad IDs as specified in the VAST response.
+  /// The wrapper ad IDs as specified in the VAST response.
   late final List<String> adWrapperIds;
 
-  /// Returns the wrapper ad systems as specified in the VAST response.
+  /// The wrapper ad systems as specified in the VAST response.
   late final List<String> adWrapperSystems;
 
-  /// Returns the advertiser name as defined by the serving party.
+  /// The advertiser name as defined by the serving party.
   late final String advertiserName;
 
-  /// Returns the companions for the current ad while using DAI.
+  /// The companions for the current ad while using DAI.
   ///
   /// Returns an empty list in any other scenario.
   late final List<CompanionAd> companionAds;
 
-  /// Returns the content type of the currently selected creative, or null if no
+  /// The content type of the currently selected creative, or null if no
   /// creative is selected or the content type is unavailable.
   late final String? contentType;
 
-  /// Returns the ISCI (Industry Standard Commercial Identifier) code for an ad.
+  /// The ISCI (Industry Standard Commercial Identifier) code for an ad.
   late final String creativeAdId;
 
-  /// Returns the ID of the selected creative for the ad,
+  /// The ID of the selected creative for the ad,
   late final String creativeId;
 
-  /// Returns the first deal ID present in the wrapper chain for the current ad,
+  /// The first deal ID present in the wrapper chain for the current ad,
   /// starting from the top.
   late final String dealId;
 
-  /// Returns the description of this ad from the VAST response.
+  /// The description of this ad from the VAST response.
   late final String? description;
 
-  /// Returns the duration of the ad in seconds, -1 if not available.
+  /// The duration of the ad in seconds, -1 if not available.
   late final double duration;
 
-  /// Returns the height of the selected creative if non-linear, else returns 0.
+  /// The height of the selected creative if non-linear, else returns 0.
   late final int height;
 
-  /// Returns the number of seconds of playback before the ad becomes skippable.
+  /// The number of seconds of playback before the ad becomes skippable.
   late final double skipTimeOffset;
 
-  /// Returns the URL associated with the survey for the given ad.
+  /// The URL associated with the survey for the given ad.
   late final String surveyUrl;
 
-  /// Returns the title of this ad from the VAST response.
+  /// The title of this ad from the VAST response.
   late final String? title;
 
-  /// Returns custom parameters associated with the ad at the time of ad
+  /// The custom parameters associated with the ad at the time of ad
   /// trafficking.
   late final String traffickingParameters;
 
-  /// Returns the set of ad UI elements rendered by the IMA SDK for this ad.
+  /// Te set of ad UI elements rendered by the IMA SDK for this ad.
   late final List<UiElement> uiElements;
 
   /// The list of all universal ad IDs for this ad.
   late final List<UniversalAdId> universalAdIds;
 
-  /// Returns the VAST bitrate in Kbps of the selected creative.
+  /// The VAST bitrate in Kbps of the selected creative.
   late final int vastMediaBitrate;
 
-  /// Returns the VAST media height in pixels of the selected creative.
+  /// The VAST media height in pixels of the selected creative.
   late final int vastMediaHeight;
 
-  /// Returns the VAST media width in pixels of the selected creative.
+  /// The VAST media width in pixels of the selected creative.
   late final int vastMediaWidth;
 
-  /// Returns the width of the selected creative if non-linear, else returns 0.
+  /// The width of the selected creative if non-linear, else returns 0.
   late final int width;
 
   /// Indicates whether the ad’s current mode of operation is linear or
@@ -641,6 +641,9 @@ abstract class AdsManagerLoadedEvent {
 abstract class AdErrorEvent {
   /// The AdError that caused this event.
   late final AdError error;
+
+  /// The user-provided object that is associated with the ads request.
+  late final Object userRequestContext;
 }
 
 /// An error that occurred in the SDK.

@@ -18,4 +18,8 @@ class AdErrorEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   override fun error(pigeon_instance: AdErrorEvent): AdError {
     return pigeon_instance.error
   }
+
+  override fun userRequestContext(pigeon_instance: AdErrorEvent): Any {
+    return pigeon_instance.userRequestContext
+  }
 }

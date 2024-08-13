@@ -795,84 +795,84 @@ class Ad extends PigeonProxyApiBaseClass {
     required this.isSkippable,
   });
 
-  /// Returns the ad ID as specified in the VAST response.
+  /// The ad ID as specified in the VAST response.
   final String adId;
 
-  /// Returns the pod metadata object.
+  /// The pod metadata object.
   final AdPodInfo adPodInfo;
 
-  /// Returns the ad system as specified in the VAST response.
+  /// The ad system as specified in the VAST response.
   final String adSystem;
 
-  /// Returns the IDs of the ads' creatives, starting with the first wrapper ad.
+  /// The IDs of the ads' creatives, starting with the first wrapper ad.
   final List<String?> adWrapperCreativeIds;
 
-  /// Returns the wrapper ad IDs as specified in the VAST response.
+  /// The wrapper ad IDs as specified in the VAST response.
   final List<String?> adWrapperIds;
 
-  /// Returns the wrapper ad systems as specified in the VAST response.
+  /// The wrapper ad systems as specified in the VAST response.
   final List<String?> adWrapperSystems;
 
-  /// Returns the advertiser name as defined by the serving party.
+  /// The advertiser name as defined by the serving party.
   final String advertiserName;
 
-  /// Returns the companions for the current ad while using DAI.
+  /// The companions for the current ad while using DAI.
   ///
   /// Returns an empty list in any other scenario.
   final List<CompanionAd?> companionAds;
 
-  /// Returns the content type of the currently selected creative, or null if no
+  /// The content type of the currently selected creative, or null if no
   /// creative is selected or the content type is unavailable.
   final String? contentType;
 
-  /// Returns the ISCI (Industry Standard Commercial Identifier) code for an ad.
+  /// The ISCI (Industry Standard Commercial Identifier) code for an ad.
   final String creativeAdId;
 
-  /// Returns the ID of the selected creative for the ad,
+  /// The ID of the selected creative for the ad,
   final String creativeId;
 
-  /// Returns the first deal ID present in the wrapper chain for the current ad,
+  /// The first deal ID present in the wrapper chain for the current ad,
   /// starting from the top.
   final String dealId;
 
-  /// Returns the description of this ad from the VAST response.
+  /// The description of this ad from the VAST response.
   final String? description;
 
-  /// Returns the duration of the ad in seconds, -1 if not available.
+  /// The duration of the ad in seconds, -1 if not available.
   final double duration;
 
-  /// Returns the height of the selected creative if non-linear, else returns 0.
+  /// The height of the selected creative if non-linear, else returns 0.
   final int height;
 
-  /// Returns the number of seconds of playback before the ad becomes skippable.
+  /// The number of seconds of playback before the ad becomes skippable.
   final double skipTimeOffset;
 
-  /// Returns the URL associated with the survey for the given ad.
+  /// The URL associated with the survey for the given ad.
   final String surveyUrl;
 
-  /// Returns the title of this ad from the VAST response.
+  /// The title of this ad from the VAST response.
   final String? title;
 
-  /// Returns custom parameters associated with the ad at the time of ad
+  /// The custom parameters associated with the ad at the time of ad
   /// trafficking.
   final String traffickingParameters;
 
-  /// Returns the set of ad UI elements rendered by the IMA SDK for this ad.
+  /// Te set of ad UI elements rendered by the IMA SDK for this ad.
   final List<UiElement?> uiElements;
 
   /// The list of all universal ad IDs for this ad.
   final List<UniversalAdId?> universalAdIds;
 
-  /// Returns the VAST bitrate in Kbps of the selected creative.
+  /// The VAST bitrate in Kbps of the selected creative.
   final int vastMediaBitrate;
 
-  /// Returns the VAST media height in pixels of the selected creative.
+  /// The VAST media height in pixels of the selected creative.
   final int vastMediaHeight;
 
-  /// Returns the VAST media width in pixels of the selected creative.
+  /// The VAST media width in pixels of the selected creative.
   final int vastMediaWidth;
 
-  /// Returns the width of the selected creative if non-linear, else returns 0.
+  /// The width of the selected creative if non-linear, else returns 0.
   final int width;
 
   /// Indicates whether the ad’s current mode of operation is linear or
@@ -3113,16 +3113,23 @@ class AdErrorEvent extends PigeonProxyApiBaseClass {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required this.error,
+    required this.userRequestContext,
   });
 
   /// The AdError that caused this event.
   final AdError error;
 
+  /// The user-provided object that is associated with the ads request.
+  final Object userRequestContext;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    AdErrorEvent Function(AdError error)? pigeon_newInstance,
+    AdErrorEvent Function(
+      AdError error,
+      Object userRequestContext,
+    )? pigeon_newInstance,
   }) {
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
         _PigeonProxyApiBaseCodec(
@@ -3147,14 +3154,18 @@ class AdErrorEvent extends PigeonProxyApiBaseClass {
           final AdError? arg_error = (args[1] as AdError?);
           assert(arg_error != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.AdErrorEvent.pigeon_newInstance was null, expected non-null AdError.');
+          final Object? arg_userRequestContext = (args[2] as Object?);
+          assert(arg_userRequestContext != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.AdErrorEvent.pigeon_newInstance was null, expected non-null Object.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_error!) ??
+              pigeon_newInstance?.call(arg_error!, arg_userRequestContext!) ??
                   AdErrorEvent.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     error: arg_error!,
+                    userRequestContext: arg_userRequestContext!,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -3176,6 +3187,7 @@ class AdErrorEvent extends PigeonProxyApiBaseClass {
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       error: error,
+      userRequestContext: userRequestContext,
     );
   }
 }
