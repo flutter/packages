@@ -141,8 +141,9 @@ class PlatformMarker {
   final bool consumeTapEvents;
   final bool draggable;
   final bool flat;
+
   /// The icon as JSON data.
-  /// TODO(schectman): replace this with structured data.
+  // TODO(schectman): replace this with structured data.
   final Object icon;
   final PlatformInfoWindow infoWindow;
   final PlatformLatLng position;
