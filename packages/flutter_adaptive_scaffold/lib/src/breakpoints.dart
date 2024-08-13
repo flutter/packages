@@ -219,10 +219,7 @@ class Breakpoint {
   }
 
   /// Returns the currently active [Breakpoint].
-  static Breakpoint activeBreakpointOf(
-    BuildContext context, {
-    bool andUp = false,
-  }) {
+  static Breakpoint activeBreakpointOf(BuildContext context) {
     final SlotLayout? slotLayout =
         context.findAncestorWidgetOfExactType<SlotLayout>();
 
@@ -256,22 +253,7 @@ class Breakpoint {
       Breakpoints.extraLarge,
     ]) {
       if (breakpoint.isActive(context)) {
-        if (andUp) {
-          switch (breakpoint) {
-            case Breakpoints.small:
-              return Breakpoints.smallAndUp;
-            case Breakpoints.medium:
-              return Breakpoints.mediumAndUp;
-            case Breakpoints.mediumLarge:
-              return Breakpoints.mediumLargeAndUp;
-            case Breakpoints.large:
-              return Breakpoints.largeAndUp;
-            case Breakpoints.extraLarge:
-              return Breakpoints.extraLarge;
-            default:
-              return Breakpoints.standard;
-          }
-        } else if (isDesktop) {
+        if (isDesktop) {
           switch (breakpoint) {
             case Breakpoints.small:
               return Breakpoints.smallDesktop;
