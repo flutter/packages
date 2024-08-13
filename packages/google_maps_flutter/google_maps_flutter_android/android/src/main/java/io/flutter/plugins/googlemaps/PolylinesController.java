@@ -38,13 +38,13 @@ class PolylinesController {
 
   void addPolylines(@NonNull List<Messages.PlatformPolyline> polylinesToAdd) {
     for (Messages.PlatformPolyline polylineToAdd : polylinesToAdd) {
-      addJsonPolyline(polylineToAdd.getJson());
+      addPolyline(polylineToAdd);
     }
   }
 
   void changePolylines(@NonNull List<Messages.PlatformPolyline> polylinesToChange) {
     for (Messages.PlatformPolyline polylineToChange : polylinesToChange) {
-      changeJsonPolyline(polylineToChange.getJson());
+      changePolyline(polylineToChange);
     }
   }
 
@@ -82,6 +82,14 @@ class PolylinesController {
     addPolyline(polylineId, options, polylineBuilder.consumeTapEvents());
   }
 
+  private void addPolyline(@NonNull Messages.PlatformPolyline polyline) {
+    PolylineBuilder polylineBuilder = new PolylineBuilder(density);
+    String polylineId =
+        Convert.interpretPolylineOptions(polyline, polylineBuilder, assetManager, density);
+    PolylineOptions options = polylineBuilder.build();
+    addPolyline(polylineId, options, polylineBuilder.consumeTapEvents());
+  }
+
   private void addPolyline(
       String polylineId, PolylineOptions polylineOptions, boolean consumeTapEvents) {
     final Polyline polyline = googleMap.addPolyline(polylineOptions);
@@ -95,6 +103,14 @@ class PolylinesController {
       return;
     }
     String polylineId = getPolylineId(polyline);
+    PolylineController polylineController = polylineIdToController.get(polylineId);
+    if (polylineController != null) {
+      Convert.interpretPolylineOptions(polyline, polylineController, assetManager, density);
+    }
+  }
+
+  private void changePolyline(@NonNull Messages.PlatformPolyline polyline) {
+    String polylineId = polyline.getPolylineId();
     PolylineController polylineController = polylineIdToController.get(polylineId);
     if (polylineController != null) {
       Convert.interpretPolylineOptions(polyline, polylineController, assetManager, density);

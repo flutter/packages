@@ -703,6 +703,21 @@ class Convert {
     return polygon.getPolygonId();
   }
 
+  static String interpretPolylineOptions(Messages.PlatformPolyline polyline, PolylineOptionsSink sink, AssetManager assetManager, float density) {
+    sink.setConsumeTapEvents(polyline.getConsumesTapEvents());
+    sink.setColor(polyline.getColor().intValue());
+    sink.setEndCap(toCap(polyline.getEndCap(), assetManager, density));
+    sink.setStartCap(toCap(polyline.getStartCap(), assetManager, density));
+    sink.setGeodesic(polyline.getGeodesic());
+    sink.setJointType(polyline.getJointType().intValue());
+    sink.setVisible(polyline.getVisible());
+    sink.setWidth(polyline.getWidth());
+    sink.setZIndex(polyline.getZIndex());
+    sink.setPoints(toPoints(polyline.getPoints()));
+    sink.setPattern(toPattern(polyline.getPatterns()));
+    return polyline.getPolylineId();
+  }
+
   static String interpretPolylineOptions(
       Map<String, ?> data, PolylineOptionsSink sink, AssetManager assetManager, float density) {
     final Object consumeTapEvents = data.get("consumeTapEvents");
