@@ -1,3 +1,7 @@
+## 0.2.1
+
+* Add `Breakpoint.activeBreakpointOf(context)` to find the currently active breakpoint.
+
 ## 0.2.0
 
 * Add breakpoints for mediumLarge and extraLarge.
