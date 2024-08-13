@@ -13,7 +13,6 @@ import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 class MarkersController {
@@ -25,12 +24,14 @@ class MarkersController {
   private final ClusterManagersController clusterManagersController;
   private final AssetManager assetManager;
   private final float density;
+  private final Convert.BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper;
 
   MarkersController(
       @NonNull MapsCallbackApi flutterApi,
       ClusterManagersController clusterManagersController,
       AssetManager assetManager,
-      float density) {
+      float density,
+      Convert.BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper) {
     this.markerIdToMarkerBuilder = new HashMap<>();
     this.markerIdToController = new HashMap<>();
     this.googleMapsMarkerIdToDartMarkerId = new HashMap<>();
@@ -38,6 +39,7 @@ class MarkersController {
     this.clusterManagersController = clusterManagersController;
     this.assetManager = assetManager;
     this.density = density;
+    this.bitmapDescriptorFactoryWrapper = bitmapDescriptorFactoryWrapper;
   }
 
   void setCollection(MarkerManager.Collection markerCollection) {
@@ -46,13 +48,13 @@ class MarkersController {
 
   void addMarkers(@NonNull List<Messages.PlatformMarker> markersToAdd) {
     for (Messages.PlatformMarker markerToAdd : markersToAdd) {
-      addJsonMarker(markerToAdd.getJson());
+      addMarker(markerToAdd);
     }
   }
 
   void changeMarkers(@NonNull List<Messages.PlatformMarker> markersToChange) {
     for (Messages.PlatformMarker markerToChange : markersToChange) {
-      changeJsonMarker(markerToChange.getJson());
+      changeMarker(markerToChange);
     }
   }
 
@@ -169,17 +171,12 @@ class MarkersController {
     }
   }
 
-  private void addJsonMarker(Map<String, ?> marker) {
-    if (marker == null) {
-      return;
-    }
-    String markerId = getMarkerId(marker);
-    if (markerId == null) {
-      throw new IllegalArgumentException("markerId was null");
-    }
-    String clusterManagerId = getClusterManagerId(marker);
+  private void addMarker(@NonNull Messages.PlatformMarker marker) {
+    String markerId = marker.getMarkerId();
+    String clusterManagerId = marker.getClusterManagerId();
     MarkerBuilder markerBuilder = new MarkerBuilder(markerId, clusterManagerId);
-    Convert.interpretMarkerOptions(marker, markerBuilder, assetManager, density);
+    Convert.interpretMarkerOptions(
+        marker, markerBuilder, assetManager, density, bitmapDescriptorFactoryWrapper);
     addMarker(markerBuilder);
   }
 
@@ -215,43 +212,34 @@ class MarkersController {
     googleMapsMarkerIdToDartMarkerId.put(marker.getId(), markerId);
   }
 
-  private void changeJsonMarker(Map<String, ?> marker) {
-    if (marker == null) {
-      return;
-    }
-    String markerId = getMarkerId(marker);
+  private void changeMarker(@NonNull Messages.PlatformMarker marker) {
+    String markerId = marker.getMarkerId();
 
     MarkerBuilder markerBuilder = markerIdToMarkerBuilder.get(markerId);
     if (markerBuilder == null) {
       return;
     }
 
-    String clusterManagerId = getClusterManagerId(marker);
+    String clusterManagerId = marker.getClusterManagerId();
     String oldClusterManagerId = markerBuilder.clusterManagerId();
 
     // If the cluster ID on the updated marker has changed, the marker needs to
     // be removed and re-added to update its cluster manager state.
     if (!(Objects.equals(clusterManagerId, oldClusterManagerId))) {
       removeMarker(markerId);
-      addJsonMarker(marker);
+      addMarker(marker);
       return;
     }
 
     // Update marker builder.
-    Convert.interpretMarkerOptions(marker, markerBuilder, assetManager, density);
+    Convert.interpretMarkerOptions(
+        marker, markerBuilder, assetManager, density, bitmapDescriptorFactoryWrapper);
 
     // Update existing marker on map.
     MarkerController markerController = markerIdToController.get(markerId);
     if (markerController != null) {
-      Convert.interpretMarkerOptions(marker, markerController, assetManager, density);
+      Convert.interpretMarkerOptions(
+          marker, markerController, assetManager, density, bitmapDescriptorFactoryWrapper);
     }
-  }
-
-  private static String getMarkerId(Map<String, ?> marker) {
-    return (String) marker.get("markerId");
-  }
-
-  private static String getClusterManagerId(Map<String, ?> marker) {
-    return (String) marker.get("clusterManagerId");
   }
 }
