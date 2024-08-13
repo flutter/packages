@@ -5,7 +5,9 @@
 #import <XCTest/XCTest.h>
 
 @import webview_flutter_wkwebview;
+#if __has_include(<webview_flutter_wkwebview/webview-umbrella.h>)
 @import webview_flutter_wkwebview.Test;
+#endif
 
 @interface FWFInstanceManagerTests : XCTestCase
 @end

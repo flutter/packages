@@ -299,8 +299,48 @@ class _MyHomePageState extends State<MyHomePage>
                   );
                 },
               ),
+              Breakpoints.mediumLarge: SlotLayout.from(
+                key: const Key('MediumLarge primaryNavigation'),
+                // The AdaptiveScaffold builder here greatly simplifies
+                // navigational elements.
+                builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                  leading: const _LargeComposeIcon(),
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      _navigationIndex = index;
+                    });
+                  },
+                  selectedIndex: _navigationIndex,
+                  trailing: trailingNavRail,
+                  extended: true,
+                  destinations:
+                      destinations.map((NavigationDestination destination) {
+                    return AdaptiveScaffold.toRailDestination(destination);
+                  }).toList(),
+                ),
+              ),
               Breakpoints.large: SlotLayout.from(
                 key: const Key('Large primaryNavigation'),
+                // The AdaptiveScaffold builder here greatly simplifies
+                // navigational elements.
+                builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                  leading: const _LargeComposeIcon(),
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      _navigationIndex = index;
+                    });
+                  },
+                  selectedIndex: _navigationIndex,
+                  trailing: trailingNavRail,
+                  extended: true,
+                  destinations:
+                      destinations.map((NavigationDestination destination) {
+                    return AdaptiveScaffold.toRailDestination(destination);
+                  }).toList(),
+                ),
+              ),
+              Breakpoints.extraLarge: SlotLayout.from(
+                key: const Key('ExtraLarge primaryNavigation'),
                 // The AdaptiveScaffold builder here greatly simplifies
                 // navigational elements.
                 builder: (_) => AdaptiveScaffold.standardNavigationRail(

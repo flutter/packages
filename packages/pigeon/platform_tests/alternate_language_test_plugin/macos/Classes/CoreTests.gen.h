@@ -28,6 +28,16 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 - (instancetype)initWithValue:(AnEnum)value;
 @end
 
+typedef NS_ENUM(NSUInteger, AnotherEnum) {
+  AnotherEnumJustInCase = 0,
+};
+
+/// Wrapper for AnotherEnum to allow for nullability.
+@interface AnotherEnumBox : NSObject
+@property(nonatomic, assign) AnotherEnum value;
+- (instancetype)initWithValue:(AnotherEnum)value;
+@end
+
 @class AllTypes;
 @class AllNullableTypes;
 @class AllNullableTypesWithoutRecursion;
@@ -46,11 +56,16 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
                   a4ByteArray:(FlutterStandardTypedData *)a4ByteArray
                   a8ByteArray:(FlutterStandardTypedData *)a8ByteArray
                   aFloatArray:(FlutterStandardTypedData *)aFloatArray
-                         list:(NSArray *)list
-                         aMap:(NSDictionary *)aMap
                        anEnum:(AnEnum)anEnum
+                  anotherEnum:(AnotherEnum)anotherEnum
                       aString:(NSString *)aString
-                     anObject:(id)anObject;
+                     anObject:(id)anObject
+                         list:(NSArray<id> *)list
+                   stringList:(NSArray<NSString *> *)stringList
+                      intList:(NSArray<NSNumber *> *)intList
+                   doubleList:(NSArray<NSNumber *> *)doubleList
+                     boolList:(NSArray<NSNumber *> *)boolList
+                          map:(NSDictionary *)map;
 @property(nonatomic, assign) BOOL aBool;
 @property(nonatomic, assign) NSInteger anInt;
 @property(nonatomic, assign) NSInteger anInt64;
@@ -59,11 +74,16 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, strong) FlutterStandardTypedData *a4ByteArray;
 @property(nonatomic, strong) FlutterStandardTypedData *a8ByteArray;
 @property(nonatomic, strong) FlutterStandardTypedData *aFloatArray;
-@property(nonatomic, copy) NSArray *list;
-@property(nonatomic, copy) NSDictionary *aMap;
 @property(nonatomic, assign) AnEnum anEnum;
+@property(nonatomic, assign) AnotherEnum anotherEnum;
 @property(nonatomic, copy) NSString *aString;
 @property(nonatomic, strong) id anObject;
+@property(nonatomic, copy) NSArray<id> *list;
+@property(nonatomic, copy) NSArray<NSString *> *stringList;
+@property(nonatomic, copy) NSArray<NSNumber *> *intList;
+@property(nonatomic, copy) NSArray<NSNumber *> *doubleList;
+@property(nonatomic, copy) NSArray<NSNumber *> *boolList;
+@property(nonatomic, copy) NSDictionary *map;
 @end
 
 /// A class containing all supported nullable types.
@@ -76,16 +96,22 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
                   aNullable4ByteArray:(nullable FlutterStandardTypedData *)aNullable4ByteArray
                   aNullable8ByteArray:(nullable FlutterStandardTypedData *)aNullable8ByteArray
                   aNullableFloatArray:(nullable FlutterStandardTypedData *)aNullableFloatArray
-                        aNullableList:(nullable NSArray *)aNullableList
-                         aNullableMap:(nullable NSDictionary *)aNullableMap
                    nullableNestedList:(nullable NSArray<NSArray<NSNumber *> *> *)nullableNestedList
            nullableMapWithAnnotations:
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(nullable AnEnumBox *)aNullableEnum
+                  anotherNullableEnum:(nullable AnotherEnumBox *)anotherNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject
-                     allNullableTypes:(nullable AllNullableTypes *)allNullableTypes;
+                     allNullableTypes:(nullable AllNullableTypes *)allNullableTypes
+                                 list:(nullable NSArray<id> *)list
+                           stringList:(nullable NSArray<NSString *> *)stringList
+                              intList:(nullable NSArray<NSNumber *> *)intList
+                           doubleList:(nullable NSArray<NSNumber *> *)doubleList
+                             boolList:(nullable NSArray<NSNumber *> *)boolList
+                      nestedClassList:(nullable NSArray<AllNullableTypes *> *)nestedClassList
+                                  map:(nullable NSDictionary *)map;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt64;
@@ -94,16 +120,22 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullable4ByteArray;
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullable8ByteArray;
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullableFloatArray;
-@property(nonatomic, copy, nullable) NSArray *aNullableList;
-@property(nonatomic, copy, nullable) NSDictionary *aNullableMap;
 @property(nonatomic, copy, nullable) NSArray<NSArray<NSNumber *> *> *nullableNestedList;
 @property(nonatomic, copy, nullable)
     NSDictionary<NSString *, NSString *> *nullableMapWithAnnotations;
 @property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *nullableMapWithObject;
 @property(nonatomic, strong, nullable) AnEnumBox *aNullableEnum;
+@property(nonatomic, strong, nullable) AnotherEnumBox *anotherNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @property(nonatomic, strong, nullable) id aNullableObject;
 @property(nonatomic, strong, nullable) AllNullableTypes *allNullableTypes;
+@property(nonatomic, copy, nullable) NSArray<id> *list;
+@property(nonatomic, copy, nullable) NSArray<NSString *> *stringList;
+@property(nonatomic, copy, nullable) NSArray<NSNumber *> *intList;
+@property(nonatomic, copy, nullable) NSArray<NSNumber *> *doubleList;
+@property(nonatomic, copy, nullable) NSArray<NSNumber *> *boolList;
+@property(nonatomic, copy, nullable) NSArray<AllNullableTypes *> *nestedClassList;
+@property(nonatomic, copy, nullable) NSDictionary *map;
 @end
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -118,15 +150,20 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
                   aNullable4ByteArray:(nullable FlutterStandardTypedData *)aNullable4ByteArray
                   aNullable8ByteArray:(nullable FlutterStandardTypedData *)aNullable8ByteArray
                   aNullableFloatArray:(nullable FlutterStandardTypedData *)aNullableFloatArray
-                        aNullableList:(nullable NSArray *)aNullableList
-                         aNullableMap:(nullable NSDictionary *)aNullableMap
                    nullableNestedList:(nullable NSArray<NSArray<NSNumber *> *> *)nullableNestedList
            nullableMapWithAnnotations:
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(nullable AnEnumBox *)aNullableEnum
+                  anotherNullableEnum:(nullable AnotherEnumBox *)anotherNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
-                      aNullableObject:(nullable id)aNullableObject;
+                      aNullableObject:(nullable id)aNullableObject
+                                 list:(nullable NSArray<id> *)list
+                           stringList:(nullable NSArray<NSString *> *)stringList
+                              intList:(nullable NSArray<NSNumber *> *)intList
+                           doubleList:(nullable NSArray<NSNumber *> *)doubleList
+                             boolList:(nullable NSArray<NSNumber *> *)boolList
+                                  map:(nullable NSDictionary *)map;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt64;
@@ -135,15 +172,20 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullable4ByteArray;
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullable8ByteArray;
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullableFloatArray;
-@property(nonatomic, copy, nullable) NSArray *aNullableList;
-@property(nonatomic, copy, nullable) NSDictionary *aNullableMap;
 @property(nonatomic, copy, nullable) NSArray<NSArray<NSNumber *> *> *nullableNestedList;
 @property(nonatomic, copy, nullable)
     NSDictionary<NSString *, NSString *> *nullableMapWithAnnotations;
 @property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *nullableMapWithObject;
 @property(nonatomic, strong, nullable) AnEnumBox *aNullableEnum;
+@property(nonatomic, strong, nullable) AnotherEnumBox *anotherNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @property(nonatomic, strong, nullable) id aNullableObject;
+@property(nonatomic, copy, nullable) NSArray<id> *list;
+@property(nonatomic, copy, nullable) NSArray<NSString *> *stringList;
+@property(nonatomic, copy, nullable) NSArray<NSNumber *> *intList;
+@property(nonatomic, copy, nullable) NSArray<NSNumber *> *doubleList;
+@property(nonatomic, copy, nullable) NSArray<NSNumber *> *boolList;
+@property(nonatomic, copy, nullable) NSDictionary *map;
 @end
 
 /// A class for testing nested class handling.
@@ -166,12 +208,12 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 
 /// A data class containing a List, used in unit tests.
 @interface TestMessage : NSObject
-+ (instancetype)makeWithTestList:(nullable NSArray *)testList;
-@property(nonatomic, copy, nullable) NSArray *testList;
++ (instancetype)makeWithTestList:(nullable NSArray<id> *)testList;
+@property(nonatomic, copy, nullable) NSArray<id> *testList;
 @end
 
-/// The codec used by HostIntegrationCoreApi.
-NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
+/// The codec used by all APIs.
+NSObject<FlutterMessageCodec> *GetCoreTestsCodec(void);
 
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
@@ -235,6 +277,11 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 ///
 /// @return `nil` only when `error != nil`.
 - (AnEnumBox *_Nullable)echoEnum:(AnEnum)anEnum error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed enum to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (AnotherEnumBox *_Nullable)echoAnotherEnum:(AnotherEnum)anotherEnum
+                                       error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the default string.
 ///
 /// @return `nil` only when `error != nil`.
@@ -312,6 +359,8 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
                                                      error:(FlutterError *_Nullable *_Nonnull)error;
 - (AnEnumBox *_Nullable)echoNullableEnum:(nullable AnEnumBox *)anEnumBoxed
                                    error:(FlutterError *_Nullable *_Nonnull)error;
+- (AnotherEnumBox *_Nullable)echoAnotherNullableEnum:(nullable AnotherEnumBox *)anotherEnumBoxed
+                                               error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns passed in int.
 - (nullable NSNumber *)echoOptionalNullableInt:(nullable NSNumber *)aNullableInt
                                          error:(FlutterError *_Nullable *_Nonnull)error;
@@ -350,6 +399,10 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// Returns the passed enum, to test asynchronous serialization and deserialization.
 - (void)echoAsyncEnum:(AnEnum)anEnum
            completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed enum, to test asynchronous serialization and deserialization.
+- (void)echoAnotherAsyncEnum:(AnotherEnum)anotherEnum
+                  completion:
+                      (void (^)(AnotherEnumBox *_Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async function returning a value.
 - (void)throwAsyncErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async void function.
@@ -400,6 +453,10 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// Returns the passed enum, to test asynchronous serialization and deserialization.
 - (void)echoAsyncNullableEnum:(nullable AnEnumBox *)anEnumBoxed
                    completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed enum, to test asynchronous serialization and deserialization.
+- (void)echoAnotherAsyncNullableEnum:(nullable AnotherEnumBox *)anotherEnumBoxed
+                          completion:(void (^)(AnotherEnumBox *_Nullable,
+                                               FlutterError *_Nullable))completion;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterThrowErrorWithCompletion:(void (^)(id _Nullable,
                                                       FlutterError *_Nullable))completion;
@@ -447,6 +504,9 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
                                      FlutterError *_Nullable))completion;
 - (void)callFlutterEchoEnum:(AnEnum)anEnum
                  completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoAnotherEnum:(AnotherEnum)anotherEnum
+                        completion:(void (^)(AnotherEnumBox *_Nullable,
+                                             FlutterError *_Nullable))completion;
 - (void)callFlutterEchoNullableBool:(nullable NSNumber *)aBool
                          completion:
                              (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
@@ -471,6 +531,9 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 - (void)callFlutterEchoNullableEnum:(nullable AnEnumBox *)anEnumBoxed
                          completion:
                              (void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoAnotherNullableEnum:(nullable AnotherEnumBox *)anotherEnumBoxed
+                                completion:(void (^)(AnotherEnumBox *_Nullable,
+                                                     FlutterError *_Nullable))completion;
 - (void)callFlutterSmallApiEchoString:(NSString *)aString
                            completion:
                                (void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
@@ -482,9 +545,6 @@ extern void SetUpHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMesseng
 extern void SetUpHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                   NSObject<HostIntegrationCoreApi> *_Nullable api,
                                                   NSString *messageChannelSuffix);
-
-/// The codec used by FlutterIntegrationCoreApi.
-NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
@@ -554,6 +614,9 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 /// Returns the passed enum to test serialization and deserialization.
 - (void)echoEnum:(AnEnum)anEnum
       completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed enum to test serialization and deserialization.
+- (void)echoAnotherEnum:(AnotherEnum)anotherEnum
+             completion:(void (^)(AnotherEnumBox *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed boolean, to test serialization and deserialization.
 - (void)echoNullableBool:(nullable NSNumber *)aBool
               completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
@@ -580,6 +643,10 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 /// Returns the passed enum to test serialization and deserialization.
 - (void)echoNullableEnum:(nullable AnEnumBox *)anEnumBoxed
               completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed enum to test serialization and deserialization.
+- (void)echoAnotherNullableEnum:(nullable AnotherEnumBox *)anotherEnumBoxed
+                     completion:
+                         (void (^)(AnotherEnumBox *_Nullable, FlutterError *_Nullable))completion;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic asynchronous calling.
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion;
@@ -587,9 +654,6 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 - (void)echoAsyncString:(NSString *)aString
              completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
-
-/// The codec used by HostTrivialApi.
-NSObject<FlutterMessageCodec> *HostTrivialApiGetCodec(void);
 
 /// An API that can be implemented for minimal, compile-only tests.
 @protocol HostTrivialApi
@@ -602,9 +666,6 @@ extern void SetUpHostTrivialApi(id<FlutterBinaryMessenger> binaryMessenger,
 extern void SetUpHostTrivialApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                           NSObject<HostTrivialApi> *_Nullable api,
                                           NSString *messageChannelSuffix);
-
-/// The codec used by HostSmallApi.
-NSObject<FlutterMessageCodec> *HostSmallApiGetCodec(void);
 
 /// A simple API implemented in some unit tests.
 @protocol HostSmallApi
@@ -619,9 +680,6 @@ extern void SetUpHostSmallApi(id<FlutterBinaryMessenger> binaryMessenger,
 extern void SetUpHostSmallApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                         NSObject<HostSmallApi> *_Nullable api,
                                         NSString *messageChannelSuffix);
-
-/// The codec used by FlutterSmallApi.
-NSObject<FlutterMessageCodec> *FlutterSmallApiGetCodec(void);
 
 /// A simple API called in some unit tests.
 @interface FlutterSmallApi : NSObject

@@ -50,6 +50,16 @@ enum class AnEnum(val raw: Int) {
   }
 }
 
+enum class AnotherEnum(val raw: Int) {
+  JUST_IN_CASE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AnotherEnum? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 /**
  * A class containing all supported types.
  *
@@ -64,28 +74,37 @@ data class AllTypes(
     val a4ByteArray: IntArray,
     val a8ByteArray: LongArray,
     val aFloatArray: DoubleArray,
-    val list: List<Any?>,
-    val aMap: Map<Any, Any?>,
     val anEnum: AnEnum,
+    val anotherEnum: AnotherEnum,
     val aString: String,
-    val anObject: Any
+    val anObject: Any,
+    val list: List<Any?>,
+    val stringList: List<String?>,
+    val intList: List<Long?>,
+    val doubleList: List<Double?>,
+    val boolList: List<Boolean?>,
+    val map: Map<Any, Any?>
 ) {
   companion object {
-    @Suppress("LocalVariableName")
-    fun fromList(__pigeon_list: List<Any?>): AllTypes {
-      val aBool = __pigeon_list[0] as Boolean
-      val anInt = __pigeon_list[1].let { num -> if (num is Int) num.toLong() else num as Long }
-      val anInt64 = __pigeon_list[2].let { num -> if (num is Int) num.toLong() else num as Long }
-      val aDouble = __pigeon_list[3] as Double
-      val aByteArray = __pigeon_list[4] as ByteArray
-      val a4ByteArray = __pigeon_list[5] as IntArray
-      val a8ByteArray = __pigeon_list[6] as LongArray
-      val aFloatArray = __pigeon_list[7] as DoubleArray
-      val list = __pigeon_list[8] as List<Any?>
-      val aMap = __pigeon_list[9] as Map<Any, Any?>
-      val anEnum = AnEnum.ofRaw(__pigeon_list[10] as Int)!!
-      val aString = __pigeon_list[11] as String
-      val anObject = __pigeon_list[12] as Any
+    fun fromList(pigeonVar_list: List<Any?>): AllTypes {
+      val aBool = pigeonVar_list[0] as Boolean
+      val anInt = pigeonVar_list[1].let { num -> if (num is Int) num.toLong() else num as Long }
+      val anInt64 = pigeonVar_list[2].let { num -> if (num is Int) num.toLong() else num as Long }
+      val aDouble = pigeonVar_list[3] as Double
+      val aByteArray = pigeonVar_list[4] as ByteArray
+      val a4ByteArray = pigeonVar_list[5] as IntArray
+      val a8ByteArray = pigeonVar_list[6] as LongArray
+      val aFloatArray = pigeonVar_list[7] as DoubleArray
+      val anEnum = pigeonVar_list[8] as AnEnum
+      val anotherEnum = pigeonVar_list[9] as AnotherEnum
+      val aString = pigeonVar_list[10] as String
+      val anObject = pigeonVar_list[11] as Any
+      val list = pigeonVar_list[12] as List<Any?>
+      val stringList = pigeonVar_list[13] as List<String?>
+      val intList = pigeonVar_list[14] as List<Long?>
+      val doubleList = pigeonVar_list[15] as List<Double?>
+      val boolList = pigeonVar_list[16] as List<Boolean?>
+      val map = pigeonVar_list[17] as Map<Any, Any?>
       return AllTypes(
           aBool,
           anInt,
@@ -95,16 +114,21 @@ data class AllTypes(
           a4ByteArray,
           a8ByteArray,
           aFloatArray,
-          list,
-          aMap,
           anEnum,
+          anotherEnum,
           aString,
-          anObject)
+          anObject,
+          list,
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          map)
     }
   }
 
   fun toList(): List<Any?> {
-    return listOf<Any?>(
+    return listOf(
         aBool,
         anInt,
         anInt64,
@@ -113,11 +137,16 @@ data class AllTypes(
         a4ByteArray,
         a8ByteArray,
         aFloatArray,
-        list,
-        aMap,
-        anEnum.raw,
+        anEnum,
+        anotherEnum,
         aString,
         anObject,
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        map,
     )
   }
 }
@@ -136,38 +165,49 @@ data class AllNullableTypes(
     val aNullable4ByteArray: IntArray? = null,
     val aNullable8ByteArray: LongArray? = null,
     val aNullableFloatArray: DoubleArray? = null,
-    val aNullableList: List<Any?>? = null,
-    val aNullableMap: Map<Any, Any?>? = null,
     val nullableNestedList: List<List<Boolean?>?>? = null,
     val nullableMapWithAnnotations: Map<String?, String?>? = null,
     val nullableMapWithObject: Map<String?, Any?>? = null,
     val aNullableEnum: AnEnum? = null,
+    val anotherNullableEnum: AnotherEnum? = null,
     val aNullableString: String? = null,
     val aNullableObject: Any? = null,
-    val allNullableTypes: AllNullableTypes? = null
+    val allNullableTypes: AllNullableTypes? = null,
+    val list: List<Any?>? = null,
+    val stringList: List<String?>? = null,
+    val intList: List<Long?>? = null,
+    val doubleList: List<Double?>? = null,
+    val boolList: List<Boolean?>? = null,
+    val nestedClassList: List<AllNullableTypes?>? = null,
+    val map: Map<Any, Any?>? = null
 ) {
   companion object {
-    @Suppress("LocalVariableName")
-    fun fromList(__pigeon_list: List<Any?>): AllNullableTypes {
-      val aNullableBool = __pigeon_list[0] as Boolean?
+    fun fromList(pigeonVar_list: List<Any?>): AllNullableTypes {
+      val aNullableBool = pigeonVar_list[0] as Boolean?
       val aNullableInt =
-          __pigeon_list[1].let { num -> if (num is Int) num.toLong() else num as Long? }
+          pigeonVar_list[1].let { num -> if (num is Int) num.toLong() else num as Long? }
       val aNullableInt64 =
-          __pigeon_list[2].let { num -> if (num is Int) num.toLong() else num as Long? }
-      val aNullableDouble = __pigeon_list[3] as Double?
-      val aNullableByteArray = __pigeon_list[4] as ByteArray?
-      val aNullable4ByteArray = __pigeon_list[5] as IntArray?
-      val aNullable8ByteArray = __pigeon_list[6] as LongArray?
-      val aNullableFloatArray = __pigeon_list[7] as DoubleArray?
-      val aNullableList = __pigeon_list[8] as List<Any?>?
-      val aNullableMap = __pigeon_list[9] as Map<Any, Any?>?
-      val nullableNestedList = __pigeon_list[10] as List<List<Boolean?>?>?
-      val nullableMapWithAnnotations = __pigeon_list[11] as Map<String?, String?>?
-      val nullableMapWithObject = __pigeon_list[12] as Map<String?, Any?>?
-      val aNullableEnum: AnEnum? = (__pigeon_list[13] as Int?)?.let { num -> AnEnum.ofRaw(num) }
-      val aNullableString = __pigeon_list[14] as String?
-      val aNullableObject = __pigeon_list[15]
-      val allNullableTypes = __pigeon_list[16] as AllNullableTypes?
+          pigeonVar_list[2].let { num -> if (num is Int) num.toLong() else num as Long? }
+      val aNullableDouble = pigeonVar_list[3] as Double?
+      val aNullableByteArray = pigeonVar_list[4] as ByteArray?
+      val aNullable4ByteArray = pigeonVar_list[5] as IntArray?
+      val aNullable8ByteArray = pigeonVar_list[6] as LongArray?
+      val aNullableFloatArray = pigeonVar_list[7] as DoubleArray?
+      val nullableNestedList = pigeonVar_list[8] as List<List<Boolean?>?>?
+      val nullableMapWithAnnotations = pigeonVar_list[9] as Map<String?, String?>?
+      val nullableMapWithObject = pigeonVar_list[10] as Map<String?, Any?>?
+      val aNullableEnum = pigeonVar_list[11] as AnEnum?
+      val anotherNullableEnum = pigeonVar_list[12] as AnotherEnum?
+      val aNullableString = pigeonVar_list[13] as String?
+      val aNullableObject = pigeonVar_list[14]
+      val allNullableTypes = pigeonVar_list[15] as AllNullableTypes?
+      val list = pigeonVar_list[16] as List<Any?>?
+      val stringList = pigeonVar_list[17] as List<String?>?
+      val intList = pigeonVar_list[18] as List<Long?>?
+      val doubleList = pigeonVar_list[19] as List<Double?>?
+      val boolList = pigeonVar_list[20] as List<Boolean?>?
+      val nestedClassList = pigeonVar_list[21] as List<AllNullableTypes?>?
+      val map = pigeonVar_list[22] as Map<Any, Any?>?
       return AllNullableTypes(
           aNullableBool,
           aNullableInt,
@@ -177,20 +217,26 @@ data class AllNullableTypes(
           aNullable4ByteArray,
           aNullable8ByteArray,
           aNullableFloatArray,
-          aNullableList,
-          aNullableMap,
           nullableNestedList,
           nullableMapWithAnnotations,
           nullableMapWithObject,
           aNullableEnum,
+          anotherNullableEnum,
           aNullableString,
           aNullableObject,
-          allNullableTypes)
+          allNullableTypes,
+          list,
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          nestedClassList,
+          map)
     }
   }
 
   fun toList(): List<Any?> {
-    return listOf<Any?>(
+    return listOf(
         aNullableBool,
         aNullableInt,
         aNullableInt64,
@@ -199,15 +245,21 @@ data class AllNullableTypes(
         aNullable4ByteArray,
         aNullable8ByteArray,
         aNullableFloatArray,
-        aNullableList,
-        aNullableMap,
         nullableNestedList,
         nullableMapWithAnnotations,
         nullableMapWithObject,
-        aNullableEnum?.raw,
+        aNullableEnum,
+        anotherNullableEnum,
         aNullableString,
         aNullableObject,
         allNullableTypes,
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        nestedClassList,
+        map,
     )
   }
 }
@@ -227,36 +279,45 @@ data class AllNullableTypesWithoutRecursion(
     val aNullable4ByteArray: IntArray? = null,
     val aNullable8ByteArray: LongArray? = null,
     val aNullableFloatArray: DoubleArray? = null,
-    val aNullableList: List<Any?>? = null,
-    val aNullableMap: Map<Any, Any?>? = null,
     val nullableNestedList: List<List<Boolean?>?>? = null,
     val nullableMapWithAnnotations: Map<String?, String?>? = null,
     val nullableMapWithObject: Map<String?, Any?>? = null,
     val aNullableEnum: AnEnum? = null,
+    val anotherNullableEnum: AnotherEnum? = null,
     val aNullableString: String? = null,
-    val aNullableObject: Any? = null
+    val aNullableObject: Any? = null,
+    val list: List<Any?>? = null,
+    val stringList: List<String?>? = null,
+    val intList: List<Long?>? = null,
+    val doubleList: List<Double?>? = null,
+    val boolList: List<Boolean?>? = null,
+    val map: Map<Any, Any?>? = null
 ) {
   companion object {
-    @Suppress("LocalVariableName")
-    fun fromList(__pigeon_list: List<Any?>): AllNullableTypesWithoutRecursion {
-      val aNullableBool = __pigeon_list[0] as Boolean?
+    fun fromList(pigeonVar_list: List<Any?>): AllNullableTypesWithoutRecursion {
+      val aNullableBool = pigeonVar_list[0] as Boolean?
       val aNullableInt =
-          __pigeon_list[1].let { num -> if (num is Int) num.toLong() else num as Long? }
+          pigeonVar_list[1].let { num -> if (num is Int) num.toLong() else num as Long? }
       val aNullableInt64 =
-          __pigeon_list[2].let { num -> if (num is Int) num.toLong() else num as Long? }
-      val aNullableDouble = __pigeon_list[3] as Double?
-      val aNullableByteArray = __pigeon_list[4] as ByteArray?
-      val aNullable4ByteArray = __pigeon_list[5] as IntArray?
-      val aNullable8ByteArray = __pigeon_list[6] as LongArray?
-      val aNullableFloatArray = __pigeon_list[7] as DoubleArray?
-      val aNullableList = __pigeon_list[8] as List<Any?>?
-      val aNullableMap = __pigeon_list[9] as Map<Any, Any?>?
-      val nullableNestedList = __pigeon_list[10] as List<List<Boolean?>?>?
-      val nullableMapWithAnnotations = __pigeon_list[11] as Map<String?, String?>?
-      val nullableMapWithObject = __pigeon_list[12] as Map<String?, Any?>?
-      val aNullableEnum: AnEnum? = (__pigeon_list[13] as Int?)?.let { num -> AnEnum.ofRaw(num) }
-      val aNullableString = __pigeon_list[14] as String?
-      val aNullableObject = __pigeon_list[15]
+          pigeonVar_list[2].let { num -> if (num is Int) num.toLong() else num as Long? }
+      val aNullableDouble = pigeonVar_list[3] as Double?
+      val aNullableByteArray = pigeonVar_list[4] as ByteArray?
+      val aNullable4ByteArray = pigeonVar_list[5] as IntArray?
+      val aNullable8ByteArray = pigeonVar_list[6] as LongArray?
+      val aNullableFloatArray = pigeonVar_list[7] as DoubleArray?
+      val nullableNestedList = pigeonVar_list[8] as List<List<Boolean?>?>?
+      val nullableMapWithAnnotations = pigeonVar_list[9] as Map<String?, String?>?
+      val nullableMapWithObject = pigeonVar_list[10] as Map<String?, Any?>?
+      val aNullableEnum = pigeonVar_list[11] as AnEnum?
+      val anotherNullableEnum = pigeonVar_list[12] as AnotherEnum?
+      val aNullableString = pigeonVar_list[13] as String?
+      val aNullableObject = pigeonVar_list[14]
+      val list = pigeonVar_list[15] as List<Any?>?
+      val stringList = pigeonVar_list[16] as List<String?>?
+      val intList = pigeonVar_list[17] as List<Long?>?
+      val doubleList = pigeonVar_list[18] as List<Double?>?
+      val boolList = pigeonVar_list[19] as List<Boolean?>?
+      val map = pigeonVar_list[20] as Map<Any, Any?>?
       return AllNullableTypesWithoutRecursion(
           aNullableBool,
           aNullableInt,
@@ -266,19 +327,24 @@ data class AllNullableTypesWithoutRecursion(
           aNullable4ByteArray,
           aNullable8ByteArray,
           aNullableFloatArray,
-          aNullableList,
-          aNullableMap,
           nullableNestedList,
           nullableMapWithAnnotations,
           nullableMapWithObject,
           aNullableEnum,
+          anotherNullableEnum,
           aNullableString,
-          aNullableObject)
+          aNullableObject,
+          list,
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          map)
     }
   }
 
   fun toList(): List<Any?> {
-    return listOf<Any?>(
+    return listOf(
         aNullableBool,
         aNullableInt,
         aNullableInt64,
@@ -287,14 +353,19 @@ data class AllNullableTypesWithoutRecursion(
         aNullable4ByteArray,
         aNullable8ByteArray,
         aNullableFloatArray,
-        aNullableList,
-        aNullableMap,
         nullableNestedList,
         nullableMapWithAnnotations,
         nullableMapWithObject,
-        aNullableEnum?.raw,
+        aNullableEnum,
+        anotherNullableEnum,
         aNullableString,
         aNullableObject,
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        map,
     )
   }
 }
@@ -314,17 +385,16 @@ data class AllClassesWrapper(
     val allTypes: AllTypes? = null
 ) {
   companion object {
-    @Suppress("LocalVariableName")
-    fun fromList(__pigeon_list: List<Any?>): AllClassesWrapper {
-      val allNullableTypes = __pigeon_list[0] as AllNullableTypes
-      val allNullableTypesWithoutRecursion = __pigeon_list[1] as AllNullableTypesWithoutRecursion?
-      val allTypes = __pigeon_list[2] as AllTypes?
+    fun fromList(pigeonVar_list: List<Any?>): AllClassesWrapper {
+      val allNullableTypes = pigeonVar_list[0] as AllNullableTypes
+      val allNullableTypesWithoutRecursion = pigeonVar_list[1] as AllNullableTypesWithoutRecursion?
+      val allTypes = pigeonVar_list[2] as AllTypes?
       return AllClassesWrapper(allNullableTypes, allNullableTypesWithoutRecursion, allTypes)
     }
   }
 
   fun toList(): List<Any?> {
-    return listOf<Any?>(
+    return listOf(
         allNullableTypes,
         allNullableTypesWithoutRecursion,
         allTypes,
@@ -338,40 +408,44 @@ data class AllClassesWrapper(
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class TestMessage(val testList: List<Any?>? = null) {
-
   companion object {
-    @Suppress("LocalVariableName")
-    fun fromList(__pigeon_list: List<Any?>): TestMessage {
-      val testList = __pigeon_list[0] as List<Any?>?
+    fun fromList(pigeonVar_list: List<Any?>): TestMessage {
+      val testList = pigeonVar_list[0] as List<Any?>?
       return TestMessage(testList)
     }
   }
 
   fun toList(): List<Any?> {
-    return listOf<Any?>(
+    return listOf(
         testList,
     )
   }
 }
 
-private object HostIntegrationCoreApiCodec : StandardMessageCodec() {
+private object CoreTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
-      128.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
-      }
       129.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+        return (readValue(buffer) as Int?)?.let { AnEnum.ofRaw(it) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          AllNullableTypesWithoutRecursion.fromList(it)
-        }
+        return (readValue(buffer) as Int?)?.let { AnotherEnum.ofRaw(it) }
       }
       131.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
       }
       132.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+      }
+      133.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          AllNullableTypesWithoutRecursion.fromList(it)
+        }
+      }
+      134.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
+      }
+      135.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -380,24 +454,32 @@ private object HostIntegrationCoreApiCodec : StandardMessageCodec() {
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
-      is AllClassesWrapper -> {
-        stream.write(128)
-        writeValue(stream, value.toList())
-      }
-      is AllNullableTypes -> {
+      is AnEnum -> {
         stream.write(129)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw)
       }
-      is AllNullableTypesWithoutRecursion -> {
+      is AnotherEnum -> {
         stream.write(130)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw)
       }
       is AllTypes -> {
         stream.write(131)
         writeValue(stream, value.toList())
       }
-      is TestMessage -> {
+      is AllNullableTypes -> {
         stream.write(132)
+        writeValue(stream, value.toList())
+      }
+      is AllNullableTypesWithoutRecursion -> {
+        stream.write(133)
+        writeValue(stream, value.toList())
+      }
+      is AllClassesWrapper -> {
+        stream.write(134)
+        writeValue(stream, value.toList())
+      }
+      is TestMessage -> {
+        stream.write(135)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -442,6 +524,8 @@ interface HostIntegrationCoreApi {
   fun echoClassWrapper(wrapper: AllClassesWrapper): AllClassesWrapper
   /** Returns the passed enum to test serialization and deserialization. */
   fun echoEnum(anEnum: AnEnum): AnEnum
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun echoAnotherEnum(anotherEnum: AnotherEnum): AnotherEnum
   /** Returns the default string. */
   fun echoNamedDefaultString(aString: String): String
   /** Returns passed in double. */
@@ -492,6 +576,8 @@ interface HostIntegrationCoreApi {
   fun echoNullableMap(aNullableMap: Map<String?, Any?>?): Map<String?, Any?>?
 
   fun echoNullableEnum(anEnum: AnEnum?): AnEnum?
+
+  fun echoAnotherNullableEnum(anotherEnum: AnotherEnum?): AnotherEnum?
   /** Returns passed in int. */
   fun echoOptionalNullableInt(aNullableInt: Long?): Long?
   /** Returns the passed in string. */
@@ -519,6 +605,8 @@ interface HostIntegrationCoreApi {
   fun echoAsyncMap(aMap: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit)
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
   fun echoAsyncEnum(anEnum: AnEnum, callback: (Result<AnEnum>) -> Unit)
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  fun echoAnotherAsyncEnum(anotherEnum: AnotherEnum, callback: (Result<AnotherEnum>) -> Unit)
   /** Responds with an error from an async function returning a value. */
   fun throwAsyncError(callback: (Result<Any?>) -> Unit)
   /** Responds with an error from an async void function. */
@@ -558,6 +646,11 @@ interface HostIntegrationCoreApi {
   )
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
   fun echoAsyncNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit)
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  fun echoAnotherAsyncNullableEnum(
+      anotherEnum: AnotherEnum?,
+      callback: (Result<AnotherEnum?>) -> Unit
+  )
 
   fun callFlutterNoop(callback: (Result<Unit>) -> Unit)
 
@@ -607,6 +700,8 @@ interface HostIntegrationCoreApi {
 
   fun callFlutterEchoEnum(anEnum: AnEnum, callback: (Result<AnEnum>) -> Unit)
 
+  fun callFlutterEchoAnotherEnum(anotherEnum: AnotherEnum, callback: (Result<AnotherEnum>) -> Unit)
+
   fun callFlutterEchoNullableBool(aBool: Boolean?, callback: (Result<Boolean?>) -> Unit)
 
   fun callFlutterEchoNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit)
@@ -626,15 +721,21 @@ interface HostIntegrationCoreApi {
 
   fun callFlutterEchoNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit)
 
+  fun callFlutterEchoAnotherNullableEnum(
+      anotherEnum: AnotherEnum?,
+      callback: (Result<AnotherEnum?>) -> Unit
+  )
+
   fun callFlutterSmallApiEchoString(aString: String, callback: (Result<String>) -> Unit)
 
   companion object {
     /** The codec used by HostIntegrationCoreApi. */
-    val codec: MessageCodec<Any?> by lazy { HostIntegrationCoreApiCodec }
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec }
     /**
      * Sets up an instance of `HostIntegrationCoreApi` to handle messages through the
      * `binaryMessenger`.
      */
+    @JvmOverloads
     fun setUp(
         binaryMessenger: BinaryMessenger,
         api: HostIntegrationCoreApi?,
@@ -653,7 +754,7 @@ interface HostIntegrationCoreApi {
             val wrapped: List<Any?> =
                 try {
                   api.noop()
-                  listOf<Any?>(null)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -675,7 +776,7 @@ interface HostIntegrationCoreApi {
             val everythingArg = args[0] as AllTypes
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoAllTypes(everythingArg))
+                  listOf(api.echoAllTypes(everythingArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -695,7 +796,7 @@ interface HostIntegrationCoreApi {
           channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.throwError())
+                  listOf(api.throwError())
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -716,7 +817,7 @@ interface HostIntegrationCoreApi {
             val wrapped: List<Any?> =
                 try {
                   api.throwErrorFromVoid()
-                  listOf<Any?>(null)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -736,7 +837,7 @@ interface HostIntegrationCoreApi {
           channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.throwFlutterError())
+                  listOf(api.throwFlutterError())
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -758,7 +859,7 @@ interface HostIntegrationCoreApi {
             val anIntArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoInt(anIntArg))
+                  listOf(api.echoInt(anIntArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -780,7 +881,7 @@ interface HostIntegrationCoreApi {
             val aDoubleArg = args[0] as Double
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoDouble(aDoubleArg))
+                  listOf(api.echoDouble(aDoubleArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -802,7 +903,7 @@ interface HostIntegrationCoreApi {
             val aBoolArg = args[0] as Boolean
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoBool(aBoolArg))
+                  listOf(api.echoBool(aBoolArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -824,7 +925,7 @@ interface HostIntegrationCoreApi {
             val aStringArg = args[0] as String
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoString(aStringArg))
+                  listOf(api.echoString(aStringArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -846,7 +947,7 @@ interface HostIntegrationCoreApi {
             val aUint8ListArg = args[0] as ByteArray
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoUint8List(aUint8ListArg))
+                  listOf(api.echoUint8List(aUint8ListArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -868,7 +969,7 @@ interface HostIntegrationCoreApi {
             val anObjectArg = args[0] as Any
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoObject(anObjectArg))
+                  listOf(api.echoObject(anObjectArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -890,7 +991,7 @@ interface HostIntegrationCoreApi {
             val listArg = args[0] as List<Any?>
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoList(listArg))
+                  listOf(api.echoList(listArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -912,7 +1013,7 @@ interface HostIntegrationCoreApi {
             val aMapArg = args[0] as Map<String?, Any?>
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoMap(aMapArg))
+                  listOf(api.echoMap(aMapArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -934,7 +1035,7 @@ interface HostIntegrationCoreApi {
             val wrapperArg = args[0] as AllClassesWrapper
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoClassWrapper(wrapperArg))
+                  listOf(api.echoClassWrapper(wrapperArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -953,10 +1054,32 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val anEnumArg = AnEnum.ofRaw(args[0] as Int)!!
+            val anEnumArg = args[0] as AnEnum
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoEnum(anEnumArg).raw)
+                  listOf(api.echoEnum(anEnumArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherEnum$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anotherEnumArg = args[0] as AnotherEnum
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoAnotherEnum(anotherEnumArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -978,7 +1101,7 @@ interface HostIntegrationCoreApi {
             val aStringArg = args[0] as String
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNamedDefaultString(aStringArg))
+                  listOf(api.echoNamedDefaultString(aStringArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1000,7 +1123,7 @@ interface HostIntegrationCoreApi {
             val aDoubleArg = args[0] as Double
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoOptionalDefaultDouble(aDoubleArg))
+                  listOf(api.echoOptionalDefaultDouble(aDoubleArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1022,7 +1145,7 @@ interface HostIntegrationCoreApi {
             val anIntArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoRequiredInt(anIntArg))
+                  listOf(api.echoRequiredInt(anIntArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1044,7 +1167,7 @@ interface HostIntegrationCoreApi {
             val everythingArg = args[0] as AllNullableTypes?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoAllNullableTypes(everythingArg))
+                  listOf(api.echoAllNullableTypes(everythingArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1066,7 +1189,7 @@ interface HostIntegrationCoreApi {
             val everythingArg = args[0] as AllNullableTypesWithoutRecursion?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoAllNullableTypesWithoutRecursion(everythingArg))
+                  listOf(api.echoAllNullableTypesWithoutRecursion(everythingArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1088,7 +1211,7 @@ interface HostIntegrationCoreApi {
             val wrapperArg = args[0] as AllClassesWrapper
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.extractNestedNullableString(wrapperArg))
+                  listOf(api.extractNestedNullableString(wrapperArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1110,7 +1233,7 @@ interface HostIntegrationCoreApi {
             val nullableStringArg = args[0] as String?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.createNestedNullableString(nullableStringArg))
+                  listOf(api.createNestedNullableString(nullableStringArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1135,7 +1258,7 @@ interface HostIntegrationCoreApi {
             val aNullableStringArg = args[2] as String?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(
+                  listOf(
                       api.sendMultipleNullableTypes(
                           aNullableBoolArg, aNullableIntArg, aNullableStringArg))
                 } catch (exception: Throwable) {
@@ -1162,7 +1285,7 @@ interface HostIntegrationCoreApi {
             val aNullableStringArg = args[2] as String?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(
+                  listOf(
                       api.sendMultipleNullableTypesWithoutRecursion(
                           aNullableBoolArg, aNullableIntArg, aNullableStringArg))
                 } catch (exception: Throwable) {
@@ -1187,7 +1310,7 @@ interface HostIntegrationCoreApi {
                 args[0].let { num -> if (num is Int) num.toLong() else num as Long? }
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableInt(aNullableIntArg))
+                  listOf(api.echoNullableInt(aNullableIntArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1209,7 +1332,7 @@ interface HostIntegrationCoreApi {
             val aNullableDoubleArg = args[0] as Double?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableDouble(aNullableDoubleArg))
+                  listOf(api.echoNullableDouble(aNullableDoubleArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1231,7 +1354,7 @@ interface HostIntegrationCoreApi {
             val aNullableBoolArg = args[0] as Boolean?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableBool(aNullableBoolArg))
+                  listOf(api.echoNullableBool(aNullableBoolArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1253,7 +1376,7 @@ interface HostIntegrationCoreApi {
             val aNullableStringArg = args[0] as String?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableString(aNullableStringArg))
+                  listOf(api.echoNullableString(aNullableStringArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1275,7 +1398,7 @@ interface HostIntegrationCoreApi {
             val aNullableUint8ListArg = args[0] as ByteArray?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableUint8List(aNullableUint8ListArg))
+                  listOf(api.echoNullableUint8List(aNullableUint8ListArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1297,7 +1420,7 @@ interface HostIntegrationCoreApi {
             val aNullableObjectArg = args[0]
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableObject(aNullableObjectArg))
+                  listOf(api.echoNullableObject(aNullableObjectArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1319,7 +1442,7 @@ interface HostIntegrationCoreApi {
             val aNullableListArg = args[0] as List<Any?>?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableList(aNullableListArg))
+                  listOf(api.echoNullableList(aNullableListArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1341,7 +1464,7 @@ interface HostIntegrationCoreApi {
             val aNullableMapArg = args[0] as Map<String?, Any?>?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableMap(aNullableMapArg))
+                  listOf(api.echoNullableMap(aNullableMapArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1360,10 +1483,32 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val anEnumArg = if (args[0] == null) null else AnEnum.ofRaw(args[0] as Int)
+            val anEnumArg = args[0] as AnEnum?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableEnum(anEnumArg)?.raw)
+                  listOf(api.echoNullableEnum(anEnumArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherNullableEnum$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anotherEnumArg = args[0] as AnotherEnum?
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoAnotherNullableEnum(anotherEnumArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1386,7 +1531,7 @@ interface HostIntegrationCoreApi {
                 args[0].let { num -> if (num is Int) num.toLong() else num as Long? }
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoOptionalNullableInt(aNullableIntArg))
+                  listOf(api.echoOptionalNullableInt(aNullableIntArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1408,7 +1553,7 @@ interface HostIntegrationCoreApi {
             val aNullableStringArg = args[0] as String?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNamedNullableString(aNullableStringArg))
+                  listOf(api.echoNamedNullableString(aNullableStringArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1426,7 +1571,7 @@ interface HostIntegrationCoreApi {
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.noopAsync() { result: Result<Unit> ->
+            api.noopAsync { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -1640,14 +1785,38 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val anEnumArg = AnEnum.ofRaw(args[0] as Int)!!
+            val anEnumArg = args[0] as AnEnum
             api.echoAsyncEnum(anEnumArg) { result: Result<AnEnum> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data!!.raw))
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncEnum$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anotherEnumArg = args[0] as AnotherEnum
+            api.echoAnotherAsyncEnum(anotherEnumArg) { result: Result<AnotherEnum> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
             }
           }
@@ -1663,7 +1832,7 @@ interface HostIntegrationCoreApi {
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.throwAsyncError() { result: Result<Any?> ->
+            api.throwAsyncError { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -1685,7 +1854,7 @@ interface HostIntegrationCoreApi {
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.throwAsyncErrorFromVoid() { result: Result<Unit> ->
+            api.throwAsyncErrorFromVoid { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -1706,7 +1875,7 @@ interface HostIntegrationCoreApi {
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.throwAsyncFlutterError() { result: Result<Any?> ->
+            api.throwAsyncFlutterError { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -1995,14 +2164,38 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val anEnumArg = if (args[0] == null) null else AnEnum.ofRaw(args[0] as Int)
+            val anEnumArg = args[0] as AnEnum?
             api.echoAsyncNullableEnum(anEnumArg) { result: Result<AnEnum?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data?.raw))
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncNullableEnum$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anotherEnumArg = args[0] as AnotherEnum?
+            api.echoAnotherAsyncNullableEnum(anotherEnumArg) { result: Result<AnotherEnum?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
             }
           }
@@ -2018,7 +2211,7 @@ interface HostIntegrationCoreApi {
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.callFlutterNoop() { result: Result<Unit> ->
+            api.callFlutterNoop { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -2039,7 +2232,7 @@ interface HostIntegrationCoreApi {
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.callFlutterThrowError() { result: Result<Any?> ->
+            api.callFlutterThrowError { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -2061,7 +2254,7 @@ interface HostIntegrationCoreApi {
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.callFlutterThrowErrorFromVoid() { result: Result<Unit> ->
+            api.callFlutterThrowErrorFromVoid { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -2383,14 +2576,38 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val anEnumArg = AnEnum.ofRaw(args[0] as Int)!!
+            val anEnumArg = args[0] as AnEnum
             api.callFlutterEchoEnum(anEnumArg) { result: Result<AnEnum> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data!!.raw))
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherEnum$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anotherEnumArg = args[0] as AnotherEnum
+            api.callFlutterEchoAnotherEnum(anotherEnumArg) { result: Result<AnotherEnum> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
             }
           }
@@ -2575,14 +2792,38 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val anEnumArg = if (args[0] == null) null else AnEnum.ofRaw(args[0] as Int)
+            val anEnumArg = args[0] as AnEnum?
             api.callFlutterEchoNullableEnum(anEnumArg) { result: Result<AnEnum?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data?.raw))
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherNullableEnum$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anotherEnumArg = args[0] as AnotherEnum?
+            api.callFlutterEchoAnotherNullableEnum(anotherEnumArg) { result: Result<AnotherEnum?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
             }
           }
@@ -2617,58 +2858,6 @@ interface HostIntegrationCoreApi {
     }
   }
 }
-
-private object FlutterIntegrationCoreApiCodec : StandardMessageCodec() {
-  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
-    return when (type) {
-      128.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
-      }
-      129.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
-      }
-      130.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          AllNullableTypesWithoutRecursion.fromList(it)
-        }
-      }
-      131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
-      }
-      132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
-      }
-      else -> super.readValueOfType(type, buffer)
-    }
-  }
-
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
-    when (value) {
-      is AllClassesWrapper -> {
-        stream.write(128)
-        writeValue(stream, value.toList())
-      }
-      is AllNullableTypes -> {
-        stream.write(129)
-        writeValue(stream, value.toList())
-      }
-      is AllNullableTypesWithoutRecursion -> {
-        stream.write(130)
-        writeValue(stream, value.toList())
-      }
-      is AllTypes -> {
-        stream.write(131)
-        writeValue(stream, value.toList())
-      }
-      is TestMessage -> {
-        stream.write(132)
-        writeValue(stream, value.toList())
-      }
-      else -> super.writeValue(stream, value)
-    }
-  }
-}
-
 /**
  * The core interface that the Dart platform_test code implements for host integration tests to call
  * into.
@@ -2681,7 +2870,7 @@ class FlutterIntegrationCoreApi(
 ) {
   companion object {
     /** The codec used by FlutterIntegrationCoreApi. */
-    val codec: MessageCodec<Any?> by lazy { FlutterIntegrationCoreApiCodec }
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec }
   }
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   fun noop(callback: (Result<Unit>) -> Unit) {
@@ -3082,7 +3271,7 @@ class FlutterIntegrationCoreApi(
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(anEnumArg.raw)) {
+    channel.send(listOf(anEnumArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -3094,7 +3283,34 @@ class FlutterIntegrationCoreApi(
                       "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
-          val output = AnEnum.ofRaw(it[0] as Int)!!
+          val output = it[0] as AnEnum
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun echoAnotherEnum(anotherEnumArg: AnotherEnum, callback: (Result<AnotherEnum>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherEnum$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(anotherEnumArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as AnotherEnum
           callback(Result.success(output))
         }
       } else {
@@ -3252,12 +3468,35 @@ class FlutterIntegrationCoreApi(
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(anEnumArg?.raw)) {
+    channel.send(listOf(anEnumArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
-          val output = (it[0] as Int?)?.let { num -> AnEnum.ofRaw(num) }
+          val output = it[0] as AnEnum?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun echoAnotherNullableEnum(
+      anotherEnumArg: AnotherEnum?,
+      callback: (Result<AnotherEnum?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherNullableEnum$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(anotherEnumArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as AnotherEnum?
           callback(Result.success(output))
         }
       } else {
@@ -3325,8 +3564,9 @@ interface HostTrivialApi {
 
   companion object {
     /** The codec used by HostTrivialApi. */
-    val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec }
     /** Sets up an instance of `HostTrivialApi` to handle messages through the `binaryMessenger`. */
+    @JvmOverloads
     fun setUp(
         binaryMessenger: BinaryMessenger,
         api: HostTrivialApi?,
@@ -3345,7 +3585,7 @@ interface HostTrivialApi {
             val wrapped: List<Any?> =
                 try {
                   api.noop()
-                  listOf<Any?>(null)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -3370,8 +3610,9 @@ interface HostSmallApi {
 
   companion object {
     /** The codec used by HostSmallApi. */
-    val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec }
     /** Sets up an instance of `HostSmallApi` to handle messages through the `binaryMessenger`. */
+    @JvmOverloads
     fun setUp(
         binaryMessenger: BinaryMessenger,
         api: HostSmallApi?,
@@ -3411,7 +3652,7 @@ interface HostSmallApi {
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.voidVoid() { result: Result<Unit> ->
+            api.voidVoid { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -3427,28 +3668,6 @@ interface HostSmallApi {
     }
   }
 }
-
-private object FlutterSmallApiCodec : StandardMessageCodec() {
-  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
-    return when (type) {
-      128.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
-      }
-      else -> super.readValueOfType(type, buffer)
-    }
-  }
-
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
-    when (value) {
-      is TestMessage -> {
-        stream.write(128)
-        writeValue(stream, value.toList())
-      }
-      else -> super.writeValue(stream, value)
-    }
-  }
-}
-
 /**
  * A simple API called in some unit tests.
  *
@@ -3460,7 +3679,7 @@ class FlutterSmallApi(
 ) {
   companion object {
     /** The codec used by FlutterSmallApi. */
-    val codec: MessageCodec<Any?> by lazy { FlutterSmallApiCodec }
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec }
   }
 
   fun echoWrappedList(msgArg: TestMessage, callback: (Result<TestMessage>) -> Unit) {

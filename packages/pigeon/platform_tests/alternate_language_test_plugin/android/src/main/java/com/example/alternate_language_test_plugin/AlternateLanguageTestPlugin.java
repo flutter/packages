@@ -11,6 +11,7 @@ import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypes;
 import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypesWithoutRecursion;
 import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
 import com.example.alternate_language_test_plugin.CoreTests.AnEnum;
+import com.example.alternate_language_test_plugin.CoreTests.AnotherEnum;
 import com.example.alternate_language_test_plugin.CoreTests.FlutterIntegrationCoreApi;
 import com.example.alternate_language_test_plugin.CoreTests.FlutterSmallApi;
 import com.example.alternate_language_test_plugin.CoreTests.HostIntegrationCoreApi;
@@ -129,6 +130,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @NonNull AnotherEnum echoAnotherEnum(@NonNull AnotherEnum anotherEnum) {
+    return anotherEnum;
+  }
+
+  @Override
   public @NonNull String echoNamedDefaultString(@NonNull String aString) {
     return aString;
   }
@@ -222,6 +228,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public @Nullable AnEnum echoNullableEnum(@Nullable AnEnum anEnum) {
     return anEnum;
+  }
+
+  @Override
+  public @Nullable AnotherEnum echoAnotherNullableEnum(@Nullable AnotherEnum anotherEnum) {
+    return anotherEnum;
   }
 
   @Override
@@ -319,6 +330,12 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public void echoAnotherAsyncEnum(
+      @NonNull AnotherEnum anotherEnum, @NonNull Result<AnotherEnum> result) {
+    result.success(anotherEnum);
+  }
+
+  @Override
   public void echoAsyncNullableInt(@Nullable Long anInt, @NonNull NullableResult<Long> result) {
     result.success(anInt);
   }
@@ -369,6 +386,12 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   public void echoAsyncNullableEnum(
       @Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result) {
     result.success(anEnum);
+  }
+
+  @Override
+  public void echoAnotherAsyncNullableEnum(
+      @Nullable AnotherEnum anotherEnum, @NonNull NullableResult<AnotherEnum> result) {
+    result.success(anotherEnum);
   }
 
   @Override
@@ -483,6 +506,13 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public void callFlutterEchoAnotherEnum(
+      @NonNull AnotherEnum anotherEnum, @NonNull Result<AnotherEnum> result) {
+    assert flutterApi != null;
+    flutterApi.echoAnotherEnum(anotherEnum, result);
+  }
+
+  @Override
   public void callFlutterEchoNullableBool(
       @Nullable Boolean aBool, @NonNull NullableResult<Boolean> result) {
     assert flutterApi != null;
@@ -536,6 +566,13 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
       @Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result) {
     assert flutterApi != null;
     flutterApi.echoNullableEnum(anEnum, result);
+  }
+
+  @Override
+  public void callFlutterEchoAnotherNullableEnum(
+      @Nullable AnotherEnum anotherEnum, @NonNull NullableResult<AnotherEnum> result) {
+    assert flutterApi != null;
+    flutterApi.echoAnotherNullableEnum(anotherEnum, result);
   }
 
   @Override

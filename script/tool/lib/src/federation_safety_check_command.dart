@@ -6,6 +6,7 @@ import 'package:file/file.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 
+import 'common/core.dart';
 import 'common/file_utils.dart';
 import 'common/git_version_finder.dart';
 import 'common/output_utils.dart';
@@ -112,6 +113,21 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
           'Platform interface changes are not validated.');
     }
 
+    // Special-case combination PRs that are following repo process, so that
+    // they don't get an error that makes it sound like something is wrong with
+    // the PR (but is still an error so that the PR can't land without following
+    // the resolution process).
+    if (package.getExamples().any(_hasTemporaryDependencyOverrides)) {
+      printError('"$kDoNotLandWarning" found in pubspec.yaml, so this is '
+          'assumed to be the initial combination PR for a federated change, '
+          'following the standard repository procedure. This failure is '
+          'expected, in order to prevent accidentally landing the temporary '
+          'overrides, and will automatically be resolved when the temporary '
+          'overrides are replaced by dependency version bumps later in the '
+          'process.');
+      return PackageResult.fail(<String>['Unresolved combo PR.']);
+    }
+
     // Uses basename to match _changedPackageFiles.
     final String basePackageName = package.directory.parent.basename;
     final String platformInterfacePackageName =
@@ -215,5 +231,10 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
     // Only return true if a comment change was found, as a fail-safe against
     // against having the wrong (e.g., incorrectly empty) diff output.
     return foundComment;
+  }
+
+  bool _hasTemporaryDependencyOverrides(RepositoryPackage package) {
+    final String pubspecContents = package.pubspecFile.readAsStringSync();
+    return pubspecContents.contains(kDoNotLandWarning);
   }
 }

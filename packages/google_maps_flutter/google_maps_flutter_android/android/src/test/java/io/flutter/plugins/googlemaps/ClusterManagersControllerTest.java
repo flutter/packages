@@ -6,33 +6,36 @@ package io.flutter.plugins.googlemaps;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Build;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.algo.StaticCluster;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodCodec;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -41,27 +44,26 @@ import org.robolectric.annotation.Config;
 @Config(sdk = Build.VERSION_CODES.P)
 public class ClusterManagersControllerTest {
   private Context context;
-  private MethodChannel methodChannel;
+  private MapsCallbackApi flutterApi;
   private ClusterManagersController controller;
   private GoogleMap googleMap;
   private MarkerManager markerManager;
-  private MarkerManager.Collection markerCollection;
+  private AssetManager assetManager;
+  private final float density = 1;
 
   @Before
   public void setUp() {
     context = ApplicationProvider.getApplicationContext();
-    methodChannel =
-        spy(new MethodChannel(mock(BinaryMessenger.class), "no-name", mock(MethodCodec.class)));
-    controller = spy(new ClusterManagersController(methodChannel, context));
+    assetManager = context.getAssets();
+    flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
+    controller = spy(new ClusterManagersController(flutterApi, context));
     googleMap = mock(GoogleMap.class);
     markerManager = new MarkerManager(googleMap);
-    markerCollection = markerManager.newCollection();
     controller.init(googleMap, markerManager);
   }
 
   @Test
-  @SuppressWarnings("unchecked")
-  public void AddClusterManagersAndMarkers() throws InterruptedException {
+  public void AddClusterManagersAndMarkers() {
     final String clusterManagerId = "cm_1";
     final String markerId1 = "mid_1";
     final String markerId2 = "mid_2";
@@ -79,9 +81,9 @@ public class ClusterManagersControllerTest {
 
     when(googleMap.getCameraPosition())
         .thenReturn(CameraPosition.builder().target(new LatLng(0, 0)).build());
-    Map<String, Object> initialClusterManager = new HashMap<>();
-    initialClusterManager.put("clusterManagerId", clusterManagerId);
-    List<Object> clusterManagersToAdd = new ArrayList<>();
+    Messages.PlatformClusterManager initialClusterManager =
+        new Messages.PlatformClusterManager.Builder().setIdentifier(clusterManagerId).build();
+    List<Messages.PlatformClusterManager> clusterManagersToAdd = new ArrayList<>();
     clusterManagersToAdd.add(initialClusterManager);
     controller.addClusterManagers(clusterManagersToAdd);
 
@@ -93,40 +95,29 @@ public class ClusterManagersControllerTest {
     final Map<String, Object> markerData2 =
         createMarkerData(markerId2, location2, clusterManagerId);
 
-    Convert.interpretMarkerOptions(markerData1, markerBuilder1);
-    Convert.interpretMarkerOptions(markerData2, markerBuilder2);
+    Convert.interpretMarkerOptions(markerData1, markerBuilder1, assetManager, density);
+    Convert.interpretMarkerOptions(markerData2, markerBuilder2, assetManager, density);
 
     controller.addItem(markerBuilder1);
     controller.addItem(markerBuilder2);
 
-    final MethodChannel.Result clusterResult1 = mock(MethodChannel.Result.class);
+    Set<? extends Cluster<MarkerBuilder>> clusters =
+        controller.getClustersWithClusterManagerId(clusterManagerId);
+    assertEquals("Amount of clusters should be 1", 1, clusters.size());
 
-    controller.getClustersWithClusterManagerId(clusterManagerId, clusterResult1);
-
-    ArgumentCaptor<Object> resultCaptor1 = ArgumentCaptor.forClass(Object.class);
-    Mockito.verify(clusterResult1, times(1)).success(resultCaptor1.capture());
-    Object capturedResult1 = resultCaptor1.getValue();
-
-    assertTrue(
-        "The captured result should be an instance of List", capturedResult1 instanceof List);
-
-    List<?> resultList1 = (List<?>) capturedResult1;
-    assertEquals("Amount of clusters should be 1", 1, resultList1.size());
-
-    Map<String, Object> clusterData = (Map<String, Object>) resultList1.get(0);
-    assertEquals(
-        "Incorrect cluster manager ID", clusterManagerId, clusterData.get("clusterManagerId"));
-    assertNotNull("Cluster bounds should not be null", clusterData.get("bounds"));
-    assertNotNull("Cluster position should not be null", clusterData.get("position"));
-    List<String> markerIds = (List<String>) clusterData.get("markerIds");
+    Cluster<MarkerBuilder> cluster = clusters.iterator().next();
+    assertNotNull("Cluster position should not be null", cluster.getPosition());
+    Set<String> markerIds = new HashSet<>();
+    for (MarkerBuilder marker : cluster.getItems()) {
+      markerIds.add(marker.markerId());
+    }
     assertTrue("Marker IDs should contain markerId1", markerIds.contains(markerId1));
     assertTrue("Marker IDs should contain markerId2", markerIds.contains(markerId2));
-    assertEquals("Cluster should contain exactly 2 markers", 2, markerIds.size());
+    assertEquals("Cluster should contain exactly 2 markers", 2, cluster.getSize());
   }
 
   @Test
-  @SuppressWarnings("unchecked")
-  public void OnClusterClickCallsMethodChannel() throws InterruptedException {
+  public void OnClusterClickCallsMethodChannel() {
     String clusterManagerId = "cm_1";
     LatLng clusterPosition = new LatLng(43.00, -87.90);
     LatLng markerPosition1 = new LatLng(43.05, -87.95);
@@ -143,8 +134,9 @@ public class ClusterManagersControllerTest {
     cluster.add(marker2);
 
     controller.onClusterClick(cluster);
-    Mockito.verify(methodChannel)
-        .invokeMethod("cluster#onTap", Convert.clusterToJson(clusterManagerId, cluster));
+    Mockito.verify(flutterApi)
+        .onClusterTap(
+            eq(Convert.clusterToPigeon(clusterManagerId, cluster)), ArgumentMatchers.any());
   }
 
   @Test
@@ -153,23 +145,20 @@ public class ClusterManagersControllerTest {
 
     when(googleMap.getCameraPosition())
         .thenReturn(CameraPosition.builder().target(new LatLng(0, 0)).build());
-    Map<String, Object> initialClusterManager = new HashMap<>();
-    initialClusterManager.put("clusterManagerId", clusterManagerId);
-    List<Object> clusterManagersToAdd = new ArrayList<>();
+    Messages.PlatformClusterManager initialClusterManager =
+        new Messages.PlatformClusterManager.Builder().setIdentifier(clusterManagerId).build();
+    List<Messages.PlatformClusterManager> clusterManagersToAdd = new ArrayList<>();
     clusterManagersToAdd.add(initialClusterManager);
     controller.addClusterManagers(clusterManagersToAdd);
 
-    final MethodChannel.Result clusterResult1 = mock(MethodChannel.Result.class);
-    controller.getClustersWithClusterManagerId(clusterManagerId, clusterResult1);
     // Verify that fetching the cluster data success and therefore ClusterManager is added.
-    Mockito.verify(clusterResult1, times(1)).success(any());
+    controller.getClustersWithClusterManagerId(clusterManagerId);
 
-    controller.removeClusterManagers(Arrays.asList(clusterManagerId));
-    final MethodChannel.Result clusterResult2 = mock(MethodChannel.Result.class);
-    controller.getClustersWithClusterManagerId(clusterManagerId, clusterResult2);
-
+    controller.removeClusterManagers(Collections.singletonList(clusterManagerId));
     // Verify that fetching the cluster data fails and therefore ClusterManager is removed.
-    Mockito.verify(clusterResult2, times(1)).error(any(), any(), any());
+    assertThrows(
+        Messages.FlutterError.class,
+        () -> controller.getClustersWithClusterManagerId(clusterManagerId));
   }
 
   private Map<String, Object> createMarkerData(

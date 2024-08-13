@@ -21,7 +21,7 @@
   PGNEnumStateBox *stateBox = [[PGNEnumStateBox alloc] initWithValue:PGNEnumStateError];
   data.state = stateBox;
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:PGNEnumApi2HostGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:PGNGetEnumCodec()];
   PGNEnumApi2Flutter *api = [[PGNEnumApi2Flutter alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoData:data

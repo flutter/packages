@@ -9,10 +9,13 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import junit.framework.TestCase
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class PrimitiveTest : TestCase() {
+class PrimitiveTest {
+
   @Test
   fun testIntPrimitiveHost() {
     val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)

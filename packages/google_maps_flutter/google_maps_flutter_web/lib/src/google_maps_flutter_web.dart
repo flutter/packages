@@ -60,7 +60,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     MarkerUpdates markerUpdates, {
     required int mapId,
   }) async {
-    _map(mapId).updateMarkers(markerUpdates);
+    await _map(mapId).updateMarkers(markerUpdates);
   }
 
   /// Applies the passed in `polygonUpdates` to the `mapId`.
@@ -88,6 +88,15 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     required int mapId,
   }) async {
     _map(mapId).updateCircles(circleUpdates);
+  }
+
+  /// Applies the passed in `heatmapUpdates` to the `mapId`.
+  @override
+  Future<void> updateHeatmaps(
+    HeatmapUpdates heatmapUpdates, {
+    required int mapId,
+  }) async {
+    _map(mapId).updateHeatmaps(heatmapUpdates);
   }
 
   @override
