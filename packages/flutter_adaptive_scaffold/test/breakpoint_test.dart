@@ -99,6 +99,94 @@ void main() {
     await tester.pumpAndSettle();
     expect(DummyWidget.built, isFalse);
   });
+
+  testWidgets(
+      'activeBreakpointOf returns correct breakpoints on mobile devices',
+      (WidgetTester tester) async {
+    // Small layout on mobile
+    await tester.pumpWidget(SimulatedLayout.small.slot(tester));
+    await tester.pumpAndSettle();
+    expect(
+        Breakpoint.activeBreakpointOf(
+            tester.element(find.byKey(const Key('Breakpoints.smallMobile')))),
+        Breakpoints.smallMobile);
+
+    // Medium layout on mobile
+    await tester.pumpWidget(SimulatedLayout.medium.slot(tester));
+    await tester.pumpAndSettle();
+    expect(
+        Breakpoint.activeBreakpointOf(
+            tester.element(find.byKey(const Key('Breakpoints.mediumMobile')))),
+        Breakpoints.mediumMobile);
+
+    // MediumLarge layout on mobile
+    await tester.pumpWidget(SimulatedLayout.mediumLarge.slot(tester));
+    await tester.pumpAndSettle();
+    expect(
+        Breakpoint.activeBreakpointOf(tester
+            .element(find.byKey(const Key('Breakpoints.mediumLargeMobile')))),
+        Breakpoints.mediumLargeMobile);
+
+    // Large layout on mobile
+    await tester.pumpWidget(SimulatedLayout.large.slot(tester));
+    await tester.pumpAndSettle();
+    expect(
+        Breakpoint.activeBreakpointOf(
+            tester.element(find.byKey(const Key('Breakpoints.largeMobile')))),
+        Breakpoints.largeMobile);
+
+    // ExtraLarge layout on mobile
+    await tester.pumpWidget(SimulatedLayout.extraLarge.slot(tester));
+    await tester.pumpAndSettle();
+    expect(
+        Breakpoint.activeBreakpointOf(tester
+            .element(find.byKey(const Key('Breakpoints.extraLargeMobile')))),
+        Breakpoints.extraLargeMobile);
+  }, variant: TargetPlatformVariant.mobile());
+
+  testWidgets(
+      'activeBreakpointOf returns correct breakpoints on desktop devices',
+      (WidgetTester tester) async {
+    // Small layout on desktop
+    await tester.pumpWidget(SimulatedLayout.small.slot(tester));
+    await tester.pumpAndSettle();
+    expect(
+        Breakpoint.activeBreakpointOf(
+            tester.element(find.byKey(const Key('Breakpoints.smallDesktop')))),
+        Breakpoints.smallDesktop);
+
+    // Medium layout on desktop
+    await tester.pumpWidget(SimulatedLayout.medium.slot(tester));
+    await tester.pumpAndSettle();
+    expect(
+        Breakpoint.activeBreakpointOf(
+            tester.element(find.byKey(const Key('Breakpoints.mediumDesktop')))),
+        Breakpoints.mediumDesktop);
+
+    // MediumLarge layout on desktop
+    await tester.pumpWidget(SimulatedLayout.mediumLarge.slot(tester));
+    await tester.pumpAndSettle();
+    expect(
+        Breakpoint.activeBreakpointOf(tester
+            .element(find.byKey(const Key('Breakpoints.mediumLargeDesktop')))),
+        Breakpoints.mediumLargeDesktop);
+
+    // Large layout on desktop
+    await tester.pumpWidget(SimulatedLayout.large.slot(tester));
+    await tester.pumpAndSettle();
+    expect(
+        Breakpoint.activeBreakpointOf(
+            tester.element(find.byKey(const Key('Breakpoints.largeDesktop')))),
+        Breakpoints.largeDesktop);
+
+    // ExtraLarge layout on desktop
+    await tester.pumpWidget(SimulatedLayout.extraLarge.slot(tester));
+    await tester.pumpAndSettle();
+    expect(
+        Breakpoint.activeBreakpointOf(tester
+            .element(find.byKey(const Key('Breakpoints.extraLargeDesktop')))),
+        Breakpoints.extraLargeDesktop);
+  }, variant: TargetPlatformVariant.desktop());
 }
 
 class DummyWidget extends StatelessWidget {

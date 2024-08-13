@@ -4,6 +4,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../flutter_adaptive_scaffold.dart';
+
 /// A group of standard breakpoints built according to the material
 /// specifications for screen width size.
 ///
@@ -217,14 +219,27 @@ class Breakpoint {
   }
 
   /// Returns the currently active [Breakpoint].
-  Breakpoint activeBreakpointOf(BuildContext context) {
-    final SlotLayout? slotLayout = findAncestorWidgetOfExactType<SlotLayout>();
+  static Breakpoint activeBreakpointOf(BuildContext context) {
+    final SlotLayout? slotLayout =
+        context.findAncestorWidgetOfExactType<SlotLayout>();
+
     if (slotLayout != null) {
+      Breakpoint? fallbackBreakpoint;
+
       for (final MapEntry<Breakpoint, SlotLayoutConfig?> config
           in slotLayout.config.entries) {
         if (config.key.isActive(context)) {
-          return config.key;
+          if (config.key.platform != null) {
+            return config.key;
+          } else {
+            fallbackBreakpoint ??= config.key;
+          }
         }
+      }
+
+      // If no breakpoint with a platform is found, return the fallback breakpoint.
+      if (fallbackBreakpoint != null) {
+        return fallbackBreakpoint;
       }
     }
 
