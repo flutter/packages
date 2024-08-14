@@ -62,6 +62,11 @@ class Convert {
 
   private static BitmapDescriptor toBitmapDescriptor(
       Object o, AssetManager assetManager, float density) {
+    return toBitmapDescriptor(o, assetManager, density, new BitmapDescriptorFactoryWrapper());
+  }
+
+  private static BitmapDescriptor toBitmapDescriptor(
+      Object o, AssetManager assetManager, float density, BitmapDescriptorFactoryWrapper wrapper) {
     final List<?> data = toList(o);
     final String descriptorType = toString(data.get(0));
     switch (descriptorType) {
@@ -101,17 +106,13 @@ class Convert {
         }
         final Map<?, ?> assetData = toMap(data.get(1));
         return getBitmapFromAsset(
-            assetData,
-            assetManager,
-            density,
-            new BitmapDescriptorFactoryWrapper(),
-            new FlutterInjectorWrapper());
+            assetData, assetManager, density, wrapper, new FlutterInjectorWrapper());
       case "bytes":
         if (!(data.get(1) instanceof Map)) {
           throw new IllegalArgumentException("'bytes' expected a map as the second parameter");
         }
         final Map<?, ?> byteData = toMap(data.get(1));
-        return getBitmapFromBytes(byteData, density, new BitmapDescriptorFactoryWrapper());
+        return getBitmapFromBytes(byteData, density, wrapper);
       default:
         throw new IllegalArgumentException("Cannot interpret " + o + " as BitmapDescriptor");
     }
@@ -659,68 +660,34 @@ class Convert {
 
   /** Set the options in the given object to marker options sink. */
   static void interpretMarkerOptions(
-      Map<String, ?> data, MarkerOptionsSink sink, AssetManager assetManager, float density) {
-    final Object alpha = data.get("alpha");
-    if (alpha != null) {
-      sink.setAlpha(toFloat(alpha));
-    }
-    final Object anchor = data.get("anchor");
-    if (anchor != null) {
-      final List<?> anchorData = toList(anchor);
-      sink.setAnchor(toFloat(anchorData.get(0)), toFloat(anchorData.get(1)));
-    }
-    final Object consumeTapEvents = data.get("consumeTapEvents");
-    if (consumeTapEvents != null) {
-      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
-    }
-    final Object draggable = data.get("draggable");
-    if (draggable != null) {
-      sink.setDraggable(toBoolean(draggable));
-    }
-    final Object flat = data.get("flat");
-    if (flat != null) {
-      sink.setFlat(toBoolean(flat));
-    }
-    final Object icon = data.get("icon");
-    if (icon != null) {
-      sink.setIcon(toBitmapDescriptor(icon, assetManager, density));
-    }
-
-    final Object infoWindow = data.get("infoWindow");
-    if (infoWindow != null) {
-      interpretInfoWindowOptions(sink, toObjectMap(infoWindow));
-    }
-    final Object position = data.get("position");
-    if (position != null) {
-      sink.setPosition(toLatLng(position));
-    }
-    final Object rotation = data.get("rotation");
-    if (rotation != null) {
-      sink.setRotation(toFloat(rotation));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
+      Messages.PlatformMarker marker,
+      MarkerOptionsSink sink,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper wrapper) {
+    sink.setAlpha(marker.getAlpha().floatValue());
+    sink.setAnchor(
+        marker.getAnchor().getDx().floatValue(), marker.getAnchor().getDy().floatValue());
+    sink.setConsumeTapEvents(marker.getConsumeTapEvents());
+    sink.setDraggable(marker.getDraggable());
+    sink.setFlat(marker.getFlat());
+    sink.setIcon(toBitmapDescriptor(marker.getIcon(), assetManager, density, wrapper));
+    interpretInfoWindowOptions(sink, marker.getInfoWindow());
+    sink.setPosition(toLatLng(marker.getPosition().toList()));
+    sink.setRotation(marker.getRotation().floatValue());
+    sink.setVisible(marker.getVisible());
+    sink.setZIndex(marker.getZIndex().floatValue());
   }
 
   private static void interpretInfoWindowOptions(
-      MarkerOptionsSink sink, Map<String, Object> infoWindow) {
-    String title = (String) infoWindow.get("title");
-    String snippet = (String) infoWindow.get("snippet");
-    // snippet is nullable.
+      MarkerOptionsSink sink, Messages.PlatformInfoWindow infoWindow) {
+    String title = infoWindow.getTitle();
     if (title != null) {
-      sink.setInfoWindowText(title, snippet);
+      sink.setInfoWindowText(title, infoWindow.getSnippet());
     }
-    Object infoWindowAnchor = infoWindow.get("anchor");
-    if (infoWindowAnchor != null) {
-      final List<?> anchorData = toList(infoWindowAnchor);
-      sink.setInfoWindowAnchor(toFloat(anchorData.get(0)), toFloat(anchorData.get(1)));
-    }
+    Messages.PlatformOffset infoWindowAnchor = infoWindow.getAnchor();
+    sink.setInfoWindowAnchor(
+        infoWindowAnchor.getDx().floatValue(), infoWindowAnchor.getDy().floatValue());
   }
 
   static String interpretPolygonOptions(Map<String, ?> data, PolygonOptionsSink sink) {
@@ -822,45 +789,16 @@ class Convert {
     }
   }
 
-  static String interpretCircleOptions(Map<String, ?> data, CircleOptionsSink sink) {
-    final Object consumeTapEvents = data.get("consumeTapEvents");
-    if (consumeTapEvents != null) {
-      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
-    }
-    final Object fillColor = data.get("fillColor");
-    if (fillColor != null) {
-      sink.setFillColor(toInt(fillColor));
-    }
-    final Object strokeColor = data.get("strokeColor");
-    if (strokeColor != null) {
-      sink.setStrokeColor(toInt(strokeColor));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final Object strokeWidth = data.get("strokeWidth");
-    if (strokeWidth != null) {
-      sink.setStrokeWidth(toInt(strokeWidth));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
-    final Object center = data.get("center");
-    if (center != null) {
-      sink.setCenter(toLatLng(center));
-    }
-    final Object radius = data.get("radius");
-    if (radius != null) {
-      sink.setRadius(toDouble(radius));
-    }
-    final String circleId = (String) data.get("circleId");
-    if (circleId == null) {
-      throw new IllegalArgumentException("circleId was null");
-    } else {
-      return circleId;
-    }
+  static String interpretCircleOptions(Messages.PlatformCircle circle, CircleOptionsSink sink) {
+    sink.setConsumeTapEvents(circle.getConsumeTapEvents());
+    sink.setFillColor(circle.getFillColor().intValue());
+    sink.setStrokeColor(circle.getStrokeColor().intValue());
+    sink.setStrokeWidth(circle.getStrokeWidth());
+    sink.setZIndex(circle.getZIndex().floatValue());
+    sink.setCenter(toLatLng(circle.getCenter().toList()));
+    sink.setRadius(circle.getRadius());
+    sink.setVisible(circle.getVisible());
+    return circle.getCircleId();
   }
 
   /**
@@ -1069,7 +1007,6 @@ class Convert {
     return new Tile(tile.getWidth().intValue(), tile.getHeight().intValue(), tile.getData());
   }
 
-  @VisibleForTesting
   static class BitmapDescriptorFactoryWrapper {
     /**
      * Creates a BitmapDescriptor from the provided asset key using the {@link
