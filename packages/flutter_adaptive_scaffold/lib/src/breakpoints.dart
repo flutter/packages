@@ -224,7 +224,7 @@ class Breakpoint {
         context.findAncestorWidgetOfExactType<SlotLayout>();
 
     if (slotLayout != null) {
-      Breakpoint? nonPlatformBreakpoint;
+      Breakpoint? fallbackBreakpoint;
 
       for (final MapEntry<Breakpoint, SlotLayoutConfig?> config
           in slotLayout.config.entries) {
@@ -232,12 +232,12 @@ class Breakpoint {
           if (config.key.platform != null) {
             return config.key;
           } else {
-            nonPlatformBreakpoint ??= config.key;
+            fallbackBreakpoint ??= config.key;
           }
         }
       }
-      if (nonPlatformBreakpoint != null) {
-        return nonPlatformBreakpoint;
+      if (fallbackBreakpoint != null) {
+        return fallbackBreakpoint;
       }
     }
 
