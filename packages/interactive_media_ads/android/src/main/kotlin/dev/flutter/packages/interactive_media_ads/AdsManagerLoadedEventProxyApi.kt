@@ -24,7 +24,7 @@ class AdsManagerLoadedEventProxyApi(override val pigeonRegistrar: ProxyApiRegist
     return pigeon_instance.streamManager
   }
 
-  override fun userRequestContext(pigeon_instance: AdsManagerLoadedEvent): Any {
+  override fun userRequestContext(pigeon_instance: AdsManagerLoadedEvent): Any? {
     return pigeon_instance.userRequestContext
   }
 }

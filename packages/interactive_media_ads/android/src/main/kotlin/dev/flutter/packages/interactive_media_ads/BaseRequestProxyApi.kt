@@ -24,7 +24,7 @@ class BaseRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     return pigeon_instance.secureSignals
   }
 
-  override fun getUserRequestContext(pigeon_instance: BaseRequest): Any {
+  override fun getUserRequestContext(pigeon_instance: BaseRequest): Any? {
     return pigeon_instance.userRequestContext
   }
 

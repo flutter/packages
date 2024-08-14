@@ -16,6 +16,7 @@ import 'interactive_media_ads.g.dart';
 class InteractiveMediaAdsProxy {
   /// Constructs an [InteractiveMediaAdsProxy].
   const InteractiveMediaAdsProxy({
+    this.newContentProgressProvider = ContentProgressProvider.new,
     this.newCompanionAdSlotClickListener = CompanionAdSlotClickListener.new,
     this.newVideoStreamPlayer = VideoStreamPlayer.new,
     this.newVideoProgressUpdate = VideoProgressUpdate.new,
@@ -43,6 +44,9 @@ class InteractiveMediaAdsProxy {
     this.videoTimeNotReadyVideoProgressUpdate =
         _videoTimeNotReadyVideoProgressUpdate,
   });
+
+  /// Constructs [ContentProgressProvider].
+  final ContentProgressProvider Function() newContentProgressProvider;
 
   /// Constructs [CompanionAdSlotClickListener].
   final CompanionAdSlotClickListener Function({

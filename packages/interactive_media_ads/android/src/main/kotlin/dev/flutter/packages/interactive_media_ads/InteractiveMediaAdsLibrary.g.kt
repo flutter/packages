@@ -21,52 +21,52 @@ private fun wrapResult(result: Any?): List<Any?> {
 
 private fun wrapError(exception: Throwable): List<Any?> {
   return if (exception is FlutterError) {
-    listOf(exception.code, exception.message, exception.details)
+    listOf(
+      exception.code,
+      exception.message,
+      exception.details
+    )
   } else {
     listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+      exception.javaClass.simpleName,
+      exception.toString(),
+      "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
+    )
   }
 }
 
 private fun createConnectionError(channelName: String): FlutterError {
-  return FlutterError(
-      "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
-}
+  return FlutterError("channel-error",  "Unable to establish connection on channel: '$channelName'.", "")}
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
- *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class FlutterError(
-    val code: String,
-    override val message: String? = null,
-    val details: Any? = null
+class FlutterError (
+  val code: String,
+  override val message: String? = null,
+  val details: Any? = null
 ) : Throwable()
 /**
  * Maintains instances used to communicate with the corresponding objects in Dart.
  *
- * Objects stored in this container are represented by an object in Dart that is also stored in an
- * InstanceManager with the same identifier.
+ * Objects stored in this container are represented by an object in Dart that is also stored in
+ * an InstanceManager with the same identifier.
  *
  * When an instance is added with an identifier, either can be used to retrieve the other.
  *
- * Added instances are added as a weak reference and a strong reference. When the strong reference
- * is removed with [remove] and the weak reference is deallocated, the
- * `finalizationListener.onFinalize` is called with the instance's identifier. However, if the
- * strong reference is removed and then the identifier is retrieved with the intention to pass the
- * identifier to Dart (e.g. calling [getIdentifierForStrongReference]), the strong reference to the
- * instance is recreated. The strong reference will then need to be removed manually again.
+ * Added instances are added as a weak reference and a strong reference. When the strong
+ * reference is removed with [remove] and the weak reference is deallocated, the
+ * `finalizationListener.onFinalize` is called with the instance's identifier. However, if the strong
+ * reference is removed and then the identifier is retrieved with the intention to pass the identifier
+ * to Dart (e.g. calling [getIdentifierForStrongReference]), the strong reference to the instance
+ * is recreated. The strong reference will then need to be removed manually again.
  */
 @Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
-class InteractiveMediaAdsLibraryPigeonInstanceManager(
-    private val finalizationListener: PigeonFinalizationListener
-) {
-  /** Interface for listening when a weak reference of an instance is removed from the manager. */
+class InteractiveMediaAdsLibraryPigeonInstanceManager(private val finalizationListener: PigeonFinalizationListener) {
+  /** Interface for listening when a weak reference of an instance is removed from the manager.  */
   interface PigeonFinalizationListener {
     fun onFinalize(identifier: Long)
   }
@@ -92,7 +92,10 @@ class InteractiveMediaAdsLibraryPigeonInstanceManager(
     }
 
   init {
-    handler.postDelayed({ releaseAllFinalizedInstances() }, clearFinalizedWeakReferencesInterval)
+    handler.postDelayed(
+      { releaseAllFinalizedInstances() },
+      clearFinalizedWeakReferencesInterval
+    )
   }
 
   companion object {
@@ -104,20 +107,19 @@ class InteractiveMediaAdsLibraryPigeonInstanceManager(
     private const val tag = "PigeonInstanceManager"
 
     /**
-     * Instantiate a new manager with a listener for garbage collected weak references.
+     * Instantiate a new manager with a listener for garbage collected weak
+     * references.
      *
      * When the manager is no longer needed, [stopFinalizationListener] must be called.
      */
-    fun create(
-        finalizationListener: PigeonFinalizationListener
-    ): InteractiveMediaAdsLibraryPigeonInstanceManager {
+    fun create(finalizationListener: PigeonFinalizationListener): InteractiveMediaAdsLibraryPigeonInstanceManager {
       return InteractiveMediaAdsLibraryPigeonInstanceManager(finalizationListener)
     }
   }
 
   /**
-   * Removes `identifier` and return its associated strongly referenced instance, if present, from
-   * the manager.
+   * Removes `identifier` and return its associated strongly referenced instance, if present,
+   * from the manager.
    */
   fun <T> remove(identifier: Long): T? {
     logWarningIfFinalizationListenerHasStopped()
@@ -127,13 +129,15 @@ class InteractiveMediaAdsLibraryPigeonInstanceManager(
   /**
    * Retrieves the identifier paired with an instance, if present, otherwise `null`.
    *
+   *
    * If the manager contains a strong reference to `instance`, it will return the identifier
    * associated with `instance`. If the manager contains only a weak reference to `instance`, a new
    * strong reference to `instance` will be added and will need to be removed again with [remove].
    *
+   *
    * If this method returns a nonnull identifier, this method also expects the Dart
-   * `InteractiveMediaAdsLibraryPigeonInstanceManager` to have, or recreate, a weak reference to the
-   * Dart instance the identifier is associated with.
+   * `InteractiveMediaAdsLibraryPigeonInstanceManager` to have, or recreate, a weak reference to the Dart instance the
+   * identifier is associated with.
    */
   fun getIdentifierForStrongReference(instance: Any?): Long? {
     logWarningIfFinalizationListenerHasStopped()
@@ -147,9 +151,9 @@ class InteractiveMediaAdsLibraryPigeonInstanceManager(
   /**
    * Adds a new instance that was instantiated from Dart.
    *
-   * The same instance can be added multiple times, but each identifier must be unique. This allows
-   * two objects that are equivalent (e.g. the `equals` method returns true and their hashcodes are
-   * equal) to both be added.
+   * The same instance can be added multiple times, but each identifier must be unique. This
+   * allows two objects that are equivalent (e.g. the `equals` method returns true and their
+   * hashcodes are equal) to both be added.
    *
    * [identifier] must be >= 0 and unique.
    */
@@ -165,9 +169,7 @@ class InteractiveMediaAdsLibraryPigeonInstanceManager(
    */
   fun addHostCreatedInstance(instance: Any): Long {
     logWarningIfFinalizationListenerHasStopped()
-    require(!containsInstance(instance)) {
-      "Instance of ${instance.javaClass} has already been added."
-    }
+    require(!containsInstance(instance)) { "Instance of ${instance.javaClass} has already been added." }
     val identifier = nextIdentifier++
     addInstance(instance, identifier)
     return identifier
@@ -225,8 +227,7 @@ class InteractiveMediaAdsLibraryPigeonInstanceManager(
       return
     }
     var reference: java.lang.ref.WeakReference<Any>?
-    while ((referenceQueue.poll() as java.lang.ref.WeakReference<Any>?).also { reference = it } !=
-        null) {
+    while ((referenceQueue.poll() as java.lang.ref.WeakReference<Any>?).also { reference = it } != null) {
       val identifier = weakReferencesToIdentifiers.remove(reference)
       if (identifier != null) {
         weakInstances.remove(identifier)
@@ -234,7 +235,10 @@ class InteractiveMediaAdsLibraryPigeonInstanceManager(
         finalizationListener.onFinalize(identifier)
       }
     }
-    handler.postDelayed({ releaseAllFinalizedInstances() }, clearFinalizedWeakReferencesInterval)
+    handler.postDelayed(
+      { releaseAllFinalizedInstances() },
+      clearFinalizedWeakReferencesInterval
+    )
   }
 
   private fun addInstance(instance: Any, identifier: Long) {
@@ -252,45 +256,39 @@ class InteractiveMediaAdsLibraryPigeonInstanceManager(
   private fun logWarningIfFinalizationListenerHasStopped() {
     if (hasFinalizationListenerStopped()) {
       Log.w(
-          tag,
-          "The manager was used after calls to the PigeonFinalizationListener has been stopped.")
+        tag,
+        "The manager was used after calls to the PigeonFinalizationListener has been stopped."
+      )
     }
   }
 }
 
-/** Generated API for managing the Dart and native `PigeonInstanceManager`s. */
-private class InteractiveMediaAdsLibraryPigeonInstanceManagerApi(
-    val binaryMessenger: BinaryMessenger
-) {
+
+/**Generated API for managing the Dart and native `PigeonInstanceManager`s. */
+private class InteractiveMediaAdsLibraryPigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
   companion object {
-    /** The codec used by InteractiveMediaAdsLibraryPigeonInstanceManagerApi. */
-    val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
+    /**The codec used by InteractiveMediaAdsLibraryPigeonInstanceManagerApi. */
+    val codec: MessageCodec<Any?> by lazy {
+      StandardMessageCodec()
+    }
 
     /**
-     * Sets up an instance of `InteractiveMediaAdsLibraryPigeonInstanceManagerApi` to handle
-     * messages from the `binaryMessenger`.
+     * Sets up an instance of `InteractiveMediaAdsLibraryPigeonInstanceManagerApi` to handle messages from the
+     * `binaryMessenger`.
      */
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        instanceManager: InteractiveMediaAdsLibraryPigeonInstanceManager?
-    ) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, instanceManager: InteractiveMediaAdsLibraryPigeonInstanceManager?) {
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.PigeonInstanceManagerApi.removeStrongReference",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.PigeonInstanceManagerApi.removeStrongReference", codec)
         if (instanceManager != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  instanceManager.remove<Any?>(identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              instanceManager.remove<Any?>(identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -298,20 +296,15 @@ private class InteractiveMediaAdsLibraryPigeonInstanceManagerApi(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.PigeonInstanceManagerApi.clear",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.PigeonInstanceManagerApi.clear", codec)
         if (instanceManager != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> =
-                try {
-                  instanceManager.clear()
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              instanceManager.clear()
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -321,9 +314,9 @@ private class InteractiveMediaAdsLibraryPigeonInstanceManagerApi(
     }
   }
 
-  fun removeStrongReference(identifierArg: Long, callback: (Result<Unit>) -> Unit) {
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.PigeonInstanceManagerApi.removeStrongReference"
+  fun removeStrongReference(identifierArg: Long, callback: (Result<Unit>) -> Unit)
+{
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.PigeonInstanceManagerApi.removeStrongReference"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(identifierArg)) {
       if (it is List<*>) {
@@ -334,17 +327,15 @@ private class InteractiveMediaAdsLibraryPigeonInstanceManagerApi(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 }
 /**
- * Provides implementations for each ProxyApi implementation and provides access to resources needed
- * by any implementation.
+ * Provides implementations for each ProxyApi implementation and provides access to resources
+ * needed by any implementation.
  */
-abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
-    val binaryMessenger: BinaryMessenger
-) {
+abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
   /** Whether APIs should ignore calling to Dart. */
   public var ignoreCallsToDart = false
   val instanceManager: InteractiveMediaAdsLibraryPigeonInstanceManager
@@ -359,35 +350,36 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
 
   init {
     val api = InteractiveMediaAdsLibraryPigeonInstanceManagerApi(binaryMessenger)
-    instanceManager =
-        InteractiveMediaAdsLibraryPigeonInstanceManager.create(
-            object : InteractiveMediaAdsLibraryPigeonInstanceManager.PigeonFinalizationListener {
-              override fun onFinalize(identifier: Long) {
-                api.removeStrongReference(identifier) {
-                  if (it.isFailure) {
-                    Log.e(
-                        "PigeonProxyApiRegistrar",
-                        "Failed to remove Dart strong reference with identifier: $identifier")
-                  }
-                }
-              }
-            })
+    instanceManager = InteractiveMediaAdsLibraryPigeonInstanceManager.create(
+      object : InteractiveMediaAdsLibraryPigeonInstanceManager.PigeonFinalizationListener {
+        override fun onFinalize(identifier: Long) {
+          api.removeStrongReference(identifier) {
+            if (it.isFailure) {
+              Log.e(
+                "PigeonProxyApiRegistrar",
+                "Failed to remove Dart strong reference with identifier: $identifier"
+              )
+            }
+          }
+        }
+      }
+    )
   }
   /**
-   * An implementation of [PigeonApiAd] used to add a new Dart instance of `Ad` to the Dart
-   * `InstanceManager`.
+   * An implementation of [PigeonApiAd] used to add a new Dart instance of
+   * `Ad` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiAd(): PigeonApiAd
 
   /**
-   * An implementation of [PigeonApiCuePoint] used to add a new Dart instance of `CuePoint` to the
-   * Dart `InstanceManager`.
+   * An implementation of [PigeonApiCuePoint] used to add a new Dart instance of
+   * `CuePoint` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiCuePoint(): PigeonApiCuePoint
 
   /**
-   * An implementation of [PigeonApiCompanionAd] used to add a new Dart instance of `CompanionAd` to
-   * the Dart `InstanceManager`.
+   * An implementation of [PigeonApiCompanionAd] used to add a new Dart instance of
+   * `CompanionAd` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiCompanionAd(): PigeonApiCompanionAd
 
@@ -428,14 +420,14 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
   abstract fun getPigeonApiAdDisplayContainer(): PigeonApiAdDisplayContainer
 
   /**
-   * An implementation of [PigeonApiAdsLoader] used to add a new Dart instance of `AdsLoader` to the
-   * Dart `InstanceManager`.
+   * An implementation of [PigeonApiAdsLoader] used to add a new Dart instance of
+   * `AdsLoader` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiAdsLoader(): PigeonApiAdsLoader
 
   /**
-   * An implementation of [PigeonApiBaseRequest] used to add a new Dart instance of `BaseRequest` to
-   * the Dart `InstanceManager`.
+   * An implementation of [PigeonApiBaseRequest] used to add a new Dart instance of
+   * `BaseRequest` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiBaseRequest(): PigeonApiBaseRequest
 
@@ -458,20 +450,20 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
   abstract fun getPigeonApiStreamManager(): PigeonApiStreamManager
 
   /**
-   * An implementation of [PigeonApiAdErrorEvent] used to add a new Dart instance of `AdErrorEvent`
-   * to the Dart `InstanceManager`.
+   * An implementation of [PigeonApiAdErrorEvent] used to add a new Dart instance of
+   * `AdErrorEvent` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiAdErrorEvent(): PigeonApiAdErrorEvent
 
   /**
-   * An implementation of [PigeonApiAdError] used to add a new Dart instance of `AdError` to the
-   * Dart `InstanceManager`.
+   * An implementation of [PigeonApiAdError] used to add a new Dart instance of
+   * `AdError` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiAdError(): PigeonApiAdError
 
   /**
-   * An implementation of [PigeonApiAdsRequest] used to add a new Dart instance of `AdsRequest` to
-   * the Dart `InstanceManager`.
+   * An implementation of [PigeonApiAdsRequest] used to add a new Dart instance of
+   * `AdsRequest` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiAdsRequest(): PigeonApiAdsRequest
 
@@ -485,19 +477,17 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
    * An implementation of [PigeonApiContentProgressProvider] used to add a new Dart instance of
    * `ContentProgressProvider` to the Dart `InstanceManager`.
    */
-  open fun getPigeonApiContentProgressProvider(): PigeonApiContentProgressProvider {
-    return PigeonApiContentProgressProvider(this)
-  }
+  abstract fun getPigeonApiContentProgressProvider(): PigeonApiContentProgressProvider
 
   /**
-   * An implementation of [PigeonApiAdsManager] used to add a new Dart instance of `AdsManager` to
-   * the Dart `InstanceManager`.
+   * An implementation of [PigeonApiAdsManager] used to add a new Dart instance of
+   * `AdsManager` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiAdsManager(): PigeonApiAdsManager
 
   /**
-   * An implementation of [PigeonApiBaseManager] used to add a new Dart instance of `BaseManager` to
-   * the Dart `InstanceManager`.
+   * An implementation of [PigeonApiBaseManager] used to add a new Dart instance of
+   * `BaseManager` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiBaseManager(): PigeonApiBaseManager
 
@@ -514,8 +504,8 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
   abstract fun getPigeonApiAdProgressInfo(): PigeonApiAdProgressInfo
 
   /**
-   * An implementation of [PigeonApiAdEvent] used to add a new Dart instance of `AdEvent` to the
-   * Dart `InstanceManager`.
+   * An implementation of [PigeonApiAdEvent] used to add a new Dart instance of
+   * `AdEvent` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiAdEvent(): PigeonApiAdEvent
 
@@ -556,46 +546,47 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
   abstract fun getPigeonApiVideoProgressUpdate(): PigeonApiVideoProgressUpdate
 
   /**
-   * An implementation of [PigeonApiAdMediaInfo] used to add a new Dart instance of `AdMediaInfo` to
-   * the Dart `InstanceManager`.
+   * An implementation of [PigeonApiAdMediaInfo] used to add a new Dart instance of
+   * `AdMediaInfo` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiAdMediaInfo(): PigeonApiAdMediaInfo
 
   /**
-   * An implementation of [PigeonApiAdPodInfo] used to add a new Dart instance of `AdPodInfo` to the
-   * Dart `InstanceManager`.
+   * An implementation of [PigeonApiAdPodInfo] used to add a new Dart instance of
+   * `AdPodInfo` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiAdPodInfo(): PigeonApiAdPodInfo
 
   /**
-   * An implementation of [PigeonApiFrameLayout] used to add a new Dart instance of `FrameLayout` to
-   * the Dart `InstanceManager`.
+   * An implementation of [PigeonApiFrameLayout] used to add a new Dart instance of
+   * `FrameLayout` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiFrameLayout(): PigeonApiFrameLayout
 
   /**
-   * An implementation of [PigeonApiViewGroup] used to add a new Dart instance of `ViewGroup` to the
-   * Dart `InstanceManager`.
+   * An implementation of [PigeonApiViewGroup] used to add a new Dart instance of
+   * `ViewGroup` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiViewGroup(): PigeonApiViewGroup
 
   /**
-   * An implementation of [PigeonApiVideoView] used to add a new Dart instance of `VideoView` to the
-   * Dart `InstanceManager`.
+   * An implementation of [PigeonApiVideoView] used to add a new Dart instance of
+   * `VideoView` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiVideoView(): PigeonApiVideoView
 
   /**
-   * An implementation of [PigeonApiView] used to add a new Dart instance of `View` to the Dart
-   * `InstanceManager`.
+   * An implementation of [PigeonApiView] used to add a new Dart instance of
+   * `View` to the Dart `InstanceManager`.
    */
-  open fun getPigeonApiView(): PigeonApiView {
+  open fun getPigeonApiView(): PigeonApiView
+  {
     return PigeonApiView(this)
   }
 
   /**
-   * An implementation of [PigeonApiMediaPlayer] used to add a new Dart instance of `MediaPlayer` to
-   * the Dart `InstanceManager`.
+   * An implementation of [PigeonApiMediaPlayer] used to add a new Dart instance of
+   * `MediaPlayer` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiMediaPlayer(): PigeonApiMediaPlayer
 
@@ -630,8 +621,8 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
   abstract fun getPigeonApiAdEventListener(): PigeonApiAdEventListener
 
   /**
-   * An implementation of [PigeonApiVersionInfo] used to add a new Dart instance of `VersionInfo` to
-   * the Dart `InstanceManager`.
+   * An implementation of [PigeonApiVersionInfo] used to add a new Dart instance of
+   * `VersionInfo` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiVersionInfo(): PigeonApiVersionInfo
 
@@ -639,7 +630,8 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
    * An implementation of [PigeonApiResizablePlayer] used to add a new Dart instance of
    * `ResizablePlayer` to the Dart `InstanceManager`.
    */
-  open fun getPigeonApiResizablePlayer(): PigeonApiResizablePlayer {
+  open fun getPigeonApiResizablePlayer(): PigeonApiResizablePlayer
+  {
     return PigeonApiResizablePlayer(this)
   }
 
@@ -662,73 +654,55 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
   abstract fun getPigeonApiSecureSignalsAdapter(): PigeonApiSecureSignalsAdapter
 
   /**
-   * An implementation of [PigeonApiSecureSignalsCollectSignalsCallback] used to add a new Dart
-   * instance of `SecureSignalsCollectSignalsCallback` to the Dart `InstanceManager`.
+   * An implementation of [PigeonApiSecureSignalsCollectSignalsCallback] used to add a new Dart instance of
+   * `SecureSignalsCollectSignalsCallback` to the Dart `InstanceManager`.
    */
-  abstract fun getPigeonApiSecureSignalsCollectSignalsCallback():
-      PigeonApiSecureSignalsCollectSignalsCallback
+  abstract fun getPigeonApiSecureSignalsCollectSignalsCallback(): PigeonApiSecureSignalsCollectSignalsCallback
 
   /**
-   * An implementation of [PigeonApiSecureSignalsInitializeCallback] used to add a new Dart instance
-   * of `SecureSignalsInitializeCallback` to the Dart `InstanceManager`.
+   * An implementation of [PigeonApiSecureSignalsInitializeCallback] used to add a new Dart instance of
+   * `SecureSignalsInitializeCallback` to the Dart `InstanceManager`.
    */
-  abstract fun getPigeonApiSecureSignalsInitializeCallback():
-      PigeonApiSecureSignalsInitializeCallback
+  abstract fun getPigeonApiSecureSignalsInitializeCallback(): PigeonApiSecureSignalsInitializeCallback
 
   fun setUp() {
-    InteractiveMediaAdsLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
-        binaryMessenger, instanceManager)
-    PigeonApiBaseDisplayContainer.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiBaseDisplayContainer())
+    InteractiveMediaAdsLibraryPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, instanceManager)
+    PigeonApiBaseDisplayContainer.setUpMessageHandlers(binaryMessenger, getPigeonApiBaseDisplayContainer())
     PigeonApiCompanionAdSlot.setUpMessageHandlers(binaryMessenger, getPigeonApiCompanionAdSlot())
-    PigeonApiCompanionAdSlotClickListener.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiCompanionAdSlotClickListener())
-    PigeonApiAdDisplayContainer.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiAdDisplayContainer())
+    PigeonApiCompanionAdSlotClickListener.setUpMessageHandlers(binaryMessenger, getPigeonApiCompanionAdSlotClickListener())
+    PigeonApiAdDisplayContainer.setUpMessageHandlers(binaryMessenger, getPigeonApiAdDisplayContainer())
     PigeonApiAdsLoader.setUpMessageHandlers(binaryMessenger, getPigeonApiAdsLoader())
     PigeonApiBaseRequest.setUpMessageHandlers(binaryMessenger, getPigeonApiBaseRequest())
     PigeonApiSecureSignals.setUpMessageHandlers(binaryMessenger, getPigeonApiSecureSignals())
     PigeonApiStreamManager.setUpMessageHandlers(binaryMessenger, getPigeonApiStreamManager())
     PigeonApiAdsRequest.setUpMessageHandlers(binaryMessenger, getPigeonApiAdsRequest())
     PigeonApiStreamRequest.setUpMessageHandlers(binaryMessenger, getPigeonApiStreamRequest())
+    PigeonApiContentProgressProvider.setUpMessageHandlers(binaryMessenger, getPigeonApiContentProgressProvider())
     PigeonApiAdsManager.setUpMessageHandlers(binaryMessenger, getPigeonApiAdsManager())
     PigeonApiBaseManager.setUpMessageHandlers(binaryMessenger, getPigeonApiBaseManager())
-    PigeonApiAdsRenderingSettings.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiAdsRenderingSettings())
+    PigeonApiAdsRenderingSettings.setUpMessageHandlers(binaryMessenger, getPigeonApiAdsRenderingSettings())
     PigeonApiImaSdkFactory.setUpMessageHandlers(binaryMessenger, getPigeonApiImaSdkFactory())
-    PigeonApiStreamDisplayContainer.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiStreamDisplayContainer())
-    PigeonApiVideoStreamPlayer.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiVideoStreamPlayer())
-    PigeonApiVideoStreamPlayerCallback.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiVideoStreamPlayerCallback())
+    PigeonApiStreamDisplayContainer.setUpMessageHandlers(binaryMessenger, getPigeonApiStreamDisplayContainer())
+    PigeonApiVideoStreamPlayer.setUpMessageHandlers(binaryMessenger, getPigeonApiVideoStreamPlayer())
+    PigeonApiVideoStreamPlayerCallback.setUpMessageHandlers(binaryMessenger, getPigeonApiVideoStreamPlayerCallback())
     PigeonApiImaSdkSettings.setUpMessageHandlers(binaryMessenger, getPigeonApiImaSdkSettings())
-    PigeonApiVideoProgressUpdate.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiVideoProgressUpdate())
+    PigeonApiVideoProgressUpdate.setUpMessageHandlers(binaryMessenger, getPigeonApiVideoProgressUpdate())
     PigeonApiFrameLayout.setUpMessageHandlers(binaryMessenger, getPigeonApiFrameLayout())
     PigeonApiViewGroup.setUpMessageHandlers(binaryMessenger, getPigeonApiViewGroup())
     PigeonApiVideoView.setUpMessageHandlers(binaryMessenger, getPigeonApiVideoView())
     PigeonApiMediaPlayer.setUpMessageHandlers(binaryMessenger, getPigeonApiMediaPlayer())
-    PigeonApiVideoAdPlayerCallback.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiVideoAdPlayerCallback())
+    PigeonApiVideoAdPlayerCallback.setUpMessageHandlers(binaryMessenger, getPigeonApiVideoAdPlayerCallback())
     PigeonApiVideoAdPlayer.setUpMessageHandlers(binaryMessenger, getPigeonApiVideoAdPlayer())
-    PigeonApiAdsLoadedListener.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiAdsLoadedListener())
+    PigeonApiAdsLoadedListener.setUpMessageHandlers(binaryMessenger, getPigeonApiAdsLoadedListener())
     PigeonApiAdErrorListener.setUpMessageHandlers(binaryMessenger, getPigeonApiAdErrorListener())
     PigeonApiAdEventListener.setUpMessageHandlers(binaryMessenger, getPigeonApiAdEventListener())
     PigeonApiVersionInfo.setUpMessageHandlers(binaryMessenger, getPigeonApiVersionInfo())
-    PigeonApiResizableVideoAdPlayer.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiResizableVideoAdPlayer())
-    PigeonApiResizableVideoStreamPlayer.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiResizableVideoStreamPlayer())
-    PigeonApiSecureSignalsAdapter.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiSecureSignalsAdapter())
-    PigeonApiSecureSignalsCollectSignalsCallback.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiSecureSignalsCollectSignalsCallback())
-    PigeonApiSecureSignalsInitializeCallback.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiSecureSignalsInitializeCallback())
+    PigeonApiResizableVideoAdPlayer.setUpMessageHandlers(binaryMessenger, getPigeonApiResizableVideoAdPlayer())
+    PigeonApiResizableVideoStreamPlayer.setUpMessageHandlers(binaryMessenger, getPigeonApiResizableVideoStreamPlayer())
+    PigeonApiSecureSignalsAdapter.setUpMessageHandlers(binaryMessenger, getPigeonApiSecureSignalsAdapter())
+    PigeonApiSecureSignalsCollectSignalsCallback.setUpMessageHandlers(binaryMessenger, getPigeonApiSecureSignalsCollectSignalsCallback())
+    PigeonApiSecureSignalsInitializeCallback.setUpMessageHandlers(binaryMessenger, getPigeonApiSecureSignalsInitializeCallback())
   }
-
   fun tearDown() {
     InteractiveMediaAdsLibraryPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiBaseDisplayContainer.setUpMessageHandlers(binaryMessenger, null)
@@ -741,6 +715,7 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
     PigeonApiStreamManager.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiAdsRequest.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiStreamRequest.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiContentProgressProvider.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiAdsManager.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiBaseManager.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiAdsRenderingSettings.setUpMessageHandlers(binaryMessenger, null)
@@ -767,10 +742,7 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
     PigeonApiSecureSignalsInitializeCallback.setUpMessageHandlers(binaryMessenger, null)
   }
 }
-
-private class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
-    val registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) : InteractiveMediaAdsLibraryPigeonCodec() {
+private class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(val registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) : InteractiveMediaAdsLibraryPigeonCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       128.toByte() -> {
@@ -782,136 +754,157 @@ private class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
   }
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
-    if (value is Boolean ||
-        value is ByteArray ||
-        value is Double ||
-        value is DoubleArray ||
-        value is FloatArray ||
-        value is Int ||
-        value is IntArray ||
-        value is List<*> ||
-        value is Long ||
-        value is LongArray ||
-        value is Map<*, *> ||
-        value is String ||
-        value is AdErrorCode ||
-        value is AdErrorType ||
-        value is AdEventType ||
-        value is UiElement ||
-        value is FriendlyObstructionPurpose ||
-        value is StreamFormat ||
-        value == null) {
+    if (value is Boolean || value is ByteArray || value is Double || value is DoubleArray || value is FloatArray || value is Int || value is IntArray || value is List<*> || value is Long || value is LongArray || value is Map<*, *> || value is String || value is AdErrorCode || value is AdErrorType || value is AdEventType || value is UiElement || value is FriendlyObstructionPurpose || value is StreamFormat || value == null) {
       super.writeValue(stream, value)
       return
     }
 
     if (value is com.google.ads.interactivemedia.v3.api.Ad) {
-      registrar.getPigeonApiAd().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.CuePoint) {
-      registrar.getPigeonApiCuePoint().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.CompanionAd) {
-      registrar.getPigeonApiCompanionAd().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.UniversalAdId) {
-      registrar.getPigeonApiUniversalAdId().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.CompanionAdSlot) {
-      registrar.getPigeonApiCompanionAdSlot().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener) {
-      registrar.getPigeonApiCompanionAdSlotClickListener().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.FriendlyObstruction) {
-      registrar.getPigeonApiFriendlyObstruction().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.AdDisplayContainer) {
-      registrar.getPigeonApiAdDisplayContainer().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.AdsLoader) {
-      registrar.getPigeonApiAdsLoader().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.signals.SecureSignals) {
-      registrar.getPigeonApiSecureSignals().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent) {
-      registrar.getPigeonApiAdsManagerLoadedEvent().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.StreamManager) {
-      registrar.getPigeonApiStreamManager().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.AdErrorEvent) {
-      registrar.getPigeonApiAdErrorEvent().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.AdError) {
-      registrar.getPigeonApiAdError().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.AdsRequest) {
-      registrar.getPigeonApiAdsRequest().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.StreamRequest) {
-      registrar.getPigeonApiStreamRequest().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.BaseRequest) {
-      registrar.getPigeonApiBaseRequest().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider) {
-      registrar.getPigeonApiContentProgressProvider().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.AdsManager) {
-      registrar.getPigeonApiAdsManager().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.BaseManager) {
-      registrar.getPigeonApiBaseManager().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.AdsRenderingSettings) {
-      registrar.getPigeonApiAdsRenderingSettings().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.AdProgressInfo) {
-      registrar.getPigeonApiAdProgressInfo().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.AdEvent) {
-      registrar.getPigeonApiAdEvent().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.ImaSdkFactory) {
-      registrar.getPigeonApiImaSdkFactory().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.StreamDisplayContainer) {
-      registrar.getPigeonApiStreamDisplayContainer().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.BaseDisplayContainer) {
-      registrar.getPigeonApiBaseDisplayContainer().pigeon_newInstance(value) {}
-    } else if (value
-        is
-        com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback) {
-      registrar.getPigeonApiVideoStreamPlayerCallback().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.ImaSdkSettings) {
-      registrar.getPigeonApiImaSdkSettings().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate) {
-      registrar.getPigeonApiVideoProgressUpdate().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.player.AdMediaInfo) {
-      registrar.getPigeonApiAdMediaInfo().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.AdPodInfo) {
-      registrar.getPigeonApiAdPodInfo().pigeon_newInstance(value) {}
-    } else if (value is android.widget.FrameLayout) {
-      registrar.getPigeonApiFrameLayout().pigeon_newInstance(value) {}
-    } else if (value is android.view.ViewGroup) {
-      registrar.getPigeonApiViewGroup().pigeon_newInstance(value) {}
-    } else if (value is android.widget.VideoView) {
-      registrar.getPigeonApiVideoView().pigeon_newInstance(value) {}
-    } else if (value is android.view.View) {
-      registrar.getPigeonApiView().pigeon_newInstance(value) {}
-    } else if (value is android.media.MediaPlayer) {
-      registrar.getPigeonApiMediaPlayer().pigeon_newInstance(value) {}
-    } else if (value
-        is com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback) {
-      registrar.getPigeonApiVideoAdPlayerCallback().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener) {
-      registrar.getPigeonApiAdsLoadedListener().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener) {
-      registrar.getPigeonApiAdErrorListener().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener) {
-      registrar.getPigeonApiAdEventListener().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.VersionInfo) {
-      registrar.getPigeonApiVersionInfo().pigeon_newInstance(value) {}
-    } else if (value
-        is
-        dev.flutter.packages.interactive_media_ads.ResizableVideoAdPlayerProxyApi.ResizableVideoAdPlayer) {
-      registrar.getPigeonApiResizableVideoAdPlayer().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer) {
-      registrar.getPigeonApiVideoAdPlayer().pigeon_newInstance(value) {}
-    } else if (value
-        is
-        dev.flutter.packages.interactive_media_ads.ResizableVideoStreamPlayerProxyApi.ResizableVideoStreamPlayer) {
-      registrar.getPigeonApiResizableVideoStreamPlayer().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer) {
-      registrar.getPigeonApiVideoStreamPlayer().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.player.ResizablePlayer) {
-      registrar.getPigeonApiResizablePlayer().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter) {
-      registrar.getPigeonApiSecureSignalsAdapter().pigeon_newInstance(value) {}
-    } else if (value
-        is com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback) {
-      registrar.getPigeonApiSecureSignalsCollectSignalsCallback().pigeon_newInstance(value) {}
-    } else if (value
-        is com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback) {
-      registrar.getPigeonApiSecureSignalsInitializeCallback().pigeon_newInstance(value) {}
+      registrar.getPigeonApiAd().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.CuePoint) {
+      registrar.getPigeonApiCuePoint().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.CompanionAd) {
+      registrar.getPigeonApiCompanionAd().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.UniversalAdId) {
+      registrar.getPigeonApiUniversalAdId().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.CompanionAdSlot) {
+      registrar.getPigeonApiCompanionAdSlot().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener) {
+      registrar.getPigeonApiCompanionAdSlotClickListener().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.FriendlyObstruction) {
+      registrar.getPigeonApiFriendlyObstruction().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.AdDisplayContainer) {
+      registrar.getPigeonApiAdDisplayContainer().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.AdsLoader) {
+      registrar.getPigeonApiAdsLoader().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.signals.SecureSignals) {
+      registrar.getPigeonApiSecureSignals().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent) {
+      registrar.getPigeonApiAdsManagerLoadedEvent().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.StreamManager) {
+      registrar.getPigeonApiStreamManager().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.AdErrorEvent) {
+      registrar.getPigeonApiAdErrorEvent().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.AdError) {
+      registrar.getPigeonApiAdError().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.AdsRequest) {
+      registrar.getPigeonApiAdsRequest().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.StreamRequest) {
+      registrar.getPigeonApiStreamRequest().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.BaseRequest) {
+      registrar.getPigeonApiBaseRequest().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider) {
+      registrar.getPigeonApiContentProgressProvider().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.AdsManager) {
+      registrar.getPigeonApiAdsManager().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.BaseManager) {
+      registrar.getPigeonApiBaseManager().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.AdsRenderingSettings) {
+      registrar.getPigeonApiAdsRenderingSettings().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.AdProgressInfo) {
+      registrar.getPigeonApiAdProgressInfo().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.AdEvent) {
+      registrar.getPigeonApiAdEvent().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.ImaSdkFactory) {
+      registrar.getPigeonApiImaSdkFactory().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.StreamDisplayContainer) {
+      registrar.getPigeonApiStreamDisplayContainer().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.BaseDisplayContainer) {
+      registrar.getPigeonApiBaseDisplayContainer().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback) {
+      registrar.getPigeonApiVideoStreamPlayerCallback().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.ImaSdkSettings) {
+      registrar.getPigeonApiImaSdkSettings().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate) {
+      registrar.getPigeonApiVideoProgressUpdate().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.player.AdMediaInfo) {
+      registrar.getPigeonApiAdMediaInfo().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.AdPodInfo) {
+      registrar.getPigeonApiAdPodInfo().pigeon_newInstance(value) { }
+    }
+     else if (value is android.widget.FrameLayout) {
+      registrar.getPigeonApiFrameLayout().pigeon_newInstance(value) { }
+    }
+     else if (value is android.view.ViewGroup) {
+      registrar.getPigeonApiViewGroup().pigeon_newInstance(value) { }
+    }
+     else if (value is android.widget.VideoView) {
+      registrar.getPigeonApiVideoView().pigeon_newInstance(value) { }
+    }
+     else if (value is android.view.View) {
+      registrar.getPigeonApiView().pigeon_newInstance(value) { }
+    }
+     else if (value is android.media.MediaPlayer) {
+      registrar.getPigeonApiMediaPlayer().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback) {
+      registrar.getPigeonApiVideoAdPlayerCallback().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener) {
+      registrar.getPigeonApiAdsLoadedListener().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener) {
+      registrar.getPigeonApiAdErrorListener().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener) {
+      registrar.getPigeonApiAdEventListener().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.VersionInfo) {
+      registrar.getPigeonApiVersionInfo().pigeon_newInstance(value) { }
+    }
+     else if (value is dev.flutter.packages.interactive_media_ads.ResizableVideoAdPlayerProxyApi.ResizableVideoAdPlayer) {
+      registrar.getPigeonApiResizableVideoAdPlayer().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer) {
+      registrar.getPigeonApiVideoAdPlayer().pigeon_newInstance(value) { }
+    }
+     else if (value is dev.flutter.packages.interactive_media_ads.ResizableVideoStreamPlayerProxyApi.ResizableVideoStreamPlayer) {
+      registrar.getPigeonApiResizableVideoStreamPlayer().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer) {
+      registrar.getPigeonApiVideoStreamPlayer().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.player.ResizablePlayer) {
+      registrar.getPigeonApiResizablePlayer().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter) {
+      registrar.getPigeonApiSecureSignalsAdapter().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback) {
+      registrar.getPigeonApiSecureSignalsCollectSignalsCallback().pigeon_newInstance(value) { }
+    }
+     else if (value is com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback) {
+      registrar.getPigeonApiSecureSignalsInitializeCallback().pigeon_newInstance(value) { }
     }
 
     when {
@@ -919,9 +912,7 @@ private class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
         stream.write(128)
         writeValue(stream, registrar.instanceManager.getIdentifierForStrongReference(value))
       }
-      else ->
-          throw IllegalArgumentException(
-              "Unsupported value: '$value' of type '${value.javaClass.name}'")
+      else -> throw IllegalArgumentException("Unsupported value: '$value' of type '${value.javaClass.name}'")
     }
   }
 }
@@ -929,8 +920,7 @@ private class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
 /**
  * The types of error that can be encountered.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdError.AdErrorCode.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdError.AdErrorCode.html.
  */
 enum class AdErrorCode(val raw: Int) {
   /** Ads player was not provided. */
@@ -962,13 +952,13 @@ enum class AdErrorCode(val raw: Int) {
   /** A VAST response containing a single `<VAST>` tag with no child tags. */
   VAST_EMPTY_RESPONSE(13),
   /**
-   * Assets were found in the VAST ad response for a linear ad, but none of them matched the video
-   * player's capabilities.
+   * Assets were found in the VAST ad response for a linear ad, but none of
+   * them matched the video player's capabilities.
    */
   VAST_LINEAR_ASSET_MISMATCH(14),
   /**
-   * At least one VAST wrapper ad loaded successfully and a subsequent wrapper or inline ad load has
-   * timed out.
+   * At least one VAST wrapper ad loaded successfully and a subsequent wrapper
+   * or inline ad load has timed out.
    */
   VAST_LOAD_TIMEOUT(15),
   /** The ad response was not recognized as a valid VAST ad. */
@@ -976,8 +966,8 @@ enum class AdErrorCode(val raw: Int) {
   /** Failed to load media assets from a VAST response. */
   VAST_MEDIA_LOAD_TIMEOUT(17),
   /**
-   * Assets were found in the VAST ad response for a nonlinear ad, but none of them matched the
-   * video player's capabilities.
+   * Assets were found in the VAST ad response for a nonlinear ad, but none of
+   * them matched the video player's capabilities.
    */
   VAST_NONLINEAR_ASSET_MISMATCH(18),
   /** No Ads VAST response after one or more wrappers. */
@@ -987,7 +977,8 @@ enum class AdErrorCode(val raw: Int) {
   /**
    * Trafficking error.
    *
-   * Video player received an ad type that it was not expecting and/or cannot display.
+   * Video player received an ad type that it was not expecting and/or cannot
+   * display.
    */
   VAST_TRAFFICKING_ERROR(21),
   /** There was an error playing the video ad. */
@@ -1005,8 +996,7 @@ enum class AdErrorCode(val raw: Int) {
 /**
  * Specifies when the error was encountered, during either ad loading or playback.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdError.AdErrorType.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdError.AdErrorType.html.
  */
 enum class AdErrorType(val raw: Int) {
   /** Indicates that the error was encountered when the ad was being loaded. */
@@ -1026,8 +1016,7 @@ enum class AdErrorType(val raw: Int) {
 /**
  * Types of events that can occur during ad playback.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.AdEventType.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.AdEventType.html.
  */
 enum class AdEventType(val raw: Int) {
   /** Fired when an ad break in a stream ends. */
@@ -1044,11 +1033,14 @@ enum class AdEventType(val raw: Int) {
   AD_PERIOD_ENDED(5),
   /** Fired when an ad period in a stream starts. */
   AD_PERIOD_STARTED(6),
-  /** Fired to inform of ad progress and can be used by publisher to display a countdown timer. */
+  /**
+   * Fired to inform of ad progress and can be used by publisher to display a
+   * countdown timer.
+   */
   AD_PROGRESS(7),
   /**
-   * Fired when the ads manager is done playing all the valid ads in the ads response, or when the
-   * response doesn't return any valid ads.
+   * Fired when the ads manager is done playing all the valid ads in the ads
+   * response, or when the response doesn't return any valid ads.
    */
   ALL_ADS_COMPLETED(8),
   /** Fired when an ad is clicked. */
@@ -1069,7 +1061,10 @@ enum class AdEventType(val raw: Int) {
   ICON_TAPPED(16),
   /** Fired when the VAST response has been received. */
   LOADED(17),
-  /** Fired to enable the SDK to communicate a message to be logged, which is stored in adData. */
+  /**
+   * Fired to enable the SDK to communicate a message to be logged, which is
+   * stored in adData.
+   */
   LOG(18),
   /** Fired when the ad playhead crosses midpoint. */
   MIDPOINT(19),
@@ -1100,8 +1095,7 @@ enum class AdEventType(val raw: Int) {
 /**
  * Describes an element of the ad UI, to be requested or rendered by the SDK.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/UiElement.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/UiElement.html.
  */
 enum class UiElement(val raw: Int) {
   /** The ad attribution UI element, for example, "Ad". */
@@ -1121,8 +1115,7 @@ enum class UiElement(val raw: Int) {
 /**
  * A list of purposes for which an obstruction would be registered as friendly.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/FriendlyObstructionPurpose.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/FriendlyObstructionPurpose.html.
  */
 enum class FriendlyObstructionPurpose(val raw: Int) {
   CLOSE_AD(0),
@@ -1141,8 +1134,7 @@ enum class FriendlyObstructionPurpose(val raw: Int) {
 /**
  * Enum of possible stream formats.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/StreamRequest.StreamFormat.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/StreamRequest.StreamFormat.html.
  */
 enum class StreamFormat(val raw: Int) {
   DASH(0),
@@ -1155,33 +1147,43 @@ enum class StreamFormat(val raw: Int) {
     }
   }
 }
-
 private open class InteractiveMediaAdsLibraryPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Int?)?.let { AdErrorCode.ofRaw(it) }
+        return (readValue(buffer) as Int?)?.let {
+          AdErrorCode.ofRaw(it)
+        }
       }
       130.toByte() -> {
-        return (readValue(buffer) as Int?)?.let { AdErrorType.ofRaw(it) }
+        return (readValue(buffer) as Int?)?.let {
+          AdErrorType.ofRaw(it)
+        }
       }
       131.toByte() -> {
-        return (readValue(buffer) as Int?)?.let { AdEventType.ofRaw(it) }
+        return (readValue(buffer) as Int?)?.let {
+          AdEventType.ofRaw(it)
+        }
       }
       132.toByte() -> {
-        return (readValue(buffer) as Int?)?.let { UiElement.ofRaw(it) }
+        return (readValue(buffer) as Int?)?.let {
+          UiElement.ofRaw(it)
+        }
       }
       133.toByte() -> {
-        return (readValue(buffer) as Int?)?.let { FriendlyObstructionPurpose.ofRaw(it) }
+        return (readValue(buffer) as Int?)?.let {
+          FriendlyObstructionPurpose.ofRaw(it)
+        }
       }
       134.toByte() -> {
-        return (readValue(buffer) as Int?)?.let { StreamFormat.ofRaw(it) }
+        return (readValue(buffer) as Int?)?.let {
+          StreamFormat.ofRaw(it)
+        }
       }
       else -> super.readValueOfType(type, buffer)
     }
   }
-
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
     when (value) {
       is AdErrorCode -> {
         stream.write(129)
@@ -1215,38 +1217,27 @@ private open class InteractiveMediaAdsLibraryPigeonCodec : StandardMessageCodec(
 /**
  * An object that holds data corresponding to the main Ad.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/Ad.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/Ad.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAd(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiAd(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** The ad ID as specified in the VAST response. */
   abstract fun adId(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String
 
   /** The pod metadata object. */
-  abstract fun adPodInfo(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
-  ): com.google.ads.interactivemedia.v3.api.AdPodInfo
+  abstract fun adPodInfo(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): com.google.ads.interactivemedia.v3.api.AdPodInfo
 
   /** The ad system as specified in the VAST response. */
   abstract fun adSystem(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String
 
   /** The IDs of the ads' creatives, starting with the first wrapper ad. */
-  abstract fun adWrapperCreativeIds(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
-  ): List<String>
+  abstract fun adWrapperCreativeIds(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): List<String>
 
   /** The wrapper ad IDs as specified in the VAST response. */
-  abstract fun adWrapperIds(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
-  ): List<String>
+  abstract fun adWrapperIds(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): List<String>
 
   /** The wrapper ad systems as specified in the VAST response. */
-  abstract fun adWrapperSystems(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
-  ): List<String>
+  abstract fun adWrapperSystems(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): List<String>
 
   /** The advertiser name as defined by the serving party. */
   abstract fun advertiserName(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String
@@ -1256,13 +1247,11 @@ abstract class PigeonApiAd(
    *
    * Returns an empty list in any other scenario.
    */
-  abstract fun companionAds(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
-  ): List<com.google.ads.interactivemedia.v3.api.CompanionAd>
+  abstract fun companionAds(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): List<com.google.ads.interactivemedia.v3.api.CompanionAd>
 
   /**
-   * The content type of the currently selected creative, or null if no creative is selected or the
-   * content type is unavailable.
+   * The content type of the currently selected creative, or null if no
+   * creative is selected or the content type is unavailable.
    */
   abstract fun contentType(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String?
 
@@ -1272,7 +1261,10 @@ abstract class PigeonApiAd(
   /** The ID of the selected creative for the ad, */
   abstract fun creativeId(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String
 
-  /** The first deal ID present in the wrapper chain for the current ad, starting from the top. */
+  /**
+   * The first deal ID present in the wrapper chain for the current ad,
+   * starting from the top.
+   */
   abstract fun dealId(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String
 
   /** The description of this ad from the VAST response. */
@@ -1293,20 +1285,17 @@ abstract class PigeonApiAd(
   /** The title of this ad from the VAST response. */
   abstract fun title(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String?
 
-  /** The custom parameters associated with the ad at the time of ad trafficking. */
-  abstract fun traffickingParameters(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
-  ): String
+  /**
+   * The custom parameters associated with the ad at the time of ad
+   * trafficking.
+   */
+  abstract fun traffickingParameters(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String
 
   /** Te set of ad UI elements rendered by the IMA SDK for this ad. */
-  abstract fun uiElements(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
-  ): List<UiElement>
+  abstract fun uiElements(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): List<UiElement>
 
   /** The list of all universal ad IDs for this ad. */
-  abstract fun universalAdIds(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad
-  ): List<com.google.ads.interactivemedia.v3.api.UniversalAdId>
+  abstract fun universalAdIds(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): List<com.google.ads.interactivemedia.v3.api.UniversalAdId>
 
   /** The VAST bitrate in Kbps of the selected creative. */
   abstract fun vastMediaBitrate(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): Long
@@ -1320,18 +1309,19 @@ abstract class PigeonApiAd(
   /** The width of the selected creative if non-linear, else returns 0. */
   abstract fun width(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): Long
 
-  /** Indicates whether the ad’s current mode of operation is linear or non-linear. */
+  /**
+   * Indicates whether the ad’s current mode of operation is linear or
+   * non-linear.
+   */
   abstract fun isLinear(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): Boolean
 
   /** Indicates whether the ad can be skipped by the user. */
   abstract fun isSkippable(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): Boolean
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of Ad and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.Ad,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of Ad and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.Ad, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -1342,8 +1332,7 @@ abstract class PigeonApiAd(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val adIdArg = adId(pigeon_instanceArg)
     val adPodInfoArg = adPodInfo(pigeon_instanceArg)
     val adSystemArg = adSystem(pigeon_instanceArg)
@@ -1375,59 +1364,27 @@ abstract class PigeonApiAd(
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.Ad.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(
-        listOf(
-            pigeon_identifierArg,
-            adIdArg,
-            adPodInfoArg,
-            adSystemArg,
-            adWrapperCreativeIdsArg,
-            adWrapperIdsArg,
-            adWrapperSystemsArg,
-            advertiserNameArg,
-            companionAdsArg,
-            contentTypeArg,
-            creativeAdIdArg,
-            creativeIdArg,
-            dealIdArg,
-            descriptionArg,
-            durationArg,
-            heightArg,
-            skipTimeOffsetArg,
-            surveyUrlArg,
-            titleArg,
-            traffickingParametersArg,
-            uiElementsArg,
-            universalAdIdsArg,
-            vastMediaBitrateArg,
-            vastMediaHeightArg,
-            vastMediaWidthArg,
-            widthArg,
-            isLinearArg,
-            isSkippableArg)) {
-          if (it is List<*>) {
-            if (it.size > 1) {
-              callback(
-                  Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
-            } else {
-              callback(Result.success(Unit))
-            }
-          } else {
-            callback(Result.failure(createConnectionError(channelName)))
-          }
+    channel.send(listOf(pigeon_identifierArg, adIdArg, adPodInfoArg, adSystemArg, adWrapperCreativeIdsArg, adWrapperIdsArg, adWrapperSystemsArg, advertiserNameArg, companionAdsArg, contentTypeArg, creativeAdIdArg, creativeIdArg, dealIdArg, descriptionArg, durationArg, heightArg, skipTimeOffsetArg, surveyUrlArg, titleArg, traffickingParametersArg, uiElementsArg, universalAdIdsArg, vastMediaBitrateArg, vastMediaHeightArg, vastMediaWidthArg, widthArg, isLinearArg, isSkippableArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
         }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
   }
+
 }
 /**
  * Represents a cuepoint within a VOD stream.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CuePoint.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CuePoint.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiCuePoint(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiCuePoint(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** The end time of the cuepoint in milliseconds. */
   abstract fun endTimeMs(pigeon_instance: com.google.ads.interactivemedia.v3.api.CuePoint): Long
 
@@ -1438,11 +1395,9 @@ abstract class PigeonApiCuePoint(
   abstract fun isPlayed(pigeon_instance: com.google.ads.interactivemedia.v3.api.CuePoint): Boolean
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of CuePoint and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.CuePoint,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of CuePoint and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.CuePoint, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -1453,8 +1408,7 @@ abstract class PigeonApiCuePoint(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val endTimeMsArg = endTimeMs(pigeon_instanceArg)
     val startTimeMsArg = startTimeMs(pigeon_instanceArg)
     val isPlayedArg = isPlayed(pigeon_instanceArg)
@@ -1471,24 +1425,20 @@ abstract class PigeonApiCuePoint(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * An object that holds data corresponding to the companion Ad.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAd.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAd.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiCompanionAd(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiCompanionAd(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** The API needed to execute this ad, or null if unavailable. */
-  abstract fun apiFramework(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAd
-  ): String?
+  abstract fun apiFramework(pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAd): String?
 
   /**
    * The height of the companion in pixels.
@@ -1498,9 +1448,7 @@ abstract class PigeonApiCompanionAd(
   abstract fun height(pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAd): Long
 
   /** The URL for the static resource of this companion. */
-  abstract fun resourceValue(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAd
-  ): String
+  abstract fun resourceValue(pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAd): String
 
   /**
    * The width of the companion in pixels.
@@ -1510,11 +1458,9 @@ abstract class PigeonApiCompanionAd(
   abstract fun width(pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAd): Long
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of CompanionAd and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.CompanionAd,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of CompanionAd and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.CompanionAd, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -1525,8 +1471,7 @@ abstract class PigeonApiCompanionAd(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val apiFrameworkArg = apiFramework(pigeon_instanceArg)
     val heightArg = height(pigeon_instanceArg)
     val resourceValueArg = resourceValue(pigeon_instanceArg)
@@ -1535,55 +1480,45 @@ abstract class PigeonApiCompanionAd(
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.CompanionAd.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(
-        listOf(pigeon_identifierArg, apiFrameworkArg, heightArg, resourceValueArg, widthArg)) {
-          if (it is List<*>) {
-            if (it.size > 1) {
-              callback(
-                  Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
-            } else {
-              callback(Result.success(Unit))
-            }
-          } else {
-            callback(Result.failure(createConnectionError(channelName)))
-          }
+    channel.send(listOf(pigeon_identifierArg, apiFrameworkArg, heightArg, resourceValueArg, widthArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
         }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
   }
+
 }
 /**
  * This object exposes information about the universal ad ID.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/UniversalAdId.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/UniversalAdId.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiUniversalAdId(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiUniversalAdId(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /**
    * Returns the ad ID registry associated with the ad ID value.
    *
    * Returns "unknown" if the registry is not known.
    */
-  abstract fun adIdRegistry(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.UniversalAdId
-  ): String
+  abstract fun adIdRegistry(pigeon_instance: com.google.ads.interactivemedia.v3.api.UniversalAdId): String
 
   /**
    * Returns the universal ad ID value.
    *
    * Returns "unknown" if the value is not known.
    */
-  abstract fun adIdValue(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.UniversalAdId
-  ): String
+  abstract fun adIdValue(pigeon_instance: com.google.ads.interactivemedia.v3.api.UniversalAdId): String
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of UniversalAdId and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.UniversalAdId,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of UniversalAdId and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.UniversalAdId, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -1594,8 +1529,7 @@ abstract class PigeonApiUniversalAdId(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val adIdRegistryArg = adIdRegistry(pigeon_instanceArg)
     val adIdValueArg = adIdValue(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -1611,82 +1545,59 @@ abstract class PigeonApiUniversalAdId(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * A base class for more specialized container interfaces.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseDisplayContainer.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseDisplayContainer.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiBaseDisplayContainer(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiBaseDisplayContainer(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** Returns the previously set container, or null if none has been set. */
-  abstract fun getAdContainer(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
-  ): android.view.ViewGroup?
+  abstract fun getAdContainer(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseDisplayContainer): android.view.ViewGroup?
 
   /**
    * Gets the companion slots that have been set.
    *
    * Returns an empty list if none have been set.
    */
-  abstract fun getCompanionSlots(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
-  ): List<com.google.ads.interactivemedia.v3.api.CompanionAdSlot>
+  abstract fun getCompanionSlots(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseDisplayContainer): List<com.google.ads.interactivemedia.v3.api.CompanionAdSlot>
 
   /**
-   * Registers a view that overlays or obstructs this container as "friendly" for viewability
-   * measurement purposes.
+   * Registers a view that overlays or obstructs this container as "friendly"
+   * for viewability measurement purposes.
    */
-  abstract fun registerFriendlyObstruction(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseDisplayContainer,
-      friendlyObstruction: com.google.ads.interactivemedia.v3.api.FriendlyObstruction
-  )
+  abstract fun registerFriendlyObstruction(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseDisplayContainer, friendlyObstruction: com.google.ads.interactivemedia.v3.api.FriendlyObstruction)
 
   /**
    * Sets slots for displaying companions.
    *
    * Passing null will reset the container to having no companion slots.
    */
-  abstract fun setCompanionSlots(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseDisplayContainer,
-      companionSlots: List<com.google.ads.interactivemedia.v3.api.CompanionAdSlot>?
-  )
+  abstract fun setCompanionSlots(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseDisplayContainer, companionSlots: List<com.google.ads.interactivemedia.v3.api.CompanionAdSlot>?)
 
   /** Unregisters all previously registered friendly obstructions. */
-  abstract fun unregisterAllFriendlyObstructions(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
-  )
+  abstract fun unregisterAllFriendlyObstructions(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseDisplayContainer)
 
   companion object {
     @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonApiBaseDisplayContainer?
-    ) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiBaseDisplayContainer?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.getAdContainer",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.getAdContainer", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getAdContainer(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
+            val wrapped: List<Any?> = try {
+              listOf(api.getAdContainer(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -1694,22 +1605,16 @@ abstract class PigeonApiBaseDisplayContainer(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.getCompanionSlots",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.getCompanionSlots", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getCompanionSlots(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
+            val wrapped: List<Any?> = try {
+              listOf(api.getCompanionSlots(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -1717,25 +1622,18 @@ abstract class PigeonApiBaseDisplayContainer(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.registerFriendlyObstruction",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.registerFriendlyObstruction", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
-            val friendlyObstructionArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.FriendlyObstruction
-            val wrapped: List<Any?> =
-                try {
-                  api.registerFriendlyObstruction(pigeon_instanceArg, friendlyObstructionArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
+            val friendlyObstructionArg = args[1] as com.google.ads.interactivemedia.v3.api.FriendlyObstruction
+            val wrapped: List<Any?> = try {
+              api.registerFriendlyObstruction(pigeon_instanceArg, friendlyObstructionArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -1743,25 +1641,18 @@ abstract class PigeonApiBaseDisplayContainer(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.setCompanionSlots",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.setCompanionSlots", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
-            val companionSlotsArg =
-                args[1] as List<com.google.ads.interactivemedia.v3.api.CompanionAdSlot>?
-            val wrapped: List<Any?> =
-                try {
-                  api.setCompanionSlots(pigeon_instanceArg, companionSlotsArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
+            val companionSlotsArg = args[1] as List<com.google.ads.interactivemedia.v3.api.CompanionAdSlot>?
+            val wrapped: List<Any?> = try {
+              api.setCompanionSlots(pigeon_instanceArg, companionSlotsArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -1769,23 +1660,17 @@ abstract class PigeonApiBaseDisplayContainer(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.unregisterAllFriendlyObstructions",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.unregisterAllFriendlyObstructions", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
-            val wrapped: List<Any?> =
-                try {
-                  api.unregisterAllFriendlyObstructions(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
+            val wrapped: List<Any?> = try {
+              api.unregisterAllFriendlyObstructions(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -1796,11 +1681,9 @@ abstract class PigeonApiBaseDisplayContainer(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of BaseDisplayContainer and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.BaseDisplayContainer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of BaseDisplayContainer and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.BaseDisplayContainer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -1811,12 +1694,10 @@ abstract class PigeonApiBaseDisplayContainer(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.pigeon_newInstance"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
@@ -1827,97 +1708,67 @@ abstract class PigeonApiBaseDisplayContainer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * A companion ad slot for which the SDK should retrieve ads.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAdSlot.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAdSlot.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiCompanionAdSlot(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiCompanionAdSlot(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** Registers a listener for companion clicks. */
-  abstract fun addClickListener(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot,
-      clickListener: com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener
-  )
+  abstract fun addClickListener(pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot, clickListener: com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener)
 
   /** Returns the ViewGroup into which the companion will be rendered. */
-  abstract fun getContainer(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot
-  ): android.view.ViewGroup
+  abstract fun getContainer(pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot): android.view.ViewGroup
 
   /** Returns the height of the companion slot. */
-  abstract fun getHeight(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot
-  ): Long
+  abstract fun getHeight(pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot): Long
 
   /** Returns the width of the companion slot. */
-  abstract fun getWidth(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot
-  ): Long
+  abstract fun getWidth(pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot): Long
 
   /** Returns true if the companion slot is filled, false otherwise. */
-  abstract fun isFilled(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot
-  ): Boolean
+  abstract fun isFilled(pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot): Boolean
 
   /** Removes a listener for companion clicks. */
-  abstract fun removeClickListener(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot,
-      clickListener: com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener
-  )
+  abstract fun removeClickListener(pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot, clickListener: com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener)
 
   /**
    * Sets the ViewGroup into which the companion will be rendered.
    *
    * Required.
    */
-  abstract fun setContainer(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot,
-      container: android.view.ViewGroup
-  )
+  abstract fun setContainer(pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot, container: android.view.ViewGroup)
 
   /**
    * Sets the size of the slot.
    *
    * Only companions matching the slot size will be displayed in the slot.
    */
-  abstract fun setSize(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot,
-      width: Long,
-      height: Long
-  )
+  abstract fun setSize(pigeon_instance: com.google.ads.interactivemedia.v3.api.CompanionAdSlot, width: Long, height: Long)
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiCompanionAdSlot?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.addClickListener",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.addClickListener", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
-            val clickListenerArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener
-            val wrapped: List<Any?> =
-                try {
-                  api.addClickListener(pigeon_instanceArg, clickListenerArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+            val clickListenerArg = args[1] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener
+            val wrapped: List<Any?> = try {
+              api.addClickListener(pigeon_instanceArg, clickListenerArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -1925,22 +1776,16 @@ abstract class PigeonApiCompanionAdSlot(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.getContainer",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.getContainer", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getContainer(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+            val wrapped: List<Any?> = try {
+              listOf(api.getContainer(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -1948,22 +1793,16 @@ abstract class PigeonApiCompanionAdSlot(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.getHeight",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.getHeight", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getHeight(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+            val wrapped: List<Any?> = try {
+              listOf(api.getHeight(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -1971,22 +1810,16 @@ abstract class PigeonApiCompanionAdSlot(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.getWidth",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.getWidth", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getWidth(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+            val wrapped: List<Any?> = try {
+              listOf(api.getWidth(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -1994,22 +1827,16 @@ abstract class PigeonApiCompanionAdSlot(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.isFilled",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.isFilled", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.isFilled(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+            val wrapped: List<Any?> = try {
+              listOf(api.isFilled(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2017,25 +1844,18 @@ abstract class PigeonApiCompanionAdSlot(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.removeClickListener",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.removeClickListener", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
-            val clickListenerArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener
-            val wrapped: List<Any?> =
-                try {
-                  api.removeClickListener(pigeon_instanceArg, clickListenerArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+            val clickListenerArg = args[1] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener
+            val wrapped: List<Any?> = try {
+              api.removeClickListener(pigeon_instanceArg, clickListenerArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2043,24 +1863,18 @@ abstract class PigeonApiCompanionAdSlot(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.setContainer",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.setContainer", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
             val containerArg = args[1] as android.view.ViewGroup
-            val wrapped: List<Any?> =
-                try {
-                  api.setContainer(pigeon_instanceArg, containerArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setContainer(pigeon_instanceArg, containerArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2068,25 +1882,19 @@ abstract class PigeonApiCompanionAdSlot(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.setSize",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.setSize", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.CompanionAdSlot
             val widthArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
             val heightArg = args[2].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.setSize(pigeon_instanceArg, widthArg, heightArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setSize(pigeon_instanceArg, widthArg, heightArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2097,11 +1905,9 @@ abstract class PigeonApiCompanionAdSlot(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of CompanionAdSlot and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.CompanionAdSlot,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of CompanionAdSlot and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.CompanionAdSlot, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -2112,8 +1918,7 @@ abstract class PigeonApiCompanionAdSlot(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.pigeon_newInstance"
@@ -2127,49 +1932,36 @@ abstract class PigeonApiCompanionAdSlot(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * Listener interface for click events.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAdSlot.ClickListener.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAdSlot.ClickListener.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiCompanionAdSlotClickListener(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  abstract fun pigeon_defaultConstructor():
-      com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener
+abstract class PigeonApiCompanionAdSlotClickListener(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(): com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener
 
   companion object {
     @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonApiCompanionAdSlotClickListener?
-    ) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiCompanionAdSlotClickListener?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlotClickListener.pigeon_defaultConstructor",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlotClickListener.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2180,14 +1972,9 @@ abstract class PigeonApiCompanionAdSlotClickListener(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /**
-   * Creates a Dart instance of CompanionAdSlotClickListener and attaches it to
-   * [pigeon_instanceArg].
-   */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of CompanionAdSlotClickListener and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -2198,15 +1985,12 @@ abstract class PigeonApiCompanionAdSlotClickListener(
       Result.success(Unit)
       return
     }
-    throw IllegalStateException(
-        "Attempting to create a new Dart instance of CompanionAdSlotClickListener, but the class has a nonnull callback method.")
+    throw IllegalStateException("Attempting to create a new Dart instance of CompanionAdSlotClickListener, but the class has a nonnull callback method.")
   }
 
   /** Respond to a click on this companion ad slot. */
-  fun onCompanionAdClick(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun onCompanionAdClick(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -2215,8 +1999,7 @@ abstract class PigeonApiCompanionAdSlotClickListener(
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlotClickListener.onCompanionAdClick"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.CompanionAdSlotClickListener.onCompanionAdClick"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg)) {
       if (it is List<*>) {
@@ -2227,41 +2010,32 @@ abstract class PigeonApiCompanionAdSlotClickListener(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
- * An obstruction that is marked as "friendly" for viewability measurement purposes.
+ * An obstruction that is marked as "friendly" for viewability measurement
+ * purposes.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/FriendlyObstruction.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/FriendlyObstruction.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiFriendlyObstruction(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  /** The optional, detailed reasoning for registering this obstruction as friendly. */
-  abstract fun detailedReason(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.FriendlyObstruction
-  ): String?
+abstract class PigeonApiFriendlyObstruction(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  /**  The optional, detailed reasoning for registering this obstruction as friendly. */
+  abstract fun detailedReason(pigeon_instance: com.google.ads.interactivemedia.v3.api.FriendlyObstruction): String?
 
   /** The purpose for registering the obstruction as friendly. */
-  abstract fun purpose(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.FriendlyObstruction
-  ): FriendlyObstructionPurpose
+  abstract fun purpose(pigeon_instance: com.google.ads.interactivemedia.v3.api.FriendlyObstruction): FriendlyObstructionPurpose
 
   /** The view causing the obstruction. */
-  abstract fun view(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.FriendlyObstruction
-  ): android.view.View
+  abstract fun view(pigeon_instance: com.google.ads.interactivemedia.v3.api.FriendlyObstruction): android.view.View
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of FriendlyObstruction and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.FriendlyObstruction,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of FriendlyObstruction and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.FriendlyObstruction, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -2272,15 +2046,13 @@ abstract class PigeonApiFriendlyObstruction(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val detailedReasonArg = detailedReason(pigeon_instanceArg)
     val purposeArg = purpose(pigeon_instanceArg)
     val viewArg = view(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.FriendlyObstruction.pigeon_newInstance"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.FriendlyObstruction.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg, detailedReasonArg, purposeArg, viewArg)) {
       if (it is List<*>) {
@@ -2291,46 +2063,36 @@ abstract class PigeonApiFriendlyObstruction(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * A container in which to display the ads.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdDisplayContainer.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdDisplayContainer.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdDisplayContainer(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiAdDisplayContainer(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** The previously set player, or null if none has been set. */
-  abstract fun getPlayer(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdDisplayContainer
-  ): com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
+  abstract fun getPlayer(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdDisplayContainer): com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiAdDisplayContainer?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdDisplayContainer.getPlayer",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdDisplayContainer.getPlayer", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.AdDisplayContainer
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getPlayer(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdDisplayContainer
+            val wrapped: List<Any?> = try {
+              listOf(api.getPlayer(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2341,11 +2103,9 @@ abstract class PigeonApiAdDisplayContainer(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdDisplayContainer and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdDisplayContainer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdDisplayContainer and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdDisplayContainer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -2356,12 +2116,10 @@ abstract class PigeonApiAdDisplayContainer(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.AdDisplayContainer.pigeon_newInstance"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.AdDisplayContainer.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
@@ -2372,104 +2130,79 @@ abstract class PigeonApiAdDisplayContainer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonApiBaseDisplayContainer] used to access callback methods */
-  fun pigeon_getPigeonApiBaseDisplayContainer(): PigeonApiBaseDisplayContainer {
+  /**An implementation of [PigeonApiBaseDisplayContainer] used to access callback methods */
+  fun pigeon_getPigeonApiBaseDisplayContainer(): PigeonApiBaseDisplayContainer
+  {
     return pigeonRegistrar.getPigeonApiBaseDisplayContainer()
   }
+
 }
 /**
- * An object which allows publishers to request ads from ad servers or a dynamic ad insertion
- * stream.
+ * An object which allows publishers to request ads from ad servers or a
+ * dynamic ad insertion stream.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsLoader.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsLoader.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdsLoader(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiAdsLoader(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** Registers a listener for errors that occur during the ads request. */
-  abstract fun addAdErrorListener(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader,
-      listener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
-  )
+  abstract fun addAdErrorListener(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader, listener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener)
 
   /** Registers a listener for the ads manager loaded event. */
-  abstract fun addAdsLoadedListener(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader,
-      listener: com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener
-  )
+  abstract fun addAdsLoadedListener(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader, listener: com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener)
 
   /** Requests ads from a server. */
-  abstract fun requestAds(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader,
-      request: com.google.ads.interactivemedia.v3.api.AdsRequest
-  )
+  abstract fun requestAds(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader, request: com.google.ads.interactivemedia.v3.api.AdsRequest)
 
   /**
    * Returns the IMA SDK settings instance.
    *
-   * To change the settings, just call the methods on the instance. The changes will apply for all
-   * ad requests made with this ads loader.
+   * To change the settings, just call the methods on the instance. The changes
+   * will apply for all ad requests made with this ads loader.
    */
-  abstract fun getSettings(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader
-  ): com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+  abstract fun getSettings(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader): com.google.ads.interactivemedia.v3.api.ImaSdkSettings
 
   /**
-   * Frees resources from the BaseDisplayContainer as well as the underlying WebView.
+   * Frees resources from the BaseDisplayContainer as well as the underlying
+   * WebView.
    *
-   * This should occur after disposing of the `BaseManager` using `BaseManager.destroy()` and after
-   * the manager has finished its own cleanup, as indicated by `AdEventType.ALL_ADS_COMPLETED`
+   * This should occur after disposing of the `BaseManager` using
+   * `BaseManager.destroy()` and after the manager has finished its own
+   * cleanup, as indicated by `AdEventType.ALL_ADS_COMPLETED`
    */
   abstract fun release(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader)
 
   /** Removes a listener for error events. */
-  abstract fun removeAdErrorListener(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader,
-      errorListener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
-  )
+  abstract fun removeAdErrorListener(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader, errorListener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener)
 
   /** Removes a listener for the ads manager loaded event. */
-  abstract fun removeAdsLoadedListener(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader,
-      loadedListener: com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener
-  )
+  abstract fun removeAdsLoadedListener(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader, loadedListener: com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener)
 
   /** Initiates a stream session with server-side ad insertion. */
-  abstract fun requestStream(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader,
-      streamRequest: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): String
+  abstract fun requestStream(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsLoader, streamRequest: com.google.ads.interactivemedia.v3.api.StreamRequest): String
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiAdsLoader?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsLoader.addAdErrorListener",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsLoader.addAdErrorListener", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsLoader
-            val listenerArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
-            val wrapped: List<Any?> =
-                try {
-                  api.addAdErrorListener(pigeon_instanceArg, listenerArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val listenerArg = args[1] as com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
+            val wrapped: List<Any?> = try {
+              api.addAdErrorListener(pigeon_instanceArg, listenerArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2477,24 +2210,18 @@ abstract class PigeonApiAdsLoader(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsLoader.addAdsLoadedListener",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsLoader.addAdsLoadedListener", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsLoader
-            val listenerArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener
-            val wrapped: List<Any?> =
-                try {
-                  api.addAdsLoadedListener(pigeon_instanceArg, listenerArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val listenerArg = args[1] as com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener
+            val wrapped: List<Any?> = try {
+              api.addAdsLoadedListener(pigeon_instanceArg, listenerArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2502,23 +2229,18 @@ abstract class PigeonApiAdsLoader(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsLoader.requestAds",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsLoader.requestAds", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsLoader
             val requestArg = args[1] as com.google.ads.interactivemedia.v3.api.AdsRequest
-            val wrapped: List<Any?> =
-                try {
-                  api.requestAds(pigeon_instanceArg, requestArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.requestAds(pigeon_instanceArg, requestArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2526,21 +2248,16 @@ abstract class PigeonApiAdsLoader(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsLoader.getSettings",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsLoader.getSettings", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsLoader
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getSettings(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getSettings(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2548,22 +2265,17 @@ abstract class PigeonApiAdsLoader(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsLoader.release",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsLoader.release", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsLoader
-            val wrapped: List<Any?> =
-                try {
-                  api.release(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.release(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2571,24 +2283,18 @@ abstract class PigeonApiAdsLoader(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsLoader.removeAdErrorListener",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsLoader.removeAdErrorListener", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsLoader
-            val errorListenerArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
-            val wrapped: List<Any?> =
-                try {
-                  api.removeAdErrorListener(pigeon_instanceArg, errorListenerArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val errorListenerArg = args[1] as com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
+            val wrapped: List<Any?> = try {
+              api.removeAdErrorListener(pigeon_instanceArg, errorListenerArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2596,24 +2302,18 @@ abstract class PigeonApiAdsLoader(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsLoader.removeAdsLoadedListener",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsLoader.removeAdsLoadedListener", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsLoader
-            val loadedListenerArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener
-            val wrapped: List<Any?> =
-                try {
-                  api.removeAdsLoadedListener(pigeon_instanceArg, loadedListenerArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val loadedListenerArg = args[1] as com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener
+            val wrapped: List<Any?> = try {
+              api.removeAdsLoadedListener(pigeon_instanceArg, loadedListenerArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2621,22 +2321,17 @@ abstract class PigeonApiAdsLoader(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsLoader.requestStream",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsLoader.requestStream", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsLoader
             val streamRequestArg = args[1] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.requestStream(pigeon_instanceArg, streamRequestArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.requestStream(pigeon_instanceArg, streamRequestArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2647,11 +2342,9 @@ abstract class PigeonApiAdsLoader(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdsLoader and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdsLoader,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdsLoader and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdsLoader, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -2662,8 +2355,7 @@ abstract class PigeonApiAdsLoader(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.AdsLoader.pigeon_newInstance"
@@ -2677,73 +2369,54 @@ abstract class PigeonApiAdsLoader(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * Base interface for requesting ads.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseRequest.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseRequest.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiBaseRequest(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  /** Returns the deep link to the content's screen provided in `setContentUrl()`. */
-  abstract fun getContentUrl(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseRequest
-  ): String
+abstract class PigeonApiBaseRequest(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  /**
+   * Returns the deep link to the content's screen provided in
+   * `setContentUrl()`.
+   */
+  abstract fun getContentUrl(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseRequest): String
 
   /** Returns the Secure Signals with custom data. */
-  abstract fun getSecureSignals(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseRequest
-  ): com.google.ads.interactivemedia.v3.api.signals.SecureSignals?
+  abstract fun getSecureSignals(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseRequest): com.google.ads.interactivemedia.v3.api.signals.SecureSignals?
 
   /** Returns the user-provided object that is associated with the request. */
-  abstract fun getUserRequestContext(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseRequest
-  ): Any
+  abstract fun getUserRequestContext(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseRequest): Any?
 
   /** Specifies the deep link to the content's screen. */
-  abstract fun setContentUrl(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseRequest,
-      url: String
-  )
+  abstract fun setContentUrl(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseRequest, url: String)
 
   /** Specifies the Secure Signals with custom data for this request. */
-  abstract fun setSecureSignals(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseRequest,
-      signal: com.google.ads.interactivemedia.v3.api.signals.SecureSignals?
-  )
+  abstract fun setSecureSignals(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseRequest, signal: com.google.ads.interactivemedia.v3.api.signals.SecureSignals?)
 
   /** Sets the user-provided object that is associated with the request. */
-  abstract fun setUserRequestContext(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseRequest,
-      userRequestContext: Any
-  )
+  abstract fun setUserRequestContext(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseRequest, userRequestContext: Any)
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiBaseRequest?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseRequest.getContentUrl",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseRequest.getContentUrl", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getContentUrl(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getContentUrl(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2751,21 +2424,16 @@ abstract class PigeonApiBaseRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseRequest.getSecureSignals",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseRequest.getSecureSignals", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getSecureSignals(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getSecureSignals(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2773,21 +2441,16 @@ abstract class PigeonApiBaseRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseRequest.getUserRequestContext",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseRequest.getUserRequestContext", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getUserRequestContext(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getUserRequestContext(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2795,23 +2458,18 @@ abstract class PigeonApiBaseRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseRequest.setContentUrl",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseRequest.setContentUrl", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseRequest
             val urlArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  api.setContentUrl(pigeon_instanceArg, urlArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setContentUrl(pigeon_instanceArg, urlArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2819,23 +2477,18 @@ abstract class PigeonApiBaseRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseRequest.setSecureSignals",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseRequest.setSecureSignals", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseRequest
             val signalArg = args[1] as com.google.ads.interactivemedia.v3.api.signals.SecureSignals?
-            val wrapped: List<Any?> =
-                try {
-                  api.setSecureSignals(pigeon_instanceArg, signalArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setSecureSignals(pigeon_instanceArg, signalArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2843,23 +2496,18 @@ abstract class PigeonApiBaseRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseRequest.setUserRequestContext",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseRequest.setUserRequestContext", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseRequest
             val userRequestContextArg = args[1] as Any
-            val wrapped: List<Any?> =
-                try {
-                  api.setUserRequestContext(pigeon_instanceArg, userRequestContextArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setUserRequestContext(pigeon_instanceArg, userRequestContextArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2870,11 +2518,9 @@ abstract class PigeonApiBaseRequest(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of BaseRequest and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.BaseRequest,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of BaseRequest and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.BaseRequest, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -2885,8 +2531,7 @@ abstract class PigeonApiBaseRequest(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.BaseRequest.pigeon_newInstance"
@@ -2900,53 +2545,42 @@ abstract class PigeonApiBaseRequest(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * Base interface for requesting ads.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseRequest.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseRequest.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiSecureSignals(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiSecureSignals(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** Secure Signal. */
-  abstract fun secureSignal(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.signals.SecureSignals
-  ): String
+  abstract fun secureSignal(pigeon_instance: com.google.ads.interactivemedia.v3.api.signals.SecureSignals): String
 
   /**
-   * Creates a new SecureSignals object that will contain all the necessary information for a secure
-   * signal.
+   * Creates a new SecureSignals object that will contain all the necessary
+   * information for a secure signal.
    */
-  abstract fun create(
-      customData: String
-  ): com.google.ads.interactivemedia.v3.api.signals.SecureSignals
+  abstract fun create(customData: String): com.google.ads.interactivemedia.v3.api.signals.SecureSignals
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiSecureSignals?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.SecureSignals.create",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.SecureSignals.create", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val customDataArg = args[0] as String
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.create(customDataArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.create(customDataArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -2957,11 +2591,9 @@ abstract class PigeonApiSecureSignals(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of SecureSignals and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.signals.SecureSignals,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of SecureSignals and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.signals.SecureSignals, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -2972,8 +2604,7 @@ abstract class PigeonApiSecureSignals(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val secureSignalArg = secureSignal(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
@@ -2988,47 +2619,38 @@ abstract class PigeonApiSecureSignals(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
- * An event raised when ads are successfully loaded from the ad server through an AdsLoader.
+ * An event raised when ads are successfully loaded from the ad server through
+ * an AdsLoader.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsManagerLoadedEvent.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsManagerLoadedEvent.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdsManagerLoadedEvent(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiAdsManagerLoadedEvent(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /**
-   * The ads manager that will control playback of the loaded ads, or null when using dynamic ad
-   * insertion.
+   * The ads manager that will control playback of the loaded ads, or null when
+   * using dynamic ad insertion.
    */
-  abstract fun adsManager(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent
-  ): com.google.ads.interactivemedia.v3.api.AdsManager?
+  abstract fun adsManager(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent): com.google.ads.interactivemedia.v3.api.AdsManager?
 
   /**
-   * the stream manager for the current dynamic ad insertion stream, or null when requesting ads
-   * directly.
+   * the stream manager for the current dynamic ad insertion stream, or null
+   * when requesting ads directly.
    */
-  abstract fun streamManager(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent
-  ): com.google.ads.interactivemedia.v3.api.StreamManager?
+  abstract fun streamManager(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent): com.google.ads.interactivemedia.v3.api.StreamManager?
 
   /** The user-provided object that is associated with the ads request. */
-  abstract fun userRequestContext(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent
-  ): Any
+  abstract fun userRequestContext(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent): Any?
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdsManagerLoadedEvent and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdsManagerLoadedEvent and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -3039,122 +2661,97 @@ abstract class PigeonApiAdsManagerLoadedEvent(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val adsManagerArg = adsManager(pigeon_instanceArg)
     val streamManagerArg = streamManager(pigeon_instanceArg)
     val userRequestContextArg = userRequestContext(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.AdsManagerLoadedEvent.pigeon_newInstance"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.AdsManagerLoadedEvent.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(
-        listOf(pigeon_identifierArg, adsManagerArg, streamManagerArg, userRequestContextArg)) {
-          if (it is List<*>) {
-            if (it.size > 1) {
-              callback(
-                  Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
-            } else {
-              callback(Result.success(Unit))
-            }
-          } else {
-            callback(Result.failure(createConnectionError(channelName)))
-          }
+    channel.send(listOf(pigeon_identifierArg, adsManagerArg, streamManagerArg, userRequestContextArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
         }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
   }
+
 }
 /**
  * An object which manages dynamic ad insertion streams.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/StreamManager.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/StreamManager.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiStreamManager(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiStreamManager(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /**
-   * Converts time offset within the stream to time offset of the underlying content, excluding ads.
+   * Converts time offset within the stream to time offset of the underlying
+   * content, excluding ads.
    */
-  abstract fun getContentTimeMsForStreamTimeMs(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamManager,
-      streamTimeMs: Long
-  ): Long
+  abstract fun getContentTimeMsForStreamTimeMs(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamManager, streamTimeMs: Long): Long
 
   /**
-   * Returns the CuePoints for the current VOD stream, which are available after cuepointsChanged is
-   * broadcast
+   * Returns the CuePoints for the current VOD stream, which are available
+   * after cuepointsChanged is broadcast
    */
-  abstract fun getCuePoints(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamManager
-  ): List<com.google.ads.interactivemedia.v3.api.CuePoint>
+  abstract fun getCuePoints(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamManager): List<com.google.ads.interactivemedia.v3.api.CuePoint>
 
   /**
    * Returns the previous cuepoint for the given VOD stream time.
    *
-   * Returns null if there is no previous cue point, or if called for a live stream.
+   * Returns null if there is no previous cue point, or if called for a live
+   * stream.
    */
-  abstract fun getPreviousCuePointForStreamTimeMs(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamManager,
-      streamTimeMs: Long
-  ): com.google.ads.interactivemedia.v3.api.CuePoint?
+  abstract fun getPreviousCuePointForStreamTimeMs(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamManager, streamTimeMs: Long): com.google.ads.interactivemedia.v3.api.CuePoint?
 
   /**
-   * Get the identifier used during server side ad insertion to uniquely identify a stream.
+   * Get the identifier used during server side ad insertion to uniquely
+   * identify a stream.
    *
    * Returns null if server side ad insertion was not used.
    */
-  abstract fun getStreamId(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamManager
-  ): String
+  abstract fun getStreamId(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamManager): String
 
   /**
-   * Converts time offset within the content to time offset of the underlying stream, including ads.
+   * Converts time offset within the content to time offset of the underlying
+   * stream, including ads.
    */
-  abstract fun getStreamTimeMsForContentTimeMs(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamManager,
-      contentTimeMs: Long
-  ): Long
+  abstract fun getStreamTimeMsForContentTimeMs(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamManager, contentTimeMs: Long): Long
 
   /**
-   * Requests SDK to retrieve the ad metadata and then load the provided streamManifestUrl and
-   * streamSubtitles into player.
+   * Requests SDK to retrieve the ad metadata and then load the provided
+   * streamManifestUrl and streamSubtitles into player.
    */
-  abstract fun loadThirdPartyStream(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamManager,
-      streamUrl: String,
-      streamSubtitles: List<Map<String, String>>
-  )
+  abstract fun loadThirdPartyStream(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamManager, streamUrl: String, streamSubtitles: List<Map<String, String>>)
 
-  /** Replaces all the ad tag parameters used for the upcoming ad requests for a live stream. */
-  abstract fun replaceAdTagParameters(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamManager,
-      adTagParameters: Map<String, String>
-  )
+  /**
+   * Replaces all the ad tag parameters used for the upcoming ad requests for a
+   * live stream.
+   */
+  abstract fun replaceAdTagParameters(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamManager, adTagParameters: Map<String, String>)
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiStreamManager?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamManager.getContentTimeMsForStreamTimeMs",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamManager.getContentTimeMsForStreamTimeMs", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamManager
-            val streamTimeMsArg =
-                args[1].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getContentTimeMsForStreamTimeMs(pigeon_instanceArg, streamTimeMsArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val streamTimeMsArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              listOf(api.getContentTimeMsForStreamTimeMs(pigeon_instanceArg, streamTimeMsArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3162,21 +2759,16 @@ abstract class PigeonApiStreamManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamManager.getCuePoints",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamManager.getCuePoints", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamManager
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getCuePoints(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getCuePoints(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3184,24 +2776,17 @@ abstract class PigeonApiStreamManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamManager.getPreviousCuePointForStreamTimeMs",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamManager.getPreviousCuePointForStreamTimeMs", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamManager
-            val streamTimeMsArg =
-                args[1].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  listOf(
-                      api.getPreviousCuePointForStreamTimeMs(pigeon_instanceArg, streamTimeMsArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val streamTimeMsArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              listOf(api.getPreviousCuePointForStreamTimeMs(pigeon_instanceArg, streamTimeMsArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3209,21 +2794,16 @@ abstract class PigeonApiStreamManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamManager.getStreamId",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamManager.getStreamId", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamManager
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getStreamId(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getStreamId(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3231,23 +2811,17 @@ abstract class PigeonApiStreamManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamManager.getStreamTimeMsForContentTimeMs",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamManager.getStreamTimeMsForContentTimeMs", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamManager
-            val contentTimeMsArg =
-                args[1].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getStreamTimeMsForContentTimeMs(pigeon_instanceArg, contentTimeMsArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val contentTimeMsArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              listOf(api.getStreamTimeMsForContentTimeMs(pigeon_instanceArg, contentTimeMsArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3255,24 +2829,19 @@ abstract class PigeonApiStreamManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamManager.loadThirdPartyStream",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamManager.loadThirdPartyStream", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamManager
             val streamUrlArg = args[1] as String
             val streamSubtitlesArg = args[2] as List<Map<String, String>>
-            val wrapped: List<Any?> =
-                try {
-                  api.loadThirdPartyStream(pigeon_instanceArg, streamUrlArg, streamSubtitlesArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.loadThirdPartyStream(pigeon_instanceArg, streamUrlArg, streamSubtitlesArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3280,23 +2849,18 @@ abstract class PigeonApiStreamManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamManager.replaceAdTagParameters",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamManager.replaceAdTagParameters", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamManager
             val adTagParametersArg = args[1] as Map<String, String>
-            val wrapped: List<Any?> =
-                try {
-                  api.replaceAdTagParameters(pigeon_instanceArg, adTagParametersArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.replaceAdTagParameters(pigeon_instanceArg, adTagParametersArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3307,11 +2871,9 @@ abstract class PigeonApiStreamManager(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of StreamManager and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.StreamManager,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of StreamManager and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.StreamManager, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -3322,8 +2884,7 @@ abstract class PigeonApiStreamManager(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.StreamManager.pigeon_newInstance"
@@ -3337,42 +2898,35 @@ abstract class PigeonApiStreamManager(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonApiBaseManager] used to access callback methods */
-  fun pigeon_getPigeonApiBaseManager(): PigeonApiBaseManager {
+  /**An implementation of [PigeonApiBaseManager] used to access callback methods */
+  fun pigeon_getPigeonApiBaseManager(): PigeonApiBaseManager
+  {
     return pigeonRegistrar.getPigeonApiBaseManager()
   }
+
 }
 /**
  * An event raised when there is an error loading or playing ads.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdErrorEvent.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdErrorEvent.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdErrorEvent(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiAdErrorEvent(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** The AdError that caused this event. */
-  abstract fun error(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdErrorEvent
-  ): com.google.ads.interactivemedia.v3.api.AdError
+  abstract fun error(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdErrorEvent): com.google.ads.interactivemedia.v3.api.AdError
 
   /** The user-provided object that is associated with the ads request. */
-  abstract fun userRequestContext(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdErrorEvent
-  ): Any
+  abstract fun userRequestContext(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdErrorEvent): Any?
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdErrorEvent and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdErrorEvent,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdErrorEvent and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdErrorEvent, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -3383,8 +2937,7 @@ abstract class PigeonApiAdErrorEvent(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val errorArg = error(pigeon_instanceArg)
     val userRequestContextArg = userRequestContext(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3400,44 +2953,34 @@ abstract class PigeonApiAdErrorEvent(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * An error that occurred in the SDK.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdError.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdError.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdError(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiAdError(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** The error's code. */
-  abstract fun errorCode(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdError
-  ): AdErrorCode
+  abstract fun errorCode(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdError): AdErrorCode
 
   /** The error code's number. */
-  abstract fun errorCodeNumber(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdError
-  ): Long
+  abstract fun errorCodeNumber(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdError): Long
 
   /** The error's type. */
-  abstract fun errorType(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdError
-  ): AdErrorType
+  abstract fun errorType(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdError): AdErrorType
 
   /** A human-readable summary of the error. */
   abstract fun message(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdError): String
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdError and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdError,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdError and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdError, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -3448,8 +2991,7 @@ abstract class PigeonApiAdError(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val errorCodeArg = errorCode(pigeon_instanceArg)
     val errorCodeNumberArg = errorCodeNumber(pigeon_instanceArg)
     val errorTypeArg = errorType(pigeon_instanceArg)
@@ -3458,152 +3000,110 @@ abstract class PigeonApiAdError(
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.AdError.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(
-        listOf(pigeon_identifierArg, errorCodeArg, errorCodeNumberArg, errorTypeArg, messageArg)) {
-          if (it is List<*>) {
-            if (it.size > 1) {
-              callback(
-                  Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
-            } else {
-              callback(Result.success(Unit))
-            }
-          } else {
-            callback(Result.failure(createConnectionError(channelName)))
-          }
+    channel.send(listOf(pigeon_identifierArg, errorCodeArg, errorCodeNumberArg, errorTypeArg, messageArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
         }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
   }
+
 }
 /**
  * An object containing the data used to request ads from the server.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsRequest.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsRequest.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdsRequest(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiAdsRequest(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** Sets the URL from which ads will be requested. */
-  abstract fun setAdTagUrl(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      adTagUrl: String
-  )
+  abstract fun setAdTagUrl(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest, adTagUrl: String)
 
   /**
-   * Attaches a ContentProgressProvider instance to allow scheduling ad breaks based on content
-   * progress (cue points).
+   * Attaches a ContentProgressProvider instance to allow scheduling ad breaks
+   * based on content progress (cue points).
    */
-  abstract fun setContentProgressProvider(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      provider: com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
-  )
+  abstract fun setContentProgressProvider(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest, provider: com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider)
 
   /** Returns the URL from which ads will be requested. */
-  abstract fun getAdTagUrl(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest
-  ): String
+  abstract fun getAdTagUrl(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest): String
 
   /** Returns the progress provider that will be used to schedule ad breaks. */
-  abstract fun getContentProgressProvider(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest
-  ): com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
+  abstract fun getContentProgressProvider(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest): com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
 
   /**
-   * Notifies the SDK whether the player intends to start the content and ad in response to a user
-   * action or whether it will be automatically played.
+   * Notifies the SDK whether the player intends to start the content and ad in
+   * response to a user action or whether it will be automatically played.
    *
    * Not calling this function leaves the setting as unknown.
    */
-  abstract fun setAdWillAutoPlay(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      willAutoPlay: Boolean
-  )
-
-  /** Notifies the SDK whether the player intends to start the content and ad while muted. */
-  abstract fun setAdWillPlayMuted(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      willPlayMuted: Boolean
-  )
+  abstract fun setAdWillAutoPlay(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest, willAutoPlay: Boolean)
 
   /**
-   * Specifies a VAST, VMAP, or ad rules response to be used instead of making a request through an
-   * ad tag URL.
+   * Notifies the SDK whether the player intends to start the content and ad
+   * while muted.
    */
-  abstract fun setAdsResponse(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      cannedAdResponse: String
-  )
+  abstract fun setAdWillPlayMuted(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest, willPlayMuted: Boolean)
+
+  /**
+   * Specifies a VAST, VMAP, or ad rules response to be used instead of making
+   * a request through an ad tag URL.
+   */
+  abstract fun setAdsResponse(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest, cannedAdResponse: String)
 
   /** Specifies the duration of the content in seconds to be shown */
-  abstract fun setContentDuration(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      duration: Double
-  )
+  abstract fun setContentDuration(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest, duration: Double)
 
   /** Specifies the keywords used to describe the content to be shown. */
-  abstract fun setContentKeywords(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      keywords: List<String>
-  )
+  abstract fun setContentKeywords(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest, keywords: List<String>)
 
   /** Specifies the title of the content to be shown. */
-  abstract fun setContentTitle(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      title: String
-  )
+  abstract fun setContentTitle(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest, title: String)
 
   /**
-   * Notifies the SDK whether the player intends to continuously play the content videos one after
-   * another similar to TV broadcast.
+   * Notifies the SDK whether the player intends to continuously play the
+   * content videos one after another similar to TV broadcast.
    *
    * Not calling this function leaves the setting as unknown.
    */
-  abstract fun setContinuousPlayback(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      continuousPlayback: Boolean
-  )
+  abstract fun setContinuousPlayback(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest, continuousPlayback: Boolean)
 
   /**
-   * Specifies the maximum amount of time to wait in seconds, after calling requestAds, before
-   * requesting the ad tag URL.
+   * Specifies the maximum amount of time to wait in seconds, after calling
+   * requestAds, before requesting the ad tag URL.
    */
-  abstract fun setLiveStreamPrefetchSeconds(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      prefetchTime: Double
-  )
+  abstract fun setLiveStreamPrefetchSeconds(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest, prefetchTime: Double)
 
   /**
    * Specifies the VAST load timeout in milliseconds for a single wrapper.
    *
-   * This parameter is optional and will override the default timeout, currently set to 5000ms.
+   * This parameter is optional and will override the default timeout,
+   * currently set to 5000ms.
    */
-  abstract fun setVastLoadTimeout(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      timeout: Double
-  )
+  abstract fun setVastLoadTimeout(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest, timeout: Double)
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiAdsRequest?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setAdTagUrl",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setAdTagUrl", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
             val adTagUrlArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  api.setAdTagUrl(pigeon_instanceArg, adTagUrlArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setAdTagUrl(pigeon_instanceArg, adTagUrlArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3611,24 +3111,18 @@ abstract class PigeonApiAdsRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContentProgressProvider",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContentProgressProvider", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
-            val providerArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
-            val wrapped: List<Any?> =
-                try {
-                  api.setContentProgressProvider(pigeon_instanceArg, providerArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val providerArg = args[1] as com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
+            val wrapped: List<Any?> = try {
+              api.setContentProgressProvider(pigeon_instanceArg, providerArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3636,21 +3130,16 @@ abstract class PigeonApiAdsRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRequest.getAdTagUrl",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRequest.getAdTagUrl", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getAdTagUrl(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getAdTagUrl(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3658,21 +3147,16 @@ abstract class PigeonApiAdsRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRequest.getContentProgressProvider",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRequest.getContentProgressProvider", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getContentProgressProvider(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getContentProgressProvider(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3680,23 +3164,18 @@ abstract class PigeonApiAdsRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setAdWillAutoPlay",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setAdWillAutoPlay", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
             val willAutoPlayArg = args[1] as Boolean
-            val wrapped: List<Any?> =
-                try {
-                  api.setAdWillAutoPlay(pigeon_instanceArg, willAutoPlayArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setAdWillAutoPlay(pigeon_instanceArg, willAutoPlayArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3704,23 +3183,18 @@ abstract class PigeonApiAdsRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setAdWillPlayMuted",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setAdWillPlayMuted", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
             val willPlayMutedArg = args[1] as Boolean
-            val wrapped: List<Any?> =
-                try {
-                  api.setAdWillPlayMuted(pigeon_instanceArg, willPlayMutedArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setAdWillPlayMuted(pigeon_instanceArg, willPlayMutedArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3728,23 +3202,18 @@ abstract class PigeonApiAdsRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setAdsResponse",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setAdsResponse", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
             val cannedAdResponseArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  api.setAdsResponse(pigeon_instanceArg, cannedAdResponseArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setAdsResponse(pigeon_instanceArg, cannedAdResponseArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3752,23 +3221,18 @@ abstract class PigeonApiAdsRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContentDuration",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContentDuration", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
             val durationArg = args[1] as Double
-            val wrapped: List<Any?> =
-                try {
-                  api.setContentDuration(pigeon_instanceArg, durationArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setContentDuration(pigeon_instanceArg, durationArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3776,23 +3240,18 @@ abstract class PigeonApiAdsRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContentKeywords",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContentKeywords", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
             val keywordsArg = args[1] as List<String>
-            val wrapped: List<Any?> =
-                try {
-                  api.setContentKeywords(pigeon_instanceArg, keywordsArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setContentKeywords(pigeon_instanceArg, keywordsArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3800,23 +3259,18 @@ abstract class PigeonApiAdsRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContentTitle",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContentTitle", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
             val titleArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  api.setContentTitle(pigeon_instanceArg, titleArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setContentTitle(pigeon_instanceArg, titleArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3824,23 +3278,18 @@ abstract class PigeonApiAdsRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContinuousPlayback",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContinuousPlayback", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
             val continuousPlaybackArg = args[1] as Boolean
-            val wrapped: List<Any?> =
-                try {
-                  api.setContinuousPlayback(pigeon_instanceArg, continuousPlaybackArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setContinuousPlayback(pigeon_instanceArg, continuousPlaybackArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3848,23 +3297,18 @@ abstract class PigeonApiAdsRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setLiveStreamPrefetchSeconds",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setLiveStreamPrefetchSeconds", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
             val prefetchTimeArg = args[1] as Double
-            val wrapped: List<Any?> =
-                try {
-                  api.setLiveStreamPrefetchSeconds(pigeon_instanceArg, prefetchTimeArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setLiveStreamPrefetchSeconds(pigeon_instanceArg, prefetchTimeArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3872,23 +3316,18 @@ abstract class PigeonApiAdsRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setVastLoadTimeout",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRequest.setVastLoadTimeout", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
             val timeoutArg = args[1] as Double
-            val wrapped: List<Any?> =
-                try {
-                  api.setVastLoadTimeout(pigeon_instanceArg, timeoutArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setVastLoadTimeout(pigeon_instanceArg, timeoutArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -3899,11 +3338,9 @@ abstract class PigeonApiAdsRequest(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdsRequest and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdsRequest and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdsRequest, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -3914,8 +3351,7 @@ abstract class PigeonApiAdsRequest(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.AdsRequest.pigeon_newInstance"
@@ -3929,197 +3365,159 @@ abstract class PigeonApiAdsRequest(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonApiBaseRequest] used to access callback methods */
-  fun pigeon_getPigeonApiBaseRequest(): PigeonApiBaseRequest {
+  /**An implementation of [PigeonApiBaseRequest] used to access callback methods */
+  fun pigeon_getPigeonApiBaseRequest(): PigeonApiBaseRequest
+  {
     return pigeonRegistrar.getPigeonApiBaseRequest()
   }
+
 }
 /**
- * An object containing the data used to request a stream with server-side ad insertion.
+ * An object containing the data used to request a stream with server-side ad
+ * insertion.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/StreamRequest.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/StreamRequest.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiStreamRequest(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiStreamRequest(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /**
-   * Returns any parameters that the SDK will attempt to add to ad tags based on a call to
-   * setAdTagParameters().
+   * Returns any parameters that the SDK will attempt to add to ad tags based
+   * on a call to setAdTagParameters().
    */
-  abstract fun getAdTagParameters(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): Map<String, String>?
+  abstract fun getAdTagParameters(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest): Map<String, String>?
 
   /**
    * Returns the ad tag associated with this stream request.
    *
-   * Returns null for all stream requests other than cloud based video on demand request.
+   * Returns null for all stream requests other than cloud based video on
+   * demand request.
    */
-  abstract fun getAdTagUrl(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): String?
+  abstract fun getAdTagUrl(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest): String?
 
   /** Returns the API key for the ad server. */
-  abstract fun getApiKey(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): String
+  abstract fun getApiKey(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest): String
 
   /**
    * Returns the asset key for server-side ad insertion streams.
    *
    * Returns null for video on demand streams and pod streams.
    */
-  abstract fun getAssetKey(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): String?
+  abstract fun getAssetKey(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest): String?
 
   /** Returns the stream request authorization token. */
-  abstract fun getAuthToken(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): String
+  abstract fun getAuthToken(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest): String
 
   /**
-   * Returns the content source ID for video on demand server-side ad insertion streams.
+   * Returns the content source ID for video on demand server-side ad insertion
+   * streams.
    *
    * Returns null for live streams and pod streams.
    */
-  abstract fun getContentSourceId(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): String?
+  abstract fun getContentSourceId(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest): String?
 
   /**
    * Returns the source of the content for this stream request.
    *
-   * Returns null for all stream requests other than cloud based video on demand request
+   * Returns null for all stream requests other than cloud based video on
+   * demand request
    */
-  abstract fun getContentSourceUrl(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): String?
+  abstract fun getContentSourceUrl(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest): String?
 
   /**
    * Returns the custom asset key for a pod serving request.
    *
    * Returns null for live and video on demand streams.
    */
-  abstract fun getCustomAssetKey(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): String?
+  abstract fun getCustomAssetKey(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest): String?
 
   /** Returns the format of the stream request. */
-  abstract fun getFormat(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): StreamFormat
+  abstract fun getFormat(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest): StreamFormat
 
-  /** Returns the suffix that the SDK will append to the query of the stream manifest URL. */
-  abstract fun getManifestSuffix(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): String
+  /**
+   * Returns the suffix that the SDK will append to the query of the stream
+   * manifest URL.
+   */
+  abstract fun getManifestSuffix(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest): String
 
   /**
    * Returns the network code for a pod serving request.
    *
    * Returns null for live and video on demand streams.
    */
-  abstract fun getNetworkCode(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): String?
+  abstract fun getNetworkCode(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest): String?
 
   /**
    * Returns the video ID for video on demand server-side ad insertion streams.
    *
    * Returns null for live and pod streams.
    */
-  abstract fun getVideoId(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): String?
+  abstract fun getVideoId(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest): String?
 
   /**
-   * Returns the associated Video Stitcher-specific session options for a Video Stitcher stream
-   * request.
+   * Returns the associated Video Stitcher-specific session options for a Video
+   * Stitcher stream request.
    *
-   * This method will return null unless `setVideoStitcherSessionOptions` was called with some
-   * value(s).
+   * This method will return null unless `setVideoStitcherSessionOptions` was
+   * called with some value(s).
    */
-  abstract fun getVideoStitcherSessionOptions(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): Map<String, Any>?
+  abstract fun getVideoStitcherSessionOptions(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest): Map<String, Any>?
 
   /** The vodConfig ID for the VOD stream, as set up on the Video Stitcher. */
-  abstract fun getVodConfigId(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest
-  ): String?
+  abstract fun getVodConfigId(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest): String?
 
   /**
    * Sets the overridable ad tag parameters on the stream request.
    *
    * See https://support.google.com/admanager/answer/7320899.
    */
-  abstract fun setAdTagParameters(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest,
-      adTagParameters: Map<String, String>
-  )
+  abstract fun setAdTagParameters(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest, adTagParameters: Map<String, String>)
 
   /** Sets the stream request authorization token. */
-  abstract fun setAuthToken(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest,
-      authToken: String
-  )
+  abstract fun setAuthToken(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest, authToken: String)
 
   /** Sets the format of the stream request. */
-  abstract fun setFormat(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest,
-      format: StreamFormat
-  )
+  abstract fun setFormat(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest, format: StreamFormat)
 
   /**
-   * Sets the stream manifest's suffix, which will be appended to the stream manifest's URL.
+   * Sets the stream manifest's suffix, which will be appended to the stream
+   * manifest's URL.
    *
    * This setting is optional.
    */
-  abstract fun setManifestSuffix(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest,
-      manifestSuffix: String
-  )
+  abstract fun setManifestSuffix(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest, manifestSuffix: String)
 
-  /** Sets the ID to be used to debug the stream with the stream activity monitor. */
-  abstract fun setStreamActivityMonitorId(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest,
-      streamActivityMonitorId: String
-  )
+  /**
+   * Sets the ID to be used to debug the stream with the stream activity
+   * monitor.
+   */
+  abstract fun setStreamActivityMonitorId(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest, streamActivityMonitorId: String)
 
-  /** Sets Video Stitcher-specific session options for a Video Stitcher stream request. */
-  abstract fun setVideoStitcherSessionOptions(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest,
-      videoStitcherSessionOptions: Map<String, Any>
-  )
+  /**
+   * Sets Video Stitcher-specific session options for a Video Stitcher stream
+   * request.
+   */
+  abstract fun setVideoStitcherSessionOptions(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamRequest, videoStitcherSessionOptions: Map<String, Any>)
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiStreamRequest?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getAdTagParameters",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getAdTagParameters", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getAdTagParameters(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getAdTagParameters(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4127,21 +3525,16 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getAdTagUrl",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getAdTagUrl", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getAdTagUrl(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getAdTagUrl(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4149,21 +3542,16 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getApiKey",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getApiKey", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getApiKey(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getApiKey(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4171,21 +3559,16 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getAssetKey",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getAssetKey", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getAssetKey(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getAssetKey(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4193,21 +3576,16 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getAuthToken",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getAuthToken", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getAuthToken(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getAuthToken(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4215,21 +3593,16 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getContentSourceId",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getContentSourceId", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getContentSourceId(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getContentSourceId(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4237,21 +3610,16 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getContentSourceUrl",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getContentSourceUrl", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getContentSourceUrl(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getContentSourceUrl(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4259,21 +3627,16 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getCustomAssetKey",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getCustomAssetKey", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getCustomAssetKey(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getCustomAssetKey(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4281,21 +3644,16 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getFormat",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getFormat", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getFormat(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getFormat(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4303,21 +3661,16 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getManifestSuffix",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getManifestSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getManifestSuffix(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getManifestSuffix(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4325,21 +3678,16 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getNetworkCode",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getNetworkCode", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getNetworkCode(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getNetworkCode(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4347,21 +3695,16 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getVideoId",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getVideoId", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getVideoId(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getVideoId(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4369,21 +3712,16 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getVideoStitcherSessionOptions",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getVideoStitcherSessionOptions", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getVideoStitcherSessionOptions(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getVideoStitcherSessionOptions(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4391,21 +3729,16 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getVodConfigId",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.getVodConfigId", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getVodConfigId(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getVodConfigId(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4413,23 +3746,18 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.setAdTagParameters",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.setAdTagParameters", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
             val adTagParametersArg = args[1] as Map<String, String>
-            val wrapped: List<Any?> =
-                try {
-                  api.setAdTagParameters(pigeon_instanceArg, adTagParametersArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setAdTagParameters(pigeon_instanceArg, adTagParametersArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4437,23 +3765,18 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.setAuthToken",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.setAuthToken", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
             val authTokenArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  api.setAuthToken(pigeon_instanceArg, authTokenArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setAuthToken(pigeon_instanceArg, authTokenArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4461,23 +3784,18 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.setFormat",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.setFormat", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
             val formatArg = args[1] as StreamFormat
-            val wrapped: List<Any?> =
-                try {
-                  api.setFormat(pigeon_instanceArg, formatArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setFormat(pigeon_instanceArg, formatArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4485,23 +3803,18 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.setManifestSuffix",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.setManifestSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
             val manifestSuffixArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  api.setManifestSuffix(pigeon_instanceArg, manifestSuffixArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setManifestSuffix(pigeon_instanceArg, manifestSuffixArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4509,23 +3822,18 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.setStreamActivityMonitorId",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.setStreamActivityMonitorId", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
             val streamActivityMonitorIdArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  api.setStreamActivityMonitorId(pigeon_instanceArg, streamActivityMonitorIdArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setStreamActivityMonitorId(pigeon_instanceArg, streamActivityMonitorIdArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4533,24 +3841,18 @@ abstract class PigeonApiStreamRequest(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamRequest.setVideoStitcherSessionOptions",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamRequest.setVideoStitcherSessionOptions", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamRequest
             val videoStitcherSessionOptionsArg = args[1] as Map<String, Any>
-            val wrapped: List<Any?> =
-                try {
-                  api.setVideoStitcherSessionOptions(
-                      pigeon_instanceArg, videoStitcherSessionOptionsArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setVideoStitcherSessionOptions(pigeon_instanceArg, videoStitcherSessionOptionsArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4561,11 +3863,9 @@ abstract class PigeonApiStreamRequest(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of StreamRequest and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.StreamRequest,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of StreamRequest and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.StreamRequest, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -4576,8 +3876,7 @@ abstract class PigeonApiStreamRequest(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.StreamRequest.pigeon_newInstance"
@@ -4591,32 +3890,83 @@ abstract class PigeonApiStreamRequest(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonApiBaseRequest] used to access callback methods */
-  fun pigeon_getPigeonApiBaseRequest(): PigeonApiBaseRequest {
+  /**An implementation of [PigeonApiBaseRequest] used to access callback methods */
+  fun pigeon_getPigeonApiBaseRequest(): PigeonApiBaseRequest
+  {
     return pigeonRegistrar.getPigeonApiBaseRequest()
   }
+
 }
 /**
  * Defines an interface to allow SDK to track progress of the content video.
  *
- * See
- * https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/android/api/reference/com/google/ads/interactivemedia/v3/api/player/ContentProgressProvider.html.
+ * See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/android/api/reference/com/google/ads/interactivemedia/v3/api/player/ContentProgressProvider.html.
  */
 @Suppress("UNCHECKED_CAST")
-open class PigeonApiContentProgressProvider(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiContentProgressProvider(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(): com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
+
+  /**
+   * Sets an update on the progress of the video.
+   *
+   * This is a custom method added to the native class because the native
+   * method `getContentProgress` requires a synchronous return value.
+   */
+  abstract fun setContentProgress(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider, update: com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate)
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiContentProgressProvider?) {
+      val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ContentProgressProvider.pigeon_defaultConstructor", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ContentProgressProvider.setContentProgress", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
+            val updateArg = args[1] as com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
+            val wrapped: List<Any?> = try {
+              api.setContentProgress(pigeon_instanceArg, updateArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of ContentProgressProvider and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of ContentProgressProvider and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -4627,12 +3977,10 @@ open class PigeonApiContentProgressProvider(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.ContentProgressProvider.pigeon_newInstance"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.ContentProgressProvider.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
@@ -4643,20 +3991,19 @@ open class PigeonApiContentProgressProvider(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
- * An object which handles playing ads after they've been received from the server.
+ * An object which handles playing ads after they've been received from the
+ * server.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsManager.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsManager.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdsManager(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiAdsManager(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** Discards current ad break and resumes content. */
   abstract fun discardAdBreak(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManager)
 
@@ -4671,9 +4018,7 @@ abstract class PigeonApiAdsManager(
    *
    * The list will be empty if no ad breaks are scheduled.
    */
-  abstract fun getAdCuePoints(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManager
-  ): List<Double>
+  abstract fun getAdCuePoints(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManager): List<Double>
 
   /** Resumes the current ad. */
   abstract fun resume(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManager)
@@ -4681,7 +4026,8 @@ abstract class PigeonApiAdsManager(
   /**
    * Skips the current ad.
    *
-   * `AdsManager.skip()` only skips ads if IMA does not render the 'Skip ad' button.
+   * `AdsManager.skip()` only skips ads if IMA does not render the 'Skip ad'
+   * button.
    */
   abstract fun skip(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManager)
 
@@ -4690,22 +4036,17 @@ abstract class PigeonApiAdsManager(
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiAdsManager?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsManager.discardAdBreak",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsManager.discardAdBreak", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsManager
-            val wrapped: List<Any?> =
-                try {
-                  api.discardAdBreak(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.discardAdBreak(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4713,20 +4054,17 @@ abstract class PigeonApiAdsManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsManager.pause", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsManager.pause", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsManager
-            val wrapped: List<Any?> =
-                try {
-                  api.pause(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.pause(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4734,20 +4072,17 @@ abstract class PigeonApiAdsManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsManager.start", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsManager.start", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsManager
-            val wrapped: List<Any?> =
-                try {
-                  api.start(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.start(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4755,21 +4090,16 @@ abstract class PigeonApiAdsManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsManager.getAdCuePoints",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsManager.getAdCuePoints", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsManager
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getAdCuePoints(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getAdCuePoints(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4777,22 +4107,17 @@ abstract class PigeonApiAdsManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsManager.resume",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsManager.resume", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsManager
-            val wrapped: List<Any?> =
-                try {
-                  api.resume(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.resume(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4800,20 +4125,17 @@ abstract class PigeonApiAdsManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsManager.skip", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsManager.skip", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsManager
-            val wrapped: List<Any?> =
-                try {
-                  api.skip(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.skip(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4824,11 +4146,9 @@ abstract class PigeonApiAdsManager(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdsManager and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdsManager,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdsManager and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdsManager, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -4839,8 +4159,7 @@ abstract class PigeonApiAdsManager(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.AdsManager.pigeon_newInstance"
@@ -4854,99 +4173,78 @@ abstract class PigeonApiAdsManager(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonApiBaseManager] used to access callback methods */
-  fun pigeon_getPigeonApiBaseManager(): PigeonApiBaseManager {
+  /**An implementation of [PigeonApiBaseManager] used to access callback methods */
+  fun pigeon_getPigeonApiBaseManager(): PigeonApiBaseManager
+  {
     return pigeonRegistrar.getPigeonApiBaseManager()
   }
+
 }
 /**
  * Base interface for managing ads.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseManager.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseManager.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiBaseManager(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiBaseManager(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /**
-   * Registers a listener for errors that occur during the ad or stream initialization and playback.
+   * Registers a listener for errors that occur during the ad or stream
+   * initialization and playback.
    */
-  abstract fun addAdErrorListener(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager,
-      errorListener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
-  )
+  abstract fun addAdErrorListener(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager, errorListener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener)
 
   /**
-   * Registers a listener for ad events that occur during ad or stream initialization and playback.
+   * Registers a listener for ad events that occur during ad or stream
+   * initialization and playback.
    */
-  abstract fun addAdEventListener(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager,
-      adEventListener: com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
-  )
+  abstract fun addAdEventListener(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager, adEventListener: com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener)
 
-  /** Stops the ad and all tracking, then releases all assets that were loaded to play the ad. */
+  /**
+   * Stops the ad and all tracking, then releases all assets that were loaded
+   * to play the ad.
+   */
   abstract fun destroy(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager)
 
   /** Initializes the ad experience on the manager. */
-  abstract fun init(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager,
-      settings: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings?
-  )
+  abstract fun init(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager, settings: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings?)
 
   /** Generic focus endpoint that puts focus on the skip button if present. */
   abstract fun focus(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager)
 
   /** Returns the latest AdProgressInfo for the current playing ad. */
-  abstract fun getAdProgressInfo(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager
-  ): com.google.ads.interactivemedia.v3.api.AdProgressInfo?
+  abstract fun getAdProgressInfo(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager): com.google.ads.interactivemedia.v3.api.AdProgressInfo?
 
   /** Get currently playing ad. */
-  abstract fun getCurrentAd(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager
-  ): com.google.ads.interactivemedia.v3.api.Ad?
+  abstract fun getCurrentAd(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager): com.google.ads.interactivemedia.v3.api.Ad?
 
   /** Removes a listener for error events. */
-  abstract fun removeAdErrorListener(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager,
-      errorListener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
-  )
+  abstract fun removeAdErrorListener(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager, errorListener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener)
 
   /** Removes a listener for ad events. */
-  abstract fun removeAdEventListener(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager,
-      adEventListener: com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
-  )
+  abstract fun removeAdEventListener(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager, adEventListener: com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener)
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiBaseManager?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseManager.addAdErrorListener",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseManager.addAdErrorListener", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
-            val errorListenerArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
-            val wrapped: List<Any?> =
-                try {
-                  api.addAdErrorListener(pigeon_instanceArg, errorListenerArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val errorListenerArg = args[1] as com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
+            val wrapped: List<Any?> = try {
+              api.addAdErrorListener(pigeon_instanceArg, errorListenerArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4954,24 +4252,18 @@ abstract class PigeonApiBaseManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseManager.addAdEventListener",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseManager.addAdEventListener", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
-            val adEventListenerArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
-            val wrapped: List<Any?> =
-                try {
-                  api.addAdEventListener(pigeon_instanceArg, adEventListenerArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val adEventListenerArg = args[1] as com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
+            val wrapped: List<Any?> = try {
+              api.addAdEventListener(pigeon_instanceArg, adEventListenerArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -4979,22 +4271,17 @@ abstract class PigeonApiBaseManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseManager.destroy",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseManager.destroy", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
-            val wrapped: List<Any?> =
-                try {
-                  api.destroy(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.destroy(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5002,22 +4289,18 @@ abstract class PigeonApiBaseManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseManager.init", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseManager.init", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
-            val settingsArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings?
-            val wrapped: List<Any?> =
-                try {
-                  api.init(pigeon_instanceArg, settingsArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val settingsArg = args[1] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings?
+            val wrapped: List<Any?> = try {
+              api.init(pigeon_instanceArg, settingsArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5025,22 +4308,17 @@ abstract class PigeonApiBaseManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseManager.focus",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseManager.focus", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
-            val wrapped: List<Any?> =
-                try {
-                  api.focus(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.focus(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5048,21 +4326,16 @@ abstract class PigeonApiBaseManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseManager.getAdProgressInfo",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseManager.getAdProgressInfo", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getAdProgressInfo(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getAdProgressInfo(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5070,21 +4343,16 @@ abstract class PigeonApiBaseManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseManager.getCurrentAd",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseManager.getCurrentAd", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getCurrentAd(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getCurrentAd(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5092,24 +4360,18 @@ abstract class PigeonApiBaseManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseManager.removeAdErrorListener",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseManager.removeAdErrorListener", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
-            val errorListenerArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
-            val wrapped: List<Any?> =
-                try {
-                  api.removeAdErrorListener(pigeon_instanceArg, errorListenerArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val errorListenerArg = args[1] as com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
+            val wrapped: List<Any?> = try {
+              api.removeAdErrorListener(pigeon_instanceArg, errorListenerArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5117,24 +4379,18 @@ abstract class PigeonApiBaseManager(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.BaseManager.removeAdEventListener",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseManager.removeAdEventListener", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
-            val adEventListenerArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
-            val wrapped: List<Any?> =
-                try {
-                  api.removeAdEventListener(pigeon_instanceArg, adEventListenerArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val adEventListenerArg = args[1] as com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
+            val wrapped: List<Any?> = try {
+              api.removeAdEventListener(pigeon_instanceArg, adEventListenerArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5145,11 +4401,9 @@ abstract class PigeonApiBaseManager(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of BaseManager and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.BaseManager,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of BaseManager and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.BaseManager, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -5160,8 +4414,7 @@ abstract class PigeonApiBaseManager(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.BaseManager.pigeon_newInstance"
@@ -5175,152 +4428,119 @@ abstract class PigeonApiBaseManager(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * Defines parameters that control the rendering of ads.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsRenderingSettings.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsRenderingSettings.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdsRenderingSettings(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiAdsRenderingSettings(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** Maximum recommended bitrate. */
-  abstract fun getBitrateKbps(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
-  ): Long
-
-  /** Returns whether the click-through URL will be opened using Custom Tabs feature. */
-  abstract fun getEnableCustomTabs(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
-  ): Boolean
+  abstract fun getBitrateKbps(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings): Long
 
   /**
-   * Whether the SDK will instruct the player to load the creative in response to
-   * `BaseManager.init()`.
+   * Returns whether the click-through URL will be opened using Custom Tabs
+   * feature.
    */
-  abstract fun getEnablePreloading(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
-  ): Boolean
+  abstract fun getEnableCustomTabs(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings): Boolean
 
   /**
-   * Whether to focus on the skip button when the skippable ad can be skipped on Android TV.
+   * Whether the SDK will instruct the player to load the creative in response
+   * to `BaseManager.init()`.
+   */
+  abstract fun getEnablePreloading(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings): Boolean
+
+  /**
+   * Whether to focus on the skip button when the skippable ad can be skipped
+   * on Android TV.
    *
    * This is a no-op on non-Android TV devices.
    */
-  abstract fun getFocusSkipButtonWhenAvailable(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
-  ): Boolean
+  abstract fun getFocusSkipButtonWhenAvailable(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings): Boolean
 
   /** The SDK will prioritize the media with MIME type on the list. */
-  abstract fun getMimeTypes(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
-  ): List<String>
+  abstract fun getMimeTypes(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings): List<String>
 
   /**
    * Maximum recommended bitrate.
    *
-   * The value is in kbit/s. Default value, -1, means the bitrate will be selected by the SDK.
+   * The value is in kbit/s. Default value, -1, means the bitrate will be
+   * selected by the SDK.
    */
-  abstract fun setBitrateKbps(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings,
-      bitrate: Long
-  )
+  abstract fun setBitrateKbps(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings, bitrate: Long)
 
   /**
-   * Notifies the SDK whether to launch the click-through URL using Custom Tabs feature.
+   * Notifies the SDK whether to launch the click-through URL using Custom Tabs
+   * feature.
    *
-   * Default is false.
+   *  Default is false.
    */
-  abstract fun setEnableCustomTabs(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings,
-      enableCustomTabs: Boolean
-  )
+  abstract fun setEnableCustomTabs(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings, enableCustomTabs: Boolean)
 
   /**
-   * If set, the SDK will instruct the player to load the creative in response to
-   * `BaseManager.init()`.
+   * If set, the SDK will instruct the player to load the creative in response
+   * to `BaseManager.init()`.
    *
-   * This allows the player to preload the ad at any point before calling `AdsManager.start()`.
+   * This allows the player to preload the ad at any point before calling
+   * `AdsManager.start()`.
    */
-  abstract fun setEnablePreloading(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings,
-      enablePreloading: Boolean
-  )
+  abstract fun setEnablePreloading(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings, enablePreloading: Boolean)
 
   /**
-   * Set whether to focus on the skip button when the skippable ad can be skipped on Android TV.
+   * Set whether to focus on the skip button when the skippable ad can be
+   * skipped on Android TV.
    *
    * This is a no-op on non-Android TV devices.
    *
    * Default is true.
    */
-  abstract fun setFocusSkipButtonWhenAvailable(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings,
-      enableFocusSkipButton: Boolean
-  )
+  abstract fun setFocusSkipButtonWhenAvailable(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings, enableFocusSkipButton: Boolean)
 
   /**
-   * Specifies a non-default amount of time to wait for media to load before timing out, in
-   * milliseconds.
+   * Specifies a non-default amount of time to wait for media to load before
+   * timing out, in milliseconds.
    *
    * This only applies to the IMA client-side SDK.
    *
    * Default time is 8000 ms.
    */
-  abstract fun setLoadVideoTimeout(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings,
-      loadVideoTimeout: Long
-  )
-
-  /** If specified, the SDK will prioritize the media with MIME type on the list. */
-  abstract fun setMimeTypes(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings,
-      mimeTypes: List<String>
-  )
+  abstract fun setLoadVideoTimeout(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings, loadVideoTimeout: Long)
 
   /**
-   * For VMAP and ad rules playlists, only play ad breaks scheduled after this time (in seconds).
+   * If specified, the SDK will prioritize the media with MIME type on the
+   * list.
    */
-  abstract fun setPlayAdsAfterTime(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings,
-      time: Double
-  )
+  abstract fun setMimeTypes(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings, mimeTypes: List<String>)
+
+  /**
+   * For VMAP and ad rules playlists, only play ad breaks scheduled after this
+   * time (in seconds).
+   */
+  abstract fun setPlayAdsAfterTime(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings, time: Double)
 
   /** Sets the ad UI elements to be rendered by the IMA SDK. */
-  abstract fun setUiElements(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings,
-      uiElements: List<UiElement>
-  )
+  abstract fun setUiElements(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings, uiElements: List<UiElement>)
 
   companion object {
     @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonApiAdsRenderingSettings?
-    ) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiAdsRenderingSettings?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getBitrateKbps",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getBitrateKbps", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getBitrateKbps(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+            val wrapped: List<Any?> = try {
+              listOf(api.getBitrateKbps(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5328,22 +4548,16 @@ abstract class PigeonApiAdsRenderingSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getEnableCustomTabs",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getEnableCustomTabs", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getEnableCustomTabs(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+            val wrapped: List<Any?> = try {
+              listOf(api.getEnableCustomTabs(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5351,22 +4565,16 @@ abstract class PigeonApiAdsRenderingSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getEnablePreloading",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getEnablePreloading", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getEnablePreloading(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+            val wrapped: List<Any?> = try {
+              listOf(api.getEnablePreloading(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5374,22 +4582,16 @@ abstract class PigeonApiAdsRenderingSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getFocusSkipButtonWhenAvailable",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getFocusSkipButtonWhenAvailable", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getFocusSkipButtonWhenAvailable(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+            val wrapped: List<Any?> = try {
+              listOf(api.getFocusSkipButtonWhenAvailable(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5397,22 +4599,16 @@ abstract class PigeonApiAdsRenderingSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getMimeTypes",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.getMimeTypes", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getMimeTypes(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+            val wrapped: List<Any?> = try {
+              listOf(api.getMimeTypes(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5420,24 +4616,18 @@ abstract class PigeonApiAdsRenderingSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setBitrateKbps",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setBitrateKbps", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
             val bitrateArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.setBitrateKbps(pigeon_instanceArg, bitrateArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setBitrateKbps(pigeon_instanceArg, bitrateArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5445,24 +4635,18 @@ abstract class PigeonApiAdsRenderingSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setEnableCustomTabs",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setEnableCustomTabs", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
             val enableCustomTabsArg = args[1] as Boolean
-            val wrapped: List<Any?> =
-                try {
-                  api.setEnableCustomTabs(pigeon_instanceArg, enableCustomTabsArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setEnableCustomTabs(pigeon_instanceArg, enableCustomTabsArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5470,24 +4654,18 @@ abstract class PigeonApiAdsRenderingSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setEnablePreloading",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setEnablePreloading", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
             val enablePreloadingArg = args[1] as Boolean
-            val wrapped: List<Any?> =
-                try {
-                  api.setEnablePreloading(pigeon_instanceArg, enablePreloadingArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setEnablePreloading(pigeon_instanceArg, enablePreloadingArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5495,24 +4673,18 @@ abstract class PigeonApiAdsRenderingSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setFocusSkipButtonWhenAvailable",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setFocusSkipButtonWhenAvailable", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
             val enableFocusSkipButtonArg = args[1] as Boolean
-            val wrapped: List<Any?> =
-                try {
-                  api.setFocusSkipButtonWhenAvailable(pigeon_instanceArg, enableFocusSkipButtonArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setFocusSkipButtonWhenAvailable(pigeon_instanceArg, enableFocusSkipButtonArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5520,25 +4692,18 @@ abstract class PigeonApiAdsRenderingSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setLoadVideoTimeout",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setLoadVideoTimeout", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
-            val loadVideoTimeoutArg =
-                args[1].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.setLoadVideoTimeout(pigeon_instanceArg, loadVideoTimeoutArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+            val loadVideoTimeoutArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.setLoadVideoTimeout(pigeon_instanceArg, loadVideoTimeoutArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5546,24 +4711,18 @@ abstract class PigeonApiAdsRenderingSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setMimeTypes",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setMimeTypes", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
             val mimeTypesArg = args[1] as List<String>
-            val wrapped: List<Any?> =
-                try {
-                  api.setMimeTypes(pigeon_instanceArg, mimeTypesArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setMimeTypes(pigeon_instanceArg, mimeTypesArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5571,24 +4730,18 @@ abstract class PigeonApiAdsRenderingSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setPlayAdsAfterTime",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setPlayAdsAfterTime", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
             val timeArg = args[1] as Double
-            val wrapped: List<Any?> =
-                try {
-                  api.setPlayAdsAfterTime(pigeon_instanceArg, timeArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setPlayAdsAfterTime(pigeon_instanceArg, timeArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5596,24 +4749,18 @@ abstract class PigeonApiAdsRenderingSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setUiElements",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.setUiElements", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
             val uiElementsArg = args[1] as List<UiElement>
-            val wrapped: List<Any?> =
-                try {
-                  api.setUiElements(pigeon_instanceArg, uiElementsArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setUiElements(pigeon_instanceArg, uiElementsArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -5624,11 +4771,9 @@ abstract class PigeonApiAdsRenderingSettings(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdsRenderingSettings and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdsRenderingSettings and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -5639,12 +4784,10 @@ abstract class PigeonApiAdsRenderingSettings(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.pigeon_newInstance"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
@@ -5655,56 +4798,40 @@ abstract class PigeonApiAdsRenderingSettings(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * Represents the progress within this ad break.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdProgressInfo.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdProgressInfo.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdProgressInfo(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiAdProgressInfo(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** Total ad break duration (in seconds). */
-  abstract fun adBreakDuration(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdProgressInfo
-  ): Double
+  abstract fun adBreakDuration(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdProgressInfo): Double
 
   /** Total ad period duration (in seconds). */
-  abstract fun adPeriodDuration(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdProgressInfo
-  ): Double
+  abstract fun adPeriodDuration(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdProgressInfo): Double
 
   /** The position of current ad within the ad break, starting with 1. */
-  abstract fun adPosition(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdProgressInfo
-  ): Long
+  abstract fun adPosition(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdProgressInfo): Long
 
   /** Current time within the ad (in seconds). */
-  abstract fun currentTime(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdProgressInfo
-  ): Double
+  abstract fun currentTime(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdProgressInfo): Double
 
   /** Duration of current ad (in seconds). */
-  abstract fun duration(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdProgressInfo
-  ): Double
+  abstract fun duration(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdProgressInfo): Double
 
   /** The total number of ads in this ad break. */
-  abstract fun totalAds(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdProgressInfo
-  ): Long
+  abstract fun totalAds(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdProgressInfo): Long
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdProgressInfo and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdProgressInfo,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdProgressInfo and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdProgressInfo, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -5715,8 +4842,7 @@ abstract class PigeonApiAdProgressInfo(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val adBreakDurationArg = adBreakDuration(pigeon_instanceArg)
     val adPeriodDurationArg = adPeriodDuration(pigeon_instanceArg)
     val adPositionArg = adPosition(pigeon_instanceArg)
@@ -5727,57 +4853,40 @@ abstract class PigeonApiAdProgressInfo(
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.AdProgressInfo.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(
-        listOf(
-            pigeon_identifierArg,
-            adBreakDurationArg,
-            adPeriodDurationArg,
-            adPositionArg,
-            currentTimeArg,
-            durationArg,
-            totalAdsArg)) {
-          if (it is List<*>) {
-            if (it.size > 1) {
-              callback(
-                  Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
-            } else {
-              callback(Result.success(Unit))
-            }
-          } else {
-            callback(Result.failure(createConnectionError(channelName)))
-          }
+    channel.send(listOf(pigeon_identifierArg, adBreakDurationArg, adPeriodDurationArg, adPositionArg, currentTimeArg, durationArg, totalAdsArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
         }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
   }
+
 }
 /**
  * Event to notify publisher that an event occurred with an Ad.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdEvent(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiAdEvent(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** The type of event that occurred. */
   abstract fun type(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdEvent): AdEventType
 
   /** A map containing any extra ad data for the event, if needed. */
-  abstract fun adData(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdEvent
-  ): Map<String, String>?
+  abstract fun adData(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdEvent): Map<String, String>?
 
   /** The ad with which this event is associated. */
-  abstract fun ad(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdEvent
-  ): com.google.ads.interactivemedia.v3.api.Ad
+  abstract fun ad(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdEvent): com.google.ads.interactivemedia.v3.api.Ad
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdEvent and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdEvent,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdEvent and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdEvent, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -5788,8 +4897,7 @@ abstract class PigeonApiAdEvent(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val typeArg = type(pigeon_instanceArg)
     val adDataArg = adData(pigeon_instanceArg)
     val adArg = ad(pigeon_instanceArg)
@@ -5806,205 +4914,132 @@ abstract class PigeonApiAdEvent(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * Factory class for creating SDK objects.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/ImaSdkFactory.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/ImaSdkFactory.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiImaSdkFactory(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiImaSdkFactory(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** The global ImaSdkFactory object. */
   abstract fun instance(): com.google.ads.interactivemedia.v3.api.ImaSdkFactory
 
   /**
-   * Creates an `AdDisplayContainer` to hold the player for video ads, a container for non-linear
-   * ads, and slots for companion ads.
+   * Creates an `AdDisplayContainer` to hold the player for video ads, a
+   * container for non-linear ads, and slots for companion ads.
    */
-  abstract fun createAdDisplayContainer(
-      container: android.view.ViewGroup,
-      player: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
-  ): com.google.ads.interactivemedia.v3.api.AdDisplayContainer
+  abstract fun createAdDisplayContainer(container: android.view.ViewGroup, player: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer): com.google.ads.interactivemedia.v3.api.AdDisplayContainer
 
   /** Creates an `ImaSdkSettings` object for configuring the IMA SDK. */
-  abstract fun createImaSdkSettings(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory
-  ): com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-
-  /** Creates an `AdsLoader` for requesting ads using the specified settings object. */
-  abstract fun createAdsLoader(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
-      settings: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      container: com.google.ads.interactivemedia.v3.api.AdDisplayContainer
-  ): com.google.ads.interactivemedia.v3.api.AdsLoader
-
-  /** Creates an AdsRequest object to contain the data used to request ads. */
-  abstract fun createAdsRequest(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory
-  ): com.google.ads.interactivemedia.v3.api.AdsRequest
+  abstract fun createImaSdkSettings(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory): com.google.ads.interactivemedia.v3.api.ImaSdkSettings
 
   /**
-   * Creates an AdsLoader for requesting server-side ad insertion ads using the specified settings
+   * Creates an `AdsLoader` for requesting ads using the specified settings
    * object.
    */
-  abstract fun createStreamAdsLoader(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
-      settings: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      container: com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
-  ): com.google.ads.interactivemedia.v3.api.AdsLoader
+  abstract fun createAdsLoader(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory, settings: com.google.ads.interactivemedia.v3.api.ImaSdkSettings, container: com.google.ads.interactivemedia.v3.api.AdDisplayContainer): com.google.ads.interactivemedia.v3.api.AdsLoader
+
+  /** Creates an AdsRequest object to contain the data used to request ads. */
+  abstract fun createAdsRequest(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory): com.google.ads.interactivemedia.v3.api.AdsRequest
 
   /**
-   * Creates an `AdsRenderingSettings` object to give the `AdsManager` parameters that control the
-   * rendering of ads.
+   * Creates an AdsLoader for requesting server-side ad insertion ads using the
+   * specified settings object.
    */
-  abstract fun createAdsRenderingSettings(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory
-  ): com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
+  abstract fun createStreamAdsLoader(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory, settings: com.google.ads.interactivemedia.v3.api.ImaSdkSettings, container: com.google.ads.interactivemedia.v3.api.StreamDisplayContainer): com.google.ads.interactivemedia.v3.api.AdsLoader
+
+  /**
+   * Creates an `AdsRenderingSettings` object to give the `AdsManager`
+   * parameters that control the rendering of ads.
+   */
+  abstract fun createAdsRenderingSettings(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory): com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
 
   /** Creates an `AdDisplayContainer` for audio ads. */
-  abstract fun createAudioAdDisplayContainer(
-      player: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
-  ): com.google.ads.interactivemedia.v3.api.AdDisplayContainer
+  abstract fun createAudioAdDisplayContainer(player: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer): com.google.ads.interactivemedia.v3.api.AdDisplayContainer
 
   /** Creates a `CompanionAdSlot` for the SDK to fill with companion ads. */
-  abstract fun createCompanionAdSlot(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory
-  ): com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+  abstract fun createCompanionAdSlot(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory): com.google.ads.interactivemedia.v3.api.CompanionAdSlot
 
   /**
-   * Creates a `FriendlyObstruction` object to describe an obstruction considered "friendly" for
-   * viewability measurement purposes.
+   * Creates a `FriendlyObstruction` object to describe an obstruction
+   * considered "friendly" for viewability measurement purposes.
    *
-   * If the detailedReason is not null, it must follow the IAB standard by being 50 characters or
-   * less and only containing characters A-z , 0-9, or spaces.
+   * If the detailedReason is not null, it must follow the IAB standard by
+   * being 50 characters or less and only containing characters A-z , 0-9, or
+   * spaces.
    */
-  abstract fun createFriendlyObstruction(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
-      view: android.view.View,
-      purpose: FriendlyObstructionPurpose,
-      detailedReason: String?
-  ): com.google.ads.interactivemedia.v3.api.FriendlyObstruction
+  abstract fun createFriendlyObstruction(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory, view: android.view.View, purpose: FriendlyObstructionPurpose, detailedReason: String?): com.google.ads.interactivemedia.v3.api.FriendlyObstruction
 
   /**
-   * Creates a `StreamRequest` object to contain the data used to request a server-side ad insertion
-   * live stream.
+   * Creates a `StreamRequest` object to contain the data used to request a
+   * server-side ad insertion live stream.
    */
-  abstract fun createLiveStreamRequest(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
-      assetKey: String,
-      apiKey: String
-  ): com.google.ads.interactivemedia.v3.api.StreamRequest
+  abstract fun createLiveStreamRequest(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory, assetKey: String, apiKey: String): com.google.ads.interactivemedia.v3.api.StreamRequest
 
   /**
-   * Creates a StreamRequest object to contain the data used to request a server-side ad insertion
-   * pod serving live stream.
+   * Creates a StreamRequest object to contain the data used to request a
+   * server-side ad insertion pod serving live stream.
    */
-  abstract fun createPodStreamRequest(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
-      networkCode: String,
-      customAssetKey: String,
-      apiKey: String
-  ): com.google.ads.interactivemedia.v3.api.StreamRequest
+  abstract fun createPodStreamRequest(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory, networkCode: String, customAssetKey: String, apiKey: String): com.google.ads.interactivemedia.v3.api.StreamRequest
 
   /**
-   * Creates a StreamRequest object to contain the data used to request a 3rd party stitched
-   * server-side ad insertion pod serving vod stream.
+   * Creates a StreamRequest object to contain the data used to request a 3rd
+   * party stitched server-side ad insertion pod serving vod stream.
    */
-  abstract fun createPodVodStreamRequest(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
-      networkCode: String
-  ): com.google.ads.interactivemedia.v3.api.StreamRequest
+  abstract fun createPodVodStreamRequest(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory, networkCode: String): com.google.ads.interactivemedia.v3.api.StreamRequest
 
   /**
-   * Creates a `StreamDisplayContainer` to hold the player for server-side ad insertion streams and
-   * slots for companion ads.
+   * Creates a `StreamDisplayContainer` to hold the player for server-side ad
+   * insertion streams and slots for companion ads.
    */
-  abstract fun createStreamDisplayContainer(
-      container: android.view.ViewGroup,
-      player: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
-  ): com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
+  abstract fun createStreamDisplayContainer(container: android.view.ViewGroup, player: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer): com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
 
   /**
-   * Creates a `StreamRequest` object to contain the data used to request a cloud video stitcher
-   * server-side ad insertion pod live serving stream.
+   * Creates a `StreamRequest` object to contain the data used to request a
+   * cloud video stitcher server-side ad insertion pod live serving stream.
    */
-  abstract fun createVideoStitcherLiveStreamRequest(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
-      networkCode: String,
-      customAssetKey: String,
-      liveStreamEventId: String,
-      region: String,
-      projectNumber: String,
-      oAuthToken: String
-  ): com.google.ads.interactivemedia.v3.api.StreamRequest
+  abstract fun createVideoStitcherLiveStreamRequest(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory, networkCode: String, customAssetKey: String, liveStreamEventId: String, region: String, projectNumber: String, oAuthToken: String): com.google.ads.interactivemedia.v3.api.StreamRequest
 
   /**
-   * Creates a `StreamRequest` object to contain the data used to request a cloud video stitcher
-   * server-side ad insertion pod serving vod stream.
+   * Creates a `StreamRequest` object to contain the data used to request a
+   * cloud video stitcher server-side ad insertion pod serving vod stream.
    */
-  abstract fun createContentSourceVideoStitcherVodStreamRequest(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
-      contentSourceUrl: String,
-      networkCode: String,
-      region: String,
-      projectNumber: String,
-      oAuthToken: String,
-      adTagUrl: String
-  ): com.google.ads.interactivemedia.v3.api.StreamRequest
+  abstract fun createContentSourceVideoStitcherVodStreamRequest(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory, contentSourceUrl: String, networkCode: String, region: String, projectNumber: String, oAuthToken: String, adTagUrl: String): com.google.ads.interactivemedia.v3.api.StreamRequest
 
   /**
-   * Creates a `StreamRequest` object to contain the data used to request a cloud video stitcher
-   * server-side ad insertion pod serving vod stream, with a vod config flow.
+   * Creates a `StreamRequest` object to contain the data used to request a
+   * cloud video stitcher server-side ad insertion pod serving vod stream, with
+   * a vod config flow.
    */
-  abstract fun createVideoStitcherVodStreamRequest(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
-      networkCode: String,
-      region: String,
-      projectNumber: String,
-      oAuthToken: String,
-      vodConfigId: String
-  ): com.google.ads.interactivemedia.v3.api.StreamRequest
+  abstract fun createVideoStitcherVodStreamRequest(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory, networkCode: String, region: String, projectNumber: String, oAuthToken: String, vodConfigId: String): com.google.ads.interactivemedia.v3.api.StreamRequest
 
   /**
-   * Creates a StreamRequest object to contain the data used to request a server-side ad insertion
-   * video on demand stream.
+   * Creates a StreamRequest object to contain the data used to request a
+   * server-side ad insertion video on demand stream.
    */
-  abstract fun createVodStreamRequest(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
-      contentSourceId: String,
-      videoId: String,
-      apiKey: String
-  ): com.google.ads.interactivemedia.v3.api.StreamRequest
+  abstract fun createVodStreamRequest(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkFactory, contentSourceId: String, videoId: String, apiKey: String): com.google.ads.interactivemedia.v3.api.StreamRequest
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiImaSdkFactory?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.instance",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.instance", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.instance(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.instance(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6012,22 +5047,17 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAdDisplayContainer",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAdDisplayContainer", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val containerArg = args[0] as android.view.ViewGroup
             val playerArg = args[1] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.createAdDisplayContainer(containerArg, playerArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createAdDisplayContainer(containerArg, playerArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6035,21 +5065,16 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createImaSdkSettings",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createImaSdkSettings", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.createImaSdkSettings(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createImaSdkSettings(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6057,23 +5082,18 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAdsLoader",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAdsLoader", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
             val settingsArg = args[1] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
             val containerArg = args[2] as com.google.ads.interactivemedia.v3.api.AdDisplayContainer
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.createAdsLoader(pigeon_instanceArg, settingsArg, containerArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createAdsLoader(pigeon_instanceArg, settingsArg, containerArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6081,21 +5101,16 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAdsRequest",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAdsRequest", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.createAdsRequest(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createAdsRequest(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6103,24 +5118,18 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createStreamAdsLoader",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createStreamAdsLoader", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
             val settingsArg = args[1] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val containerArg =
-                args[2] as com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.createStreamAdsLoader(pigeon_instanceArg, settingsArg, containerArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val containerArg = args[2] as com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
+            val wrapped: List<Any?> = try {
+              listOf(api.createStreamAdsLoader(pigeon_instanceArg, settingsArg, containerArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6128,21 +5137,16 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAdsRenderingSettings",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAdsRenderingSettings", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.createAdsRenderingSettings(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createAdsRenderingSettings(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6150,21 +5154,16 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAudioAdDisplayContainer",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAudioAdDisplayContainer", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val playerArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.createAudioAdDisplayContainer(playerArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createAudioAdDisplayContainer(playerArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6172,21 +5171,16 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createCompanionAdSlot",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createCompanionAdSlot", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.createCompanionAdSlot(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createCompanionAdSlot(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6194,11 +5188,7 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createFriendlyObstruction",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createFriendlyObstruction", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -6206,14 +5196,11 @@ abstract class PigeonApiImaSdkFactory(
             val viewArg = args[1] as android.view.View
             val purposeArg = args[2] as FriendlyObstructionPurpose
             val detailedReasonArg = args[3] as String?
-            val wrapped: List<Any?> =
-                try {
-                  listOf(
-                      api.createFriendlyObstruction(
-                          pigeon_instanceArg, viewArg, purposeArg, detailedReasonArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createFriendlyObstruction(pigeon_instanceArg, viewArg, purposeArg, detailedReasonArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6221,23 +5208,18 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createLiveStreamRequest",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createLiveStreamRequest", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
             val assetKeyArg = args[1] as String
             val apiKeyArg = args[2] as String
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.createLiveStreamRequest(pigeon_instanceArg, assetKeyArg, apiKeyArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createLiveStreamRequest(pigeon_instanceArg, assetKeyArg, apiKeyArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6245,11 +5227,7 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createPodStreamRequest",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createPodStreamRequest", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -6257,14 +5235,11 @@ abstract class PigeonApiImaSdkFactory(
             val networkCodeArg = args[1] as String
             val customAssetKeyArg = args[2] as String
             val apiKeyArg = args[3] as String
-            val wrapped: List<Any?> =
-                try {
-                  listOf(
-                      api.createPodStreamRequest(
-                          pigeon_instanceArg, networkCodeArg, customAssetKeyArg, apiKeyArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createPodStreamRequest(pigeon_instanceArg, networkCodeArg, customAssetKeyArg, apiKeyArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6272,22 +5247,17 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createPodVodStreamRequest",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createPodVodStreamRequest", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkFactory
             val networkCodeArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.createPodVodStreamRequest(pigeon_instanceArg, networkCodeArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createPodVodStreamRequest(pigeon_instanceArg, networkCodeArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6295,23 +5265,17 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createStreamDisplayContainer",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createStreamDisplayContainer", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val containerArg = args[0] as android.view.ViewGroup
-            val playerArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.createStreamDisplayContainer(containerArg, playerArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val playerArg = args[1] as com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
+            val wrapped: List<Any?> = try {
+              listOf(api.createStreamDisplayContainer(containerArg, playerArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6319,11 +5283,7 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createVideoStitcherLiveStreamRequest",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createVideoStitcherLiveStreamRequest", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -6334,20 +5294,11 @@ abstract class PigeonApiImaSdkFactory(
             val regionArg = args[4] as String
             val projectNumberArg = args[5] as String
             val oAuthTokenArg = args[6] as String
-            val wrapped: List<Any?> =
-                try {
-                  listOf(
-                      api.createVideoStitcherLiveStreamRequest(
-                          pigeon_instanceArg,
-                          networkCodeArg,
-                          customAssetKeyArg,
-                          liveStreamEventIdArg,
-                          regionArg,
-                          projectNumberArg,
-                          oAuthTokenArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createVideoStitcherLiveStreamRequest(pigeon_instanceArg, networkCodeArg, customAssetKeyArg, liveStreamEventIdArg, regionArg, projectNumberArg, oAuthTokenArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6355,11 +5306,7 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createContentSourceVideoStitcherVodStreamRequest",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createContentSourceVideoStitcherVodStreamRequest", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -6370,20 +5317,11 @@ abstract class PigeonApiImaSdkFactory(
             val projectNumberArg = args[4] as String
             val oAuthTokenArg = args[5] as String
             val adTagUrlArg = args[6] as String
-            val wrapped: List<Any?> =
-                try {
-                  listOf(
-                      api.createContentSourceVideoStitcherVodStreamRequest(
-                          pigeon_instanceArg,
-                          contentSourceUrlArg,
-                          networkCodeArg,
-                          regionArg,
-                          projectNumberArg,
-                          oAuthTokenArg,
-                          adTagUrlArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createContentSourceVideoStitcherVodStreamRequest(pigeon_instanceArg, contentSourceUrlArg, networkCodeArg, regionArg, projectNumberArg, oAuthTokenArg, adTagUrlArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6391,11 +5329,7 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createVideoStitcherVodStreamRequest",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createVideoStitcherVodStreamRequest", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -6405,19 +5339,11 @@ abstract class PigeonApiImaSdkFactory(
             val projectNumberArg = args[3] as String
             val oAuthTokenArg = args[4] as String
             val vodConfigIdArg = args[5] as String
-            val wrapped: List<Any?> =
-                try {
-                  listOf(
-                      api.createVideoStitcherVodStreamRequest(
-                          pigeon_instanceArg,
-                          networkCodeArg,
-                          regionArg,
-                          projectNumberArg,
-                          oAuthTokenArg,
-                          vodConfigIdArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createVideoStitcherVodStreamRequest(pigeon_instanceArg, networkCodeArg, regionArg, projectNumberArg, oAuthTokenArg, vodConfigIdArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6425,11 +5351,7 @@ abstract class PigeonApiImaSdkFactory(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createVodStreamRequest",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createVodStreamRequest", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -6437,14 +5359,11 @@ abstract class PigeonApiImaSdkFactory(
             val contentSourceIdArg = args[1] as String
             val videoIdArg = args[2] as String
             val apiKeyArg = args[3] as String
-            val wrapped: List<Any?> =
-                try {
-                  listOf(
-                      api.createVodStreamRequest(
-                          pigeon_instanceArg, contentSourceIdArg, videoIdArg, apiKeyArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.createVodStreamRequest(pigeon_instanceArg, contentSourceIdArg, videoIdArg, apiKeyArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6455,11 +5374,9 @@ abstract class PigeonApiImaSdkFactory(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of ImaSdkFactory and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.ImaSdkFactory,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of ImaSdkFactory and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.ImaSdkFactory, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -6470,8 +5387,7 @@ abstract class PigeonApiImaSdkFactory(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.pigeon_newInstance"
@@ -6485,52 +5401,39 @@ abstract class PigeonApiImaSdkFactory(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * A display container specific to server-side ad insertion.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/StreamDisplayContainer.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/StreamDisplayContainer.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiStreamDisplayContainer(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiStreamDisplayContainer(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /**
-   * Returns the previously set player used for server-side ad insertion, or null if none has been
-   * set.
+   * Returns the previously set player used for server-side ad insertion, or
+   * null if none has been set.
    */
-  abstract fun getVideoStreamPlayer(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
-  ): com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer?
+  abstract fun getVideoStreamPlayer(pigeon_instance: com.google.ads.interactivemedia.v3.api.StreamDisplayContainer): com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer?
 
   companion object {
     @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonApiStreamDisplayContainer?
-    ) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiStreamDisplayContainer?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.StreamDisplayContainer.getVideoStreamPlayer",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.StreamDisplayContainer.getVideoStreamPlayer", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getVideoStreamPlayer(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.StreamDisplayContainer
+            val wrapped: List<Any?> = try {
+              listOf(api.getVideoStreamPlayer(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6541,11 +5444,9 @@ abstract class PigeonApiStreamDisplayContainer(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of StreamDisplayContainer and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.StreamDisplayContainer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of StreamDisplayContainer and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.StreamDisplayContainer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -6556,12 +5457,10 @@ abstract class PigeonApiStreamDisplayContainer(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.StreamDisplayContainer.pigeon_newInstance"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.StreamDisplayContainer.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
@@ -6572,65 +5471,53 @@ abstract class PigeonApiStreamDisplayContainer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonApiBaseDisplayContainer] used to access callback methods */
-  fun pigeon_getPigeonApiBaseDisplayContainer(): PigeonApiBaseDisplayContainer {
+  /**An implementation of [PigeonApiBaseDisplayContainer] used to access callback methods */
+  fun pigeon_getPigeonApiBaseDisplayContainer(): PigeonApiBaseDisplayContainer
+  {
     return pigeonRegistrar.getPigeonApiBaseDisplayContainer()
   }
+
 }
 /**
- * Defines a set of methods that a video player must implement to be used by the IMA SDK for dynamic
- * ad insertion.
+ * Defines a set of methods that a video player must implement to be used by
+ * the IMA SDK for dynamic ad insertion.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoStreamPlayer.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoStreamPlayer.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiVideoStreamPlayer(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  abstract fun pigeon_defaultConstructor():
-      com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
+abstract class PigeonApiVideoStreamPlayer(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(): com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
 
   /** The volume of the player as a percentage from 0 to 100. */
-  abstract fun setVolume(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
-      value: Long
-  )
+  abstract fun setVolume(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer, value: Long)
 
-  /** The `VideoProgressUpdate` describing playback progress of the current video. */
-  abstract fun setContentProgress(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
-      progress: com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
-  )
+  /**
+   * The `VideoProgressUpdate` describing playback progress of the current
+   * video.
+   */
+  abstract fun setContentProgress(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer, progress: com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate)
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiVideoStreamPlayer?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.pigeon_defaultConstructor",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6638,24 +5525,18 @@ abstract class PigeonApiVideoStreamPlayer(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.setVolume",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.setVolume", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
             val valueArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.setVolume(pigeon_instanceArg, valueArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setVolume(pigeon_instanceArg, valueArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6663,25 +5544,18 @@ abstract class PigeonApiVideoStreamPlayer(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.setContentProgress",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayer.setContentProgress", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
-            val progressArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
-            val wrapped: List<Any?> =
-                try {
-                  api.setContentProgress(pigeon_instanceArg, progressArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer
+            val progressArg = args[1] as com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
+            val wrapped: List<Any?> = try {
+              api.setContentProgress(pigeon_instanceArg, progressArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -6692,11 +5566,9 @@ abstract class PigeonApiVideoStreamPlayer(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of VideoStreamPlayer and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of VideoStreamPlayer and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -6707,17 +5579,15 @@ abstract class PigeonApiVideoStreamPlayer(
       Result.success(Unit)
       return
     }
-    throw IllegalStateException(
-        "Attempting to create a new Dart instance of VideoStreamPlayer, but the class has a nonnull callback method.")
+    throw IllegalStateException("Attempting to create a new Dart instance of VideoStreamPlayer, but the class has a nonnull callback method.")
   }
 
-  /** Adds a callback so that listeners can react to events from the `VideoStreamPlayer`. */
-  fun addCallback(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
-      callbackArg:
-          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**
+   * Adds a callback so that listeners can react to events from the
+   * `VideoStreamPlayer`.
+   */
+  fun addCallback(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer, callbackArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -6737,17 +5607,16 @@ abstract class PigeonApiVideoStreamPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
-  /** Loads a stream with dynamic ad insertion given the stream url and subtitles array. */
-  fun loadUrl(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
-      urlArg: String,
-      subtitlesArg: List<Map<String, String>>,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**
+   * Loads a stream with dynamic ad insertion given the stream url and
+   * subtitles array.
+   */
+  fun loadUrl(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer, urlArg: String, subtitlesArg: List<Map<String, String>>, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -6767,15 +5636,13 @@ abstract class PigeonApiVideoStreamPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /** The SDK will call this method the first time each ad break ends. */
-  fun onAdBreakEnded(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun onAdBreakEnded(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -6795,15 +5662,13 @@ abstract class PigeonApiVideoStreamPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /** The SDK will call this method the first time each ad break begins playback. */
-  fun onAdBreakStarted(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun onAdBreakStarted(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -6823,18 +5688,16 @@ abstract class PigeonApiVideoStreamPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /**
-   * The SDK will call this method every time the stream switches from advertising or slate to
-   * content.
+   * The SDK will call this method every time the stream switches from
+   * advertising or slate to content.
    */
-  fun onAdPeriodEnded(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun onAdPeriodEnded(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -6854,18 +5717,16 @@ abstract class PigeonApiVideoStreamPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /**
-   * The SDK will call this method every time the stream switches from content to advertising or
-   * slate.
+   * The SDK will call this method every time the stream switches from content
+   * to advertising or slate.
    */
-  fun onAdPeriodStarted(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun onAdPeriodStarted(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -6885,15 +5746,13 @@ abstract class PigeonApiVideoStreamPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /** Pauses the current stream. */
-  fun pause(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun pause(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -6913,17 +5772,13 @@ abstract class PigeonApiVideoStreamPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /** Removes a callback. */
-  fun removeCallback(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
-      callbackArg:
-          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun removeCallback(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer, callbackArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -6943,15 +5798,13 @@ abstract class PigeonApiVideoStreamPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /** Resumes playing the stream. */
-  fun resume(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun resume(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -6971,16 +5824,13 @@ abstract class PigeonApiVideoStreamPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /** Seeks the stream to the given time in milliseconds. */
-  fun seek(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer,
-      timeArg: Long,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun seek(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer, timeArg: Long, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -7000,85 +5850,56 @@ abstract class PigeonApiVideoStreamPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
- * Defines a set of methods that a video player must implement to be used by the IMA SDK for dynamic
- * ad insertion.
+ * Defines a set of methods that a video player must implement to be used by
+ * the IMA SDK for dynamic ad insertion.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoStreamPlayer.VideoStreamPlayerCallback.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoStreamPlayer.VideoStreamPlayerCallback.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiVideoStreamPlayerCallback(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiVideoStreamPlayerCallback(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** Fire this callback when all content has finished playing. */
-  abstract fun onContentComplete(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
-  )
+  abstract fun onContentComplete(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback)
 
   /** Fire this callback when the video is paused. */
-  abstract fun onPause(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
-  )
+  abstract fun onPause(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback)
 
   /** Fire this callback when the video is resumed. */
-  abstract fun onResume(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
-  )
+  abstract fun onResume(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback)
 
   /**
-   * Fire this callback when a timed metadata ID3 event corresponding to user-defined text is
-   * received.
+   * Fire this callback when a timed metadata ID3 event corresponding to
+   * user-defined text is received.
    *
-   * For more information about user text events, see http://id3.org/id3v2.4.0-frames.
+   * For more information about user text events, see
+   * http://id3.org/id3v2.4.0-frames.
    */
-  abstract fun onUserTextReceived(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback,
-      userText: String
-  )
+  abstract fun onUserTextReceived(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback, userText: String)
 
   /** Fire this callback when the video player volume changes. */
-  abstract fun onVolumeChanged(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback,
-      percentage: Long
-  )
+  abstract fun onVolumeChanged(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback, percentage: Long)
 
   companion object {
     @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonApiVideoStreamPlayerCallback?
-    ) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiVideoStreamPlayerCallback?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onContentComplete",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onContentComplete", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
-            val wrapped: List<Any?> =
-                try {
-                  api.onContentComplete(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+            val wrapped: List<Any?> = try {
+              api.onContentComplete(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7086,25 +5907,17 @@ abstract class PigeonApiVideoStreamPlayerCallback(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onPause",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onPause", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
-            val wrapped: List<Any?> =
-                try {
-                  api.onPause(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+            val wrapped: List<Any?> = try {
+              api.onPause(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7112,25 +5925,17 @@ abstract class PigeonApiVideoStreamPlayerCallback(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onResume",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onResume", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
-            val wrapped: List<Any?> =
-                try {
-                  api.onResume(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+            val wrapped: List<Any?> = try {
+              api.onResume(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7138,26 +5943,18 @@ abstract class PigeonApiVideoStreamPlayerCallback(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onUserTextReceived",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onUserTextReceived", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
             val userTextArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  api.onUserTextReceived(pigeon_instanceArg, userTextArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.onUserTextReceived(pigeon_instanceArg, userTextArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7165,26 +5962,18 @@ abstract class PigeonApiVideoStreamPlayerCallback(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onVolumeChanged",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.onVolumeChanged", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback
             val percentageArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.onVolumeChanged(pigeon_instanceArg, percentageArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.onVolumeChanged(pigeon_instanceArg, percentageArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7195,14 +5984,9 @@ abstract class PigeonApiVideoStreamPlayerCallback(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /**
-   * Creates a Dart instance of VideoStreamPlayerCallback and attaches it to [pigeon_instanceArg].
-   */
-  fun pigeon_newInstance(
-      pigeon_instanceArg:
-          com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of VideoStreamPlayerCallback and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -7213,12 +5997,10 @@ abstract class PigeonApiVideoStreamPlayerCallback(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.pigeon_newInstance"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.VideoStreamPlayerCallback.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
@@ -7229,162 +6011,118 @@ abstract class PigeonApiVideoStreamPlayerCallback(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * Defines general SDK settings that are used when creating an `AdsLoader`.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/ImaSdkSettings.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/ImaSdkSettings.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiImaSdkSettings(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiImaSdkSettings(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /**
    * Specifies whether VMAP and ad rules ad breaks are automatically played.
    *
    * Default is true.
    */
-  abstract fun getAutoPlayAdBreaks(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-  ): Boolean
+  abstract fun getAutoPlayAdBreaks(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings): Boolean
 
-  /** Returns the feature flags and their states as set by the `setFeatureFlags(Map)` function. */
-  abstract fun getFeatureFlags(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-  ): Map<String, String>
+  /**
+   * Returns the feature flags and their states as set by the
+   * `setFeatureFlags(Map)` function.
+   */
+  abstract fun getFeatureFlags(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings): Map<String, String>
 
   /**
    * Gets the current ISO 639-1 language code.
    *
    * Defaults to "en" for English.
    */
-  abstract fun getLanguage(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-  ): String
+  abstract fun getLanguage(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings): String
 
   /** Returns the maximum number of VAST redirects. */
-  abstract fun getMaxRedirects(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-  ): Long
+  abstract fun getMaxRedirects(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings): Long
 
   /** Returns the partner provided player type. */
-  abstract fun getPlayerType(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-  ): String
+  abstract fun getPlayerType(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings): String
 
   /** Returns the partner provided player version. */
-  abstract fun getPlayerVersion(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-  ): String
+  abstract fun getPlayerVersion(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings): String
 
   /** Returns the PPID. */
-  abstract fun getPpid(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-  ): String
+  abstract fun getPpid(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings): String
 
   /** Returns the session ID if set. */
-  abstract fun getSessionId(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-  ): String?
+  abstract fun getSessionId(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings): String?
 
   /**
    * Gets the debug mode.
    *
    * Default is false.
    */
-  abstract fun isDebugMode(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-  ): Boolean
+  abstract fun isDebugMode(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings): Boolean
 
   /** Sets whether to automatically play VMAP and ad rules ad breaks. */
-  abstract fun setAutoPlayAdBreaks(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      autoPlayAdBreaks: Boolean
-  )
+  abstract fun setAutoPlayAdBreaks(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings, autoPlayAdBreaks: Boolean)
 
   /** Enables and disables the debug mode, which is disabled by default. */
-  abstract fun setDebugMode(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      debugMode: Boolean
-  )
+  abstract fun setDebugMode(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings, debugMode: Boolean)
 
   /** Sets the feature flags and their states to control experimental features. */
-  abstract fun setFeatureFlags(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      featureFlags: Map<String, String>
-  )
+  abstract fun setFeatureFlags(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings, featureFlags: Map<String, String>)
 
   /**
    * Sets the preferred language for the ad UI.
    *
-   * The supported codes are closely related to the two-letter ISO 639-1 language codes. See
+   * The supported codes  are closely related to the two-letter ISO 639-1
+   * language codes. See
    * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/localization.
    *
-   * Once the AdsLoader object has been created, using this setter will have no effect.
+   * Once the AdsLoader object has been created, using this setter will have no
+   * effect.
    */
-  abstract fun setLanguage(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      language: String
-  )
+  abstract fun setLanguage(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings, language: String)
 
   /**
-   * Specifies the maximum number of redirects before the subsequent redirects will be denied and
-   * the ad load aborted. In this case, the ad will raise an error with error code 302.
+   * Specifies the maximum number of redirects before the subsequent redirects
+   * will be denied and the ad load aborted. In this case, the ad will raise an
+   * error with error code 302.
    */
-  abstract fun setMaxRedirects(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      maxRedirects: Long
-  )
+  abstract fun setMaxRedirects(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings, maxRedirects: Long)
 
   /** Sets the partner provided player type. */
-  abstract fun setPlayerType(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      playerType: String
-  )
+  abstract fun setPlayerType(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings, playerType: String)
 
   /** Sets the partner provided player version. */
-  abstract fun setPlayerVersion(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      playerVersion: String
-  )
+  abstract fun setPlayerVersion(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings, playerVersion: String)
 
   /** Sets the publisher provided ID used for tracking. */
-  abstract fun setPpid(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      ppid: String
-  )
+  abstract fun setPpid(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings, ppid: String)
 
-  /** Session ID is a temporary random ID. It is used exclusively for frequency capping. */
-  abstract fun setSessionId(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      sessionId: String
-  )
+  /**
+   * Session ID is a temporary random ID. It is used exclusively for frequency
+   * capping.
+   */
+  abstract fun setSessionId(pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings, sessionId: String)
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiImaSdkSettings?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getAutoPlayAdBreaks",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getAutoPlayAdBreaks", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getAutoPlayAdBreaks(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> = try {
+              listOf(api.getAutoPlayAdBreaks(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7392,22 +6130,16 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getFeatureFlags",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getFeatureFlags", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getFeatureFlags(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> = try {
+              listOf(api.getFeatureFlags(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7415,22 +6147,16 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getLanguage",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getLanguage", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getLanguage(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> = try {
+              listOf(api.getLanguage(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7438,22 +6164,16 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getMaxRedirects",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getMaxRedirects", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getMaxRedirects(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> = try {
+              listOf(api.getMaxRedirects(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7461,22 +6181,16 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getPlayerType",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getPlayerType", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getPlayerType(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> = try {
+              listOf(api.getPlayerType(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7484,22 +6198,16 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getPlayerVersion",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getPlayerVersion", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getPlayerVersion(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> = try {
+              listOf(api.getPlayerVersion(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7507,22 +6215,16 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getPpid",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getPpid", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getPpid(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> = try {
+              listOf(api.getPpid(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7530,22 +6232,16 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getSessionId",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.getSessionId", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getSessionId(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> = try {
+              listOf(api.getSessionId(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7553,22 +6249,16 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.isDebugMode",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.isDebugMode", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.isDebugMode(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val wrapped: List<Any?> = try {
+              listOf(api.isDebugMode(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7576,24 +6266,18 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setAutoPlayAdBreaks",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setAutoPlayAdBreaks", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
             val autoPlayAdBreaksArg = args[1] as Boolean
-            val wrapped: List<Any?> =
-                try {
-                  api.setAutoPlayAdBreaks(pigeon_instanceArg, autoPlayAdBreaksArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setAutoPlayAdBreaks(pigeon_instanceArg, autoPlayAdBreaksArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7601,24 +6285,18 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setDebugMode",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setDebugMode", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
             val debugModeArg = args[1] as Boolean
-            val wrapped: List<Any?> =
-                try {
-                  api.setDebugMode(pigeon_instanceArg, debugModeArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setDebugMode(pigeon_instanceArg, debugModeArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7626,24 +6304,18 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setFeatureFlags",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setFeatureFlags", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
             val featureFlagsArg = args[1] as Map<String, String>
-            val wrapped: List<Any?> =
-                try {
-                  api.setFeatureFlags(pigeon_instanceArg, featureFlagsArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setFeatureFlags(pigeon_instanceArg, featureFlagsArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7651,24 +6323,18 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setLanguage",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setLanguage", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
             val languageArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  api.setLanguage(pigeon_instanceArg, languageArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setLanguage(pigeon_instanceArg, languageArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7676,25 +6342,18 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setMaxRedirects",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setMaxRedirects", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val maxRedirectsArg =
-                args[1].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.setMaxRedirects(pigeon_instanceArg, maxRedirectsArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val maxRedirectsArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.setMaxRedirects(pigeon_instanceArg, maxRedirectsArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7702,24 +6361,18 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setPlayerType",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setPlayerType", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
             val playerTypeArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  api.setPlayerType(pigeon_instanceArg, playerTypeArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setPlayerType(pigeon_instanceArg, playerTypeArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7727,24 +6380,18 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setPlayerVersion",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setPlayerVersion", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
             val playerVersionArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  api.setPlayerVersion(pigeon_instanceArg, playerVersionArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setPlayerVersion(pigeon_instanceArg, playerVersionArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7752,24 +6399,18 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setPpid",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setPpid", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
             val ppidArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  api.setPpid(pigeon_instanceArg, ppidArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setPpid(pigeon_instanceArg, ppidArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7777,24 +6418,18 @@ abstract class PigeonApiImaSdkSettings(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setSessionId",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setSessionId", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
             val sessionIdArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  api.setSessionId(pigeon_instanceArg, sessionIdArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setSessionId(pigeon_instanceArg, sessionIdArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7805,11 +6440,9 @@ abstract class PigeonApiImaSdkSettings(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of ImaSdkSettings and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of ImaSdkSettings and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.ImaSdkSettings, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -7820,8 +6453,7 @@ abstract class PigeonApiImaSdkSettings(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.pigeon_newInstance"
@@ -7835,56 +6467,44 @@ abstract class PigeonApiImaSdkSettings(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * Defines an update to the video's progress.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoProgressUpdate.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoProgressUpdate.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiVideoProgressUpdate(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  abstract fun pigeon_defaultConstructor(
-      currentTimeMs: Long,
-      durationMs: Long
-  ): com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
+abstract class PigeonApiVideoProgressUpdate(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(currentTimeMs: Long, durationMs: Long): com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 
-  /** Value to use for cases when progress is not yet defined, such as video initialization. */
-  abstract fun videoTimeNotReady():
-      com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
+  /**
+   * Value to use for cases when progress is not yet defined, such as video
+   * initialization.
+   */
+  abstract fun videoTimeNotReady(): com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiVideoProgressUpdate?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoProgressUpdate.pigeon_defaultConstructor",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoProgressUpdate.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val currentTimeMsArg =
-                args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val currentTimeMsArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
             val durationMsArg = args[2].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(currentTimeMsArg, durationMsArg),
-                      pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(currentTimeMsArg,durationMsArg), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7892,24 +6512,17 @@ abstract class PigeonApiVideoProgressUpdate(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoProgressUpdate.videoTimeNotReady",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoProgressUpdate.videoTimeNotReady", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.videoTimeNotReady(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.videoTimeNotReady(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -7920,11 +6533,9 @@ abstract class PigeonApiVideoProgressUpdate(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of VideoProgressUpdate and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of VideoProgressUpdate and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -7935,12 +6546,10 @@ abstract class PigeonApiVideoProgressUpdate(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.VideoProgressUpdate.pigeon_newInstance"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.VideoProgressUpdate.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
@@ -7951,30 +6560,24 @@ abstract class PigeonApiVideoProgressUpdate(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * The minimal information required to play an ad.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/AdMediaInfo.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/AdMediaInfo.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdMediaInfo(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  abstract fun url(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-  ): String
+abstract class PigeonApiAdMediaInfo(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  abstract fun url(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo): String
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdMediaInfo and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdMediaInfo and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -7985,8 +6588,7 @@ abstract class PigeonApiAdMediaInfo(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val urlArg = url(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
@@ -8001,25 +6603,23 @@ abstract class PigeonApiAdMediaInfo(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * An ad may be part of a pod of ads.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdPodInfo.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdPodInfo.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdPodInfo(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiAdPodInfo(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /**
    * The position of the ad within the pod.
    *
-   * The value returned is one-based, for example, 1 of 2, 2 of 2, etc. If the ad is not part of a
-   * pod, this will return 1.
+   * The value returned is one-based, for example, 1 of 2, 2 of 2, etc. If the
+   * ad is not part of a pod, this will return 1.
    */
   abstract fun adPosition(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdPodInfo): Long
 
@@ -8028,9 +6628,7 @@ abstract class PigeonApiAdPodInfo(
    *
    * For unknown duration, -1 is returned.
    */
-  abstract fun maxDuration(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.AdPodInfo
-  ): Double
+  abstract fun maxDuration(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdPodInfo): Double
 
   /** Client side and DAI VOD: Returns the index of the ad pod. */
   abstract fun podIndex(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdPodInfo): Long
@@ -8038,9 +6636,9 @@ abstract class PigeonApiAdPodInfo(
   /**
    * The content time offset at which the current ad pod was scheduled.
    *
-   * For preroll pod, 0 is returned. For midrolls, the scheduled time is returned in seconds. For
-   * postroll, -1 is returned. Defaults to 0 if this ad is not part of a pod, or the pod is not part
-   * of an ad playlist.
+   * For preroll pod, 0 is returned. For midrolls, the scheduled time is
+   * returned in seconds. For postroll, -1 is returned. Defaults to 0 if this
+   * ad is not part of a pod, or the pod is not part of an ad playlist.
    */
   abstract fun timeOffset(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdPodInfo): Double
 
@@ -8051,11 +6649,9 @@ abstract class PigeonApiAdPodInfo(
   abstract fun isBumper(pigeon_instance: com.google.ads.interactivemedia.v3.api.AdPodInfo): Boolean
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdPodInfo and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdPodInfo,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdPodInfo and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdPodInfo, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -8066,8 +6662,7 @@ abstract class PigeonApiAdPodInfo(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val adPositionArg = adPosition(pigeon_instanceArg)
     val maxDurationArg = maxDuration(pigeon_instanceArg)
     val podIndexArg = podIndex(pigeon_instanceArg)
@@ -8078,37 +6673,28 @@ abstract class PigeonApiAdPodInfo(
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.AdPodInfo.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(
-        listOf(
-            pigeon_identifierArg,
-            adPositionArg,
-            maxDurationArg,
-            podIndexArg,
-            timeOffsetArg,
-            totalAdsArg,
-            isBumperArg)) {
-          if (it is List<*>) {
-            if (it.size > 1) {
-              callback(
-                  Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
-            } else {
-              callback(Result.success(Unit))
-            }
-          } else {
-            callback(Result.failure(createConnectionError(channelName)))
-          }
+    channel.send(listOf(pigeon_identifierArg, adPositionArg, maxDurationArg, podIndexArg, timeOffsetArg, totalAdsArg, isBumperArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
         }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
   }
+
 }
 /**
- * FrameLayout is designed to block out an area on the screen to display a single item.
+ * FrameLayout is designed to block out an area on the screen to display a
+ * single item.
  *
  * See https://developer.android.com/reference/android/widget/FrameLayout.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiFrameLayout(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiFrameLayout(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   abstract fun pigeon_defaultConstructor(): android.widget.FrameLayout
 
   companion object {
@@ -8116,24 +6702,17 @@ abstract class PigeonApiFrameLayout(
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiFrameLayout?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.FrameLayout.pigeon_defaultConstructor",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.FrameLayout.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8144,11 +6723,9 @@ abstract class PigeonApiFrameLayout(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of FrameLayout and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: android.widget.FrameLayout,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of FrameLayout and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: android.widget.FrameLayout, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -8159,8 +6736,7 @@ abstract class PigeonApiFrameLayout(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.FrameLayout.pigeon_newInstance"
@@ -8174,15 +6750,17 @@ abstract class PigeonApiFrameLayout(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonApiViewGroup] used to access callback methods */
-  fun pigeon_getPigeonApiViewGroup(): PigeonApiViewGroup {
+  /**An implementation of [PigeonApiViewGroup] used to access callback methods */
+  fun pigeon_getPigeonApiViewGroup(): PigeonApiViewGroup
+  {
     return pigeonRegistrar.getPigeonApiViewGroup()
   }
+
 }
 /**
  * A special view that can contain other views (called children.)
@@ -8190,9 +6768,7 @@ abstract class PigeonApiFrameLayout(
  * See https://developer.android.com/reference/android/view/ViewGroup.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiViewGroup(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiViewGroup(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   abstract fun addView(pigeon_instance: android.view.ViewGroup, view: android.view.View)
 
   companion object {
@@ -8200,23 +6776,18 @@ abstract class PigeonApiViewGroup(
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiViewGroup?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ViewGroup.addView",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ViewGroup.addView", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.view.ViewGroup
             val viewArg = args[1] as android.view.View
-            val wrapped: List<Any?> =
-                try {
-                  api.addView(pigeon_instanceArg, viewArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.addView(pigeon_instanceArg, viewArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8227,11 +6798,9 @@ abstract class PigeonApiViewGroup(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of ViewGroup and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: android.view.ViewGroup,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of ViewGroup and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: android.view.ViewGroup, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -8242,8 +6811,7 @@ abstract class PigeonApiViewGroup(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.ViewGroup.pigeon_newInstance"
@@ -8257,15 +6825,17 @@ abstract class PigeonApiViewGroup(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonApiView] used to access callback methods */
-  fun pigeon_getPigeonApiView(): PigeonApiView {
+  /**An implementation of [PigeonApiView] used to access callback methods */
+  fun pigeon_getPigeonApiView(): PigeonApiView
+  {
     return pigeonRegistrar.getPigeonApiView()
   }
+
 }
 /**
  * Displays a video file.
@@ -8273,9 +6843,7 @@ abstract class PigeonApiViewGroup(
  * See https://developer.android.com/reference/android/widget/VideoView.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiVideoView(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiVideoView(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   abstract fun pigeon_defaultConstructor(): android.widget.VideoView
 
   /** Sets the URI of the video. */
@@ -8293,24 +6861,17 @@ abstract class PigeonApiVideoView(
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiVideoView?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoView.pigeon_defaultConstructor",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoView.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8318,23 +6879,18 @@ abstract class PigeonApiVideoView(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoView.setVideoUri",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoView.setVideoUri", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.widget.VideoView
             val uriArg = args[1] as String
-            val wrapped: List<Any?> =
-                try {
-                  api.setVideoUri(pigeon_instanceArg, uriArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setVideoUri(pigeon_instanceArg, uriArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8342,21 +6898,16 @@ abstract class PigeonApiVideoView(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoView.getCurrentPosition",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoView.getCurrentPosition", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.widget.VideoView
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getCurrentPosition(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getCurrentPosition(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8367,11 +6918,9 @@ abstract class PigeonApiVideoView(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of VideoView and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: android.widget.VideoView,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of VideoView and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: android.widget.VideoView, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -8382,16 +6931,12 @@ abstract class PigeonApiVideoView(
       Result.success(Unit)
       return
     }
-    throw IllegalStateException(
-        "Attempting to create a new Dart instance of VideoView, but the class has a nonnull callback method.")
+    throw IllegalStateException("Attempting to create a new Dart instance of VideoView, but the class has a nonnull callback method.")
   }
 
   /** Callback to be invoked when the media source is ready for playback. */
-  fun onPrepared(
-      pigeon_instanceArg: android.widget.VideoView,
-      playerArg: android.media.MediaPlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun onPrepared(pigeon_instanceArg: android.widget.VideoView, playerArg: android.media.MediaPlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -8411,16 +6956,13 @@ abstract class PigeonApiVideoView(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /** Callback to be invoked when playback of a media source has completed. */
-  fun onCompletion(
-      pigeon_instanceArg: android.widget.VideoView,
-      playerArg: android.media.MediaPlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun onCompletion(pigeon_instanceArg: android.widget.VideoView, playerArg: android.media.MediaPlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -8440,18 +6982,16 @@ abstract class PigeonApiVideoView(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
-  /** Callback to be invoked when there has been an error during an asynchronous operation. */
-  fun onError(
-      pigeon_instanceArg: android.widget.VideoView,
-      playerArg: android.media.MediaPlayer,
-      whatArg: Long,
-      extraArg: Long,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**
+   * Callback to be invoked when there has been an error during an asynchronous
+   * operation.
+   */
+  fun onError(pigeon_instanceArg: android.widget.VideoView, playerArg: android.media.MediaPlayer, whatArg: Long, extraArg: Long, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -8471,15 +7011,17 @@ abstract class PigeonApiVideoView(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonApiView] used to access callback methods */
-  fun pigeon_getPigeonApiView(): PigeonApiView {
+  /**An implementation of [PigeonApiView] used to access callback methods */
+  fun pigeon_getPigeonApiView(): PigeonApiView
+  {
     return pigeonRegistrar.getPigeonApiView()
   }
+
 }
 /**
  * This class represents the basic building block for user interface components.
@@ -8487,12 +7029,11 @@ abstract class PigeonApiVideoView(
  * See https://developer.android.com/reference/android/view/View.
  */
 @Suppress("UNCHECKED_CAST")
-open class PigeonApiView(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+open class PigeonApiView(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of View and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(pigeon_instanceArg: android.view.View, callback: (Result<Unit>) -> Unit) {
+  /**Creates a Dart instance of View and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: android.view.View, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -8503,8 +7044,7 @@ open class PigeonApiView(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.View.pigeon_newInstance"
@@ -8518,19 +7058,19 @@ open class PigeonApiView(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
- * MediaPlayer class can be used to control playback of audio/video files and streams.
+ * MediaPlayer class can be used to control playback of audio/video files and
+ * streams.
  *
  * See https://developer.android.com/reference/android/media/MediaPlayer.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiMediaPlayer(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiMediaPlayer(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** Gets the duration of the file. */
   abstract fun getDuration(pigeon_instance: android.media.MediaPlayer): Long
 
@@ -8551,21 +7091,16 @@ abstract class PigeonApiMediaPlayer(
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiMediaPlayer?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.MediaPlayer.getDuration",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.MediaPlayer.getDuration", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.media.MediaPlayer
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getDuration(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              listOf(api.getDuration(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8573,23 +7108,18 @@ abstract class PigeonApiMediaPlayer(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.MediaPlayer.seekTo",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.MediaPlayer.seekTo", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.media.MediaPlayer
             val mSecArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.seekTo(pigeon_instanceArg, mSecArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.seekTo(pigeon_instanceArg, mSecArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8597,22 +7127,17 @@ abstract class PigeonApiMediaPlayer(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.MediaPlayer.start",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.MediaPlayer.start", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.media.MediaPlayer
-            val wrapped: List<Any?> =
-                try {
-                  api.start(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.start(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8620,22 +7145,17 @@ abstract class PigeonApiMediaPlayer(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.MediaPlayer.pause",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.MediaPlayer.pause", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.media.MediaPlayer
-            val wrapped: List<Any?> =
-                try {
-                  api.pause(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.pause(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8643,20 +7163,17 @@ abstract class PigeonApiMediaPlayer(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.MediaPlayer.stop", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.MediaPlayer.stop", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.media.MediaPlayer
-            val wrapped: List<Any?> =
-                try {
-                  api.stop(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.stop(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8667,11 +7184,9 @@ abstract class PigeonApiMediaPlayer(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of MediaPlayer and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: android.media.MediaPlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of MediaPlayer and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: android.media.MediaPlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -8682,8 +7197,7 @@ abstract class PigeonApiMediaPlayer(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.MediaPlayer.pigeon_newInstance"
@@ -8697,122 +7211,66 @@ abstract class PigeonApiMediaPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * Callbacks that the player must fire.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoAdPlayer.VideoAdPlayerCallback.html
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoAdPlayer.VideoAdPlayerCallback.html
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiVideoAdPlayerCallback(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiVideoAdPlayerCallback(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /** Fire this callback periodically as ad playback occurs. */
-  abstract fun onAdProgress(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback,
-      adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo,
-      videoProgressUpdate: com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
-  )
+  abstract fun onAdProgress(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback, adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo, videoProgressUpdate: com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate)
 
   /** Fire this callback when video playback stalls waiting for data. */
-  abstract fun onBuffering(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback,
-      adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-  )
+  abstract fun onBuffering(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback, adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo)
 
   /** Fire this callback when all content has finished playing. */
-  abstract fun onContentComplete(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
-  )
+  abstract fun onContentComplete(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback)
 
   /** Fire this callback when the video finishes playing. */
-  abstract fun onEnded(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback,
-      adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-  )
+  abstract fun onEnded(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback, adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo)
 
   /** Fire this callback when the video has encountered an error. */
-  abstract fun onError(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback,
-      adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-  )
+  abstract fun onError(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback, adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo)
 
   /** Fire this callback when the video is ready to begin playback. */
-  abstract fun onLoaded(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback,
-      adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-  )
+  abstract fun onLoaded(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback, adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo)
 
   /** Fire this callback when the video is paused. */
-  abstract fun onPause(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback,
-      adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-  )
+  abstract fun onPause(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback, adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo)
 
   /** Fire this callback when the player begins playing a video. */
-  abstract fun onPlay(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback,
-      adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-  )
+  abstract fun onPlay(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback, adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo)
 
   /** Fire this callback when the video is unpaused. */
-  abstract fun onResume(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback,
-      adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-  )
+  abstract fun onResume(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback, adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo)
 
   /** Fire this callback when the playback volume changes. */
-  abstract fun onVolumeChanged(
-      pigeon_instance:
-          com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback,
-      adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo,
-      percentage: Long
-  )
+  abstract fun onVolumeChanged(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback, adMediaInfo: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo, percentage: Long)
 
   companion object {
     @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonApiVideoAdPlayerCallback?
-    ) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiVideoAdPlayerCallback?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onAdProgress",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onAdProgress", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
-            val adMediaInfoArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-            val videoProgressUpdateArg =
-                args[2] as com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
-            val wrapped: List<Any?> =
-                try {
-                  api.onAdProgress(pigeon_instanceArg, adMediaInfoArg, videoProgressUpdateArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
+            val adMediaInfoArg = args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+            val videoProgressUpdateArg = args[2] as com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
+            val wrapped: List<Any?> = try {
+              api.onAdProgress(pigeon_instanceArg, adMediaInfoArg, videoProgressUpdateArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8820,27 +7278,18 @@ abstract class PigeonApiVideoAdPlayerCallback(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onBuffering",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onBuffering", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
-            val adMediaInfoArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-            val wrapped: List<Any?> =
-                try {
-                  api.onBuffering(pigeon_instanceArg, adMediaInfoArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
+            val adMediaInfoArg = args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+            val wrapped: List<Any?> = try {
+              api.onBuffering(pigeon_instanceArg, adMediaInfoArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8848,25 +7297,17 @@ abstract class PigeonApiVideoAdPlayerCallback(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onContentComplete",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onContentComplete", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
-            val wrapped: List<Any?> =
-                try {
-                  api.onContentComplete(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
+            val wrapped: List<Any?> = try {
+              api.onContentComplete(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8874,27 +7315,18 @@ abstract class PigeonApiVideoAdPlayerCallback(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onEnded",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onEnded", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
-            val adMediaInfoArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-            val wrapped: List<Any?> =
-                try {
-                  api.onEnded(pigeon_instanceArg, adMediaInfoArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
+            val adMediaInfoArg = args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+            val wrapped: List<Any?> = try {
+              api.onEnded(pigeon_instanceArg, adMediaInfoArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8902,27 +7334,18 @@ abstract class PigeonApiVideoAdPlayerCallback(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onError",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onError", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
-            val adMediaInfoArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-            val wrapped: List<Any?> =
-                try {
-                  api.onError(pigeon_instanceArg, adMediaInfoArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
+            val adMediaInfoArg = args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+            val wrapped: List<Any?> = try {
+              api.onError(pigeon_instanceArg, adMediaInfoArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8930,27 +7353,18 @@ abstract class PigeonApiVideoAdPlayerCallback(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onLoaded",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onLoaded", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
-            val adMediaInfoArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-            val wrapped: List<Any?> =
-                try {
-                  api.onLoaded(pigeon_instanceArg, adMediaInfoArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
+            val adMediaInfoArg = args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+            val wrapped: List<Any?> = try {
+              api.onLoaded(pigeon_instanceArg, adMediaInfoArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8958,27 +7372,18 @@ abstract class PigeonApiVideoAdPlayerCallback(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onPause",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onPause", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
-            val adMediaInfoArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-            val wrapped: List<Any?> =
-                try {
-                  api.onPause(pigeon_instanceArg, adMediaInfoArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
+            val adMediaInfoArg = args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+            val wrapped: List<Any?> = try {
+              api.onPause(pigeon_instanceArg, adMediaInfoArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -8986,27 +7391,18 @@ abstract class PigeonApiVideoAdPlayerCallback(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onPlay",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onPlay", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
-            val adMediaInfoArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-            val wrapped: List<Any?> =
-                try {
-                  api.onPlay(pigeon_instanceArg, adMediaInfoArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
+            val adMediaInfoArg = args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+            val wrapped: List<Any?> = try {
+              api.onPlay(pigeon_instanceArg, adMediaInfoArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -9014,27 +7410,18 @@ abstract class PigeonApiVideoAdPlayerCallback(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onResume",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onResume", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
-            val adMediaInfoArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
-            val wrapped: List<Any?> =
-                try {
-                  api.onResume(pigeon_instanceArg, adMediaInfoArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
+            val adMediaInfoArg = args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+            val wrapped: List<Any?> = try {
+              api.onResume(pigeon_instanceArg, adMediaInfoArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -9042,28 +7429,19 @@ abstract class PigeonApiVideoAdPlayerCallback(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onVolumeChanged",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.onVolumeChanged", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0]
-                    as
-                    com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
-            val adMediaInfoArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
+            val adMediaInfoArg = args[1] as com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
             val percentageArg = args[2].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.onVolumeChanged(pigeon_instanceArg, adMediaInfoArg, percentageArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.onVolumeChanged(pigeon_instanceArg, adMediaInfoArg, percentageArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -9074,12 +7452,9 @@ abstract class PigeonApiVideoAdPlayerCallback(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of VideoAdPlayerCallback and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg:
-          com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of VideoAdPlayerCallback and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9090,12 +7465,10 @@ abstract class PigeonApiVideoAdPlayerCallback(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.pigeon_newInstance"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
@@ -9106,59 +7479,46 @@ abstract class PigeonApiVideoAdPlayerCallback(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
- * Defines the set of methods that a video player must implement to be used by the IMA SDK, as well
- * as a set of callbacks that it must fire.
+ * Defines the set of methods that a video player must implement to be used by
+ * the IMA SDK, as well as a set of callbacks that it must fire.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoAdPlayer.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoAdPlayer.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiVideoAdPlayer(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  abstract fun pigeon_defaultConstructor():
-      com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
+abstract class PigeonApiVideoAdPlayer(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(): com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
 
   /** The volume of the player as a percentage from 0 to 100. */
-  abstract fun setVolume(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer,
-      value: Long
-  )
+  abstract fun setVolume(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer, value: Long)
 
-  /** The `VideoProgressUpdate` describing playback progress of the current video. */
-  abstract fun setAdProgress(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer,
-      progress: com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
-  )
+  /**
+   * The `VideoProgressUpdate` describing playback progress of the current
+   * video.
+   */
+  abstract fun setAdProgress(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer, progress: com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate)
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiVideoAdPlayer?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.pigeon_defaultConstructor",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -9166,24 +7526,18 @@ abstract class PigeonApiVideoAdPlayer(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.setVolume",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.setVolume", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
             val valueArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.setVolume(pigeon_instanceArg, valueArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val wrapped: List<Any?> = try {
+              api.setVolume(pigeon_instanceArg, valueArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -9191,25 +7545,18 @@ abstract class PigeonApiVideoAdPlayer(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.setAdProgress",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.setAdProgress", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
-            val progressArg =
-                args[1] as com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
-            val wrapped: List<Any?> =
-                try {
-                  api.setAdProgress(pigeon_instanceArg, progressArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
+            val progressArg = args[1] as com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
+            val wrapped: List<Any?> = try {
+              api.setAdProgress(pigeon_instanceArg, progressArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -9220,11 +7567,9 @@ abstract class PigeonApiVideoAdPlayer(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of VideoAdPlayer and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of VideoAdPlayer and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9235,17 +7580,12 @@ abstract class PigeonApiVideoAdPlayer(
       Result.success(Unit)
       return
     }
-    throw IllegalStateException(
-        "Attempting to create a new Dart instance of VideoAdPlayer, but the class has a nonnull callback method.")
+    throw IllegalStateException("Attempting to create a new Dart instance of VideoAdPlayer, but the class has a nonnull callback method.")
   }
 
   /** Adds a callback. */
-  fun addCallback(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer,
-      callbackArg:
-          com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun addCallback(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer, callbackArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9265,17 +7605,13 @@ abstract class PigeonApiVideoAdPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /** Loads a video ad hosted at AdMediaInfo. */
-  fun loadAd(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer,
-      adMediaInfoArg: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo,
-      adPodInfoArg: com.google.ads.interactivemedia.v3.api.AdPodInfo,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun loadAd(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer, adMediaInfoArg: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo, adPodInfoArg: com.google.ads.interactivemedia.v3.api.AdPodInfo, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9295,16 +7631,13 @@ abstract class PigeonApiVideoAdPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /** Pauses playing the current ad. */
-  fun pauseAd(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer,
-      adMediaInfoArg: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun pauseAd(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer, adMediaInfoArg: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9324,19 +7657,16 @@ abstract class PigeonApiVideoAdPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /**
-   * Starts or resumes playing the video ad referenced by the AdMediaInfo, provided loadAd has
-   * already been called for it.
+   * Starts or resumes playing the video ad referenced by the AdMediaInfo,
+   * provided loadAd has already been called for it.
    */
-  fun playAd(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer,
-      adMediaInfoArg: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun playAd(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer, adMediaInfoArg: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9356,15 +7686,13 @@ abstract class PigeonApiVideoAdPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /** Cleans up and releases all resources used by the `VideoAdPlayer`. */
-  fun release(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun release(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9384,17 +7712,13 @@ abstract class PigeonApiVideoAdPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /** Removes a callback. */
-  fun removeCallback(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer,
-      callbackArg:
-          com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun removeCallback(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer, callbackArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9414,16 +7738,13 @@ abstract class PigeonApiVideoAdPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /** Stops playing the current ad. */
-  fun stopAd(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer,
-      adMediaInfoArg: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun stopAd(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer, adMediaInfoArg: com.google.ads.interactivemedia.v3.api.player.AdMediaInfo, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9443,46 +7764,36 @@ abstract class PigeonApiVideoAdPlayer(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * Listener interface for notification of ad load or stream load completion.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsLoader.AdsLoadedListener.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsLoader.AdsLoadedListener.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdsLoadedListener(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  abstract fun pigeon_defaultConstructor():
-      com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener
+abstract class PigeonApiAdsLoadedListener(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(): com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiAdsLoadedListener?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdsLoadedListener.pigeon_defaultConstructor",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdsLoadedListener.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -9493,11 +7804,9 @@ abstract class PigeonApiAdsLoadedListener(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdsLoadedListener and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdsLoadedListener and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9508,16 +7817,12 @@ abstract class PigeonApiAdsLoadedListener(
       Result.success(Unit)
       return
     }
-    throw IllegalStateException(
-        "Attempting to create a new Dart instance of AdsLoadedListener, but the class has a nonnull callback method.")
+    throw IllegalStateException("Attempting to create a new Dart instance of AdsLoadedListener, but the class has a nonnull callback method.")
   }
 
   /** Called once the AdsManager or StreamManager has been loaded. */
-  fun onAdsManagerLoaded(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener,
-      eventArg: com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun onAdsManagerLoaded(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener, eventArg: com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9526,8 +7831,7 @@ abstract class PigeonApiAdsLoadedListener(
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.AdsLoadedListener.onAdsManagerLoaded"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.AdsLoadedListener.onAdsManagerLoaded"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg, eventArg)) {
       if (it is List<*>) {
@@ -9538,46 +7842,36 @@ abstract class PigeonApiAdsLoadedListener(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * Interface for classes that will listen to AdErrorEvents.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdErrorEvent.AdErrorListener.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdErrorEvent.AdErrorListener.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdErrorListener(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  abstract fun pigeon_defaultConstructor():
-      com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
+abstract class PigeonApiAdErrorListener(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(): com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiAdErrorListener?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdErrorListener.pigeon_defaultConstructor",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdErrorListener.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -9588,11 +7882,9 @@ abstract class PigeonApiAdErrorListener(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdErrorListener and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdErrorListener and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9603,16 +7895,12 @@ abstract class PigeonApiAdErrorListener(
       Result.success(Unit)
       return
     }
-    throw IllegalStateException(
-        "Attempting to create a new Dart instance of AdErrorListener, but the class has a nonnull callback method.")
+    throw IllegalStateException("Attempting to create a new Dart instance of AdErrorListener, but the class has a nonnull callback method.")
   }
 
   /** Called when an error occurs. */
-  fun onAdError(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener,
-      eventArg: com.google.ads.interactivemedia.v3.api.AdErrorEvent,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun onAdError(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener, eventArg: com.google.ads.interactivemedia.v3.api.AdErrorEvent, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9632,46 +7920,36 @@ abstract class PigeonApiAdErrorListener(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
  * Listener interface for ad events.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.AdEventListener.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.AdEventListener.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdEventListener(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  abstract fun pigeon_defaultConstructor():
-      com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
+abstract class PigeonApiAdEventListener(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(): com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiAdEventListener?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.AdEventListener.pigeon_defaultConstructor",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.AdEventListener.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -9682,11 +7960,9 @@ abstract class PigeonApiAdEventListener(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of AdEventListener and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of AdEventListener and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9697,16 +7973,12 @@ abstract class PigeonApiAdEventListener(
       Result.success(Unit)
       return
     }
-    throw IllegalStateException(
-        "Attempting to create a new Dart instance of AdEventListener, but the class has a nonnull callback method.")
+    throw IllegalStateException("Attempting to create a new Dart instance of AdEventListener, but the class has a nonnull callback method.")
   }
 
   /** Respond to an occurrence of an AdEvent. */
-  fun onAdEvent(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener,
-      eventArg: com.google.ads.interactivemedia.v3.api.AdEvent,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun onAdEvent(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener, eventArg: com.google.ads.interactivemedia.v3.api.AdEvent, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9726,73 +7998,50 @@ abstract class PigeonApiAdEventListener(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
- * Version info for SecureSignals adapters and for third party SDKs that collect SecureSignals.
+ * Version info for SecureSignals adapters and for third party SDKs that
+ * collect SecureSignals.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/VersionInfo.html.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/VersionInfo.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiVersionInfo(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+abstract class PigeonApiVersionInfo(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   /**
-   * Creates a new VersionInfo object that will contain the version of an rtb adapter or third party
-   * SDK.
+   * Creates a new VersionInfo object that will contain the version of an rtb
+   * adapter or third party SDK.
    */
-  abstract fun pigeon_defaultConstructor(
-      majorVersion: Long,
-      minorVersion: Long,
-      microVersion: Long
-  ): com.google.ads.interactivemedia.v3.api.VersionInfo
+  abstract fun pigeon_defaultConstructor(majorVersion: Long, minorVersion: Long, microVersion: Long): com.google.ads.interactivemedia.v3.api.VersionInfo
 
-  abstract fun majorVersion(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.VersionInfo
-  ): Long
+  abstract fun majorVersion(pigeon_instance: com.google.ads.interactivemedia.v3.api.VersionInfo): Long
 
-  abstract fun minorVersion(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.VersionInfo
-  ): Long
+  abstract fun minorVersion(pigeon_instance: com.google.ads.interactivemedia.v3.api.VersionInfo): Long
 
-  abstract fun microVersion(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.VersionInfo
-  ): Long
+  abstract fun microVersion(pigeon_instance: com.google.ads.interactivemedia.v3.api.VersionInfo): Long
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiVersionInfo?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.VersionInfo.pigeon_defaultConstructor",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VersionInfo.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val majorVersionArg =
-                args[1].let { num -> if (num is Int) num.toLong() else num as Long }
-            val minorVersionArg =
-                args[2].let { num -> if (num is Int) num.toLong() else num as Long }
-            val microVersionArg =
-                args[3].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(
-                          majorVersionArg, minorVersionArg, microVersionArg),
-                      pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val majorVersionArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val minorVersionArg = args[2].let { num -> if (num is Int) num.toLong() else num as Long }
+            val microVersionArg = args[3].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(majorVersionArg,minorVersionArg,microVersionArg), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -9803,11 +8052,9 @@ abstract class PigeonApiVersionInfo(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of VersionInfo and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.VersionInfo,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of VersionInfo and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.VersionInfo, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9818,8 +8065,7 @@ abstract class PigeonApiVersionInfo(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val majorVersionArg = majorVersion(pigeon_instanceArg)
     val minorVersionArg = minorVersion(pigeon_instanceArg)
     val microVersionArg = microVersion(pigeon_instanceArg)
@@ -9836,27 +8082,23 @@ abstract class PigeonApiVersionInfo(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
- * Provides an API for interactive advertisements to resize the `VideoAdPlayer` or
- * `VideoStreamPlayer` within its container.
+ * Provides an API for interactive advertisements to resize the `VideoAdPlayer`
+ * or `VideoStreamPlayer` within its container.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/ResizablePlayer.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/ResizablePlayer.
  */
 @Suppress("UNCHECKED_CAST")
-open class PigeonApiResizablePlayer(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
+open class PigeonApiResizablePlayer(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of ResizablePlayer and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.ResizablePlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of ResizablePlayer and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.ResizablePlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9867,19 +8109,15 @@ open class PigeonApiResizablePlayer(
       Result.success(Unit)
       return
     }
-    throw IllegalStateException(
-        "Attempting to create a new Dart instance of ResizablePlayer, but the class has a nonnull callback method.")
+    throw IllegalStateException("Attempting to create a new Dart instance of ResizablePlayer, but the class has a nonnull callback method.")
   }
 
-  /** Resize the VideoPlayer within its bounds by adding margins to each side, in pixels. */
-  fun resize(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.ResizablePlayer,
-      leftMarginArg: Long,
-      topMarginArg: Long,
-      rightMarginArg: Long,
-      bottomMarginArg: Long,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**
+   * Resize the VideoPlayer within its bounds by adding margins to each side,
+   * in pixels.
+   */
+  fun resize(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.ResizablePlayer, leftMarginArg: Long, topMarginArg: Long, rightMarginArg: Long, bottomMarginArg: Long, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9890,60 +8128,46 @@ open class PigeonApiResizablePlayer(
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.interactive_media_ads.ResizablePlayer.resize"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(
-        listOf(pigeon_instanceArg, leftMarginArg, topMarginArg, rightMarginArg, bottomMarginArg)) {
-          if (it is List<*>) {
-            if (it.size > 1) {
-              callback(
-                  Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
-            } else {
-              callback(Result.success(Unit))
-            }
-          } else {
-            callback(Result.failure(createConnectionError(channelName)))
-          }
+    channel.send(listOf(pigeon_instanceArg, leftMarginArg, topMarginArg, rightMarginArg, bottomMarginArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
         }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
   }
+
 }
 /**
  * Implementation of a `VideoAdPlayer` that also implements `ResizablePlayer`.
  *
- * This class is not a part of the IMA SDK and is provided as a work around to create a class that
- * implements both `VideoAdPlayer` and `ResizablePlayer`.
+ * This class is not a part of the IMA SDK and is provided as a work around to
+ * create a class that implements both `VideoAdPlayer` and `ResizablePlayer`.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiResizableVideoAdPlayer(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  abstract fun pigeon_defaultConstructor():
-      dev.flutter.packages.interactive_media_ads.ResizableVideoAdPlayerProxyApi.ResizableVideoAdPlayer
+abstract class PigeonApiResizableVideoAdPlayer(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(): dev.flutter.packages.interactive_media_ads.ResizableVideoAdPlayerProxyApi.ResizableVideoAdPlayer
 
   companion object {
     @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonApiResizableVideoAdPlayer?
-    ) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiResizableVideoAdPlayer?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ResizableVideoAdPlayer.pigeon_defaultConstructor",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ResizableVideoAdPlayer.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -9954,12 +8178,9 @@ abstract class PigeonApiResizableVideoAdPlayer(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of ResizableVideoAdPlayer and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg:
-          dev.flutter.packages.interactive_media_ads.ResizableVideoAdPlayerProxyApi.ResizableVideoAdPlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of ResizableVideoAdPlayer and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: dev.flutter.packages.interactive_media_ads.ResizableVideoAdPlayerProxyApi.ResizableVideoAdPlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -9970,61 +8191,52 @@ abstract class PigeonApiResizableVideoAdPlayer(
       Result.success(Unit)
       return
     }
-    throw IllegalStateException(
-        "Attempting to create a new Dart instance of ResizableVideoAdPlayer, but the class has a nonnull callback method.")
+    throw IllegalStateException("Attempting to create a new Dart instance of ResizableVideoAdPlayer, but the class has a nonnull callback method.")
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonApiVideoAdPlayer] used to access callback methods */
-  fun pigeon_getPigeonApiVideoAdPlayer(): PigeonApiVideoAdPlayer {
+  /**An implementation of [PigeonApiVideoAdPlayer] used to access callback methods */
+  fun pigeon_getPigeonApiVideoAdPlayer(): PigeonApiVideoAdPlayer
+  {
     return pigeonRegistrar.getPigeonApiVideoAdPlayer()
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonApiResizablePlayer] used to access callback methods */
-  fun pigeon_getPigeonApiResizablePlayer(): PigeonApiResizablePlayer {
+  /**An implementation of [PigeonApiResizablePlayer] used to access callback methods */
+  fun pigeon_getPigeonApiResizablePlayer(): PigeonApiResizablePlayer
+  {
     return pigeonRegistrar.getPigeonApiResizablePlayer()
   }
+
 }
 /**
- * Implementation of a `VideoStreamPlayer` that also implements `ResizablePlayer`.
+ * Implementation of a `VideoStreamPlayer` that also implements
+ * `ResizablePlayer`.
  *
- * This class is not a part of the IMA SDK and is provided as a work around to create a class that
- * implements both `VideoStreamPlayer` and `ResizablePlayer`.
+ * This class is not a part of the IMA SDK and is provided as a work around to
+ * create a class that implements both `VideoStreamPlayer` and
+ * `ResizablePlayer`.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiResizableVideoStreamPlayer(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  abstract fun pigeon_defaultConstructor():
-      dev.flutter.packages.interactive_media_ads.ResizableVideoStreamPlayerProxyApi.ResizableVideoStreamPlayer
+abstract class PigeonApiResizableVideoStreamPlayer(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(): dev.flutter.packages.interactive_media_ads.ResizableVideoStreamPlayerProxyApi.ResizableVideoStreamPlayer
 
   companion object {
     @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonApiResizableVideoStreamPlayer?
-    ) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiResizableVideoStreamPlayer?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.ResizableVideoStreamPlayer.pigeon_defaultConstructor",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.ResizableVideoStreamPlayer.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -10035,14 +8247,9 @@ abstract class PigeonApiResizableVideoStreamPlayer(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /**
-   * Creates a Dart instance of ResizableVideoStreamPlayer and attaches it to [pigeon_instanceArg].
-   */
-  fun pigeon_newInstance(
-      pigeon_instanceArg:
-          dev.flutter.packages.interactive_media_ads.ResizableVideoStreamPlayerProxyApi.ResizableVideoStreamPlayer,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of ResizableVideoStreamPlayer and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: dev.flutter.packages.interactive_media_ads.ResizableVideoStreamPlayerProxyApi.ResizableVideoStreamPlayer, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -10053,83 +8260,63 @@ abstract class PigeonApiResizableVideoStreamPlayer(
       Result.success(Unit)
       return
     }
-    throw IllegalStateException(
-        "Attempting to create a new Dart instance of ResizableVideoStreamPlayer, but the class has a nonnull callback method.")
+    throw IllegalStateException("Attempting to create a new Dart instance of ResizableVideoStreamPlayer, but the class has a nonnull callback method.")
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonApiVideoStreamPlayer] used to access callback methods */
-  fun pigeon_getPigeonApiVideoStreamPlayer(): PigeonApiVideoStreamPlayer {
+  /**An implementation of [PigeonApiVideoStreamPlayer] used to access callback methods */
+  fun pigeon_getPigeonApiVideoStreamPlayer(): PigeonApiVideoStreamPlayer
+  {
     return pigeonRegistrar.getPigeonApiVideoStreamPlayer()
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonApiResizablePlayer] used to access callback methods */
-  fun pigeon_getPigeonApiResizablePlayer(): PigeonApiResizablePlayer {
+  /**An implementation of [PigeonApiResizablePlayer] used to access callback methods */
+  fun pigeon_getPigeonApiResizablePlayer(): PigeonApiResizablePlayer
+  {
     return pigeonRegistrar.getPigeonApiResizablePlayer()
   }
+
 }
 /**
- * Mediation adapter for gathering Secure Signals generated by a 3P entity that is not the
- * publisher.
+ * Mediation adapter for gathering Secure Signals generated by a 3P entity that
+ * is not the publisher.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/signals/SecureSignalsAdapter.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/signals/SecureSignalsAdapter.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiSecureSignalsAdapter(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  abstract fun collectSignals(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter,
-      callback: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback
-  )
+abstract class PigeonApiSecureSignalsAdapter(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  abstract fun collectSignals(pigeon_instance: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter, callback: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback)
 
   /** Returns the version of the third party SDK built into the app. */
-  abstract fun getSDKVersion(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
-  ): com.google.ads.interactivemedia.v3.api.VersionInfo
+  abstract fun getSDKVersion(pigeon_instance: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter): com.google.ads.interactivemedia.v3.api.VersionInfo
 
   /** Returns the version of the SecureSignals Adapter. */
-  abstract fun getVersion(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
-  ): com.google.ads.interactivemedia.v3.api.VersionInfo
+  abstract fun getVersion(pigeon_instance: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter): com.google.ads.interactivemedia.v3.api.VersionInfo
 
-  /** Called by Interactive Media Ads SDK to initialize a third party adapter and SDK. */
-  abstract fun initialize(
-      pigeon_instance: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter,
-      callback: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback
-  )
+  /**
+   * Called by Interactive Media Ads SDK to initialize a third party adapter
+   * and SDK.
+   */
+  abstract fun initialize(pigeon_instance: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter, callback: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback)
 
   companion object {
     @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonApiSecureSignalsAdapter?
-    ) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiSecureSignalsAdapter?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.collectSignals",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.collectSignals", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
-            val callbackArg =
-                args[1]
-                    as
-                    com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback
-            val wrapped: List<Any?> =
-                try {
-                  api.collectSignals(pigeon_instanceArg, callbackArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
+            val callbackArg = args[1] as com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback
+            val wrapped: List<Any?> = try {
+              api.collectSignals(pigeon_instanceArg, callbackArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -10137,22 +8324,16 @@ abstract class PigeonApiSecureSignalsAdapter(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.getSDKVersion",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.getSDKVersion", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getSDKVersion(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
+            val wrapped: List<Any?> = try {
+              listOf(api.getSDKVersion(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -10160,22 +8341,16 @@ abstract class PigeonApiSecureSignalsAdapter(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.getVersion",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.getVersion", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getVersion(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
+            val wrapped: List<Any?> = try {
+              listOf(api.getVersion(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -10183,27 +8358,18 @@ abstract class PigeonApiSecureSignalsAdapter(
         }
       }
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.initialize",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.initialize", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg =
-                args[0] as com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
-            val callbackArg =
-                args[1]
-                    as
-                    com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback
-            val wrapped: List<Any?> =
-                try {
-                  api.initialize(pigeon_instanceArg, callbackArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
+            val callbackArg = args[1] as com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback
+            val wrapped: List<Any?> = try {
+              api.initialize(pigeon_instanceArg, callbackArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -10214,11 +8380,9 @@ abstract class PigeonApiSecureSignalsAdapter(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of SecureSignalsAdapter and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of SecureSignalsAdapter and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -10229,12 +8393,10 @@ abstract class PigeonApiSecureSignalsAdapter(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.pigeon_newInstance"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
@@ -10245,51 +8407,38 @@ abstract class PigeonApiSecureSignalsAdapter(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
- * Defines callback methods for an implementation of `SecureSignalsAdapter` to communicate success
- * or failure of a call to
+ * Defines callback methods for an implementation of `SecureSignalsAdapter` to
+ * communicate success or failure of a call to
  * `SecureSignalsAdapter.collectSignals(SecureSignalsCollectSignalsCallback)`.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/signals/SecureSignalsCollectSignalsCallback.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/signals/SecureSignalsCollectSignalsCallback.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiSecureSignalsCollectSignalsCallback(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  abstract fun pigeon_defaultConstructor():
-      com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback
+abstract class PigeonApiSecureSignalsCollectSignalsCallback(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(): com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback
 
   companion object {
     @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonApiSecureSignalsCollectSignalsCallback?
-    ) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiSecureSignalsCollectSignalsCallback?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.pigeon_defaultConstructor",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -10300,15 +8449,9 @@ abstract class PigeonApiSecureSignalsCollectSignalsCallback(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /**
-   * Creates a Dart instance of SecureSignalsCollectSignalsCallback and attaches it to
-   * [pigeon_instanceArg].
-   */
-  fun pigeon_newInstance(
-      pigeon_instanceArg:
-          com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of SecureSignalsCollectSignalsCallback and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -10319,18 +8462,12 @@ abstract class PigeonApiSecureSignalsCollectSignalsCallback(
       Result.success(Unit)
       return
     }
-    throw IllegalStateException(
-        "Attempting to create a new Dart instance of SecureSignalsCollectSignalsCallback, but the class has a nonnull callback method.")
+    throw IllegalStateException("Attempting to create a new Dart instance of SecureSignalsCollectSignalsCallback, but the class has a nonnull callback method.")
   }
 
   /** To be invoked when signal collection fails. */
-  fun onFailure(
-      pigeon_instanceArg:
-          com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback,
-      typeArg: String,
-      messageArg: String?,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun onFailure(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback, typeArg: String, messageArg: String?, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -10339,8 +8476,7 @@ abstract class PigeonApiSecureSignalsCollectSignalsCallback(
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.onFailure"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.onFailure"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg, typeArg, messageArg)) {
       if (it is List<*>) {
@@ -10351,17 +8487,13 @@ abstract class PigeonApiSecureSignalsCollectSignalsCallback(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /** To be invoked when the signals have been successfully collected. */
-  fun onSuccess(
-      pigeon_instanceArg:
-          com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback,
-      signalsArg: String,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun onSuccess(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback, signalsArg: String, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -10370,8 +8502,7 @@ abstract class PigeonApiSecureSignalsCollectSignalsCallback(
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.onSuccess"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.onSuccess"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg, signalsArg)) {
       if (it is List<*>) {
@@ -10382,50 +8513,38 @@ abstract class PigeonApiSecureSignalsCollectSignalsCallback(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }
 /**
- * Defines callback methods for an implementation of `SecureSignalsAdapter` to communicate success
- * or failure of a call to `SecureSignalsAdapter.initialize(SecureSignalsInitializeCallback)`.
+ * Defines callback methods for an implementation of `SecureSignalsAdapter` to
+ * communicate success or failure of a call to
+ * `SecureSignalsAdapter.initialize(SecureSignalsInitializeCallback)`.
  *
- * See
- * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/signals/SecureSignalsInitializeCallback.
+ * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/signals/SecureSignalsInitializeCallback.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiSecureSignalsInitializeCallback(
-    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-) {
-  abstract fun pigeon_defaultConstructor():
-      com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback
+abstract class PigeonApiSecureSignalsInitializeCallback(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(): com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback
 
   companion object {
     @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonApiSecureSignalsInitializeCallback?
-    ) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiSecureSignalsInitializeCallback?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.pigeon_defaultConstructor",
-                codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+            val pigeon_identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
             reply.reply(wrapped)
           }
         } else {
@@ -10436,15 +8555,9 @@ abstract class PigeonApiSecureSignalsInitializeCallback(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /**
-   * Creates a Dart instance of SecureSignalsInitializeCallback and attaches it to
-   * [pigeon_instanceArg].
-   */
-  fun pigeon_newInstance(
-      pigeon_instanceArg:
-          com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  /**Creates a Dart instance of SecureSignalsInitializeCallback and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -10455,18 +8568,12 @@ abstract class PigeonApiSecureSignalsInitializeCallback(
       Result.success(Unit)
       return
     }
-    throw IllegalStateException(
-        "Attempting to create a new Dart instance of SecureSignalsInitializeCallback, but the class has a nonnull callback method.")
+    throw IllegalStateException("Attempting to create a new Dart instance of SecureSignalsInitializeCallback, but the class has a nonnull callback method.")
   }
 
   /** To be invoked when initialization fails. */
-  fun onFailure(
-      pigeon_instanceArg:
-          com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback,
-      typeArg: String,
-      messageArg: String?,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun onFailure(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback, typeArg: String, messageArg: String?, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -10475,8 +8582,7 @@ abstract class PigeonApiSecureSignalsInitializeCallback(
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.onFailure"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.onFailure"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg, typeArg, messageArg)) {
       if (it is List<*>) {
@@ -10487,19 +8593,16 @@ abstract class PigeonApiSecureSignalsInitializeCallback(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
 
   /**
-   * Indicates to the SDK that the adapter has been initialized and can be used for future signal
-   * collection.
+   * Indicates to the SDK that the adapter has been initialized and can be used
+   * for future signal collection.
    */
-  fun onSuccess(
-      pigeon_instanceArg:
-          com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun onSuccess(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback, callback: (Result<Unit>) -> Unit)
+{
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
           Result.failure(
@@ -10508,8 +8611,7 @@ abstract class PigeonApiSecureSignalsInitializeCallback(
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.onSuccess"
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.onSuccess"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg)) {
       if (it is List<*>) {
@@ -10520,7 +8622,8 @@ abstract class PigeonApiSecureSignalsInitializeCallback(
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
-      }
+      } 
     }
   }
+
 }

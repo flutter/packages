@@ -584,7 +584,7 @@ abstract class BaseRequest {
   SecureSignals? getSecureSignals();
 
   /// Returns the user-provided object that is associated with the request.
-  Object getUserRequestContext();
+  Object? getUserRequestContext();
 
   /// Specifies the deep link to the content's screen.
   void setContentUrl(String url);
@@ -635,7 +635,7 @@ abstract class AdsManagerLoadedEvent {
   late final StreamManager? streamManager;
 
   /// The user-provided object that is associated with the ads request.
-  late final Object userRequestContext;
+  late final Object? userRequestContext;
 }
 
 /// An object which manages dynamic ad insertion streams.
@@ -696,7 +696,7 @@ abstract class AdErrorEvent {
   late final AdError error;
 
   /// The user-provided object that is associated with the ads request.
-  late final Object userRequestContext;
+  late final Object? userRequestContext;
 }
 
 /// An error that occurred in the SDK.
@@ -895,7 +895,15 @@ abstract class StreamRequest extends BaseRequest {
         'com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider',
   ),
 )
-abstract class ContentProgressProvider {}
+abstract class ContentProgressProvider {
+  ContentProgressProvider();
+
+  /// Sets an update on the progress of the video.
+  ///
+  /// This is a custom method added to the native class because the native
+  /// method `getContentProgress` requires a synchronous return value.
+  void setContentProgress(VideoProgressUpdate update);
+}
 
 /// An object which handles playing ads after they've been received from the
 /// server.
