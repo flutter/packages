@@ -6,7 +6,7 @@
 // https://github.com/flutter/packages/pull/6371 lands. This file uses the
 // Kotlin ProxyApi feature from pigeon.
 // ignore_for_file: avoid_unused_constructor_parameters
-
+/*
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
@@ -1849,3 +1849,4 @@ abstract class SecureSignalsInitializeCallback {
   /// for future signal collection.
   late final void Function() onSuccess;
 }
+*/
