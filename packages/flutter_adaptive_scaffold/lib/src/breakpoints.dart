@@ -293,11 +293,7 @@ class Breakpoint {
 
   /// Returns the currently active [Breakpoint].
   static Breakpoint activeBreakpointOf(BuildContext context) {
-    final Breakpoint? slotBreakpoint =
-        maybeActiveBreakpointFromSlotLayout(context);
-    if (slotBreakpoint != null) {
-      return slotBreakpoint;
-    }
-    return defaultBreakpointOf(context);
+    return maybeActiveBreakpointFromSlotLayout(context) ??
+        defaultBreakpointOf(context);
   }
 }
