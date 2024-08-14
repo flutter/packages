@@ -126,6 +126,32 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
     return AdEventListenerProxyApi(this)
   }
 
+  override fun getPigeonApiVersionInfo(): PigeonApiVersionInfo {
+    return VersionInfoProxyApi(this)
+  }
+
+  override fun getPigeonApiResizableVideoAdPlayer(): PigeonApiResizableVideoAdPlayer {
+    return ResizableVideoAdPlayerProxyApi(this)
+  }
+
+  override fun getPigeonApiResizableVideoStreamPlayer(): PigeonApiResizableVideoStreamPlayer {
+    return ResizableVideoStreamPlayerProxyApi(this)
+  }
+
+  override fun getPigeonApiSecureSignalsAdapter(): PigeonApiSecureSignalsAdapter {
+    return SecureSignalsAdapterProxyApi(this)
+  }
+
+  override fun getPigeonApiSecureSignalsCollectSignalsCallback():
+      PigeonApiSecureSignalsCollectSignalsCallback {
+    return SecureSignalsCollectSignalsCallbackProxyApi(this)
+  }
+
+  override fun getPigeonApiSecureSignalsInitializeCallback():
+      PigeonApiSecureSignalsInitializeCallback {
+    return SecureSignalsInitializeCallbackProxyApi(this)
+  }
+
   override fun getPigeonApiAdEvent(): PigeonApiAdEvent {
     return AdEventProxyApi(this)
   }

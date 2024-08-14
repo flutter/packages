@@ -21,7 +21,7 @@ class VideoAdPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     return VideoAdPlayerImpl(this)
   }
 
-  internal class VideoAdPlayerImpl(val api: VideoAdPlayerProxyApi) : VideoAdPlayer {
+  open class VideoAdPlayerImpl(val api: VideoAdPlayerProxyApi) : VideoAdPlayer {
     var savedVolume: Int = 0
 
     var savedAdProgress: VideoProgressUpdate = VideoProgressUpdate.VIDEO_TIME_NOT_READY

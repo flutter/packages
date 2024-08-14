@@ -32,10 +32,7 @@ class BaseRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     pigeon_instance.contentUrl = url
   }
 
-  override fun setSecureSignals(
-      pigeon_instance: BaseRequest,
-      signal: SecureSignals?
-  ) {
+  override fun setSecureSignals(pigeon_instance: BaseRequest, signal: SecureSignals?) {
     pigeon_instance.secureSignals = signal
   }
 

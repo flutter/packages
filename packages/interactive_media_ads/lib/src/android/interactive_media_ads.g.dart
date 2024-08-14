@@ -219,6 +219,20 @@ class PigeonInstanceManager {
         pigeon_instanceManager: instanceManager);
     AdEventListener.pigeon_setUpMessageHandlers(
         pigeon_instanceManager: instanceManager);
+    VersionInfo.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    ResizablePlayer.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    ResizableVideoAdPlayer.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    ResizableVideoStreamPlayer.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    SecureSignalsAdapter.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    SecureSignalsCollectSignalsCallback.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    SecureSignalsInitializeCallback.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -11187,6 +11201,1089 @@ class AdEventListener extends PigeonProxyApiBaseClass {
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       onAdEvent: onAdEvent,
+    );
+  }
+}
+
+/// Version info for SecureSignals adapters and for third party SDKs that
+/// collect SecureSignals.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/VersionInfo.html.
+class VersionInfo extends PigeonProxyApiBaseClass {
+  /// Creates a new VersionInfo object that will contain the version of an rtb
+  /// adapter or third party SDK.
+  VersionInfo({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.majorVersion,
+    required this.minorVersion,
+    required this.microVersion,
+  }) {
+    final int __pigeon_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecVersionInfo;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String __pigeon_channelName =
+          'dev.flutter.pigeon.interactive_media_ads.VersionInfo.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: __pigeon_binaryMessenger,
+      );
+      final List<Object?>? __pigeon_replyList = await __pigeon_channel
+          .send(<Object?>[
+        __pigeon_instanceIdentifier,
+        majorVersion,
+        minorVersion,
+        microVersion
+      ]) as List<Object?>?;
+      if (__pigeon_replyList == null) {
+        throw _createConnectionError(__pigeon_channelName);
+      } else if (__pigeon_replyList.length > 1) {
+        throw PlatformException(
+          code: __pigeon_replyList[0]! as String,
+          message: __pigeon_replyList[1] as String?,
+          details: __pigeon_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
+  /// Constructs [VersionInfo] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  VersionInfo.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.majorVersion,
+    required this.minorVersion,
+    required this.microVersion,
+  });
+
+  late final _PigeonProxyApiBaseCodec __pigeon_codecVersionInfo =
+      _PigeonProxyApiBaseCodec(pigeon_instanceManager);
+
+  final int majorVersion;
+
+  final int minorVersion;
+
+  final int microVersion;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    VersionInfo Function(
+      int majorVersion,
+      int minorVersion,
+      int microVersion,
+    )? pigeon_newInstance,
+  }) {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.VersionInfo.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VersionInfo.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VersionInfo.pigeon_newInstance was null, expected non-null int.');
+          final int? arg_majorVersion = (args[1] as int?);
+          assert(arg_majorVersion != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VersionInfo.pigeon_newInstance was null, expected non-null int.');
+          final int? arg_minorVersion = (args[2] as int?);
+          assert(arg_minorVersion != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VersionInfo.pigeon_newInstance was null, expected non-null int.');
+          final int? arg_microVersion = (args[3] as int?);
+          assert(arg_microVersion != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VersionInfo.pigeon_newInstance was null, expected non-null int.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call(arg_majorVersion!, arg_minorVersion!,
+                      arg_microVersion!) ??
+                  VersionInfo.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    majorVersion: arg_majorVersion!,
+                    minorVersion: arg_minorVersion!,
+                    microVersion: arg_microVersion!,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  VersionInfo pigeon_copy() {
+    return VersionInfo.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      majorVersion: majorVersion,
+      minorVersion: minorVersion,
+      microVersion: microVersion,
+    );
+  }
+}
+
+/// Provides an API for interactive advertisements to resize the `VideoAdPlayer`
+/// or `VideoStreamPlayer` within its container.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/ResizablePlayer.
+class ResizablePlayer extends PigeonProxyApiBaseClass {
+  /// Constructs [ResizablePlayer] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  ResizablePlayer.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.resize,
+  });
+
+  /// Resize the VideoPlayer within its bounds by adding margins to each side,
+  /// in pixels.
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final ResizablePlayer instance = ResizablePlayer(
+  ///  resize: (ResizablePlayer pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final void Function(
+    ResizablePlayer pigeon_instance,
+    int leftMargin,
+    int topMargin,
+    int rightMargin,
+    int bottomMargin,
+  ) resize;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    void Function(
+      ResizablePlayer pigeon_instance,
+      int leftMargin,
+      int topMargin,
+      int rightMargin,
+      int bottomMargin,
+    )? resize,
+  }) {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+              'dev.flutter.pigeon.interactive_media_ads.ResizablePlayer.resize',
+              pigeonChannelCodec,
+              binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.ResizablePlayer.resize was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final ResizablePlayer? arg_pigeon_instance =
+              (args[0] as ResizablePlayer?);
+          assert(arg_pigeon_instance != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.ResizablePlayer.resize was null, expected non-null ResizablePlayer.');
+          final int? arg_leftMargin = (args[1] as int?);
+          assert(arg_leftMargin != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.ResizablePlayer.resize was null, expected non-null int.');
+          final int? arg_topMargin = (args[2] as int?);
+          assert(arg_topMargin != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.ResizablePlayer.resize was null, expected non-null int.');
+          final int? arg_rightMargin = (args[3] as int?);
+          assert(arg_rightMargin != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.ResizablePlayer.resize was null, expected non-null int.');
+          final int? arg_bottomMargin = (args[4] as int?);
+          assert(arg_bottomMargin != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.ResizablePlayer.resize was null, expected non-null int.');
+          try {
+            (resize ?? arg_pigeon_instance!.resize).call(
+                arg_pigeon_instance!,
+                arg_leftMargin!,
+                arg_topMargin!,
+                arg_rightMargin!,
+                arg_bottomMargin!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  ResizablePlayer pigeon_copy() {
+    return ResizablePlayer.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      resize: resize,
+    );
+  }
+}
+
+/// Implementation of a `VideoAdPlayer` that also implements `ResizablePlayer`.
+///
+/// This class is not a part of the IMA SDK and is provided as a work around to
+/// create a class that implements both `VideoAdPlayer` and `ResizablePlayer`.
+class ResizableVideoAdPlayer extends VideoAdPlayer implements ResizablePlayer {
+  ResizableVideoAdPlayer({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required super.addCallback,
+    required super.loadAd,
+    required super.pauseAd,
+    required super.playAd,
+    required super.release,
+    required super.removeCallback,
+    required super.stopAd,
+    required this.resize,
+  }) : super.pigeon_detached() {
+    final int __pigeon_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecResizableVideoAdPlayer;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String __pigeon_channelName =
+          'dev.flutter.pigeon.interactive_media_ads.ResizableVideoAdPlayer.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: __pigeon_binaryMessenger,
+      );
+      final List<Object?>? __pigeon_replyList = await __pigeon_channel
+          .send(<Object?>[__pigeon_instanceIdentifier]) as List<Object?>?;
+      if (__pigeon_replyList == null) {
+        throw _createConnectionError(__pigeon_channelName);
+      } else if (__pigeon_replyList.length > 1) {
+        throw PlatformException(
+          code: __pigeon_replyList[0]! as String,
+          message: __pigeon_replyList[1] as String?,
+          details: __pigeon_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
+  /// Constructs [ResizableVideoAdPlayer] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  ResizableVideoAdPlayer.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required super.addCallback,
+    required super.loadAd,
+    required super.pauseAd,
+    required super.playAd,
+    required super.release,
+    required super.removeCallback,
+    required super.stopAd,
+    required this.resize,
+  }) : super.pigeon_detached();
+
+  late final _PigeonProxyApiBaseCodec __pigeon_codecResizableVideoAdPlayer =
+      _PigeonProxyApiBaseCodec(pigeon_instanceManager);
+
+  /// Resize the VideoPlayer within its bounds by adding margins to each side,
+  /// in pixels.
+  @override
+  final void Function(
+    ResizablePlayer pigeon_instance,
+    int leftMargin,
+    int topMargin,
+    int rightMargin,
+    int bottomMargin,
+  ) resize;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) {}
+  @override
+  ResizableVideoAdPlayer pigeon_copy() {
+    return ResizableVideoAdPlayer.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      addCallback: addCallback,
+      loadAd: loadAd,
+      pauseAd: pauseAd,
+      playAd: playAd,
+      release: release,
+      removeCallback: removeCallback,
+      stopAd: stopAd,
+      resize: resize,
+    );
+  }
+}
+
+/// Implementation of a `VideoStreamPlayer` that also implements
+/// `ResizablePlayer`.
+///
+/// This class is not a part of the IMA SDK and is provided as a work around to
+/// create a class that implements both `VideoStreamPlayer` and
+/// `ResizablePlayer`.
+class ResizableVideoStreamPlayer extends VideoStreamPlayer
+    implements ResizablePlayer {
+  ResizableVideoStreamPlayer({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required super.addCallback,
+    required super.loadUrl,
+    required super.onAdBreakEnded,
+    required super.onAdBreakStarted,
+    required super.onAdPeriodEnded,
+    required super.onAdPeriodStarted,
+    required super.pause,
+    required super.removeCallback,
+    required super.resume,
+    required super.seek,
+    required this.resize,
+  }) : super.pigeon_detached() {
+    final int __pigeon_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecResizableVideoStreamPlayer;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String __pigeon_channelName =
+          'dev.flutter.pigeon.interactive_media_ads.ResizableVideoStreamPlayer.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: __pigeon_binaryMessenger,
+      );
+      final List<Object?>? __pigeon_replyList = await __pigeon_channel
+          .send(<Object?>[__pigeon_instanceIdentifier]) as List<Object?>?;
+      if (__pigeon_replyList == null) {
+        throw _createConnectionError(__pigeon_channelName);
+      } else if (__pigeon_replyList.length > 1) {
+        throw PlatformException(
+          code: __pigeon_replyList[0]! as String,
+          message: __pigeon_replyList[1] as String?,
+          details: __pigeon_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
+  /// Constructs [ResizableVideoStreamPlayer] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  ResizableVideoStreamPlayer.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required super.addCallback,
+    required super.loadUrl,
+    required super.onAdBreakEnded,
+    required super.onAdBreakStarted,
+    required super.onAdPeriodEnded,
+    required super.onAdPeriodStarted,
+    required super.pause,
+    required super.removeCallback,
+    required super.resume,
+    required super.seek,
+    required this.resize,
+  }) : super.pigeon_detached();
+
+  late final _PigeonProxyApiBaseCodec __pigeon_codecResizableVideoStreamPlayer =
+      _PigeonProxyApiBaseCodec(pigeon_instanceManager);
+
+  /// Resize the VideoPlayer within its bounds by adding margins to each side,
+  /// in pixels.
+  @override
+  final void Function(
+    ResizablePlayer pigeon_instance,
+    int leftMargin,
+    int topMargin,
+    int rightMargin,
+    int bottomMargin,
+  ) resize;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) {}
+  @override
+  ResizableVideoStreamPlayer pigeon_copy() {
+    return ResizableVideoStreamPlayer.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      addCallback: addCallback,
+      loadUrl: loadUrl,
+      onAdBreakEnded: onAdBreakEnded,
+      onAdBreakStarted: onAdBreakStarted,
+      onAdPeriodEnded: onAdPeriodEnded,
+      onAdPeriodStarted: onAdPeriodStarted,
+      pause: pause,
+      removeCallback: removeCallback,
+      resume: resume,
+      seek: seek,
+      resize: resize,
+    );
+  }
+}
+
+/// Mediation adapter for gathering Secure Signals generated by a 3P entity that
+/// is not the publisher.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/signals/SecureSignalsAdapter.
+class SecureSignalsAdapter extends PigeonProxyApiBaseClass {
+  /// Constructs [SecureSignalsAdapter] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  SecureSignalsAdapter.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
+
+  late final _PigeonProxyApiBaseCodec __pigeon_codecSecureSignalsAdapter =
+      _PigeonProxyApiBaseCodec(pigeon_instanceManager);
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    SecureSignalsAdapter Function()? pigeon_newInstance,
+  }) {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.pigeon_newInstance was null, expected non-null int.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  SecureSignalsAdapter.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  Future<void> collectSignals(
+      SecureSignalsCollectSignalsCallback callback) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecSecureSignalsAdapter;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.collectSignals';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[this, callback]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Returns the version of the third party SDK built into the app.
+  Future<VersionInfo> getSDKVersion() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecSecureSignalsAdapter;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.getSDKVersion';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as VersionInfo?)!;
+    }
+  }
+
+  /// Returns the version of the SecureSignals Adapter.
+  Future<VersionInfo> getVersion() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecSecureSignalsAdapter;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.getVersion';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as VersionInfo?)!;
+    }
+  }
+
+  /// Called by Interactive Media Ads SDK to initialize a third party adapter
+  /// and SDK.
+  Future<void> initialize(SecureSignalsInitializeCallback callback) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecSecureSignalsAdapter;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.initialize';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[this, callback]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  @override
+  SecureSignalsAdapter pigeon_copy() {
+    return SecureSignalsAdapter.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+  }
+}
+
+/// Defines callback methods for an implementation of `SecureSignalsAdapter` to
+/// communicate success or failure of a call to
+/// `SecureSignalsAdapter.collectSignals(SecureSignalsCollectSignalsCallback)`.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/signals/SecureSignalsCollectSignalsCallback.
+class SecureSignalsCollectSignalsCallback extends PigeonProxyApiBaseClass {
+  SecureSignalsCollectSignalsCallback({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.onFailure,
+    required this.onSuccess,
+  }) {
+    final int __pigeon_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecSecureSignalsCollectSignalsCallback;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String __pigeon_channelName =
+          'dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: __pigeon_binaryMessenger,
+      );
+      final List<Object?>? __pigeon_replyList = await __pigeon_channel
+          .send(<Object?>[__pigeon_instanceIdentifier]) as List<Object?>?;
+      if (__pigeon_replyList == null) {
+        throw _createConnectionError(__pigeon_channelName);
+      } else if (__pigeon_replyList.length > 1) {
+        throw PlatformException(
+          code: __pigeon_replyList[0]! as String,
+          message: __pigeon_replyList[1] as String?,
+          details: __pigeon_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
+  /// Constructs [SecureSignalsCollectSignalsCallback] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  SecureSignalsCollectSignalsCallback.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.onFailure,
+    required this.onSuccess,
+  });
+
+  late final _PigeonProxyApiBaseCodec
+      __pigeon_codecSecureSignalsCollectSignalsCallback =
+      _PigeonProxyApiBaseCodec(pigeon_instanceManager);
+
+  /// To be invoked when signal collection fails.
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final SecureSignalsCollectSignalsCallback instance = SecureSignalsCollectSignalsCallback(
+  ///  onFailure: (SecureSignalsCollectSignalsCallback pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final void Function(
+    SecureSignalsCollectSignalsCallback pigeon_instance,
+    String type,
+    String? message,
+  ) onFailure;
+
+  /// To be invoked when the signals have been successfully collected.
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final SecureSignalsCollectSignalsCallback instance = SecureSignalsCollectSignalsCallback(
+  ///  onSuccess: (SecureSignalsCollectSignalsCallback pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final void Function(
+    SecureSignalsCollectSignalsCallback pigeon_instance,
+    String signals,
+  ) onSuccess;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    void Function(
+      SecureSignalsCollectSignalsCallback pigeon_instance,
+      String type,
+      String? message,
+    )? onFailure,
+    void Function(
+      SecureSignalsCollectSignalsCallback pigeon_instance,
+      String signals,
+    )? onSuccess,
+  }) {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.onFailure',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.onFailure was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final SecureSignalsCollectSignalsCallback? arg_pigeon_instance =
+              (args[0] as SecureSignalsCollectSignalsCallback?);
+          assert(arg_pigeon_instance != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.onFailure was null, expected non-null SecureSignalsCollectSignalsCallback.');
+          final String? arg_type = (args[1] as String?);
+          assert(arg_type != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.onFailure was null, expected non-null String.');
+          final String? arg_message = (args[2] as String?);
+          try {
+            (onFailure ?? arg_pigeon_instance!.onFailure)
+                .call(arg_pigeon_instance!, arg_type!, arg_message);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.onSuccess',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.onSuccess was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final SecureSignalsCollectSignalsCallback? arg_pigeon_instance =
+              (args[0] as SecureSignalsCollectSignalsCallback?);
+          assert(arg_pigeon_instance != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.onSuccess was null, expected non-null SecureSignalsCollectSignalsCallback.');
+          final String? arg_signals = (args[1] as String?);
+          assert(arg_signals != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.onSuccess was null, expected non-null String.');
+          try {
+            (onSuccess ?? arg_pigeon_instance!.onSuccess)
+                .call(arg_pigeon_instance!, arg_signals!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  SecureSignalsCollectSignalsCallback pigeon_copy() {
+    return SecureSignalsCollectSignalsCallback.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      onFailure: onFailure,
+      onSuccess: onSuccess,
+    );
+  }
+}
+
+/// Defines callback methods for an implementation of `SecureSignalsAdapter` to
+/// communicate success or failure of a call to
+/// `SecureSignalsAdapter.initialize(SecureSignalsInitializeCallback)`.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/signals/SecureSignalsInitializeCallback.
+class SecureSignalsInitializeCallback extends PigeonProxyApiBaseClass {
+  SecureSignalsInitializeCallback({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.onFailure,
+    required this.onSuccess,
+  }) {
+    final int __pigeon_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecSecureSignalsInitializeCallback;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String __pigeon_channelName =
+          'dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: __pigeon_binaryMessenger,
+      );
+      final List<Object?>? __pigeon_replyList = await __pigeon_channel
+          .send(<Object?>[__pigeon_instanceIdentifier]) as List<Object?>?;
+      if (__pigeon_replyList == null) {
+        throw _createConnectionError(__pigeon_channelName);
+      } else if (__pigeon_replyList.length > 1) {
+        throw PlatformException(
+          code: __pigeon_replyList[0]! as String,
+          message: __pigeon_replyList[1] as String?,
+          details: __pigeon_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
+  /// Constructs [SecureSignalsInitializeCallback] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  SecureSignalsInitializeCallback.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.onFailure,
+    required this.onSuccess,
+  });
+
+  late final _PigeonProxyApiBaseCodec
+      __pigeon_codecSecureSignalsInitializeCallback =
+      _PigeonProxyApiBaseCodec(pigeon_instanceManager);
+
+  /// To be invoked when initialization fails.
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final SecureSignalsInitializeCallback instance = SecureSignalsInitializeCallback(
+  ///  onFailure: (SecureSignalsInitializeCallback pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final void Function(
+    SecureSignalsInitializeCallback pigeon_instance,
+    String type,
+    String? message,
+  ) onFailure;
+
+  /// Indicates to the SDK that the adapter has been initialized and can be used
+  /// for future signal collection.
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final SecureSignalsInitializeCallback instance = SecureSignalsInitializeCallback(
+  ///  onSuccess: (SecureSignalsInitializeCallback pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final void Function(SecureSignalsInitializeCallback pigeon_instance)
+      onSuccess;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    void Function(
+      SecureSignalsInitializeCallback pigeon_instance,
+      String type,
+      String? message,
+    )? onFailure,
+    void Function(SecureSignalsInitializeCallback pigeon_instance)? onSuccess,
+  }) {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.onFailure',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.onFailure was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final SecureSignalsInitializeCallback? arg_pigeon_instance =
+              (args[0] as SecureSignalsInitializeCallback?);
+          assert(arg_pigeon_instance != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.onFailure was null, expected non-null SecureSignalsInitializeCallback.');
+          final String? arg_type = (args[1] as String?);
+          assert(arg_type != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.onFailure was null, expected non-null String.');
+          final String? arg_message = (args[2] as String?);
+          try {
+            (onFailure ?? arg_pigeon_instance!.onFailure)
+                .call(arg_pigeon_instance!, arg_type!, arg_message);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.onSuccess',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.onSuccess was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final SecureSignalsInitializeCallback? arg_pigeon_instance =
+              (args[0] as SecureSignalsInitializeCallback?);
+          assert(arg_pigeon_instance != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.onSuccess was null, expected non-null SecureSignalsInitializeCallback.');
+          try {
+            (onSuccess ?? arg_pigeon_instance!.onSuccess)
+                .call(arg_pigeon_instance!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  SecureSignalsInitializeCallback pigeon_copy() {
+    return SecureSignalsInitializeCallback.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      onFailure: onFailure,
+      onSuccess: onSuccess,
     );
   }
 }

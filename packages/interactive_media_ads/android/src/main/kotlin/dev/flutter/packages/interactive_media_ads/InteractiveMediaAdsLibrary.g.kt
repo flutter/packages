@@ -629,6 +629,52 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
    */
   abstract fun getPigeonApiAdEventListener(): PigeonApiAdEventListener
 
+  /**
+   * An implementation of [PigeonApiVersionInfo] used to add a new Dart instance of `VersionInfo` to
+   * the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiVersionInfo(): PigeonApiVersionInfo
+
+  /**
+   * An implementation of [PigeonApiResizablePlayer] used to add a new Dart instance of
+   * `ResizablePlayer` to the Dart `InstanceManager`.
+   */
+  open fun getPigeonApiResizablePlayer(): PigeonApiResizablePlayer {
+    return PigeonApiResizablePlayer(this)
+  }
+
+  /**
+   * An implementation of [PigeonApiResizableVideoAdPlayer] used to add a new Dart instance of
+   * `ResizableVideoAdPlayer` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiResizableVideoAdPlayer(): PigeonApiResizableVideoAdPlayer
+
+  /**
+   * An implementation of [PigeonApiResizableVideoStreamPlayer] used to add a new Dart instance of
+   * `ResizableVideoStreamPlayer` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiResizableVideoStreamPlayer(): PigeonApiResizableVideoStreamPlayer
+
+  /**
+   * An implementation of [PigeonApiSecureSignalsAdapter] used to add a new Dart instance of
+   * `SecureSignalsAdapter` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiSecureSignalsAdapter(): PigeonApiSecureSignalsAdapter
+
+  /**
+   * An implementation of [PigeonApiSecureSignalsCollectSignalsCallback] used to add a new Dart
+   * instance of `SecureSignalsCollectSignalsCallback` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiSecureSignalsCollectSignalsCallback():
+      PigeonApiSecureSignalsCollectSignalsCallback
+
+  /**
+   * An implementation of [PigeonApiSecureSignalsInitializeCallback] used to add a new Dart instance
+   * of `SecureSignalsInitializeCallback` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiSecureSignalsInitializeCallback():
+      PigeonApiSecureSignalsInitializeCallback
+
   fun setUp() {
     InteractiveMediaAdsLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
         binaryMessenger, instanceManager)
@@ -670,6 +716,17 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
         binaryMessenger, getPigeonApiAdsLoadedListener())
     PigeonApiAdErrorListener.setUpMessageHandlers(binaryMessenger, getPigeonApiAdErrorListener())
     PigeonApiAdEventListener.setUpMessageHandlers(binaryMessenger, getPigeonApiAdEventListener())
+    PigeonApiVersionInfo.setUpMessageHandlers(binaryMessenger, getPigeonApiVersionInfo())
+    PigeonApiResizableVideoAdPlayer.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiResizableVideoAdPlayer())
+    PigeonApiResizableVideoStreamPlayer.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiResizableVideoStreamPlayer())
+    PigeonApiSecureSignalsAdapter.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiSecureSignalsAdapter())
+    PigeonApiSecureSignalsCollectSignalsCallback.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiSecureSignalsCollectSignalsCallback())
+    PigeonApiSecureSignalsInitializeCallback.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiSecureSignalsInitializeCallback())
   }
 
   fun tearDown() {
@@ -702,6 +759,12 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
     PigeonApiAdsLoadedListener.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiAdErrorListener.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiAdEventListener.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiVersionInfo.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiResizableVideoAdPlayer.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiResizableVideoStreamPlayer.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiSecureSignalsAdapter.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiSecureSignalsCollectSignalsCallback.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiSecureSignalsInitializeCallback.setUpMessageHandlers(binaryMessenger, null)
   }
 }
 
@@ -794,8 +857,6 @@ private class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
       registrar.getPigeonApiStreamDisplayContainer().pigeon_newInstance(value) {}
     } else if (value is com.google.ads.interactivemedia.v3.api.BaseDisplayContainer) {
       registrar.getPigeonApiBaseDisplayContainer().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer) {
-      registrar.getPigeonApiVideoStreamPlayer().pigeon_newInstance(value) {}
     } else if (value
         is
         com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStreamPlayerCallback) {
@@ -821,14 +882,36 @@ private class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
     } else if (value
         is com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback) {
       registrar.getPigeonApiVideoAdPlayerCallback().pigeon_newInstance(value) {}
-    } else if (value is com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer) {
-      registrar.getPigeonApiVideoAdPlayer().pigeon_newInstance(value) {}
     } else if (value is com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener) {
       registrar.getPigeonApiAdsLoadedListener().pigeon_newInstance(value) {}
     } else if (value is com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener) {
       registrar.getPigeonApiAdErrorListener().pigeon_newInstance(value) {}
     } else if (value is com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener) {
       registrar.getPigeonApiAdEventListener().pigeon_newInstance(value) {}
+    } else if (value is com.google.ads.interactivemedia.v3.api.VersionInfo) {
+      registrar.getPigeonApiVersionInfo().pigeon_newInstance(value) {}
+    } else if (value
+        is
+        dev.flutter.packages.interactive_media_ads.ResizableVideoAdPlayerProxyApi.ResizableVideoAdPlayer) {
+      registrar.getPigeonApiResizableVideoAdPlayer().pigeon_newInstance(value) {}
+    } else if (value is com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer) {
+      registrar.getPigeonApiVideoAdPlayer().pigeon_newInstance(value) {}
+    } else if (value
+        is
+        dev.flutter.packages.interactive_media_ads.ResizableVideoStreamPlayerProxyApi.ResizableVideoStreamPlayer) {
+      registrar.getPigeonApiResizableVideoStreamPlayer().pigeon_newInstance(value) {}
+    } else if (value is com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer) {
+      registrar.getPigeonApiVideoStreamPlayer().pigeon_newInstance(value) {}
+    } else if (value is com.google.ads.interactivemedia.v3.api.player.ResizablePlayer) {
+      registrar.getPigeonApiResizablePlayer().pigeon_newInstance(value) {}
+    } else if (value is com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter) {
+      registrar.getPigeonApiSecureSignalsAdapter().pigeon_newInstance(value) {}
+    } else if (value
+        is com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback) {
+      registrar.getPigeonApiSecureSignalsCollectSignalsCallback().pigeon_newInstance(value) {}
+    } else if (value
+        is com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback) {
+      registrar.getPigeonApiSecureSignalsInitializeCallback().pigeon_newInstance(value) {}
     }
 
     when {
@@ -15412,6 +15495,1349 @@ class AdEventListenerProxyApiTest {
     instance.onAdEvent(event)
 
     verify(mockApi).onAdEvent(eq(instance), eq(event), any())
+  }
+
+}
+*/
+/**
+ * Version info for SecureSignals adapters and for third party SDKs that collect SecureSignals.
+ *
+ * See
+ * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/VersionInfo.html.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiVersionInfo(
+    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+) {
+  /**
+   * Creates a new VersionInfo object that will contain the version of an rtb adapter or third party
+   * SDK.
+   */
+  abstract fun pigeon_defaultConstructor(
+      majorVersion: Long,
+      minorVersion: Long,
+      microVersion: Long
+  ): com.google.ads.interactivemedia.v3.api.VersionInfo
+
+  abstract fun majorVersion(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.VersionInfo
+  ): Long
+
+  abstract fun minorVersion(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.VersionInfo
+  ): Long
+
+  abstract fun microVersion(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.VersionInfo
+  ): Long
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiVersionInfo?) {
+      val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.VersionInfo.pigeon_defaultConstructor",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg =
+                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val majorVersionArg =
+                args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val minorVersionArg =
+                args[2].let { num -> if (num is Int) num.toLong() else num as Long }
+            val microVersionArg =
+                args[3].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> =
+                try {
+                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                      api.pigeon_defaultConstructor(
+                          majorVersionArg, minorVersionArg, microVersionArg),
+                      pigeon_identifierArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of VersionInfo and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.VersionInfo,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg =
+        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val majorVersionArg = majorVersion(pigeon_instanceArg)
+    val minorVersionArg = minorVersion(pigeon_instanceArg)
+    val microVersionArg = microVersion(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.VersionInfo.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg, majorVersionArg, minorVersionArg, microVersionArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.VersionInfo
+
+/**
+ * ProxyApi implementation for [VersionInfo].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class VersionInfoProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiVersionInfo(pigeonRegistrar) {
+
+  override fun pigeon_defaultConstructor(): VersionInfo {
+    return VersionInfo()
+  }
+
+  override fun majorVersion(pigeon_instance: VersionInfo): Long {
+    return pigeon_instance.majorVersion
+  }
+
+  override fun minorVersion(pigeon_instance: VersionInfo): Long {
+    return pigeon_instance.minorVersion
+  }
+
+  override fun microVersion(pigeon_instance: VersionInfo): Long {
+    return pigeon_instance.microVersion
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.VersionInfo
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+
+class VersionInfoProxyApiTest {
+  @Test
+  fun pigeon_defaultConstructor() {
+    val api = TestProxyApiRegistrar().getPigeonApiVersionInfo()
+
+    assertTrue(api.pigeon_defaultConstructor() is VersionInfoProxyApi.VersionInfo)
+  }
+
+  @Test
+  fun majorVersion() {
+    val api = TestProxyApiRegistrar().getPigeonApiVersionInfo()
+
+    val instance = mock<VersionInfo>()
+    val value = 0
+    whenever(instance.majorVersion).thenReturn(value)
+
+    assertEquals(value, api.majorVersion(instance))
+  }
+
+  @Test
+  fun minorVersion() {
+    val api = TestProxyApiRegistrar().getPigeonApiVersionInfo()
+
+    val instance = mock<VersionInfo>()
+    val value = 0
+    whenever(instance.minorVersion).thenReturn(value)
+
+    assertEquals(value, api.minorVersion(instance))
+  }
+
+  @Test
+  fun microVersion() {
+    val api = TestProxyApiRegistrar().getPigeonApiVersionInfo()
+
+    val instance = mock<VersionInfo>()
+    val value = 0
+    whenever(instance.microVersion).thenReturn(value)
+
+    assertEquals(value, api.microVersion(instance))
+  }
+
+}
+*/
+/**
+ * Provides an API for interactive advertisements to resize the `VideoAdPlayer` or
+ * `VideoStreamPlayer` within its container.
+ *
+ * See
+ * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/ResizablePlayer.
+ */
+@Suppress("UNCHECKED_CAST")
+open class PigeonApiResizablePlayer(
+    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+) {
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ResizablePlayer and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.ResizablePlayer,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    throw IllegalStateException(
+        "Attempting to create a new Dart instance of ResizablePlayer, but the class has a nonnull callback method.")
+  }
+
+  /** Resize the VideoPlayer within its bounds by adding margins to each side, in pixels. */
+  fun resize(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.player.ResizablePlayer,
+      leftMarginArg: Long,
+      topMarginArg: Long,
+      rightMarginArg: Long,
+      bottomMarginArg: Long,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.ResizablePlayer.resize"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(
+        listOf(pigeon_instanceArg, leftMarginArg, topMarginArg, rightMarginArg, bottomMarginArg)) {
+          if (it is List<*>) {
+            if (it.size > 1) {
+              callback(
+                  Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+            } else {
+              callback(Result.success(Unit))
+            }
+          } else {
+            callback(Result.failure(createConnectionError(channelName)))
+          }
+        }
+  }
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.player.ResizablePlayer
+
+/**
+ * ProxyApi implementation for [ResizablePlayer].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class ResizablePlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiResizablePlayer(pigeonRegistrar) {
+  internal class ResizablePlayerImpl(val api: ResizablePlayerProxyApi) : ResizablePlayer {
+    override fun resize(leftMargin: Long, topMargin: Long, rightMargin: Long, bottomMargin: Long) {
+      api.pigeonRegistrar.runOnMainThread { api.resize(this, leftMargin, topMargin, rightMargin, bottomMargin) {} }
+    }
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.player.ResizablePlayer
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+
+class ResizablePlayerProxyApiTest {
+  @Test
+  fun resize() {
+    val mockApi = mock<ResizablePlayerProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = ResizablePlayerImpl(mockApi)
+    val leftMargin = 0
+    val topMargin = 0
+    val rightMargin = 0
+    val bottomMargin = 0
+    instance.resize(leftMargin, topMargin, rightMargin, bottomMargin)
+
+    verify(mockApi).resize(eq(instance), eq(leftMargin), eq(topMargin), eq(rightMargin), eq(bottomMargin), any())
+  }
+
+}
+*/
+/**
+ * Implementation of a `VideoAdPlayer` that also implements `ResizablePlayer`.
+ *
+ * This class is not a part of the IMA SDK and is provided as a work around to create a class that
+ * implements both `VideoAdPlayer` and `ResizablePlayer`.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiResizableVideoAdPlayer(
+    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+) {
+  abstract fun pigeon_defaultConstructor():
+      dev.flutter.packages.interactive_media_ads.ResizableVideoAdPlayerProxyApi.ResizableVideoAdPlayer
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(
+        binaryMessenger: BinaryMessenger,
+        api: PigeonApiResizableVideoAdPlayer?
+    ) {
+      val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ResizableVideoAdPlayer.pigeon_defaultConstructor",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg =
+                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> =
+                try {
+                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ResizableVideoAdPlayer and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg:
+          dev.flutter.packages.interactive_media_ads.ResizableVideoAdPlayerProxyApi.ResizableVideoAdPlayer,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    throw IllegalStateException(
+        "Attempting to create a new Dart instance of ResizableVideoAdPlayer, but the class has a nonnull callback method.")
+  }
+
+  @Suppress("FunctionName")
+  /** An implementation of [PigeonApiVideoAdPlayer] used to access callback methods */
+  fun pigeon_getPigeonApiVideoAdPlayer(): PigeonApiVideoAdPlayer {
+    return pigeonRegistrar.getPigeonApiVideoAdPlayer()
+  }
+
+  @Suppress("FunctionName")
+  /** An implementation of [PigeonApiResizablePlayer] used to access callback methods */
+  fun pigeon_getPigeonApiResizablePlayer(): PigeonApiResizablePlayer {
+    return pigeonRegistrar.getPigeonApiResizablePlayer()
+  }
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import dev.flutter.packages.interactive_media_ads.ResizableVideoAdPlayerProxyApi.ResizableVideoAdPlayer
+
+/**
+ * ProxyApi implementation for [ResizableVideoAdPlayer].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class ResizableVideoAdPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiResizableVideoAdPlayer(pigeonRegistrar) {
+  internal class ResizableVideoAdPlayerImpl(val api: ResizableVideoAdPlayerProxyApi) : ResizableVideoAdPlayer {
+  }
+
+  override fun pigeon_defaultConstructor(): ResizableVideoAdPlayer {
+    return ResizableVideoAdPlayerImpl()
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import dev.flutter.packages.interactive_media_ads.ResizableVideoAdPlayerProxyApi.ResizableVideoAdPlayer
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+
+class ResizableVideoAdPlayerProxyApiTest {
+  @Test
+  fun pigeon_defaultConstructor() {
+    val api = TestProxyApiRegistrar().getPigeonApiResizableVideoAdPlayer()
+
+    assertTrue(api.pigeon_defaultConstructor() is ResizableVideoAdPlayerProxyApi.ResizableVideoAdPlayerImpl)
+  }
+
+}
+*/
+/**
+ * Implementation of a `VideoStreamPlayer` that also implements `ResizablePlayer`.
+ *
+ * This class is not a part of the IMA SDK and is provided as a work around to create a class that
+ * implements both `VideoStreamPlayer` and `ResizablePlayer`.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiResizableVideoStreamPlayer(
+    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+) {
+  abstract fun pigeon_defaultConstructor():
+      dev.flutter.packages.interactive_media_ads.ResizableVideoStreamPlayerProxyApi.ResizableVideoStreamPlayer
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(
+        binaryMessenger: BinaryMessenger,
+        api: PigeonApiResizableVideoStreamPlayer?
+    ) {
+      val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ResizableVideoStreamPlayer.pigeon_defaultConstructor",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg =
+                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> =
+                try {
+                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /**
+   * Creates a Dart instance of ResizableVideoStreamPlayer and attaches it to [pigeon_instanceArg].
+   */
+  fun pigeon_newInstance(
+      pigeon_instanceArg:
+          dev.flutter.packages.interactive_media_ads.ResizableVideoStreamPlayerProxyApi.ResizableVideoStreamPlayer,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    throw IllegalStateException(
+        "Attempting to create a new Dart instance of ResizableVideoStreamPlayer, but the class has a nonnull callback method.")
+  }
+
+  @Suppress("FunctionName")
+  /** An implementation of [PigeonApiVideoStreamPlayer] used to access callback methods */
+  fun pigeon_getPigeonApiVideoStreamPlayer(): PigeonApiVideoStreamPlayer {
+    return pigeonRegistrar.getPigeonApiVideoStreamPlayer()
+  }
+
+  @Suppress("FunctionName")
+  /** An implementation of [PigeonApiResizablePlayer] used to access callback methods */
+  fun pigeon_getPigeonApiResizablePlayer(): PigeonApiResizablePlayer {
+    return pigeonRegistrar.getPigeonApiResizablePlayer()
+  }
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import dev.flutter.packages.interactive_media_ads.ResizableVideoStreamPlayerProxyApi.ResizableVideoStreamPlayer
+
+/**
+ * ProxyApi implementation for [ResizableVideoStreamPlayer].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class ResizableVideoStreamPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiResizableVideoStreamPlayer(pigeonRegistrar) {
+  internal class ResizableVideoStreamPlayerImpl(val api: ResizableVideoStreamPlayerProxyApi) : ResizableVideoStreamPlayer {
+  }
+
+  override fun pigeon_defaultConstructor(): ResizableVideoStreamPlayer {
+    return ResizableVideoStreamPlayerImpl()
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import dev.flutter.packages.interactive_media_ads.ResizableVideoStreamPlayerProxyApi.ResizableVideoStreamPlayer
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+
+class ResizableVideoStreamPlayerProxyApiTest {
+  @Test
+  fun pigeon_defaultConstructor() {
+    val api = TestProxyApiRegistrar().getPigeonApiResizableVideoStreamPlayer()
+
+    assertTrue(api.pigeon_defaultConstructor() is ResizableVideoStreamPlayerProxyApi.ResizableVideoStreamPlayerImpl)
+  }
+
+}
+*/
+/**
+ * Mediation adapter for gathering Secure Signals generated by a 3P entity that is not the
+ * publisher.
+ *
+ * See
+ * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/signals/SecureSignalsAdapter.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiSecureSignalsAdapter(
+    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+) {
+  abstract fun collectSignals(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter,
+      callback: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback
+  )
+
+  /** Returns the version of the third party SDK built into the app. */
+  abstract fun getSDKVersion(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
+  ): com.google.ads.interactivemedia.v3.api.VersionInfo
+
+  /** Returns the version of the SecureSignals Adapter. */
+  abstract fun getVersion(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
+  ): com.google.ads.interactivemedia.v3.api.VersionInfo
+
+  /** Called by Interactive Media Ads SDK to initialize a third party adapter and SDK. */
+  abstract fun initialize(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter,
+      callback: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback
+  )
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(
+        binaryMessenger: BinaryMessenger,
+        api: PigeonApiSecureSignalsAdapter?
+    ) {
+      val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.collectSignals",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
+            val callbackArg =
+                args[1]
+                    as
+                    com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback
+            val wrapped: List<Any?> =
+                try {
+                  api.collectSignals(pigeon_instanceArg, callbackArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.getSDKVersion",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getSDKVersion(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.getVersion",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getVersion(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.initialize",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
+            val callbackArg =
+                args[1]
+                    as
+                    com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback
+            val wrapped: List<Any?> =
+                try {
+                  api.initialize(pigeon_instanceArg, callbackArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of SecureSignalsAdapter and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg =
+        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.interactive_media_ads.SecureSignalsAdapter.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
+import com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback
+import com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback
+import com.google.ads.interactivemedia.v3.api.VersionInfo
+
+/**
+ * ProxyApi implementation for [SecureSignalsAdapter].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class SecureSignalsAdapterProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiSecureSignalsAdapter(pigeonRegistrar) {
+
+  override fun collectSignals(pigeon_instance: SecureSignalsAdapter,callback: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback) {
+    pigeon_instance.collectSignals(callback)
+  }
+
+  override fun getSDKVersion(pigeon_instance: SecureSignalsAdapter): com.google.ads.interactivemedia.v3.api.VersionInfo {
+    return pigeon_instance.getSDKVersion()
+  }
+
+  override fun getVersion(pigeon_instance: SecureSignalsAdapter): com.google.ads.interactivemedia.v3.api.VersionInfo {
+    return pigeon_instance.getVersion()
+  }
+
+  override fun initialize(pigeon_instance: SecureSignalsAdapter,callback: com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback) {
+    pigeon_instance.initialize(callback)
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.signals.SecureSignalsAdapter
+import com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback
+import com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback
+import com.google.ads.interactivemedia.v3.api.VersionInfo
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+
+class SecureSignalsAdapterProxyApiTest {
+  @Test
+  fun collectSignals() {
+    val api = TestProxyApiRegistrar().getPigeonApiSecureSignalsAdapter()
+
+    val instance = mock<SecureSignalsAdapter>()
+    val callback = mock<SecureSignalsCollectSignalsCallback>()
+    api.collectSignals(instance, callback)
+
+    verify(instance).collectSignals(callback)
+  }
+
+  @Test
+  fun getSDKVersion() {
+    val api = TestProxyApiRegistrar().getPigeonApiSecureSignalsAdapter()
+
+    val instance = mock<SecureSignalsAdapter>()
+    val value = mock<VersionInfo>()
+    whenever(instance.getSDKVersion()).thenReturn(value)
+
+    assertEquals(value, api.getSDKVersion(instance ))
+  }
+
+  @Test
+  fun getVersion() {
+    val api = TestProxyApiRegistrar().getPigeonApiSecureSignalsAdapter()
+
+    val instance = mock<SecureSignalsAdapter>()
+    val value = mock<VersionInfo>()
+    whenever(instance.getVersion()).thenReturn(value)
+
+    assertEquals(value, api.getVersion(instance ))
+  }
+
+  @Test
+  fun initialize() {
+    val api = TestProxyApiRegistrar().getPigeonApiSecureSignalsAdapter()
+
+    val instance = mock<SecureSignalsAdapter>()
+    val callback = mock<SecureSignalsInitializeCallback>()
+    api.initialize(instance, callback)
+
+    verify(instance).initialize(callback)
+  }
+
+}
+*/
+/**
+ * Defines callback methods for an implementation of `SecureSignalsAdapter` to communicate success
+ * or failure of a call to
+ * `SecureSignalsAdapter.collectSignals(SecureSignalsCollectSignalsCallback)`.
+ *
+ * See
+ * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/signals/SecureSignalsCollectSignalsCallback.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiSecureSignalsCollectSignalsCallback(
+    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+) {
+  abstract fun pigeon_defaultConstructor():
+      com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(
+        binaryMessenger: BinaryMessenger,
+        api: PigeonApiSecureSignalsCollectSignalsCallback?
+    ) {
+      val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.pigeon_defaultConstructor",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg =
+                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> =
+                try {
+                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /**
+   * Creates a Dart instance of SecureSignalsCollectSignalsCallback and attaches it to
+   * [pigeon_instanceArg].
+   */
+  fun pigeon_newInstance(
+      pigeon_instanceArg:
+          com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    throw IllegalStateException(
+        "Attempting to create a new Dart instance of SecureSignalsCollectSignalsCallback, but the class has a nonnull callback method.")
+  }
+
+  /** To be invoked when signal collection fails. */
+  fun onFailure(
+      pigeon_instanceArg:
+          com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback,
+      typeArg: String,
+      messageArg: String?,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.onFailure"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, typeArg, messageArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** To be invoked when the signals have been successfully collected. */
+  fun onSuccess(
+      pigeon_instanceArg:
+          com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback,
+      signalsArg: String,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.interactive_media_ads.SecureSignalsCollectSignalsCallback.onSuccess"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, signalsArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback
+
+/**
+ * ProxyApi implementation for [SecureSignalsCollectSignalsCallback].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class SecureSignalsCollectSignalsCallbackProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiSecureSignalsCollectSignalsCallback(pigeonRegistrar) {
+  internal class SecureSignalsCollectSignalsCallbackImpl(val api: SecureSignalsCollectSignalsCallbackProxyApi) : SecureSignalsCollectSignalsCallback {
+    override fun onFailure(type: String, message: String?) {
+      api.pigeonRegistrar.runOnMainThread { api.onFailure(this, type, message) {} }
+    }
+    override fun onSuccess(signals: String) {
+      api.pigeonRegistrar.runOnMainThread { api.onSuccess(this, signals) {} }
+    }
+  }
+
+  override fun pigeon_defaultConstructor(): SecureSignalsCollectSignalsCallback {
+    return SecureSignalsCollectSignalsCallbackImpl()
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.signals.SecureSignalsCollectSignalsCallback
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+
+class SecureSignalsCollectSignalsCallbackProxyApiTest {
+  @Test
+  fun pigeon_defaultConstructor() {
+    val api = TestProxyApiRegistrar().getPigeonApiSecureSignalsCollectSignalsCallback()
+
+    assertTrue(api.pigeon_defaultConstructor() is SecureSignalsCollectSignalsCallbackProxyApi.SecureSignalsCollectSignalsCallbackImpl)
+  }
+
+  @Test
+  fun onFailure() {
+    val mockApi = mock<SecureSignalsCollectSignalsCallbackProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = SecureSignalsCollectSignalsCallbackImpl(mockApi)
+    val type = "myString"
+    val message = "myString"
+    instance.onFailure(type, message)
+
+    verify(mockApi).onFailure(eq(instance), eq(type), eq(message), any())
+  }
+
+  @Test
+  fun onSuccess() {
+    val mockApi = mock<SecureSignalsCollectSignalsCallbackProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = SecureSignalsCollectSignalsCallbackImpl(mockApi)
+    val signals = "myString"
+    instance.onSuccess(signals)
+
+    verify(mockApi).onSuccess(eq(instance), eq(signals), any())
+  }
+
+}
+*/
+/**
+ * Defines callback methods for an implementation of `SecureSignalsAdapter` to communicate success
+ * or failure of a call to `SecureSignalsAdapter.initialize(SecureSignalsInitializeCallback)`.
+ *
+ * See
+ * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/signals/SecureSignalsInitializeCallback.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiSecureSignalsInitializeCallback(
+    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+) {
+  abstract fun pigeon_defaultConstructor():
+      com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(
+        binaryMessenger: BinaryMessenger,
+        api: PigeonApiSecureSignalsInitializeCallback?
+    ) {
+      val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.pigeon_defaultConstructor",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg =
+                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val wrapped: List<Any?> =
+                try {
+                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /**
+   * Creates a Dart instance of SecureSignalsInitializeCallback and attaches it to
+   * [pigeon_instanceArg].
+   */
+  fun pigeon_newInstance(
+      pigeon_instanceArg:
+          com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    throw IllegalStateException(
+        "Attempting to create a new Dart instance of SecureSignalsInitializeCallback, but the class has a nonnull callback method.")
+  }
+
+  /** To be invoked when initialization fails. */
+  fun onFailure(
+      pigeon_instanceArg:
+          com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback,
+      typeArg: String,
+      messageArg: String?,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.onFailure"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, typeArg, messageArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /**
+   * Indicates to the SDK that the adapter has been initialized and can be used for future signal
+   * collection.
+   */
+  fun onSuccess(
+      pigeon_instanceArg:
+          com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.interactive_media_ads.SecureSignalsInitializeCallback.onSuccess"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback
+
+/**
+ * ProxyApi implementation for [SecureSignalsInitializeCallback].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class SecureSignalsInitializeCallbackProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiSecureSignalsInitializeCallback(pigeonRegistrar) {
+  internal class SecureSignalsInitializeCallbackImpl(val api: SecureSignalsInitializeCallbackProxyApi) : SecureSignalsInitializeCallback {
+    override fun onFailure(type: String, message: String?) {
+      api.pigeonRegistrar.runOnMainThread { api.onFailure(this, type, message) {} }
+    }
+    override fun onSuccess() {
+      api.pigeonRegistrar.runOnMainThread { api.onSuccess(this ) {} }
+    }
+  }
+
+  override fun pigeon_defaultConstructor(): SecureSignalsInitializeCallback {
+    return SecureSignalsInitializeCallbackImpl()
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.signals.SecureSignalsInitializeCallback
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+
+class SecureSignalsInitializeCallbackProxyApiTest {
+  @Test
+  fun pigeon_defaultConstructor() {
+    val api = TestProxyApiRegistrar().getPigeonApiSecureSignalsInitializeCallback()
+
+    assertTrue(api.pigeon_defaultConstructor() is SecureSignalsInitializeCallbackProxyApi.SecureSignalsInitializeCallbackImpl)
+  }
+
+  @Test
+  fun onFailure() {
+    val mockApi = mock<SecureSignalsInitializeCallbackProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = SecureSignalsInitializeCallbackImpl(mockApi)
+    val type = "myString"
+    val message = "myString"
+    instance.onFailure(type, message)
+
+    verify(mockApi).onFailure(eq(instance), eq(type), eq(message), any())
+  }
+
+  @Test
+  fun onSuccess() {
+    val mockApi = mock<SecureSignalsInitializeCallbackProxyApi>()
+    whenever(mockApi.pigeonRegistrar).thenReturn(TestProxyApiRegistrar())
+
+    val instance = SecureSignalsInitializeCallbackImpl(mockApi)
+    instance.onSuccess()
+
+    verify(mockApi).onSuccess(eq(instance) , any())
   }
 
 }

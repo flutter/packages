@@ -16,7 +16,7 @@ import com.google.ads.interactivemedia.v3.api.player.VideoStreamPlayer.VideoStre
  */
 class VideoStreamPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiVideoStreamPlayer(pigeonRegistrar) {
-  internal class VideoStreamPlayerImpl(val api: VideoStreamPlayerProxyApi) : VideoStreamPlayer {
+  open class VideoStreamPlayerImpl(val api: VideoStreamPlayerProxyApi) : VideoStreamPlayer {
     var savedVolume: Int = 0
 
     var savedContentProgress: VideoProgressUpdate = VideoProgressUpdate.VIDEO_TIME_NOT_READY

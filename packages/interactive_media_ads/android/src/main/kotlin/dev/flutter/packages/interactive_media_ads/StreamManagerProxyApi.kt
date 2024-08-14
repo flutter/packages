@@ -23,9 +23,7 @@ class StreamManagerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     return pigeon_instance.getContentTimeMsForStreamTimeMs(streamTimeMs)
   }
 
-  override fun getCuePoints(
-      pigeon_instance: StreamManager
-  ): List<CuePoint> {
+  override fun getCuePoints(pigeon_instance: StreamManager): List<CuePoint> {
     return pigeon_instance.cuePoints
   }
 

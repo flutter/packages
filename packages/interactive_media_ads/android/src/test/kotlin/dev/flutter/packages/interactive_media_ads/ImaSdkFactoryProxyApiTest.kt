@@ -81,7 +81,7 @@ class ImaSdkFactoryProxyApiTest {
     val value = mock<AdsRenderingSettings>()
     whenever(instance.createAdsRenderingSettings()).thenReturn(value)
 
-    assertEquals(value, api.createAdsRenderingSettings(instance ))
+    assertEquals(value, api.createAdsRenderingSettings(instance))
   }
 
   @Test
@@ -92,7 +92,7 @@ class ImaSdkFactoryProxyApiTest {
     val value = mock<CompanionAdSlot>()
     whenever(instance.createCompanionAdSlot()).thenReturn(value)
 
-    assertEquals(value, api.createCompanionAdSlot(instance ))
+    assertEquals(value, api.createCompanionAdSlot(instance))
   }
 
   @Test
@@ -104,7 +104,10 @@ class ImaSdkFactoryProxyApiTest {
     val purpose = dev.flutter.packages.interactive_media_ads.FriendlyObstructionPurpose.CLOSE_AD
     val detailedReason = "myString"
     val value = mock<FriendlyObstruction>()
-    whenever(instance.createFriendlyObstruction(view, FriendlyObstructionPurpose.CLOSE_AD, detailedReason)).thenReturn(value)
+    whenever(
+            instance.createFriendlyObstruction(
+                view, FriendlyObstructionPurpose.CLOSE_AD, detailedReason))
+        .thenReturn(value)
 
     assertEquals(value, api.createFriendlyObstruction(instance, view, purpose, detailedReason))
   }
@@ -160,9 +163,21 @@ class ImaSdkFactoryProxyApiTest {
     val projectNumber = "myString4"
     val oAuthToken = "myString5"
     val value = mock<StreamRequest>()
-    whenever(instance.createVideoStitcherLiveStreamRequest(networkCode, customAssetKey, liveStreamEventId, region, projectNumber, oAuthToken)).thenReturn(value)
+    whenever(
+            instance.createVideoStitcherLiveStreamRequest(
+                networkCode, customAssetKey, liveStreamEventId, region, projectNumber, oAuthToken))
+        .thenReturn(value)
 
-    assertEquals(value, api.createVideoStitcherLiveStreamRequest(instance, networkCode, customAssetKey, liveStreamEventId, region, projectNumber, oAuthToken))
+    assertEquals(
+        value,
+        api.createVideoStitcherLiveStreamRequest(
+            instance,
+            networkCode,
+            customAssetKey,
+            liveStreamEventId,
+            region,
+            projectNumber,
+            oAuthToken))
   }
 
   @Test
@@ -177,9 +192,15 @@ class ImaSdkFactoryProxyApiTest {
     val oAuthToken = "myString4"
     val adTagUrl = "myString5"
     val value = mock<StreamRequest>()
-    whenever(instance.createVideoStitcherVodStreamRequest(contentSourceUrl, networkCode, region, projectNumber, oAuthToken, adTagUrl)).thenReturn(value)
+    whenever(
+            instance.createVideoStitcherVodStreamRequest(
+                contentSourceUrl, networkCode, region, projectNumber, oAuthToken, adTagUrl))
+        .thenReturn(value)
 
-    assertEquals(value, api.createContentSourceVideoStitcherVodStreamRequest(instance, contentSourceUrl, networkCode, region, projectNumber, oAuthToken, adTagUrl))
+    assertEquals(
+        value,
+        api.createContentSourceVideoStitcherVodStreamRequest(
+            instance, contentSourceUrl, networkCode, region, projectNumber, oAuthToken, adTagUrl))
   }
 
   @Test
@@ -193,9 +214,15 @@ class ImaSdkFactoryProxyApiTest {
     val oAuthToken = "myString3"
     val vodConfigId = "myString4"
     val value = mock<StreamRequest>()
-    whenever(instance.createVideoStitcherVodStreamRequest(networkCode, region, projectNumber, oAuthToken, vodConfigId)).thenReturn(value)
+    whenever(
+            instance.createVideoStitcherVodStreamRequest(
+                networkCode, region, projectNumber, oAuthToken, vodConfigId))
+        .thenReturn(value)
 
-    assertEquals(value, api.createVideoStitcherVodStreamRequest(instance, networkCode, region, projectNumber, oAuthToken, vodConfigId))
+    assertEquals(
+        value,
+        api.createVideoStitcherVodStreamRequest(
+            instance, networkCode, region, projectNumber, oAuthToken, vodConfigId))
   }
 
   @Test
