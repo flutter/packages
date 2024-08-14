@@ -1,3 +1,8 @@
+## 0.2.7
+
+* Adds `inDuration`, `outDuration`, `inCurve`, and `outCurve` parameters for 
+configuring additional SlotLayoutConfig animation behavior.
+
 ## 0.2.6
 
 * Add new sample for using AdaptiveScaffold with GoRouter.
@@ -41,8 +46,6 @@
 * Add `navigationRailDestinationBuilder` to apply custom Destinations.
 * Add `groupAlignment` property to change alignment.
 * Set `navRailTheme` when using the Drawer just like the other NavigationRails.
-* Adds `inDuration`, `outDuration`, `inCurve`, and `outCurve` parameters for 
-configuring additional SlotLayoutConfig animation behavior.
 
 ## 0.1.11+1
 
