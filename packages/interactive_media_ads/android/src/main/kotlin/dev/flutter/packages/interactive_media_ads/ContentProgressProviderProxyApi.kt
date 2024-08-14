@@ -15,23 +15,23 @@ import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
  */
 class ContentProgressProviderProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiContentProgressProvider(pigeonRegistrar) {
-    internal class ContentProgressProviderImpl(val api: ContentProgressProviderProxyApi) :
-        ContentProgressProvider {
-        var currentProgress = VideoProgressUpdate.VIDEO_TIME_NOT_READY
+  internal class ContentProgressProviderImpl(val api: ContentProgressProviderProxyApi) :
+      ContentProgressProvider {
+    var currentProgress = VideoProgressUpdate.VIDEO_TIME_NOT_READY
 
-        override fun getContentProgress(): VideoProgressUpdate {
-            return currentProgress
-        }
+    override fun getContentProgress(): VideoProgressUpdate {
+      return currentProgress
     }
+  }
 
-    override fun pigeon_defaultConstructor(): ContentProgressProvider {
-        return ContentProgressProviderImpl(this)
-    }
+  override fun pigeon_defaultConstructor(): ContentProgressProvider {
+    return ContentProgressProviderImpl(this)
+  }
 
-    override fun setContentProgress(
-        pigeon_instance: ContentProgressProvider,
-        update: VideoProgressUpdate
-    ) {
-        (pigeon_instance as ContentProgressProviderImpl).currentProgress = update
-    }
-    }
+  override fun setContentProgress(
+      pigeon_instance: ContentProgressProvider,
+      update: VideoProgressUpdate
+  ) {
+    (pigeon_instance as ContentProgressProviderImpl).currentProgress = update
+  }
+}

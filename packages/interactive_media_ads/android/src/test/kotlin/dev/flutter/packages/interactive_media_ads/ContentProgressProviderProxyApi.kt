@@ -16,8 +16,8 @@ class ContentProgressProviderProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiContentProgressProvider()
 
     assertTrue(
-      api.pigeon_defaultConstructor()
-          is ContentProgressProviderProxyApi.ContentProgressProviderImpl)
+        api.pigeon_defaultConstructor()
+            is ContentProgressProviderProxyApi.ContentProgressProviderImpl)
   }
 
   @Test
@@ -25,8 +25,8 @@ class ContentProgressProviderProxyApiTest {
     val api = TestProxyApiRegistrar().getPigeonApiContentProgressProvider()
 
     val instance =
-      ContentProgressProviderProxyApi.ContentProgressProviderImpl(
-        api as ContentProgressProviderProxyApi)
+        ContentProgressProviderProxyApi.ContentProgressProviderImpl(
+            api as ContentProgressProviderProxyApi)
     val mockProgressUpdate = mock<VideoProgressUpdate>()
     api.setContentProgress(instance, mockProgressUpdate)
 
