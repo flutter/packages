@@ -1,3 +1,7 @@
+## 0.1.2+1
+
+* Adds internal wrappers for the remaining classes of the Android SDK.
+
 ## 0.1.2
 
 * Adds support for all `AdEventType`s and ad data. See `AdEvent.adData`.
