@@ -44,8 +44,8 @@ class _FakeAdError_1 extends _i1.SmartFake implements _i2.AdError {
         );
 }
 
-class _FakeObject_2 extends _i1.SmartFake implements Object {
-  _FakeObject_2(
+class _FakeAdErrorEvent_2 extends _i1.SmartFake implements _i2.AdErrorEvent {
+  _FakeAdErrorEvent_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -54,19 +54,9 @@ class _FakeObject_2 extends _i1.SmartFake implements Object {
         );
 }
 
-class _FakeAdErrorEvent_3 extends _i1.SmartFake implements _i2.AdErrorEvent {
-  _FakeAdErrorEvent_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeAdErrorListener_4 extends _i1.SmartFake
+class _FakeAdErrorListener_3 extends _i1.SmartFake
     implements _i2.AdErrorListener {
-  _FakeAdErrorListener_4(
+  _FakeAdErrorListener_3(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -75,8 +65,8 @@ class _FakeAdErrorListener_4 extends _i1.SmartFake
         );
 }
 
-class _FakeAd_5 extends _i1.SmartFake implements _i2.Ad {
-  _FakeAd_5(
+class _FakeAdEvent_4 extends _i1.SmartFake implements _i2.AdEvent {
+  _FakeAdEvent_4(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -85,19 +75,9 @@ class _FakeAd_5 extends _i1.SmartFake implements _i2.Ad {
         );
 }
 
-class _FakeAdEvent_6 extends _i1.SmartFake implements _i2.AdEvent {
-  _FakeAdEvent_6(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeAdEventListener_7 extends _i1.SmartFake
+class _FakeAdEventListener_5 extends _i1.SmartFake
     implements _i2.AdEventListener {
-  _FakeAdEventListener_7(
+  _FakeAdEventListener_5(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -106,8 +86,8 @@ class _FakeAdEventListener_7 extends _i1.SmartFake
         );
 }
 
-class _FakeAdsManager_8 extends _i1.SmartFake implements _i2.AdsManager {
-  _FakeAdsManager_8(
+class _FakeAdsManager_6 extends _i1.SmartFake implements _i2.AdsManager {
+  _FakeAdsManager_6(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -208,19 +188,6 @@ class MockAdErrorEvent extends _i1.Mock implements _i2.AdErrorEvent {
       ) as _i2.AdError);
 
   @override
-  Object get userRequestContext => (super.noSuchMethod(
-        Invocation.getter(#userRequestContext),
-        returnValue: _FakeObject_2(
-          this,
-          Invocation.getter(#userRequestContext),
-        ),
-        returnValueForMissingStub: _FakeObject_2(
-          this,
-          Invocation.getter(#userRequestContext),
-        ),
-      ) as Object);
-
-  @override
   _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
         Invocation.getter(#pigeon_instanceManager),
         returnValue: _FakePigeonInstanceManager_0(
@@ -239,14 +206,14 @@ class MockAdErrorEvent extends _i1.Mock implements _i2.AdErrorEvent {
           #pigeon_copy,
           [],
         ),
-        returnValue: _FakeAdErrorEvent_3(
+        returnValue: _FakeAdErrorEvent_2(
           this,
           Invocation.method(
             #pigeon_copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeAdErrorEvent_3(
+        returnValueForMissingStub: _FakeAdErrorEvent_2(
           this,
           Invocation.method(
             #pigeon_copy,
@@ -298,14 +265,14 @@ class MockAdErrorListener extends _i1.Mock implements _i2.AdErrorListener {
           #pigeon_copy,
           [],
         ),
-        returnValue: _FakeAdErrorListener_4(
+        returnValue: _FakeAdErrorListener_3(
           this,
           Invocation.method(
             #pigeon_copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeAdErrorListener_4(
+        returnValueForMissingStub: _FakeAdErrorListener_3(
           this,
           Invocation.method(
             #pigeon_copy,
@@ -327,19 +294,6 @@ class MockAdEvent extends _i1.Mock implements _i2.AdEvent {
       ) as _i2.AdEventType);
 
   @override
-  _i2.Ad get ad => (super.noSuchMethod(
-        Invocation.getter(#ad),
-        returnValue: _FakeAd_5(
-          this,
-          Invocation.getter(#ad),
-        ),
-        returnValueForMissingStub: _FakeAd_5(
-          this,
-          Invocation.getter(#ad),
-        ),
-      ) as _i2.Ad);
-
-  @override
   _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
         Invocation.getter(#pigeon_instanceManager),
         returnValue: _FakePigeonInstanceManager_0(
@@ -358,14 +312,14 @@ class MockAdEvent extends _i1.Mock implements _i2.AdEvent {
           #pigeon_copy,
           [],
         ),
-        returnValue: _FakeAdEvent_6(
+        returnValue: _FakeAdEvent_4(
           this,
           Invocation.method(
             #pigeon_copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeAdEvent_6(
+        returnValueForMissingStub: _FakeAdEvent_4(
           this,
           Invocation.method(
             #pigeon_copy,
@@ -417,14 +371,14 @@ class MockAdEventListener extends _i1.Mock implements _i2.AdEventListener {
           #pigeon_copy,
           [],
         ),
-        returnValue: _FakeAdEventListener_7(
+        returnValue: _FakeAdEventListener_5(
           this,
           Invocation.method(
             #pigeon_copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeAdEventListener_7(
+        returnValueForMissingStub: _FakeAdEventListener_5(
           this,
           Invocation.method(
             #pigeon_copy,
@@ -517,14 +471,14 @@ class MockAdsManager extends _i1.Mock implements _i2.AdsManager {
           #pigeon_copy,
           [],
         ),
-        returnValue: _FakeAdsManager_8(
+        returnValue: _FakeAdsManager_6(
           this,
           Invocation.method(
             #pigeon_copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeAdsManager_8(
+        returnValueForMissingStub: _FakeAdsManager_6(
           this,
           Invocation.method(
             #pigeon_copy,
