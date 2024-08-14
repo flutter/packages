@@ -4,6 +4,12 @@
 
 package io.flutter.plugins.googlemaps;
 
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_HYBRID;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NONE;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_SATELLITE;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_TERRAIN;
+
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,6 +36,8 @@ import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.maps.model.Tile;
 import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.heatmaps.Gradient;
+import com.google.maps.android.heatmaps.WeightedLatLng;
 import io.flutter.FlutterInjector;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,9 +49,24 @@ import java.util.Map;
 
 /** Conversions between JSON-like values and GoogleMaps data types. */
 class Convert {
+  // These constants must match the corresponding constants in serialization.dart
+  public static final String HEATMAP_ID_KEY = "heatmapId";
+  public static final String HEATMAP_DATA_KEY = "data";
+  public static final String HEATMAP_GRADIENT_KEY = "gradient";
+  public static final String HEATMAP_MAX_INTENSITY_KEY = "maxIntensity";
+  public static final String HEATMAP_OPACITY_KEY = "opacity";
+  public static final String HEATMAP_RADIUS_KEY = "radius";
+  public static final String HEATMAP_GRADIENT_COLORS_KEY = "colors";
+  public static final String HEATMAP_GRADIENT_START_POINTS_KEY = "startPoints";
+  public static final String HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY = "colorMapSize";
 
   private static BitmapDescriptor toBitmapDescriptor(
       Object o, AssetManager assetManager, float density) {
+    return toBitmapDescriptor(o, assetManager, density, new BitmapDescriptorFactoryWrapper());
+  }
+
+  private static BitmapDescriptor toBitmapDescriptor(
+      Object o, AssetManager assetManager, float density, BitmapDescriptorFactoryWrapper wrapper) {
     final List<?> data = toList(o);
     final String descriptorType = toString(data.get(0));
     switch (descriptorType) {
@@ -83,17 +106,13 @@ class Convert {
         }
         final Map<?, ?> assetData = toMap(data.get(1));
         return getBitmapFromAsset(
-            assetData,
-            assetManager,
-            density,
-            new BitmapDescriptorFactoryWrapper(),
-            new FlutterInjectorWrapper());
+            assetData, assetManager, density, wrapper, new FlutterInjectorWrapper());
       case "bytes":
         if (!(data.get(1) instanceof Map)) {
           throw new IllegalArgumentException("'bytes' expected a map as the second parameter");
         }
         final Map<?, ?> byteData = toMap(data.get(1));
-        return getBitmapFromBytes(byteData, density, new BitmapDescriptorFactoryWrapper());
+        return getBitmapFromBytes(byteData, density, wrapper);
       default:
         throw new IllegalArgumentException("Cannot interpret " + o + " as BitmapDescriptor");
     }
@@ -300,6 +319,16 @@ class Convert {
     return (Boolean) o;
   }
 
+  static @NonNull CameraPosition cameraPositionFromPigeon(
+      @NonNull Messages.PlatformCameraPosition position) {
+    final CameraPosition.Builder builder = CameraPosition.builder();
+    builder.bearing(position.getBearing().floatValue());
+    builder.target(latLngFromPigeon(position.getTarget()));
+    builder.tilt(position.getTilt().floatValue());
+    builder.zoom(position.getZoom().floatValue());
+    return builder.build();
+  }
+
   static CameraPosition toCameraPosition(Object o) {
     final Map<?, ?> data = toMap(o);
     final CameraPosition.Builder builder = CameraPosition.builder();
@@ -351,12 +380,28 @@ class Convert {
     return ((Number) o).floatValue();
   }
 
-  private static Float toFloatWrapper(Object o) {
-    return (o == null) ? null : toFloat(o);
+  private static @Nullable Float nullableDoubleToFloat(@Nullable Double d) {
+    return (d == null) ? null : d.floatValue();
   }
 
   private static int toInt(Object o) {
     return ((Number) o).intValue();
+  }
+
+  static int toMapType(@NonNull Messages.PlatformMapType type) {
+    switch (type) {
+      case NONE:
+        return MAP_TYPE_NONE;
+      case NORMAL:
+        return MAP_TYPE_NORMAL;
+      case SATELLITE:
+        return MAP_TYPE_SATELLITE;
+      case TERRAIN:
+        return MAP_TYPE_TERRAIN;
+      case HYBRID:
+        return MAP_TYPE_HYBRID;
+    }
+    return MAP_TYPE_NORMAL;
   }
 
   static @Nullable MapsInitializer.Renderer toMapRendererType(
@@ -383,13 +428,6 @@ class Convert {
         .build();
   }
 
-  static Object latLngBoundsToJson(LatLngBounds latLngBounds) {
-    final Map<String, Object> arguments = new HashMap<>(2);
-    arguments.put("southwest", latLngToJson(latLngBounds.southwest));
-    arguments.put("northeast", latLngToJson(latLngBounds.northeast));
-    return arguments;
-  }
-
   static Messages.PlatformLatLngBounds latLngBoundsToPigeon(LatLngBounds latLngBounds) {
     return new Messages.PlatformLatLngBounds.Builder()
         .setNortheast(latLngToPigeon(latLngBounds.northeast))
@@ -397,35 +435,10 @@ class Convert {
         .build();
   }
 
-  static Object markerIdToJson(String markerId) {
-    if (markerId == null) {
-      return null;
-    }
-    final Map<String, Object> data = new HashMap<>(1);
-    data.put("markerId", markerId);
-    return data;
-  }
-
-  static Object polygonIdToJson(String polygonId) {
-    if (polygonId == null) {
-      return null;
-    }
-    final Map<String, Object> data = new HashMap<>(1);
-    data.put("polygonId", polygonId);
-    return data;
-  }
-
-  static Object polylineIdToJson(String polylineId) {
-    if (polylineId == null) {
-      return null;
-    }
-    final Map<String, Object> data = new HashMap<>(1);
-    data.put("polylineId", polylineId);
-    return data;
-  }
-
-  static Object latLngToJson(LatLng latLng) {
-    return Arrays.asList(latLng.latitude, latLng.longitude);
+  static @NonNull LatLngBounds latLngBoundsFromPigeon(
+      @NonNull Messages.PlatformLatLngBounds bounds) {
+    return new LatLngBounds(
+        latLngFromPigeon(bounds.getSouthwest()), latLngFromPigeon(bounds.getNortheast()));
   }
 
   static Messages.PlatformLatLng latLngToPigeon(LatLng latLng) {
@@ -463,6 +476,17 @@ class Convert {
   static LatLng toLatLng(Object o) {
     final List<?> data = toList(o);
     return new LatLng(toDouble(data.get(0)), toDouble(data.get(1)));
+  }
+
+  /**
+   * Converts a list of serialized weighted lat/lng to a list of WeightedLatLng.
+   *
+   * @param o The serialized list of weighted lat/lng.
+   * @return The list of WeightedLatLng.
+   */
+  static WeightedLatLng toWeightedLatLng(Object o) {
+    final List<?> data = toList(o);
+    return new WeightedLatLng(toLatLng(data.get(0)), toDouble(data.get(1)));
   }
 
   static Point pointFromPigeon(Messages.PlatformPoint point) {
@@ -547,159 +571,123 @@ class Convert {
     return (String) o;
   }
 
-  static void interpretGoogleMapOptions(Object o, GoogleMapOptionsSink sink) {
-    final Map<?, ?> data = toMap(o);
-    final Object cameraTargetBounds = data.get("cameraTargetBounds");
+  static void interpretMapConfiguration(
+      @NonNull Messages.PlatformMapConfiguration config, @NonNull GoogleMapOptionsSink sink) {
+    final Messages.PlatformCameraTargetBounds cameraTargetBounds = config.getCameraTargetBounds();
     if (cameraTargetBounds != null) {
-      final List<?> targetData = toList(cameraTargetBounds);
-      sink.setCameraTargetBounds(toLatLngBounds(targetData.get(0)));
+      final @Nullable Messages.PlatformLatLngBounds bounds = cameraTargetBounds.getBounds();
+      sink.setCameraTargetBounds(bounds == null ? null : latLngBoundsFromPigeon(bounds));
     }
-    final Object compassEnabled = data.get("compassEnabled");
+    final Boolean compassEnabled = config.getCompassEnabled();
     if (compassEnabled != null) {
-      sink.setCompassEnabled(toBoolean(compassEnabled));
+      sink.setCompassEnabled(compassEnabled);
     }
-    final Object mapToolbarEnabled = data.get("mapToolbarEnabled");
+    final Boolean mapToolbarEnabled = config.getMapToolbarEnabled();
     if (mapToolbarEnabled != null) {
-      sink.setMapToolbarEnabled(toBoolean(mapToolbarEnabled));
+      sink.setMapToolbarEnabled(mapToolbarEnabled);
     }
-    final Object mapType = data.get("mapType");
+    final Messages.PlatformMapType mapType = config.getMapType();
     if (mapType != null) {
-      sink.setMapType(toInt(mapType));
+      sink.setMapType(toMapType(mapType));
     }
-    final Object minMaxZoomPreference = data.get("minMaxZoomPreference");
+    final Messages.PlatformZoomRange minMaxZoomPreference = config.getMinMaxZoomPreference();
     if (minMaxZoomPreference != null) {
-      final List<?> zoomPreferenceData = toList(minMaxZoomPreference);
-      sink.setMinMaxZoomPreference( //
-          toFloatWrapper(zoomPreferenceData.get(0)), //
-          toFloatWrapper(zoomPreferenceData.get(1)));
+      sink.setMinMaxZoomPreference(
+          nullableDoubleToFloat(minMaxZoomPreference.getMin()),
+          nullableDoubleToFloat(minMaxZoomPreference.getMax()));
     }
-    final Object padding = data.get("padding");
+    final Messages.PlatformEdgeInsets padding = config.getPadding();
     if (padding != null) {
-      final List<?> paddingData = toList(padding);
       sink.setPadding(
-          toFloat(paddingData.get(0)),
-          toFloat(paddingData.get(1)),
-          toFloat(paddingData.get(2)),
-          toFloat(paddingData.get(3)));
+          padding.getTop().floatValue(),
+          padding.getLeft().floatValue(),
+          padding.getBottom().floatValue(),
+          padding.getRight().floatValue());
     }
-    final Object rotateGesturesEnabled = data.get("rotateGesturesEnabled");
+    final Boolean rotateGesturesEnabled = config.getRotateGesturesEnabled();
     if (rotateGesturesEnabled != null) {
-      sink.setRotateGesturesEnabled(toBoolean(rotateGesturesEnabled));
+      sink.setRotateGesturesEnabled(rotateGesturesEnabled);
     }
-    final Object scrollGesturesEnabled = data.get("scrollGesturesEnabled");
+    final Boolean scrollGesturesEnabled = config.getScrollGesturesEnabled();
     if (scrollGesturesEnabled != null) {
-      sink.setScrollGesturesEnabled(toBoolean(scrollGesturesEnabled));
+      sink.setScrollGesturesEnabled(scrollGesturesEnabled);
     }
-    final Object tiltGesturesEnabled = data.get("tiltGesturesEnabled");
+    final Boolean tiltGesturesEnabled = config.getTiltGesturesEnabled();
     if (tiltGesturesEnabled != null) {
-      sink.setTiltGesturesEnabled(toBoolean(tiltGesturesEnabled));
+      sink.setTiltGesturesEnabled(tiltGesturesEnabled);
     }
-    final Object trackCameraPosition = data.get("trackCameraPosition");
+    final Boolean trackCameraPosition = config.getTrackCameraPosition();
     if (trackCameraPosition != null) {
-      sink.setTrackCameraPosition(toBoolean(trackCameraPosition));
+      sink.setTrackCameraPosition(trackCameraPosition);
     }
-    final Object zoomGesturesEnabled = data.get("zoomGesturesEnabled");
+    final Boolean zoomGesturesEnabled = config.getZoomGesturesEnabled();
     if (zoomGesturesEnabled != null) {
-      sink.setZoomGesturesEnabled(toBoolean(zoomGesturesEnabled));
+      sink.setZoomGesturesEnabled(zoomGesturesEnabled);
     }
-    final Object liteModeEnabled = data.get("liteModeEnabled");
+    final Boolean liteModeEnabled = config.getLiteModeEnabled();
     if (liteModeEnabled != null) {
-      sink.setLiteModeEnabled(toBoolean(liteModeEnabled));
+      sink.setLiteModeEnabled(liteModeEnabled);
     }
-    final Object myLocationEnabled = data.get("myLocationEnabled");
+    final Boolean myLocationEnabled = config.getMyLocationEnabled();
     if (myLocationEnabled != null) {
-      sink.setMyLocationEnabled(toBoolean(myLocationEnabled));
+      sink.setMyLocationEnabled(myLocationEnabled);
     }
-    final Object zoomControlsEnabled = data.get("zoomControlsEnabled");
+    final Boolean zoomControlsEnabled = config.getZoomControlsEnabled();
     if (zoomControlsEnabled != null) {
-      sink.setZoomControlsEnabled(toBoolean(zoomControlsEnabled));
+      sink.setZoomControlsEnabled(zoomControlsEnabled);
     }
-    final Object myLocationButtonEnabled = data.get("myLocationButtonEnabled");
+    final Boolean myLocationButtonEnabled = config.getMyLocationButtonEnabled();
     if (myLocationButtonEnabled != null) {
-      sink.setMyLocationButtonEnabled(toBoolean(myLocationButtonEnabled));
+      sink.setMyLocationButtonEnabled(myLocationButtonEnabled);
     }
-    final Object indoorEnabled = data.get("indoorEnabled");
+    final Boolean indoorEnabled = config.getIndoorViewEnabled();
     if (indoorEnabled != null) {
-      sink.setIndoorEnabled(toBoolean(indoorEnabled));
+      sink.setIndoorEnabled(indoorEnabled);
     }
-    final Object trafficEnabled = data.get("trafficEnabled");
+    final Boolean trafficEnabled = config.getTrafficEnabled();
     if (trafficEnabled != null) {
-      sink.setTrafficEnabled(toBoolean(trafficEnabled));
+      sink.setTrafficEnabled(trafficEnabled);
     }
-    final Object buildingsEnabled = data.get("buildingsEnabled");
+    final Boolean buildingsEnabled = config.getBuildingsEnabled();
     if (buildingsEnabled != null) {
-      sink.setBuildingsEnabled(toBoolean(buildingsEnabled));
+      sink.setBuildingsEnabled(buildingsEnabled);
     }
-    final Object style = data.get("style");
+    final String style = config.getStyle();
     if (style != null) {
-      sink.setMapStyle(toString(style));
+      sink.setMapStyle(style);
     }
   }
 
   /** Set the options in the given object to marker options sink. */
   static void interpretMarkerOptions(
-      Map<String, ?> data, MarkerOptionsSink sink, AssetManager assetManager, float density) {
-    final Object alpha = data.get("alpha");
-    if (alpha != null) {
-      sink.setAlpha(toFloat(alpha));
-    }
-    final Object anchor = data.get("anchor");
-    if (anchor != null) {
-      final List<?> anchorData = toList(anchor);
-      sink.setAnchor(toFloat(anchorData.get(0)), toFloat(anchorData.get(1)));
-    }
-    final Object consumeTapEvents = data.get("consumeTapEvents");
-    if (consumeTapEvents != null) {
-      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
-    }
-    final Object draggable = data.get("draggable");
-    if (draggable != null) {
-      sink.setDraggable(toBoolean(draggable));
-    }
-    final Object flat = data.get("flat");
-    if (flat != null) {
-      sink.setFlat(toBoolean(flat));
-    }
-    final Object icon = data.get("icon");
-    if (icon != null) {
-      sink.setIcon(toBitmapDescriptor(icon, assetManager, density));
-    }
-
-    final Object infoWindow = data.get("infoWindow");
-    if (infoWindow != null) {
-      interpretInfoWindowOptions(sink, toObjectMap(infoWindow));
-    }
-    final Object position = data.get("position");
-    if (position != null) {
-      sink.setPosition(toLatLng(position));
-    }
-    final Object rotation = data.get("rotation");
-    if (rotation != null) {
-      sink.setRotation(toFloat(rotation));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
+      Messages.PlatformMarker marker,
+      MarkerOptionsSink sink,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper wrapper) {
+    sink.setAlpha(marker.getAlpha().floatValue());
+    sink.setAnchor(
+        marker.getAnchor().getDx().floatValue(), marker.getAnchor().getDy().floatValue());
+    sink.setConsumeTapEvents(marker.getConsumeTapEvents());
+    sink.setDraggable(marker.getDraggable());
+    sink.setFlat(marker.getFlat());
+    sink.setIcon(toBitmapDescriptor(marker.getIcon(), assetManager, density, wrapper));
+    interpretInfoWindowOptions(sink, marker.getInfoWindow());
+    sink.setPosition(toLatLng(marker.getPosition().toList()));
+    sink.setRotation(marker.getRotation().floatValue());
+    sink.setVisible(marker.getVisible());
+    sink.setZIndex(marker.getZIndex().floatValue());
   }
 
   private static void interpretInfoWindowOptions(
-      MarkerOptionsSink sink, Map<String, Object> infoWindow) {
-    String title = (String) infoWindow.get("title");
-    String snippet = (String) infoWindow.get("snippet");
-    // snippet is nullable.
+      MarkerOptionsSink sink, Messages.PlatformInfoWindow infoWindow) {
+    String title = infoWindow.getTitle();
     if (title != null) {
-      sink.setInfoWindowText(title, snippet);
+      sink.setInfoWindowText(title, infoWindow.getSnippet());
     }
-    Object infoWindowAnchor = infoWindow.get("anchor");
-    if (infoWindowAnchor != null) {
-      final List<?> anchorData = toList(infoWindowAnchor);
-      sink.setInfoWindowAnchor(toFloat(anchorData.get(0)), toFloat(anchorData.get(1)));
-    }
+    Messages.PlatformOffset infoWindowAnchor = infoWindow.getAnchor();
+    sink.setInfoWindowAnchor(
+        infoWindowAnchor.getDx().floatValue(), infoWindowAnchor.getDy().floatValue());
   }
 
   static String interpretPolygonOptions(Map<String, ?> data, PolygonOptionsSink sink) {
@@ -801,44 +789,64 @@ class Convert {
     }
   }
 
-  static String interpretCircleOptions(Map<String, ?> data, CircleOptionsSink sink) {
-    final Object consumeTapEvents = data.get("consumeTapEvents");
-    if (consumeTapEvents != null) {
-      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
+  static String interpretCircleOptions(Messages.PlatformCircle circle, CircleOptionsSink sink) {
+    sink.setConsumeTapEvents(circle.getConsumeTapEvents());
+    sink.setFillColor(circle.getFillColor().intValue());
+    sink.setStrokeColor(circle.getStrokeColor().intValue());
+    sink.setStrokeWidth(circle.getStrokeWidth());
+    sink.setZIndex(circle.getZIndex().floatValue());
+    sink.setCenter(toLatLng(circle.getCenter().toList()));
+    sink.setRadius(circle.getRadius());
+    sink.setVisible(circle.getVisible());
+    return circle.getCircleId();
+  }
+
+  /**
+   * Set the options in the given heatmap object to the given sink.
+   *
+   * @param data the object expected to be a Map containing the heatmap options. The options map is
+   *     expected to have the following structure:
+   *     <pre>{@code
+   * {
+   *   "heatmapId": String,
+   *   "data": List, // List of serialized weighted lat/lng
+   *   "gradient": Map, // Serialized heatmap gradient
+   *   "maxIntensity": Double,
+   *   "opacity": Double,
+   *   "radius": Integer
+   * }
+   * }</pre>
+   *
+   * @param sink the HeatmapOptionsSink where the options will be set.
+   * @return the heatmapId.
+   * @throws IllegalArgumentException if heatmapId is null.
+   */
+  static String interpretHeatmapOptions(Map<String, ?> data, HeatmapOptionsSink sink) {
+    final Object rawWeightedData = data.get(HEATMAP_DATA_KEY);
+    if (rawWeightedData != null) {
+      sink.setWeightedData(toWeightedData(rawWeightedData));
     }
-    final Object fillColor = data.get("fillColor");
-    if (fillColor != null) {
-      sink.setFillColor(toInt(fillColor));
+    final Object gradient = data.get(HEATMAP_GRADIENT_KEY);
+    if (gradient != null) {
+      sink.setGradient(toGradient(gradient));
     }
-    final Object strokeColor = data.get("strokeColor");
-    if (strokeColor != null) {
-      sink.setStrokeColor(toInt(strokeColor));
+    final Object maxIntensity = data.get(HEATMAP_MAX_INTENSITY_KEY);
+    if (maxIntensity != null) {
+      sink.setMaxIntensity(toDouble(maxIntensity));
     }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
+    final Object opacity = data.get(HEATMAP_OPACITY_KEY);
+    if (opacity != null) {
+      sink.setOpacity(toDouble(opacity));
     }
-    final Object strokeWidth = data.get("strokeWidth");
-    if (strokeWidth != null) {
-      sink.setStrokeWidth(toInt(strokeWidth));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
-    final Object center = data.get("center");
-    if (center != null) {
-      sink.setCenter(toLatLng(center));
-    }
-    final Object radius = data.get("radius");
+    final Object radius = data.get(HEATMAP_RADIUS_KEY);
     if (radius != null) {
-      sink.setRadius(toDouble(radius));
+      sink.setRadius(toInt(radius));
     }
-    final String circleId = (String) data.get("circleId");
-    if (circleId == null) {
-      throw new IllegalArgumentException("circleId was null");
+    final String heatmapId = (String) data.get(HEATMAP_ID_KEY);
+    if (heatmapId == null) {
+      throw new IllegalArgumentException("heatmapId was null");
     } else {
-      return circleId;
+      return heatmapId;
     }
   }
 
@@ -852,6 +860,62 @@ class Convert {
       points.add(new LatLng(toDouble(point.get(0)), toDouble(point.get(1))));
     }
     return points;
+  }
+
+  /**
+   * Converts the given object to a list of WeightedLatLng objects.
+   *
+   * @param o the object to convert. The object is expected to be a List of serialized weighted
+   *     lat/lng.
+   * @return a list of WeightedLatLng objects.
+   */
+  @VisibleForTesting
+  static List<WeightedLatLng> toWeightedData(Object o) {
+    final List<?> data = toList(o);
+    final List<WeightedLatLng> weightedData = new ArrayList<>(data.size());
+
+    for (Object rawWeightedPoint : data) {
+      weightedData.add(toWeightedLatLng(rawWeightedPoint));
+    }
+    return weightedData;
+  }
+
+  /**
+   * Converts the given object to a Gradient object.
+   *
+   * @param o the object to convert. The object is expected to be a Map containing the gradient
+   *     options. The gradient map is expected to have the following structure:
+   *     <pre>{@code
+   * {
+   *   "colors": List<Integer>,
+   *   "startPoints": List<Float>,
+   *   "colorMapSize": Integer
+   * }
+   * }</pre>
+   *
+   * @return a Gradient object.
+   */
+  @VisibleForTesting
+  static Gradient toGradient(Object o) {
+    final Map<?, ?> data = toMap(o);
+
+    final List<?> colorData = toList(data.get(HEATMAP_GRADIENT_COLORS_KEY));
+    assert colorData != null;
+    final int[] colors = new int[colorData.size()];
+    for (int i = 0; i < colorData.size(); i++) {
+      colors[i] = toInt(colorData.get(i));
+    }
+
+    final List<?> startPointData = toList(data.get(HEATMAP_GRADIENT_START_POINTS_KEY));
+    assert startPointData != null;
+    final float[] startPoints = new float[startPointData.size()];
+    for (int i = 0; i < startPointData.size(); i++) {
+      startPoints[i] = toFloat(startPointData.get(i));
+    }
+
+    final int colorMapSize = toInt(data.get(HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY));
+
+    return new Gradient(colors, startPoints, colorMapSize);
   }
 
   private static List<List<LatLng>> toHoles(Object o) {
@@ -943,7 +1007,6 @@ class Convert {
     return new Tile(tile.getWidth().intValue(), tile.getHeight().intValue(), tile.getData());
   }
 
-  @VisibleForTesting
   static class BitmapDescriptorFactoryWrapper {
     /**
      * Creates a BitmapDescriptor from the provided asset key using the {@link

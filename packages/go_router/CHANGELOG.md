@@ -1,6 +1,15 @@
+## 14.2.4
+
+- Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+- Fix GoRouter configuration in `upgrading.md`
+
+## 14.2.3
+
+- Fixes redirect example's signature in `route.dart`.
+
 ## 14.2.2
 
-- Fix GoRouter configuration in `upgrading.md`
+- Adds section for "Stateful nested navigation" to configuration.md.
 
 ## 14.2.1
 

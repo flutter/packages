@@ -32,6 +32,7 @@ internal class AllDatatypesTest {
     assertTrue(firstTypes.a8ByteArray.contentEquals(secondTypes.a8ByteArray))
     assertTrue(firstTypes.aFloatArray.contentEquals(secondTypes.aFloatArray))
     assertEquals(firstTypes.anEnum, secondTypes.anEnum)
+    assertEquals(firstTypes.anotherEnum, secondTypes.anotherEnum)
     assertEquals(firstTypes.anObject, secondTypes.anObject)
     assertEquals(firstTypes.list, secondTypes.list)
     assertEquals(firstTypes.boolList, secondTypes.boolList)
@@ -59,6 +60,8 @@ internal class AllDatatypesTest {
     assertTrue(firstTypes.aNullableFloatArray.contentEquals(secondTypes.aNullableFloatArray))
     assertEquals(firstTypes.nullableMapWithObject, secondTypes.nullableMapWithObject)
     assertEquals(firstTypes.aNullableObject, secondTypes.aNullableObject)
+    assertEquals(firstTypes.aNullableEnum, secondTypes.aNullableEnum)
+    assertEquals(firstTypes.anotherNullableEnum, secondTypes.anotherNullableEnum)
     assertEquals(firstTypes.list, secondTypes.list)
     assertEquals(firstTypes.boolList, secondTypes.boolList)
     assertEquals(firstTypes.doubleList, secondTypes.doubleList)
@@ -152,6 +155,7 @@ internal class AllDatatypesTest {
         listOf(
             null,
             123,
+            null,
             null,
             null,
             null,

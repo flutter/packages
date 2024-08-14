@@ -14,6 +14,8 @@ const String _docCommentPrefix = '///';
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_docCommentPrefix);
 
+const String _overflowClassName = '${classNamePrefix}CodecOverflow';
+
 /// Options that control how Swift code will be generated.
 class SwiftOptions {
   /// Creates a [SwiftOptions] object
@@ -135,33 +137,54 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     final String readerName = '${codecName}Reader';
     final String writerName = '${codecName}Writer';
 
-    final Iterable<EnumeratedType> allTypes = getEnumeratedTypes(root);
+    final List<EnumeratedType> enumeratedTypes =
+        getEnumeratedTypes(root).toList();
+
+    void writeDecodeLogic(EnumeratedType customType) {
+      indent.writeln('case ${customType.enumeration}:');
+      indent.nest(1, () {
+        if (customType.type == CustomTypes.customEnum) {
+          indent.writeln(
+              'let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)');
+          indent.writeScoped('if let enumResultAsInt = enumResultAsInt {', '}',
+              () {
+            indent.writeln(
+                'return ${customType.name}(rawValue: enumResultAsInt)');
+          });
+          indent.writeln('return nil');
+        } else {
+          indent.writeln(
+              'return ${customType.name}.fromList(self.readValue() as! [Any?])');
+        }
+      });
+    }
+
+    final EnumeratedType overflowClass = EnumeratedType(
+        _overflowClassName, maximumCodecFieldKey, CustomTypes.customClass);
+
+    if (root.requiresOverflowClass) {
+      indent.newln();
+      _writeCodecOverflowUtilities(
+          generatorOptions, root, indent, enumeratedTypes,
+          dartPackageName: dartPackageName);
+    }
+
+    indent.newln();
     // Generate Reader
     indent.write('private class $readerName: FlutterStandardReader ');
     indent.addScoped('{', '}', () {
-      if (allTypes.isNotEmpty) {
+      if (enumeratedTypes.isNotEmpty) {
         indent.write('override func readValue(ofType type: UInt8) -> Any? ');
         indent.addScoped('{', '}', () {
           indent.write('switch type ');
           indent.addScoped('{', '}', nestCount: 0, () {
-            for (final EnumeratedType customType in allTypes) {
-              indent.writeln('case ${customType.enumeration}:');
-              indent.nest(1, () {
-                if (customType.type == CustomTypes.customEnum) {
-                  indent.writeln('var enumResult: ${customType.name}? = nil');
-                  indent.writeln(
-                      'let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)');
-                  indent.writeScoped(
-                      'if let enumResultAsInt = enumResultAsInt {', '}', () {
-                    indent.writeln(
-                        'enumResult = ${customType.name}(rawValue: enumResultAsInt)');
-                  });
-                  indent.writeln('return enumResult');
-                } else {
-                  indent.writeln(
-                      'return ${customType.name}.fromList(self.readValue() as! [Any?])');
-                }
-              });
+            for (final EnumeratedType customType in enumeratedTypes) {
+              if (customType.enumeration < maximumCodecFieldKey) {
+                writeDecodeLogic(customType);
+              }
+            }
+            if (root.requiresOverflowClass) {
+              writeDecodeLogic(overflowClass);
             }
             indent.writeln('default:');
             indent.nest(1, () {
@@ -176,19 +199,31 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     indent.newln();
     indent.write('private class $writerName: FlutterStandardWriter ');
     indent.addScoped('{', '}', () {
-      if (allTypes.isNotEmpty) {
+      if (enumeratedTypes.isNotEmpty) {
         indent.write('override func writeValue(_ value: Any) ');
         indent.addScoped('{', '}', () {
           indent.write('');
-          for (final EnumeratedType customType in allTypes) {
+          for (final EnumeratedType customType in enumeratedTypes) {
             indent.add('if let value = value as? ${customType.name} ');
             indent.addScoped('{', '} else ', () {
-              indent.writeln('super.writeByte(${customType.enumeration})');
-              if (customType.type == CustomTypes.customEnum) {
-                indent.writeln('super.writeValue(value.rawValue)');
-              } else if (customType.type == CustomTypes.customClass) {
-                indent.writeln('super.writeValue(value.toList())');
+              final String encodeString =
+                  customType.type == CustomTypes.customClass
+                      ? 'toList()'
+                      : 'rawValue';
+              final String valueString =
+                  customType.enumeration < maximumCodecFieldKey
+                      ? 'value.$encodeString'
+                      : 'wrap.toList()';
+              final int enumeration =
+                  customType.enumeration < maximumCodecFieldKey
+                      ? customType.enumeration
+                      : maximumCodecFieldKey;
+              if (customType.enumeration >= maximumCodecFieldKey) {
+                indent.writeln(
+                    'let wrap = $_overflowClassName(type: ${customType.enumeration - maximumCodecFieldKey}, wrapped: value.$encodeString)');
               }
+              indent.writeln('super.writeByte($enumeration)');
+              indent.writeln('super.writeValue($valueString)');
             }, addTrailingNewline: false);
           }
           indent.addScoped('{', '}', () {
@@ -227,6 +262,108 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     indent.newln();
   }
 
+  void _writeDataClassSignature(
+    Indent indent,
+    Class classDefinition, {
+    bool private = false,
+  }) {
+    final String privateString = private ? 'private ' : '';
+    if (classDefinition.isSwiftClass) {
+      indent.write('${privateString}class ${classDefinition.name} ');
+    } else {
+      indent.write('${privateString}struct ${classDefinition.name} ');
+    }
+
+    indent.addScoped('{', '', () {
+      final Iterable<NamedType> fields =
+          getFieldsInSerializationOrder(classDefinition);
+
+      if (classDefinition.isSwiftClass) {
+        _writeClassInit(indent, fields.toList());
+      }
+
+      for (final NamedType field in fields) {
+        addDocumentationComments(
+            indent, field.documentationComments, _docCommentSpec);
+        indent.write('var ');
+        _writeClassField(indent, field, addNil: !classDefinition.isSwiftClass);
+        indent.newln();
+      }
+    });
+  }
+
+  void _writeCodecOverflowUtilities(
+    SwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+    List<EnumeratedType> types, {
+    required String dartPackageName,
+  }) {
+    final NamedType overflowInt = NamedType(
+        name: 'type',
+        type: const TypeDeclaration(baseName: 'Int', isNullable: false));
+    final NamedType overflowObject = NamedType(
+        name: 'wrapped',
+        type: const TypeDeclaration(baseName: 'Object', isNullable: true));
+    final List<NamedType> overflowFields = <NamedType>[
+      overflowInt,
+      overflowObject,
+    ];
+    final Class overflowClass =
+        Class(name: _overflowClassName, fields: overflowFields);
+    indent.newln();
+    _writeDataClassSignature(indent, overflowClass, private: true);
+    indent.addScoped('', '}', () {
+      writeClassEncode(
+        generatorOptions,
+        root,
+        indent,
+        overflowClass,
+        dartPackageName: dartPackageName,
+      );
+
+      indent.format('''
+// swift-format-ignore: AlwaysUseLowerCamelCase
+static func fromList(_ ${varNamePrefix}list: [Any?]) -> Any? {
+  let type = ${varNamePrefix}list[0] as! Int
+  let wrapped: Any? = ${varNamePrefix}list[1]
+
+  let wrapper = $_overflowClassName(
+    type: type,
+    wrapped: wrapped
+  )
+  
+  return wrapper.unwrap()
+}
+''');
+
+      indent.writeScoped('func unwrap() -> Any? {', '}', () {
+        indent.format('''
+if (wrapped == nil) {
+  return nil;
+}
+    ''');
+        indent.writeScoped('switch type {', '}', () {
+          for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
+            indent.writeScoped('case ${i - totalCustomCodecKeysAllowed}:', '',
+                () {
+              if (types[i].type == CustomTypes.customClass) {
+                indent.writeln(
+                    'return ${types[i].name}.fromList(wrapped as! [Any?]);');
+              } else if (types[i].type == CustomTypes.customEnum) {
+                indent.writeln(
+                    'return ${types[i].name}(rawValue: wrapped as! Int);');
+              }
+            }, addTrailingNewline: false);
+          }
+          indent.writeScoped('default: ', '', () {
+            indent.writeln('return nil');
+          }, addTrailingNewline: false);
+        });
+      });
+    });
+  }
+
   @override
   void writeDataClass(
     SwiftOptions generatorOptions,
@@ -242,28 +379,8 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     addDocumentationComments(
         indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
-
-    if (classDefinition.isSwiftClass) {
-      indent.write('class ${classDefinition.name} ');
-    } else {
-      indent.write('struct ${classDefinition.name} ');
-    }
-    indent.addScoped('{', '}', () {
-      final Iterable<NamedType> fields =
-          getFieldsInSerializationOrder(classDefinition);
-
-      if (classDefinition.isSwiftClass) {
-        _writeClassInit(indent, fields.toList());
-      }
-
-      for (final NamedType field in fields) {
-        addDocumentationComments(
-            indent, field.documentationComments, _docCommentSpec);
-        indent.write('var ');
-        _writeClassField(indent, field, addNil: !classDefinition.isSwiftClass);
-        indent.newln();
-      }
-
+    _writeDataClassSignature(indent, classDefinition);
+    indent.writeScoped('', '}', () {
       indent.newln();
       writeClassDecode(
         generatorOptions,

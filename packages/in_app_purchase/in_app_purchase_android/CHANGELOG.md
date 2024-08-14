@@ -1,3 +1,23 @@
+## 0.3.6+6
+
+* Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.
+
+## 0.3.6+5
+
+* Bumps com.android.billingclient:billing from 6.1.0 to 6.2.0.
+
+## 0.3.6+4
+
+* Bumps androidx.annotation:annotation from 1.8.0 to 1.8.1.
+
+## 0.3.6+3
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 0.3.6+2
+
+* Updates Android Gradle Plugin to 8.5.1.
+
 ## 0.3.6+1
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

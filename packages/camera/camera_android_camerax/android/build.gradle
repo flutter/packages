@@ -55,7 +55,7 @@ android {
     lintOptions {
         checkAllWarnings true
         warningsAsErrors true
-        disable 'AndroidGradlePluginVersion', 'GradleDependency', 'InvalidPackage'
+        disable 'AndroidGradlePluginVersion', 'GradleDependency', 'InvalidPackage', 'NewerVersionAvailable'
     }
 }
 

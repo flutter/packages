@@ -1,3 +1,16 @@
+## 2.13.0
+
+* Updates map configuration and platform view creation parameters to use Pigeon.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 2.12.0
+
+* Adds support for marker clustering.
+
+## 2.11.0
+
+* Adds support for heatmap layers.
+
 ## 2.10.0
 
 * Converts Obj-C->Dart calls to Pigeon.
