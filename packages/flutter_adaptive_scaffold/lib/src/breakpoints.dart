@@ -218,14 +218,13 @@ class Breakpoint {
     return isWidthActive && isHeightActive && isRightPlatform;
   }
 
-  /// Returns the currently active [Breakpoint].
-  static Breakpoint activeBreakpointOf(BuildContext context) {
+  /// Returns the currently active [Breakpoint] based on the [SlotLayout] in the
+  /// context.
+  static Breakpoint? maybeActiveBreakpointFromSlotLayout(BuildContext context) {
     final SlotLayout? slotLayout =
         context.findAncestorWidgetOfExactType<SlotLayout>();
-
+    Breakpoint? fallbackBreakpoint;
     if (slotLayout != null) {
-      Breakpoint? fallbackBreakpoint;
-
       for (final MapEntry<Breakpoint, SlotLayoutConfig?> config
           in slotLayout.config.entries) {
         if (config.key.isActive(context)) {
@@ -236,11 +235,12 @@ class Breakpoint {
           }
         }
       }
-      if (fallbackBreakpoint != null) {
-        return fallbackBreakpoint;
-      }
     }
+    return fallbackBreakpoint;
+  }
 
+  /// Returns the default [Breakpoint] based on the [BuildContext].
+  static Breakpoint defaultBreakpointOf(BuildContext context) {
     final TargetPlatform platform = Theme.of(context).platform;
     final bool isDesktop = Breakpoint.desktop.contains(platform);
     final bool isMobile = Breakpoint.mobile.contains(platform);
@@ -289,5 +289,15 @@ class Breakpoint {
       }
     }
     return Breakpoints.standard;
+  }
+
+  /// Returns the currently active [Breakpoint].
+  static Breakpoint activeBreakpointOf(BuildContext context) {
+    final Breakpoint? slotBreakpoint =
+        maybeActiveBreakpointFromSlotLayout(context);
+    if (slotBreakpoint != null) {
+      return slotBreakpoint;
+    }
+    return defaultBreakpointOf(context);
   }
 }
