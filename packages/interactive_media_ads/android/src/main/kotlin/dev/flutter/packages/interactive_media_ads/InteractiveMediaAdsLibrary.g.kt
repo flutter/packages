@@ -1289,7 +1289,7 @@ abstract class PigeonApiAd(
   abstract fun skipTimeOffset(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): Double
 
   /** The URL associated with the survey for the given ad. */
-  abstract fun surveyUrl(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String
+  abstract fun surveyUrl(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String?
 
   /** The title of this ad from the VAST response. */
   abstract fun title(pigeon_instance: com.google.ads.interactivemedia.v3.api.Ad): String?
@@ -5846,7 +5846,7 @@ abstract class PigeonApiAdEvent(
   /** The ad with which this event is associated. */
   abstract fun ad(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.AdEvent
-  ): com.google.ads.interactivemedia.v3.api.Ad
+  ): com.google.ads.interactivemedia.v3.api.Ad?
 
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of AdEvent and attaches it to [pigeon_instanceArg]. */

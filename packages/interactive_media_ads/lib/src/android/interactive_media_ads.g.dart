@@ -798,7 +798,7 @@ class Ad extends PigeonProxyApiBaseClass {
     required this.duration,
     required this.height,
     required this.skipTimeOffset,
-    required this.surveyUrl,
+    this.surveyUrl,
     this.title,
     required this.traffickingParameters,
     required this.uiElements,
@@ -864,7 +864,7 @@ class Ad extends PigeonProxyApiBaseClass {
   final double skipTimeOffset;
 
   /// The URL associated with the survey for the given ad.
-  final String surveyUrl;
+  final String? surveyUrl;
 
   /// The title of this ad from the VAST response.
   final String? title;
@@ -919,7 +919,7 @@ class Ad extends PigeonProxyApiBaseClass {
       double duration,
       int height,
       double skipTimeOffset,
-      String surveyUrl,
+      String? surveyUrl,
       String? title,
       String traffickingParameters,
       List<UiElement?> uiElements,
@@ -1001,8 +1001,6 @@ class Ad extends PigeonProxyApiBaseClass {
           assert(arg_skipTimeOffset != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.Ad.pigeon_newInstance was null, expected non-null double.');
           final String? arg_surveyUrl = (args[17] as String?);
-          assert(arg_surveyUrl != null,
-              'Argument for dev.flutter.pigeon.interactive_media_ads.Ad.pigeon_newInstance was null, expected non-null String.');
           final String? arg_title = (args[18] as String?);
           final String? arg_traffickingParameters = (args[19] as String?);
           assert(arg_traffickingParameters != null,
@@ -1053,7 +1051,7 @@ class Ad extends PigeonProxyApiBaseClass {
                       arg_duration!,
                       arg_height!,
                       arg_skipTimeOffset!,
-                      arg_surveyUrl!,
+                      arg_surveyUrl,
                       arg_title,
                       arg_traffickingParameters!,
                       arg_uiElements!,
@@ -1083,7 +1081,7 @@ class Ad extends PigeonProxyApiBaseClass {
                     duration: arg_duration!,
                     height: arg_height!,
                     skipTimeOffset: arg_skipTimeOffset!,
-                    surveyUrl: arg_surveyUrl!,
+                    surveyUrl: arg_surveyUrl,
                     title: arg_title,
                     traffickingParameters: arg_traffickingParameters!,
                     uiElements: arg_uiElements!,
@@ -6153,7 +6151,7 @@ class AdEvent extends PigeonProxyApiBaseClass {
     super.pigeon_instanceManager,
     required this.type,
     this.adData,
-    required this.ad,
+    this.ad,
   });
 
   /// The type of event that occurred.
@@ -6163,7 +6161,7 @@ class AdEvent extends PigeonProxyApiBaseClass {
   final Map<String?, String?>? adData;
 
   /// The ad with which this event is associated.
-  final Ad ad;
+  final Ad? ad;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -6172,7 +6170,7 @@ class AdEvent extends PigeonProxyApiBaseClass {
     AdEvent Function(
       AdEventType type,
       Map<String?, String?>? adData,
-      Ad ad,
+      Ad? ad,
     )? pigeon_newInstance,
   }) {
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
@@ -6201,18 +6199,16 @@ class AdEvent extends PigeonProxyApiBaseClass {
           final Map<String?, String?>? arg_adData =
               (args[2] as Map<Object?, Object?>?)?.cast<String?, String?>();
           final Ad? arg_ad = (args[3] as Ad?);
-          assert(arg_ad != null,
-              'Argument for dev.flutter.pigeon.interactive_media_ads.AdEvent.pigeon_newInstance was null, expected non-null Ad.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_type!, arg_adData, arg_ad!) ??
+              pigeon_newInstance?.call(arg_type!, arg_adData, arg_ad) ??
                   AdEvent.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     type: arg_type!,
                     adData: arg_adData,
-                    ad: arg_ad!,
+                    ad: arg_ad,
                   ),
               arg_pigeon_instanceIdentifier!,
             );

@@ -306,7 +306,7 @@ abstract class Ad {
   late final double skipTimeOffset;
 
   /// The URL associated with the survey for the given ad.
-  late final String surveyUrl;
+  late final String? surveyUrl;
 
   /// The title of this ad from the VAST response.
   late final String? title;
@@ -1100,7 +1100,7 @@ abstract class AdEvent {
   late final Map<String, String>? adData;
 
   /// The ad with which this event is associated.
-  late final Ad ad;
+  late final Ad? ad;
 }
 
 /// Factory class for creating SDK objects.

@@ -80,7 +80,7 @@ class AdProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiAd(
     return pigeon_instance.skipTimeOffset
   }
 
-  override fun surveyUrl(pigeon_instance: Ad): String {
+  override fun surveyUrl(pigeon_instance: Ad): String? {
     return pigeon_instance.surveyUrl
   }
 
