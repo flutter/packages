@@ -185,19 +185,25 @@ void main() {
       // Small layout on desktop
       await tester.pumpWidget(SimulatedLayout.small.slot(tester));
       await tester.pumpAndSettle();
-      expect(Breakpoint.defaultBreakpointOf(tester.element(find.byType(Theme))),
+      expect(
+          Breakpoint.defaultBreakpointOf(
+              tester.element(find.byType(Directionality))),
           Breakpoints.smallDesktop);
 
       // Medium layout on desktop
       await tester.pumpWidget(SimulatedLayout.medium.slot(tester));
       await tester.pumpAndSettle();
-      expect(Breakpoint.defaultBreakpointOf(tester.element(find.byType(Theme))),
+      expect(
+          Breakpoint.defaultBreakpointOf(
+              tester.element(find.byType(Directionality))),
           Breakpoints.mediumDesktop);
 
       // Large layout on desktop
       await tester.pumpWidget(SimulatedLayout.large.slot(tester));
       await tester.pumpAndSettle();
-      expect(Breakpoint.defaultBreakpointOf(tester.element(find.byType(Theme))),
+      expect(
+          Breakpoint.defaultBreakpointOf(
+              tester.element(find.byType(Directionality))),
           Breakpoints.largeDesktop);
     }, variant: TargetPlatformVariant.desktop());
   });
