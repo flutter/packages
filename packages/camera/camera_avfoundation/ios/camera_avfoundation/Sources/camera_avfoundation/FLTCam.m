@@ -69,6 +69,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(strong, nonatomic) AVCaptureVideoDataOutput *videoOutput;
 @property(strong, nonatomic) AVCaptureAudioDataOutput *audioOutput;
 @property(strong, nonatomic) NSString *videoRecordingPath;
+@property(assign, nonatomic) BOOL isFirstVideoSample;
 @property(assign, nonatomic) BOOL isRecording;
 @property(assign, nonatomic) BOOL isRecordingPaused;
 @property(assign, nonatomic) BOOL videoIsDisconnected;
@@ -715,19 +716,19 @@ NSString *const errorMethod = @"error";
 
     // ignore audio samples until the first video sample arrives to avoid black frames
     // https://github.com/flutter/flutter/issues/57831
-    if (_videoWriter.status != AVAssetWriterStatusWriting && output != _captureVideoOutput) {
+    if (_isFirstVideoSample && output != _captureVideoOutput) {
       return;
     }
 
     CMTime currentSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
 
-    if (_videoWriter.status != AVAssetWriterStatusWriting) {
-      [_videoWriter startWriting];
+    if (_isFirstVideoSample) {
       [_videoWriter startSessionAtSourceTime:currentSampleTime];
       // fix sample times not being numeric when pause/resume happens before first sample buffer
       // arrives https://github.com/flutter/flutter/issues/132014
       _lastVideoSampleTime = currentSampleTime;
       _lastAudioSampleTime = currentSampleTime;
+      _isFirstVideoSample = NO;
     }
 
     if (output == _captureVideoOutput) {
@@ -886,6 +887,14 @@ NSString *const errorMethod = @"error";
                                      details:nil]);
       return;
     }
+    // startWriting should not be called in didOutputSampleBuffer where it can cause state
+    // in which _isRecording is YES but _videoWriter.status is AVAssetWriterStatusUnknown
+    // in stopVideoRecording if it is called after startVideoRecording but before
+    // didOutputSampleBuffer had chance to call startWriting and lag at start of video
+    // https://github.com/flutter/flutter/issues/132016
+    // https://github.com/flutter/flutter/issues/151319
+    [_videoWriter startWriting];
+    _isFirstVideoSample = YES;
     _isRecording = YES;
     _isRecordingPaused = NO;
     _videoTimeOffset = CMTimeMake(0, 1);
@@ -905,19 +914,21 @@ NSString *const errorMethod = @"error";
   if (_isRecording) {
     _isRecording = NO;
 
-    if (_videoWriter.status != AVAssetWriterStatusUnknown) {
-      [_videoWriter finishWritingWithCompletionHandler:^{
-        if (self->_videoWriter.status == AVAssetWriterStatusCompleted) {
-          [self updateOrientation];
-          completion(self->_videoRecordingPath, nil);
-          self->_videoRecordingPath = nil;
-        } else {
-          completion(nil, [FlutterError errorWithCode:@"IOError"
-                                              message:@"AVAssetWriter could not finish writing!"
-                                              details:nil]);
-        }
-      }];
-    }
+    // when _isRecording is YES startWriting was already called so _videoWriter.status
+    // is always either AVAssetWriterStatusWriting or AVAssetWriterStatusFailed and
+    // finishWritingWithCompletionHandler does not throw exception so there is no need
+    // to check _videoWriter.status
+    [_videoWriter finishWritingWithCompletionHandler:^{
+      if (self->_videoWriter.status == AVAssetWriterStatusCompleted) {
+        [self updateOrientation];
+        completion(self->_videoRecordingPath, nil);
+        self->_videoRecordingPath = nil;
+      } else {
+        completion(nil, [FlutterError errorWithCode:@"IOError"
+                                            message:@"AVAssetWriter could not finish writing!"
+                                            details:nil]);
+      }
+    }];
   } else {
     NSError *error =
         [NSError errorWithDomain:NSCocoaErrorDomain

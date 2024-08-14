@@ -1,6 +1,15 @@
-## 0.9.17+2
+## 0.9.17+4
 
 * Adds possibility to use any supported FPS and fixes crash when using unsupported FPS.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 0.9.17+3
+
+* Fixes deallocation of camera on dispose.
+
+## 0.9.17+2
+
+* Fixes stopVideoRecording waiting indefinitely and lag at start of video.
 
 ## 0.9.17+1
 
