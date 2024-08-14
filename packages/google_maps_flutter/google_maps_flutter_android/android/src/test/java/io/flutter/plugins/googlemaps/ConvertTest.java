@@ -105,7 +105,8 @@ public class ConvertTest {
   public void ConvertToPointsPlatformConvertsThePointsWithFullPrecision() {
     double latitude = 43.03725568057;
     double longitude = -87.90466904649;
-    Messages.PlatformLatLng platLng = new Messages.PlatformLatLng.Builder().build();
+    Messages.PlatformLatLng platLng =
+        new Messages.PlatformLatLng.Builder().setLatitude(latitude).setLongitude(longitude).build();
     List<LatLng> latLngs = Convert.toPoints(Collections.singletonList(platLng));
     LatLng latLng = latLngs.get(0);
     Assert.assertEquals(latitude, latLng.latitude, 1e-15);
