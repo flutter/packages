@@ -7,6 +7,7 @@ library;
 
 import 'dart:io' show File;
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -38,7 +39,8 @@ void main() async {
     },
   );
 
-  final FontLoader fontLoader = FontLoader(CupertinoIcons.iconFont);
+  final String effectiveFontFamily = const TextStyle(fontFamily: CupertinoIcons.iconFont, package: CupertinoIcons.iconFontPackage).fontFamily!;
+  final FontLoader fontLoader = FontLoader(effectiveFontFamily);
   final String filePath = path.canonicalize('assets/CupertinoIcons.ttf');
   final File file = File(filePath);
   fontLoader.addFont(file.readAsBytes().then((Uint8List v) => v.buffer.asByteData()));

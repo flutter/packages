@@ -9,11 +9,11 @@ environment:
   sdk: ^3.3.0
 
 dev_dependencies:
-  path: any
   flutter:
     sdk: flutter
   flutter_test:
     sdk: flutter
+  path: any
 
 flutter:
   fonts:
