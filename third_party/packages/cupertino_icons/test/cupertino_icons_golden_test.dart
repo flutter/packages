@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' show File;
+import 'dart:io' show File, Platform;
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,7 +21,8 @@ const int iconsPerImage = iconsPerRow * iconsPerCol;
 
 void main() async {
   // Do not run on web since this test uses dart:io.
-  if (kIsWeb) {
+  // The golden test runs on Linux only to avoid platform rendering differences.
+  if (kIsWeb || !Platform.isLinux) {
     return;
   }
   // Load font.
@@ -34,7 +35,6 @@ void main() async {
 
   assert(icons.isNotEmpty);
   for (int index = 0; index < icons.length;) {
-    assert(index < icons.length);
     final int groupEndCodePoint = (icons[index].codePoint ~/ iconsPerImage + 1) * iconsPerImage;
     final int next = icons.indexWhere((IconData icon) => icon.codePoint >= groupEndCodePoint, index);
     final int nextIndex = next < 0 ? icons.length : next;
