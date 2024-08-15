@@ -135,6 +135,7 @@ class _CustomNavigator extends StatefulWidget {
     required this.configuration,
     required this.errorBuilder,
     required this.errorPageBuilder,
+    this.updateParentPages,
   });
 
   final GlobalKey<NavigatorState> navigatorKey;
@@ -152,6 +153,9 @@ class _CustomNavigator extends StatefulWidget {
   final String? navigatorRestorationId;
   final GoRouterWidgetBuilder? errorBuilder;
   final GoRouterPageBuilder? errorPageBuilder;
+
+  /// Notify the parent navigator to update its pages.
+  final VoidCallback? updateParentPages;
 
   @override
   State<StatefulWidget> createState() => _CustomNavigatorState();
@@ -286,6 +290,13 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
           // This is used to recursively build pages under this shell route.
           errorBuilder: widget.errorBuilder,
           errorPageBuilder: widget.errorPageBuilder,
+          updateParentPages: () {
+            final ShellRouteMatch routeMatch =
+                _pageToRouteMatchBase[_pages!.last]! as ShellRouteMatch;
+            _pageToRouteMatchBase[_pages!.last] = routeMatch.copyWith(
+              matches: match.matches.sublist(0, match.matches.length - 1),
+            );
+          },
         );
       },
     );
@@ -413,7 +424,14 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   bool _handlePopPage(Route<Object?> route, Object? result) {
     final Page<Object?> page = route.settings as Page<Object?>;
     final RouteMatchBase match = _pageToRouteMatchBase[page]!;
-    return widget.onPopPageWithRouteMatch(route, result, match);
+    final bool didPop = widget.onPopPageWithRouteMatch(route, result, match);
+    if (didPop) {
+      _pages?.remove(page);
+      // Update the registery too.
+      _pageToRouteMatchBase.remove(page);
+      widget.updateParentPages?.call();
+    }
+    return didPop;
   }
 
   @override
