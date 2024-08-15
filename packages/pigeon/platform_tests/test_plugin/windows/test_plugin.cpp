@@ -21,6 +21,7 @@ using core_tests_pigeontest::AllNullableTypes;
 using core_tests_pigeontest::AllNullableTypesWithoutRecursion;
 using core_tests_pigeontest::AllTypes;
 using core_tests_pigeontest::AnEnum;
+using core_tests_pigeontest::AnotherEnum;
 using core_tests_pigeontest::ErrorOr;
 using core_tests_pigeontest::FlutterError;
 using core_tests_pigeontest::FlutterIntegrationCoreApi;
@@ -150,6 +151,11 @@ ErrorOr<AllClassesWrapper> TestPlugin::EchoClassWrapper(
 }
 
 ErrorOr<AnEnum> TestPlugin::EchoEnum(const AnEnum& an_enum) { return an_enum; }
+
+ErrorOr<AnotherEnum> TestPlugin::EchoAnotherEnum(
+    const AnotherEnum& another_enum) {
+  return another_enum;
+}
 
 ErrorOr<std::string> TestPlugin::EchoNamedDefaultString(
     const std::string& a_string) {
@@ -292,6 +298,14 @@ ErrorOr<std::optional<AnEnum>> TestPlugin::EchoNullableEnum(
   return *an_enum;
 }
 
+ErrorOr<std::optional<AnotherEnum>> TestPlugin::EchoAnotherNullableEnum(
+    const AnotherEnum* another_enum) {
+  if (!another_enum) {
+    return std::nullopt;
+  }
+  return *another_enum;
+}
+
 ErrorOr<std::optional<int64_t>> TestPlugin::EchoOptionalNullableInt(
     const int64_t* a_nullable_int) {
   if (!a_nullable_int) {
@@ -383,6 +397,12 @@ void TestPlugin::EchoAsyncEnum(
   result(an_enum);
 }
 
+void TestPlugin::EchoAnotherAsyncEnum(
+    const AnotherEnum& another_enum,
+    std::function<void(ErrorOr<AnotherEnum> reply)> result) {
+  result(another_enum);
+}
+
 void TestPlugin::EchoAsyncNullableAllNullableTypes(
     const AllNullableTypes* everything,
     std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
@@ -455,6 +475,13 @@ void TestPlugin::EchoAsyncNullableEnum(
     const AnEnum* an_enum,
     std::function<void(ErrorOr<std::optional<AnEnum>> reply)> result) {
   result(an_enum ? std::optional<AnEnum>(*an_enum) : std::nullopt);
+}
+
+void TestPlugin::EchoAnotherAsyncNullableEnum(
+    const AnotherEnum* another_enum,
+    std::function<void(ErrorOr<std::optional<AnotherEnum>> reply)> result) {
+  result(another_enum ? std::optional<AnotherEnum>(*another_enum)
+                      : std::nullopt);
 }
 
 void TestPlugin::CallFlutterNoop(
@@ -595,6 +622,14 @@ void TestPlugin::CallFlutterEchoEnum(
       [result](const FlutterError& error) { result(error); });
 }
 
+void TestPlugin::CallFlutterEchoAnotherEnum(
+    const AnotherEnum& another_enum,
+    std::function<void(ErrorOr<AnotherEnum> reply)> result) {
+  flutter_api_->EchoAnotherEnum(
+      another_enum, [result](const AnotherEnum& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
 void TestPlugin::CallFlutterEchoNullableBool(
     const bool* a_bool,
     std::function<void(ErrorOr<std::optional<bool>> reply)> result) {
@@ -681,6 +716,17 @@ void TestPlugin::CallFlutterEchoNullableEnum(
       an_enum,
       [result](const AnEnum* echo) {
         result(echo ? std::optional<AnEnum>(*echo) : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoAnotherNullableEnum(
+    const AnotherEnum* another_enum,
+    std::function<void(ErrorOr<std::optional<AnotherEnum>> reply)> result) {
+  flutter_api_->EchoAnotherNullableEnum(
+      another_enum,
+      [result](const AnotherEnum* echo) {
+        result(echo ? std::optional<AnotherEnum>(*echo) : std::nullopt);
       },
       [result](const FlutterError& error) { result(error); });
 }
