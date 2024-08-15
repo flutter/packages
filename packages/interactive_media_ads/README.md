@@ -15,7 +15,7 @@ a separate video player positioned on top of the app's content video player.
 
 **NOTE:**
 * The initial release for this package supports linear pre-roll video ads on iOS and Android
-* platforms. Please view/report any issues [here](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+interactive_media_ads%22).
+* platforms.
 * Companion ads, Background Audio ads and Google Dynamic Ad Insertion methods are currently not
 * supported.
 
