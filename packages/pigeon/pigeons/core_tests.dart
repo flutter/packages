@@ -12,6 +12,22 @@ enum AnEnum {
   fourHundredTwentyTwo,
 }
 
+// Enums require special logic, having multiple ensures that the logic can be
+// replicated without collision.
+enum AnotherEnum {
+  justInCase,
+}
+
+class SimpleClass {
+  SimpleClass({
+    this.aString,
+    this.aBool = true,
+  });
+
+  String? aString;
+  bool aBool;
+}
+
 /// A class containing all supported types.
 class AllTypes {
   AllTypes({
@@ -23,11 +39,22 @@ class AllTypes {
     required this.a4ByteArray,
     required this.a8ByteArray,
     required this.aFloatArray,
-    this.list = const <Object?>[],
-    this.aMap = const <String?, Object?>{},
     this.anEnum = AnEnum.one,
+    this.anotherEnum = AnotherEnum.justInCase,
     this.aString = '',
     this.anObject = 0,
+
+    // Lists
+    // This name is in a different format than the others to ensure that name
+    // collision with the work 'list' doesn't occur in the generated files.
+    required this.list,
+    required this.stringList,
+    required this.intList,
+    required this.doubleList,
+    required this.boolList,
+
+    // Maps
+    required this.map,
   });
 
   bool aBool;
@@ -38,15 +65,22 @@ class AllTypes {
   Int32List a4ByteArray;
   Int64List a8ByteArray;
   Float64List aFloatArray;
-  // This name is in a different format than the others to ensure that name
-  // collision with the work 'list' doesn't occur in the generated files.
-  // ignore: always_specify_types, strict_raw_type
-  List list;
-  // ignore: always_specify_types, strict_raw_type
-  Map aMap;
   AnEnum anEnum;
+  AnotherEnum anotherEnum;
   String aString;
   Object anObject;
+
+  // Lists
+  // ignore: strict_raw_type, always_specify_types
+  List list;
+  List<String?> stringList;
+  List<int?> intList;
+  List<double?> doubleList;
+  List<bool?> boolList;
+
+  // Maps
+  // ignore: strict_raw_type, always_specify_types
+  Map map;
 }
 
 /// A class containing all supported nullable types.
@@ -61,15 +95,25 @@ class AllNullableTypes {
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
     this.aNullableFloatArray,
-    this.aNullableList,
-    this.aNullableMap,
     this.nullableNestedList,
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
     this.aNullableEnum,
+    this.anotherNullableEnum,
     this.aNullableString,
     this.aNullableObject,
     this.allNullableTypes,
+
+    // Lists
+    this.list,
+    this.stringList,
+    this.intList,
+    this.doubleList,
+    this.boolList,
+    this.nestedClassList,
+
+    //Maps
+    this.map,
   );
 
   bool? aNullableBool;
@@ -80,17 +124,27 @@ class AllNullableTypes {
   Int32List? aNullable4ByteArray;
   Int64List? aNullable8ByteArray;
   Float64List? aNullableFloatArray;
-  // ignore: always_specify_types, strict_raw_type
-  List? aNullableList;
-  // ignore: always_specify_types, strict_raw_type
-  Map? aNullableMap;
   List<List<bool?>?>? nullableNestedList;
   Map<String?, String?>? nullableMapWithAnnotations;
   Map<String?, Object?>? nullableMapWithObject;
   AnEnum? aNullableEnum;
+  AnotherEnum? anotherNullableEnum;
   String? aNullableString;
   Object? aNullableObject;
   AllNullableTypes? allNullableTypes;
+
+  // Lists
+  // ignore: strict_raw_type, always_specify_types
+  List? list;
+  List<String?>? stringList;
+  List<int?>? intList;
+  List<double?>? doubleList;
+  List<bool?>? boolList;
+  List<AllNullableTypes?>? nestedClassList;
+
+  // Maps
+  // ignore: strict_raw_type, always_specify_types
+  Map? map;
 }
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -106,14 +160,23 @@ class AllNullableTypesWithoutRecursion {
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
     this.aNullableFloatArray,
-    this.aNullableList,
-    this.aNullableMap,
     this.nullableNestedList,
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
     this.aNullableEnum,
+    this.anotherNullableEnum,
     this.aNullableString,
     this.aNullableObject,
+
+    // Lists
+    this.list,
+    this.stringList,
+    this.intList,
+    this.doubleList,
+    this.boolList,
+
+    //Maps
+    this.map,
   );
 
   bool? aNullableBool;
@@ -124,16 +187,25 @@ class AllNullableTypesWithoutRecursion {
   Int32List? aNullable4ByteArray;
   Int64List? aNullable8ByteArray;
   Float64List? aNullableFloatArray;
-  // ignore: always_specify_types, strict_raw_type
-  List? aNullableList;
-  // ignore: always_specify_types, strict_raw_type
-  Map? aNullableMap;
   List<List<bool?>?>? nullableNestedList;
   Map<String?, String?>? nullableMapWithAnnotations;
   Map<String?, Object?>? nullableMapWithObject;
   AnEnum? aNullableEnum;
+  AnotherEnum? anotherNullableEnum;
   String? aNullableString;
   Object? aNullableObject;
+
+  // Lists
+  // ignore: strict_raw_type, always_specify_types
+  List? list;
+  List<String?>? stringList;
+  List<int?>? intList;
+  List<double?>? doubleList;
+  List<bool?>? boolList;
+
+  // Maps
+  // ignore: strict_raw_type, always_specify_types
+  Map? map;
 }
 
 /// A class for testing nested class handling.
@@ -222,6 +294,11 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoEnum:')
   @SwiftFunction('echo(_:)')
   AnEnum echoEnum(AnEnum anEnum);
+
+  /// Returns the passed enum to test serialization and deserialization.
+  @ObjCSelector('echoAnotherEnum:')
+  @SwiftFunction('echo(_:)')
+  AnotherEnum echoAnotherEnum(AnotherEnum anotherEnum);
 
   /// Returns the default string.
   @ObjCSelector('echoNamedDefaultString:')
@@ -320,6 +397,10 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoNullable(_:)')
   AnEnum? echoNullableEnum(AnEnum? anEnum);
 
+  @ObjCSelector('echoAnotherNullableEnum:')
+  @SwiftFunction('echoNullable(_:)')
+  AnotherEnum? echoAnotherNullableEnum(AnotherEnum? anotherEnum);
+
   /// Returns passed in int.
   @ObjCSelector('echoOptionalNullableInt:')
   @SwiftFunction('echoOptional(_:)')
@@ -390,6 +471,12 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoAsyncEnum:')
   @SwiftFunction('echoAsync(_:)')
   AnEnum echoAsyncEnum(AnEnum anEnum);
+
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAnotherAsyncEnum:')
+  @SwiftFunction('echoAsync(_:)')
+  AnotherEnum echoAnotherAsyncEnum(AnotherEnum anotherEnum);
 
   /// Responds with an error from an async function returning a value.
   @async
@@ -478,6 +565,12 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoAsyncNullable(_:)')
   AnEnum? echoAsyncNullableEnum(AnEnum? anEnum);
 
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAnotherAsyncNullableEnum:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  AnotherEnum? echoAnotherAsyncNullableEnum(AnotherEnum? anotherEnum);
+
   // ========== Flutter API test wrappers ==========
 
   @async
@@ -563,6 +656,11 @@ abstract class HostIntegrationCoreApi {
   AnEnum callFlutterEchoEnum(AnEnum anEnum);
 
   @async
+  @ObjCSelector('callFlutterEchoAnotherEnum:')
+  @SwiftFunction('callFlutterEcho(_:)')
+  AnotherEnum callFlutterEchoAnotherEnum(AnotherEnum anotherEnum);
+
+  @async
   @ObjCSelector('callFlutterEchoNullableBool:')
   @SwiftFunction('callFlutterEchoNullable(_:)')
   bool? callFlutterEchoNullableBool(bool? aBool);
@@ -600,8 +698,13 @@ abstract class HostIntegrationCoreApi {
 
   @async
   @ObjCSelector('callFlutterEchoNullableEnum:')
-  @SwiftFunction('callFlutterNullableEcho(_:)')
+  @SwiftFunction('callFlutterEchoNullable(_:)')
   AnEnum? callFlutterEchoNullableEnum(AnEnum? anEnum);
+
+  @async
+  @ObjCSelector('callFlutterEchoAnotherNullableEnum:')
+  @SwiftFunction('callFlutterEchoNullable(_:)')
+  AnotherEnum? callFlutterEchoAnotherNullableEnum(AnotherEnum? anotherEnum);
 
   @async
   @ObjCSelector('callFlutterSmallApiEchoString:')
@@ -698,6 +801,11 @@ abstract class FlutterIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   AnEnum echoEnum(AnEnum anEnum);
 
+  /// Returns the passed enum to test serialization and deserialization.
+  @ObjCSelector('echoAnotherEnum:')
+  @SwiftFunction('echo(_:)')
+  AnotherEnum echoAnotherEnum(AnotherEnum anotherEnum);
+
   // ========== Nullable argument/return type tests ==========
 
   /// Returns the passed boolean, to test serialization and deserialization.
@@ -739,6 +847,11 @@ abstract class FlutterIntegrationCoreApi {
   @ObjCSelector('echoNullableEnum:')
   @SwiftFunction('echoNullable(_:)')
   AnEnum? echoNullableEnum(AnEnum? anEnum);
+
+  /// Returns the passed enum to test serialization and deserialization.
+  @ObjCSelector('echoAnotherNullableEnum:')
+  @SwiftFunction('echoNullable(_:)')
+  AnotherEnum? echoAnotherNullableEnum(AnotherEnum? anotherEnum);
 
   // ========== Async tests ==========
   // These are minimal since async FlutterApi only changes Dart generation.

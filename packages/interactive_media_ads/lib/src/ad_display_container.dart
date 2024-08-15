@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'platform_interface/platform_ad_display_container.dart';
 import 'platform_interface/platform_interface.dart';
 
-/// Handles playing ads after they've been received from the server.
+/// A [Widget] for displaying loaded ads.
 ///
 /// ## Platform-Specific Features
 /// This class contains an underlying implementation provided by the current
@@ -37,6 +37,7 @@ class AdDisplayContainer extends StatelessWidget {
   AdDisplayContainer({
     Key? key,
     required void Function(AdDisplayContainer container) onContainerAdded,
+    TextDirection layoutDirection = TextDirection.ltr,
   }) : this.fromPlatformCreationParams(
           key: key,
           params: PlatformAdDisplayContainerCreationParams(
@@ -45,6 +46,7 @@ class AdDisplayContainer extends StatelessWidget {
                 platform: container,
               ));
             },
+            layoutDirection: layoutDirection,
           ),
         );
 
@@ -94,6 +96,9 @@ class AdDisplayContainer extends StatelessWidget {
   /// platform view hierarchy.
   void Function(PlatformAdDisplayContainer container) get onContainerAdded =>
       platform.params.onContainerAdded;
+
+  /// The layout direction to use for the embedded AdDisplayContainer.
+  TextDirection get layoutDirection => platform.params.layoutDirection;
 
   @override
   Widget build(BuildContext context) {

@@ -23,8 +23,6 @@ class FileSelectorWindows extends FileSelectorPlatform {
   }) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
         SelectionOptions(
-          allowMultiple: false,
-          selectFolders: false,
           allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups),
         ),
         initialDirectory,
@@ -41,7 +39,6 @@ class FileSelectorWindows extends FileSelectorPlatform {
     final FileDialogResult result = await _hostApi.showOpenDialog(
         SelectionOptions(
           allowMultiple: true,
-          selectFolders: false,
           allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups),
         ),
         initialDirectory,
@@ -73,8 +70,6 @@ class FileSelectorWindows extends FileSelectorPlatform {
   }) async {
     final FileDialogResult result = await _hostApi.showSaveDialog(
         SelectionOptions(
-          allowMultiple: false,
-          selectFolders: false,
           allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups),
         ),
         options.initialDirectory,
@@ -95,7 +90,6 @@ class FileSelectorWindows extends FileSelectorPlatform {
   }) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
         SelectionOptions(
-          allowMultiple: false,
           selectFolders: true,
           allowedTypes: <TypeGroup>[],
         ),

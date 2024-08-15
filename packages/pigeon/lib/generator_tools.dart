@@ -13,13 +13,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '19.0.1';
-
-/// Prefix for all local variables in methods.
-///
-/// This lowers the chances of variable name collisions with
-/// user defined parameters.
-const String varNamePrefix = '__pigeon_';
+const String pigeonVersion = '21.2.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -37,7 +31,7 @@ bool debugGenerators = false;
 
 /// A helper class for managing indentation, wrapping a [StringSink].
 class Indent {
-  /// Constructor which takes a [StringSink] [Ident] will wrap.
+  /// Constructor which takes a [StringSink] [Indent] will wrap.
   Indent(this._sink);
 
   int _count = 0;
@@ -102,8 +96,6 @@ class Indent {
     bool addTrailingNewline = true,
     int nestCount = 1,
   }) {
-    assert(begin != '' || end != '',
-        'Use nest for indentation without any decoration');
     if (begin != null) {
       _sink.write(begin + newline);
     }
@@ -123,8 +115,6 @@ class Indent {
     Function func, {
     bool addTrailingNewline = true,
   }) {
-    assert(begin != '' || end != '',
-        'Use nest for indentation without any decoration');
     addScoped(str() + (begin ?? ''), end, func,
         addTrailingNewline: addTrailingNewline);
   }
@@ -301,11 +291,11 @@ String getGeneratedCodeWarning() {
 /// String to be printed after `getGeneratedCodeWarning()'s warning`.
 const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 
-/// Prefix for utility classes generated for ProxyApis.
+/// Prefix for generated internal classes.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
-const String classNamePrefix = 'Pigeon';
+const String classNamePrefix = 'PigeonInternal';
 
 /// Name for the generated InstanceManager for ProxyApis.
 ///
@@ -318,6 +308,20 @@ const String instanceManagerClassName = '${classNamePrefix}InstanceManager';
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
 const String classMemberNamePrefix = 'pigeon_';
+
+/// Prefix for  variable names not defined by the user.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String varNamePrefix = 'pigeonVar_';
+
+/// Prefixes that are not allowed for any names of any types or methods.
+const List<String> disallowedPrefixes = <String>[
+  classNamePrefix,
+  classMemberNamePrefix,
+  varNamePrefix,
+  'pigeonChannelCodec'
+];
 
 /// Collection of keys used in dictionaries across generators.
 class Keys {
@@ -381,16 +385,26 @@ Map<String, Object> mergeMaps(
   return result;
 }
 
-/// A class name that is enumerated.
-class EnumeratedClass {
+/// A type name that is enumerated.
+class EnumeratedType {
   /// Constructor.
-  EnumeratedClass(this.name, this.enumeration);
+  EnumeratedType(this.name, this.enumeration, this.type,
+      {this.associatedClass, this.associatedEnum});
 
-  /// The name of the class.
+  /// The name of the type.
   final String name;
 
   /// The enumeration of the class.
   final int enumeration;
+
+  /// The type of custom type of the enumerated type.
+  final CustomTypes type;
+
+  /// The associated Class that is represented by the [EnumeratedType].
+  final Class? associatedClass;
+
+  /// The associated Enum that is represented by the [EnumeratedType].
+  final Enum? associatedEnum;
 }
 
 /// Supported basic datatypes.
@@ -408,9 +422,16 @@ const List<String> validTypes = <String>[
   'Object',
 ];
 
-/// Custom codecs' custom types are enumerated from 255 down to this number to
+/// Custom codecs' custom types are enumerations begin at this number to
 /// avoid collisions with the StandardMessageCodec.
-const int _minimumCodecFieldKey = 128;
+const int minimumCodecFieldKey = 129;
+
+/// The maximum codec enumeration allowed.
+const int maximumCodecFieldKey = 255;
+
+/// The total number of keys allowed in the custom codec.
+const int totalCustomCodecKeysAllowed =
+    maximumCodecFieldKey - minimumCodecFieldKey;
 
 Iterable<TypeDeclaration> _getTypeArguments(TypeDeclaration type) sync* {
   for (final TypeDeclaration typeArg in type.typeArguments) {
@@ -494,40 +515,45 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
   return references.map;
 }
 
-/// Returns true if the concrete type cannot be determined at compile-time.
-bool _isConcreteTypeAmbiguous(TypeDeclaration type) {
-  return (type.baseName == 'List' && type.typeArguments.isEmpty) ||
-      (type.baseName == 'Map' && type.typeArguments.isEmpty) ||
-      type.baseName == 'Object';
+/// All custom definable data types.
+enum CustomTypes {
+  /// A custom Class.
+  customClass,
+
+  /// A custom Enum.
+  customEnum,
 }
 
-/// Given an [Api], return the enumerated classes that must exist in the codec
+/// Return the enumerated types that must exist in the codec
 /// where the enumeration should be the key used in the buffer.
-Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
-  final Set<String> enumNames = root.enums.map((Enum e) => e.name).toSet();
-  final Map<TypeDeclaration, List<int>> referencedTypes =
-      getReferencedTypes(<Api>[api], root.classes);
-  final Iterable<String> allTypeNames =
-      referencedTypes.keys.any(_isConcreteTypeAmbiguous)
-          ? root.classes.map((Class aClass) => aClass.name)
-          : referencedTypes.keys.map((TypeDeclaration e) => e.baseName);
-  final List<String> sortedNames = allTypeNames
-      .where((String element) =>
-          element != 'void' &&
-          !validTypes.contains(element) &&
-          !enumNames.contains(element))
-      .toList();
-  sortedNames.sort();
-  int enumeration = _minimumCodecFieldKey;
-  const int maxCustomClassesPerApi = 255 - _minimumCodecFieldKey;
-  if (sortedNames.length > maxCustomClassesPerApi) {
-    throw Exception(
-        "Pigeon doesn't support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.");
+Iterable<EnumeratedType> getEnumeratedTypes(Root root) sync* {
+  int index = 0;
+
+  for (final Enum customEnum in root.enums) {
+    yield EnumeratedType(
+      customEnum.name,
+      index + minimumCodecFieldKey,
+      CustomTypes.customEnum,
+      associatedEnum: customEnum,
+    );
+    index += 1;
   }
-  for (final String name in sortedNames) {
-    yield EnumeratedClass(name, enumeration);
-    enumeration += 1;
+
+  for (final Class customClass in root.classes) {
+    yield EnumeratedType(
+      customClass.name,
+      index + minimumCodecFieldKey,
+      CustomTypes.customClass,
+      associatedClass: customClass,
+    );
+    index += 1;
   }
+}
+
+/// Checks if [root] contains enough custom types to require overflow codec tools.
+bool customTypeOverflowCheck(Root root) {
+  return root.classes.length + root.enums.length >
+      maximumCodecFieldKey - minimumCodecFieldKey;
 }
 
 /// Describes how to format a document comment.
@@ -684,4 +710,22 @@ class OutputFileOptions<T> {
 
   /// Options for specified language across all file types.
   T languageOptions;
+}
+
+/// Converts strings to Upper Camel Case.
+String toUpperCamelCase(String text) {
+  final RegExp separatorPattern = RegExp(r'[ _-]');
+  return text.split(separatorPattern).map((String word) {
+    return word.isEmpty
+        ? ''
+        : word.substring(0, 1).toUpperCase() + word.substring(1);
+  }).join();
+}
+
+/// Converts string to SCREAMING_SNAKE_CASE.
+String toScreamingSnakeCase(String string) {
+  return string
+      .replaceAllMapped(
+          RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => '_${m.group(0)}')
+      .toUpperCase();
 }

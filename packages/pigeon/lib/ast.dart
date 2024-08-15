@@ -4,6 +4,7 @@
 
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
+import 'generator_tools.dart';
 import 'pigeon_lib.dart';
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
@@ -515,6 +516,18 @@ class TypeDeclaration {
     );
   }
 
+  /// Returns duplicated `TypeDeclaration` with attached `associatedProxyApi` value.
+  TypeDeclaration copyWithTypeArguments(List<TypeDeclaration> types) {
+    return TypeDeclaration(
+      baseName: baseName,
+      isNullable: isNullable,
+      typeArguments: types,
+      associatedClass: associatedClass,
+      associatedEnum: associatedEnum,
+      associatedProxyApi: associatedProxyApi,
+    );
+  }
+
   @override
   String toString() {
     final String typeArgumentsStr =
@@ -742,6 +755,11 @@ class Root extends Node {
 
   /// All of the enums contained in the AST.
   List<Enum> enums;
+
+  /// Returns true if the number of custom types would exceed the available enumerations
+  /// on the standard codec.
+  bool get requiresOverflowClass =>
+      classes.length + enums.length >= totalCustomCodecKeysAllowed;
 
   @override
   String toString() {

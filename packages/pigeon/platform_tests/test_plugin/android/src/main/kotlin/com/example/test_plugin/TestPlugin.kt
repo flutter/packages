@@ -13,18 +13,18 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   private var flutterSmallApiOne: FlutterSmallApi? = null
   private var flutterSmallApiTwo: FlutterSmallApi? = null
 
-  override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+  override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
-    val testSuffixApiOne: TestPluginWithSuffix = TestPluginWithSuffix()
+    val testSuffixApiOne = TestPluginWithSuffix()
     testSuffixApiOne.setUp(binding, "suffixOne")
-    val testSuffixApiTwo: TestPluginWithSuffix = TestPluginWithSuffix()
+    val testSuffixApiTwo = TestPluginWithSuffix()
     testSuffixApiTwo.setUp(binding, "suffixTwo")
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
     flutterSmallApiTwo = FlutterSmallApi(binding.binaryMessenger, "suffixTwo")
   }
 
-  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}
+  override fun onDetachedFromEngine(binding: FlutterPluginBinding) {}
 
   // HostIntegrationCoreApi
 
@@ -94,6 +94,10 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun echoEnum(anEnum: AnEnum): AnEnum {
     return anEnum
+  }
+
+  override fun echoAnotherEnum(anotherEnum: AnotherEnum): AnotherEnum {
+    return anotherEnum
   }
 
   override fun echoNamedDefaultString(aString: String): String {
@@ -172,6 +176,10 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun echoNullableEnum(anEnum: AnEnum?): AnEnum? {
     return anEnum
+  }
+
+  override fun echoAnotherNullableEnum(anotherEnum: AnotherEnum?): AnotherEnum? {
+    return anotherEnum
   }
 
   override fun echoOptionalNullableInt(aNullableInt: Long?): Long? {
@@ -255,6 +263,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(anEnum))
   }
 
+  override fun echoAnotherAsyncEnum(
+      anotherEnum: AnotherEnum,
+      callback: (Result<AnotherEnum>) -> Unit
+  ) {
+    callback(Result.success(anotherEnum))
+  }
+
   override fun echoAsyncNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit) {
     callback(Result.success(anInt))
   }
@@ -297,16 +312,23 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(anEnum))
   }
 
+  override fun echoAnotherAsyncNullableEnum(
+      anotherEnum: AnotherEnum?,
+      callback: (Result<AnotherEnum?>) -> Unit
+  ) {
+    callback(Result.success(anotherEnum))
+  }
+
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
-    flutterApi!!.noop() { callback(Result.success(Unit)) }
+    flutterApi!!.noop { callback(Result.success(Unit)) }
   }
 
   override fun callFlutterThrowError(callback: (Result<Any?>) -> Unit) {
-    flutterApi!!.throwError() { result -> callback(result) }
+    flutterApi!!.throwError { result -> callback(result) }
   }
 
   override fun callFlutterThrowErrorFromVoid(callback: (Result<Unit>) -> Unit) {
-    flutterApi!!.throwErrorFromVoid() { result -> callback(result) }
+    flutterApi!!.throwErrorFromVoid { result -> callback(result) }
   }
 
   override fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {
@@ -378,6 +400,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     flutterApi!!.echoEnum(anEnum) { echo -> callback(echo) }
   }
 
+  override fun callFlutterEchoAnotherEnum(
+      anotherEnum: AnotherEnum,
+      callback: (Result<AnotherEnum>) -> Unit
+  ) {
+    flutterApi!!.echoAnotherEnum(anotherEnum) { echo -> callback(echo) }
+  }
+
   override fun callFlutterEchoAllNullableTypes(
       everything: AllNullableTypes?,
       callback: (Result<AllNullableTypes?>) -> Unit
@@ -430,6 +459,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun callFlutterEchoNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit) {
     flutterApi!!.echoNullableEnum(anEnum) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoAnotherNullableEnum(
+      anotherEnum: AnotherEnum?,
+      callback: (Result<AnotherEnum?>) -> Unit
+  ) {
+    flutterApi!!.echoAnotherNullableEnum(anotherEnum) { echo -> callback(echo) }
   }
 
   override fun callFlutterSmallApiEchoString(aString: String, callback: (Result<String>) -> Unit) {

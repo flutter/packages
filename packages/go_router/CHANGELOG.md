@@ -1,6 +1,23 @@
+## 14.2.4
+
+- Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+- Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
+
+## 14.2.3
+
+- Fixes redirect example's signature in `route.dart`.
+
+## 14.2.2
+
+- Adds section for "Stateful nested navigation" to configuration.md.
+
+## 14.2.1
+
+- Makes GoRouterState lookup more robust.
+
 ## 14.2.0
 
-- Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
+- Added proper `redirect` handling for `ShellRoute.$route` and `StatefulShellRoute.$route` for proper redirection handling in case of code generation.
 
 ## 14.1.4
 
