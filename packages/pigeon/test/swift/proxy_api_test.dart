@@ -97,8 +97,18 @@ void main() {
       expect(code, contains('import MyLibrary'));
 
       // Instance Manager
-      expect(code, contains(r'final class MyFilePigeonInstanceManager'));
-      expect(code, contains(r'private class MyFilePigeonInstanceManagerApi'));
+      expect(
+        code,
+        contains(
+          r'final class MyFilePigeonInternalInstanceManager',
+        ),
+      );
+      expect(
+        code,
+        contains(
+          r'private class MyFilePigeonInternalInstanceManagerApi',
+        ),
+      );
 
       // ProxyApi Delegate
       expect(code, contains(r'protocol MyFilePigeonProxyApiDelegate'));
@@ -118,7 +128,7 @@ void main() {
       expect(
         code,
         contains(
-          'private class MyFilePigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter',
+          'private class MyFilePigeonInternalProxyApiCodecReaderWriter: FlutterStandardReaderWriter',
         ),
       );
 

@@ -1527,7 +1527,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required Iterable<AstProxyApi> allProxyApis,
   }) {
     final String delegateName =
-        '${generatorOptions.fileSpecificClassNameComponent ?? ''}${classNamePrefix}ProxyApiDelegate';
+        '${generatorOptions.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}ProxyApiDelegate';
     indent.writeScoped('protocol $delegateName {', '}', () {
       for (final AstProxyApi api in allProxyApis) {
         final String hostApiName = '$hostProxyApiPrefix${api.name}';

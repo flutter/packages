@@ -12,7 +12,7 @@ String instanceManagerFinalizerDelegateName(SwiftOptions options) =>
 
 /// The name of the registrar containing all the ProxyApi implementations.
 String proxyApiRegistrarName(SwiftOptions options) =>
-    '${options.fileSpecificClassNameComponent ?? ''}${classNamePrefix}ProxyApiRegistrar';
+    '${options.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}ProxyApiRegistrar';
 
 /// The name of the `ReaderWriter` that handles ProxyApis.
 String proxyApiReaderWriterName(SwiftOptions options) =>
