@@ -25,7 +25,7 @@ class SlotLayout extends StatefulWidget {
       if (breakpoint.isActive(context)) {
         if (breakpoint.platform != null) {
           chosenWidget = pickedWidget;
-        } else if (pickedWidget != null) {
+        } else if (chosenWidget == null && pickedWidget != null) {
           fallbackWidget = pickedWidget;
         }
       }

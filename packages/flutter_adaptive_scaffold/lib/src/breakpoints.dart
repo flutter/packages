@@ -211,11 +211,11 @@ class Breakpoint {
         ? width >= lowerBoundWidth
         : width >= lowerBoundWidth && width < upperBoundWidth;
 
-    final bool isHeightActive =
-        !isDesktop && orientation == Orientation.portrait ||
-            (orientation == Orientation.landscape &&
-                height >= lowerBoundHeight &&
-                height < upperBoundHeight);
+    final bool isHeightActive = isDesktop ||
+        orientation == Orientation.portrait ||
+        (orientation == Orientation.landscape &&
+            height >= lowerBoundHeight &&
+            height < upperBoundHeight);
 
     return isWidthActive && isHeightActive && isRightPlatform;
   }
