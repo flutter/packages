@@ -451,12 +451,13 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                     waitUntilDone:NO];
             break;
           // Cancelled, or something failed.
-          case AVKeyValueStatusFailed:
+          case AVKeyValueStatusFailed: {
             // if something failed then future should result in error
             dispatch_async(dispatch_get_main_queue(), ^{
               [self sendFailedToLoadVideoEvent:error];
             });
             break;
+          }
           default:
             break;
         }
