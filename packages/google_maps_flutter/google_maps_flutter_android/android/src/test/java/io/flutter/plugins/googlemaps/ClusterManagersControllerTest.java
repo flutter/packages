@@ -15,6 +15,7 @@ import static org.mockito.Mockito.when;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,18 +26,23 @@ import com.google.maps.android.clustering.algo.StaticCluster;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -51,8 +57,13 @@ public class ClusterManagersControllerTest {
   private AssetManager assetManager;
   private final float density = 1;
 
+  @Mock Convert.BitmapDescriptorFactoryWrapper bitmapFactory;
+
+  private AutoCloseable mocksClosable;
+
   @Before
   public void setUp() {
+    mocksClosable = MockitoAnnotations.openMocks(this);
     context = ApplicationProvider.getApplicationContext();
     assetManager = context.getAssets();
     flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
@@ -60,6 +71,11 @@ public class ClusterManagersControllerTest {
     googleMap = mock(GoogleMap.class);
     markerManager = new MarkerManager(googleMap);
     controller.init(googleMap, markerManager);
+  }
+
+  @After
+  public void close() throws Exception {
+    mocksClosable.close();
   }
 
   @Test
@@ -90,13 +106,15 @@ public class ClusterManagersControllerTest {
     MarkerBuilder markerBuilder1 = new MarkerBuilder(markerId1, clusterManagerId);
     MarkerBuilder markerBuilder2 = new MarkerBuilder(markerId2, clusterManagerId);
 
-    final Map<String, Object> markerData1 =
-        createMarkerData(markerId1, location1, clusterManagerId);
-    final Map<String, Object> markerData2 =
-        createMarkerData(markerId2, location2, clusterManagerId);
+    final Messages.PlatformMarker markerData1 =
+        createPlatformMarker(markerId1, location1, clusterManagerId);
+    final Messages.PlatformMarker markerData2 =
+        createPlatformMarker(markerId2, location2, clusterManagerId);
 
-    Convert.interpretMarkerOptions(markerData1, markerBuilder1, assetManager, density);
-    Convert.interpretMarkerOptions(markerData2, markerBuilder2, assetManager, density);
+    Convert.interpretMarkerOptions(
+        markerData1, markerBuilder1, assetManager, density, bitmapFactory);
+    Convert.interpretMarkerOptions(
+        markerData2, markerBuilder2, assetManager, density, bitmapFactory);
 
     controller.addItem(markerBuilder1);
     controller.addItem(markerBuilder2);
@@ -161,12 +179,36 @@ public class ClusterManagersControllerTest {
         () -> controller.getClustersWithClusterManagerId(clusterManagerId));
   }
 
-  private Map<String, Object> createMarkerData(
+  private Messages.PlatformMarker createPlatformMarker(
       String markerId, List<Double> location, String clusterManagerId) {
-    Map<String, Object> markerData = new HashMap<>();
-    markerData.put("markerId", markerId);
-    markerData.put("position", location);
-    markerData.put("clusterManagerId", clusterManagerId);
-    return markerData;
+    Bitmap fakeBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    fakeBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+    byte[] byteArray = byteArrayOutputStream.toByteArray();
+    Map<String, Object> byteData = new HashMap<>();
+    byteData.put("byteData", byteArray);
+    byteData.put("bitmapScaling", "none");
+    byteData.put("imagePixelRatio", "");
+    Messages.PlatformOffset anchor =
+        new Messages.PlatformOffset.Builder().setDx(0.0).setDy(0.0).build();
+    return new Messages.PlatformMarker.Builder()
+        .setMarkerId(markerId)
+        .setConsumeTapEvents(false)
+        .setIcon(Arrays.asList("bytes", byteData))
+        .setAlpha(1.0)
+        .setDraggable(false)
+        .setFlat(false)
+        .setVisible(true)
+        .setRotation(0.0)
+        .setZIndex(0.0)
+        .setPosition(
+            new Messages.PlatformLatLng.Builder()
+                .setLatitude(location.get(0))
+                .setLongitude(location.get(1))
+                .build())
+        .setClusterManagerId(clusterManagerId)
+        .setAnchor(anchor)
+        .setInfoWindow(new Messages.PlatformInfoWindow.Builder().setAnchor(anchor).build())
+        .build();
   }
 }
