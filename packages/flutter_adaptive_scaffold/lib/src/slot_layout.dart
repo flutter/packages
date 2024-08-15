@@ -20,17 +20,24 @@ class SlotLayout extends StatefulWidget {
   static SlotLayoutConfig? pickWidget(
       BuildContext context, Map<Breakpoint, SlotLayoutConfig?> config) {
     SlotLayoutConfig? chosenWidget;
-    SlotLayoutConfig? fallbackWidget;
-    config.forEach((Breakpoint breakpoint, SlotLayoutConfig? pickedWidget) {
+
+    for (final Breakpoint breakpoint in config.keys) {
       if (breakpoint.isActive(context)) {
-        if (breakpoint.platform != null) {
-          chosenWidget = pickedWidget;
-        } else if (chosenWidget == null && pickedWidget != null) {
-          fallbackWidget = pickedWidget;
+        final SlotLayoutConfig? pickedWidget = config[breakpoint];
+        if (pickedWidget != null) {
+          if (breakpoint.platform != null) {
+            // Prioritize platform-specific breakpoints
+            return pickedWidget;
+          } else {
+            // Fallback to non-platform-specific
+            chosenWidget = pickedWidget;
+          }
+        } else {
+          chosenWidget = null;
         }
       }
-    });
-    chosenWidget ??= fallbackWidget;
+    }
+
     return chosenWidget;
   }
 

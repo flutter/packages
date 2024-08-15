@@ -226,6 +226,7 @@ class Breakpoint {
     final SlotLayout? slotLayout =
         context.findAncestorWidgetOfExactType<SlotLayout>();
     Breakpoint? fallbackBreakpoint;
+
     if (slotLayout != null) {
       for (final MapEntry<Breakpoint, SlotLayoutConfig?> config
           in slotLayout.config.entries) {
