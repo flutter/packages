@@ -5,8 +5,8 @@
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
 
-import 'kotlin_generator.dart' show KotlinProxyApiOptions;
 import 'generator_tools.dart';
+import 'kotlin_generator.dart' show KotlinProxyApiOptions;
 import 'pigeon_lib.dart';
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
