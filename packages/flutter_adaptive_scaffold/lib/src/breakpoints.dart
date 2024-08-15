@@ -195,6 +195,7 @@ class Breakpoint {
   bool isActive(BuildContext context) {
     final TargetPlatform host = Theme.of(context).platform;
     final bool isRightPlatform = platform?.contains(host) ?? true;
+    final bool isDesktop = Breakpoint.desktop.contains(host);
 
     final double width = MediaQuery.sizeOf(context).width;
     final double height = MediaQuery.sizeOf(context).height;
@@ -210,10 +211,11 @@ class Breakpoint {
         ? width >= lowerBoundWidth
         : width >= lowerBoundWidth && width < upperBoundWidth;
 
-    final bool isHeightActive = (orientation == Orientation.landscape &&
-            height >= lowerBoundHeight &&
-            height < upperBoundHeight) ||
-        orientation == Orientation.portrait;
+    final bool isHeightActive =
+        !isDesktop && orientation == Orientation.portrait ||
+            (orientation == Orientation.landscape &&
+                height >= lowerBoundHeight &&
+                height < upperBoundHeight);
 
     return isWidthActive && isHeightActive && isRightPlatform;
   }
@@ -241,9 +243,9 @@ class Breakpoint {
 
   /// Returns the default [Breakpoint] based on the [BuildContext].
   static Breakpoint defaultBreakpointOf(BuildContext context) {
-    final TargetPlatform platform = Theme.of(context).platform;
-    final bool isDesktop = Breakpoint.desktop.contains(platform);
-    final bool isMobile = Breakpoint.mobile.contains(platform);
+    final TargetPlatform host = Theme.of(context).platform;
+    final bool isDesktop = Breakpoint.desktop.contains(host);
+    final bool isMobile = Breakpoint.mobile.contains(host);
 
     for (final Breakpoint breakpoint in <Breakpoint>[
       Breakpoints.small,
