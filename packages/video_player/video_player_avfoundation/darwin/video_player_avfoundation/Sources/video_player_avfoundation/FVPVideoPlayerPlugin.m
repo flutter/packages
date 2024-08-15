@@ -401,12 +401,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)sendFailedToLoadVideoEvent:(NSError *)error {
-  if (!NSThread.isMainThread) {
-    dispatch_async(dispatch_get_main_queue(), ^{
-      [self sendFailedToLoadVideoEvent:error];
-    });
-    return;
-  }
   if (_eventSink == nil) {
     return;
   }
@@ -417,7 +411,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     }
   };
   NSError *underlyingError = error.userInfo[NSUnderlyingErrorKey];
-  // add more details to error message
   // https://github.com/flutter/flutter/issues/56665
   add(error.localizedDescription);
   add(error.localizedFailureReason);
@@ -429,10 +422,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 - (void)setupEventSinkIfReadyToPlay {
   if (_eventSink && !_isInitialized) {
     AVPlayerItem *currentItem = self.player.currentItem;
-    // if status is Failed here then this was called from onListenWithArguments which means
-    // _eventSink was nil when was called observeValueForKeyPath with updated Failed status
-    // and error was not sent and never will be so it is needed to send it here to have
-    // future returned by initialize resolved instead of in state of infinite waiting,
+    // if status is Failed this was probably called from onListenWithArguments, which means
+    // _eventSink was initialized to non-nil probably only after observeValueForKeyPath already
+    // observed Failed status and it did not send error, therefore we need to send it here
     // see comment in onListenWithArguments
     // https://github.com/flutter/flutter/issues/151475
     // https://github.com/flutter/flutter/issues/147707
@@ -461,7 +453,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
           // Cancelled, or something failed.
           case AVKeyValueStatusFailed:
             // if something failed then future should result in error
-            [self sendFailedToLoadVideoEvent:error];
+            dispatch_async(dispatch_get_main_queue(), ^{
+              [self sendFailedToLoadVideoEvent:error];
+            });
             break;
           default:
             break;
