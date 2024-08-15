@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:meta/meta.dart';
 
 import '../platform_interface/platform_interface.dart';
-import 'enum_converter_extensions.dart';
+import 'enum_converter_utils.dart';
 import 'interactive_media_ads.g.dart' as ima;
 import 'interactive_media_ads_proxy.dart';
 
@@ -57,14 +57,13 @@ class AndroidAdsManager extends PlatformAdsManager {
     weakThis.target?._manager.addAdEventListener(
       proxy.newAdEventListener(
         onAdEvent: (_, ima.AdEvent event) {
-          late final AdEventType? eventType =
-              event.type.asInterfaceAdEventType();
-          if (eventType == null) {
-            return;
-          }
-
-          weakThis.target?._managerDelegate?.params.onAdEvent
-              ?.call(AdEvent(type: eventType));
+          weakThis.target?._managerDelegate?.params.onAdEvent?.call(
+            AdEvent(
+              type: toInterfaceEventType(event.type),
+              adData:
+                  event.adData?.cast<String, String>() ?? <String, String>{},
+            ),
+          );
         },
       ),
     );
@@ -74,8 +73,8 @@ class AndroidAdsManager extends PlatformAdsManager {
           weakThis.target?._managerDelegate?.params.onAdErrorEvent?.call(
             AdErrorEvent(
               error: AdError(
-                type: event.error.errorType.asInterfaceErrorType(),
-                code: event.error.errorCode.asInterfaceErrorCode(),
+                type: toInterfaceErrorType(event.error.errorType),
+                code: toInterfaceErrorCode(event.error.errorCode),
                 message: event.error.message,
               ),
             ),
