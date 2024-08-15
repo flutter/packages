@@ -1155,7 +1155,8 @@ class StatefulNavigationShell extends StatefulWidget {
   /// associated with it).
   @visibleForTesting
   List<StatefulShellBranch> get debugLoadedBranches =>
-    route._shellStateKey.currentState?._loadedBranches ?? <StatefulShellBranch>[];
+      route._shellStateKey.currentState?._loadedBranches ??
+      <StatefulShellBranch>[];
 
   /// Gets the effective initial location for the branch at the provided index
   /// in the associated [StatefulShellRoute].
@@ -1226,8 +1227,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   bool _isBranchLoaded(StatefulShellBranch branch) =>
       _branchState[branch] != null;
 
-  List<StatefulShellBranch> get _loadedBranches =>
-      _branchState.keys.toList();
+  List<StatefulShellBranch> get _loadedBranches => _branchState.keys.toList();
 
   @override
   String? get restorationId => route.restorationScopeId;
@@ -1244,8 +1244,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   _StatefulShellBranchState _branchStateFor(StatefulShellBranch branch,
       [bool register = true]) {
     return _branchState.putIfAbsent(branch, () {
-      final _StatefulShellBranchState branchState =
-      _StatefulShellBranchState(location: _RestorableRouteMatchList(_router.configuration));
+      final _StatefulShellBranchState branchState = _StatefulShellBranchState(
+          location: _RestorableRouteMatchList(_router.configuration));
       if (register) {
         registerForRestoration(
             branchState.location, _branchLocationRestorationScopeId(branch));
@@ -1291,19 +1291,17 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
         _scopedMatchList(shellRouteContext.routeMatchList);
 
     final _StatefulShellBranchState branchState =
-      _branchStateFor(branch, false);
+        _branchStateFor(branch, false);
     final RouteMatchList previousBranchLocation = branchState.location.value;
     branchState.location.value = currentBranchLocation;
-    final bool hasExistingNavigator =
-        branchState.navigator != null;
+    final bool hasExistingNavigator = branchState.navigator != null;
 
     /// Only update the Navigator of the route match list has changed
     final bool locationChanged =
         previousBranchLocation != currentBranchLocation;
     if (locationChanged || !hasExistingNavigator) {
-      branchState.navigator =
-          shellRouteContext._buildNavigatorForCurrentRoute(
-              branch.observers, branch.restorationScopeId);
+      branchState.navigator = shellRouteContext._buildNavigatorForCurrentRoute(
+          branch.observers, branch.restorationScopeId);
     }
 
     _cleanUpObsoleteBranches();
@@ -1333,7 +1331,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
           branch.restorationScopeId,
         );
 
-        final _StatefulShellBranchState branchState = _branchStateFor(branch, false);
+        final _StatefulShellBranchState branchState =
+            _branchStateFor(branch, false);
         branchState.location.value = matchList;
         branchState.navigator = navigator;
       }
@@ -1341,9 +1340,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   }
 
   void _cleanUpObsoleteBranches() {
-    _branchState.removeWhere((StatefulShellBranch branch, _StatefulShellBranchState branchState) {
+    _branchState.removeWhere(
+        (StatefulShellBranch branch, _StatefulShellBranchState branchState) {
       if (!route.branches.contains(branch)) {
-        unregisterFromRestoration(branchState.location);
         branchState.dispose();
         return true;
       }
@@ -1383,7 +1382,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   @override
   void dispose() {
     super.dispose();
-    _branchState.forEach((_, _StatefulShellBranchState branchState) => branchState.dispose());
+    _branchState.forEach(
+        (_, _StatefulShellBranchState branchState) => branchState.dispose());
   }
 
   @override
