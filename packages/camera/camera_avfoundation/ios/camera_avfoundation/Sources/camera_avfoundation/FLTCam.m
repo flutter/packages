@@ -519,11 +519,6 @@ NSString *const errorMethod = @"error";
           // Set the best device format found and finish the device configuration.
           _captureDevice.activeFormat = bestFormat;
           [_captureDevice unlockForConfiguration];
-
-          // Set the preview size based on values from the current capture device.
-          _previewSize =
-              CGSizeMake(_captureDevice.activeFormat.highResolutionStillImageDimensions.width,
-                         _captureDevice.activeFormat.highResolutionStillImageDimensions.height);
           break;
         }
       }
@@ -531,44 +526,35 @@ NSString *const errorMethod = @"error";
     case FCPPlatformResolutionPresetUltraHigh:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset3840x2160]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset3840x2160;
-        _previewSize = CGSizeMake(3840, 2160);
         break;
       }
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPresetHigh]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPresetHigh;
-        _previewSize =
-            CGSizeMake(_captureDevice.activeFormat.highResolutionStillImageDimensions.width,
-                       _captureDevice.activeFormat.highResolutionStillImageDimensions.height);
         break;
       }
     case FCPPlatformResolutionPresetVeryHigh:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset1920x1080]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset1920x1080;
-        _previewSize = CGSizeMake(1920, 1080);
         break;
       }
     case FCPPlatformResolutionPresetHigh:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset1280x720]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset1280x720;
-        _previewSize = CGSizeMake(1280, 720);
         break;
       }
     case FCPPlatformResolutionPresetMedium:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset640x480]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset640x480;
-        _previewSize = CGSizeMake(640, 480);
         break;
       }
     case FCPPlatformResolutionPresetLow:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset352x288]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset352x288;
-        _previewSize = CGSizeMake(352, 288);
         break;
       }
     default:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPresetLow]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPresetLow;
-        _previewSize = CGSizeMake(352, 288);
       } else {
         if (error != nil) {
           *error =
@@ -582,6 +568,8 @@ NSString *const errorMethod = @"error";
         return NO;
       }
   }
+  CMVideoDimensions size = self.videoDimensionsForFormat(_captureDevice.activeFormat);
+  _previewSize = CGSizeMake(size.width, size.height);
   _audioCaptureSession.sessionPreset = _videoCaptureSession.sessionPreset;
   return YES;
 }
