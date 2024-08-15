@@ -7,15 +7,15 @@ import '../kotlin_generator.dart';
 
 /// Name of the Kotlin `InstanceManager`.
 String kotlinInstanceManagerClassName(KotlinOptions options) =>
-    '${options.fileSpecificClassNameComponent ?? ''}${classNamePrefix}InstanceManager';
+    '${options.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}InstanceManager';
 
 /// The name of the registrar containing all the ProxyApi implementations.
 String proxyApiRegistrarName(KotlinOptions options) =>
-    '${options.fileSpecificClassNameComponent ?? ''}${classNamePrefix}ProxyApiRegistrar';
+    '${options.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}ProxyApiRegistrar';
 
 /// The name of the codec that handles ProxyApis.
 String proxyApiCodecName(KotlinOptions options) =>
-    '${options.fileSpecificClassNameComponent ?? ''}${classNamePrefix}ProxyApiBaseCodec';
+    '${options.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}ProxyApiBaseCodec';
 
 /// The Kotlin `InstanceManager`.
 String instanceManagerTemplate(KotlinOptions options) {
@@ -237,4 +237,4 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
 }
 
 const String _finalizationListenerClassName =
-    '${classNamePrefix}FinalizationListener';
+    '${proxyApiClassNamePrefix}FinalizationListener';

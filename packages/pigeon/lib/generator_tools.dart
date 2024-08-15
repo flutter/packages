@@ -316,11 +316,17 @@ const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 /// parameters.
 const String classNamePrefix = 'PigeonInternal';
 
+/// Prefix for classes generated to use with ProxyApis.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String proxyApiClassNamePrefix = 'Pigeon';
+
 /// Prefix for APIs generated for ProxyApi.
 ///
 /// Since ProxyApis are intended to wrap a class and will often share the name
 /// of said class, host APIs should prefix the API with this protected name.
-const String hostProxyApiPrefix = '${classNamePrefix}Api';
+const String hostProxyApiPrefix = '${proxyApiClassNamePrefix}Api';
 
 /// Name for the generated InstanceManager for ProxyApis.
 ///
@@ -334,7 +340,7 @@ const String instanceManagerClassName = '${classNamePrefix}InstanceManager';
 /// parameters.
 const String classMemberNamePrefix = 'pigeon_';
 
-/// Prefix for  variable names not defined by the user.
+/// Prefix for variable names not defined by the user.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
@@ -344,6 +350,8 @@ const String varNamePrefix = 'pigeonVar_';
 const List<String> disallowedPrefixes = <String>[
   classNamePrefix,
   classMemberNamePrefix,
+  hostProxyApiPrefix,
+  proxyApiClassNamePrefix,
   varNamePrefix,
   'pigeonChannelCodec'
 ];

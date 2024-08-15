@@ -64,11 +64,11 @@ class ProxyApiTestsError(
  * instance is recreated. The strong reference will then need to be removed manually again.
  */
 @Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
-class ProxyApiTestsPigeonInternalInstanceManager(
-    private val finalizationListener: PigeonInternalFinalizationListener
+class ProxyApiTestsPigeonInstanceManager(
+    private val finalizationListener: PigeonFinalizationListener
 ) {
   /** Interface for listening when a weak reference of an instance is removed from the manager. */
-  interface PigeonInternalFinalizationListener {
+  interface PigeonFinalizationListener {
     fun onFinalize(identifier: Long)
   }
 
@@ -110,9 +110,9 @@ class ProxyApiTestsPigeonInternalInstanceManager(
      * When the manager is no longer needed, [stopFinalizationListener] must be called.
      */
     fun create(
-        finalizationListener: PigeonInternalFinalizationListener
-    ): ProxyApiTestsPigeonInternalInstanceManager {
-      return ProxyApiTestsPigeonInternalInstanceManager(finalizationListener)
+        finalizationListener: PigeonFinalizationListener
+    ): ProxyApiTestsPigeonInstanceManager {
+      return ProxyApiTestsPigeonInstanceManager(finalizationListener)
     }
   }
 
@@ -133,7 +133,7 @@ class ProxyApiTestsPigeonInternalInstanceManager(
    * strong reference to `instance` will be added and will need to be removed again with [remove].
    *
    * If this method returns a nonnull identifier, this method also expects the Dart
-   * `ProxyApiTestsPigeonInternalInstanceManager` to have, or recreate, a weak reference to the Dart
+   * `ProxyApiTestsPigeonInstanceManager` to have, or recreate, a weak reference to the Dart
    * instance the identifier is associated with.
    */
   fun getIdentifierForStrongReference(instance: Any?): Long? {
@@ -188,11 +188,11 @@ class ProxyApiTestsPigeonInternalInstanceManager(
   }
 
   /**
-   * Stops the periodic run of the [PigeonInternalFinalizationListener] for instances that have been
-   * garbage collected.
+   * Stops the periodic run of the [PigeonFinalizationListener] for instances that have been garbage
+   * collected.
    *
-   * The InstanceManager can continue to be used, but the [PigeonInternalFinalizationListener] will
-   * no longer be called and methods will log a warning.
+   * The InstanceManager can continue to be used, but the [PigeonFinalizationListener] will no
+   * longer be called and methods will log a warning.
    */
   fun stopFinalizationListener() {
     handler.removeCallbacks { this.releaseAllFinalizedInstances() }
@@ -212,8 +212,8 @@ class ProxyApiTestsPigeonInternalInstanceManager(
   }
 
   /**
-   * Whether the [PigeonInternalFinalizationListener] is still being called for instances that are
-   * garbage collected.
+   * Whether the [PigeonFinalizationListener] is still being called for instances that are garbage
+   * collected.
    *
    * See [stopFinalizationListener].
    */
@@ -254,24 +254,24 @@ class ProxyApiTestsPigeonInternalInstanceManager(
     if (hasFinalizationListenerStopped()) {
       Log.w(
           tag,
-          "The manager was used after calls to the PigeonInternalFinalizationListener has been stopped.")
+          "The manager was used after calls to the PigeonFinalizationListener has been stopped.")
     }
   }
 }
 
 /** Generated API for managing the Dart and native `PigeonInternalInstanceManager`s. */
-private class ProxyApiTestsPigeonInternalInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
+private class ProxyApiTestsPigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
   companion object {
-    /** The codec used by ProxyApiTestsPigeonInternalInstanceManagerApi. */
+    /** The codec used by ProxyApiTestsPigeonInstanceManagerApi. */
     val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
 
     /**
-     * Sets up an instance of `ProxyApiTestsPigeonInternalInstanceManagerApi` to handle messages
-     * from the `binaryMessenger`.
+     * Sets up an instance of `ProxyApiTestsPigeonInstanceManagerApi` to handle messages from the
+     * `binaryMessenger`.
      */
     fun setUpMessageHandlers(
         binaryMessenger: BinaryMessenger,
-        instanceManager: ProxyApiTestsPigeonInternalInstanceManager?
+        instanceManager: ProxyApiTestsPigeonInstanceManager?
     ) {
       run {
         val channel =
@@ -343,24 +343,24 @@ private class ProxyApiTestsPigeonInternalInstanceManagerApi(val binaryMessenger:
  * Provides implementations for each ProxyApi implementation and provides access to resources needed
  * by any implementation.
  */
-abstract class ProxyApiTestsPigeonInternalProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
+abstract class ProxyApiTestsPigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
   /** Whether APIs should ignore calling to Dart. */
   public var ignoreCallsToDart = false
-  val instanceManager: ProxyApiTestsPigeonInternalInstanceManager
+  val instanceManager: ProxyApiTestsPigeonInstanceManager
   private var _codec: StandardMessageCodec? = null
   val codec: StandardMessageCodec
     get() {
       if (_codec == null) {
-        _codec = ProxyApiTestsPigeonInternalProxyApiBaseCodec(this)
+        _codec = ProxyApiTestsPigeonProxyApiBaseCodec(this)
       }
       return _codec!!
     }
 
   init {
-    val api = ProxyApiTestsPigeonInternalInstanceManagerApi(binaryMessenger)
+    val api = ProxyApiTestsPigeonInstanceManagerApi(binaryMessenger)
     instanceManager =
-        ProxyApiTestsPigeonInternalInstanceManager.create(
-            object : ProxyApiTestsPigeonInternalInstanceManager.PigeonFinalizationListener {
+        ProxyApiTestsPigeonInstanceManager.create(
+            object : ProxyApiTestsPigeonInstanceManager.PigeonFinalizationListener {
               override fun onFinalize(identifier: Long) {
                 api.removeStrongReference(identifier) {
                   if (it.isFailure) {
@@ -373,53 +373,51 @@ abstract class ProxyApiTestsPigeonInternalProxyApiRegistrar(val binaryMessenger:
             })
   }
   /**
-   * An implementation of [PigeonInternalApiProxyApiTestClass] used to add a new Dart instance of
+   * An implementation of [PigeonApiProxyApiTestClass] used to add a new Dart instance of
    * `ProxyApiTestClass` to the Dart `InstanceManager`.
    */
-  abstract fun getPigeonInternalApiProxyApiTestClass(): PigeonInternalApiProxyApiTestClass
+  abstract fun getPigeonApiProxyApiTestClass(): PigeonApiProxyApiTestClass
 
   /**
-   * An implementation of [PigeonInternalApiProxyApiSuperClass] used to add a new Dart instance of
+   * An implementation of [PigeonApiProxyApiSuperClass] used to add a new Dart instance of
    * `ProxyApiSuperClass` to the Dart `InstanceManager`.
    */
-  abstract fun getPigeonInternalApiProxyApiSuperClass(): PigeonInternalApiProxyApiSuperClass
+  abstract fun getPigeonApiProxyApiSuperClass(): PigeonApiProxyApiSuperClass
 
   /**
-   * An implementation of [PigeonInternalApiProxyApiInterface] used to add a new Dart instance of
+   * An implementation of [PigeonApiProxyApiInterface] used to add a new Dart instance of
    * `ProxyApiInterface` to the Dart `InstanceManager`.
    */
-  open fun getPigeonInternalApiProxyApiInterface(): PigeonInternalApiProxyApiInterface {
-    return PigeonInternalApiProxyApiInterface(this)
+  open fun getPigeonApiProxyApiInterface(): PigeonApiProxyApiInterface {
+    return PigeonApiProxyApiInterface(this)
   }
 
   /**
-   * An implementation of [PigeonInternalApiClassWithApiRequirement] used to add a new Dart instance
-   * of `ClassWithApiRequirement` to the Dart `InstanceManager`.
+   * An implementation of [PigeonApiClassWithApiRequirement] used to add a new Dart instance of
+   * `ClassWithApiRequirement` to the Dart `InstanceManager`.
    */
-  abstract fun getPigeonInternalApiClassWithApiRequirement():
-      PigeonInternalApiClassWithApiRequirement
+  abstract fun getPigeonApiClassWithApiRequirement(): PigeonApiClassWithApiRequirement
 
   fun setUp() {
-    ProxyApiTestsPigeonInternalInstanceManagerApi.setUpMessageHandlers(
-        binaryMessenger, instanceManager)
-    PigeonInternalApiProxyApiTestClass.setUpMessageHandlers(
-        binaryMessenger, getPigeonInternalApiProxyApiTestClass())
-    PigeonInternalApiProxyApiSuperClass.setUpMessageHandlers(
-        binaryMessenger, getPigeonInternalApiProxyApiSuperClass())
-    PigeonInternalApiClassWithApiRequirement.setUpMessageHandlers(
-        binaryMessenger, getPigeonInternalApiClassWithApiRequirement())
+    ProxyApiTestsPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, instanceManager)
+    PigeonApiProxyApiTestClass.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiProxyApiTestClass())
+    PigeonApiProxyApiSuperClass.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiProxyApiSuperClass())
+    PigeonApiClassWithApiRequirement.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiClassWithApiRequirement())
   }
 
   fun tearDown() {
-    ProxyApiTestsPigeonInternalInstanceManagerApi.setUpMessageHandlers(binaryMessenger, null)
-    PigeonInternalApiProxyApiTestClass.setUpMessageHandlers(binaryMessenger, null)
-    PigeonInternalApiProxyApiSuperClass.setUpMessageHandlers(binaryMessenger, null)
-    PigeonInternalApiClassWithApiRequirement.setUpMessageHandlers(binaryMessenger, null)
+    ProxyApiTestsPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiProxyApiTestClass.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiProxyApiSuperClass.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiClassWithApiRequirement.setUpMessageHandlers(binaryMessenger, null)
   }
 }
 
-private class ProxyApiTestsPigeonInternalProxyApiBaseCodec(
-    val registrar: ProxyApiTestsPigeonInternalProxyApiRegistrar
+private class ProxyApiTestsPigeonProxyApiBaseCodec(
+    val registrar: ProxyApiTestsPigeonProxyApiRegistrar
 ) : ProxyApiTestsPigeonCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
@@ -451,13 +449,13 @@ private class ProxyApiTestsPigeonInternalProxyApiBaseCodec(
     }
 
     if (value is ProxyApiTestClass) {
-      registrar.getPigeonInternalApiProxyApiTestClass().pigeon_newInstance(value) {}
+      registrar.getPigeonApiProxyApiTestClass().pigeon_newInstance(value) {}
     } else if (value is com.example.test_plugin.ProxyApiSuperClass) {
-      registrar.getPigeonInternalApiProxyApiSuperClass().pigeon_newInstance(value) {}
+      registrar.getPigeonApiProxyApiSuperClass().pigeon_newInstance(value) {}
     } else if (value is ProxyApiInterface) {
-      registrar.getPigeonInternalApiProxyApiInterface().pigeon_newInstance(value) {}
+      registrar.getPigeonApiProxyApiInterface().pigeon_newInstance(value) {}
     } else if (android.os.Build.VERSION.SDK_INT >= 25 && value is ClassWithApiRequirement) {
-      registrar.getPigeonInternalApiClassWithApiRequirement().pigeon_newInstance(value) {}
+      registrar.getPigeonApiClassWithApiRequirement().pigeon_newInstance(value) {}
     }
 
     when {
@@ -510,8 +508,8 @@ private open class ProxyApiTestsPigeonCodec : StandardMessageCodec() {
  * integration tests.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonInternalApiProxyApiTestClass(
-    open val pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar
+abstract class PigeonApiProxyApiTestClass(
+    open val pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
 ) {
   abstract fun pigeon_defaultConstructor(
       aBool: Boolean,
@@ -1012,10 +1010,7 @@ abstract class PigeonInternalApiProxyApiTestClass(
 
   companion object {
     @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonInternalApiProxyApiTestClass?
-    ) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiProxyApiTestClass?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
         val channel =
@@ -3979,21 +3974,21 @@ abstract class PigeonInternalApiProxyApiTestClass(
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonInternalApiProxyApiSuperClass] used to access callback methods */
-  fun pigeon_getPigeonInternalApiProxyApiSuperClass(): PigeonInternalApiProxyApiSuperClass {
-    return pigeonRegistrar.getPigeonInternalApiProxyApiSuperClass()
+  /** An implementation of [PigeonApiProxyApiSuperClass] used to access callback methods */
+  fun pigeon_getPigeonApiProxyApiSuperClass(): PigeonApiProxyApiSuperClass {
+    return pigeonRegistrar.getPigeonApiProxyApiSuperClass()
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonInternalApiProxyApiInterface] used to access callback methods */
-  fun pigeon_getPigeonInternalApiProxyApiInterface(): PigeonInternalApiProxyApiInterface {
-    return pigeonRegistrar.getPigeonInternalApiProxyApiInterface()
+  /** An implementation of [PigeonApiProxyApiInterface] used to access callback methods */
+  fun pigeon_getPigeonApiProxyApiInterface(): PigeonApiProxyApiInterface {
+    return pigeonRegistrar.getPigeonApiProxyApiInterface()
   }
 }
 /** ProxyApi to serve as a super class to the core ProxyApi class. */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonInternalApiProxyApiSuperClass(
-    open val pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar
+abstract class PigeonApiProxyApiSuperClass(
+    open val pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
 ) {
   abstract fun pigeon_defaultConstructor(): com.example.test_plugin.ProxyApiSuperClass
 
@@ -4001,10 +3996,7 @@ abstract class PigeonInternalApiProxyApiSuperClass(
 
   companion object {
     @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonInternalApiProxyApiSuperClass?
-    ) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiProxyApiSuperClass?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
         val channel =
@@ -4097,8 +4089,8 @@ abstract class PigeonInternalApiProxyApiSuperClass(
 }
 /** ProxyApi to serve as an interface to the core ProxyApi class. */
 @Suppress("UNCHECKED_CAST")
-open class PigeonInternalApiProxyApiInterface(
-    open val pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar
+open class PigeonApiProxyApiInterface(
+    open val pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
 ) {
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ProxyApiInterface and attaches it to [pigeon_instanceArg]. */
@@ -4164,8 +4156,8 @@ open class PigeonInternalApiProxyApiInterface(
 }
 
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonInternalApiClassWithApiRequirement(
-    open val pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar
+abstract class PigeonApiClassWithApiRequirement(
+    open val pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
 ) {
   @androidx.annotation.RequiresApi(api = 25)
   abstract fun pigeon_defaultConstructor(): ClassWithApiRequirement
@@ -4177,7 +4169,7 @@ abstract class PigeonInternalApiClassWithApiRequirement(
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(
         binaryMessenger: BinaryMessenger,
-        api: PigeonInternalApiClassWithApiRequirement?
+        api: PigeonApiClassWithApiRequirement?
     ) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       if (android.os.Build.VERSION.SDK_INT >= 25) {
