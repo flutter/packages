@@ -209,10 +209,12 @@ void main() {
         setUpMockMap(mapId: mapId);
 
     // Set some arbitrary options.
-    const MapConfiguration config = MapConfiguration(
+    final CameraTargetBounds cameraBounds = CameraTargetBounds(LatLngBounds(
+        southwest: const LatLng(10, 20), northeast: const LatLng(30, 40)));
+    final MapConfiguration config = MapConfiguration(
       compassEnabled: true,
-      liteModeEnabled: false,
       mapType: MapType.terrain,
+      cameraTargetBounds: cameraBounds,
     );
     await maps.updateMapConfiguration(config, mapId: mapId);
 
@@ -220,16 +222,21 @@ void main() {
         verify(api.updateMapConfiguration(captureAny));
     final PlatformMapConfiguration passedConfig =
         verification.captured[0] as PlatformMapConfiguration;
-    final Map<String, Object?> passedConfigJson =
-        passedConfig.json as Map<String, Object?>;
     // Each set option should be present.
-    expect(passedConfigJson['compassEnabled'], true);
-    expect(passedConfigJson['liteModeEnabled'], false);
-    expect(passedConfigJson['mapType'], MapType.terrain.index);
+    expect(passedConfig.compassEnabled, true);
+    expect(passedConfig.mapType, PlatformMapType.terrain);
+    expect(passedConfig.cameraTargetBounds?.bounds?.northeast.latitude,
+        cameraBounds.bounds?.northeast.latitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.northeast.longitude,
+        cameraBounds.bounds?.northeast.longitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.southwest.latitude,
+        cameraBounds.bounds?.southwest.latitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.southwest.longitude,
+        cameraBounds.bounds?.southwest.longitude);
     // Spot-check that unset options are not be present.
-    expect(passedConfigJson['myLocationEnabled'], isNull);
-    expect(passedConfigJson['cameraTargetBounds'], isNull);
-    expect(passedConfigJson['padding'], isNull);
+    expect(passedConfig.myLocationEnabled, isNull);
+    expect(passedConfig.minMaxZoomPreference, isNull);
+    expect(passedConfig.padding, isNull);
   });
 
   test('updateMapOptions passes expected arguments', () async {
@@ -238,10 +245,12 @@ void main() {
         setUpMockMap(mapId: mapId);
 
     // Set some arbitrary options.
+    final CameraTargetBounds cameraBounds = CameraTargetBounds(LatLngBounds(
+        southwest: const LatLng(10, 20), northeast: const LatLng(30, 40)));
     final Map<String, Object?> config = <String, Object?>{
       'compassEnabled': true,
-      'liteModeEnabled': false,
       'mapType': MapType.terrain.index,
+      'cameraTargetBounds': cameraBounds.toJson(),
     };
     await maps.updateMapOptions(config, mapId: mapId);
 
@@ -249,16 +258,21 @@ void main() {
         verify(api.updateMapConfiguration(captureAny));
     final PlatformMapConfiguration passedConfig =
         verification.captured[0] as PlatformMapConfiguration;
-    final Map<String, Object?> passedConfigJson =
-        passedConfig.json as Map<String, Object?>;
     // Each set option should be present.
-    expect(passedConfigJson['compassEnabled'], true);
-    expect(passedConfigJson['liteModeEnabled'], false);
-    expect(passedConfigJson['mapType'], MapType.terrain.index);
+    expect(passedConfig.compassEnabled, true);
+    expect(passedConfig.mapType, PlatformMapType.terrain);
+    expect(passedConfig.cameraTargetBounds?.bounds?.northeast.latitude,
+        cameraBounds.bounds?.northeast.latitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.northeast.longitude,
+        cameraBounds.bounds?.northeast.longitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.southwest.latitude,
+        cameraBounds.bounds?.southwest.latitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.southwest.longitude,
+        cameraBounds.bounds?.southwest.longitude);
     // Spot-check that unset options are not be present.
-    expect(passedConfigJson['myLocationEnabled'], isNull);
-    expect(passedConfigJson['cameraTargetBounds'], isNull);
-    expect(passedConfigJson['padding'], isNull);
+    expect(passedConfig.myLocationEnabled, isNull);
+    expect(passedConfig.minMaxZoomPreference, isNull);
+    expect(passedConfig.padding, isNull);
   });
 
   test('updateCircles passes expected arguments', () async {
@@ -286,11 +300,46 @@ void main() {
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.circleId.value);
     // Object two should be changed.
-    expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    {
+      expect(toChange.length, 1);
+      final List<Object?>? encoded = toChange.first?.encode() as List<Object?>?;
+      expect(encoded?.getRange(0, 6), <Object?>[
+        object2new.consumeTapEvents,
+        object2new.fillColor.value,
+        object2new.strokeColor.value,
+        object2new.visible,
+        object2new.strokeWidth,
+        object2new.zIndex.toDouble(),
+      ]);
+      final PlatformLatLng? latLng = encoded?[6] as PlatformLatLng?;
+      expect(latLng?.latitude, object2new.center.latitude);
+      expect(latLng?.longitude, object2new.center.longitude);
+      expect(encoded?.getRange(7, 9), <Object?>[
+        object2new.radius,
+        object2new.circleId.value,
+      ]);
+    }
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    {
+      expect(toAdd.length, 1);
+      final List<Object?>? encoded = toAdd.first?.encode() as List<Object?>?;
+      expect(encoded?.getRange(0, 6), <Object?>[
+        object3.consumeTapEvents,
+        object3.fillColor.value,
+        object3.strokeColor.value,
+        object3.visible,
+        object3.strokeWidth,
+        object3.zIndex.toDouble(),
+      ]);
+      final PlatformLatLng? latLng = encoded?[6] as PlatformLatLng?;
+      expect(latLng?.latitude, object3.center.latitude);
+      expect(latLng?.longitude, object3.center.longitude);
+      expect(encoded?.getRange(7, 9), <Object?>[
+        object3.radius,
+        object3.circleId.value,
+      ]);
+    }
   });
 
   test('updateClusterManagers passes expected arguments', () async {
@@ -347,11 +396,65 @@ void main() {
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.markerId.value);
     // Object two should be changed.
-    expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    {
+      expect(toChange.length, 1);
+      final List<Object?>? encoded = toChange.first?.encode() as List<Object?>?;
+      expect(encoded?[0], object2new.alpha);
+      final PlatformOffset? offset = encoded?[1] as PlatformOffset?;
+      expect(offset?.dx, object2new.anchor.dx);
+      expect(offset?.dy, object2new.anchor.dy);
+      expect(encoded?.getRange(2, 6).toList(), <Object?>[
+        object2new.consumeTapEvents,
+        object2new.draggable,
+        object2new.flat,
+        object2new.icon.toJson(),
+      ]);
+      final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
+      expect(window?.title, object2new.infoWindow.title);
+      expect(window?.snippet, object2new.infoWindow.snippet);
+      expect(window?.anchor.dx, object2new.infoWindow.anchor.dx);
+      expect(window?.anchor.dy, object2new.infoWindow.anchor.dy);
+      final PlatformLatLng? latLng = encoded?[7] as PlatformLatLng?;
+      expect(latLng?.latitude, object2new.position.latitude);
+      expect(latLng?.longitude, object2new.position.longitude);
+      expect(encoded?.getRange(8, 13), <Object?>[
+        object2new.rotation,
+        object2new.visible,
+        object2new.zIndex,
+        object2new.markerId.value,
+        object2new.clusterManagerId?.value,
+      ]);
+    }
     // Object 3 should be added.
-    expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    {
+      expect(toAdd.length, 1);
+      final List<Object?>? encoded = toAdd.first?.encode() as List<Object?>?;
+      expect(encoded?[0], object3.alpha);
+      final PlatformOffset? offset = encoded?[1] as PlatformOffset?;
+      expect(offset?.dx, object3.anchor.dx);
+      expect(offset?.dy, object3.anchor.dy);
+      expect(encoded?.getRange(2, 6).toList(), <Object?>[
+        object3.consumeTapEvents,
+        object3.draggable,
+        object3.flat,
+        object3.icon.toJson(),
+      ]);
+      final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
+      expect(window?.title, object3.infoWindow.title);
+      expect(window?.snippet, object3.infoWindow.snippet);
+      expect(window?.anchor.dx, object3.infoWindow.anchor.dx);
+      expect(window?.anchor.dy, object3.infoWindow.anchor.dy);
+      final PlatformLatLng? latLng = encoded?[7] as PlatformLatLng?;
+      expect(latLng?.latitude, object3.position.latitude);
+      expect(latLng?.longitude, object3.position.longitude);
+      expect(encoded?.getRange(8, 13), <Object?>[
+        object3.rotation,
+        object3.visible,
+        object3.zIndex,
+        object3.markerId.value,
+        object3.clusterManagerId?.value,
+      ]);
+    }
   });
 
   test('updatePolygons passes expected arguments', () async {
@@ -645,17 +748,15 @@ void main() {
               methodCall.arguments as Map<dynamic, dynamic>);
           if (args.containsKey('params')) {
             final Uint8List paramsUint8List = args['params'] as Uint8List;
-            const StandardMessageCodec codec = StandardMessageCodec();
             final ByteData byteData = ByteData.sublistView(paramsUint8List);
-            final Map<String, dynamic> creationParams =
-                Map<String, dynamic>.from(
-                    codec.decodeMessage(byteData) as Map<dynamic, dynamic>);
-            if (creationParams.containsKey('options')) {
-              final Map<String, dynamic> options = Map<String, dynamic>.from(
-                  creationParams['options'] as Map<dynamic, dynamic>);
-              if (options.containsKey('cloudMapId')) {
-                passedCloudMapIdCompleter
-                    .complete(options['cloudMapId'] as String);
+            final PlatformMapViewCreationParams? creationParams =
+                MapsApi.pigeonChannelCodec.decodeMessage(byteData)
+                    as PlatformMapViewCreationParams?;
+            if (creationParams != null) {
+              final String? passedMapId =
+                  creationParams.mapConfiguration.cloudMapId;
+              if (passedMapId != null) {
+                passedCloudMapIdCompleter.complete(passedMapId);
               }
             }
           }
