@@ -104,7 +104,7 @@ void main() {
   group('maybeActiveBreakpointFromSlotLayout', () {
     testWidgets('returns correct breakpoint from SlotLayout on mobile devices',
         (WidgetTester tester) async {
-      // Small layout on mobile
+      // Small layout on mobile.
       await tester.pumpWidget(SimulatedLayout.small.slot(tester));
       await tester.pumpAndSettle();
       expect(
@@ -161,7 +161,7 @@ void main() {
   group('defaultBreakpointOf', () {
     testWidgets('returns correct default breakpoint on mobile devices',
         (WidgetTester tester) async {
-      // Small layout on mobile
+      // Small layout on mobile.
       await tester.pumpWidget(SimulatedLayout.small.slot(tester));
       await tester.pumpAndSettle();
       expect(Breakpoint.defaultBreakpointOf(tester.element(find.byType(Theme))),
@@ -212,7 +212,7 @@ void main() {
   group('activeBreakpointOf', () {
     testWidgets('returns correct active breakpoint on mobile devices',
         (WidgetTester tester) async {
-      // Small layout on mobile
+      // Small layout on mobile.
       await tester.pumpWidget(SimulatedLayout.small.slot(tester));
       await tester.pumpAndSettle();
       expect(
