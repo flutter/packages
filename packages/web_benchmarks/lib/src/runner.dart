@@ -160,10 +160,26 @@ class BenchmarkServer {
     Cascade cascade = Cascade();
 
     // Serves the static files built for the app (html, js, images, fonts, etc)
-    cascade = cascade.add(createStaticHandler(
-      path.join(benchmarkAppDirectory.path, 'build', 'web'),
-      defaultDocument: 'index.html',
-    ));
+    final Handler buildFolderHandler = createStaticHandler(
+        path.join(benchmarkAppDirectory.path, 'build', 'web'),
+        defaultDocument: 'index.html',
+    );
+    if (compilationOptions.useWasm) {
+      // In wasm mode, we need cross origin isolation, so we need to serve the
+      // html document with COOP/COEP headers.
+      cascade = cascade.add((Request request) async {
+        final Response response = await buildFolderHandler(request);
+        if (response.mimeType == 'text/html') {
+          return response.change(headers: <String, String>{
+            'Cross-Origin-Opener-Policy': 'same-origin',
+            'Cross-Origin-Embedder-Policy': 'require-corp',
+          });
+        }
+        return response;
+      });
+    } else {
+      cascade = cascade.add(buildFolderHandler);
+    }
 
     // Serves the benchmark server API used by the benchmark app to coordinate
     // the running of benchmarks.
