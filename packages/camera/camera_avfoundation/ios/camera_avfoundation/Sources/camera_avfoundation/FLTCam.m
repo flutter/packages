@@ -1223,7 +1223,7 @@ NSString *const errorMethod = @"error";
     return NO;
   }
 
-  [self setUpCaptureSessionForAudio];
+  [self setUpCaptureSessionForAudioIfNeeded];
 
   _videoWriter = [[AVAssetWriter alloc] initWithURL:outputURL
                                            fileType:AVFileTypeMPEG4
@@ -1303,22 +1303,17 @@ NSString *const errorMethod = @"error";
   return YES;
 }
 
+// this same function is also in video_player_avfoundation
 // configure application wide audio session manually to prevent overwriting
 // flag MixWithOthers by capture session, only change category if it is considered
 // as upgrade which means it can only enable ability to play in silent mode or
 // ability to record audio but never disables it, that could affect other plugins
 // which depend on this global state, only change category or options if there is
-// change to prevent unnecessary route changes which can cause lags
+// change to prevent unnecessary lags and silence
 // https://github.com/flutter/flutter/issues/131553
 static void upgradeAudioSessionCategory(AVAudioSessionCategory category,
                                         AVAudioSessionCategoryOptions options,
                                         AVAudioSessionCategoryOptions clearOptions) {
-  if (!NSThread.isMainThread) {
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      upgradeAudioSessionCategory(category, options, clearOptions);
-    });
-    return;
-  }
   if (category == nil) {
     category = AVAudioSession.sharedInstance.category;
   }
@@ -1344,7 +1339,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory category,
   [AVAudioSession.sharedInstance setCategory:category withOptions:options error:nil];
 }
 
-- (void)setUpCaptureSessionForAudio {
+- (void)setUpCaptureSessionForAudioIfNeeded {
   // Don't setup audio twice or we will lose the audio.
   if (!_mediaSettings.enableAudio || _isAudioSetup) {
     return;
@@ -1362,11 +1357,13 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory category,
   // Setup the audio output.
   _audioOutput = [[AVCaptureAudioDataOutput alloc] init];
 
-  upgradeAudioSessionCategory(AVAudioSessionCategoryPlayAndRecord,
-                              AVAudioSessionCategoryOptionDefaultToSpeaker |
-                                  AVAudioSessionCategoryOptionAllowBluetoothA2DP |
-                                  AVAudioSessionCategoryOptionAllowAirPlay,
-                              0);
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    upgradeAudioSessionCategory(AVAudioSessionCategoryPlayAndRecord,
+                                AVAudioSessionCategoryOptionDefaultToSpeaker |
+                                    AVAudioSessionCategoryOptionAllowBluetoothA2DP |
+                                    AVAudioSessionCategoryOptionAllowAirPlay,
+                                0);
+  });
 
   if ([_audioCaptureSession canAddInput:audioInput]) {
     [_audioCaptureSession addInput:audioInput];
