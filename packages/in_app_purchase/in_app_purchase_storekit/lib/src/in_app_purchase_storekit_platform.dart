@@ -8,11 +8,13 @@ import 'dart:ffi';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
+import 'package:in_app_purchase_storekit/src/store_kit_2_wrappers/platform_types/sk2_purchase_details.dart';
 
 import '../in_app_purchase_storekit.dart';
 import '../store_kit_2_wrappers.dart';
 import '../store_kit_wrappers.dart';
 import 'messages2.g.dart';
+import 'store_kit_2_wrappers/sk2_storefront_wrapper.dart';
 
 /// [IAPError.code] code for failed purchases.
 const String kPurchaseErrorCode = 'purchase_error';
@@ -37,9 +39,12 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   static late SKPaymentQueueWrapper _skPaymentQueueWrapper;
   static late _TransactionObserver _observer;
 
+  static late SK2TransactionObserver _sk2transactionObserver;
+
   @override
-  Stream<List<PurchaseDetails>> get purchaseStream =>
-      _observer.purchaseUpdatedController.stream;
+  Stream<List<PurchaseDetails>> get purchaseStream => useStoreKit2
+      ? _sk2transactionObserver.purchaseUpdatedController.stream
+      : _observer.purchaseUpdatedController.stream;
 
   /// Callback handler for transaction status changes.
   @visibleForTesting
@@ -58,22 +63,32 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
     _skPaymentQueueWrapper = SKPaymentQueueWrapper();
 
-    // Create a purchaseUpdatedController and notify the native side when to
-    // start of stop sending updates.
-    final StreamController<List<PurchaseDetails>> updateController =
-        StreamController<List<PurchaseDetails>>.broadcast(
-      onListen: () => _skPaymentQueueWrapper.startObservingTransactionQueue(),
-      onCancel: () => _skPaymentQueueWrapper.stopObservingTransactionQueue(),
-    );
-    _observer = _TransactionObserver(updateController);
-    _skPaymentQueueWrapper.setTransactionObserver(observer);
-    InAppPurchase2CallbackAPI.setUp(SK2TransactionCallbacks());
+    if (useStoreKit2) {
+      final StreamController<List<PurchaseDetails>> updateController2 =
+          StreamController<List<PurchaseDetails>>.broadcast(
+        onListen: () => SK2Transaction.startListeningToTransactions(),
+        onCancel: () => SK2Transaction.stopListeningToTransactions(),
+      );
+      _sk2transactionObserver =
+          SK2TransactionObserver(purchaseUpdatedController: updateController2);
+
+      InAppPurchase2CallbackAPI.setUp(_sk2transactionObserver);
+    } else {
+      // Create a purchaseUpdatedController and notify the native side when to
+      // start of stop sending updates.
+      final StreamController<List<PurchaseDetails>> updateController =
+          StreamController<List<PurchaseDetails>>.broadcast(
+        onListen: () => _skPaymentQueueWrapper.startObservingTransactionQueue(),
+        onCancel: () => _skPaymentQueueWrapper.stopObservingTransactionQueue(),
+      );
+      _observer = _TransactionObserver(updateController);
+      _skPaymentQueueWrapper.setTransactionObserver(observer);
+    }
   }
 
   @override
   Future<bool> isAvailable() {
     if (useStoreKit2) {
-      print("Hewwo");
       return AppStore().canMakePayments();
     }
     return SKPaymentQueueWrapper.canMakePayments();
@@ -83,8 +98,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {
     if (useStoreKit2) {
       print("dart purchase");
-      var result = await SK2Product.purchase(purchaseParam.productDetails.id);
-      print("dart purchasereturn ${result}");
+      await SK2Product.purchase(purchaseParam.productDetails.id);
       return true;
     }
     await _skPaymentQueueWrapper.addPayment(SKPaymentWrapper(
@@ -114,10 +128,9 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
       purchase is AppStorePurchaseDetails,
       'On iOS, the `purchase` should always be of type `AppStorePurchaseDetails`.',
     );
-
     if (useStoreKit2) {
       print('dart finishing${purchase.productID}');
-      return SK2Transaction.finish(purchase.purchaseID! as int);
+      return SK2Transaction.finish(int.parse(purchase.purchaseID!));
     }
 
     return _skPaymentQueueWrapper.finishTransaction(
@@ -143,7 +156,6 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   Future<ProductDetailsResponse> queryProductDetails(
       Set<String> identifiers) async {
     if (useStoreKit2) {
-      print("hewwo 2");
       List<SK2Product> products = <SK2Product>[];
       Set<String> invalidProductIdentifiers;
       PlatformException? exception;
@@ -208,6 +220,9 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   /// See: https://developer.apple.com/documentation/storekit/skstorefront?language=objc
   @override
   Future<String> countryCode() async {
+    if (useStoreKit2) {
+      return SK2Storefront().countryCode();
+    }
     return (await _skPaymentQueueWrapper.storefront())?.countryCode ?? '';
   }
 
@@ -294,6 +309,10 @@ class _TransactionObserver implements SKTransactionObserverWrapper {
     return _receiptData;
   }
 
+  /// Listen to transaction updates from storekit, and convert to
+  /// purchasedetails
+  /// Problem is calling purchase alters purchaseDetails, but it doesnt have access?
+  /// Or should I just get transactions directly from the listener?
   Future<void> _handleTransationUpdates(
       List<SKPaymentTransactionWrapper> transactions) async {
     if (_transactionRestoreState ==

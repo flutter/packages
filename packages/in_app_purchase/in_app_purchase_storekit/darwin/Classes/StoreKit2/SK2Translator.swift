@@ -125,7 +125,7 @@ extension Product.SubscriptionOffer.PaymentMode {
 
 @available(iOS 15.0, macOS 12.0, *)
 extension Transaction {
-  func convertToPigeon() -> SK2TransactionMessage {
+  func convertToPigeon(status: SK2ProductPurchaseResultMessage) -> SK2TransactionMessage {
 
     let dateFromatter: DateFormatter = DateFormatter()
     dateFromatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -136,7 +136,8 @@ extension Transaction {
       productId: productID,
       purchaseDate: dateFromatter.string(from: purchaseDate),
       purchasedQuantity: Int64(purchasedQuantity),
-      appAccountToken: appAccountToken?.uuidString
+      appAccountToken: appAccountToken?.uuidString,
+      status: status
     )
   }
 }

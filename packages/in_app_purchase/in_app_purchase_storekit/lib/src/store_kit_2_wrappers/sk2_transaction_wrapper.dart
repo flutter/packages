@@ -2,8 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
+import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
+
 import '../../store_kit_wrappers.dart';
 import '../messages2.g.dart';
+import 'platform_types/sk2_purchase_details.dart';
 
 InAppPurchase2API _hostapi = InAppPurchase2API();
 
@@ -12,18 +17,16 @@ InAppPurchase2API _hostapi = InAppPurchase2API();
 /// Dart wrapper around StoreKit2's [Transaction](https://developer.apple.com/documentation/storekit/transaction)
 ///
 class SK2Transaction {
-  SK2Transaction({
-    required this.id,
-    required this.originalId,
-    required this.productId,
-    required this.purchaseDate,
-    this.quantity = 1,
-    required this.appAccountToken,
-    this.subscriptionGroupID,
-    this.price,
-    this.transactionState,
-    this.error
-  });
+  SK2Transaction(
+      {required this.id,
+      required this.originalId,
+      required this.productId,
+      required this.purchaseDate,
+      this.quantity = 1,
+      required this.appAccountToken,
+      this.subscriptionGroupID,
+      this.price,
+      this.error});
 
   // SKTransaction
   final String id;
@@ -41,18 +44,26 @@ class SK2Transaction {
   final double? price;
 
   final SKError? error;
-  final SKPaymentTransactionStateWrapper transactionState;
+
   static Future<void> finish(int id) async {
     await _hostapi.finish(id);
   }
 
   static Future<List<SK2Transaction>> transactions() async {
-    List<SK2TransactionMessage?> msgs =  await _hostapi.transactions();
+    List<SK2TransactionMessage?> msgs = await _hostapi.transactions();
     List<SK2Transaction> transactions = msgs
         .map((SK2TransactionMessage? e) => e?.convertFromPigeon())
         .cast<SK2Transaction>()
         .toList();
     return transactions;
+  }
+
+  static void startListeningToTransactions() {
+    _hostapi.startListeningToTransactions();
+  }
+
+  static void stopListeningToTransactions() {
+    _hostapi.stopListeningToTransactions();
   }
 }
 
@@ -63,16 +74,32 @@ extension on SK2TransactionMessage {
         originalId: originalId.toString(),
         productId: productId,
         purchaseDate: purchaseDate,
-        appAccountToken: appAccountToken
+        appAccountToken: appAccountToken);
+  }
+
+  PurchaseDetails convertToDetails() {
+    print("converting to details");
+    return PurchaseDetails(
+      productID: productId,
+      verificationData: PurchaseVerificationData(
+          localVerificationData: "", serverVerificationData: "", source: ""),
+      transactionDate: "",
+      // Note that with sk2, any transactions that *can* be returned will require to be finished. So set this
+      // as pending for all transactions initially.
+      status: PurchaseStatus.purchased,
+      purchaseID: id.toString(),
     );
   }
 }
 
-class SK2TransactionCallbacks implements InAppPurchase2CallbackAPI {
-  @override
-  void onTransactionsUpdated(List<SK2TransactionMessage?> updatedTransactions) {
-    print('Transaction received');
-  }
+class SK2TransactionObserver implements InAppPurchase2CallbackAPI {
+  SK2TransactionObserver({required this.purchaseUpdatedController});
 
-  
+  final StreamController<List<PurchaseDetails>> purchaseUpdatedController;
+
+  @override
+  void onTransactionsUpdated(SK2TransactionMessage newTransaction) {
+    purchaseUpdatedController.add([newTransaction.convertToDetails()]);
+    print(purchaseUpdatedController);
+  }
 }

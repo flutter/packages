@@ -1,29 +1,26 @@
-class TransactionCallbacks : InAppPurchase2CallbackAPI {
+class TransactionCallbacks: InAppPurchase2CallbackAPI {
   var callbackAPI: InAppPurchase2CallbackAPI
 
   init(binaryMessenger: FlutterBinaryMessenger) {
     callbackAPI = InAppPurchase2CallbackAPI(binaryMessenger: binaryMessenger)
     super.init(binaryMessenger: binaryMessenger)
   }
-  
+
   @available(iOS 15.0, *)
-  func transactionUpdated(updatedTransactions: [Transaction]) {
-    let transactionMsg = updatedTransactions.map { Transaction in
-      Transaction.convertToPigeon()
-    }
-    callbackAPI.onTransactionsUpdated(updatedTransactions: transactionMsg) { result in
+  func transactionUpdated(updatedTransactions: Transaction) {
+    let transactionMsg = updatedTransactions.convertToPigeon(
+      status: SK2ProductPurchaseResultMessage.success)
+    callbackAPI.onTransactionsUpdated(newTransaction: transactionMsg) { result in
       switch result {
-        case .success:
-            print("Transaction updates successfully sent")
-        case .failure(let error):
-            print("Failed to send transaction updates: \(error)")
+      case .success:
+        print("Transaction updates successfully sent")
+      case .failure(let error):
+        print("Failed to send transaction updates: \(error)")
       }
     }
   }
 
-
 }
-
 
 //private class PigeonFlutterApi {
 //  var flutterAPI: MessageFlutterApi

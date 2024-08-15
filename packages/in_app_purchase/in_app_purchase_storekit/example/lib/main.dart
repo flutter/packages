@@ -398,6 +398,10 @@ class _MyAppState extends State<_MyApp> {
 
   Future<void> _handleReportedPurchaseState(
       PurchaseDetails purchaseDetails) async {
+    print("in example");
+    print(purchaseDetails.productID);
+    print(purchaseDetails.purchaseID);
+    print(purchaseDetails.status);
     if (purchaseDetails.status == PurchaseStatus.pending) {
       showPendingUI();
     } else {

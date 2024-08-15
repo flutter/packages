@@ -7,6 +7,7 @@
 //
 //import Foundation
 //
-//extension InAppPurchasePlugin : PigeonsStoreKit2API {
-//
-//}
+@available(iOS 15.0, *)
+extension InAppPurchasePlugin {
+
+}

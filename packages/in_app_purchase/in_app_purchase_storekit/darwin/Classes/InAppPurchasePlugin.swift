@@ -11,7 +11,9 @@ import StoreKit
   import FlutterMacOS
 #endif
 
+@available(iOS 13.0, *)
 public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InAppPurchase2API {
+
   private let receiptManager: FIAPReceiptManager
   private var productsCache: NSMutableDictionary = [:]
   private var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
@@ -26,9 +28,9 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
   public var registrar: FlutterPluginRegistrar?
   // This property is optional, as it requires self to exist to be initialized.
   public var paymentQueueHandler: FLTPaymentQueueHandlerProtocol?
-  var updateListenerTask: Any? = nil
-  var transactionListenerAPI : TransactionCallbacks? = nil;
-  var cache : Any? = nil;
+  var updateListenerTask: Task<Void, Error>?
+  var transactionListenerAPI: TransactionCallbacks? = nil
+  var cache: Any? = nil
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
@@ -58,7 +60,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
     self.receiptManager = receiptManager
     self.handlerFactory = handlerFactory
     self.transactionObserverCallbackChannel = transactionCallbackChannel
-
     super.init()
   }
 
@@ -95,10 +96,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
       let messenger = registrar.messenger
     #endif
     setupTransactionObserverChannelIfNeeded(withMessenger: messenger)
-    if #available(iOS 15.0, *) {
-      self.cache = TransactionCache()
-      self.updateListenerTask = listenForTransactions()
-    }
     self.transactionListenerAPI = TransactionCallbacks.init(binaryMessenger: messenger)
 
   }
@@ -459,7 +456,10 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
 
   // Gets the appropriate product, then calls purchase on it.
   // https://developer.apple.com/documentation/storekit/product/3791971-purchase
-  func purchase(id: String, options: SK2ProductPurchaseOptionsMessage?, completion: @escaping (Result<SK2ProductPurchaseResultMessage, any Error>) -> Void) {
+  func purchase(
+    id: String, options: SK2ProductPurchaseOptionsMessage?,
+    completion: @escaping (Result<SK2ProductPurchaseResultMessage, any Error>) -> Void
+  ) {
     if #available(iOS 15.0, macOS 12.0, *) {
       Task {
         do {
@@ -476,6 +476,11 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
           case .success(let verification):
             switch verification {
             case .verified(let transaction):
+              // return transaction here too?
+              // need to pass in if it succeeded?
+              print("purchase verified native")
+              TransactionCache.shared.add(transaction: transaction)
+              self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
               completion(.success(result.convertToPigeon()))
             case .unverified(_, let error):
               completion(.failure(error))
@@ -528,7 +533,9 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
     if #available(iOS 15.0, macOS 12, *) {
       Task {
         do {
-          let transactionsMsgs = await rawTransactions().map { $0.convertToPigeon() }
+          let transactionsMsgs = await rawTransactions().map {
+            $0.convertToPigeon(status: SK2ProductPurchaseResultMessage.success)
+          }
           completion(.success(transactionsMsgs))
         }
       }
@@ -537,63 +544,83 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
     }
   }
 
-
-  func finish(id : Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
+  func finish(id: Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
     if #available(iOS 15.0, *) {
       Task {
-        let transactionCache = self.cache as! TransactionCache;
-        let transaction = transactionCache.get(id: Int(id))
-        transactionCache.remove(transactionToRemove: transaction)
+        print("native finish")
+        let transaction = TransactionCache.shared.get(id: Int(id))
+        TransactionCache.shared.remove(transactionToRemove: transaction)
         await transaction.finish()
-        print("native finish");
-        completion(.success(()));
+        completion(.success(()))
       }
-      }
+    }
+  }
+
+  func startListeningToTransactions() throws {
+    if #available(iOS 15.0, *) {
+      self.updateListenerTask = self.listenForTransactions()
+    }
+  }
+
+  func stopListeningToTransactions() throws {
+    self.updateListenerTask = nil
   }
 
   @available(iOS 15.0, *)
+  /// This only listens for UNFINISHED transactions that occur outside of the app,
+  /// amd will emit all at once at app launch
   func listenForTransactions() -> Task<Void, Error> {
-    let transactionCache = self.cache as! TransactionCache
-      return Task.detached {
-        print("hiya")
-        var verfiedArray:[Transaction] = [];
-        var unverifiedArray = [];
-        for await verificationResult in Transaction.updates {
-          print("hiya2")
-             switch verificationResult {
-             case .verified(let transaction):
-               verfiedArray.append(transaction)
-               transactionCache.add(transaction: transaction)
-             case .unverified(let transaction, _):
-               unverifiedArray.append(transaction)
-             }
-         }
-        self.transactionListenerAPI?.transactionUpdated(updatedTransactions: verfiedArray)
+    return Task.detached {
+      let transactionCache = self.cache as! TransactionCache
+      print("hiya")
+      var verfiedArray: [Transaction] = []
+      var unverifiedArray = []
+      for await verificationResult in Transaction.updates {
+        print("HIT MEEEE PLS")
+        switch verificationResult {
+        case .verified(let transaction):
+          verfiedArray.append(transaction)
+          transactionCache.add(transaction: transaction)
+          self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
+        case .unverified(let transaction, _):
+          unverifiedArray.append(transaction)
         }
-      }
-  }
 
-  // Raw storekit calls
-
-  @available(iOS 15.0, macOS 12.0, *)
-  func rawProducts(identifiers: [String]) async throws -> [Product] {
-    return try await Product.products(for: identifiers)
-  }
-
-  @available(iOS 15.0, macOS 12.0, *)
-  func rawTransactions() async -> [Transaction] {
-    var transactions: [Transaction] = []
-
-    for await verificationResult in Transaction.unfinished {
-      switch verificationResult {
-      case .verified(let transaction):
-        transactions.append(transaction)
-      case .unverified(_, _):
-        // Handle unverified transactions if necessary
-        break
       }
     }
 
-    return transactions
+  }
+  func countryCode(completion: @escaping (Result<String, any Error>) -> Void) {
+    Task {
+      if #available(iOS 15.0, *) {
+        return await Storefront.current?.countryCode
+      } else {
+        fatalError()
+      }
+    }
+  }
+}
+
+// Raw storekit calls
+
+@available(iOS 15.0, macOS 12.0, *)
+func rawProducts(identifiers: [String]) async throws -> [Product] {
+  return try await Product.products(for: identifiers)
+}
+
+@available(iOS 15.0, macOS 12.0, *)
+func rawTransactions() async -> [Transaction] {
+  var transactions: [Transaction] = []
+
+  for await verificationResult in Transaction.all {
+    switch verificationResult {
+    case .verified(let transaction):
+      transactions.append(transaction)
+    case .unverified(_, _):
+      // Handle unverified transactions if necessary
+      break
+    }
   }
 
+  return transactions
+}

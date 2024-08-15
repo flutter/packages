@@ -129,20 +129,21 @@ class SK2PriceLocaleMessage {
 }
 
 class SK2TransactionMessage {
-  SK2TransactionMessage({
-    required this.id,
-    required this.originalId,
-    required this.productId,
-    required this.purchaseDate,
-    this.purchasedQuantity = 1,
-    this.appAccountToken,
-  });
+  SK2TransactionMessage(
+      {required this.id,
+      required this.originalId,
+      required this.productId,
+      required this.purchaseDate,
+      this.purchasedQuantity = 1,
+      this.appAccountToken,
+      required this.status});
   final int id;
   final int originalId;
   final String productId;
   final String purchaseDate;
   final int purchasedQuantity;
   final String? appAccountToken;
+  final SK2ProductPurchaseResultMessage status;
 }
 
 // Link the correct dart class
@@ -181,9 +182,16 @@ abstract class InAppPurchase2API {
 
   @async
   void finish(int id);
+
+  void startListeningToTransactions();
+
+  void stopListeningToTransactions();
+
+  @async
+  String countryCode();
 }
 
 @FlutterApi()
 abstract class InAppPurchase2CallbackAPI {
-  void onTransactionsUpdated(List<SK2TransactionMessage?> updatedTransactions);
+  void onTransactionsUpdated(SK2TransactionMessage newTransaction);
 }

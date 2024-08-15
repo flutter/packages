@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Foundation
+import StoreKit
 import StoreKitTest
 
 @testable import in_app_purchase_storekit
