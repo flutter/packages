@@ -95,14 +95,14 @@ void main() {
       final String collapsedCode = _collapseNewlineAndIndentation(code);
 
       // Instance Manager
-      expect(code, contains(r'class MyFilePigeonInstanceManager'));
-      expect(code, contains(r'class MyFilePigeonInstanceManagerApi'));
+      expect(code, contains(r'class MyFilePigeonInternalInstanceManager'));
+      expect(code, contains(r'class MyFilePigeonInternalInstanceManagerApi'));
 
       // API registrar
       expect(
         code,
         contains(
-          'abstract class MyFilePigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger)',
+          'abstract class MyFilePigeonInternalProxyApiRegistrar(val binaryMessenger: BinaryMessenger)',
         ),
       );
 
