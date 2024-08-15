@@ -74,29 +74,30 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 /// Handles the callback when an object is deallocated.
-protocol ProxyApiTestsPigeonFinalizerDelegate: AnyObject {
+protocol ProxyApiTestsPigeonInternalFinalizerDelegate: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
   func onDeinit(identifier: Int64)
 }
 
 // Attaches to an object to receive a callback when the object is deallocated.
-internal final class ProxyApiTestsPigeonFinalizer {
+internal final class ProxyApiTestsPigeonInternalFinalizer {
   private static let associatedObjectKey = malloc(1)!
 
   private let identifier: Int64
   // Reference to the delegate is weak because the callback should be ignored if the
   // `InstanceManager` is deallocated.
-  private weak var delegate: ProxyApiTestsPigeonFinalizerDelegate?
+  private weak var delegate: ProxyApiTestsPigeonInternalFinalizerDelegate?
 
-  private init(identifier: Int64, delegate: ProxyApiTestsPigeonFinalizerDelegate) {
+  private init(identifier: Int64, delegate: ProxyApiTestsPigeonInternalFinalizerDelegate) {
     self.identifier = identifier
     self.delegate = delegate
   }
 
   internal static func attach(
-    to instance: AnyObject, identifier: Int64, delegate: ProxyApiTestsPigeonFinalizerDelegate
+    to instance: AnyObject, identifier: Int64,
+    delegate: ProxyApiTestsPigeonInternalFinalizerDelegate
   ) {
-    let finalizer = ProxyApiTestsPigeonFinalizer(identifier: identifier, delegate: delegate)
+    let finalizer = ProxyApiTestsPigeonInternalFinalizer(identifier: identifier, delegate: delegate)
     objc_setAssociatedObject(instance, associatedObjectKey, finalizer, .OBJC_ASSOCIATION_RETAIN)
   }
 
@@ -117,31 +118,31 @@ internal final class ProxyApiTestsPigeonFinalizer {
 /// When an instance is added with an identifier, either can be used to retrieve the other.
 ///
 /// Added instances are added as a weak reference and a strong reference. When the strong
-/// reference is removed and the weak reference is deallocated,`ProxyApiTestsPigeonFinalizerDelegate.onDeinit`
+/// reference is removed and the weak reference is deallocated,`ProxyApiTestsPigeonInternalFinalizerDelegate.onDeinit`
 /// is called with the instance's identifier. However, if the strong reference is removed and then the identifier is
 /// retrieved with the intention to pass the identifier to Dart (e.g. by calling `identifierWithStrongReference`),
 /// the strong reference to the instance is re-added. The strong reference will then need to be removed manually
 /// again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
-final class ProxyApiTestsPigeonInstanceManager {
+final class ProxyApiTestsPigeonInternalInstanceManager {
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
   // 0 <= n < 2^16.
   private static let minHostCreatedIdentifier: Int64 = 65536
 
-  private let lockQueue = DispatchQueue(label: "ProxyApiTestsPigeonInstanceManager")
+  private let lockQueue = DispatchQueue(label: "ProxyApiTestsPigeonInternalInstanceManager")
   private let identifiers: NSMapTable<AnyObject, NSNumber> = NSMapTable(
     keyOptions: [.weakMemory, .objectPointerPersonality], valueOptions: .strongMemory)
   private let weakInstances: NSMapTable<NSNumber, AnyObject> = NSMapTable(
     keyOptions: .strongMemory, valueOptions: [.weakMemory, .objectPointerPersonality])
   private let strongInstances: NSMapTable<NSNumber, AnyObject> = NSMapTable(
     keyOptions: .strongMemory, valueOptions: [.strongMemory, .objectPointerPersonality])
-  private let finalizerDelegate: ProxyApiTestsPigeonFinalizerDelegate
+  private let finalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate
   private var nextIdentifier: Int64 = minHostCreatedIdentifier
 
-  public init(finalizerDelegate: ProxyApiTestsPigeonFinalizerDelegate) {
+  public init(finalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate) {
     self.finalizerDelegate = finalizerDelegate
   }
 
@@ -212,7 +213,7 @@ final class ProxyApiTestsPigeonInstanceManager {
     identifiers.setObject(NSNumber(value: identifier), forKey: instance)
     weakInstances.setObject(instance, forKey: NSNumber(value: identifier))
     strongInstances.setObject(instance, forKey: NSNumber(value: identifier))
-    ProxyApiTestsPigeonFinalizer.attach(
+    ProxyApiTestsPigeonInternalFinalizer.attach(
       to: instance, identifier: identifier, delegate: finalizerDelegate)
   }
 
@@ -223,7 +224,7 @@ final class ProxyApiTestsPigeonInstanceManager {
   /// strong reference to `instance` will be added and will need to be removed again with `removeInstance`.
   ///
   /// If this method returns a nonnull identifier, this method also expects the Dart
-  /// `ProxyApiTestsPigeonInstanceManager` to have, or recreate, a weak reference to the Dart instance the
+  /// `ProxyApiTestsPigeonInternalInstanceManager` to have, or recreate, a weak reference to the Dart instance the
   /// identifier is associated with.
   ///
   /// - Parameters:
@@ -262,7 +263,7 @@ final class ProxyApiTestsPigeonInstanceManager {
       identifiers.removeAllObjects()
       weakInstances.removeAllObjects()
       strongInstances.removeAllObjects()
-      nextIdentifier = ProxyApiTestsPigeonInstanceManager.minHostCreatedIdentifier
+      nextIdentifier = ProxyApiTestsPigeonInternalInstanceManager.minHostCreatedIdentifier
     }
   }
 
@@ -290,7 +291,7 @@ final class ProxyApiTestsPigeonInstanceManager {
   }
 }
 
-private class ProxyApiTestsPigeonInstanceManagerApi {
+private class ProxyApiTestsPigeonInternalInstanceManagerApi {
   /// The codec used for serializing messages.
   let codec = FlutterStandardMessageCodec.sharedInstance()
 
@@ -301,14 +302,15 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
     self.binaryMessenger = binaryMessenger
   }
 
-  /// Sets up an instance of `ProxyApiTestsPigeonInstanceManagerApi` to handle messages through the `binaryMessenger`.
+  /// Sets up an instance of `ProxyApiTestsPigeonInternalInstanceManagerApi` to handle messages through the `binaryMessenger`.
   static func setUpMessageHandlers(
-    binaryMessenger: FlutterBinaryMessenger, instanceManager: ProxyApiTestsPigeonInstanceManager?
+    binaryMessenger: FlutterBinaryMessenger,
+    instanceManager: ProxyApiTestsPigeonInternalInstanceManager?
   ) {
     let codec = FlutterStandardMessageCodec.sharedInstance()
     let removeStrongReferenceChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference",
+        "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManagerApi.removeStrongReference",
       binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       removeStrongReferenceChannel.setMessageHandler { message, reply in
@@ -325,7 +327,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
       removeStrongReferenceChannel.setMessageHandler(nil)
     }
     let clearChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.clear",
+      name: "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManagerApi.clear",
       binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       clearChannel.setMessageHandler { _, reply in
@@ -347,7 +349,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
     completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     let channelName: String =
-      "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference"
+      "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManagerApi.removeStrongReference"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([identifierArg] as [Any?]) { response in
@@ -366,53 +368,53 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
     }
   }
 }
-protocol ProxyApiTestsPigeonProxyApiDelegate {
-  /// An implementation of [PigeonApiProxyApiTestClass] used to add a new Dart instance of
+protocol ProxyApiTestsPigeonInternalProxyApiDelegate {
+  /// An implementation of [PigeonInternalApiProxyApiTestClass] used to add a new Dart instance of
   /// `ProxyApiTestClass` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiProxyApiTestClass(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
-    -> PigeonApiProxyApiTestClass
-  /// An implementation of [PigeonApiProxyApiSuperClass] used to add a new Dart instance of
+  func pigeonApiProxyApiTestClass(_ registrar: ProxyApiTestsPigeonInternalProxyApiRegistrar)
+    -> PigeonInternalApiProxyApiTestClass
+  /// An implementation of [PigeonInternalApiProxyApiSuperClass] used to add a new Dart instance of
   /// `ProxyApiSuperClass` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiProxyApiSuperClass(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
-    -> PigeonApiProxyApiSuperClass
-  /// An implementation of [PigeonApiProxyApiInterface] used to add a new Dart instance of
+  func pigeonApiProxyApiSuperClass(_ registrar: ProxyApiTestsPigeonInternalProxyApiRegistrar)
+    -> PigeonInternalApiProxyApiSuperClass
+  /// An implementation of [PigeonInternalApiProxyApiInterface] used to add a new Dart instance of
   /// `ProxyApiInterface` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiProxyApiInterface(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
-    -> PigeonApiProxyApiInterface
-  /// An implementation of [PigeonApiClassWithApiRequirement] used to add a new Dart instance of
+  func pigeonApiProxyApiInterface(_ registrar: ProxyApiTestsPigeonInternalProxyApiRegistrar)
+    -> PigeonInternalApiProxyApiInterface
+  /// An implementation of [PigeonInternalApiClassWithApiRequirement] used to add a new Dart instance of
   /// `ClassWithApiRequirement` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiClassWithApiRequirement(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
-    -> PigeonApiClassWithApiRequirement
+  func pigeonApiClassWithApiRequirement(_ registrar: ProxyApiTestsPigeonInternalProxyApiRegistrar)
+    -> PigeonInternalApiClassWithApiRequirement
 }
 
-extension ProxyApiTestsPigeonProxyApiDelegate {
-  func pigeonApiProxyApiInterface(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
-    -> PigeonApiProxyApiInterface
+extension ProxyApiTestsPigeonInternalProxyApiDelegate {
+  func pigeonApiProxyApiInterface(_ registrar: ProxyApiTestsPigeonInternalProxyApiRegistrar)
+    -> PigeonInternalApiProxyApiInterface
   {
-    return PigeonApiProxyApiInterface(
-      pigeonRegistrar: registrar, delegate: PigeonApiDelegateProxyApiInterface())
+    return PigeonInternalApiProxyApiInterface(
+      pigeonRegistrar: registrar, delegate: PigeonInternalApiDelegateProxyApiInterface())
   }
 }
 
-open class ProxyApiTestsPigeonProxyApiRegistrar {
+open class ProxyApiTestsPigeonInternalProxyApiRegistrar {
   let binaryMessenger: FlutterBinaryMessenger
-  let apiDelegate: ProxyApiTestsPigeonProxyApiDelegate
-  let instanceManager: ProxyApiTestsPigeonInstanceManager
+  let apiDelegate: ProxyApiTestsPigeonInternalProxyApiDelegate
+  let instanceManager: ProxyApiTestsPigeonInternalInstanceManager
   /// Whether APIs should ignore calling to Dart.
   public var ignoreCallsToDart = false
   private var _codec: FlutterStandardMessageCodec?
   var codec: FlutterStandardMessageCodec {
     if _codec == nil {
       _codec = FlutterStandardMessageCodec(
-        readerWriter: ProxyApiTestsPigeonProxyApiCodecReaderWriter(pigeonRegistrar: self))
+        readerWriter: ProxyApiTestsPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: self))
     }
     return _codec!
   }
 
-  private class InstanceManagerApiFinalizerDelegate: ProxyApiTestsPigeonFinalizerDelegate {
-    let api: ProxyApiTestsPigeonInstanceManagerApi
+  private class InstanceManagerApiFinalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate {
+    let api: ProxyApiTestsPigeonInternalInstanceManagerApi
 
-    init(_ api: ProxyApiTestsPigeonInstanceManagerApi) {
+    init(_ api: ProxyApiTestsPigeonInternalInstanceManagerApi) {
       self.api = api
     }
 
@@ -423,40 +425,45 @@ open class ProxyApiTestsPigeonProxyApiRegistrar {
     }
   }
 
-  init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: ProxyApiTestsPigeonProxyApiDelegate) {
+  init(
+    binaryMessenger: FlutterBinaryMessenger,
+    apiDelegate: ProxyApiTestsPigeonInternalProxyApiDelegate
+  ) {
     self.binaryMessenger = binaryMessenger
     self.apiDelegate = apiDelegate
-    self.instanceManager = ProxyApiTestsPigeonInstanceManager(
+    self.instanceManager = ProxyApiTestsPigeonInternalInstanceManager(
       finalizerDelegate: InstanceManagerApiFinalizerDelegate(
-        ProxyApiTestsPigeonInstanceManagerApi(binaryMessenger: binaryMessenger)))
+        ProxyApiTestsPigeonInternalInstanceManagerApi(binaryMessenger: binaryMessenger)))
   }
 
   func setUp() {
-    ProxyApiTestsPigeonInstanceManagerApi.setUpMessageHandlers(
+    ProxyApiTestsPigeonInternalInstanceManagerApi.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, instanceManager: instanceManager)
-    PigeonApiProxyApiTestClass.setUpMessageHandlers(
+    PigeonInternalApiProxyApiTestClass.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiProxyApiTestClass(self))
-    PigeonApiProxyApiSuperClass.setUpMessageHandlers(
+    PigeonInternalApiProxyApiSuperClass.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiProxyApiSuperClass(self))
-    PigeonApiClassWithApiRequirement.setUpMessageHandlers(
+    PigeonInternalApiClassWithApiRequirement.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiClassWithApiRequirement(self))
   }
   func tearDown() {
-    ProxyApiTestsPigeonInstanceManagerApi.setUpMessageHandlers(
+    ProxyApiTestsPigeonInternalInstanceManagerApi.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, instanceManager: nil)
-    PigeonApiProxyApiTestClass.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
-    PigeonApiProxyApiSuperClass.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
-    PigeonApiClassWithApiRequirement.setUpMessageHandlers(
+    PigeonInternalApiProxyApiTestClass.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: nil)
+    PigeonInternalApiProxyApiSuperClass.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: nil)
+    PigeonInternalApiClassWithApiRequirement.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: nil)
   }
 }
-private class ProxyApiTestsPigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
-  unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
+private class ProxyApiTestsPigeonInternalProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
+  unowned let pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar
 
-  private class ProxyApiTestsPigeonProxyApiCodecReader: ProxyApiTestsPigeonCodecReader {
-    unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
+  private class ProxyApiTestsPigeonInternalProxyApiCodecReader: ProxyApiTestsPigeonCodecReader {
+    unowned let pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar
 
-    init(data: Data, pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar) {
+    init(data: Data, pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar) {
       self.pigeonRegistrar = pigeonRegistrar
       super.init(data: data)
     }
@@ -474,10 +481,10 @@ private class ProxyApiTestsPigeonProxyApiCodecReaderWriter: FlutterStandardReade
     }
   }
 
-  private class ProxyApiTestsPigeonProxyApiCodecWriter: ProxyApiTestsPigeonCodecWriter {
-    unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
+  private class ProxyApiTestsPigeonInternalProxyApiCodecWriter: ProxyApiTestsPigeonCodecWriter {
+    unowned let pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar
 
-    init(data: NSMutableData, pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar) {
+    init(data: NSMutableData, pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar) {
       self.pigeonRegistrar = pigeonRegistrar
       super.init(data: data)
     }
@@ -544,22 +551,24 @@ private class ProxyApiTestsPigeonProxyApiCodecReaderWriter: FlutterStandardReade
           pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
       } else {
         print("Unsupported value: \(value) of \(type(of: value))")
-        assert(false, "Unsupported value for ProxyApiTestsPigeonProxyApiCodecWriter")
+        assert(false, "Unsupported value for ProxyApiTestsPigeonInternalProxyApiCodecWriter")
       }
 
     }
   }
 
-  init(pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar) {
+  init(pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar) {
     self.pigeonRegistrar = pigeonRegistrar
   }
 
   override func reader(with data: Data) -> FlutterStandardReader {
-    return ProxyApiTestsPigeonProxyApiCodecReader(data: data, pigeonRegistrar: pigeonRegistrar)
+    return ProxyApiTestsPigeonInternalProxyApiCodecReader(
+      data: data, pigeonRegistrar: pigeonRegistrar)
   }
 
   override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return ProxyApiTestsPigeonProxyApiCodecWriter(data: data, pigeonRegistrar: pigeonRegistrar)
+    return ProxyApiTestsPigeonInternalProxyApiCodecWriter(
+      data: data, pigeonRegistrar: pigeonRegistrar)
   }
 }
 
@@ -568,16 +577,16 @@ enum ProxyApiTestEnum: Int {
   case two = 1
   case three = 2
 }
+
 private class ProxyApiTestsPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 129:
-      var enumResult: ProxyApiTestEnum? = nil
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
       if let enumResultAsInt = enumResultAsInt {
-        enumResult = ProxyApiTestEnum(rawValue: enumResultAsInt)
+        return ProxyApiTestEnum(rawValue: enumResultAsInt)
       }
-      return enumResult
+      return nil
     default:
       return super.readValue(ofType: type)
     }
@@ -609,9 +618,9 @@ class ProxyApiTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable
   static let shared = ProxyApiTestsPigeonCodec(readerWriter: ProxyApiTestsPigeonCodecReaderWriter())
 }
 
-protocol PigeonApiDelegateProxyApiTestClass {
+protocol PigeonInternalApiDelegateProxyApiTestClass {
   func pigeonDefaultConstructor(
-    pigeonApi: PigeonApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
     aString: String, aUint8List: FlutterStandardTypedData, aList: [Any?], aMap: [String?: Any?],
     anEnum: ProxyApiTestEnum, aProxyApi: ProxyApiSuperClass, aNullableBool: Bool?,
     aNullableInt: Int64?, aNullableDouble: Double?, aNullableString: String?,
@@ -625,336 +634,357 @@ protocol PigeonApiDelegateProxyApiTestClass {
     nullableListParam: [Any?]?, nullableMapParam: [String?: Any?]?,
     nullableEnumParam: ProxyApiTestEnum?, nullableProxyApiParam: ProxyApiSuperClass?
   ) throws -> ProxyApiTestClass
-  func attachedField(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> ProxyApiSuperClass
-  func staticAttachedField(pigeonApi: PigeonApiProxyApiTestClass) throws -> ProxyApiSuperClass
-  func aBool(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> Bool
-  func anInt(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> Int64
-  func aDouble(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> Double
-  func aString(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> String
-  func aUint8List(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> FlutterStandardTypedData
-  func aList(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> [Any?]
-  func aMap(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> [String?: Any?]
-  func anEnum(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> ProxyApiTestEnum
-  func aProxyApi(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
+  func attachedField(
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
+  ) throws -> ProxyApiSuperClass
+  func staticAttachedField(pigeonApi: PigeonInternalApiProxyApiTestClass) throws
     -> ProxyApiSuperClass
-  func aNullableBool(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> Bool?
-  func aNullableInt(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> Int64?
-  func aNullableDouble(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> Double?
-  func aNullableString(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> String?
-  func aNullableUint8List(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> FlutterStandardTypedData?
-  func aNullableList(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> [Any?]?
-  func aNullableMap(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> [String?: Any?]?
-  func aNullableEnum(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> ProxyApiTestEnum?
-  func aNullableProxyApi(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> ProxyApiSuperClass?
+  func aBool(pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
+    throws -> Bool
+  func anInt(pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
+    throws -> Int64
+  func aDouble(pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
+    throws -> Double
+  func aString(pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
+    throws -> String
+  func aUint8List(pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
+    throws -> FlutterStandardTypedData
+  func aList(pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
+    throws -> [Any?]
+  func aMap(pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
+    -> [String?: Any?]
+  func anEnum(pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
+    throws -> ProxyApiTestEnum
+  func aProxyApi(pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
+    throws -> ProxyApiSuperClass
+  func aNullableBool(
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
+  ) throws -> Bool?
+  func aNullableInt(
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
+  ) throws -> Int64?
+  func aNullableDouble(
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
+  ) throws -> Double?
+  func aNullableString(
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
+  ) throws -> String?
+  func aNullableUint8List(
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
+  ) throws -> FlutterStandardTypedData?
+  func aNullableList(
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
+  ) throws -> [Any?]?
+  func aNullableMap(
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
+  ) throws -> [String?: Any?]?
+  func aNullableEnum(
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
+  ) throws -> ProxyApiTestEnum?
+  func aNullableProxyApi(
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
+  ) throws -> ProxyApiSuperClass?
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  func noop(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
+  func noop(pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
   /// Returns an error, to test error handling.
-  func throwError(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> Any?
-  /// Returns an error from a void function, to test error handling.
-  func throwErrorFromVoid(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws
-  /// Returns a Flutter error, to test error handling.
-  func throwFlutterError(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
+  func throwError(pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
     throws -> Any?
+  /// Returns an error from a void function, to test error handling.
+  func throwErrorFromVoid(
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
+  /// Returns a Flutter error, to test error handling.
+  func throwFlutterError(
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
+  ) throws -> Any?
   /// Returns passed in int.
   func echoInt(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64
   ) throws -> Int64
   /// Returns passed in double.
   func echoDouble(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aDouble: Double
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aDouble: Double
   ) throws -> Double
   /// Returns the passed in boolean.
   func echoBool(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool
   ) throws -> Bool
   /// Returns the passed in string.
   func echoString(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aString: String
   ) throws -> String
   /// Returns the passed in Uint8List.
   func echoUint8List(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aUint8List: FlutterStandardTypedData
   ) throws -> FlutterStandardTypedData
   /// Returns the passed in generic Object.
   func echoObject(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any
   ) throws -> Any
   /// Returns the passed list, to test serialization and deserialization.
   func echoList(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?]
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?]
   ) throws -> [Any?]
   /// Returns the passed list with ProxyApis, to test serialization and
   /// deserialization.
   func echoProxyApiList(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aList: [ProxyApiTestClass]
   ) throws -> [ProxyApiTestClass]
   /// Returns the passed map, to test serialization and deserialization.
   func echoMap(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aMap: [String?: Any?]
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aMap: [String?: Any?]
   ) throws -> [String?: Any?]
   /// Returns the passed map with ProxyApis, to test serialization and
   /// deserialization.
   func echoProxyApiMap(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aMap: [String: ProxyApiTestClass]
   ) throws -> [String: ProxyApiTestClass]
   /// Returns the passed enum to test serialization and deserialization.
   func echoEnum(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     anEnum: ProxyApiTestEnum
   ) throws -> ProxyApiTestEnum
   /// Returns the passed ProxyApi to test serialization and deserialization.
   func echoProxyApi(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aProxyApi: ProxyApiSuperClass
   ) throws -> ProxyApiSuperClass
   /// Returns passed in int.
   func echoNullableInt(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aNullableInt: Int64?
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aNullableInt: Int64?
   ) throws -> Int64?
   /// Returns passed in double.
   func echoNullableDouble(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aNullableDouble: Double?
   ) throws -> Double?
   /// Returns the passed in boolean.
   func echoNullableBool(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aNullableBool: Bool?
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aNullableBool: Bool?
   ) throws -> Bool?
   /// Returns the passed in string.
   func echoNullableString(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aNullableString: String?
   ) throws -> String?
   /// Returns the passed in Uint8List.
   func echoNullableUint8List(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aNullableUint8List: FlutterStandardTypedData?
   ) throws -> FlutterStandardTypedData?
   /// Returns the passed in generic Object.
   func echoNullableObject(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aNullableObject: Any?
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aNullableObject: Any?
   ) throws -> Any?
   /// Returns the passed list, to test serialization and deserialization.
   func echoNullableList(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aNullableList: [Any?]?
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aNullableList: [Any?]?
   ) throws -> [Any?]?
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullableMap(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aNullableMap: [String?: Any?]?
   ) throws -> [String?: Any?]?
   func echoNullableEnum(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aNullableEnum: ProxyApiTestEnum?
   ) throws -> ProxyApiTestEnum?
   /// Returns the passed ProxyApi to test serialization and deserialization.
   func echoNullableProxyApi(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aNullableProxyApi: ProxyApiSuperClass?
   ) throws -> ProxyApiSuperClass?
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   func noopAsync(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     completion: @escaping (Result<Void, Error>) -> Void)
   /// Returns passed in int asynchronously.
   func echoAsyncInt(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64,
     completion: @escaping (Result<Int64, Error>) -> Void)
   /// Returns passed in double asynchronously.
   func echoAsyncDouble(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aDouble: Double,
-    completion: @escaping (Result<Double, Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aDouble: Double, completion: @escaping (Result<Double, Error>) -> Void)
   /// Returns the passed in boolean asynchronously.
   func echoAsyncBool(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool,
     completion: @escaping (Result<Bool, Error>) -> Void)
   /// Returns the passed string asynchronously.
   func echoAsyncString(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String,
-    completion: @escaping (Result<String, Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aString: String, completion: @escaping (Result<String, Error>) -> Void)
   /// Returns the passed in Uint8List asynchronously.
   func echoAsyncUint8List(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aUint8List: FlutterStandardTypedData,
     completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
   /// Returns the passed in generic Object asynchronously.
   func echoAsyncObject(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any,
     completion: @escaping (Result<Any, Error>) -> Void)
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   func echoAsyncList(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?],
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?],
     completion: @escaping (Result<[Any?], Error>) -> Void)
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   func echoAsyncMap(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aMap: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aMap: [String?: Any?], completion: @escaping (Result<[String?: Any?], Error>) -> Void)
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   func echoAsyncEnum(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     anEnum: ProxyApiTestEnum, completion: @escaping (Result<ProxyApiTestEnum, Error>) -> Void)
   /// Responds with an error from an async function returning a value.
   func throwAsyncError(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     completion: @escaping (Result<Any?, Error>) -> Void)
   /// Responds with an error from an async void function.
   func throwAsyncErrorFromVoid(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     completion: @escaping (Result<Void, Error>) -> Void)
   /// Responds with a Flutter error from an async function returning a value.
   func throwAsyncFlutterError(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     completion: @escaping (Result<Any?, Error>) -> Void)
   /// Returns passed in int asynchronously.
   func echoAsyncNullableInt(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64?,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64?,
     completion: @escaping (Result<Int64?, Error>) -> Void)
   /// Returns passed in double asynchronously.
   func echoAsyncNullableDouble(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aDouble: Double?,
-    completion: @escaping (Result<Double?, Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aDouble: Double?, completion: @escaping (Result<Double?, Error>) -> Void)
   /// Returns the passed in boolean asynchronously.
   func echoAsyncNullableBool(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool?,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool?,
     completion: @escaping (Result<Bool?, Error>) -> Void)
   /// Returns the passed string asynchronously.
   func echoAsyncNullableString(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String?,
-    completion: @escaping (Result<String?, Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aString: String?, completion: @escaping (Result<String?, Error>) -> Void)
   /// Returns the passed in Uint8List asynchronously.
   func echoAsyncNullableUint8List(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aUint8List: FlutterStandardTypedData?,
     completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void)
   /// Returns the passed in generic Object asynchronously.
   func echoAsyncNullableObject(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any?,
-    completion: @escaping (Result<Any?, Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    anObject: Any?, completion: @escaping (Result<Any?, Error>) -> Void)
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   func echoAsyncNullableList(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?]?,
-    completion: @escaping (Result<[Any?]?, Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   func echoAsyncNullableMap(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   func echoAsyncNullableEnum(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     anEnum: ProxyApiTestEnum?, completion: @escaping (Result<ProxyApiTestEnum?, Error>) -> Void)
-  func staticNoop(pigeonApi: PigeonApiProxyApiTestClass) throws
-  func echoStaticString(pigeonApi: PigeonApiProxyApiTestClass, aString: String) throws -> String
+  func staticNoop(pigeonApi: PigeonInternalApiProxyApiTestClass) throws
+  func echoStaticString(pigeonApi: PigeonInternalApiProxyApiTestClass, aString: String) throws
+    -> String
   func staticAsyncNoop(
-    pigeonApi: PigeonApiProxyApiTestClass, completion: @escaping (Result<Void, Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass,
+    completion: @escaping (Result<Void, Error>) -> Void)
   func callFlutterNoop(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     completion: @escaping (Result<Void, Error>) -> Void)
   func callFlutterThrowError(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     completion: @escaping (Result<Any?, Error>) -> Void)
   func callFlutterThrowErrorFromVoid(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     completion: @escaping (Result<Void, Error>) -> Void)
   func callFlutterEchoBool(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool,
     completion: @escaping (Result<Bool, Error>) -> Void)
   func callFlutterEchoInt(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64,
     completion: @escaping (Result<Int64, Error>) -> Void)
   func callFlutterEchoDouble(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aDouble: Double,
-    completion: @escaping (Result<Double, Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aDouble: Double, completion: @escaping (Result<Double, Error>) -> Void)
   func callFlutterEchoString(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String,
-    completion: @escaping (Result<String, Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aString: String, completion: @escaping (Result<String, Error>) -> Void)
   func callFlutterEchoUint8List(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aUint8List: FlutterStandardTypedData,
     completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
   func callFlutterEchoList(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?],
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?],
     completion: @escaping (Result<[Any?], Error>) -> Void)
   func callFlutterEchoProxyApiList(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aList: [ProxyApiTestClass?], completion: @escaping (Result<[ProxyApiTestClass?], Error>) -> Void
   )
   func callFlutterEchoMap(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aMap: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aMap: [String?: Any?], completion: @escaping (Result<[String?: Any?], Error>) -> Void)
   func callFlutterEchoProxyApiMap(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aMap: [String?: ProxyApiTestClass?],
     completion: @escaping (Result<[String?: ProxyApiTestClass?], Error>) -> Void)
   func callFlutterEchoEnum(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     anEnum: ProxyApiTestEnum, completion: @escaping (Result<ProxyApiTestEnum, Error>) -> Void)
   func callFlutterEchoProxyApi(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aProxyApi: ProxyApiSuperClass, completion: @escaping (Result<ProxyApiSuperClass, Error>) -> Void
   )
   func callFlutterEchoNullableBool(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool?,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool?,
     completion: @escaping (Result<Bool?, Error>) -> Void)
   func callFlutterEchoNullableInt(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64?,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64?,
     completion: @escaping (Result<Int64?, Error>) -> Void)
   func callFlutterEchoNullableDouble(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aDouble: Double?,
-    completion: @escaping (Result<Double?, Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aDouble: Double?, completion: @escaping (Result<Double?, Error>) -> Void)
   func callFlutterEchoNullableString(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String?,
-    completion: @escaping (Result<String?, Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aString: String?, completion: @escaping (Result<String?, Error>) -> Void)
   func callFlutterEchoNullableUint8List(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aUint8List: FlutterStandardTypedData?,
     completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void)
   func callFlutterEchoNullableList(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?]?,
-    completion: @escaping (Result<[Any?]?, Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
   func callFlutterEchoNullableMap(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
   func callFlutterEchoNullableEnum(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     anEnum: ProxyApiTestEnum?, completion: @escaping (Result<ProxyApiTestEnum?, Error>) -> Void)
   func callFlutterEchoNullableProxyApi(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aProxyApi: ProxyApiSuperClass?,
     completion: @escaping (Result<ProxyApiSuperClass?, Error>) -> Void)
   func callFlutterNoopAsync(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     completion: @escaping (Result<Void, Error>) -> Void)
   func callFlutterEchoAsyncString(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String,
-    completion: @escaping (Result<String, Error>) -> Void)
+    pigeonApi: PigeonInternalApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aString: String, completion: @escaping (Result<String, Error>) -> Void)
 }
 
-protocol PigeonApiProtocolProxyApiTestClass {
+protocol PigeonInternalApiProtocolProxyApiTestClass {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   func flutterNoop(
@@ -1063,33 +1093,33 @@ protocol PigeonApiProtocolProxyApiTestClass {
     completion: @escaping (Result<String, ProxyApiTestsError>) -> Void)
 }
 
-final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
-  unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonApiDelegateProxyApiTestClass
+final class PigeonInternalApiProxyApiTestClass: PigeonInternalApiProtocolProxyApiTestClass {
+  unowned let pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar
+  let pigeonDelegate: PigeonInternalApiDelegateProxyApiTestClass
   ///An implementation of [ProxyApiSuperClass] used to access callback methods
-  var pigeonApiProxyApiSuperClass: PigeonApiProxyApiSuperClass {
+  var pigeonApiProxyApiSuperClass: PigeonInternalApiProxyApiSuperClass {
     return pigeonRegistrar.apiDelegate.pigeonApiProxyApiSuperClass(pigeonRegistrar)
   }
 
   ///An implementation of [ProxyApiInterface] used to access callback methods
-  var pigeonApiProxyApiInterface: PigeonApiProxyApiInterface {
+  var pigeonApiProxyApiInterface: PigeonInternalApiProxyApiInterface {
     return pigeonRegistrar.apiDelegate.pigeonApiProxyApiInterface(pigeonRegistrar)
   }
 
   init(
-    pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar,
-    delegate: PigeonApiDelegateProxyApiTestClass
+    pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar,
+    delegate: PigeonInternalApiDelegateProxyApiTestClass
   ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   static func setUpMessageHandlers(
-    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiProxyApiTestClass?
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonInternalApiProxyApiTestClass?
   ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: ProxyApiTestsPigeonProxyApiCodecReaderWriter(
+        readerWriter: ProxyApiTestsPigeonInternalProxyApiCodecReaderWriter(
           pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
     let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
@@ -3847,32 +3877,33 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
 }
-protocol PigeonApiDelegateProxyApiSuperClass {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiProxyApiSuperClass) throws -> ProxyApiSuperClass
-  func aSuperMethod(pigeonApi: PigeonApiProxyApiSuperClass, pigeonInstance: ProxyApiSuperClass)
-    throws
+protocol PigeonInternalApiDelegateProxyApiSuperClass {
+  func pigeonDefaultConstructor(pigeonApi: PigeonInternalApiProxyApiSuperClass) throws
+    -> ProxyApiSuperClass
+  func aSuperMethod(
+    pigeonApi: PigeonInternalApiProxyApiSuperClass, pigeonInstance: ProxyApiSuperClass) throws
 }
 
-protocol PigeonApiProtocolProxyApiSuperClass {
+protocol PigeonInternalApiProtocolProxyApiSuperClass {
 }
 
-final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
-  unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonApiDelegateProxyApiSuperClass
+final class PigeonInternalApiProxyApiSuperClass: PigeonInternalApiProtocolProxyApiSuperClass {
+  unowned let pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar
+  let pigeonDelegate: PigeonInternalApiDelegateProxyApiSuperClass
   init(
-    pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar,
-    delegate: PigeonApiDelegateProxyApiSuperClass
+    pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar,
+    delegate: PigeonInternalApiDelegateProxyApiSuperClass
   ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   static func setUpMessageHandlers(
-    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiProxyApiSuperClass?
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonInternalApiProxyApiSuperClass?
   ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: ProxyApiTestsPigeonProxyApiCodecReaderWriter(
+        readerWriter: ProxyApiTestsPigeonInternalProxyApiCodecReaderWriter(
           pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
     let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
@@ -3955,21 +3986,21 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
     }
   }
 }
-open class PigeonApiDelegateProxyApiInterface {
+open class PigeonInternalApiDelegateProxyApiInterface {
 }
 
-protocol PigeonApiProtocolProxyApiInterface {
+protocol PigeonInternalApiProtocolProxyApiInterface {
   func anInterfaceMethod(
     pigeonInstance pigeonInstanceArg: ProxyApiInterface,
     completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void)
 }
 
-final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
-  unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonApiDelegateProxyApiInterface
+final class PigeonInternalApiProxyApiInterface: PigeonInternalApiProtocolProxyApiInterface {
+  unowned let pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar
+  let pigeonDelegate: PigeonInternalApiDelegateProxyApiInterface
   init(
-    pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar,
-    delegate: PigeonApiDelegateProxyApiInterface
+    pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar,
+    delegate: PigeonInternalApiDelegateProxyApiInterface
   ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
@@ -4049,35 +4080,38 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
   }
 
 }
-protocol PigeonApiDelegateClassWithApiRequirement {
+protocol PigeonInternalApiDelegateClassWithApiRequirement {
   @available(iOS 15.0.0, macOS 10.0.0, *)
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiClassWithApiRequirement) throws
+  func pigeonDefaultConstructor(pigeonApi: PigeonInternalApiClassWithApiRequirement) throws
     -> ClassWithApiRequirement
   @available(iOS 15.0.0, macOS 10.0.0, *)
-  func aMethod(pigeonApi: PigeonApiClassWithApiRequirement, pigeonInstance: ClassWithApiRequirement)
+  func aMethod(
+    pigeonApi: PigeonInternalApiClassWithApiRequirement, pigeonInstance: ClassWithApiRequirement)
     throws
 }
 
-protocol PigeonApiProtocolClassWithApiRequirement {
+protocol PigeonInternalApiProtocolClassWithApiRequirement {
 }
 
-final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequirement {
-  unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonApiDelegateClassWithApiRequirement
+final class PigeonInternalApiClassWithApiRequirement:
+  PigeonInternalApiProtocolClassWithApiRequirement
+{
+  unowned let pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar
+  let pigeonDelegate: PigeonInternalApiDelegateClassWithApiRequirement
   init(
-    pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar,
-    delegate: PigeonApiDelegateClassWithApiRequirement
+    pigeonRegistrar: ProxyApiTestsPigeonInternalProxyApiRegistrar,
+    delegate: PigeonInternalApiDelegateClassWithApiRequirement
   ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   static func setUpMessageHandlers(
-    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiClassWithApiRequirement?
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonInternalApiClassWithApiRequirement?
   ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: ProxyApiTestsPigeonProxyApiCodecReaderWriter(
+        readerWriter: ProxyApiTestsPigeonInternalProxyApiCodecReaderWriter(
           pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
     if #available(iOS 15.0.0, macOS 10.0.0, *) {

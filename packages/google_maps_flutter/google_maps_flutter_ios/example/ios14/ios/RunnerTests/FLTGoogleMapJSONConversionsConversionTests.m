@@ -152,6 +152,25 @@
   XCTAssertEqualWithAccuracy(cameraPosition.viewingAngle, 5, accuracy);
 }
 
+- (void)testGetCameraPostionForPigeonCameraPosition {
+  FGMPlatformCameraPosition *pigeonCameraPosition = [FGMPlatformCameraPosition
+      makeWithBearing:1.0
+               target:[FGMPlatformLatLng makeWithLatitude:2.0 longitude:3.0]
+                 tilt:4.0
+                 zoom:5.0];
+
+  GMSCameraPosition *cameraPosition =
+      FGMGetCameraPositionForPigeonCameraPosition(pigeonCameraPosition);
+
+  XCTAssertEqualWithAccuracy(cameraPosition.target.latitude, pigeonCameraPosition.target.latitude,
+                             DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(cameraPosition.target.longitude, pigeonCameraPosition.target.longitude,
+                             DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(cameraPosition.zoom, pigeonCameraPosition.zoom, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(cameraPosition.bearing, pigeonCameraPosition.bearing, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(cameraPosition.viewingAngle, pigeonCameraPosition.tilt, DBL_EPSILON);
+}
+
 - (void)testCGPointForPigeonPoint {
   FGMPlatformPoint *pigeonPoint = [FGMPlatformPoint makeWithX:1.0 y:2.0];
 
@@ -175,12 +194,12 @@
   XCTAssertEqualWithAccuracy(bounds.northEast.longitude, 4, accuracy);
 }
 
-- (void)testMapViewTypeFromTypeValue {
-  XCTAssertEqual(kGMSTypeNormal, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@1]);
-  XCTAssertEqual(kGMSTypeSatellite, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@2]);
-  XCTAssertEqual(kGMSTypeTerrain, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@3]);
-  XCTAssertEqual(kGMSTypeHybrid, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@4]);
-  XCTAssertEqual(kGMSTypeNone, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@5]);
+- (void)testMapViewTypeFromPigeonType {
+  XCTAssertEqual(kGMSTypeNormal, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeNormal));
+  XCTAssertEqual(kGMSTypeSatellite, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeSatellite));
+  XCTAssertEqual(kGMSTypeTerrain, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeTerrain));
+  XCTAssertEqual(kGMSTypeHybrid, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeHybrid));
+  XCTAssertEqual(kGMSTypeNone, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeNone));
 }
 
 - (void)testCameraUpdateFromArrayNewCameraPosition {
@@ -317,6 +336,56 @@
 
   XCTAssertEqual(firstSpanLength.doubleValue, 10);
   XCTAssertEqual(secondSpanLength.doubleValue, 6.4);
+}
+
+- (void)testWeightedLatLngFromArray {
+  NSArray *weightedLatLng = @[ @[ @1, @2 ], @3 ];
+
+  GMUWeightedLatLng *weightedLocation =
+      [FLTGoogleMapJSONConversions weightedLatLngFromArray:weightedLatLng];
+
+  // The location gets projected to different values
+  XCTAssertEqual([weightedLocation intensity], 3);
+}
+
+- (void)testWeightedLatLngFromArrayThrowsForInvalidInput {
+  NSArray *weightedLatLng = @[];
+
+  XCTAssertThrows([FLTGoogleMapJSONConversions weightedLatLngFromArray:weightedLatLng]);
+}
+
+- (void)testWeightedDataFromArray {
+  NSNumber *intensity1 = @3;
+  NSNumber *intensity2 = @6;
+  NSArray *data = @[ @[ @[ @1, @2 ], intensity1 ], @[ @[ @4, @5 ], intensity2 ] ];
+
+  NSArray<GMUWeightedLatLng *> *weightedData =
+      [FLTGoogleMapJSONConversions weightedDataFromArray:data];
+  XCTAssertEqual([weightedData[0] intensity], [intensity1 floatValue]);
+  XCTAssertEqual([weightedData[1] intensity], [intensity2 floatValue]);
+}
+
+- (void)testGradientFromDictionary {
+  NSNumber *startPoint = @0.6;
+  NSNumber *colorMapSize = @200;
+  NSDictionary *gradientData = @{
+    @"colors" : @[
+      // Color.fromARGB(255, 0, 255, 255)
+      @4278255615,
+    ],
+    @"startPoints" : @[ startPoint ],
+    @"colorMapSize" : colorMapSize,
+  };
+
+  GMUGradient *gradient = [FLTGoogleMapJSONConversions gradientFromDictionary:gradientData];
+  CGFloat red, green, blue, alpha;
+  [[gradient colors][0] getRed:&red green:&green blue:&blue alpha:&alpha];
+  XCTAssertEqual(red, 0);
+  XCTAssertEqual(green, 1);
+  XCTAssertEqual(blue, 1);
+  XCTAssertEqual(alpha, 1);
+  XCTAssertEqualWithAccuracy([[gradient startPoints][0] doubleValue], [startPoint doubleValue], 0);
+  XCTAssertEqual([gradient mapSize], [colorMapSize intValue]);
 }
 
 @end

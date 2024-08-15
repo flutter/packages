@@ -1,3 +1,11 @@
+## 0.8.12+12
+
+* Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.
+
+## 0.8.12+11
+
+* Bumps androidx.annotation:annotation from 1.8.0 to 1.8.1.
+
 ## 0.8.12+10
 
 * Bumps androidx.activity:activity from 1.9.0 to 1.9.1.
