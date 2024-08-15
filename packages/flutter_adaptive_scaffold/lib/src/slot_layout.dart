@@ -15,7 +15,7 @@ class SlotLayout extends StatefulWidget {
   /// Creates a [SlotLayout] widget.
   const SlotLayout({required this.config, super.key});
 
-  /// Given a context and a config, it returns the [SlotLayoutConfig] that will g
+  /// Given a context and a config, it returns the [SlotLayoutConfig] that will
   /// be chosen from the config under the context's conditions.
   static SlotLayoutConfig? pickWidget(
       BuildContext context, Map<Breakpoint, SlotLayoutConfig?> config) {
@@ -26,10 +26,10 @@ class SlotLayout extends StatefulWidget {
         final SlotLayoutConfig? pickedWidget = config[breakpoint];
         if (pickedWidget != null) {
           if (breakpoint.platform != null) {
-            // Prioritize platform-specific breakpoints
+            // Prioritize platform-specific breakpoints.
             return pickedWidget;
           } else {
-            // Fallback to non-platform-specific
+            // Fallback to non-platform-specific.
             chosenWidget = pickedWidget;
           }
         } else {

@@ -1,7 +1,7 @@
 ## 0.2.1
 
 * Add `Breakpoint.activeBreakpointOf(context)` to find the currently active breakpoint.
-* Don't check for height on Desktop platforms
+* Don't check for height on Desktop platforms.
 
 ## 0.2.0
 
