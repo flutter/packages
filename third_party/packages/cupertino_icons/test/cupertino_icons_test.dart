@@ -50,14 +50,19 @@ void main() async {
     const int iconsPerRow = 5;
     const int iconsPerCol = 5;
     const int iconsPerImage = iconsPerRow * iconsPerCol;
+    const Size canvasSize = Size(iconSize * iconsPerRow, iconSize * iconsPerCol);
     const Widget fillerBox = SizedBox.square(dimension: iconSize);
 
     void registerTestForIconGroup(List<IconData> iconGroup) {
       assert(iconGroup.isNotEmpty);
       String hexCodePoint(int codePoint) => codePoint.toRadixString(16).toUpperCase().padLeft(4, '0');
-      final String range = 'U+${hexCodePoint(iconGroup.first.codePoint)}-${hexCodePoint(iconGroup.last.codePoint)}';
+      final int groupStartCodePoint = (iconGroup.first.codePoint ~/ iconsPerImage) * iconsPerImage;
+      final String range = 'U+${hexCodePoint(groupStartCodePoint)}-${hexCodePoint(groupStartCodePoint + iconsPerImage - 1)}';
+
       testWidgets('font golden test: $range', (WidgetTester tester) async {
-        final int groupStartCodePoint = (iconGroup.first.codePoint ~/ iconsPerImage) * iconsPerImage;
+        addTearDown(tester.view.reset);
+        tester.view.physicalSize = canvasSize * tester.view.devicePixelRatio;
+
         final List<Widget> children = List<Widget>.filled(iconsPerImage, fillerBox);
         for (final IconData icon in iconGroup) {
           children[icon.codePoint - groupStartCodePoint] = Icon(icon, size: iconSize);
