@@ -7,6 +7,7 @@ library;
 
 import 'dart:io' show File;
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -55,6 +56,10 @@ void main() async {
     const Size canvasSize = Size(iconSize * iconsPerRow, iconSize * iconsPerCol);
     const Widget fillerBox = SizedBox.square(dimension: iconSize);
 
+    // Generating goldens for each glyph is very slow. Group the sorted icons
+    // into codepoint-aligned groups (each of which has a max capacity of
+    // iconsPerRow * iconsPerCol), so the goldens are easier to review when
+    // symbols are added or removed.
     void registerTestForIconGroup(List<IconData> iconGroup) {
       assert(iconGroup.isNotEmpty);
       String hexCodePoint(int codePoint) => codePoint.toRadixString(16).toUpperCase().padLeft(4, '0');
@@ -70,42 +75,28 @@ void main() async {
           children[icon.codePoint - groupStartCodePoint] = Icon(icon, size: iconSize);
         }
 
-        final Widget widget = Center(
-          child: SizedBox(
-            height: iconSize * iconsPerCol,
-            width: iconSize * iconsPerRow,
-            child: RepaintBoundary(child: Wrap(children: children)),
+        final Widget widget = Directionality(
+          textDirection: TextDirection.ltr,
+          child: Center(
+            child: SizedBox(
+              height: iconSize * iconsPerCol,
+              width: iconSize * iconsPerRow,
+              child: RepaintBoundary(child: Wrap(children: children)),
+            ),
           ),
         );
-        await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: widget));
+        await tester.pumpWidget(widget);
         await expectLater(find.byType(Wrap) , matchesGoldenFile('goldens/glyph_$range.png'));
       });
     }
 
-    // Generating goldens for each glyph is very slow. Group the sorted icons
-    // into codepoint-aligned groups (each of which has a max capacity of
-    // iconsPerRow * iconsPerCol), so the goldens are easier to review when
-    // codepoints are added or removed.
-    int nextGroupStartIndex(int groupStartIndex) {
-      int index = groupStartIndex;
-      final int groupStartCodePoint = (icons[index].codePoint ~/ iconsPerImage) * iconsPerImage;
-      final int groupEndCodePoint = groupStartCodePoint + iconsPerImage;
-      while (index < icons.length) {
-        if (icons[index].codePoint >= groupEndCodePoint) {
-          return index;
-        }
-        index += 1;
-      }
-      assert(groupStartIndex <= index);
-      assert(index <= groupStartIndex + iconsPerRow * iconsPerCol);
-      return index;
-    }
-
-    int index = 0;
-    while (index < icons.length) {
-      final int nextIndex = nextGroupStartIndex(index);
-
-      registerTestForIconGroup(icons.sublist(index, nextIndex));
+    assert(icons.isNotEmpty);
+    for (int index = 0; index < icons.length;) {
+      assert(index < icons.length);
+      final int groupEndCodePoint = (icons[index].codePoint ~/ iconsPerImage + 1) * iconsPerImage;
+      final int next = icons.indexWhere((IconData icon) => icon.codePoint >= groupEndCodePoint, index);
+      final int nextIndex = next < 0 ? icons.length : next;
+      registerTestForIconGroup(icons.slice(index, nextIndex));
       index = nextIndex;
     }
   });
