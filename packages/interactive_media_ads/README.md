@@ -11,7 +11,7 @@ a separate video player positioned on top of the app's content video player.
 
 |             | Android | iOS   |
 |-------------|---------|-------|
-| **Support** | SDK 19+ | 12.0+ |
+| **Support** | SDK 21+ | 12.0+ |
 
 **This package is still in development.**
 
@@ -203,7 +203,7 @@ Future<void> _requestAds(AdDisplayContainer container) {
 
       manager.setAdsManagerDelegate(AdsManagerDelegate(
         onAdEvent: (AdEvent event) {
-          debugPrint('OnAdEvent: ${event.type}');
+          debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
           switch (event.type) {
             case AdEventType.loaded:
               manager.start();
@@ -216,6 +216,7 @@ Future<void> _requestAds(AdDisplayContainer container) {
               _adsManager = null;
             case AdEventType.clicked:
             case AdEventType.complete:
+            case _:
           }
         },
         onAdErrorEvent: (AdErrorEvent event) {

@@ -1,3 +1,11 @@
+## 6.1.28
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 6.1.27
+
+* Updates AGP version to 8.5.0.
+
 ## 6.1.26
 
 * Removes additional references to the v1 Android embedding.

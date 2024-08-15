@@ -15,6 +15,9 @@ TargetGenerator _getTarget() {
   if (Platform.isIOS || Platform.isMacOS) {
     return TargetGenerator.swift;
   }
+  if (Platform.isLinux) {
+    return TargetGenerator.gobject;
+  }
   if (Platform.isWindows) {
     return TargetGenerator.cpp;
   }

@@ -1,3 +1,35 @@
+## 2.14.1
+
+* Converts `PlatformCircle` and `PlatformMarker` to pigeon.
+
+## 2.14.0
+
+* Updates map configuration and platform view creation parameters to use Pigeon.
+
+## 2.13.0
+
+* Adds support for heatmap layers.
+
+## 2.12.2
+
+* Updates the example app to use TLHC mode, per current package guidance.
+
+## 2.12.1
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 2.12.0
+
+* Converts Java->Dart calls to Pigeon.
+
+## 2.11.1
+
+* Fixes handling of Circle updates.
+
+## 2.11.0
+
+* Converts additional platform calls to Pigeon.
+
 ## 2.10.0
 
 * Converts some platform calls to Pigeon.

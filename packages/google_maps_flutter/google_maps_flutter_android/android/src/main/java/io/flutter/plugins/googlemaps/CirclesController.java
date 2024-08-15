@@ -4,26 +4,27 @@
 
 package io.flutter.plugins.googlemaps;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 class CirclesController {
-
-  private final Map<String, CircleController> circleIdToController;
+  @VisibleForTesting final Map<String, CircleController> circleIdToController;
   private final Map<String, String> googleMapsCircleIdToDartCircleId;
-  private final MethodChannel methodChannel;
+  private final @NonNull MapsCallbackApi flutterApi;
   private final float density;
   private GoogleMap googleMap;
 
-  CirclesController(MethodChannel methodChannel, float density) {
+  CirclesController(@NonNull MapsCallbackApi flutterApi, float density) {
     this.circleIdToController = new HashMap<>();
     this.googleMapsCircleIdToDartCircleId = new HashMap<>();
-    this.methodChannel = methodChannel;
+    this.flutterApi = flutterApi;
     this.density = density;
   }
 
@@ -31,31 +32,20 @@ class CirclesController {
     this.googleMap = googleMap;
   }
 
-  void addCircles(List<Object> circlesToAdd) {
-    if (circlesToAdd != null) {
-      for (Object circleToAdd : circlesToAdd) {
-        addCircle(circleToAdd);
-      }
+  void addCircles(@NonNull List<Messages.PlatformCircle> circlesToAdd) {
+    for (Messages.PlatformCircle circleToAdd : circlesToAdd) {
+      addCircle(circleToAdd);
     }
   }
 
-  void changeCircles(List<Object> circlesToChange) {
-    if (circlesToChange != null) {
-      for (Object circleToChange : circlesToChange) {
-        changeCircle(circleToChange);
-      }
+  void changeCircles(@NonNull List<Messages.PlatformCircle> circlesToChange) {
+    for (Messages.PlatformCircle circleToChange : circlesToChange) {
+      changeCircle(circleToChange);
     }
   }
 
-  void removeCircles(List<Object> circleIdsToRemove) {
-    if (circleIdsToRemove == null) {
-      return;
-    }
-    for (Object rawCircleId : circleIdsToRemove) {
-      if (rawCircleId == null) {
-        continue;
-      }
-      String circleId = (String) rawCircleId;
+  void removeCircles(@NonNull List<String> circleIdsToRemove) {
+    for (String circleId : circleIdsToRemove) {
       final CircleController circleController = circleIdToController.remove(circleId);
       if (circleController != null) {
         circleController.remove();
@@ -69,7 +59,7 @@ class CirclesController {
     if (circleId == null) {
       return false;
     }
-    methodChannel.invokeMethod("circle#onTap", Convert.circleIdToJson(circleId));
+    flutterApi.onCircleTap(circleId, new NoOpVoidResult());
     CircleController circleController = circleIdToController.get(circleId);
     if (circleController != null) {
       return circleController.consumeTapEvents();
@@ -77,10 +67,7 @@ class CirclesController {
     return false;
   }
 
-  private void addCircle(Object circle) {
-    if (circle == null) {
-      return;
-    }
+  void addCircle(@NonNull Messages.PlatformCircle circle) {
     CircleBuilder circleBuilder = new CircleBuilder(density);
     String circleId = Convert.interpretCircleOptions(circle, circleBuilder);
     CircleOptions options = circleBuilder.build();
@@ -94,20 +81,11 @@ class CirclesController {
     googleMapsCircleIdToDartCircleId.put(circle.getId(), circleId);
   }
 
-  private void changeCircle(Object circle) {
-    if (circle == null) {
-      return;
-    }
-    String circleId = getCircleId(circle);
+  private void changeCircle(@NonNull Messages.PlatformCircle circle) {
+    String circleId = circle.getCircleId();
     CircleController circleController = circleIdToController.get(circleId);
     if (circleController != null) {
       Convert.interpretCircleOptions(circle, circleController);
     }
-  }
-
-  @SuppressWarnings("unchecked")
-  private static String getCircleId(Object circle) {
-    Map<String, Object> circleMap = (Map<String, Object>) circle;
-    return (String) circleMap.get("circleId");
   }
 }
