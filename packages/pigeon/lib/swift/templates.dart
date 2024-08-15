@@ -20,7 +20,7 @@ String proxyApiReaderWriterName(SwiftOptions options) =>
 
 /// Name of the Swift `InstanceManager`.
 String swiftInstanceManagerClassName(SwiftOptions options) =>
-    '${options.fileSpecificClassNameComponent ?? ''}${classNamePrefix}InstanceManager';
+    '${options.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}InstanceManager';
 
 /// Template for delegate with callback when an object is deallocated.
 String instanceManagerFinalizerDelegateTemplate(SwiftOptions options) => '''

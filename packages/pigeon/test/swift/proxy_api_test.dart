@@ -100,13 +100,13 @@ void main() {
       expect(
         code,
         contains(
-          r'final class MyFilePigeonInternalInstanceManager',
+          r'final class MyFilePigeonInstanceManager',
         ),
       );
       expect(
         code,
         contains(
-          r'private class MyFilePigeonInternalInstanceManagerApi',
+          r'private class MyFilePigeonInstanceManagerApi',
         ),
       );
 

@@ -125,14 +125,14 @@ internal final class ProxyApiTestsPigeonInternalFinalizer {
 /// again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
-final class ProxyApiTestsPigeonInternalInstanceManager {
+final class ProxyApiTestsPigeonInstanceManager {
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
   // 0 <= n < 2^16.
   private static let minHostCreatedIdentifier: Int64 = 65536
 
-  private let lockQueue = DispatchQueue(label: "ProxyApiTestsPigeonInternalInstanceManager")
+  private let lockQueue = DispatchQueue(label: "ProxyApiTestsPigeonInstanceManager")
   private let identifiers: NSMapTable<AnyObject, NSNumber> = NSMapTable(
     keyOptions: [.weakMemory, .objectPointerPersonality], valueOptions: .strongMemory)
   private let weakInstances: NSMapTable<NSNumber, AnyObject> = NSMapTable(
@@ -224,7 +224,7 @@ final class ProxyApiTestsPigeonInternalInstanceManager {
   /// strong reference to `instance` will be added and will need to be removed again with `removeInstance`.
   ///
   /// If this method returns a nonnull identifier, this method also expects the Dart
-  /// `ProxyApiTestsPigeonInternalInstanceManager` to have, or recreate, a weak reference to the Dart instance the
+  /// `ProxyApiTestsPigeonInstanceManager` to have, or recreate, a weak reference to the Dart instance the
   /// identifier is associated with.
   ///
   /// - Parameters:
@@ -263,7 +263,7 @@ final class ProxyApiTestsPigeonInternalInstanceManager {
       identifiers.removeAllObjects()
       weakInstances.removeAllObjects()
       strongInstances.removeAllObjects()
-      nextIdentifier = ProxyApiTestsPigeonInternalInstanceManager.minHostCreatedIdentifier
+      nextIdentifier = ProxyApiTestsPigeonInstanceManager.minHostCreatedIdentifier
     }
   }
 
@@ -291,7 +291,7 @@ final class ProxyApiTestsPigeonInternalInstanceManager {
   }
 }
 
-private class ProxyApiTestsPigeonInternalInstanceManagerApi {
+private class ProxyApiTestsPigeonInstanceManagerApi {
   /// The codec used for serializing messages.
   let codec = FlutterStandardMessageCodec.sharedInstance()
 
@@ -302,10 +302,9 @@ private class ProxyApiTestsPigeonInternalInstanceManagerApi {
     self.binaryMessenger = binaryMessenger
   }
 
-  /// Sets up an instance of `ProxyApiTestsPigeonInternalInstanceManagerApi` to handle messages through the `binaryMessenger`.
+  /// Sets up an instance of `ProxyApiTestsPigeonInstanceManagerApi` to handle messages through the `binaryMessenger`.
   static func setUpMessageHandlers(
-    binaryMessenger: FlutterBinaryMessenger,
-    instanceManager: ProxyApiTestsPigeonInternalInstanceManager?
+    binaryMessenger: FlutterBinaryMessenger, instanceManager: ProxyApiTestsPigeonInstanceManager?
   ) {
     let codec = FlutterStandardMessageCodec.sharedInstance()
     let removeStrongReferenceChannel = FlutterBasicMessageChannel(
@@ -399,7 +398,7 @@ extension ProxyApiTestsPigeonProxyApiDelegate {
 open class ProxyApiTestsPigeonProxyApiRegistrar {
   let binaryMessenger: FlutterBinaryMessenger
   let apiDelegate: ProxyApiTestsPigeonProxyApiDelegate
-  let instanceManager: ProxyApiTestsPigeonInternalInstanceManager
+  let instanceManager: ProxyApiTestsPigeonInstanceManager
   /// Whether APIs should ignore calling to Dart.
   public var ignoreCallsToDart = false
   private var _codec: FlutterStandardMessageCodec?
@@ -428,7 +427,7 @@ open class ProxyApiTestsPigeonProxyApiRegistrar {
   init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: ProxyApiTestsPigeonProxyApiDelegate) {
     self.binaryMessenger = binaryMessenger
     self.apiDelegate = apiDelegate
-    self.instanceManager = ProxyApiTestsPigeonInternalInstanceManager(
+    self.instanceManager = ProxyApiTestsPigeonInstanceManager(
       finalizerDelegate: InstanceManagerApiFinalizerDelegate(
         ProxyApiTestsPigeonInternalInstanceManagerApi(binaryMessenger: binaryMessenger)))
   }
