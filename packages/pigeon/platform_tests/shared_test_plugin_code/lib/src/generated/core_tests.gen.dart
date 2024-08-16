@@ -62,7 +62,10 @@ class AllTypes {
     required this.intList,
     required this.doubleList,
     required this.boolList,
+    required this.listList,
     required this.map,
+    required this.stringMap,
+    required this.intMap,
   });
 
   bool aBool;
@@ -99,7 +102,13 @@ class AllTypes {
 
   List<bool?> boolList;
 
+  List<List<Object?>?> listList;
+
   Map<Object?, Object?> map;
+
+  Map<String?, String?> stringMap;
+
+  Map<int?, int?> intMap;
 
   Object encode() {
     return <Object?>[
@@ -120,7 +129,10 @@ class AllTypes {
       intList,
       doubleList,
       boolList,
+      listList,
       map,
+      stringMap,
+      intMap,
     ];
   }
 
@@ -144,7 +156,11 @@ class AllTypes {
       intList: (result[14] as List<Object?>?)!.cast<int?>(),
       doubleList: (result[15] as List<Object?>?)!.cast<double?>(),
       boolList: (result[16] as List<Object?>?)!.cast<bool?>(),
-      map: result[17]! as Map<Object?, Object?>,
+      listList: (result[17] as List<Object?>?)!.cast<List<Object?>?>(),
+      map: result[18]! as Map<Object?, Object?>,
+      stringMap:
+          (result[19] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+      intMap: (result[20] as Map<Object?, Object?>?)!.cast<int?, int?>(),
     );
   }
 }
@@ -160,9 +176,6 @@ class AllNullableTypes {
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
     this.aNullableFloatArray,
-    this.nullableNestedList,
-    this.nullableMapWithAnnotations,
-    this.nullableMapWithObject,
     this.aNullableEnum,
     this.anotherNullableEnum,
     this.aNullableString,
@@ -173,8 +186,10 @@ class AllNullableTypes {
     this.intList,
     this.doubleList,
     this.boolList,
-    this.nestedClassList,
+    this.listList,
     this.map,
+    this.stringMap,
+    this.intMap,
   });
 
   bool? aNullableBool;
@@ -192,12 +207,6 @@ class AllNullableTypes {
   Int64List? aNullable8ByteArray;
 
   Float64List? aNullableFloatArray;
-
-  List<List<bool?>?>? nullableNestedList;
-
-  Map<String?, String?>? nullableMapWithAnnotations;
-
-  Map<String?, Object?>? nullableMapWithObject;
 
   AnEnum? aNullableEnum;
 
@@ -219,9 +228,13 @@ class AllNullableTypes {
 
   List<bool?>? boolList;
 
-  List<AllNullableTypes?>? nestedClassList;
+  List<List<Object?>?>? listList;
 
   Map<Object?, Object?>? map;
+
+  Map<String?, String?>? stringMap;
+
+  Map<int?, int?>? intMap;
 
   Object encode() {
     return <Object?>[
@@ -233,9 +246,6 @@ class AllNullableTypes {
       aNullable4ByteArray,
       aNullable8ByteArray,
       aNullableFloatArray,
-      nullableNestedList,
-      nullableMapWithAnnotations,
-      nullableMapWithObject,
       aNullableEnum,
       anotherNullableEnum,
       aNullableString,
@@ -246,8 +256,10 @@ class AllNullableTypes {
       intList,
       doubleList,
       boolList,
-      nestedClassList,
+      listList,
       map,
+      stringMap,
+      intMap,
     ];
   }
 
@@ -262,24 +274,21 @@ class AllNullableTypes {
       aNullable4ByteArray: result[5] as Int32List?,
       aNullable8ByteArray: result[6] as Int64List?,
       aNullableFloatArray: result[7] as Float64List?,
-      nullableNestedList: (result[8] as List<Object?>?)?.cast<List<bool?>?>(),
-      nullableMapWithAnnotations:
-          (result[9] as Map<Object?, Object?>?)?.cast<String?, String?>(),
-      nullableMapWithObject:
-          (result[10] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
-      aNullableEnum: result[11] as AnEnum?,
-      anotherNullableEnum: result[12] as AnotherEnum?,
-      aNullableString: result[13] as String?,
-      aNullableObject: result[14],
-      allNullableTypes: result[15] as AllNullableTypes?,
-      list: result[16] as List<Object?>?,
-      stringList: (result[17] as List<Object?>?)?.cast<String?>(),
-      intList: (result[18] as List<Object?>?)?.cast<int?>(),
-      doubleList: (result[19] as List<Object?>?)?.cast<double?>(),
-      boolList: (result[20] as List<Object?>?)?.cast<bool?>(),
-      nestedClassList:
-          (result[21] as List<Object?>?)?.cast<AllNullableTypes?>(),
-      map: result[22] as Map<Object?, Object?>?,
+      aNullableEnum: result[8] as AnEnum?,
+      anotherNullableEnum: result[9] as AnotherEnum?,
+      aNullableString: result[10] as String?,
+      aNullableObject: result[11],
+      allNullableTypes: result[12] as AllNullableTypes?,
+      list: result[13] as List<Object?>?,
+      stringList: (result[14] as List<Object?>?)?.cast<String?>(),
+      intList: (result[15] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[16] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[17] as List<Object?>?)?.cast<bool?>(),
+      listList: (result[18] as List<Object?>?)?.cast<List<Object?>?>(),
+      map: result[19] as Map<Object?, Object?>?,
+      stringMap:
+          (result[20] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      intMap: (result[21] as Map<Object?, Object?>?)?.cast<int?, int?>(),
     );
   }
 }
@@ -297,9 +306,6 @@ class AllNullableTypesWithoutRecursion {
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
     this.aNullableFloatArray,
-    this.nullableNestedList,
-    this.nullableMapWithAnnotations,
-    this.nullableMapWithObject,
     this.aNullableEnum,
     this.anotherNullableEnum,
     this.aNullableString,
@@ -309,7 +315,10 @@ class AllNullableTypesWithoutRecursion {
     this.intList,
     this.doubleList,
     this.boolList,
+    this.listList,
     this.map,
+    this.stringMap,
+    this.intMap,
   });
 
   bool? aNullableBool;
@@ -327,12 +336,6 @@ class AllNullableTypesWithoutRecursion {
   Int64List? aNullable8ByteArray;
 
   Float64List? aNullableFloatArray;
-
-  List<List<bool?>?>? nullableNestedList;
-
-  Map<String?, String?>? nullableMapWithAnnotations;
-
-  Map<String?, Object?>? nullableMapWithObject;
 
   AnEnum? aNullableEnum;
 
@@ -352,7 +355,13 @@ class AllNullableTypesWithoutRecursion {
 
   List<bool?>? boolList;
 
+  List<List<Object?>?>? listList;
+
   Map<Object?, Object?>? map;
+
+  Map<String?, String?>? stringMap;
+
+  Map<int?, int?>? intMap;
 
   Object encode() {
     return <Object?>[
@@ -364,9 +373,6 @@ class AllNullableTypesWithoutRecursion {
       aNullable4ByteArray,
       aNullable8ByteArray,
       aNullableFloatArray,
-      nullableNestedList,
-      nullableMapWithAnnotations,
-      nullableMapWithObject,
       aNullableEnum,
       anotherNullableEnum,
       aNullableString,
@@ -376,7 +382,10 @@ class AllNullableTypesWithoutRecursion {
       intList,
       doubleList,
       boolList,
+      listList,
       map,
+      stringMap,
+      intMap,
     ];
   }
 
@@ -391,21 +400,20 @@ class AllNullableTypesWithoutRecursion {
       aNullable4ByteArray: result[5] as Int32List?,
       aNullable8ByteArray: result[6] as Int64List?,
       aNullableFloatArray: result[7] as Float64List?,
-      nullableNestedList: (result[8] as List<Object?>?)?.cast<List<bool?>?>(),
-      nullableMapWithAnnotations:
-          (result[9] as Map<Object?, Object?>?)?.cast<String?, String?>(),
-      nullableMapWithObject:
-          (result[10] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
-      aNullableEnum: result[11] as AnEnum?,
-      anotherNullableEnum: result[12] as AnotherEnum?,
-      aNullableString: result[13] as String?,
-      aNullableObject: result[14],
-      list: result[15] as List<Object?>?,
-      stringList: (result[16] as List<Object?>?)?.cast<String?>(),
-      intList: (result[17] as List<Object?>?)?.cast<int?>(),
-      doubleList: (result[18] as List<Object?>?)?.cast<double?>(),
-      boolList: (result[19] as List<Object?>?)?.cast<bool?>(),
-      map: result[20] as Map<Object?, Object?>?,
+      aNullableEnum: result[8] as AnEnum?,
+      anotherNullableEnum: result[9] as AnotherEnum?,
+      aNullableString: result[10] as String?,
+      aNullableObject: result[11],
+      list: result[12] as List<Object?>?,
+      stringList: (result[13] as List<Object?>?)?.cast<String?>(),
+      intList: (result[14] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[15] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[16] as List<Object?>?)?.cast<bool?>(),
+      listList: (result[17] as List<Object?>?)?.cast<List<Object?>?>(),
+      map: result[18] as Map<Object?, Object?>?,
+      stringMap:
+          (result[19] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      intMap: (result[20] as Map<Object?, Object?>?)?.cast<int?, int?>(),
     );
   }
 }
@@ -473,7 +481,10 @@ class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AnEnum) {
+    if (value is int) {
+      buffer.putUint8(4);
+      buffer.putInt64(value);
+    } else if (value is AnEnum) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
     } else if (value is AnotherEnum) {

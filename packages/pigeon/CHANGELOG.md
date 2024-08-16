@@ -1,3 +1,8 @@
+## 21.2.1
+
+* [dart] Changes codec to send int64 instead of int32.
+* Adds tests to validate collections of ints.
+
 ## 21.2.0
 
 * Removes restriction on number of custom types.

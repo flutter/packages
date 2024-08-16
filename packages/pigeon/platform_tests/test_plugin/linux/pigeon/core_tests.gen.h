@@ -71,7 +71,10 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAllTypes,
  * int_list: field in this object.
  * double_list: field in this object.
  * bool_list: field in this object.
+ * list_list: field in this object.
  * map: field in this object.
+ * string_map: field in this object.
+ * int_map: field in this object.
  *
  * Creates a new #AllTypes object.
  *
@@ -86,7 +89,8 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
     CoreTestsPigeonTestAnEnum an_enum,
     CoreTestsPigeonTestAnotherEnum another_enum, const gchar* a_string,
     FlValue* an_object, FlValue* list, FlValue* string_list, FlValue* int_list,
-    FlValue* double_list, FlValue* bool_list, FlValue* map);
+    FlValue* double_list, FlValue* bool_list, FlValue* list_list, FlValue* map,
+    FlValue* string_map, FlValue* int_map);
 
 /**
  * core_tests_pigeon_test_all_types_get_a_bool
@@ -281,6 +285,17 @@ FlValue* core_tests_pigeon_test_all_types_get_bool_list(
     CoreTestsPigeonTestAllTypes* object);
 
 /**
+ * core_tests_pigeon_test_all_types_get_list_list
+ * @object: a #CoreTestsPigeonTestAllTypes.
+ *
+ * Gets the value of the listList field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_types_get_list_list(
+    CoreTestsPigeonTestAllTypes* object);
+
+/**
  * core_tests_pigeon_test_all_types_get_map
  * @object: a #CoreTestsPigeonTestAllTypes.
  *
@@ -289,6 +304,28 @@ FlValue* core_tests_pigeon_test_all_types_get_bool_list(
  * Returns: the field value.
  */
 FlValue* core_tests_pigeon_test_all_types_get_map(
+    CoreTestsPigeonTestAllTypes* object);
+
+/**
+ * core_tests_pigeon_test_all_types_get_string_map
+ * @object: a #CoreTestsPigeonTestAllTypes.
+ *
+ * Gets the value of the stringMap field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_types_get_string_map(
+    CoreTestsPigeonTestAllTypes* object);
+
+/**
+ * core_tests_pigeon_test_all_types_get_int_map
+ * @object: a #CoreTestsPigeonTestAllTypes.
+ *
+ * Gets the value of the intMap field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_types_get_int_map(
     CoreTestsPigeonTestAllTypes* object);
 
 /**
@@ -315,9 +352,6 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAllNullableTypes,
  * a_nullable8_byte_array_length: length of @a_nullable8_byte_array.
  * a_nullable_float_array: field in this object.
  * a_nullable_float_array_length: length of @a_nullable_float_array.
- * nullable_nested_list: field in this object.
- * nullable_map_with_annotations: field in this object.
- * nullable_map_with_object: field in this object.
  * a_nullable_enum: field in this object.
  * another_nullable_enum: field in this object.
  * a_nullable_string: field in this object.
@@ -328,8 +362,10 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAllNullableTypes,
  * int_list: field in this object.
  * double_list: field in this object.
  * bool_list: field in this object.
- * nested_class_list: field in this object.
+ * list_list: field in this object.
  * map: field in this object.
+ * string_map: field in this object.
+ * int_map: field in this object.
  *
  * Creates a new #AllNullableTypes object.
  *
@@ -343,14 +379,13 @@ core_tests_pigeon_test_all_nullable_types_new(
     const int32_t* a_nullable4_byte_array, size_t a_nullable4_byte_array_length,
     const int64_t* a_nullable8_byte_array, size_t a_nullable8_byte_array_length,
     const double* a_nullable_float_array, size_t a_nullable_float_array_length,
-    FlValue* nullable_nested_list, FlValue* nullable_map_with_annotations,
-    FlValue* nullable_map_with_object,
     CoreTestsPigeonTestAnEnum* a_nullable_enum,
     CoreTestsPigeonTestAnotherEnum* another_nullable_enum,
     const gchar* a_nullable_string, FlValue* a_nullable_object,
     CoreTestsPigeonTestAllNullableTypes* all_nullable_types, FlValue* list,
     FlValue* string_list, FlValue* int_list, FlValue* double_list,
-    FlValue* bool_list, FlValue* nested_class_list, FlValue* map);
+    FlValue* bool_list, FlValue* list_list, FlValue* map, FlValue* string_map,
+    FlValue* int_map);
 
 /**
  * core_tests_pigeon_test_all_nullable_types_get_a_nullable_bool
@@ -447,40 +482,6 @@ core_tests_pigeon_test_all_nullable_types_get_a_nullable8_byte_array(
 const double*
 core_tests_pigeon_test_all_nullable_types_get_a_nullable_float_array(
     CoreTestsPigeonTestAllNullableTypes* object, size_t* length);
-
-/**
- * core_tests_pigeon_test_all_nullable_types_get_nullable_nested_list
- * @object: a #CoreTestsPigeonTestAllNullableTypes.
- *
- * Gets the value of the nullableNestedList field of @object.
- *
- * Returns: the field value.
- */
-FlValue* core_tests_pigeon_test_all_nullable_types_get_nullable_nested_list(
-    CoreTestsPigeonTestAllNullableTypes* object);
-
-/**
- * core_tests_pigeon_test_all_nullable_types_get_nullable_map_with_annotations
- * @object: a #CoreTestsPigeonTestAllNullableTypes.
- *
- * Gets the value of the nullableMapWithAnnotations field of @object.
- *
- * Returns: the field value.
- */
-FlValue*
-core_tests_pigeon_test_all_nullable_types_get_nullable_map_with_annotations(
-    CoreTestsPigeonTestAllNullableTypes* object);
-
-/**
- * core_tests_pigeon_test_all_nullable_types_get_nullable_map_with_object
- * @object: a #CoreTestsPigeonTestAllNullableTypes.
- *
- * Gets the value of the nullableMapWithObject field of @object.
- *
- * Returns: the field value.
- */
-FlValue* core_tests_pigeon_test_all_nullable_types_get_nullable_map_with_object(
-    CoreTestsPigeonTestAllNullableTypes* object);
 
 /**
  * core_tests_pigeon_test_all_nullable_types_get_a_nullable_enum
@@ -596,14 +597,14 @@ FlValue* core_tests_pigeon_test_all_nullable_types_get_bool_list(
     CoreTestsPigeonTestAllNullableTypes* object);
 
 /**
- * core_tests_pigeon_test_all_nullable_types_get_nested_class_list
+ * core_tests_pigeon_test_all_nullable_types_get_list_list
  * @object: a #CoreTestsPigeonTestAllNullableTypes.
  *
- * Gets the value of the nestedClassList field of @object.
+ * Gets the value of the listList field of @object.
  *
  * Returns: the field value.
  */
-FlValue* core_tests_pigeon_test_all_nullable_types_get_nested_class_list(
+FlValue* core_tests_pigeon_test_all_nullable_types_get_list_list(
     CoreTestsPigeonTestAllNullableTypes* object);
 
 /**
@@ -615,6 +616,28 @@ FlValue* core_tests_pigeon_test_all_nullable_types_get_nested_class_list(
  * Returns: the field value.
  */
 FlValue* core_tests_pigeon_test_all_nullable_types_get_map(
+    CoreTestsPigeonTestAllNullableTypes* object);
+
+/**
+ * core_tests_pigeon_test_all_nullable_types_get_string_map
+ * @object: a #CoreTestsPigeonTestAllNullableTypes.
+ *
+ * Gets the value of the stringMap field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_nullable_types_get_string_map(
+    CoreTestsPigeonTestAllNullableTypes* object);
+
+/**
+ * core_tests_pigeon_test_all_nullable_types_get_int_map
+ * @object: a #CoreTestsPigeonTestAllNullableTypes.
+ *
+ * Gets the value of the intMap field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_nullable_types_get_int_map(
     CoreTestsPigeonTestAllNullableTypes* object);
 
 /**
@@ -644,9 +667,6 @@ G_DECLARE_FINAL_TYPE(
  * a_nullable8_byte_array_length: length of @a_nullable8_byte_array.
  * a_nullable_float_array: field in this object.
  * a_nullable_float_array_length: length of @a_nullable_float_array.
- * nullable_nested_list: field in this object.
- * nullable_map_with_annotations: field in this object.
- * nullable_map_with_object: field in this object.
  * a_nullable_enum: field in this object.
  * another_nullable_enum: field in this object.
  * a_nullable_string: field in this object.
@@ -656,7 +676,10 @@ G_DECLARE_FINAL_TYPE(
  * int_list: field in this object.
  * double_list: field in this object.
  * bool_list: field in this object.
+ * list_list: field in this object.
  * map: field in this object.
+ * string_map: field in this object.
+ * int_map: field in this object.
  *
  * Creates a new #AllNullableTypesWithoutRecursion object.
  *
@@ -670,13 +693,12 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
     const int32_t* a_nullable4_byte_array, size_t a_nullable4_byte_array_length,
     const int64_t* a_nullable8_byte_array, size_t a_nullable8_byte_array_length,
     const double* a_nullable_float_array, size_t a_nullable_float_array_length,
-    FlValue* nullable_nested_list, FlValue* nullable_map_with_annotations,
-    FlValue* nullable_map_with_object,
     CoreTestsPigeonTestAnEnum* a_nullable_enum,
     CoreTestsPigeonTestAnotherEnum* another_nullable_enum,
     const gchar* a_nullable_string, FlValue* a_nullable_object, FlValue* list,
     FlValue* string_list, FlValue* int_list, FlValue* double_list,
-    FlValue* bool_list, FlValue* map);
+    FlValue* bool_list, FlValue* list_list, FlValue* map, FlValue* string_map,
+    FlValue* int_map);
 
 /**
  * core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_bool
@@ -781,42 +803,6 @@ const double*
 core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_float_array(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object,
     size_t* length);
-
-/**
- * core_tests_pigeon_test_all_nullable_types_without_recursion_get_nullable_nested_list
- * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
- *
- * Gets the value of the nullableNestedList field of @object.
- *
- * Returns: the field value.
- */
-FlValue*
-core_tests_pigeon_test_all_nullable_types_without_recursion_get_nullable_nested_list(
-    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
-
-/**
- * core_tests_pigeon_test_all_nullable_types_without_recursion_get_nullable_map_with_annotations
- * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
- *
- * Gets the value of the nullableMapWithAnnotations field of @object.
- *
- * Returns: the field value.
- */
-FlValue*
-core_tests_pigeon_test_all_nullable_types_without_recursion_get_nullable_map_with_annotations(
-    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
-
-/**
- * core_tests_pigeon_test_all_nullable_types_without_recursion_get_nullable_map_with_object
- * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
- *
- * Gets the value of the nullableMapWithObject field of @object.
- *
- * Returns: the field value.
- */
-FlValue*
-core_tests_pigeon_test_all_nullable_types_without_recursion_get_nullable_map_with_object(
-    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
 
 /**
  * core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_enum
@@ -926,6 +912,18 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_get_bool_list(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
 
 /**
+ * core_tests_pigeon_test_all_nullable_types_without_recursion_get_list_list
+ * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
+ *
+ * Gets the value of the listList field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_list_list(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
+
+/**
  * core_tests_pigeon_test_all_nullable_types_without_recursion_get_map
  * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
  *
@@ -934,6 +932,30 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_get_bool_list(
  * Returns: the field value.
  */
 FlValue* core_tests_pigeon_test_all_nullable_types_without_recursion_get_map(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
+
+/**
+ * core_tests_pigeon_test_all_nullable_types_without_recursion_get_string_map
+ * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
+ *
+ * Gets the value of the stringMap field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_string_map(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
+
+/**
+ * core_tests_pigeon_test_all_nullable_types_without_recursion_get_int_map
+ * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
+ *
+ * Gets the value of the intMap field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_int_map(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
 
 /**

@@ -43,6 +43,7 @@ class AllTypes {
     this.anotherEnum = AnotherEnum.justInCase,
     this.aString = '',
     this.anObject = 0,
+    // required this.aClass,
 
     // Lists
     // This name is in a different format than the others to ensure that name
@@ -52,9 +53,23 @@ class AllTypes {
     required this.intList,
     required this.doubleList,
     required this.boolList,
+    // required this.enumList,
+    // required this.objectList,
+    required this.listList,
+    // required this.mapList,
+    // required this.classList,
 
     // Maps
     required this.map,
+    required this.stringMap,
+    required this.intMap,
+    // required this.doubleMap,
+    // required this.boolMap,
+    // required this.enumMap,
+    // required this.objectMap,
+    // required this.listMap,
+    // required this.mapMap,
+    // required this.classMap,
   });
 
   bool aBool;
@@ -69,6 +84,7 @@ class AllTypes {
   AnotherEnum anotherEnum;
   String aString;
   Object anObject;
+  // AllNullableTypesWithoutRecursion aClass;
 
   // Lists
   // ignore: strict_raw_type, always_specify_types
@@ -77,10 +93,24 @@ class AllTypes {
   List<int?> intList;
   List<double?> doubleList;
   List<bool?> boolList;
+  // List<AnEnum?> enumList;
+  // List<Object?> objectList;
+  List<List<Object?>?> listList;
+  // List<Map<Object?, Object?>?> mapList;
+  // List<AllNullableTypesWithoutRecursion?> classList;
 
   // Maps
   // ignore: strict_raw_type, always_specify_types
   Map map;
+  Map<String?, String?> stringMap;
+  Map<int?, int?> intMap;
+  // Map<double?, double?> doubleMap;
+  // Map<int?, bool?> boolMap;
+  // Map<AnEnum?, AnEnum?> enumMap;
+  // Map<Object?, Object?> objectMap;
+  // Map<int?, List<Object?>?> listMap;
+  // Map<int?, Map<Object?, Object?>?> mapMap;
+  // Map<int?, AllNullableTypesWithoutRecursion?> classMap;
 }
 
 /// A class containing all supported nullable types.
@@ -95,9 +125,6 @@ class AllNullableTypes {
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
     this.aNullableFloatArray,
-    this.nullableNestedList,
-    this.nullableMapWithAnnotations,
-    this.nullableMapWithObject,
     this.aNullableEnum,
     this.anotherNullableEnum,
     this.aNullableString,
@@ -105,15 +132,32 @@ class AllNullableTypes {
     this.allNullableTypes,
 
     // Lists
+    // This name is in a different format than the others to ensure that name
+    // collision with the work 'list' doesn't occur in the generated files.
     this.list,
     this.stringList,
     this.intList,
     this.doubleList,
     this.boolList,
-    this.nestedClassList,
+    // this.enumList,
+    // this.objectList,
+    this.listList,
+    // this.mapList,
+    // this.classList,
+    // this.recursiveClassList,
 
-    //Maps
+    // Maps
     this.map,
+    this.stringMap,
+    this.intMap,
+    // this.doubleMap,
+    // this.boolMap,
+    // this.enumMap,
+    // this.objectMap,
+    // this.listMap,
+    // this.mapMap,
+    // this.classMap,
+    // this.recursiveClassMap,
   );
 
   bool? aNullableBool;
@@ -124,9 +168,6 @@ class AllNullableTypes {
   Int32List? aNullable4ByteArray;
   Int64List? aNullable8ByteArray;
   Float64List? aNullableFloatArray;
-  List<List<bool?>?>? nullableNestedList;
-  Map<String?, String?>? nullableMapWithAnnotations;
-  Map<String?, Object?>? nullableMapWithObject;
   AnEnum? aNullableEnum;
   AnotherEnum? anotherNullableEnum;
   String? aNullableString;
@@ -140,11 +181,26 @@ class AllNullableTypes {
   List<int?>? intList;
   List<double?>? doubleList;
   List<bool?>? boolList;
-  List<AllNullableTypes?>? nestedClassList;
+  // List<AnEnum?>? enumList;
+  // List<Object?>? objectList;
+  List<List<Object?>?>? listList;
+  // List<Map<Object, Object?>?>? mapList;
+  // List<AllNullableTypesWithoutRecursion?>? classList;
+  // List<AllNullableTypes?>? recursiveClassList;
 
   // Maps
   // ignore: strict_raw_type, always_specify_types
   Map? map;
+  Map<String?, String?>? stringMap;
+  Map<int?, int?>? intMap;
+  // Map<double, double?>? doubleMap;
+  // Map<int, bool?>? boolMap;
+  // Map<AnEnum, AnEnum?>? enumMap;
+  // Map<Object, Object?>? objectMap;
+  // Map<int, List<Object?>?>? listMap;
+  // Map<int, Map<Object, Object?>?>? mapMap;
+  // Map<int, AllNullableTypesWithoutRecursion?>? classMap;
+  // Map<int, AllNullableTypes?>? recursiveClassMap;
 }
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -160,23 +216,34 @@ class AllNullableTypesWithoutRecursion {
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
     this.aNullableFloatArray,
-    this.nullableNestedList,
-    this.nullableMapWithAnnotations,
-    this.nullableMapWithObject,
     this.aNullableEnum,
     this.anotherNullableEnum,
     this.aNullableString,
     this.aNullableObject,
 
     // Lists
+    // This name is in a different format than the others to ensure that name
+    // collision with the work 'list' doesn't occur in the generated files.
     this.list,
     this.stringList,
     this.intList,
     this.doubleList,
     this.boolList,
+    // this.enumList,
+    // this.objectList,
+    this.listList,
+    // this.mapList,
 
-    //Maps
+    // Maps
     this.map,
+    this.stringMap,
+    this.intMap,
+    // this.doubleMap,
+    // this.boolMap,
+    // this.enumMap,
+    // this.objectMap,
+    // this.listMap,
+    // this.mapMap,
   );
 
   bool? aNullableBool;
@@ -187,9 +254,6 @@ class AllNullableTypesWithoutRecursion {
   Int32List? aNullable4ByteArray;
   Int64List? aNullable8ByteArray;
   Float64List? aNullableFloatArray;
-  List<List<bool?>?>? nullableNestedList;
-  Map<String?, String?>? nullableMapWithAnnotations;
-  Map<String?, Object?>? nullableMapWithObject;
   AnEnum? aNullableEnum;
   AnotherEnum? anotherNullableEnum;
   String? aNullableString;
@@ -202,10 +266,22 @@ class AllNullableTypesWithoutRecursion {
   List<int?>? intList;
   List<double?>? doubleList;
   List<bool?>? boolList;
+  // List<AnEnum?>? enumList;
+  // List<Object?>? objectList;
+  List<List<Object?>?>? listList;
+  // List<Map<Object, Object?>?>? mapList;
 
   // Maps
   // ignore: strict_raw_type, always_specify_types
   Map? map;
+  Map<String?, String?>? stringMap;
+  Map<int?, int?>? intMap;
+  // Map<double, double?>? doubleMap;
+  // Map<int, bool?>? boolMap;
+  // Map<AnEnum, AnEnum?>? enumMap;
+  // Map<Object, Object?>? objectMap;
+  // Map<int, List<Object?>?>? listMap;
+  // Map<int, Map<Object, Object?>?>? mapMap;
 }
 
 /// A class for testing nested class handling.

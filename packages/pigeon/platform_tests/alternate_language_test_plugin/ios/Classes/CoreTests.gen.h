@@ -65,7 +65,10 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                       intList:(NSArray<NSNumber *> *)intList
                    doubleList:(NSArray<NSNumber *> *)doubleList
                      boolList:(NSArray<NSNumber *> *)boolList
-                          map:(NSDictionary *)map;
+                     listList:(NSArray<NSArray<id> *> *)listList
+                          map:(NSDictionary *)map
+                    stringMap:(NSDictionary<NSString *, NSString *> *)stringMap
+                       intMap:(NSDictionary<NSNumber *, NSNumber *> *)intMap;
 @property(nonatomic, assign) BOOL aBool;
 @property(nonatomic, assign) NSInteger anInt;
 @property(nonatomic, assign) NSInteger anInt64;
@@ -83,7 +86,10 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy) NSArray<NSNumber *> *intList;
 @property(nonatomic, copy) NSArray<NSNumber *> *doubleList;
 @property(nonatomic, copy) NSArray<NSNumber *> *boolList;
+@property(nonatomic, copy) NSArray<NSArray<id> *> *listList;
 @property(nonatomic, copy) NSDictionary *map;
+@property(nonatomic, copy) NSDictionary<NSString *, NSString *> *stringMap;
+@property(nonatomic, copy) NSDictionary<NSNumber *, NSNumber *> *intMap;
 @end
 
 /// A class containing all supported nullable types.
@@ -96,10 +102,6 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                   aNullable4ByteArray:(nullable FlutterStandardTypedData *)aNullable4ByteArray
                   aNullable8ByteArray:(nullable FlutterStandardTypedData *)aNullable8ByteArray
                   aNullableFloatArray:(nullable FlutterStandardTypedData *)aNullableFloatArray
-                   nullableNestedList:(nullable NSArray<NSArray<NSNumber *> *> *)nullableNestedList
-           nullableMapWithAnnotations:
-               (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
-                nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
                   anotherNullableEnum:(nullable FLTAnotherEnumBox *)anotherNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
@@ -110,8 +112,10 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                               intList:(nullable NSArray<NSNumber *> *)intList
                            doubleList:(nullable NSArray<NSNumber *> *)doubleList
                              boolList:(nullable NSArray<NSNumber *> *)boolList
-                      nestedClassList:(nullable NSArray<FLTAllNullableTypes *> *)nestedClassList
-                                  map:(nullable NSDictionary *)map;
+                             listList:(nullable NSArray<NSArray<id> *> *)listList
+                                  map:(nullable NSDictionary *)map
+                            stringMap:(nullable NSDictionary<NSString *, NSString *> *)stringMap
+                               intMap:(nullable NSDictionary<NSNumber *, NSNumber *> *)intMap;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt64;
@@ -120,10 +124,6 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullable4ByteArray;
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullable8ByteArray;
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullableFloatArray;
-@property(nonatomic, copy, nullable) NSArray<NSArray<NSNumber *> *> *nullableNestedList;
-@property(nonatomic, copy, nullable)
-    NSDictionary<NSString *, NSString *> *nullableMapWithAnnotations;
-@property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *nullableMapWithObject;
 @property(nonatomic, strong, nullable) FLTAnEnumBox *aNullableEnum;
 @property(nonatomic, strong, nullable) FLTAnotherEnumBox *anotherNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
@@ -134,8 +134,10 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *intList;
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *doubleList;
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *boolList;
-@property(nonatomic, copy, nullable) NSArray<FLTAllNullableTypes *> *nestedClassList;
+@property(nonatomic, copy, nullable) NSArray<NSArray<id> *> *listList;
 @property(nonatomic, copy, nullable) NSDictionary *map;
+@property(nonatomic, copy, nullable) NSDictionary<NSString *, NSString *> *stringMap;
+@property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSNumber *> *intMap;
 @end
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -150,10 +152,6 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                   aNullable4ByteArray:(nullable FlutterStandardTypedData *)aNullable4ByteArray
                   aNullable8ByteArray:(nullable FlutterStandardTypedData *)aNullable8ByteArray
                   aNullableFloatArray:(nullable FlutterStandardTypedData *)aNullableFloatArray
-                   nullableNestedList:(nullable NSArray<NSArray<NSNumber *> *> *)nullableNestedList
-           nullableMapWithAnnotations:
-               (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
-                nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
                   anotherNullableEnum:(nullable FLTAnotherEnumBox *)anotherNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
@@ -163,7 +161,10 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                               intList:(nullable NSArray<NSNumber *> *)intList
                            doubleList:(nullable NSArray<NSNumber *> *)doubleList
                              boolList:(nullable NSArray<NSNumber *> *)boolList
-                                  map:(nullable NSDictionary *)map;
+                             listList:(nullable NSArray<NSArray<id> *> *)listList
+                                  map:(nullable NSDictionary *)map
+                            stringMap:(nullable NSDictionary<NSString *, NSString *> *)stringMap
+                               intMap:(nullable NSDictionary<NSNumber *, NSNumber *> *)intMap;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt64;
@@ -172,10 +173,6 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullable4ByteArray;
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullable8ByteArray;
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullableFloatArray;
-@property(nonatomic, copy, nullable) NSArray<NSArray<NSNumber *> *> *nullableNestedList;
-@property(nonatomic, copy, nullable)
-    NSDictionary<NSString *, NSString *> *nullableMapWithAnnotations;
-@property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *nullableMapWithObject;
 @property(nonatomic, strong, nullable) FLTAnEnumBox *aNullableEnum;
 @property(nonatomic, strong, nullable) FLTAnotherEnumBox *anotherNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
@@ -185,7 +182,10 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *intList;
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *doubleList;
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *boolList;
+@property(nonatomic, copy, nullable) NSArray<NSArray<id> *> *listList;
 @property(nonatomic, copy, nullable) NSDictionary *map;
+@property(nonatomic, copy, nullable) NSDictionary<NSString *, NSString *> *stringMap;
+@property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSNumber *> *intMap;
 @end
 
 /// A class for testing nested class handling.

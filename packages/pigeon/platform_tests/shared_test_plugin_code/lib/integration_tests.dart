@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -35,333 +37,557 @@ enum TargetGenerator {
   swift,
 }
 
-void _compareAllTypes(AllTypes? allTypesOne, AllTypes? allTypesTwo) {
-  expect(allTypesOne == null, allTypesTwo == null);
-  if (allTypesOne == null || allTypesTwo == null) {
-    return;
-  }
-  expect(allTypesOne.aBool, allTypesTwo.aBool);
-  expect(allTypesOne.anInt, allTypesTwo.anInt);
-  expect(allTypesOne.anInt64, allTypesTwo.anInt64);
-  expect(allTypesOne.aDouble, allTypesTwo.aDouble);
-  expect(allTypesOne.aString, allTypesTwo.aString);
-  expect(allTypesOne.aByteArray, allTypesTwo.aByteArray);
-  expect(allTypesOne.a4ByteArray, allTypesTwo.a4ByteArray);
-  expect(allTypesOne.a8ByteArray, allTypesTwo.a8ByteArray);
-  expect(allTypesOne.aFloatArray, allTypesTwo.aFloatArray);
-  expect(allTypesOne.anEnum, allTypesTwo.anEnum);
-  expect(allTypesOne.anObject, allTypesTwo.anObject);
-  expect(listEquals(allTypesOne.list, allTypesTwo.list), true);
-  expect(listEquals(allTypesOne.stringList, allTypesTwo.stringList), true);
-  expect(listEquals(allTypesOne.boolList, allTypesTwo.boolList), true);
-  expect(listEquals(allTypesOne.doubleList, allTypesTwo.doubleList), true);
-  expect(listEquals(allTypesOne.intList, allTypesTwo.intList), true);
-  expect(mapEquals(allTypesOne.map, allTypesTwo.map), true);
-}
-
-void _compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
-    AllNullableTypes? allNullableTypesTwo) {
-  expect(allNullableTypesOne == null, allNullableTypesTwo == null);
-  if (allNullableTypesOne == null || allNullableTypesTwo == null) {
-    return;
-  }
-  expect(allNullableTypesOne.aNullableBool, allNullableTypesTwo.aNullableBool);
-  expect(allNullableTypesOne.aNullableInt, allNullableTypesTwo.aNullableInt);
-  expect(
-      allNullableTypesOne.aNullableInt64, allNullableTypesTwo.aNullableInt64);
-  expect(
-      allNullableTypesOne.aNullableDouble, allNullableTypesTwo.aNullableDouble);
-  expect(
-      allNullableTypesOne.aNullableString, allNullableTypesTwo.aNullableString);
-  expect(allNullableTypesOne.aNullableByteArray,
-      allNullableTypesTwo.aNullableByteArray);
-  expect(allNullableTypesOne.aNullable4ByteArray,
-      allNullableTypesTwo.aNullable4ByteArray);
-  expect(allNullableTypesOne.aNullable8ByteArray,
-      allNullableTypesTwo.aNullable8ByteArray);
-  expect(allNullableTypesOne.aNullableFloatArray,
-      allNullableTypesTwo.aNullableFloatArray);
-  expect(allNullableTypesOne.nullableNestedList?.length,
-      allNullableTypesTwo.nullableNestedList?.length);
-  // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
-  // https://github.com/flutter/flutter/issues/116117
-  //for (int i = 0; i < allNullableTypesOne.nullableNestedList!.length; i++) {
-  //  expect(listEquals(allNullableTypesOne.nullableNestedList![i], allNullableTypesTwo.nullableNestedList![i]),
-  //      true);
-  //}
-  expect(
-      mapEquals(allNullableTypesOne.nullableMapWithAnnotations,
-          allNullableTypesTwo.nullableMapWithAnnotations),
-      true);
-  expect(
-      mapEquals(allNullableTypesOne.nullableMapWithObject,
-          allNullableTypesTwo.nullableMapWithObject),
-      true);
-  expect(
-      allNullableTypesOne.aNullableObject, allNullableTypesTwo.aNullableObject);
-  expect(allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
-  _compareAllNullableTypes(allNullableTypesOne.allNullableTypes,
-      allNullableTypesTwo.allNullableTypes);
-  expect(listEquals(allNullableTypesOne.list, allNullableTypesTwo.list), true);
-  expect(
-      listEquals(
-          allNullableTypesOne.stringList, allNullableTypesTwo.stringList),
-      true);
-  expect(listEquals(allNullableTypesOne.boolList, allNullableTypesTwo.boolList),
-      true);
-  expect(
-      listEquals(
-          allNullableTypesOne.doubleList, allNullableTypesTwo.doubleList),
-      true);
-  expect(listEquals(allNullableTypesOne.intList, allNullableTypesTwo.intList),
-      true);
-  expect(allNullableTypesOne.nestedClassList?.length,
-      allNullableTypesTwo.nestedClassList?.length);
-  for (int i = 0; i < (allNullableTypesOne.nestedClassList?.length ?? 0); i++) {
-    _compareAllNullableTypes(allNullableTypesOne.nestedClassList?[i],
-        allNullableTypesTwo.nestedClassList?[i]);
-  }
-  expect(mapEquals(allNullableTypesOne.map, allNullableTypesTwo.map), true);
-}
-
-void __compareAllNullableTypesWithoutRecursion(
-    AllNullableTypesWithoutRecursion? allNullableTypesOne,
-    AllNullableTypesWithoutRecursion? allNullableTypesTwo) {
-  expect(allNullableTypesOne == null, allNullableTypesTwo == null);
-  if (allNullableTypesOne == null || allNullableTypesTwo == null) {
-    return;
-  }
-  expect(allNullableTypesOne.aNullableBool, allNullableTypesTwo.aNullableBool);
-  expect(allNullableTypesOne.aNullableInt, allNullableTypesTwo.aNullableInt);
-  expect(
-      allNullableTypesOne.aNullableInt64, allNullableTypesTwo.aNullableInt64);
-  expect(
-      allNullableTypesOne.aNullableDouble, allNullableTypesTwo.aNullableDouble);
-  expect(
-      allNullableTypesOne.aNullableString, allNullableTypesTwo.aNullableString);
-  expect(allNullableTypesOne.aNullableByteArray,
-      allNullableTypesTwo.aNullableByteArray);
-  expect(allNullableTypesOne.aNullable4ByteArray,
-      allNullableTypesTwo.aNullable4ByteArray);
-  expect(allNullableTypesOne.aNullable8ByteArray,
-      allNullableTypesTwo.aNullable8ByteArray);
-  expect(allNullableTypesOne.aNullableFloatArray,
-      allNullableTypesTwo.aNullableFloatArray);
-  expect(allNullableTypesOne.nullableNestedList?.length,
-      allNullableTypesTwo.nullableNestedList?.length);
-  // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
-  // https://github.com/flutter/flutter/issues/116117
-  //for (int i = 0; i < allNullableTypesOne.nullableNestedList!.length; i++) {
-  //  expect(listEquals(allNullableTypesOne.nullableNestedList![i], allNullableTypesTwo.nullableNestedList![i]),
-  //      true);
-  //}
-  expect(
-      mapEquals(allNullableTypesOne.nullableMapWithAnnotations,
-          allNullableTypesTwo.nullableMapWithAnnotations),
-      true);
-  expect(
-      mapEquals(allNullableTypesOne.nullableMapWithObject,
-          allNullableTypesTwo.nullableMapWithObject),
-      true);
-  expect(
-      allNullableTypesOne.aNullableObject, allNullableTypesTwo.aNullableObject);
-  expect(allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
-  expect(listEquals(allNullableTypesOne.list, allNullableTypesTwo.list), true);
-  expect(
-      listEquals(
-          allNullableTypesOne.stringList, allNullableTypesTwo.stringList),
-      true);
-  expect(listEquals(allNullableTypesOne.boolList, allNullableTypesTwo.boolList),
-      true);
-  expect(
-      listEquals(
-          allNullableTypesOne.doubleList, allNullableTypesTwo.doubleList),
-      true);
-  expect(listEquals(allNullableTypesOne.intList, allNullableTypesTwo.intList),
-      true);
-  expect(mapEquals(allNullableTypesOne.map, allNullableTypesTwo.map), true);
-}
-
-void _compareAllClassesWrapper(
-    AllClassesWrapper? wrapperOne, AllClassesWrapper? wrapperTwo) {
-  expect(wrapperOne == null, wrapperTwo == null);
-  if (wrapperOne == null || wrapperTwo == null) {
-    return;
-  }
-
-  _compareAllNullableTypes(
-      wrapperOne.allNullableTypes, wrapperTwo.allNullableTypes);
-  __compareAllNullableTypesWithoutRecursion(
-    wrapperOne.allNullableTypesWithoutRecursion,
-    wrapperTwo.allNullableTypesWithoutRecursion,
-  );
-  _compareAllTypes(wrapperOne.allTypes, wrapperTwo.allTypes);
-}
-
-final Map<Object?, Object?> _map = <Object?, Object?>{
-  'a': 1,
-  'b': 2.0,
-  'c': 'three',
-  'd': false,
-  'e': null
-};
-
-final List<Object?> _list = <Object?>[
-  'Thing 1',
-  2,
-  true,
-  3.14,
-  null,
-];
-
-final List<String?> _stringList = <String?>[
-  'Thing 1',
-  '2',
-  'true',
-  '3.14',
-  null,
-];
-
-final List<int?> _intList = <int?>[
-  1,
-  2,
-  3,
-  4,
-  null,
-];
-
-final List<double?> _doubleList = <double?>[
-  1,
-  2.99999,
-  3,
-  3.14,
-  null,
-];
-
-final List<bool?> _boolList = <bool?>[
-  true,
-  false,
-  true,
-  false,
-  null,
-];
-
-final AllTypes _genericAllTypes = AllTypes(
-  aBool: true,
-  anInt: _regularInt,
-  anInt64: _biggerThanBigInt,
-  aDouble: _doublePi,
-  aString: 'Hello host!',
-  aByteArray: Uint8List.fromList(<int>[1, 2, 3]),
-  a4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
-  a8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-  aFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
-  anEnum: AnEnum.fortyTwo,
-  // ignore: avoid_redundant_argument_values
-  anotherEnum: AnotherEnum.justInCase,
-  anObject: 1,
-  list: _list,
-  stringList: _stringList,
-  intList: _intList,
-  doubleList: _doubleList,
-  boolList: _boolList,
-  map: _map,
-);
-
-final AllNullableTypes _genericAllNullableTypes = AllNullableTypes(
-  aNullableBool: true,
-  aNullableInt: _regularInt,
-  aNullableInt64: _biggerThanBigInt,
-  aNullableDouble: _doublePi,
-  aNullableString: 'Hello host!',
-  aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
-  aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
-  aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-  aNullableFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
-  nullableNestedList: <List<bool>>[
-    <bool>[true, false],
-    <bool>[false, true]
-  ],
-  nullableMapWithAnnotations: <String?, String?>{},
-  nullableMapWithObject: <String?, Object?>{},
-  aNullableEnum: AnEnum.fourHundredTwentyTwo,
-  anotherNullableEnum: AnotherEnum.justInCase,
-  aNullableObject: 0,
-  list: _list,
-  stringList: _stringList,
-  intList: _intList,
-  doubleList: _doubleList,
-  boolList: _boolList,
-  map: _map,
-);
-
-final List<AllNullableTypes?> _allNullableTypesList = <AllNullableTypes?>[
-  _genericAllNullableTypes,
-  AllNullableTypes(),
-  null,
-];
-
-final AllNullableTypes _recursiveAllNullableTypes = AllNullableTypes(
-  aNullableBool: true,
-  aNullableInt: _regularInt,
-  aNullableInt64: _biggerThanBigInt,
-  aNullableDouble: _doublePi,
-  aNullableString: 'Hello host!',
-  aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
-  aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
-  aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-  aNullableFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
-  nullableNestedList: <List<bool>>[
-    <bool>[true, false],
-    <bool>[false, true]
-  ],
-  nullableMapWithAnnotations: <String?, String?>{},
-  nullableMapWithObject: <String?, Object?>{},
-  aNullableEnum: AnEnum.fourHundredTwentyTwo,
-  anotherNullableEnum: AnotherEnum.justInCase,
-  aNullableObject: 0,
-  allNullableTypes: _genericAllNullableTypes,
-  list: _list,
-  stringList: _stringList,
-  intList: _intList,
-  doubleList: _doubleList,
-  boolList: _boolList,
-  nestedClassList: _allNullableTypesList,
-  map: _map,
-);
-
-final AllNullableTypesWithoutRecursion
-    __genericAllNullableTypesWithoutRecursion =
-    AllNullableTypesWithoutRecursion(
-  aNullableBool: true,
-  aNullableInt: _regularInt,
-  aNullableInt64: _biggerThanBigInt,
-  aNullableDouble: _doublePi,
-  aNullableString: 'Hello host!',
-  aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
-  aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
-  aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-  aNullableFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
-  nullableNestedList: <List<bool>>[
-    <bool>[true, false],
-    <bool>[false, true]
-  ],
-  nullableMapWithAnnotations: <String?, String?>{},
-  nullableMapWithObject: <String?, Object?>{},
-  aNullableEnum: AnEnum.fourHundredTwentyTwo,
-  anotherNullableEnum: AnotherEnum.justInCase,
-  aNullableObject: 0,
-  list: _list,
-  stringList: _stringList,
-  intList: _intList,
-  doubleList: _doubleList,
-  boolList: _boolList,
-  map: _map,
-);
-
 /// Sets up and runs the integration tests.
 void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  void compareAllNullableTypesWithoutRecursion(
+      AllNullableTypesWithoutRecursion? allNullableTypesOne,
+      AllNullableTypesWithoutRecursion? allNullableTypesTwo) {
+    expect(allNullableTypesOne == null, allNullableTypesTwo == null);
+    if (allNullableTypesOne == null || allNullableTypesTwo == null) {
+      return;
+    }
+    expect(
+        allNullableTypesOne.aNullableBool, allNullableTypesTwo.aNullableBool);
+    expect(allNullableTypesOne.aNullableInt, allNullableTypesTwo.aNullableInt);
+    expect(
+        allNullableTypesOne.aNullableInt64, allNullableTypesTwo.aNullableInt64);
+    expect(allNullableTypesOne.aNullableDouble,
+        allNullableTypesTwo.aNullableDouble);
+    expect(allNullableTypesOne.aNullableString,
+        allNullableTypesTwo.aNullableString);
+    expect(allNullableTypesOne.aNullableByteArray,
+        allNullableTypesTwo.aNullableByteArray);
+    expect(allNullableTypesOne.aNullable4ByteArray,
+        allNullableTypesTwo.aNullable4ByteArray);
+    expect(allNullableTypesOne.aNullable8ByteArray,
+        allNullableTypesTwo.aNullable8ByteArray);
+    expect(allNullableTypesOne.aNullableFloatArray,
+        allNullableTypesTwo.aNullableFloatArray);
+    expect(allNullableTypesOne.aNullableObject,
+        allNullableTypesTwo.aNullableObject);
+    expect(
+        allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
+    expect(
+        listEquals(allNullableTypesOne.list, allNullableTypesTwo.list), true);
+    expect(
+        listEquals(
+            allNullableTypesOne.stringList, allNullableTypesTwo.stringList),
+        true);
+    expect(
+        listEquals(allNullableTypesOne.boolList, allNullableTypesTwo.boolList),
+        true);
+    expect(
+        listEquals(
+            allNullableTypesOne.doubleList, allNullableTypesTwo.doubleList),
+        true);
+    expect(listEquals(allNullableTypesOne.intList, allNullableTypesTwo.intList),
+        true);
+    // expect(
+    //     listEquals(allNullableTypesOne.enumList, allNullableTypesTwo.enumList),
+    //     true);
+    // expect(
+    //     listEquals(
+    //         allNullableTypesOne.objectList, allNullableTypesTwo.objectList),
+    //     true);
+    // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
+    // https://github.com/flutter/flutter/issues/116117
+    //for (int i = 0; i < allNullableTypesOne.listList!.length; i++) {
+    //  expect(listEquals(allNullableTypesOne.listList![i], allNullableTypesTwo.listList![i]),
+    //      true);
+    //}
+    // expect(listEquals(allNullableTypesOne.mapList, allNullableTypesTwo.mapList),
+    //     true);
+    expect(mapEquals(allNullableTypesOne.map, allNullableTypesTwo.map), true);
+    expect(
+        mapEquals(allNullableTypesOne.stringMap, allNullableTypesTwo.stringMap),
+        true);
+    expect(mapEquals(allNullableTypesOne.intMap, allNullableTypesTwo.intMap),
+        true);
+    // expect(
+    //     mapEquals(allNullableTypesOne.doubleMap, allNullableTypesTwo.doubleMap),
+    //     true);
+    // expect(mapEquals(allNullableTypesOne.boolMap, allNullableTypesTwo.boolMap),
+    //     true);
+    // expect(mapEquals(allNullableTypesOne.enumMap, allNullableTypesTwo.enumMap),
+    //     true);
+    // expect(
+    //     mapEquals(allNullableTypesOne.objectMap, allNullableTypesTwo.objectMap),
+    // true);
+    // listMap: check each key and value, and compare each lists values
+    //
+    // mapMap: check each key and value, and compare each map in the same way
+    //
+    // classMap: check each key and value, call each compare method for every class
+  }
+
+  void compareAllTypes(AllTypes? allTypesOne, AllTypes? allTypesTwo) {
+    expect(allTypesOne == null, allTypesTwo == null);
+    if (allTypesOne == null || allTypesTwo == null) {
+      return;
+    }
+    expect(allTypesOne.aBool, allTypesTwo.aBool);
+    expect(allTypesOne.anInt, allTypesTwo.anInt);
+    expect(allTypesOne.anInt64, allTypesTwo.anInt64);
+    expect(allTypesOne.aDouble, allTypesTwo.aDouble);
+    expect(allTypesOne.aString, allTypesTwo.aString);
+    expect(allTypesOne.aByteArray, allTypesTwo.aByteArray);
+    expect(allTypesOne.a4ByteArray, allTypesTwo.a4ByteArray);
+    expect(allTypesOne.a8ByteArray, allTypesTwo.a8ByteArray);
+    expect(allTypesOne.aFloatArray, allTypesTwo.aFloatArray);
+    expect(allTypesOne.anEnum, allTypesTwo.anEnum);
+    expect(allTypesOne.anObject, allTypesTwo.anObject);
+    // compareAllNullableTypesWithoutRecursion(
+    //     allTypesOne.aClass, allTypesTwo.aClass);
+    expect(listEquals(allTypesOne.list, allTypesTwo.list), true);
+    expect(listEquals(allTypesOne.stringList, allTypesTwo.stringList), true);
+    expect(listEquals(allTypesOne.intList, allTypesTwo.intList), true);
+    expect(listEquals(allTypesOne.doubleList, allTypesTwo.doubleList), true);
+    expect(listEquals(allTypesOne.boolList, allTypesTwo.boolList), true);
+    // expect(listEquals(allTypesOne.enumList, allTypesTwo.enumList), true);
+    // expect(listEquals(allTypesOne.objectList, allTypesTwo.objectList), true);
+    // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
+    // https://github.com/flutter/flutter/issues/116117
+    //for (int i = 0; i < allTypesOne.listList!.length; i++) {
+    //  expect(listEquals(allTypesOne.listList![i], allTypesTwo.listList![i]),
+    //      true);
+    //}
+    // expect(listEquals(allTypesOne.mapList, allTypesTwo.mapList), true);
+    // for (int i = 0; i < (allTypesOne.classList.length); i++) {
+    //   compareAllNullableTypesWithoutRecursion(
+    //       allTypesOne.classList[i], allTypesTwo.classList[i]);
+    // }
+    // expect(listEquals(allTypesOne.mapList, allTypesTwo.mapList), true);
+    expect(mapEquals(allTypesOne.map, allTypesTwo.map), true);
+    expect(mapEquals(allTypesOne.stringMap, allTypesTwo.stringMap), true);
+    expect(mapEquals(allTypesOne.intMap, allTypesTwo.intMap), true);
+    // expect(mapEquals(allTypesOne.doubleMap, allTypesTwo.doubleMap), true);
+    // expect(mapEquals(allTypesOne.boolMap, allTypesTwo.boolMap), true);
+    // expect(mapEquals(allTypesOne.enumMap, allTypesTwo.enumMap), true);
+    // expect(mapEquals(allTypesOne.objectMap, allTypesTwo.objectMap), true);
+    // listMap: check each key and value, and compare each lists values
+    //
+    // mapMap: check each key and value, and compare each map in the same way
+    //
+    // classMap: check each key and value, call each compare method for every class
+  }
+
+  void compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
+      AllNullableTypes? allNullableTypesTwo) {
+    expect(allNullableTypesOne == null, allNullableTypesTwo == null);
+    if (allNullableTypesOne == null || allNullableTypesTwo == null) {
+      return;
+    }
+    expect(
+        allNullableTypesOne.aNullableBool, allNullableTypesTwo.aNullableBool);
+    expect(allNullableTypesOne.aNullableInt, allNullableTypesTwo.aNullableInt);
+    expect(
+        allNullableTypesOne.aNullableInt64, allNullableTypesTwo.aNullableInt64);
+    expect(allNullableTypesOne.aNullableDouble,
+        allNullableTypesTwo.aNullableDouble);
+    expect(allNullableTypesOne.aNullableString,
+        allNullableTypesTwo.aNullableString);
+    expect(allNullableTypesOne.aNullableByteArray,
+        allNullableTypesTwo.aNullableByteArray);
+    expect(allNullableTypesOne.aNullable4ByteArray,
+        allNullableTypesTwo.aNullable4ByteArray);
+    expect(allNullableTypesOne.aNullable8ByteArray,
+        allNullableTypesTwo.aNullable8ByteArray);
+    expect(allNullableTypesOne.aNullableFloatArray,
+        allNullableTypesTwo.aNullableFloatArray);
+    expect(allNullableTypesOne.aNullableObject,
+        allNullableTypesTwo.aNullableObject);
+    expect(
+        allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
+    compareAllNullableTypes(allNullableTypesOne.allNullableTypes,
+        allNullableTypesTwo.allNullableTypes);
+    expect(
+        listEquals(allNullableTypesOne.list, allNullableTypesTwo.list), true);
+    expect(
+        listEquals(
+            allNullableTypesOne.stringList, allNullableTypesTwo.stringList),
+        true);
+    expect(
+        listEquals(allNullableTypesOne.boolList, allNullableTypesTwo.boolList),
+        true);
+    expect(
+        listEquals(
+            allNullableTypesOne.doubleList, allNullableTypesTwo.doubleList),
+        true);
+    expect(listEquals(allNullableTypesOne.intList, allNullableTypesTwo.intList),
+        true);
+    // expect(
+    //     listEquals(allNullableTypesOne.enumList, allNullableTypesTwo.enumList),
+    //     true);
+    // expect(
+    //     listEquals(
+    //         allNullableTypesOne.objectList, allNullableTypesTwo.objectList),
+    // true);
+    // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
+    // https://github.com/flutter/flutter/issues/116117
+    //for (int i = 0; i < allNullableTypesOne.listList!.length; i++) {
+    //  expect(listEquals(allNullableTypesOne.listList![i], allNullableTypesTwo.listList![i]),
+    //      true);
+    //}
+    // expect(listEquals(allNullableTypesOne.mapList, allNullableTypesTwo.mapList),
+    //     true);
+    // for (int i = 0; i < (allNullableTypesOne.classList?.length ?? 0); i++) {
+    //   compareAllNullableTypesWithoutRecursion(
+    //       allNullableTypesOne.classList?[i], allNullableTypesTwo.classList?[i]);
+    // }
+    // for (int i = 0;
+    //     i < (allNullableTypesOne.recursiveClassList?.length ?? 0);
+    //     i++) {
+    //   compareAllNullableTypes(allNullableTypesOne.recursiveClassList?[i],
+    //       allNullableTypesTwo.recursiveClassList?[i]);
+    // }
+    // expect(listEquals(allNullableTypesOne.mapList, allNullableTypesTwo.mapList),
+    //     true);
+    expect(mapEquals(allNullableTypesOne.map, allNullableTypesTwo.map), true);
+    expect(
+        mapEquals(allNullableTypesOne.stringMap, allNullableTypesTwo.stringMap),
+        true);
+    expect(mapEquals(allNullableTypesOne.intMap, allNullableTypesTwo.intMap),
+        true);
+    // expect(
+    //     mapEquals(allNullableTypesOne.doubleMap, allNullableTypesTwo.doubleMap),
+    //     true);
+    // expect(mapEquals(allNullableTypesOne.boolMap, allNullableTypesTwo.boolMap),
+    //     true);
+    // expect(mapEquals(allNullableTypesOne.enumMap, allNullableTypesTwo.enumMap),
+    //     true);
+    // expect(
+    //     mapEquals(allNullableTypesOne.objectMap, allNullableTypesTwo.objectMap),
+    //     true);
+    // listMap: check each key and value, and compare each lists values
+    //
+    // mapMap: check each key and value, and compare each map in the same way
+    //
+    // classMap: check each key and value, call each compare method for every class
+    // recursiveClassMap: check each key and value, call each compare method for every class
+  }
+
+  void compareAllClassesWrapper(
+      AllClassesWrapper? wrapperOne, AllClassesWrapper? wrapperTwo) {
+    expect(wrapperOne == null, wrapperTwo == null);
+    if (wrapperOne == null || wrapperTwo == null) {
+      return;
+    }
+
+    compareAllNullableTypes(
+        wrapperOne.allNullableTypes, wrapperTwo.allNullableTypes);
+    compareAllNullableTypesWithoutRecursion(
+      wrapperOne.allNullableTypesWithoutRecursion,
+      wrapperTwo.allNullableTypesWithoutRecursion,
+    );
+    compareAllTypes(wrapperOne.allTypes, wrapperTwo.allTypes);
+  }
+
+  final List<Object?> list = <Object?>[
+    'Thing 1',
+    2,
+    true,
+    3.14,
+    null,
+  ];
+
+  final List<String?> stringList = <String?>[
+    'Thing 1',
+    '2',
+    'true',
+    '3.14',
+    null,
+  ];
+
+  final List<int?> intList = <int?>[
+    1,
+    2,
+    3,
+    4,
+    null,
+  ];
+
+  final List<double?> doubleList = <double?>[
+    1,
+    2.99999,
+    3,
+    3.14,
+    null,
+  ];
+
+  final List<bool?> boolList = <bool?>[
+    true,
+    false,
+    true,
+    false,
+    null,
+  ];
+
+  final List<AnEnum?> enumList = <AnEnum?>[
+    AnEnum.one,
+    AnEnum.two,
+    AnEnum.three,
+    AnEnum.fortyTwo,
+    AnEnum.fourHundredTwentyTwo,
+    null
+  ];
+
+  final List<List<Object?>?> listList = <List<Object?>?>[
+    list,
+    stringList,
+    intList,
+    doubleList,
+    boolList,
+    enumList,
+    null
+  ];
+
+  final Map<Object?, Object?> map = <Object?, Object?>{
+    'a': 1,
+    'b': 2.0,
+    'c': 'three',
+    'd': false,
+    'e': null
+  };
+
+  final Map<String?, String?> stringMap = <String?, String?>{
+    'a': '1',
+    'b': '2.0',
+    'c': 'three',
+    'd': 'false',
+    'e': 'null',
+    'f': null
+  };
+
+  final Map<int?, int?> intMap = <int?, int?>{
+    0: 0,
+    1: 1,
+    2: 3,
+    4: -1,
+    5: null,
+  };
+
+  final Map<double?, double?> doubleMap = <double?, double?>{
+    0.0: 0,
+    1.1: 2.0,
+    3: 0.3,
+    -.4: -0.2,
+    1111111111111111.11111111111111111111111111111111111111111111: null
+  };
+
+  final Map<int?, bool?> boolMap = <int?, bool?>{
+    0: true,
+    1: false,
+    2: true,
+    3: null,
+  };
+
+  final Map<AnEnum?, AnEnum?> enumMap = <AnEnum?, AnEnum?>{
+    AnEnum.one: AnEnum.one,
+    AnEnum.two: AnEnum.two,
+    AnEnum.three: AnEnum.three,
+    AnEnum.fortyTwo: AnEnum.fortyTwo,
+    AnEnum.fourHundredTwentyTwo: null,
+  };
+
+  final Map<int?, List<Object?>?> listMap = <int?, List<Object?>?>{
+    0: list,
+    1: stringList,
+    2: doubleList,
+    4: intList,
+    5: boolList,
+    6: enumList,
+    7: null
+  };
+
+  final Map<int?, Map<Object?, Object?>?> mapMap =
+      <int?, Map<Object?, Object?>?>{
+    0: map,
+    1: stringMap,
+    2: doubleMap,
+    4: intMap,
+    5: boolMap,
+    6: enumMap,
+    7: null
+  };
+
+  final List<Map<Object?, Object?>?> mapList = <Map<Object?, Object?>?>[
+    map,
+    stringMap,
+    doubleMap,
+    intMap,
+    boolMap,
+    enumMap,
+    null
+  ]; // fill in.
+
+  final AllNullableTypesWithoutRecursion
+      genericAllNullableTypesWithoutRecursion =
+      AllNullableTypesWithoutRecursion(
+    aNullableBool: true,
+    aNullableInt: _regularInt,
+    aNullableInt64: _biggerThanBigInt,
+    aNullableDouble: _doublePi,
+    aNullableString: 'Hello host!',
+    aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+    aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+    aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+    aNullableFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
+    aNullableEnum: AnEnum.fourHundredTwentyTwo,
+    aNullableObject: 0,
+    list: list,
+    stringList: stringList,
+    intList: intList,
+    doubleList: doubleList,
+    boolList: boolList,
+    // enumList: enumList,
+    // objectList: list,
+    // listList: listList,
+    // mapList: mapList,
+    map: map,
+    stringMap: stringMap,
+    intMap: intMap,
+    // doubleMap: doubleMap,
+    // boolMap: boolMap,
+    // enumMap: enumMap,
+    // objectMap: map,
+    // listMap: listMap,
+    // mapMap: mapMap,
+  );
+
+  final List<AllNullableTypesWithoutRecursion?> classList =
+      <AllNullableTypesWithoutRecursion?>[
+    genericAllNullableTypesWithoutRecursion,
+    AllNullableTypesWithoutRecursion(),
+    null,
+  ];
+
+  final Map<int, AllNullableTypesWithoutRecursion?> classMap =
+      <int, AllNullableTypesWithoutRecursion?>{
+    0: genericAllNullableTypesWithoutRecursion,
+    1: AllNullableTypesWithoutRecursion(),
+    2: null,
+  };
+
+  final AllTypes genericAllTypes = AllTypes(
+    aBool: true,
+    anInt: _regularInt,
+    anInt64: _biggerThanBigInt,
+    aDouble: _doublePi,
+    aString: 'Hello host!',
+    aByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+    a4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+    a8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+    aFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
+    anEnum: AnEnum.fortyTwo,
+    anObject: 1,
+    list: list,
+    stringList: stringList,
+    intList: intList,
+    doubleList: doubleList,
+    boolList: boolList,
+    // aClass: genericAllNullableTypesWithoutRecursion,
+    // enumList: enumList,
+    // objectList: list,
+    listList: listList,
+    // mapList: mapList,
+    // classList: classList,
+    map: map,
+    stringMap: stringMap,
+    intMap: intMap,
+    // doubleMap: doubleMap,
+    // boolMap: boolMap,
+    // enumMap: enumMap,
+    // objectMap: map,
+    // listMap: listMap,
+    // mapMap: mapMap,
+    // classMap: classMap,
+  );
+
+  final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
+    aNullableBool: true,
+    aNullableInt: _regularInt,
+    aNullableInt64: _biggerThanBigInt,
+    aNullableDouble: _doublePi,
+    aNullableString: 'Hello host!',
+    aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+    aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+    aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+    aNullableFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
+    aNullableEnum: AnEnum.fourHundredTwentyTwo,
+    aNullableObject: 0,
+    list: list,
+    stringList: stringList,
+    intList: intList,
+    doubleList: doubleList,
+    boolList: boolList,
+    // enumList: enumList,
+    // objectList: list,
+    // listList: listList,
+    // mapList: mapList,
+    // classList: classList,
+    map: map,
+    // stringMap: stringMap,
+    intMap: intMap,
+    // doubleMap: doubleMap,
+    // boolMap: boolMap,
+    // enumMap: enumMap,
+    // objectMap: map,
+    // listMap: listMap,
+    // mapMap: mapMap,
+    // classMap: classMap,
+  );
+
+  final List<AllNullableTypes?> allNullableTypesList = <AllNullableTypes?>[
+    genericAllNullableTypes,
+    AllNullableTypes(),
+    null,
+  ];
+
+  final Map<int, AllNullableTypes?> allNullableTypesMap =
+      <int, AllNullableTypes?>{
+    0: genericAllNullableTypes,
+    1: AllNullableTypes(),
+    2: null,
+  };
+
+  final AllNullableTypes recursiveAllNullableTypes = AllNullableTypes(
+    aNullableBool: true,
+    aNullableInt: _regularInt,
+    aNullableInt64: _biggerThanBigInt,
+    aNullableDouble: _doublePi,
+    aNullableString: 'Hello host!',
+    aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+    aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+    aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+    aNullableFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
+    aNullableEnum: AnEnum.fourHundredTwentyTwo,
+    aNullableObject: 0,
+    allNullableTypes: genericAllNullableTypes,
+    list: list,
+    stringList: stringList,
+    intList: intList,
+    doubleList: doubleList,
+    boolList: boolList,
+    // enumList: enumList,
+    // objectList: list,
+    // listList: listList,
+    // mapList: mapList,
+    // classList: classList,
+    // recursiveClassList: allNullableTypesList,
+    map: map,
+    // stringMap: stringMap,
+    intMap: intMap,
+    // doubleMap: doubleMap,
+    // boolMap: boolMap,
+    // enumMap: enumMap,
+    // objectMap: map,
+    // listMap: listMap,
+    // mapMap: mapMap,
+    // classMap: classMap,
+    // recursiveClassMap: allNullableTypesMap,
+  );
 
   group('Host sync API tests', () {
     testWidgets('basic void->void call works', (WidgetTester _) async {
@@ -374,8 +600,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final AllTypes echoObject = await api.echoAllTypes(_genericAllTypes);
-      _compareAllTypes(echoObject, _genericAllTypes);
+      final AllTypes echoObject = await api.echoAllTypes(genericAllTypes);
+      compareAllTypes(echoObject, genericAllTypes);
     });
 
     testWidgets('all nullable datatypes serialize and deserialize correctly',
@@ -383,9 +609,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final AllNullableTypes? echoObject =
-          await api.echoAllNullableTypes(_recursiveAllNullableTypes);
+          await api.echoAllNullableTypes(recursiveAllNullableTypes);
 
-      _compareAllNullableTypes(echoObject, _recursiveAllNullableTypes);
+      compareAllNullableTypes(echoObject, recursiveAllNullableTypes);
     });
 
     testWidgets('all null datatypes serialize and deserialize correctly',
@@ -396,7 +622,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypes? echoNullFilledClass =
           await api.echoAllNullableTypes(allTypesNull);
-      _compareAllNullableTypes(allTypesNull, echoNullFilledClass);
+      compareAllNullableTypes(allTypesNull, echoNullFilledClass);
     });
 
     testWidgets('Classes with list of null serialize and deserialize correctly',
@@ -409,7 +635,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllNullableTypes? echoNullFilledClass =
           await api.echoAllNullableTypes(nullableListTypes);
 
-      _compareAllNullableTypes(nullableListTypes, echoNullFilledClass);
+      compareAllNullableTypes(nullableListTypes, echoNullFilledClass);
     });
 
     testWidgets('Classes with map of null serialize and deserialize correctly',
@@ -422,7 +648,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllNullableTypes? echoNullFilledClass =
           await api.echoAllNullableTypes(nullableListTypes);
 
-      _compareAllNullableTypes(nullableListTypes, echoNullFilledClass);
+      compareAllNullableTypes(nullableListTypes, echoNullFilledClass);
     });
 
     testWidgets(
@@ -432,10 +658,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypesWithoutRecursion? echoObject =
           await api.echoAllNullableTypesWithoutRecursion(
-              __genericAllNullableTypesWithoutRecursion);
+              genericAllNullableTypesWithoutRecursion);
 
-      __compareAllNullableTypesWithoutRecursion(
-          echoObject, __genericAllNullableTypesWithoutRecursion);
+      compareAllNullableTypesWithoutRecursion(
+          echoObject, genericAllNullableTypesWithoutRecursion);
     });
 
     testWidgets(
@@ -448,7 +674,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypesWithoutRecursion? echoNullFilledClass =
           await api.echoAllNullableTypesWithoutRecursion(allTypesNull);
-      __compareAllNullableTypesWithoutRecursion(
+      compareAllNullableTypesWithoutRecursion(
           allTypesNull, echoNullFilledClass);
     });
 
@@ -465,7 +691,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllNullableTypesWithoutRecursion? echoNullFilledClass =
           await api.echoAllNullableTypesWithoutRecursion(nullableListTypes);
 
-      __compareAllNullableTypesWithoutRecursion(
+      compareAllNullableTypesWithoutRecursion(
           nullableListTypes, echoNullFilledClass);
     });
 
@@ -482,7 +708,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllNullableTypesWithoutRecursion? echoNullFilledClass =
           await api.echoAllNullableTypesWithoutRecursion(nullableListTypes);
 
-      __compareAllNullableTypesWithoutRecursion(
+      compareAllNullableTypesWithoutRecursion(
           nullableListTypes, echoNullFilledClass);
     });
 
@@ -520,10 +746,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final AllClassesWrapper sentObject = AllClassesWrapper(
-          allNullableTypes: _recursiveAllNullableTypes,
+          allNullableTypes: recursiveAllNullableTypes,
           allNullableTypesWithoutRecursion:
-              __genericAllNullableTypesWithoutRecursion,
-          allTypes: _genericAllTypes);
+              genericAllNullableTypesWithoutRecursion,
+          allTypes: genericAllTypes);
 
       final String? receivedString =
           await api.extractNestedNullableString(sentObject);
@@ -547,12 +773,12 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllClassesWrapper sentWrapper = AllClassesWrapper(
         allNullableTypes: AllNullableTypes(),
         allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion(),
-        allTypes: _genericAllTypes,
+        allTypes: genericAllTypes,
       );
 
       final AllClassesWrapper receivedClassWrapper =
           await api.echoClassWrapper(sentWrapper);
-      _compareAllClassesWrapper(sentWrapper, receivedClassWrapper);
+      compareAllClassesWrapper(sentWrapper, receivedClassWrapper);
     });
 
     testWidgets('nested null classes can serialize and deserialize correctly',
@@ -566,7 +792,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllClassesWrapper receivedClassWrapper =
           await api.echoClassWrapper(sentWrapper);
-      _compareAllClassesWrapper(sentWrapper, receivedClassWrapper);
+      compareAllClassesWrapper(sentWrapper, receivedClassWrapper);
     });
 
     testWidgets(
@@ -1091,9 +1317,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final AllTypes echoObject = await api.echoAsyncAllTypes(_genericAllTypes);
+      final AllTypes echoObject = await api.echoAsyncAllTypes(genericAllTypes);
 
-      _compareAllTypes(echoObject, _genericAllTypes);
+      compareAllTypes(echoObject, genericAllTypes);
     });
 
     testWidgets(
@@ -1102,9 +1328,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final AllNullableTypes? echoObject = await api
-          .echoAsyncNullableAllNullableTypes(_recursiveAllNullableTypes);
+          .echoAsyncNullableAllNullableTypes(recursiveAllNullableTypes);
 
-      _compareAllNullableTypes(echoObject, _recursiveAllNullableTypes);
+      compareAllNullableTypes(echoObject, recursiveAllNullableTypes);
     });
 
     testWidgets('all null datatypes async serialize and deserialize correctly',
@@ -1115,7 +1341,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypes? echoNullFilledClass =
           await api.echoAsyncNullableAllNullableTypes(allTypesNull);
-      _compareAllNullableTypes(echoNullFilledClass, allTypesNull);
+      compareAllNullableTypes(echoNullFilledClass, allTypesNull);
     });
 
     testWidgets(
@@ -1125,10 +1351,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypesWithoutRecursion? echoObject =
           await api.echoAsyncNullableAllNullableTypesWithoutRecursion(
-              __genericAllNullableTypesWithoutRecursion);
+              genericAllNullableTypesWithoutRecursion);
 
-      __compareAllNullableTypesWithoutRecursion(
-          echoObject, __genericAllNullableTypesWithoutRecursion);
+      compareAllNullableTypesWithoutRecursion(
+          echoObject, genericAllNullableTypesWithoutRecursion);
     });
 
     testWidgets(
@@ -1141,7 +1367,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypesWithoutRecursion? echoNullFilledClass = await api
           .echoAsyncNullableAllNullableTypesWithoutRecursion(allTypesNull);
-      __compareAllNullableTypesWithoutRecursion(
+      compareAllNullableTypesWithoutRecursion(
           echoNullFilledClass, allTypesNull);
     });
 
@@ -1572,9 +1798,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final AllTypes echoObject =
-          await api.callFlutterEchoAllTypes(_genericAllTypes);
+          await api.callFlutterEchoAllTypes(genericAllTypes);
 
-      _compareAllTypes(echoObject, _genericAllTypes);
+      compareAllTypes(echoObject, genericAllTypes);
     });
 
     testWidgets(
