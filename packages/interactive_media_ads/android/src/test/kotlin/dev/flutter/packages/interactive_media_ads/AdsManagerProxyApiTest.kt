@@ -6,8 +6,10 @@ package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdsManager
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 class AdsManagerProxyApiTest {
   @Test
@@ -38,5 +40,36 @@ class AdsManagerProxyApiTest {
     api.start(instance)
 
     verify(instance).start()
+  }
+
+  @Test
+  fun getAdCuePoints() {
+    val api = TestProxyApiRegistrar().getPigeonApiAdsManager()
+
+    val instance = mock<AdsManager>()
+    val value = listOf(1.0)
+    whenever(instance.adCuePoints).thenReturn(listOf(1.0f))
+
+    assertEquals(value, api.getAdCuePoints(instance))
+  }
+
+  @Test
+  fun resume() {
+    val api = TestProxyApiRegistrar().getPigeonApiAdsManager()
+
+    val instance = mock<AdsManager>()
+    api.resume(instance)
+
+    verify(instance).resume()
+  }
+
+  @Test
+  fun skip() {
+    val api = TestProxyApiRegistrar().getPigeonApiAdsManager()
+
+    val instance = mock<AdsManager>()
+    api.skip(instance)
+
+    verify(instance).skip()
   }
 }

@@ -25,4 +25,16 @@ class AdsManagerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   override fun start(pigeon_instance: AdsManager) {
     pigeon_instance.start()
   }
+
+  override fun getAdCuePoints(pigeon_instance: AdsManager): List<Double> {
+    return pigeon_instance.adCuePoints.map { it.toDouble() }
+  }
+
+  override fun resume(pigeon_instance: AdsManager) {
+    pigeon_instance.resume()
+  }
+
+  override fun skip(pigeon_instance: AdsManager) {
+    pigeon_instance.skip()
+  }
 }
