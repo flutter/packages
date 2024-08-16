@@ -68,6 +68,28 @@ void main() {
       expect(find.byType(DummyScreen), findsOneWidget);
     });
 
+    testWidgets('pushReplacement and replace when only one matches',
+            (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(name: '1', path: '/', builder: dummy),
+        GoRoute(name: '2', path: '/a', builder: dummy),
+        GoRoute(name: '3', path: '/b', builder: dummy),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      expect(router.routerDelegate.currentConfiguration.uri.path, '/');
+
+      router.replace<void>('/a');
+      await tester.pumpAndSettle();
+      // When the imperative match is the only match in the route match list,
+      // it should update the uri.
+      expect(router.routerDelegate.currentConfiguration.uri.path, '/a');
+
+      router.pushReplacement<void>('/b');
+      await tester.pumpAndSettle();
+      expect(router.routerDelegate.currentConfiguration.uri.path, '/b');
+    });
+
     test('empty path', () {
       expect(() {
         GoRoute(path: '');
