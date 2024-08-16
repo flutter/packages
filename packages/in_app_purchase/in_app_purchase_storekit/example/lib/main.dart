@@ -59,7 +59,7 @@ class _MyAppState extends State<_MyApp> {
         _iapStoreKitPlatform.purchaseStream;
     _subscription =
         purchaseUpdated.listen((List<PurchaseDetails> purchaseDetailsList) {
-          print(purchaseDetailsList.first.purchaseID);
+      print(purchaseDetailsList.first.purchaseID);
       _listenToPurchaseUpdated(purchaseDetailsList);
     }, onDone: () {
       _subscription.cancel();
@@ -237,9 +237,8 @@ class _MyAppState extends State<_MyApp> {
     final Map<String, PurchaseDetails> purchases =
         Map<String, PurchaseDetails>.fromEntries(
             _purchases.map((PurchaseDetails purchase) {
-              print('finishing pending transactions');
+      print('finishing pending transactions');
       if (purchase.pendingCompletePurchase) {
-
         _iapStoreKitPlatform.completePurchase(purchase);
       }
       return MapEntry<String, PurchaseDetails>(purchase.productID, purchase);

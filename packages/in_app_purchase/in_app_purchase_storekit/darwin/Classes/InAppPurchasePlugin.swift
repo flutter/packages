@@ -1,6 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+
 
 import Foundation
 import StoreKit
@@ -11,9 +9,7 @@ import StoreKit
   import FlutterMacOS
 #endif
 
-@available(iOS 13.0, *)
-public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InAppPurchase2API {
-
+public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   private let receiptManager: FIAPReceiptManager
   private var productsCache: NSMutableDictionary = [:]
   private var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
@@ -28,9 +24,8 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
   public var registrar: FlutterPluginRegistrar?
   // This property is optional, as it requires self to exist to be initialized.
   public var paymentQueueHandler: FLTPaymentQueueHandlerProtocol?
-  var updateListenerTask: Task<Void, Error>?
+  var updateListenerTask: Any?
   var transactionListenerAPI: TransactionCallbacks? = nil
-  var cache: Any? = nil
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
@@ -46,7 +41,9 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
     registrar.addMethodCallDelegate(instance, channel: channel)
     registrar.addApplicationDelegate(instance)
     SetUpInAppPurchaseAPI(messenger, instance)
-    InAppPurchase2APISetup.setUp(binaryMessenger: messenger, api: instance)
+    if #available(iOS 15.0, *) {
+      InAppPurchase2APISetup.setUp(binaryMessenger: messenger, api: instance)
+    }
   }
 
   // This init is used for tests
@@ -441,198 +438,4 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
       )
     )
   }
-
-  // https://developer.apple.com/documentation/storekit/appstore/3822277-canmakepayments
-  func canMakePayments() throws -> Bool {
-    if #available(iOS 15.0, macOS 12.0, *) {
-      return AppStore.canMakePayments
-    }
-    throw PigeonError(
-      code: "storekit2_invalid_os_version ",
-      message:
-        "You have tried to access a StoreKit 2 method on a device below iOS 15.0. or OS X. Please try again on an appropriate device",
-      details: "details")
-  }
-
-  // Gets the appropriate product, then calls purchase on it.
-  // https://developer.apple.com/documentation/storekit/product/3791971-purchase
-  func purchase(
-    id: String, options: SK2ProductPurchaseOptionsMessage?,
-    completion: @escaping (Result<SK2ProductPurchaseResultMessage, any Error>) -> Void
-  ) {
-    if #available(iOS 15.0, macOS 12.0, *) {
-      Task {
-        do {
-          let product = try await rawProducts(identifiers: [id]).first
-          guard let product = product else {
-            throw PigeonError(
-              code: "storekit2_failed_to_fetch_product", message: "failed to make purchase",
-              details: "")
-          }
-          print("native purchase")
-          let result = try await product.purchase()
-
-          switch result {
-          case .success(let verification):
-            switch verification {
-            case .verified(let transaction):
-              // return transaction here too?
-              // need to pass in if it succeeded?
-              print("purchase verified native")
-              TransactionCache.shared.add(transaction: transaction)
-              self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
-              completion(.success(result.convertToPigeon()))
-            case .unverified(_, let error):
-              completion(.failure(error))
-            }
-          case .pending:
-            completion(
-              .failure(
-                PigeonError(
-                  code: "storekit2_purchase_pending", message: "this transaction is still pending",
-                  details: "")))
-          case .userCancelled:
-            completion(
-              .failure(
-                PigeonError(
-                  code: "storekit2_purchase_cancelled",
-                  message: "this transaction has been cancelled", details: "")))
-          @unknown default:
-            fatalError()
-          }
-        } catch {
-          completion(.failure(error))
-        }
-      }
-    }
-  }
-
-  // Pigeon method
-  func products(
-    identifiers: [String], completion: @escaping (Result<[SK2ProductMessage], any Error>) -> Void
-  ) {
-    if #available(iOS 15.0, macOS 12.0, *) {
-      Task {
-        do {
-          let products = try await rawProducts(identifiers: identifiers)
-          let productMessages = products.map { product in
-            product.convertToPigeon()
-          }
-          completion(.success(productMessages))
-        } catch {
-          completion(.failure(error))
-        }
-      }
-    }
-  }
-
-  func transactions(
-    completion: @escaping (Result<[SK2TransactionMessage], any Error>) -> Void
-  ) {
-    if #available(iOS 15.0, macOS 12, *) {
-      Task {
-        do {
-          let transactionsMsgs = await rawTransactions().map {
-            $0.convertToPigeon()
-          }
-          completion(.success(transactionsMsgs))
-        }
-      }
-    } else {
-      fatalError("version")
-    }
-  }
-
-  func finish(id: Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
-    if #available(iOS 15.0, *) {
-      Task {
-        print("native finish")
-        let transaction = TransactionCache.shared.get(id: Int(id))
-        let transactionId = transaction.id;
-        await transaction.finish()
-        TransactionCache.shared.remove(id: Int(transactionId));
-        completion(.success(()))
-      }
-    }
-  }
-
-  func startListeningToTransactions() throws {
-    if #available(iOS 15.0, *) {
-      print("start listening");
-      self.updateListenerTask = self.listenForTransactions()
-    }
-  }
-
-  func stopListeningToTransactions() throws {
-    self.updateListenerTask = nil
-  }
-
-  @available(iOS 15.0, *)
-  func listenForTransactions() -> Task<Void, Error> {
-    return Task.detached {
-      for await verificationResult in Transaction.updates {
-        switch verificationResult {
-        case .verified(let transaction):
-          print(transaction.id)
-          TransactionCache.shared.add(transaction: transaction)
-          self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
-        case .unverified(let transaction, _): 
-          print("unverified", transaction.id)
-          break
-        }
-      }
-    }
-
-  }
-  func countryCode(completion: @escaping (Result<String, any Error>) -> Void) {
-    Task {
-      if #available(iOS 15.0, *) {
-        return await Storefront.current?.countryCode
-      } else {
-        fatalError()
-      }
-    }
-  }
-
-  func restorePurchases(completion: @escaping (Result<Void, any Error>) -> Void) {
-    if #available(iOS 15.0, *) {
-      Task {
-        for await completedPurchase in Transaction.currentEntitlements {
-          switch completedPurchase {
-          case .verified(let purchase):
-            self.transactionListenerAPI?.transactionUpdated(updatedTransactions: purchase, restoring: true)
-          case .unverified(_, _):
-            fatalError()
-          }
-        }
-
-      }
-    } else {
-      fatalError()
-    }
-  }
-}
-
-// Raw storekit calls
-
-@available(iOS 15.0, macOS 12.0, *)
-func rawProducts(identifiers: [String]) async throws -> [Product] {
-  return try await Product.products(for: identifiers)
-}
-
-@available(iOS 15.0, macOS 12.0, *)
-func rawTransactions() async -> [Transaction] {
-  var transactions: [Transaction] = []
-
-  for await verificationResult in Transaction.all {
-    switch verificationResult {
-    case .verified(let transaction):
-      transactions.append(transaction)
-    case .unverified(_, _):
-      // Handle unverified transactions if necessary
-      break
-    }
-  }
-
-  return transactions
 }
