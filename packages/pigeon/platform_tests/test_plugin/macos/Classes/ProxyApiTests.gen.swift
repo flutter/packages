@@ -411,9 +411,9 @@ open class ProxyApiTestsPigeonProxyApiRegistrar {
   }
 
   private class InstanceManagerApiFinalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate {
-    let api: ProxyApiTestsProxyApiTestsPigeonInstanceManagerApi
+    let api: ProxyApiTestsPigeonInstanceManagerApi
 
-    init(_ api: ProxyApiTestsProxyApiTestsPigeonInstanceManagerApi) {
+    init(_ api: ProxyApiTestsPigeonInstanceManagerApi) {
       self.api = api
     }
 
@@ -429,11 +429,11 @@ open class ProxyApiTestsPigeonProxyApiRegistrar {
     self.apiDelegate = apiDelegate
     self.instanceManager = ProxyApiTestsPigeonInstanceManager(
       finalizerDelegate: InstanceManagerApiFinalizerDelegate(
-        ProxyApiTestsProxyApiTestsPigeonInstanceManagerApi(binaryMessenger: binaryMessenger)))
+        ProxyApiTestsPigeonInstanceManagerApi(binaryMessenger: binaryMessenger)))
   }
 
   func setUp() {
-    ProxyApiTestsProxyApiTestsPigeonInstanceManagerApi.setUpMessageHandlers(
+    ProxyApiTestsPigeonInstanceManagerApi.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, instanceManager: instanceManager)
     PigeonApiProxyApiTestClass.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiProxyApiTestClass(self))
@@ -443,7 +443,7 @@ open class ProxyApiTestsPigeonProxyApiRegistrar {
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiClassWithApiRequirement(self))
   }
   func tearDown() {
-    ProxyApiTestsProxyApiTestsPigeonInstanceManagerApi.setUpMessageHandlers(
+    ProxyApiTestsPigeonInstanceManagerApi.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, instanceManager: nil)
     PigeonApiProxyApiTestClass.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiProxyApiSuperClass.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
