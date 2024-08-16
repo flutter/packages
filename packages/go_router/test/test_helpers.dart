@@ -51,6 +51,7 @@ class GoRouterNamedLocationSpy extends GoRouter {
     String name, {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
+    String? fragment
   }) {
     this.name = name;
     this.pathParameters = pathParameters;
@@ -76,6 +77,7 @@ class GoRouterGoSpy extends GoRouter {
 }
 
 class GoRouterGoNamedSpy extends GoRouter {
+
   GoRouterGoNamedSpy({required List<RouteBase> routes})
       : super.routingConfig(
             routingConfig:
@@ -85,18 +87,20 @@ class GoRouterGoNamedSpy extends GoRouter {
   Map<String, String>? pathParameters;
   Map<String, dynamic>? queryParameters;
   Object? extra;
+  String? fragment;
 
   @override
   void goNamed(
     String name, {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
-    Object? extra,
+    Object? extra,String? fragment,
   }) {
     this.name = name;
     this.pathParameters = pathParameters;
     this.queryParameters = queryParameters;
     this.extra = extra;
+    this.fragment = fragment;
   }
 }
 

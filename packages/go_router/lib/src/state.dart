@@ -14,7 +14,6 @@ import 'route.dart';
 /// The state contains parsed artifacts of the current URI.
 @immutable
 class GoRouterState {
-  /// Default constructor for creating route state during routing.
   const GoRouterState(
     this._configuration, {
     required this.uri,
@@ -28,6 +27,7 @@ class GoRouterState {
     required this.pageKey,
     this.topRoute,
   });
+
   final RouteConfiguration _configuration;
 
   /// The full uri of the route, e.g. /family/f2/person/p1?filter=name#fragment
@@ -42,6 +42,7 @@ class GoRouterState {
   ///
   /// matchedLocation = /family/f2
   final String matchedLocation;
+  String? get fragment => uri.fragment.isEmpty ? null : uri.fragment;
 
   /// The optional name of the route associated with this app.
   ///
@@ -153,13 +154,21 @@ class GoRouterState {
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
-  String namedLocation(
+String namedLocation(
     String name, {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, String> queryParameters = const <String, String>{},
+    String? fragment,
   }) {
-    return _configuration.namedLocation(name,
-        pathParameters: pathParameters, queryParameters: queryParameters);
+    final String location = _configuration.namedLocation(
+      name,
+      pathParameters: pathParameters,
+      queryParameters: queryParameters,
+    );
+    if (fragment != null && fragment.isNotEmpty) {
+      return '$location#$fragment';
+    }
+    return location;
   }
 
   @override
