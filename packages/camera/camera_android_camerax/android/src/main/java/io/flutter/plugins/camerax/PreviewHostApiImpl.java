@@ -78,6 +78,25 @@ public class PreviewHostApiImpl implements PreviewHostApi {
     return new Preview.SurfaceProvider() {
       @Override
       public void onSurfaceRequested(@NonNull SurfaceRequest request) {
+        // Set callback for surfaceProducer to invalidate Surfaces that it produces when they
+        // get destroyed.
+        surfaceProducer.setCallback(
+            new TextureRegistry.SurfaceProducer.Callback() {
+              @Override
+              public void onSurfaceCreated() {
+                // Do nothing. The Preview.SurfaceProvider will handle this whenever a new
+                // Surface is needed.
+              }
+
+              @Override
+              public void onSurfaceDestroyed() {
+                // Invalidate the SurfaceRequest so that CameraX knows to to make a new request
+                // for a surface.
+                request.invalidate();
+              }
+            });
+
+        // Provide surface.
         surfaceProducer.setSize(
             request.getResolution().getWidth(), request.getResolution().getHeight());
         Surface flutterSurface = surfaceProducer.getSurface();

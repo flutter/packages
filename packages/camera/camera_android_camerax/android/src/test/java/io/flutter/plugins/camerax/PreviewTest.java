@@ -11,6 +11,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import android.util.Size;
@@ -82,7 +83,7 @@ public class PreviewTest {
   }
 
   @Test
-  public void setSurfaceProviderTest_createsSurfaceProviderAndReturnsTextureEntryId() {
+  public void setSurfaceProvider_createsSurfaceProviderAndReturnsTextureEntryId() {
     final PreviewHostApiImpl previewHostApi =
         spy(new PreviewHostApiImpl(mockBinaryMessenger, testInstanceManager, mockTextureRegistry));
     final TextureRegistry.SurfaceProducer mockSurfaceProducer =
@@ -103,6 +104,38 @@ public class PreviewTest {
     assertEquals(previewHostApi.setSurfaceProvider(previewIdentifier), surfaceProducerEntryId);
     verify(mockPreview).setSurfaceProvider(surfaceProviderCaptor.capture());
     verify(previewHostApi).createSurfaceProvider(mockSurfaceProducer);
+  }
+
+  @Test
+  public void createSurfaceProducer_setsExpectedSurfaceProducerCallback() {
+    final PreviewHostApiImpl previewHostApi =
+        new PreviewHostApiImpl(mockBinaryMessenger, testInstanceManager, mockTextureRegistry);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    final SurfaceRequest mockSurfaceRequest = mock(SurfaceRequest.class);
+    final ArgumentCaptor<TextureRegistry.SurfaceProducer.Callback> callbackCaptor =
+        ArgumentCaptor.forClass(TextureRegistry.SurfaceProducer.Callback.class);
+
+    when(mockSurfaceRequest.getResolution()).thenReturn(new Size(5, 6));
+    when(mockSurfaceProducer.getSurface()).thenReturn(mock(Surface.class));
+
+    Preview.SurfaceProvider previewSurfaceProvider =
+        previewHostApi.createSurfaceProvider(mockSurfaceProducer);
+    previewSurfaceProvider.onSurfaceRequested(mockSurfaceRequest);
+
+    verify(mockSurfaceProducer).setCallback(callbackCaptor.capture());
+
+    TextureRegistry.SurfaceProducer.Callback callback = callbackCaptor.getValue();
+
+    // Verify callback's onSurfaceDestroyed invalidates SurfaceRequest.
+    callback.onSurfaceDestroyed();
+    verify(mockSurfaceRequest).invalidate();
+
+    reset(mockSurfaceRequest);
+
+    // Verify callback's onSurfaceCreated does not interact with the SurfaceRequest.
+    callback.onSurfaceCreated();
+    verifyNoMoreInteractions(mockSurfaceRequest);
   }
 
   @Test
