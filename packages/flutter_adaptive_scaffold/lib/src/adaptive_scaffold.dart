@@ -431,19 +431,12 @@ class AdaptiveScaffold extends StatefulWidget {
     int? itemColumns,
   }) {
     return Builder(builder: (BuildContext context) {
-      Breakpoint? currentBreakpoint;
-      for (final Breakpoint breakpoint in breakpoints) {
-        if (breakpoint.isActive(context)) {
-          if (breakpoint.platform != null) {
-            currentBreakpoint = breakpoint;
-            break;
-          } else {
-            currentBreakpoint ??= breakpoint;
-          }
-        }
-      }
+      final Breakpoint? currentBreakpoint =
+          Breakpoint.activeBreakpointIn(context, breakpoints);
       final double thisMargin =
           margin ?? currentBreakpoint?.margin ?? kMaterialCompactMargin;
+      final int thisColumns =
+          itemColumns ?? currentBreakpoint?.recommendedPanes ?? 1;
 
       return CustomScrollView(
         primary: false,
@@ -455,8 +448,7 @@ class AdaptiveScaffold extends StatefulWidget {
             child: Padding(
               padding: EdgeInsets.all(thisMargin),
               child: _BrickLayout(
-                columns:
-                    itemColumns ?? currentBreakpoint?.recommendedPanes ?? 1,
+                columns: thisColumns,
                 columnSpacing: thisMargin,
                 itemPadding: EdgeInsets.only(bottom: thisMargin),
                 children: widgets,
