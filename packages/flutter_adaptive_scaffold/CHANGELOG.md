@@ -1,3 +1,8 @@
+## 0.2.3
+
+* Update the margins to the latest material m3 specs.
+* Add `margin` and `recommendedPanes` with their Material value to `Breakpoint`.
+
 ## 0.2.2
 
 * Fix a bug where landscape would not show body when using `andUp`.
