@@ -17,7 +17,7 @@ class Breakpoints {
   /// case that no other breakpoint is active.
   ///
   /// It is active from a width of -1 dp to infinity.
-  static const Breakpoint standard = Breakpoint(beginWidth: -1);
+  static const Breakpoint standard = Breakpoint.standard();
 
   /// A window whose width is less than 600 dp and greater than 0 dp.
   static const Breakpoint small = Breakpoint.small();
@@ -117,6 +117,15 @@ class Breakpoint {
     this.andUp = false,
   });
 
+  /// Returns a [Breakpoint] that can be used as a fallthrough in the
+  /// case that no other breakpoint is active.
+  const Breakpoint.standard({this.platform})
+      : beginWidth = -1,
+        endWidth = null,
+        beginHeight = null,
+        endHeight = null,
+        andUp = true;
+
   /// Returns a [Breakpoint] with the given constraints for a small screen.
   const Breakpoint.small({this.andUp = false, this.platform})
       : beginWidth = 0,
@@ -213,9 +222,9 @@ class Breakpoint {
 
     final bool isHeightActive = isDesktop ||
         orientation == Orientation.portrait ||
-        (orientation == Orientation.landscape &&
-            height >= lowerBoundHeight &&
-            height < upperBoundHeight);
+        (orientation == Orientation.landscape && andUp
+            ? height >= lowerBoundHeight
+            : height >= lowerBoundHeight && height < upperBoundHeight);
 
     return isWidthActive && isHeightActive && isRightPlatform;
   }
