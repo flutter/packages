@@ -198,12 +198,12 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
           return newMatchList;
         }
         return baseRouteMatchList.push(
-              ImperativeRouteMatch(
-                pageKey: _getUniqueValueKey(),
-                completer: completer!,
-                matches: newMatchList,
-              ),
-            );
+          ImperativeRouteMatch(
+            pageKey: _getUniqueValueKey(),
+            completer: completer!,
+            matches: newMatchList,
+          ),
+        );
       case NavigatingType.replace:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
         baseRouteMatchList = baseRouteMatchList.remove(routeMatch);
@@ -211,12 +211,12 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
           return newMatchList;
         }
         return baseRouteMatchList.push(
-              ImperativeRouteMatch(
-                pageKey: routeMatch.pageKey,
-                completer: completer!,
-                matches: newMatchList,
-              ),
-            );
+          ImperativeRouteMatch(
+            pageKey: routeMatch.pageKey,
+            completer: completer!,
+            matches: newMatchList,
+          ),
+        );
       case NavigatingType.go:
         return newMatchList;
       case NavigatingType.restore:

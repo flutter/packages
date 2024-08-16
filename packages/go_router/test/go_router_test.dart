@@ -69,7 +69,7 @@ void main() {
     });
 
     testWidgets('pushReplacement and replace when only one matches',
-            (WidgetTester tester) async {
+        (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(name: '1', path: '/', builder: dummy),
         GoRoute(name: '2', path: '/a', builder: dummy),
