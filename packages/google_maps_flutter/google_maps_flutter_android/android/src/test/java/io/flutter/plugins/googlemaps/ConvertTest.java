@@ -95,7 +95,7 @@ public class ConvertTest {
     point.add(longitude);
     ArrayList<ArrayList<Double>> pointsList = new ArrayList<>();
     pointsList.add(point);
-    List<LatLng> latLngs = Convert.toPoints(pointsList);
+    List<LatLng> latLngs = Convert.pointsFromPigeon(pointsList);
     LatLng latLng = latLngs.get(0);
     Assert.assertEquals(latitude, latLng.latitude, 1e-15);
     Assert.assertEquals(longitude, latLng.longitude, 1e-15);

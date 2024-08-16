@@ -202,10 +202,16 @@ class PlatformPolyline {
   final bool consumesTapEvents;
   final int color;
   final bool geodesic;
+  // TODO(schectman): Convert field to enum.
   final int jointType;
-  // TODO(schectman): convert to structured data.
+
+  /// The pattern data, as JSON. Each element in this list should be set only from PatternItem.toJson, and the native code must interpret it according to the internal implementation details of that method.
+  // TODO(schectman): Convert field to structured data.
   final List<Object?> patterns;
   final List<PlatformLatLng?> points;
+
+  /// The start and end cap data, as JSON. These should be set only from Cap.toJson, and the native code must interpret it according to the internal implementation details of that method.
+  // TODO(schectman): Convert below two fields to structured data.
   final Object startCap;
   final Object endCap;
   final bool visible;

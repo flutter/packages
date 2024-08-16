@@ -784,7 +784,7 @@ class Convert {
   }
 
   @VisibleForTesting
-  static List<LatLng> toPoints(Object o) {
+  static List<LatLng> pointsFromPigeon(Object o) {
     final List<?> data = toList(o);
     final List<LatLng> points = new ArrayList<>(data.size());
 
@@ -863,8 +863,8 @@ class Convert {
   private static List<List<LatLng>> toHoles(List<List<Messages.PlatformLatLng>> data) {
     final List<List<LatLng>> holes = new ArrayList<>(data.size());
 
-    for (List<Messages.PlatformLatLng> rawHole : data) {
-      holes.add(toPoints(rawHole));
+    for (List<Messages.PlatformLatLng> hole : data) {
+      holes.add(toPoints(hole));
     }
     return holes;
   }
