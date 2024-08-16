@@ -425,11 +425,10 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Public helper method to be used for creating a staggered grid following m3
   /// specs from a list of [Widget]s
   static Builder toMaterialGrid({
-    List<Widget> thisWidgets = const <Widget>[],
+    List<Widget> widgets = const <Widget>[],
     List<Breakpoint> breakpoints = Breakpoints.all,
     double? margin,
     int? itemColumns,
-    required BuildContext context,
   }) {
     return Builder(builder: (BuildContext context) {
       Breakpoint? currentBreakpoint;
@@ -460,7 +459,7 @@ class AdaptiveScaffold extends StatefulWidget {
                     itemColumns ?? currentBreakpoint?.recommendedPanes ?? 1,
                 columnSpacing: thisMargin,
                 itemPadding: EdgeInsets.only(bottom: thisMargin),
-                children: thisWidgets,
+                children: widgets,
               ),
             ),
           ),
