@@ -7,9 +7,9 @@ class TransactionCallbacks: InAppPurchase2CallbackAPI {
   }
 
   @available(iOS 15.0, *)
-  func transactionUpdated(updatedTransactions: Transaction) {
+  func transactionUpdated(updatedTransactions: Transaction, restoring: Bool = false) {
     let transactionMsg = updatedTransactions.convertToPigeon(
-      status: SK2ProductPurchaseResultMessage.success)
+      restoring: restoring)
     callbackAPI.onTransactionsUpdated(newTransaction: transactionMsg) { result in
       switch result {
       case .success:

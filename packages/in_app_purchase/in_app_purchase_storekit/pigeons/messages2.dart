@@ -136,14 +136,14 @@ class SK2TransactionMessage {
       required this.purchaseDate,
       this.purchasedQuantity = 1,
       this.appAccountToken,
-      required this.status});
+      this.restoring = false});
   final int id;
   final int originalId;
   final String productId;
   final String purchaseDate;
   final int purchasedQuantity;
   final String? appAccountToken;
-  final SK2ProductPurchaseResultMessage status;
+  final bool restoring;
 }
 
 // Link the correct dart class
@@ -189,6 +189,9 @@ abstract class InAppPurchase2API {
 
   @async
   String countryCode();
+
+  @async
+  void restorePurchases();
 }
 
 @FlutterApi()

@@ -9,5 +9,6 @@ class SK2PurchaseDetails extends PurchaseDetails {
       required super.status});
 
   @override
+  // but not restored
   bool get pendingCompletePurchase => status == PurchaseStatus.purchased;
 }

@@ -29,7 +29,7 @@ final class PigeonError: Error {
   var localizedDescription: String {
     return
       "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
-  }
+      }
 }
 
 private func wrapResult(_ result: Any?) -> [Any?] {
@@ -59,9 +59,7 @@ private func wrapError(_ error: Any) -> [Any?] {
 }
 
 private func createConnectionError(withChannelName channelName: String) -> PigeonError {
-  return PigeonError(
-    code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
-    details: "")
+  return PigeonError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
 }
 
 private func isNullish(_ value: Any?) -> Bool {
@@ -123,8 +121,7 @@ struct SK2SubscriptionOfferMessage {
     let price = __pigeon_list[1] as! Double
     let type = __pigeon_list[2] as! SK2SubscriptionOfferTypeMessage
     let period = __pigeon_list[3] as! SK2SubscriptionPeriodMessage
-    let periodCount =
-      __pigeon_list[4] is Int64 ? __pigeon_list[4] as! Int64 : Int64(__pigeon_list[4] as! Int32)
+    let periodCount = __pigeon_list[4] is Int64 ? __pigeon_list[4] as! Int64 : Int64(__pigeon_list[4] as! Int32)
     let paymentMode = __pigeon_list[5] as! SK2SubscriptionOfferPaymentModeMessage
 
     return SK2SubscriptionOfferMessage(
@@ -157,8 +154,7 @@ struct SK2SubscriptionPeriodMessage {
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ __pigeon_list: [Any?]) -> SK2SubscriptionPeriodMessage? {
-    let value =
-      __pigeon_list[0] is Int64 ? __pigeon_list[0] as! Int64 : Int64(__pigeon_list[0] as! Int32)
+    let value = __pigeon_list[0] is Int64 ? __pigeon_list[0] as! Int64 : Int64(__pigeon_list[0] as! Int32)
     let unit = __pigeon_list[1] as! SK2SubscriptionPeriodUnitMessage
 
     return SK2SubscriptionPeriodMessage(
@@ -295,20 +291,17 @@ struct SK2TransactionMessage {
   var purchaseDate: String
   var purchasedQuantity: Int64
   var appAccountToken: String? = nil
-  var status: SK2ProductPurchaseResultMessage
+  var restoring: Bool
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ __pigeon_list: [Any?]) -> SK2TransactionMessage? {
-    let id =
-      __pigeon_list[0] is Int64 ? __pigeon_list[0] as! Int64 : Int64(__pigeon_list[0] as! Int32)
-    let originalId =
-      __pigeon_list[1] is Int64 ? __pigeon_list[1] as! Int64 : Int64(__pigeon_list[1] as! Int32)
+    let id = __pigeon_list[0] is Int64 ? __pigeon_list[0] as! Int64 : Int64(__pigeon_list[0] as! Int32)
+    let originalId = __pigeon_list[1] is Int64 ? __pigeon_list[1] as! Int64 : Int64(__pigeon_list[1] as! Int32)
     let productId = __pigeon_list[2] as! String
     let purchaseDate = __pigeon_list[3] as! String
-    let purchasedQuantity =
-      __pigeon_list[4] is Int64 ? __pigeon_list[4] as! Int64 : Int64(__pigeon_list[4] as! Int32)
+    let purchasedQuantity = __pigeon_list[4] is Int64 ? __pigeon_list[4] as! Int64 : Int64(__pigeon_list[4] as! Int32)
     let appAccountToken: String? = nilOrValue(__pigeon_list[5])
-    let status = __pigeon_list[6] as! SK2ProductPurchaseResultMessage
+    let restoring = __pigeon_list[6] as! Bool
 
     return SK2TransactionMessage(
       id: id,
@@ -317,7 +310,7 @@ struct SK2TransactionMessage {
       purchaseDate: purchaseDate,
       purchasedQuantity: purchasedQuantity,
       appAccountToken: appAccountToken,
-      status: status
+      restoring: restoring
     )
   }
   func toList() -> [Any?] {
@@ -328,7 +321,7 @@ struct SK2TransactionMessage {
       purchaseDate,
       purchasedQuantity,
       appAccountToken,
-      status,
+      restoring,
     ]
   }
 }
@@ -341,11 +334,7 @@ struct SK2ProductPurchaseOptionsMessage {
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ __pigeon_list: [Any?]) -> SK2ProductPurchaseOptionsMessage? {
     let appAccountToken: String? = nilOrValue(__pigeon_list[0])
-    let quantity: Int64? =
-      isNullish(__pigeon_list[1])
-      ? nil
-      : (__pigeon_list[1] is Int64?
-        ? __pigeon_list[1] as! Int64? : Int64(__pigeon_list[1] as! Int32))
+    let quantity: Int64? = isNullish(__pigeon_list[1]) ? nil : (__pigeon_list[1] is Int64? ? __pigeon_list[1] as! Int64? : Int64(__pigeon_list[1] as! Int32))
 
     return SK2ProductPurchaseOptionsMessage(
       appAccountToken: appAccountToken,
@@ -475,34 +464,27 @@ class messagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = messagesPigeonCodec(readerWriter: messagesPigeonCodecReaderWriter())
 }
 
+
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol InAppPurchase2API {
   func canMakePayments() throws -> Bool
-  func purchase(
-    id: String, options: SK2ProductPurchaseOptionsMessage?,
-    completion: @escaping (Result<SK2ProductPurchaseResultMessage, Error>) -> Void)
-  func products(
-    identifiers: [String], completion: @escaping (Result<[SK2ProductMessage], Error>) -> Void)
+  func purchase(id: String, options: SK2ProductPurchaseOptionsMessage?, completion: @escaping (Result<SK2ProductPurchaseResultMessage, Error>) -> Void)
+  func products(identifiers: [String], completion: @escaping (Result<[SK2ProductMessage], Error>) -> Void)
   func transactions(completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func startListeningToTransactions() throws
   func stopListeningToTransactions() throws
   func countryCode(completion: @escaping (Result<String, Error>) -> Void)
+  func restorePurchases(completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class InAppPurchase2APISetup {
   static var codec: FlutterStandardMessageCodec { messagesPigeonCodec.shared }
   /// Sets up an instance of `InAppPurchase2API` to handle messages through the `binaryMessenger`.
-  static func setUp(
-    binaryMessenger: FlutterBinaryMessenger, api: InAppPurchase2API?,
-    messageChannelSuffix: String = ""
-  ) {
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: InAppPurchase2API?, messageChannelSuffix: String = "") {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    let canMakePaymentsChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let canMakePaymentsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       canMakePaymentsChannel.setMessageHandler { _, reply in
         do {
@@ -515,10 +497,7 @@ class InAppPurchase2APISetup {
     } else {
       canMakePaymentsChannel.setMessageHandler(nil)
     }
-    let purchaseChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.purchase\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let purchaseChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.purchase\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       purchaseChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -536,10 +515,7 @@ class InAppPurchase2APISetup {
     } else {
       purchaseChannel.setMessageHandler(nil)
     }
-    let productsChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let productsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       productsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -556,10 +532,7 @@ class InAppPurchase2APISetup {
     } else {
       productsChannel.setMessageHandler(nil)
     }
-    let transactionsChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.transactions\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let transactionsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.transactions\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       transactionsChannel.setMessageHandler { _, reply in
         api.transactions { result in
@@ -574,9 +547,7 @@ class InAppPurchase2APISetup {
     } else {
       transactionsChannel.setMessageHandler(nil)
     }
-    let finishChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let finishChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       finishChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -593,10 +564,7 @@ class InAppPurchase2APISetup {
     } else {
       finishChannel.setMessageHandler(nil)
     }
-    let startListeningToTransactionsChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.startListeningToTransactions\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let startListeningToTransactionsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.startListeningToTransactions\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       startListeningToTransactionsChannel.setMessageHandler { _, reply in
         do {
@@ -609,10 +577,7 @@ class InAppPurchase2APISetup {
     } else {
       startListeningToTransactionsChannel.setMessageHandler(nil)
     }
-    let stopListeningToTransactionsChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.stopListeningToTransactions\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let stopListeningToTransactionsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.stopListeningToTransactions\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       stopListeningToTransactionsChannel.setMessageHandler { _, reply in
         do {
@@ -625,10 +590,7 @@ class InAppPurchase2APISetup {
     } else {
       stopListeningToTransactionsChannel.setMessageHandler(nil)
     }
-    let countryCodeChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.countryCode\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let countryCodeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.countryCode\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       countryCodeChannel.setMessageHandler { _, reply in
         api.countryCode { result in
@@ -643,13 +605,26 @@ class InAppPurchase2APISetup {
     } else {
       countryCodeChannel.setMessageHandler(nil)
     }
+    let restorePurchasesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.restorePurchases\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      restorePurchasesChannel.setMessageHandler { _, reply in
+        api.restorePurchases { result in
+          switch result {
+          case .success:
+            reply(wrapResult(nil))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      restorePurchasesChannel.setMessageHandler(nil)
+    }
   }
 }
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol InAppPurchase2CallbackAPIProtocol {
-  func onTransactionsUpdated(
-    newTransaction newTransactionArg: SK2TransactionMessage,
-    completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func onTransactionsUpdated(newTransaction newTransactionArg: SK2TransactionMessage, completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 class InAppPurchase2CallbackAPI: InAppPurchase2CallbackAPIProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -661,14 +636,9 @@ class InAppPurchase2CallbackAPI: InAppPurchase2CallbackAPIProtocol {
   var codec: messagesPigeonCodec {
     return messagesPigeonCodec.shared
   }
-  func onTransactionsUpdated(
-    newTransaction newTransactionArg: SK2TransactionMessage,
-    completion: @escaping (Result<Void, PigeonError>) -> Void
-  ) {
-    let channelName: String =
-      "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated\(messageChannelSuffix)"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+  func onTransactionsUpdated(newTransaction newTransactionArg: SK2TransactionMessage, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([newTransactionArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))

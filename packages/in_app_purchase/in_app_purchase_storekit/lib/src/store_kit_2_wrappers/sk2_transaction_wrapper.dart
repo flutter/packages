@@ -65,6 +65,10 @@ class SK2Transaction {
   static void stopListeningToTransactions() {
     _hostapi.stopListeningToTransactions();
   }
+
+  static void restorePurchases() {
+    _hostapi.restorePurchases();
+  }
 }
 
 extension on SK2TransactionMessage {
@@ -79,14 +83,15 @@ extension on SK2TransactionMessage {
 
   PurchaseDetails convertToDetails() {
     print("converting to details");
-    return PurchaseDetails(
+    return SK2PurchaseDetails(
       productID: productId,
       verificationData: PurchaseVerificationData(
           localVerificationData: "", serverVerificationData: "", source: ""),
       transactionDate: "",
-      // Note that with sk2, any transactions that *can* be returned will require to be finished. So set this
-      // as pending for all transactions initially.
-      status: PurchaseStatus.purchased,
+      // Note that with sk2, any transactions that *can* be returned will require to be finished, and are already purchased.
+      // So set this
+      // as purchased for all transactions initially.
+      status: restoring ? PurchaseStatus.restored : PurchaseStatus.purchased,
       purchaseID: id.toString(),
     );
   }
@@ -100,6 +105,5 @@ class SK2TransactionObserver implements InAppPurchase2CallbackAPI {
   @override
   void onTransactionsUpdated(SK2TransactionMessage newTransaction) {
     purchaseUpdatedController.add([newTransaction.convertToDetails()]);
-    print(purchaseUpdatedController);
   }
 }

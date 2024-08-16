@@ -492,7 +492,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
                   code: "storekit2_purchase_pending", message: "this transaction is still pending",
                   details: "")))
           case .userCancelled:
-            // The user cancelled the transaction
             completion(
               .failure(
                 PigeonError(
@@ -534,7 +533,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
       Task {
         do {
           let transactionsMsgs = await rawTransactions().map {
-            $0.convertToPigeon(status: SK2ProductPurchaseResultMessage.success)
+            $0.convertToPigeon()
           }
           completion(.success(transactionsMsgs))
         }
@@ -549,8 +548,9 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
       Task {
         print("native finish")
         let transaction = TransactionCache.shared.get(id: Int(id))
-        TransactionCache.shared.remove(transactionToRemove: transaction)
+        let transactionId = transaction.id;
         await transaction.finish()
+        TransactionCache.shared.remove(id: Int(transactionId));
         completion(.success(()))
       }
     }
@@ -558,6 +558,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
 
   func startListeningToTransactions() throws {
     if #available(iOS 15.0, *) {
+      print("start listening");
       self.updateListenerTask = self.listenForTransactions()
     }
   }
@@ -567,25 +568,18 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
   }
 
   @available(iOS 15.0, *)
-  /// This only listens for UNFINISHED transactions that occur outside of the app,
-  /// amd will emit all at once at app launch
   func listenForTransactions() -> Task<Void, Error> {
     return Task.detached {
-      let transactionCache = self.cache as! TransactionCache
-      print("hiya")
-      var verfiedArray: [Transaction] = []
-      var unverifiedArray = []
       for await verificationResult in Transaction.updates {
-        print("HIT MEEEE PLS")
         switch verificationResult {
         case .verified(let transaction):
-          verfiedArray.append(transaction)
-          transactionCache.add(transaction: transaction)
+          print(transaction.id)
+          TransactionCache.shared.add(transaction: transaction)
           self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
-        case .unverified(let transaction, _):
-          unverifiedArray.append(transaction)
+        case .unverified(let transaction, _): 
+          print("unverified", transaction.id)
+          break
         }
-
       }
     }
 
@@ -597,6 +591,24 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI, InA
       } else {
         fatalError()
       }
+    }
+  }
+
+  func restorePurchases(completion: @escaping (Result<Void, any Error>) -> Void) {
+    if #available(iOS 15.0, *) {
+      Task {
+        for await completedPurchase in Transaction.currentEntitlements {
+          switch completedPurchase {
+          case .verified(let purchase):
+            self.transactionListenerAPI?.transactionUpdated(updatedTransactions: purchase, restoring: true)
+          case .unverified(_, _):
+            fatalError()
+          }
+        }
+
+      }
+    } else {
+      fatalError()
     }
   }
 }

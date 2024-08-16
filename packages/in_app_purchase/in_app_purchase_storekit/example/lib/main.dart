@@ -59,6 +59,7 @@ class _MyAppState extends State<_MyApp> {
         _iapStoreKitPlatform.purchaseStream;
     _subscription =
         purchaseUpdated.listen((List<PurchaseDetails> purchaseDetailsList) {
+          print(purchaseDetailsList.first.purchaseID);
       _listenToPurchaseUpdated(purchaseDetailsList);
     }, onDone: () {
       _subscription.cancel();
@@ -236,7 +237,9 @@ class _MyAppState extends State<_MyApp> {
     final Map<String, PurchaseDetails> purchases =
         Map<String, PurchaseDetails>.fromEntries(
             _purchases.map((PurchaseDetails purchase) {
+              print('finishing pending transactions');
       if (purchase.pendingCompletePurchase) {
+
         _iapStoreKitPlatform.completePurchase(purchase);
       }
       return MapEntry<String, PurchaseDetails>(purchase.productID, purchase);
@@ -393,15 +396,13 @@ class _MyAppState extends State<_MyApp> {
   }
 
   void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
+    print('dart updated ${purchaseDetailsList.length}');
     purchaseDetailsList.forEach(_handleReportedPurchaseState);
   }
 
   Future<void> _handleReportedPurchaseState(
       PurchaseDetails purchaseDetails) async {
     print("in example");
-    print(purchaseDetails.productID);
-    print(purchaseDetails.purchaseID);
-    print(purchaseDetails.status);
     if (purchaseDetails.status == PurchaseStatus.pending) {
       showPendingUI();
     } else {
@@ -409,6 +410,7 @@ class _MyAppState extends State<_MyApp> {
         handleError(purchaseDetails.error!);
       } else if (purchaseDetails.status == PurchaseStatus.purchased ||
           purchaseDetails.status == PurchaseStatus.restored) {
+        print("verifying purchase - restore?");
         final bool valid = await _verifyPurchase(purchaseDetails);
         if (valid) {
           await deliverProduct(purchaseDetails);
@@ -419,6 +421,7 @@ class _MyAppState extends State<_MyApp> {
       }
 
       if (purchaseDetails.pendingCompletePurchase) {
+        print("example finish");
         await _iapStoreKitPlatform.completePurchase(purchaseDetails);
       }
     }

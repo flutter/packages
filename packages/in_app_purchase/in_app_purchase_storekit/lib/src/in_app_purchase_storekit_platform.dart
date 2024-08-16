@@ -125,7 +125,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @override
   Future<void> completePurchase(PurchaseDetails purchase) {
     assert(
-      purchase is AppStorePurchaseDetails,
+      purchase is AppStorePurchaseDetails || purchase is SK2PurchaseDetails,
       'On iOS, the `purchase` should always be of type `AppStorePurchaseDetails`.',
     );
     if (useStoreKit2) {
@@ -140,6 +140,10 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   @override
   Future<void> restorePurchases({String? applicationUserName}) async {
+    if (useStoreKit2) {
+      SK2Transaction.restorePurchases();
+      return;
+    }
     return _observer
         .restoreTransactions(
             queue: _skPaymentQueueWrapper,
