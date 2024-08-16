@@ -1570,7 +1570,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     }
 
     final String instanceManagerApiName =
-        '${generatorOptions.fileSpecificClassNameComponent ?? ''}${instanceManagerClassName}Api';
+        '${generatorOptions.fileSpecificClassNameComponent ?? ''}${swiftInstanceManagerClassName(generatorOptions)}Api';
 
     indent.writeScoped(
         'open class ${proxyApiRegistrarName(generatorOptions)} {', '}', () {
