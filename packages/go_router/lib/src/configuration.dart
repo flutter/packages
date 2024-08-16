@@ -254,7 +254,7 @@ class RouteConfiguration {
   String namedLocation(
     String name, {
     Map<String, String> pathParameters = const <String, String>{},
-    Map<String, dynamic> queryParameters = const <String, dynamic>{},z
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
   }) {
     assert(() {
       log('getting location for name: '
