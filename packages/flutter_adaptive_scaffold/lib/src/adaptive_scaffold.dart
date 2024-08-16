@@ -14,15 +14,11 @@ const double kMaterialGutterValue = 8;
 
 /// Margin value of the compact breakpoint layout according to the material
 /// design 3 spec.
-const double kMaterialCompactMinMargin = 8;
+const double kMaterialCompactSpacing = 16;
 
 /// Margin value of the medium breakpoint layout according to the material
 /// design 3 spec.
-const double kMaterialMediumMinMargin = 12;
-
-//// Margin value of the expanded breakpoint layout according to the material
-/// design 3 spec.
-const double kMaterialExpandedMinMargin = 32;
+const double kMaterialMediumAndUpSpacing = 24;
 
 /// Signature for a builder used by [AdaptiveScaffold.navigationRailDestinationBuilder] that converts a
 /// [NavigationDestination] to a [NavigationRailDestination].
@@ -430,39 +426,26 @@ class AdaptiveScaffold extends StatefulWidget {
   /// specs from a list of [Widget]s
   static Builder toMaterialGrid({
     List<Widget> thisWidgets = const <Widget>[],
-    List<Breakpoint> breakpoints = const <Breakpoint>[
-      Breakpoints.small,
-      Breakpoints.medium,
-      Breakpoints.mediumLarge,
-      Breakpoints.large,
-      Breakpoints.extraLarge,
-    ],
-    double margin = 8,
-    int itemColumns = 1,
+    List<Breakpoint> breakpoints = Breakpoints.all,
+    double? margin,
+    int? itemColumns,
     required BuildContext context,
   }) {
     return Builder(builder: (BuildContext context) {
       Breakpoint? currentBreakpoint;
       for (final Breakpoint breakpoint in breakpoints) {
         if (breakpoint.isActive(context)) {
-          currentBreakpoint = breakpoint;
+          if (breakpoint.platform != null) {
+            currentBreakpoint = breakpoint;
+            break;
+          } else {
+            currentBreakpoint ??= breakpoint;
+          }
         }
       }
-      double? thisMargin = margin;
+      final double thisMargin =
+          margin ?? currentBreakpoint?.spacing ?? kMaterialCompactSpacing;
 
-      if (currentBreakpoint == Breakpoints.small) {
-        if (thisMargin < kMaterialCompactMinMargin) {
-          thisMargin = kMaterialCompactMinMargin;
-        }
-      } else if (currentBreakpoint == Breakpoints.medium) {
-        if (thisMargin < kMaterialMediumMinMargin) {
-          thisMargin = kMaterialMediumMinMargin;
-        }
-      } else if (currentBreakpoint == Breakpoints.mediumLarge) {
-        if (thisMargin < kMaterialExpandedMinMargin) {
-          thisMargin = kMaterialExpandedMinMargin;
-        }
-      }
       return CustomScrollView(
         primary: false,
         controller: ScrollController(),
@@ -473,10 +456,10 @@ class AdaptiveScaffold extends StatefulWidget {
             child: Padding(
               padding: EdgeInsets.all(thisMargin),
               child: _BrickLayout(
-                columns: itemColumns,
-                columnSpacing: kMaterialGutterValue,
-                itemPadding:
-                    const EdgeInsets.only(bottom: kMaterialGutterValue),
+                columns:
+                    itemColumns ?? currentBreakpoint?.recommendedPanes ?? 1,
+                columnSpacing: thisMargin,
+                itemPadding: EdgeInsets.only(bottom: thisMargin),
                 children: thisWidgets,
               ),
             ),
