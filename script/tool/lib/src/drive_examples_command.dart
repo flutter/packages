@@ -449,6 +449,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           flutterCommand,
           <String>[
             'test',
+            '-v',
             ...deviceFlags,
             if (enableExperiment.isNotEmpty)
               '--enable-experiment=$enableExperiment',
