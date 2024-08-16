@@ -8,17 +8,17 @@ import 'adaptive_layout.dart';
 import 'breakpoints.dart';
 import 'slot_layout.dart';
 
-/// Gutter value between different parts of the body slot depending on
-/// material 3 design spec.
-const double kMaterialGutterValue = 8;
+/// Spacing value between different parts of the body slot according to
+/// the material 3 design spec.
+const double kMaterialSpacing = 24;
 
 /// Margin value of the compact breakpoint layout according to the material
 /// design 3 spec.
-const double kMaterialCompactSpacing = 16;
+const double kMaterialCompactMargin = 16;
 
 /// Margin value of the medium breakpoint layout according to the material
 /// design 3 spec.
-const double kMaterialMediumAndUpSpacing = 24;
+const double kMaterialMediumAndUpMargin = 24;
 
 /// Signature for a builder used by [AdaptiveScaffold.navigationRailDestinationBuilder] that converts a
 /// [NavigationDestination] to a [NavigationRailDestination].
@@ -444,7 +444,7 @@ class AdaptiveScaffold extends StatefulWidget {
         }
       }
       final double thisMargin =
-          margin ?? currentBreakpoint?.spacing ?? kMaterialCompactSpacing;
+          margin ?? currentBreakpoint?.margin ?? kMaterialCompactMargin;
 
       return CustomScrollView(
         primary: false,

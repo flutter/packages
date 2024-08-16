@@ -140,6 +140,7 @@ class Breakpoint {
     this.andUp = false,
     this.platform,
     this.spacing = kMaterialCompactSpacing,
+    this.margin = kMaterialCompactMargin,
     this.recommendedPanes = 1,
     this.maxPanes = 1,
   });
@@ -159,7 +160,7 @@ class Breakpoint {
         endWidth = 600,
         beginHeight = null,
         endHeight = 480,
-        spacing = kMaterialCompactSpacing,
+        margin = kMaterialCompactMargin,
         recommendedPanes = 1,
         maxPanes = 1;
 
@@ -169,7 +170,7 @@ class Breakpoint {
         endWidth = 840,
         beginHeight = 480,
         endHeight = 900,
-        spacing = kMaterialMediumAndUpSpacing,
+        margin = kMaterialMediumAndUpMargin,
         recommendedPanes = 1,
         maxPanes = 2;
 
@@ -179,7 +180,7 @@ class Breakpoint {
         endWidth = 1200,
         beginHeight = 900,
         endHeight = null,
-        spacing = kMaterialMediumAndUpSpacing,
+        margin = kMaterialMediumAndUpMargin,
         recommendedPanes = 2,
         maxPanes = 2;
 
@@ -189,7 +190,7 @@ class Breakpoint {
         endWidth = 1600,
         beginHeight = 900,
         endHeight = null,
-        spacing = kMaterialMediumAndUpSpacing,
+        margin = kMaterialMediumAndUpMargin,
         recommendedPanes = 2,
         maxPanes = 2;
 
@@ -199,7 +200,7 @@ class Breakpoint {
         endWidth = null,
         beginHeight = 900,
         endHeight = null,
-        spacing = kMaterialMediumAndUpSpacing,
+        margin = kMaterialMediumAndUpMargin,
         recommendedPanes = 2,
         maxPanes = 3;
 
@@ -240,8 +241,8 @@ class Breakpoint {
   /// left null then it will be active on all platforms.
   final Set<TargetPlatform>? platform;
 
-  /// The default material spacing for the [Breakpoint].
-  final double spacing;
+  /// The default material margin for the [Breakpoint].
+  final double margin;
 
   /// The material recommended number of panes for the [Breakpoint].
   final int recommendedPanes;
