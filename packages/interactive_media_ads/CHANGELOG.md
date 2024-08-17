@@ -1,6 +1,10 @@
-## 0.1.2+1
+## 0.1.2+2
 
 * Adds internal wrappers for the remaining classes of the Android SDK.
+
+## 0.1.2+1
+
+* Updates README to clarify supported features and link to issues tracker.
 
 ## 0.1.2
 
