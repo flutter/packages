@@ -43,6 +43,9 @@ class GoRouterState {
   ///
   /// matchedLocation = /family/f2
   final String matchedLocation;
+
+  /// Retrieves the fragment/hash from the current URI, if it exists.
+  /// Returns `null` if the fragment is empty.
   String? get fragment => uri.fragment.isEmpty ? null : uri.fragment;
 
   /// The optional name of the route associated with this app.
@@ -161,11 +164,13 @@ String namedLocation(
     Map<String, String> queryParameters = const <String, String>{},
     String? fragment,
   }) {
+    /// Generate the base location string using the provided route name, path, and query parameters.
     final String location = _configuration.namedLocation(
       name,
       pathParameters: pathParameters,
       queryParameters: queryParameters,
     );
+    /// If a fragment is provided and is not empty, append it to the location string with a "#" symbol.
     if (fragment != null && fragment.isNotEmpty) {
       return '$location#$fragment';
     }

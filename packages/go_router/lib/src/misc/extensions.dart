@@ -16,8 +16,9 @@ extension GoRouterHelper on BuildContext {
     String name, {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
-    String? fragment,
+    String? fragment, 
   }) =>
+    /// If a fragment is provided, it appends it to the route name with a "#" symbol, otherwise, it returns the name as is.
       GoRouter.of(this).namedLocation(fragment == null?name:"$name#$fragment",
           pathParameters: pathParameters, queryParameters: queryParameters);
 
@@ -31,7 +32,7 @@ extension GoRouterHelper on BuildContext {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
-    String? fragment,
+    String? fragment, 
   }) =>
       GoRouter.of(this).goNamed(
         name,

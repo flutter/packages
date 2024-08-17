@@ -257,6 +257,9 @@ abstract class RouteBase with Diagnosticable {
 /// {@category Named routes}
 /// {@category Redirection}
 class GoRoute extends RouteBase {
+  /// Constructs a [GoRoute].
+  /// - [path] and [name] cannot be empty strings.
+  /// - One of either [builder] or [pageBuilder] must be provided.
   GoRoute({
     required this.path,
     this.name,
@@ -274,38 +277,196 @@ class GoRoute extends RouteBase {
         assert(onExit == null || pageBuilder != null || builder != null,
             'if onExit is provided, one of pageBuilder or builder must be provided'),
         super._() {
+      // cache the path regexp and parameters
     _pathRE = patternToRegExp(path, pathParameters);
   }
 
-  final String? name;
+  /// Whether this [GoRoute] only redirects to another route.
+  ///
+  /// If this is true, this route must redirect location other than itself.
+  bool get redirectOnly => pageBuilder == null && builder == null;
+  /// Optional name of the route.
+  ///
+  /// If used, a unique string name must be provided and it can not be empty.
+  ///
+  /// This is used in [GoRouter.namedLocation] and its related API. This
+  /// property can be used to navigate to this route without knowing exact the
+  /// URI of it.
+  ///
+  /// {@tool snippet}
+  /// Typical usage is as follows:
+  ///
+  /// ```dart
+  /// GoRoute(
+  ///   name: 'home',
+  ///   path: '/',
+  ///   builder: (BuildContext context, GoRouterState state) =>
+  ///       HomeScreen(),
+  ///   routes: <GoRoute>[
+  ///     GoRoute(
+  ///       name: 'family',
+  ///       path: 'family/:fid',
+  ///       builder: (BuildContext context, GoRouterState state) =>
+  ///           FamilyScreen(),
+  ///     ),
+  ///   ],
+  /// );
+  ///
+  /// context.go(
+  ///   context.namedLocation('family'),
+  ///   pathParameters: <String, String>{'fid': 123},
+  ///   queryParameters: <String, String>{'qid': 'quid'},
+  /// );
+  /// ```
+  /// {@end-tool}
+  ///
+  /// See the [named routes example](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/named_routes.dart)
+  /// for a complete runnable app.
+ final String? name;
+
+  /// The path of this go route.
+  ///
+  /// For example:
+  /// ```
+  /// GoRoute(
+  ///   path: '/',
+  ///   pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
+  ///     key: state.pageKey,
+  ///     child: HomePage(families: Families.data),
+  ///   ),
+  /// ),
+  /// ```
+  ///
+  /// The path also support path parameters. For a path: `/family/:fid`, it
+  /// matches all URIs start with `/family/...`, e.g. `/family/123`,
+  /// `/family/456` and etc. The parameter values are stored in [GoRouterState]
+  /// that are passed into [pageBuilder] and [builder].
+  ///
+  /// The query parameter are also capture during the route parsing and stored
+  /// in [GoRouterState].
+  ///
+  /// See [Query parameters and path parameters](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/path_and_query_parameters.dart)
+  /// to learn more about parameters.
   final String path;
+
+  /// A page builder for this route.
+  ///
+  /// Typically a MaterialPage, as in:
+  /// ```
+  /// GoRoute(
+  ///   path: '/',
+  ///   pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
+  ///     key: state.pageKey,
+  ///     child: HomePage(families: Families.data),
+  ///   ),
+  /// ),
+  /// ```
+  ///
+  /// You can also use CupertinoPage, and for a custom page builder to use
+  /// custom page transitions, you can use [CustomTransitionPage].
   final GoRouterPageBuilder? pageBuilder;
+
+  /// A custom builder for this route.
+  ///
+  /// For example:
+  /// ```
+  /// GoRoute(
+  ///   path: '/',
+  ///   builder: (BuildContext context, GoRouterState state) => FamilyPage(
+  ///     families: Families.family(
+  ///       state.pathParameters['id'],
+  ///     ),
+  ///   ),
+  /// ),
+  /// ```
+  ///
   final GoRouterWidgetBuilder? builder;
-  final ExitCallback? onExit;
+
+  /// Called when this route is removed from GoRouter's route history.
+  ///
+  /// Some example this callback may be called:
+  ///  * This route is removed as the result of [GoRouter.pop].
+  ///  * This route is no longer in the route history after a [GoRouter.go].
+  ///
+  /// This method can be useful it one wants to launch a dialog for user to
+  /// confirm if they want to exit the screen.
+  ///
+  /// ```
+  /// final GoRouter _router = GoRouter(
+  ///   routes: <GoRoute>[
+  ///     GoRoute(
+  ///       path: '/',
+  ///       onExit: (BuildContext context) => showDialog<bool>(
+  ///         context: context,
+  ///         builder: (BuildContext context) {
+  ///           return AlertDialog(
+  ///             title: const Text('Do you want to exit this page?'),
+  ///             actions: <Widget>[
+  ///               TextButton(
+  ///                 style: TextButton.styleFrom(
+  ///                   textStyle: Theme.of(context).textTheme.labelLarge,
+  ///                 ),
+  ///                 child: const Text('Go Back'),
+  ///                 onPressed: () {
+  ///                   Navigator.of(context).pop(false);
+  ///                 },
+  ///               ),
+  ///               TextButton(
+  ///                 style: TextButton.styleFrom(
+  ///                   textStyle: Theme.of(context).textTheme.labelLarge,
+  ///                 ),
+  ///                 child: const Text('Confirm'),
+  ///                 onPressed: () {
+  ///                   Navigator.of(context).pop(true);
+  ///                 },
+  ///               ),
+  ///             ],
+  ///           );
+  ///         },
+  ///       ),
+  ///     ),
+  ///   ],
+  /// );
+  /// ```
   final String? fragment;
+
+  /// The optional fragment/hash component of the route.
+  /// 
+  /// This field allows specifying a fragment that will be appended to the route's URI, enabling navigation to a specific section within a page. If not provided, the URI will not include a fragment. 
+  /// 
+  /// Example usage:
+  /// ```dart
+  /// GoRouterState.of(context).namedLocation(
+  ///   path: '/details',
+  ///   fragment: 'section2',
+  /// )
+  /// context.go(location);
+  /// ```
+  /// In this example, the resulting URI will be `/details#section2`.
+  final ExitCallback? onExit;
 
   late final RegExp _pathRE;
 
-  bool get redirectOnly => pageBuilder == null && builder == null;
 
   // This is the changed method to support fragments
   RegExpMatch? matchPatternAsPrefix(String loc) {
     final Uri uri = Uri.parse(loc);
     final RegExpMatch? pathMatch = _pathRE.matchAsPrefix(uri.path) as RegExpMatch?;
     if (pathMatch == null) return null;
-
+  // TODO(chunhtai): move all regex related help methods to path_utils.dart.
+  /// Match this route against a location.
+  RegExpMatch? matchPatternAsPrefix(String loc) =>
+      _pathRE.matchAsPrefix(loc) as RegExpMatch?;
     // Added fragment matching
     if (fragment != null && fragment != uri.fragment) return null;
-
     return pathMatch;
   }
-
+  /// Extract the path parameters from a match.
   Map<String, String> extractPathParams(RegExpMatch match) =>
       extractPathParameters(pathParameters, match);
-
+  /// The path parameters in this route.
   @internal
   final List<String> pathParameters = <String>[];
-
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
