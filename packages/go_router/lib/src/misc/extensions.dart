@@ -9,18 +9,18 @@ import '../router.dart';
 /// Dart extension to add navigation function to a BuildContext object, e.g.
 /// context.go('/');
 extension GoRouterHelper on BuildContext {
-  /// Get a location from route name and parameters.
-  ///
-  /// This method can't be called during redirects.
   String namedLocation(
     String name, {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
-    String? fragment, 
+    String? fragment,
   }) =>
-    /// If a fragment is provided, it appends it to the route name with a "#" symbol, otherwise, it returns the name as is.
-      GoRouter.of(this).namedLocation(fragment == null?name:'$name#$fragment',
-          pathParameters: pathParameters, queryParameters: queryParameters);
+
+      /// If a fragment is provided, it appends it to the route name with a "#" symbol, otherwise, it returns the name as is.
+      GoRouter.of(this).namedLocation(
+          fragment == null ? name : '$name#$fragment',
+          pathParameters: pathParameters,
+          queryParameters: queryParameters);
 
   /// Navigate to a location.
   void go(String location, {Object? extra}) =>
@@ -32,7 +32,7 @@ extension GoRouterHelper on BuildContext {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
-    String? fragment, 
+    String? fragment,
   }) =>
       GoRouter.of(this).goNamed(
         name,

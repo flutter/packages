@@ -1,8 +1,7 @@
 ## 14.2.5
   - Added support for handling fragments/hashes as a first-party parameter in the GoRouter package.
-  **BREAKING CHANGE**
-      - Introduced a fragment parameter to the GoRoute constructor in `extensions.dart`. This allows users to directly specify a fragment when defining a route, eliminating the need to manually append the fragment to the location URL.
-      - Updated the GoRouterState to include the fragment in the URI management in `state.dart`. The namedLocation method now takes an optional fragment parameter, which is automatically appended to the generated location.
+  - Introduced a fragment parameter to the GoRoute constructor in `extensions.dart`. This allows users to directly specify a fragment when defining a route, eliminating the need to manually append the fragment to the location URL.
+  - Updated the GoRouterState to include the fragment in the URI management in `state.dart`. The namedLocation method now takes an optional fragment parameter, which is automatically appended to the generated location.
 
 ## 14.2.4
 
