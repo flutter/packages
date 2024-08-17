@@ -1,3 +1,7 @@
+## 0.1.2+1
+
+* Updates README to clarify supported features and link to issues tracker.
+
 ## 0.1.2
 
 * Adds support for all `AdEventType`s and ad data. See `AdEvent.adData`.
