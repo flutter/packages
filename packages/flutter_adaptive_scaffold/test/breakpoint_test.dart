@@ -508,6 +508,48 @@ void main() {
     }, variant: TargetPlatformVariant.desktop());
   });
 
+  group('Portrait and Landscape Mixed Layout Tests', () {
+    testWidgets(
+        'Layout for smallPortraitMediumLandscape shows correct slot configuration',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+          SimulatedLayout.smallPortraitMediumLandscape.slot(tester));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('Breakpoints.smallMobile')), findsOneWidget);
+      expect(find.byKey(const Key('Breakpoints.mediumMobile')), findsNothing);
+    });
+
+    testWidgets(
+        'Layout for smallLandscapeMediumPortrait shows correct slot configuration',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+          SimulatedLayout.smallLandscapeMediumPortrait.slot(tester));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('Breakpoints.smallMobile')), findsOneWidget);
+      expect(find.byKey(const Key('Breakpoints.mediumMobile')), findsNothing);
+    });
+
+    testWidgets(
+        'Layout for smallPortraitMediumLargeLandscape shows correct slot configuration',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+          SimulatedLayout.smallPortraitMediumLargeLandscape.slot(tester));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('Breakpoints.smallMobile')), findsOneWidget);
+      expect(find.byKey(const Key('Breakpoints.largeMobile')), findsNothing);
+    });
+
+    testWidgets(
+        'Layout for smallLandscapeMediumLargePortrait shows correct slot configuration',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+          SimulatedLayout.smallLandscapeMediumLargePortrait.slot(tester));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('Breakpoints.smallMobile')), findsOneWidget);
+      expect(find.byKey(const Key('Breakpoints.largeMobile')), findsNothing);
+    });
+  });
+
   group('Slot And Up Layout Tests', () {
     testWidgets('slotAndUp shows correct slot for small layout',
         (WidgetTester tester) async {

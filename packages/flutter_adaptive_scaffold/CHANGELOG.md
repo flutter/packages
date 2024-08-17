@@ -1,4 +1,4 @@
-## 0.2.1+1
+## 0.2.2
 
 * Fix a bug where landscape would not show body when using `andUp`.
 

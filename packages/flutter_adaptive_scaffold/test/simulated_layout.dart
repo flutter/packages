@@ -115,7 +115,15 @@ enum SimulatedLayout {
       width: 1100, height: 900, navSlotKey: 'primaryNavigation1'),
   largeLandscape(width: 1400, height: 1000, navSlotKey: 'primaryNavigation2'),
   extraLargeLandscape(
-      width: 1700, height: 1000, navSlotKey: 'primaryNavigation3');
+      width: 1700, height: 1000, navSlotKey: 'primaryNavigation3'),
+  smallPortraitMediumLandscape(
+      width: 360, height: 650, navSlotKey: 'bottomNavigation'),
+  smallLandscapeMediumPortrait(
+      width: 650, height: 360, navSlotKey: 'bottomNavigation'),
+  smallPortraitMediumLargeLandscape(
+      width: 360, height: 900, navSlotKey: 'bottomNavigation'),
+  smallLandscapeMediumLargePortrait(
+      width: 900, height: 360, navSlotKey: 'bottomNavigation');
 
   const SimulatedLayout({
     required double width,

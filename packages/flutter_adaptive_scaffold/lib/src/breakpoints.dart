@@ -86,6 +86,30 @@ class Breakpoints {
   /// A mobile window whose width is greater than 1600 dp.
   static const Breakpoint extraLargeMobile =
       Breakpoint.extraLarge(platform: Breakpoint.mobile);
+
+  /// A list of all the standard breakpoints.
+  static const List<Breakpoint> all = <Breakpoint>[
+    smallDesktop,
+    smallMobile,
+    small,
+    mediumDesktop,
+    mediumMobile,
+    medium,
+    mediumLargeDesktop,
+    mediumLargeMobile,
+    mediumLarge,
+    largeDesktop,
+    largeMobile,
+    large,
+    extraLargeDesktop,
+    extraLargeMobile,
+    extraLarge,
+    smallAndUp,
+    mediumAndUp,
+    mediumLargeAndUp,
+    largeAndUp,
+    standard,
+  ];
 }
 
 /// A class to define the conditions that distinguish between types of
@@ -113,8 +137,8 @@ class Breakpoint {
     this.endWidth,
     this.beginHeight,
     this.endHeight,
-    this.platform,
     this.andUp = false,
+    this.platform,
   });
 
   /// Returns a [Breakpoint] that can be used as a fallthrough in the
@@ -234,78 +258,40 @@ class Breakpoint {
   static Breakpoint? maybeActiveBreakpointFromSlotLayout(BuildContext context) {
     final SlotLayout? slotLayout =
         context.findAncestorWidgetOfExactType<SlotLayout>();
-    Breakpoint? fallbackBreakpoint;
 
-    if (slotLayout != null) {
-      for (final MapEntry<Breakpoint, SlotLayoutConfig?> config
-          in slotLayout.config.entries) {
-        if (config.key.isActive(context)) {
-          if (config.key.platform != null) {
-            return config.key;
-          } else {
-            fallbackBreakpoint ??= config.key;
-          }
-        }
-      }
-    }
-    return fallbackBreakpoint;
+    return slotLayout != null
+        ? activeBreakpointIn(context, slotLayout.config.keys.toList())
+        : null;
   }
 
   /// Returns the default [Breakpoint] based on the [BuildContext].
   static Breakpoint defaultBreakpointOf(BuildContext context) {
-    final TargetPlatform host = Theme.of(context).platform;
-    final bool isDesktop = Breakpoint.desktop.contains(host);
-    final bool isMobile = Breakpoint.mobile.contains(host);
-
-    for (final Breakpoint breakpoint in <Breakpoint>[
-      Breakpoints.small,
-      Breakpoints.medium,
-      Breakpoints.mediumLarge,
-      Breakpoints.large,
-      Breakpoints.extraLarge,
-    ]) {
-      if (breakpoint.isActive(context)) {
-        if (isDesktop) {
-          switch (breakpoint) {
-            case Breakpoints.small:
-              return Breakpoints.smallDesktop;
-            case Breakpoints.medium:
-              return Breakpoints.mediumDesktop;
-            case Breakpoints.mediumLarge:
-              return Breakpoints.mediumLargeDesktop;
-            case Breakpoints.large:
-              return Breakpoints.largeDesktop;
-            case Breakpoints.extraLarge:
-              return Breakpoints.extraLargeDesktop;
-            default:
-              return Breakpoints.standard;
-          }
-        } else if (isMobile) {
-          switch (breakpoint) {
-            case Breakpoints.small:
-              return Breakpoints.smallMobile;
-            case Breakpoints.medium:
-              return Breakpoints.mediumMobile;
-            case Breakpoints.mediumLarge:
-              return Breakpoints.mediumLargeMobile;
-            case Breakpoints.large:
-              return Breakpoints.largeMobile;
-            case Breakpoints.extraLarge:
-              return Breakpoints.extraLargeMobile;
-            default:
-              return Breakpoints.standard;
-          }
-        } else {
-          return breakpoint;
-        }
-      }
-    }
-    return Breakpoints.standard;
+    return activeBreakpointIn(context, Breakpoints.all) ?? Breakpoints.standard;
   }
 
   /// Returns the currently active [Breakpoint].
   static Breakpoint activeBreakpointOf(BuildContext context) {
     return maybeActiveBreakpointFromSlotLayout(context) ??
         defaultBreakpointOf(context);
+  }
+
+  /// Returns the currently active [Breakpoint] based on the [BuildContext] and
+  /// a list of [Breakpoint]s.
+  static Breakpoint? activeBreakpointIn(
+      BuildContext context, List<Breakpoint> breakpoints) {
+    Breakpoint? currentBreakpoint;
+
+    for (final Breakpoint breakpoint in breakpoints) {
+      if (breakpoint.isActive(context)) {
+        if (breakpoint.platform != null) {
+          // Prioritize platform-specific breakpoints.
+          return breakpoint;
+        } else {
+          // Fallback to non-platform-specific.
+          currentBreakpoint = breakpoint;
+        }
+      }
+    }
+    return currentBreakpoint;
   }
 }
