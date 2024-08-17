@@ -365,7 +365,7 @@ abstract class ProxyApiTestsPigeonProxyApiRegistrar(val binaryMessenger: BinaryM
                 api.removeStrongReference(identifier) {
                   if (it.isFailure) {
                     Log.e(
-                        "PigeonInternalProxyApiRegistrar",
+                        "PigeonProxyApiRegistrar",
                         "Failed to remove Dart strong reference with identifier: $identifier")
                   }
                 }

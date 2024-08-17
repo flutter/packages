@@ -1368,7 +1368,7 @@ if (wrapped == null) {
                   api.removeStrongReference(identifier) {
                     if (it.isFailure) {
                       Log.e(
-                        "${classNamePrefix}ProxyApiRegistrar",
+                        "${proxyApiClassNamePrefix}ProxyApiRegistrar",
                         "Failed to remove Dart strong reference with identifier: \$identifier"
                       )
                     }
