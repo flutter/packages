@@ -285,7 +285,7 @@ class GoRoute extends RouteBase {
   ///
   /// If this is true, this route must redirect location other than itself.
   bool get redirectOnly => pageBuilder == null && builder == null;
-  
+
   /// Optional name of the route.
   ///
   /// If used, a unique string name must be provided and it can not be empty.
@@ -449,19 +449,11 @@ class GoRoute extends RouteBase {
   late final RegExp _pathRE;
 
 
-  // This is the changed method to support fragments
-  RegExpMatch? matchPatternAsPrefix(String loc) {
-    final Uri uri = Uri.parse(loc);
-    final RegExpMatch? pathMatch = _pathRE.matchAsPrefix(uri.path) as RegExpMatch?;
-    if (pathMatch == null) return null;
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.
   RegExpMatch? matchPatternAsPrefix(String loc) =>
       _pathRE.matchAsPrefix(loc) as RegExpMatch?;
-    // Added fragment matching
-    if (fragment != null && fragment != uri.fragment) return null;
-    return pathMatch;
-  }
+      
   /// Extract the path parameters from a match.
   Map<String, String> extractPathParams(RegExpMatch match) =>
       extractPathParameters(pathParameters, match);

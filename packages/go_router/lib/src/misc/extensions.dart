@@ -19,7 +19,7 @@ extension GoRouterHelper on BuildContext {
     String? fragment, 
   }) =>
     /// If a fragment is provided, it appends it to the route name with a "#" symbol, otherwise, it returns the name as is.
-      GoRouter.of(this).namedLocation(fragment == null?name:"$name#$fragment",
+      GoRouter.of(this).namedLocation(fragment == null?name:'$name#$fragment',
           pathParameters: pathParameters, queryParameters: queryParameters);
 
   /// Navigate to a location.
