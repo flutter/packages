@@ -736,10 +736,9 @@ if (wrapped == nil) {
     final String instanceManagerApiName =
         '${swiftInstanceManagerClassName(generatorOptions)}Api';
 
-    final String removeStrongReferenceName = makeChannelNameWithStrings(
-      apiName: '${instanceManagerClassName}Api',
-      methodName: 'removeStrongReference',
-      dartPackageName: dartPackageName,
+    final String removeStrongReferenceName =
+        makeRemoveStrongReferenceChannelName(
+      dartPackageName,
     );
 
     indent.writeScoped('private class $instanceManagerApiName {', '}', () {
@@ -813,11 +812,7 @@ if (wrapped == nil) {
           _writeHostMethodMessageHandler(
             indent,
             name: 'clear',
-            channelName: makeChannelNameWithStrings(
-              apiName: '${instanceManagerClassName}Api',
-              methodName: 'clear',
-              dartPackageName: dartPackageName,
-            ),
+            channelName: makeClearChannelName(dartPackageName),
             parameters: <Parameter>[],
             returnType: const TypeDeclaration.voidDeclaration(),
             setHandlerCondition: setHandlerCondition,

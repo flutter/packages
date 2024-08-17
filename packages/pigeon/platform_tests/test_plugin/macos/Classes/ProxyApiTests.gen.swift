@@ -309,7 +309,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
     let codec = FlutterStandardMessageCodec.sharedInstance()
     let removeStrongReferenceChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManagerApi.removeStrongReference",
+        "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference",
       binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       removeStrongReferenceChannel.setMessageHandler { message, reply in
@@ -326,7 +326,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
       removeStrongReferenceChannel.setMessageHandler(nil)
     }
     let clearChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManagerApi.clear",
+      name: "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.clear",
       binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       clearChannel.setMessageHandler { _, reply in
@@ -348,7 +348,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
     completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     let channelName: String =
-      "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManagerApi.removeStrongReference"
+      "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([identifierArg] as [Any?]) { response in

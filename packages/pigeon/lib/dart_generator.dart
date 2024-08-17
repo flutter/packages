@@ -534,8 +534,6 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     Indent indent, {
     required String dartPackageName,
   }) {
-    const String apiName = '${instanceManagerClassName}Api';
-
     final cb.Parameter binaryMessengerParameter = cb.Parameter(
       (cb.ParameterBuilder builder) => builder
         ..name = 'binaryMessenger'
@@ -550,23 +548,18 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         ..modifier = cb.FieldModifier.final$,
     );
 
-    final String removeStrongReferenceName = makeChannelNameWithStrings(
-      apiName: apiName,
-      methodName: 'removeStrongReference',
-      dartPackageName: dartPackageName,
-    );
-
     final cb.Class instanceManagerApi = cb.Class(
       (cb.ClassBuilder builder) => builder
-        ..name = '_$apiName'
+        ..name = dartInstanceManagerApiClassName
         ..docs.add(
-          '/// Generated API for managing the Dart and native `$instanceManagerClassName`s.',
+          '/// Generated API for managing the Dart and native `$dartInstanceManagerClassName`s.',
         )
         ..constructors.add(
           cb.Constructor(
             (cb.ConstructorBuilder builder) {
               builder
-                ..docs.add('/// Constructor for [_$apiName].')
+                ..docs.add(
+                    '/// Constructor for [$dartInstanceManagerApiClassName].')
                 ..optionalParameters.add(binaryMessengerParameter)
                 ..initializers.add(
                   cb.Code(
@@ -611,7 +604,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                     (cb.ParameterBuilder builder) => builder
                       ..name = 'instanceManager'
                       ..named = true
-                      ..type = cb.refer('$instanceManagerClassName?'),
+                      ..type = cb.refer('$dartInstanceManagerClassName?'),
                   ),
                 ])
                 ..body = cb.Block.of(
@@ -631,7 +624,8 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                           )
                         ],
                         returnType: const TypeDeclaration.voidDeclaration(),
-                        channelName: removeStrongReferenceName,
+                        channelName: makeRemoveStrongReferenceChannelName(
+                            dartPackageName),
                         isMockHandler: false,
                         isAsynchronous: false,
                         nullHandlerExpression:
@@ -641,7 +635,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                           Iterable<Parameter> parameters,
                           Iterable<String> safeArgumentNames,
                         ) {
-                          return '(instanceManager ?? $instanceManagerClassName.instance).remove(${safeArgumentNames.single})';
+                          return '(instanceManager ?? $dartInstanceManagerClassName.instance).remove(${safeArgumentNames.single})';
                         },
                       );
                       builder.statements.add(
@@ -674,7 +668,8 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                       _writeHostMethodMessageCall(
                         Indent(messageCallSink),
                         addSuffixVariable: false,
-                        channelName: removeStrongReferenceName,
+                        channelName: makeRemoveStrongReferenceChannelName(
+                            dartPackageName),
                         parameters: <Parameter>[
                           Parameter(
                             name: 'identifier',
@@ -700,7 +695,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                   ..returns = cb.refer('Future<void>')
                   ..modifier = cb.MethodModifier.async
                   ..docs.addAll(<String>[
-                    '/// Clear the native `$instanceManagerClassName`.',
+                    '/// Clear the native `$dartInstanceManagerClassName`.',
                     '///',
                     '/// This is typically called after a hot restart.',
                   ])
@@ -710,11 +705,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                       _writeHostMethodMessageCall(
                         Indent(messageCallSink),
                         addSuffixVariable: false,
-                        channelName: makeChannelNameWithStrings(
-                          apiName: apiName,
-                          methodName: 'clear',
-                          dartPackageName: dartPackageName,
-                        ),
+                        channelName: makeClearChannelName(dartPackageName),
                         parameters: <Parameter>[],
                         returnType: const TypeDeclaration.voidDeclaration(),
                       );
@@ -1423,7 +1414,7 @@ if (${varNamePrefix}replyList == null) {
           '/// Constructs [$apiName] without creating the associated native object.',
           '///',
           '/// This should only be used by subclasses created by this library or to',
-          '/// create copies for an [$instanceManagerClassName].',
+          '/// create copies for an [$dartInstanceManagerClassName].',
         ])
         ..annotations.add(cb.refer('protected'))
         ..optionalParameters.addAll(<cb.Parameter>[
@@ -1530,7 +1521,7 @@ if (${varNamePrefix}replyList == null) {
                 ');',
                 '```',
                 '',
-                'Alternatively, [$instanceManagerClassName.removeWeakReference] can be used to',
+                'Alternatively, [$dartInstanceManagerClassName.removeWeakReference] can be used to',
                 'release the associated Native object manually.',
               ],
             ],
@@ -1676,7 +1667,7 @@ if (${varNamePrefix}replyList == null) {
             (cb.ParameterBuilder builder) => builder
               ..name = _instanceManagerVarName
               ..named = true
-              ..type = cb.refer('$instanceManagerClassName?'),
+              ..type = cb.refer('$dartInstanceManagerClassName?'),
           ),
           if (hasCallbackConstructor)
             cb.Parameter(
@@ -1727,7 +1718,7 @@ if (${varNamePrefix}replyList == null) {
         ..body = cb.Block.of(<cb.Code>[
           if (hasAnyMessageHandlers) ...<cb.Code>[
             cb.Code(
-              'final $codecName $_pigeonChannelCodec = $codecName($_instanceManagerVarName ?? $instanceManagerClassName.instance);',
+              'final $codecName $_pigeonChannelCodec = $codecName($_instanceManagerVarName ?? $dartInstanceManagerClassName.instance);',
             ),
             const cb.Code(
               'final BinaryMessenger? binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
@@ -1775,7 +1766,7 @@ if (${varNamePrefix}replyList == null) {
                       return '${parameter.name}: $safeArgName,\n';
                     },
                   ).skip(1).join();
-                  return '($_instanceManagerVarName ?? $instanceManagerClassName.instance)\n'
+                  return '($_instanceManagerVarName ?? $dartInstanceManagerClassName.instance)\n'
                       '    .addHostCreatedInstance(\n'
                       '  $methodName?.call(${safeArgumentNames.skip(1).join(',')}) ??\n'
                       '      $apiName.${classMemberNamePrefix}detached('
@@ -1911,13 +1902,13 @@ if (${varNamePrefix}replyList == null) {
                       'final $type $instanceName = $type.${classMemberNamePrefix}detached();',
                     ),
                     cb.Code(
-                      'final $codecName $_pigeonChannelCodec = $codecName($instanceManagerClassName.instance);',
+                      'final $codecName $_pigeonChannelCodec = $codecName($dartInstanceManagerClassName.instance);',
                     ),
                     const cb.Code(
                       'final BinaryMessenger ${varNamePrefix}binaryMessenger = ServicesBinding.instance.defaultBinaryMessenger;',
                     ),
                     const cb.Code(
-                      'final int $identifierInstanceName = $instanceManagerClassName.instance.addDartCreatedInstance($instanceName);',
+                      'final int $identifierInstanceName = $dartInstanceManagerClassName.instance.addDartCreatedInstance($instanceName);',
                     ),
                   ],
                   const cb.Code('() async {'),
@@ -1978,7 +1969,7 @@ if (${varNamePrefix}replyList == null) {
               cb.Parameter(
                 (cb.ParameterBuilder builder) => builder
                   ..name = _instanceManagerVarName
-                  ..type = cb.refer('$instanceManagerClassName?'),
+                  ..type = cb.refer('$dartInstanceManagerClassName?'),
               ),
             ],
           ])
@@ -2012,7 +2003,7 @@ if (${varNamePrefix}replyList == null) {
                       '    $codecInstanceName;')
                 else
                   cb.Code(
-                    'final $codecName $_pigeonChannelCodec = $codecName($_instanceManagerVarName ?? $instanceManagerClassName.instance);',
+                    'final $codecName $_pigeonChannelCodec = $codecName($_instanceManagerVarName ?? $dartInstanceManagerClassName.instance);',
                   ),
                 const cb.Code(
                   'final BinaryMessenger? ${varNamePrefix}binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
