@@ -1,3 +1,7 @@
+## 0.1.2+2
+
+* Adds internal wrapper for remaining methods of the Android native `AdsManager`.
+
 ## 0.1.2+1
 
 * Updates README to clarify supported features and link to issues tracker.
