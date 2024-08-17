@@ -655,21 +655,10 @@ if (wrapped == null) {
     final String instanceManagerApiName =
         '${kotlinInstanceManagerClassName(generatorOptions)}Api';
 
-    final String removeStrongReferenceName = makeChannelNameWithStrings(
-      apiName: '${instanceManagerClassName}Api',
-      methodName: 'removeStrongReference',
-      dartPackageName: dartPackageName,
-    );
-    final String clearName = makeChannelNameWithStrings(
-      apiName: '${instanceManagerClassName}Api',
-      methodName: 'clear',
-      dartPackageName: dartPackageName,
-    );
-
     addDocumentationComments(
       indent,
       <String>[
-        'Generated API for managing the Dart and native `$instanceManagerClassName`s.',
+        'Generated API for managing the Dart and native `InstanceManager`s.',
       ],
       _docCommentSpec,
     );
@@ -705,7 +694,8 @@ if (wrapped == null) {
               _writeHostMethodMessageHandler(
                 indent,
                 name: 'removeStrongReference',
-                channelName: removeStrongReferenceName,
+                channelName:
+                    makeRemoveStrongReferenceChannelName(dartPackageName),
                 taskQueueType: TaskQueueType.serial,
                 parameters: <Parameter>[
                   Parameter(
@@ -728,7 +718,7 @@ if (wrapped == null) {
               _writeHostMethodMessageHandler(
                 indent,
                 name: 'clear',
-                channelName: clearName,
+                channelName: makeClearChannelName(dartPackageName),
                 taskQueueType: TaskQueueType.serial,
                 parameters: <Parameter>[],
                 returnType: const TypeDeclaration.voidDeclaration(),
@@ -756,7 +746,7 @@ if (wrapped == null) {
             )
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
-          channelName: removeStrongReferenceName,
+          channelName: makeRemoveStrongReferenceChannelName(dartPackageName),
           dartPackageName: dartPackageName,
         );
       },

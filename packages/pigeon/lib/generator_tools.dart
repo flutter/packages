@@ -328,12 +328,6 @@ const String proxyApiClassNamePrefix = 'Pigeon';
 /// of said class, host APIs should prefix the API with this protected name.
 const String hostProxyApiPrefix = '${proxyApiClassNamePrefix}Api';
 
-/// Name for the generated InstanceManager for ProxyApis.
-///
-/// This lowers the chances of variable name collisions with user defined
-/// parameters.
-const String instanceManagerClassName = '${classNamePrefix}InstanceManager';
-
 /// Prefix for class member names not defined by the user.
 ///
 /// This lowers the chances of variable name collisions with user defined
@@ -806,4 +800,27 @@ String toScreamingSnakeCase(String string) {
       .replaceAllMapped(
           RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => '_${m.group(0)}')
       .toUpperCase();
+}
+
+/// The channel name for the `removeStrongReference` method of the
+/// `InstanceManager` API.
+///
+/// This ensures the channel name is the same for all languages.
+String makeRemoveStrongReferenceChannelName(String dartPackageName) {
+  return makeChannelNameWithStrings(
+    apiName: '${classNamePrefix}InstanceManager',
+    methodName: 'removeStrongReference',
+    dartPackageName: dartPackageName,
+  );
+}
+
+/// The channel name for the `clear` method of the `InstanceManager` API.
+///
+/// This ensures the channel name is the same for all languages.
+String makeClearChannelName(String dartPackageName) {
+  return makeChannelNameWithStrings(
+    apiName: '${classNamePrefix}InstanceManager',
+    methodName: 'clear',
+    dartPackageName: dartPackageName,
+  );
 }

@@ -102,7 +102,7 @@ class ProxyApiTestsPigeonInstanceManager(
     // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
     // 0 <= n < 2^16.
     private const val minHostCreatedIdentifier: Long = 65536
-    private const val tag = "PigeonInternalInstanceManager"
+    private const val tag = "PigeonInstanceManager"
 
     /**
      * Instantiate a new manager with a listener for garbage collected weak references.
@@ -259,7 +259,7 @@ class ProxyApiTestsPigeonInstanceManager(
   }
 }
 
-/** Generated API for managing the Dart and native `PigeonInternalInstanceManager`s. */
+/** Generated API for managing the Dart and native `InstanceManager`s. */
 private class ProxyApiTestsPigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
   companion object {
     /** The codec used by ProxyApiTestsPigeonInstanceManagerApi. */
@@ -277,7 +277,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi(val binaryMessenger: BinaryM
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManagerApi.removeStrongReference",
+                "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference",
                 codec)
         if (instanceManager != null) {
           channel.setMessageHandler { message, reply ->
@@ -300,7 +300,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi(val binaryMessenger: BinaryM
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManagerApi.clear",
+                "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.clear",
                 codec)
         if (instanceManager != null) {
           channel.setMessageHandler { _, reply ->
@@ -322,7 +322,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi(val binaryMessenger: BinaryM
 
   fun removeStrongReference(identifierArg: Long, callback: (Result<Unit>) -> Unit) {
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManagerApi.removeStrongReference"
+        "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(identifierArg)) {
       if (it is List<*>) {
