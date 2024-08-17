@@ -14,6 +14,7 @@ import 'route.dart';
 /// The state contains parsed artifacts of the current URI.
 @immutable
 class GoRouterState {
+/// Default constructor for creating route state during routing.
   const GoRouterState(
     this._configuration, {
     required this.uri,
