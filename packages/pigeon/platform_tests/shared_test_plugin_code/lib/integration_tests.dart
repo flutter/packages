@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: unused_local_variable
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -84,13 +82,6 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         true);
     expect(listEquals(allNullableTypesOne.intList, allNullableTypesTwo.intList),
         true);
-    // expect(
-    //     listEquals(allNullableTypesOne.enumList, allNullableTypesTwo.enumList),
-    //     true);
-    // expect(
-    //     listEquals(
-    //         allNullableTypesOne.objectList, allNullableTypesTwo.objectList),
-    //     true);
     // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
     // https://github.com/flutter/flutter/issues/116117
     //for (int i = 0; i < allNullableTypesOne.listList!.length; i++) {
@@ -105,21 +96,6 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         true);
     expect(mapEquals(allNullableTypesOne.intMap, allNullableTypesTwo.intMap),
         true);
-    // expect(
-    //     mapEquals(allNullableTypesOne.doubleMap, allNullableTypesTwo.doubleMap),
-    //     true);
-    // expect(mapEquals(allNullableTypesOne.boolMap, allNullableTypesTwo.boolMap),
-    //     true);
-    // expect(mapEquals(allNullableTypesOne.enumMap, allNullableTypesTwo.enumMap),
-    //     true);
-    // expect(
-    //     mapEquals(allNullableTypesOne.objectMap, allNullableTypesTwo.objectMap),
-    // true);
-    // listMap: check each key and value, and compare each lists values
-    //
-    // mapMap: check each key and value, and compare each map in the same way
-    //
-    // classMap: check each key and value, call each compare method for every class
   }
 
   void compareAllTypes(AllTypes? allTypesOne, AllTypes? allTypesTwo) {
@@ -138,39 +114,20 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(allTypesOne.aFloatArray, allTypesTwo.aFloatArray);
     expect(allTypesOne.anEnum, allTypesTwo.anEnum);
     expect(allTypesOne.anObject, allTypesTwo.anObject);
-    // compareAllNullableTypesWithoutRecursion(
-    //     allTypesOne.aClass, allTypesTwo.aClass);
     expect(listEquals(allTypesOne.list, allTypesTwo.list), true);
     expect(listEquals(allTypesOne.stringList, allTypesTwo.stringList), true);
     expect(listEquals(allTypesOne.intList, allTypesTwo.intList), true);
     expect(listEquals(allTypesOne.doubleList, allTypesTwo.doubleList), true);
     expect(listEquals(allTypesOne.boolList, allTypesTwo.boolList), true);
-    // expect(listEquals(allTypesOne.enumList, allTypesTwo.enumList), true);
-    // expect(listEquals(allTypesOne.objectList, allTypesTwo.objectList), true);
     // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
     // https://github.com/flutter/flutter/issues/116117
     //for (int i = 0; i < allTypesOne.listList!.length; i++) {
     //  expect(listEquals(allTypesOne.listList![i], allTypesTwo.listList![i]),
     //      true);
     //}
-    // expect(listEquals(allTypesOne.mapList, allTypesTwo.mapList), true);
-    // for (int i = 0; i < (allTypesOne.classList.length); i++) {
-    //   compareAllNullableTypesWithoutRecursion(
-    //       allTypesOne.classList[i], allTypesTwo.classList[i]);
-    // }
-    // expect(listEquals(allTypesOne.mapList, allTypesTwo.mapList), true);
     expect(mapEquals(allTypesOne.map, allTypesTwo.map), true);
     expect(mapEquals(allTypesOne.stringMap, allTypesTwo.stringMap), true);
     expect(mapEquals(allTypesOne.intMap, allTypesTwo.intMap), true);
-    // expect(mapEquals(allTypesOne.doubleMap, allTypesTwo.doubleMap), true);
-    // expect(mapEquals(allTypesOne.boolMap, allTypesTwo.boolMap), true);
-    // expect(mapEquals(allTypesOne.enumMap, allTypesTwo.enumMap), true);
-    // expect(mapEquals(allTypesOne.objectMap, allTypesTwo.objectMap), true);
-    // listMap: check each key and value, and compare each lists values
-    //
-    // mapMap: check each key and value, and compare each map in the same way
-    //
-    // classMap: check each key and value, call each compare method for every class
   }
 
   void compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
@@ -217,55 +174,18 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         true);
     expect(listEquals(allNullableTypesOne.intList, allNullableTypesTwo.intList),
         true);
-    // expect(
-    //     listEquals(allNullableTypesOne.enumList, allNullableTypesTwo.enumList),
-    //     true);
-    // expect(
-    //     listEquals(
-    //         allNullableTypesOne.objectList, allNullableTypesTwo.objectList),
-    // true);
     // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
     // https://github.com/flutter/flutter/issues/116117
     //for (int i = 0; i < allNullableTypesOne.listList!.length; i++) {
     //  expect(listEquals(allNullableTypesOne.listList![i], allNullableTypesTwo.listList![i]),
     //      true);
     //}
-    // expect(listEquals(allNullableTypesOne.mapList, allNullableTypesTwo.mapList),
-    //     true);
-    // for (int i = 0; i < (allNullableTypesOne.classList?.length ?? 0); i++) {
-    //   compareAllNullableTypesWithoutRecursion(
-    //       allNullableTypesOne.classList?[i], allNullableTypesTwo.classList?[i]);
-    // }
-    // for (int i = 0;
-    //     i < (allNullableTypesOne.recursiveClassList?.length ?? 0);
-    //     i++) {
-    //   compareAllNullableTypes(allNullableTypesOne.recursiveClassList?[i],
-    //       allNullableTypesTwo.recursiveClassList?[i]);
-    // }
-    // expect(listEquals(allNullableTypesOne.mapList, allNullableTypesTwo.mapList),
-    //     true);
     expect(mapEquals(allNullableTypesOne.map, allNullableTypesTwo.map), true);
     expect(
         mapEquals(allNullableTypesOne.stringMap, allNullableTypesTwo.stringMap),
         true);
     expect(mapEquals(allNullableTypesOne.intMap, allNullableTypesTwo.intMap),
         true);
-    // expect(
-    //     mapEquals(allNullableTypesOne.doubleMap, allNullableTypesTwo.doubleMap),
-    //     true);
-    // expect(mapEquals(allNullableTypesOne.boolMap, allNullableTypesTwo.boolMap),
-    //     true);
-    // expect(mapEquals(allNullableTypesOne.enumMap, allNullableTypesTwo.enumMap),
-    //     true);
-    // expect(
-    //     mapEquals(allNullableTypesOne.objectMap, allNullableTypesTwo.objectMap),
-    //     true);
-    // listMap: check each key and value, and compare each lists values
-    //
-    // mapMap: check each key and value, and compare each map in the same way
-    //
-    // classMap: check each key and value, call each compare method for every class
-    // recursiveClassMap: check each key and value, call each compare method for every class
   }
 
   void compareAllClassesWrapper(
@@ -368,60 +288,6 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     5: null,
   };
 
-  final Map<double?, double?> doubleMap = <double?, double?>{
-    0.0: 0,
-    1.1: 2.0,
-    3: 0.3,
-    -.4: -0.2,
-    1111111111111111.11111111111111111111111111111111111111111111: null
-  };
-
-  final Map<int?, bool?> boolMap = <int?, bool?>{
-    0: true,
-    1: false,
-    2: true,
-    3: null,
-  };
-
-  final Map<AnEnum?, AnEnum?> enumMap = <AnEnum?, AnEnum?>{
-    AnEnum.one: AnEnum.one,
-    AnEnum.two: AnEnum.two,
-    AnEnum.three: AnEnum.three,
-    AnEnum.fortyTwo: AnEnum.fortyTwo,
-    AnEnum.fourHundredTwentyTwo: null,
-  };
-
-  final Map<int?, List<Object?>?> listMap = <int?, List<Object?>?>{
-    0: list,
-    1: stringList,
-    2: doubleList,
-    4: intList,
-    5: boolList,
-    6: enumList,
-    7: null
-  };
-
-  final Map<int?, Map<Object?, Object?>?> mapMap =
-      <int?, Map<Object?, Object?>?>{
-    0: map,
-    1: stringMap,
-    2: doubleMap,
-    4: intMap,
-    5: boolMap,
-    6: enumMap,
-    7: null
-  };
-
-  final List<Map<Object?, Object?>?> mapList = <Map<Object?, Object?>?>[
-    map,
-    stringMap,
-    doubleMap,
-    intMap,
-    boolMap,
-    enumMap,
-    null
-  ]; // fill in.
-
   final AllNullableTypesWithoutRecursion
       genericAllNullableTypesWithoutRecursion =
       AllNullableTypesWithoutRecursion(
@@ -441,34 +307,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     intList: intList,
     doubleList: doubleList,
     boolList: boolList,
-    // enumList: enumList,
-    // objectList: list,
-    // listList: listList,
-    // mapList: mapList,
     map: map,
     stringMap: stringMap,
     intMap: intMap,
-    // doubleMap: doubleMap,
-    // boolMap: boolMap,
-    // enumMap: enumMap,
-    // objectMap: map,
-    // listMap: listMap,
-    // mapMap: mapMap,
   );
-
-  final List<AllNullableTypesWithoutRecursion?> classList =
-      <AllNullableTypesWithoutRecursion?>[
-    genericAllNullableTypesWithoutRecursion,
-    AllNullableTypesWithoutRecursion(),
-    null,
-  ];
-
-  final Map<int, AllNullableTypesWithoutRecursion?> classMap =
-      <int, AllNullableTypesWithoutRecursion?>{
-    0: genericAllNullableTypesWithoutRecursion,
-    1: AllNullableTypesWithoutRecursion(),
-    2: null,
-  };
 
   final AllTypes genericAllTypes = AllTypes(
     aBool: true,
@@ -487,22 +329,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     intList: intList,
     doubleList: doubleList,
     boolList: boolList,
-    // aClass: genericAllNullableTypesWithoutRecursion,
-    // enumList: enumList,
-    // objectList: list,
     listList: listList,
-    // mapList: mapList,
-    // classList: classList,
     map: map,
     stringMap: stringMap,
     intMap: intMap,
-    // doubleMap: doubleMap,
-    // boolMap: boolMap,
-    // enumMap: enumMap,
-    // objectMap: map,
-    // listMap: listMap,
-    // mapMap: mapMap,
-    // classMap: classMap,
   );
 
   final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
@@ -522,35 +352,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     intList: intList,
     doubleList: doubleList,
     boolList: boolList,
-    // enumList: enumList,
-    // objectList: list,
-    // listList: listList,
-    // mapList: mapList,
-    // classList: classList,
     map: map,
-    // stringMap: stringMap,
     intMap: intMap,
-    // doubleMap: doubleMap,
-    // boolMap: boolMap,
-    // enumMap: enumMap,
-    // objectMap: map,
-    // listMap: listMap,
-    // mapMap: mapMap,
-    // classMap: classMap,
   );
-
-  final List<AllNullableTypes?> allNullableTypesList = <AllNullableTypes?>[
-    genericAllNullableTypes,
-    AllNullableTypes(),
-    null,
-  ];
-
-  final Map<int, AllNullableTypes?> allNullableTypesMap =
-      <int, AllNullableTypes?>{
-    0: genericAllNullableTypes,
-    1: AllNullableTypes(),
-    2: null,
-  };
 
   final AllNullableTypes recursiveAllNullableTypes = AllNullableTypes(
     aNullableBool: true,
@@ -570,23 +374,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     intList: intList,
     doubleList: doubleList,
     boolList: boolList,
-    // enumList: enumList,
-    // objectList: list,
-    // listList: listList,
-    // mapList: mapList,
-    // classList: classList,
-    // recursiveClassList: allNullableTypesList,
     map: map,
-    // stringMap: stringMap,
     intMap: intMap,
-    // doubleMap: doubleMap,
-    // boolMap: boolMap,
-    // enumMap: enumMap,
-    // objectMap: map,
-    // listMap: listMap,
-    // mapMap: mapMap,
-    // classMap: classMap,
-    // recursiveClassMap: allNullableTypesMap,
   );
 
   group('Host sync API tests', () {
