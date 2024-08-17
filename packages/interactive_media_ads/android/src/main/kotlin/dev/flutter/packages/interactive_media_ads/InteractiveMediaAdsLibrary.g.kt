@@ -366,7 +366,7 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
                 api.removeStrongReference(identifier) {
                   if (it.isFailure) {
                     Log.e(
-                        "PigeonInternalProxyApiRegistrar",
+                        "PigeonProxyApiRegistrar",
                         "Failed to remove Dart strong reference with identifier: $identifier")
                   }
                 }
