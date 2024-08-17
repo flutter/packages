@@ -41,9 +41,9 @@ abstract class PigeonInternalProxyApiBaseClass {
   /// Construct a [PigeonInternalProxyApiBaseClass].
   PigeonInternalProxyApiBaseClass({
     this.pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) : pigeon_instanceManager =
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance;
+            pigeon_instanceManager ?? PigeonInstanceManager.instance;
 
   /// Sends and receives binary data across the Flutter platform barrier.
   ///
@@ -54,12 +54,12 @@ abstract class PigeonInternalProxyApiBaseClass {
 
   /// Maintains instances stored to communicate with native language objects.
   @protected
-  final PigeonInternalInstanceManager pigeon_instanceManager;
+  final PigeonInstanceManager pigeon_instanceManager;
 
   /// Instantiates and returns a functionally identical object to oneself.
   ///
   /// Outside of tests, this method should only ever be called by
-  /// [PigeonInternalInstanceManager].
+  /// [PigeonInstanceManager].
   ///
   /// Subclasses should always override their parent's implementation of this
   /// method.
@@ -82,10 +82,9 @@ abstract class PigeonInternalProxyApiBaseClass {
 /// is added as a weak reference with the same identifier. This prevents a
 /// scenario where the weak referenced instance was released and then later
 /// returned by the host platform.
-class PigeonInternalInstanceManager {
-  /// Constructs a [PigeonInternalInstanceManager].
-  PigeonInternalInstanceManager(
-      {required void Function(int) onWeakReferenceRemoved}) {
+class PigeonInstanceManager {
+  /// Constructs a [PigeonInstanceManager].
+  PigeonInstanceManager({required void Function(int) onWeakReferenceRemoved}) {
     this.onWeakReferenceRemoved = (int identifier) {
       _weakInstances.remove(identifier);
       onWeakReferenceRemoved(identifier);
@@ -99,12 +98,12 @@ class PigeonInternalInstanceManager {
   // 0 <= n < 2^16.
   static const int _maxDartCreatedIdentifier = 65536;
 
-  /// The default [PigeonInternalInstanceManager] used by ProxyApis.
+  /// The default [PigeonInstanceManager] used by ProxyApis.
   ///
   /// On creation, this manager makes a call to clear the native
   /// InstanceManager. This is to prevent identifier conflicts after a host
   /// restart.
-  static final PigeonInternalInstanceManager instance = _initInstance();
+  static final PigeonInstanceManager instance = _initInstance();
 
   // Expando is used because it doesn't prevent its keys from becoming
   // inaccessible. This allows the manager to efficiently retrieve an identifier
@@ -126,14 +125,13 @@ class PigeonInternalInstanceManager {
   /// or becomes inaccessible.
   late final void Function(int) onWeakReferenceRemoved;
 
-  static PigeonInternalInstanceManager _initInstance() {
+  static PigeonInstanceManager _initInstance() {
     WidgetsFlutterBinding.ensureInitialized();
     final _PigeonInternalInstanceManagerApi api =
         _PigeonInternalInstanceManagerApi();
-    // Clears the native `PigeonInternalInstanceManager` on the initial use of the Dart one.
+    // Clears the native `PigeonInstanceManager` on the initial use of the Dart one.
     api.clear();
-    final PigeonInternalInstanceManager instanceManager =
-        PigeonInternalInstanceManager(
+    final PigeonInstanceManager instanceManager = PigeonInstanceManager(
       onWeakReferenceRemoved: (int identifier) {
         api.removeStrongReference(identifier);
       },
@@ -328,7 +326,7 @@ class PigeonInternalInstanceManager {
   }
 }
 
-/// Generated API for managing the Dart and native `PigeonInternalInstanceManager`s.
+/// Generated API for managing the Dart and native `PigeonInstanceManager`s.
 class _PigeonInternalInstanceManagerApi {
   /// Constructor for [_PigeonInternalInstanceManagerApi].
   _PigeonInternalInstanceManagerApi({BinaryMessenger? binaryMessenger})
@@ -342,13 +340,13 @@ class _PigeonInternalInstanceManagerApi {
   static void setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? binaryMessenger,
-    PigeonInternalInstanceManager? instanceManager,
+    PigeonInstanceManager? instanceManager,
   }) {
     {
       final BasicMessageChannel<
           Object?> pigeonVar_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManagerApi.removeStrongReference',
+          'dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManager.removeStrongReference',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
@@ -356,13 +354,13 @@ class _PigeonInternalInstanceManagerApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManagerApi.removeStrongReference was null.');
+              'Argument for dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManager.removeStrongReference was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
-              'Argument for dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManagerApi.removeStrongReference was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManager.removeStrongReference was null, expected non-null int.');
           try {
-            (instanceManager ?? PigeonInternalInstanceManager.instance)
+            (instanceManager ?? PigeonInstanceManager.instance)
                 .remove(arg_identifier!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
@@ -378,7 +376,7 @@ class _PigeonInternalInstanceManagerApi {
 
   Future<void> removeStrongReference(int identifier) async {
     const String pigeonVar_channelName =
-        'dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManagerApi.removeStrongReference';
+        'dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManager.removeStrongReference';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,
@@ -400,12 +398,12 @@ class _PigeonInternalInstanceManagerApi {
     }
   }
 
-  /// Clear the native `PigeonInternalInstanceManager`.
+  /// Clear the native `PigeonInstanceManager`.
   ///
   /// This is typically called after a hot restart.
   Future<void> clear() async {
     const String pigeonVar_channelName =
-        'dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManagerApi.clear';
+        'dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManager.clear';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,
@@ -430,7 +428,7 @@ class _PigeonInternalInstanceManagerApi {
 
 class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
   const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
-  final PigeonInternalInstanceManager instanceManager;
+  final PigeonInstanceManager instanceManager;
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is PigeonInternalProxyApiBaseClass) {
@@ -685,7 +683,7 @@ class BaseDisplayContainer extends PigeonInternalProxyApiBaseClass {
   /// Constructs [BaseDisplayContainer] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   BaseDisplayContainer.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -695,12 +693,12 @@ class BaseDisplayContainer extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     BaseDisplayContainer Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -720,7 +718,7 @@ class BaseDisplayContainer extends PigeonInternalProxyApiBaseClass {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   BaseDisplayContainer.pigeon_detached(
@@ -758,7 +756,7 @@ class AdDisplayContainer extends PigeonInternalProxyApiBaseClass
   /// Constructs [AdDisplayContainer] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   AdDisplayContainer.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -768,12 +766,12 @@ class AdDisplayContainer extends PigeonInternalProxyApiBaseClass
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     AdDisplayContainer Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -793,7 +791,7 @@ class AdDisplayContainer extends PigeonInternalProxyApiBaseClass
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.AdDisplayContainer.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   AdDisplayContainer.pigeon_detached(
@@ -831,7 +829,7 @@ class AdsLoader extends PigeonInternalProxyApiBaseClass {
   /// Constructs [AdsLoader] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   AdsLoader.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -844,12 +842,12 @@ class AdsLoader extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     AdsLoader Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -869,7 +867,7 @@ class AdsLoader extends PigeonInternalProxyApiBaseClass {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.AdsLoader.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   AdsLoader.pigeon_detached(
@@ -990,7 +988,7 @@ class AdsManagerLoadedEvent extends PigeonInternalProxyApiBaseClass {
   /// Constructs [AdsManagerLoadedEvent] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   AdsManagerLoadedEvent.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -1005,12 +1003,12 @@ class AdsManagerLoadedEvent extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     AdsManagerLoadedEvent Function(AdsManager manager)? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -1033,7 +1031,7 @@ class AdsManagerLoadedEvent extends PigeonInternalProxyApiBaseClass {
           assert(arg_manager != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.AdsManagerLoadedEvent.pigeon_newInstance was null, expected non-null AdsManager.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call(arg_manager!) ??
                   AdsManagerLoadedEvent.pigeon_detached(
@@ -1072,7 +1070,7 @@ class AdErrorEvent extends PigeonInternalProxyApiBaseClass {
   /// Constructs [AdErrorEvent] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   AdErrorEvent.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -1086,12 +1084,12 @@ class AdErrorEvent extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     AdErrorEvent Function(AdError error)? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -1114,7 +1112,7 @@ class AdErrorEvent extends PigeonInternalProxyApiBaseClass {
           assert(arg_error != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.AdErrorEvent.pigeon_newInstance was null, expected non-null AdError.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call(arg_error!) ??
                   AdErrorEvent.pigeon_detached(
@@ -1153,7 +1151,7 @@ class AdError extends PigeonInternalProxyApiBaseClass {
   /// Constructs [AdError] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   AdError.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -1179,7 +1177,7 @@ class AdError extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     AdError Function(
       AdErrorCode errorCode,
       int errorCodeNumber,
@@ -1189,7 +1187,7 @@ class AdError extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -1221,7 +1219,7 @@ class AdError extends PigeonInternalProxyApiBaseClass {
           assert(arg_message != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.AdError.pigeon_newInstance was null, expected non-null String.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call(arg_errorCode!, arg_errorCodeNumber!,
                       arg_errorType!, arg_message!) ??
@@ -1267,7 +1265,7 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
   /// Constructs [AdsRequest] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   AdsRequest.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -1280,12 +1278,12 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     AdsRequest Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -1305,7 +1303,7 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.AdsRequest.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   AdsRequest.pigeon_detached(
@@ -1400,7 +1398,7 @@ class ContentProgressProvider extends PigeonInternalProxyApiBaseClass {
   /// Constructs [ContentProgressProvider] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   ContentProgressProvider.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -1410,12 +1408,12 @@ class ContentProgressProvider extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     ContentProgressProvider Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -1435,7 +1433,7 @@ class ContentProgressProvider extends PigeonInternalProxyApiBaseClass {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.ContentProgressProvider.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   ContentProgressProvider.pigeon_detached(
@@ -1473,7 +1471,7 @@ class AdsManager extends BaseManager {
   /// Constructs [AdsManager] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   AdsManager.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -1486,12 +1484,12 @@ class AdsManager extends BaseManager {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     AdsManager Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -1511,7 +1509,7 @@ class AdsManager extends BaseManager {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.AdsManager.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   AdsManager.pigeon_detached(
@@ -1726,7 +1724,7 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
   /// Constructs [BaseManager] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   BaseManager.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -1739,12 +1737,12 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     BaseManager Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -1764,7 +1762,7 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.BaseManager.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   BaseManager.pigeon_detached(
@@ -1916,7 +1914,7 @@ class AdEvent extends PigeonInternalProxyApiBaseClass {
   /// Constructs [AdEvent] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   AdEvent.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -1934,7 +1932,7 @@ class AdEvent extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     AdEvent Function(
       AdEventType type,
       Map<String?, String?>? adData,
@@ -1942,7 +1940,7 @@ class AdEvent extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -1967,7 +1965,7 @@ class AdEvent extends PigeonInternalProxyApiBaseClass {
           final Map<String?, String?>? arg_adData =
               (args[2] as Map<Object?, Object?>?)?.cast<String?, String?>();
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call(arg_type!, arg_adData) ??
                   AdEvent.pigeon_detached(
@@ -2008,7 +2006,7 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
   /// Constructs [ImaSdkFactory] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   ImaSdkFactory.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -2023,12 +2021,12 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     ImaSdkFactory Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -2048,7 +2046,7 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   ImaSdkFactory.pigeon_detached(
@@ -2072,12 +2070,10 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
   static ImaSdkFactory pigeonVar_instance() {
     final ImaSdkFactory pigeonVar_instance = ImaSdkFactory.pigeon_detached();
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _PigeonInternalProxyApiBaseCodec(
-            PigeonInternalInstanceManager.instance);
+        _PigeonInternalProxyApiBaseCodec(PigeonInstanceManager.instance);
     final BinaryMessenger pigeonVar_binaryMessenger =
         ServicesBinding.instance.defaultBinaryMessenger;
-    final int pigeonVar_instanceIdentifier = PigeonInternalInstanceManager
-        .instance
+    final int pigeonVar_instanceIdentifier = PigeonInstanceManager.instance
         .addDartCreatedInstance(pigeonVar_instance);
     () async {
       const String pigeonVar_channelName =
@@ -2109,11 +2105,11 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
     ViewGroup container,
     VideoAdPlayer player, {
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const String pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAdDisplayContainer';
@@ -2262,7 +2258,7 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
   /// Constructs [ImaSdkSettings] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   ImaSdkSettings.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -2272,12 +2268,12 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     ImaSdkSettings Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -2297,7 +2293,7 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   ImaSdkSettings.pigeon_detached(
@@ -2374,7 +2370,7 @@ class VideoProgressUpdate extends PigeonInternalProxyApiBaseClass {
   /// Constructs [VideoProgressUpdate] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   VideoProgressUpdate.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -2393,12 +2389,12 @@ class VideoProgressUpdate extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     VideoProgressUpdate Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -2418,7 +2414,7 @@ class VideoProgressUpdate extends PigeonInternalProxyApiBaseClass {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.VideoProgressUpdate.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   VideoProgressUpdate.pigeon_detached(
@@ -2443,12 +2439,10 @@ class VideoProgressUpdate extends PigeonInternalProxyApiBaseClass {
     final VideoProgressUpdate pigeonVar_instance =
         VideoProgressUpdate.pigeon_detached();
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _PigeonInternalProxyApiBaseCodec(
-            PigeonInternalInstanceManager.instance);
+        _PigeonInternalProxyApiBaseCodec(PigeonInstanceManager.instance);
     final BinaryMessenger pigeonVar_binaryMessenger =
         ServicesBinding.instance.defaultBinaryMessenger;
-    final int pigeonVar_instanceIdentifier = PigeonInternalInstanceManager
-        .instance
+    final int pigeonVar_instanceIdentifier = PigeonInstanceManager.instance
         .addDartCreatedInstance(pigeonVar_instance);
     () async {
       const String pigeonVar_channelName =
@@ -2492,7 +2486,7 @@ class AdMediaInfo extends PigeonInternalProxyApiBaseClass {
   /// Constructs [AdMediaInfo] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   AdMediaInfo.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -2505,12 +2499,12 @@ class AdMediaInfo extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     AdMediaInfo Function(String url)? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -2533,7 +2527,7 @@ class AdMediaInfo extends PigeonInternalProxyApiBaseClass {
           assert(arg_url != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.AdMediaInfo.pigeon_newInstance was null, expected non-null String.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call(arg_url!) ??
                   AdMediaInfo.pigeon_detached(
@@ -2572,7 +2566,7 @@ class AdPodInfo extends PigeonInternalProxyApiBaseClass {
   /// Constructs [AdPodInfo] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   AdPodInfo.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -2615,7 +2609,7 @@ class AdPodInfo extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     AdPodInfo Function(
       int adPosition,
       double maxDuration,
@@ -2627,7 +2621,7 @@ class AdPodInfo extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -2665,7 +2659,7 @@ class AdPodInfo extends PigeonInternalProxyApiBaseClass {
           assert(arg_isBumper != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.AdPodInfo.pigeon_newInstance was null, expected non-null bool.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call(
                       arg_adPosition!,
@@ -2755,7 +2749,7 @@ class FrameLayout extends ViewGroup {
   /// Constructs [FrameLayout] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   FrameLayout.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -2768,12 +2762,12 @@ class FrameLayout extends ViewGroup {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     FrameLayout Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -2793,7 +2787,7 @@ class FrameLayout extends ViewGroup {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.FrameLayout.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   FrameLayout.pigeon_detached(
@@ -2830,7 +2824,7 @@ class ViewGroup extends View {
   /// Constructs [ViewGroup] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   ViewGroup.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -2843,12 +2837,12 @@ class ViewGroup extends View {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     ViewGroup Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -2868,7 +2862,7 @@ class ViewGroup extends View {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.ViewGroup.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   ViewGroup.pigeon_detached(
@@ -2969,7 +2963,7 @@ class VideoView extends View {
   /// Constructs [VideoView] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   VideoView.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -2999,7 +2993,7 @@ class VideoView extends View {
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(
     VideoView pigeon_instance,
@@ -3023,7 +3017,7 @@ class VideoView extends View {
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(
     VideoView pigeon_instance,
@@ -3048,7 +3042,7 @@ class VideoView extends View {
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(
     VideoView pigeon_instance,
@@ -3060,7 +3054,7 @@ class VideoView extends View {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     void Function(
       VideoView pigeon_instance,
       MediaPlayer player,
@@ -3078,7 +3072,7 @@ class VideoView extends View {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<Object?> pigeonVar_channel =
@@ -3268,7 +3262,7 @@ class View extends PigeonInternalProxyApiBaseClass {
   /// Constructs [View] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   View.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -3278,12 +3272,12 @@ class View extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     View Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -3303,7 +3297,7 @@ class View extends PigeonInternalProxyApiBaseClass {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.View.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   View.pigeon_detached(
@@ -3341,7 +3335,7 @@ class MediaPlayer extends PigeonInternalProxyApiBaseClass {
   /// Constructs [MediaPlayer] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   MediaPlayer.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -3354,12 +3348,12 @@ class MediaPlayer extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     MediaPlayer Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -3379,7 +3373,7 @@ class MediaPlayer extends PigeonInternalProxyApiBaseClass {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.MediaPlayer.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   MediaPlayer.pigeon_detached(
@@ -3561,7 +3555,7 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
   /// Constructs [VideoAdPlayerCallback] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   VideoAdPlayerCallback.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -3575,12 +3569,12 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     VideoAdPlayerCallback Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -3600,7 +3594,7 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   VideoAdPlayerCallback.pigeon_detached(
@@ -3966,7 +3960,7 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   /// Constructs [VideoAdPlayer] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   VideoAdPlayer.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -4000,7 +3994,7 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(
     VideoAdPlayer pigeon_instance,
@@ -4024,7 +4018,7 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(
     VideoAdPlayer pigeon_instance,
@@ -4049,7 +4043,7 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(
     VideoAdPlayer pigeon_instance,
@@ -4074,7 +4068,7 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(
     VideoAdPlayer pigeon_instance,
@@ -4098,7 +4092,7 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(VideoAdPlayer pigeon_instance) release;
 
@@ -4119,7 +4113,7 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(
     VideoAdPlayer pigeon_instance,
@@ -4143,7 +4137,7 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(
     VideoAdPlayer pigeon_instance,
@@ -4153,7 +4147,7 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     void Function(
       VideoAdPlayer pigeon_instance,
       VideoAdPlayerCallback callback,
@@ -4183,7 +4177,7 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -4543,7 +4537,7 @@ class AdsLoadedListener extends PigeonInternalProxyApiBaseClass {
   /// Constructs [AdsLoadedListener] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   AdsLoadedListener.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -4572,7 +4566,7 @@ class AdsLoadedListener extends PigeonInternalProxyApiBaseClass {
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(
     AdsLoadedListener pigeon_instance,
@@ -4582,7 +4576,7 @@ class AdsLoadedListener extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     void Function(
       AdsLoadedListener pigeon_instance,
       AdsManagerLoadedEvent event,
@@ -4590,7 +4584,7 @@ class AdsLoadedListener extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -4681,7 +4675,7 @@ class AdErrorListener extends PigeonInternalProxyApiBaseClass {
   /// Constructs [AdErrorListener] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   AdErrorListener.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -4709,7 +4703,7 @@ class AdErrorListener extends PigeonInternalProxyApiBaseClass {
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(
     AdErrorListener pigeon_instance,
@@ -4719,7 +4713,7 @@ class AdErrorListener extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     void Function(
       AdErrorListener pigeon_instance,
       AdErrorEvent event,
@@ -4727,7 +4721,7 @@ class AdErrorListener extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -4817,7 +4811,7 @@ class AdEventListener extends PigeonInternalProxyApiBaseClass {
   /// Constructs [AdEventListener] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   AdEventListener.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -4845,7 +4839,7 @@ class AdEventListener extends PigeonInternalProxyApiBaseClass {
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(
     AdEventListener pigeon_instance,
@@ -4855,7 +4849,7 @@ class AdEventListener extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     void Function(
       AdEventListener pigeon_instance,
       AdEvent event,
@@ -4863,7 +4857,7 @@ class AdEventListener extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
