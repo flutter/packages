@@ -525,7 +525,7 @@ void main() {
       await tester.pumpWidget(
           SimulatedLayout.smallLandscapeMediumPortrait.slot(tester));
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('Breakpoints.smallMobile')), findsOneWidget);
+      expect(find.byKey(const Key('Breakpoints.smallMobile')), findsNothing);
       expect(find.byKey(const Key('Breakpoints.mediumMobile')), findsNothing);
     });
 
@@ -545,7 +545,7 @@ void main() {
       await tester.pumpWidget(
           SimulatedLayout.smallLandscapeMediumLargePortrait.slot(tester));
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('Breakpoints.smallMobile')), findsOneWidget);
+      expect(find.byKey(const Key('Breakpoints.smallMobile')), findsNothing);
       expect(find.byKey(const Key('Breakpoints.largeMobile')), findsNothing);
     });
   });
@@ -625,6 +625,53 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('Breakpoints.mediumAndUp')), findsOneWidget);
       expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+    });
+  });
+
+  group('Slot And Up Layout Tests with Portrait and Landscape Mixed Layout',
+      () {
+    testWidgets(
+        'slotAndUp shows correct slot for smallPortraitMediumLandscape layout',
+        (WidgetTester tester) async {
+      // smallPortraitMediumLandscape layout should only show the small slot.
+      await tester.pumpWidget(
+          SimulatedLayout.smallPortraitMediumLandscape.slotAndUp(tester));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('Breakpoints.small')), findsOneWidget);
+      expect(find.byKey(const Key('Breakpoints.mediumAndUp')), findsNothing);
+    });
+
+    testWidgets(
+        'slotAndUp shows correct slot for smallLandscapeMediumPortrait layout',
+        (WidgetTester tester) async {
+      // smallLandscapeMediumPortrait layout should show the small slot.
+      await tester.pumpWidget(
+          SimulatedLayout.smallLandscapeMediumPortrait.slotAndUp(tester));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumAndUp')), findsOneWidget);
+    });
+
+    testWidgets(
+        'slotAndUp shows correct slot for smallPortraitMediumLargeLandscape layout',
+        (WidgetTester tester) async {
+      // smallPortraitMediumLargeLandscape layout should show the small slot.
+      await tester.pumpWidget(
+          SimulatedLayout.smallPortraitMediumLargeLandscape.slotAndUp(tester));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('Breakpoints.small')), findsOneWidget);
+      expect(find.byKey(const Key('Breakpoints.mediumAndUp')), findsNothing);
+    });
+
+    testWidgets(
+        'slotAndUp shows correct slot for smallLandscapeMediumLargePortrait layout',
+        (WidgetTester tester) async {
+      // smallLandscapeMediumLargePortrait layout should show the small slot.
+      await tester.pumpWidget(
+          SimulatedLayout.smallLandscapeMediumLargePortrait.slotAndUp(tester));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumAndUp')), findsOneWidget);
     });
   });
 }

@@ -123,7 +123,7 @@ enum SimulatedLayout {
   smallPortraitMediumLargeLandscape(
       width: 360, height: 900, navSlotKey: 'bottomNavigation'),
   smallLandscapeMediumLargePortrait(
-      width: 900, height: 360, navSlotKey: 'bottomNavigation');
+      width: 900, height: 360, navSlotKey: 'primaryNavigation');
 
   const SimulatedLayout({
     required double width,
