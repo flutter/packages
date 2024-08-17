@@ -44,7 +44,8 @@ final class InstanceManagerTests: XCTestCase {
     let finalizerDelegate = TestFinalizerDelegate()
 
     var object: NSObject? = NSObject()
-    ProxyApiTestsPigeonFinalizer.attach(to: object!, identifier: 0, delegate: finalizerDelegate)
+    ProxyApiTestsPigeonInternalFinalizer.attach(
+      to: object!, identifier: 0, delegate: finalizerDelegate)
 
     object = nil
     XCTAssertEqual(finalizerDelegate.lastHandledIdentifier, 0)
@@ -123,18 +124,18 @@ final class InstanceManagerTests: XCTestCase {
 
     let finalizerDelegate = TestFinalizerDelegate()
 
-    ProxyApiTestsPigeonFinalizer.attach(
+    ProxyApiTestsPigeonInternalFinalizer.attach(
       to: registrar!.instanceManager, identifier: 0, delegate: finalizerDelegate)
     registrar = nil
     XCTAssertEqual(finalizerDelegate.lastHandledIdentifier, 0)
   }
 }
 
-class EmptyFinalizerDelegate: ProxyApiTestsPigeonFinalizerDelegate {
+class EmptyFinalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate {
   func onDeinit(identifier: Int64) {}
 }
 
-class TestFinalizerDelegate: ProxyApiTestsPigeonFinalizerDelegate {
+class TestFinalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate {
   var lastHandledIdentifier: Int64?
 
   func onDeinit(identifier: Int64) {
