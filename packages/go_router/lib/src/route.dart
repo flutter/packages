@@ -285,6 +285,7 @@ class GoRoute extends RouteBase {
   ///
   /// If this is true, this route must redirect location other than itself.
   bool get redirectOnly => pageBuilder == null && builder == null;
+  
   /// Optional name of the route.
   ///
   /// If used, a unique string name must be provided and it can not be empty.
