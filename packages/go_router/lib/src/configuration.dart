@@ -349,14 +349,17 @@ class RouteConfiguration {
   /// Processes redirects by returning a new [RouteMatchList] representing the new
   /// location.
   FutureOr<RouteMatchList> redirect(
-      BuildContext context, FutureOr<RouteMatchList> prevMatchListFuture,
-      {required List<RouteMatchList> redirectHistory}) {
+    BuildContext context,
+    FutureOr<RouteMatchList> prevMatchListFuture, {
+    required List<RouteMatchList> redirectHistory,
+    bool forceRedirect = false,
+  }) {
     FutureOr<RouteMatchList> processRedirect(RouteMatchList prevMatchList) {
       final String prevLocation = prevMatchList.uri.toString();
       FutureOr<RouteMatchList> processTopLevelRedirect(
           String? topRedirectLocation) {
         if (topRedirectLocation != null &&
-            topRedirectLocation != prevLocation) {
+            (forceRedirect || topRedirectLocation != prevLocation)) {
           final RouteMatchList newMatch = _getNewMatches(
             topRedirectLocation,
             prevMatchList.uri,
@@ -375,7 +378,7 @@ class RouteConfiguration {
         FutureOr<RouteMatchList> processRouteLevelRedirect(
             String? routeRedirectLocation) {
           if (routeRedirectLocation != null &&
-              routeRedirectLocation != prevLocation) {
+              (forceRedirect || routeRedirectLocation != prevLocation)) {
             final RouteMatchList newMatch = _getNewMatches(
               routeRedirectLocation,
               prevMatchList.uri,

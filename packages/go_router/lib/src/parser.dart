@@ -69,7 +69,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       // the state.
       final RouteMatchList matchList =
           _routeMatchListCodec.decode(state as Map<Object?, Object?>);
-      return debugParserFuture = _redirect(context, matchList)
+      return debugParserFuture = _redirect(context, matchList, true)
           .then<RouteMatchList>((RouteMatchList value) {
         if (value.isError && onParserException != null) {
           // TODO(chunhtai): Figure out what to return if context is invalid.
@@ -106,6 +106,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     return debugParserFuture = _redirect(
       context,
       initialMatches,
+      false,
     ).then<RouteMatchList>((RouteMatchList matchList) {
       if (matchList.isError && onParserException != null) {
         // TODO(chunhtai): Figure out what to return if context is invalid.
@@ -167,9 +168,16 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   }
 
   Future<RouteMatchList> _redirect(
-      BuildContext context, RouteMatchList routeMatch) {
-    final FutureOr<RouteMatchList> redirectedFuture = configuration
-        .redirect(context, routeMatch, redirectHistory: <RouteMatchList>[]);
+    BuildContext context,
+    RouteMatchList routeMatch,
+    bool forceRedirect,
+  ) {
+    final FutureOr<RouteMatchList> redirectedFuture = configuration.redirect(
+      context,
+      routeMatch,
+      redirectHistory: <RouteMatchList>[],
+      forceRedirect: forceRedirect,
+    );
     if (redirectedFuture is RouteMatchList) {
       return SynchronousFuture<RouteMatchList>(redirectedFuture);
     }
