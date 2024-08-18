@@ -67,26 +67,8 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       // This is a result of browser backward/forward button or state
       // restoration. In this case, the route match list is already stored in
       // the state.
-      final RouteMatchList baseMatchList =
+      final RouteMatchList matchList =
           _routeMatchListCodec.decode(state as Map<Object?, Object?>);
-      final Uri? newUri = baseMatchList.matches
-          .whereType<ImperativeRouteMatch>()
-          .lastOrNull
-          ?.matches
-          .uri;
-      final RouteMatchList matchList;
-      if (newUri != null) {
-        // If the last route is an imperative route and has a new uri,
-        // set the new uri to redirect.
-        matchList = RouteMatchList(
-          matches: baseMatchList.matches,
-          uri: newUri,
-          pathParameters: const <String, String>{},
-        );
-      } else {
-        matchList = baseMatchList;
-      }
-
       return debugParserFuture = _redirect(context, matchList)
           .then<RouteMatchList>((RouteMatchList value) {
         if (value.isError && onParserException != null) {

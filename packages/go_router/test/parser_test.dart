@@ -207,7 +207,7 @@ void main() {
     final RouteMatchList parsedRouteMatch = await router.routeInformationParser
         .parseRouteInformationWithDependencies(
             restoredRouteInformation, navKey.currentContext!);
-    expect(parsedRouteMatch.uri.toString(), '/');
+    expect(parsedRouteMatch.uri.toString(), '/abc');
     expect(parsedRouteMatch.matches.length, 3);
 
     GoRouter.optionURLReflectsImperativeAPIs = false;
