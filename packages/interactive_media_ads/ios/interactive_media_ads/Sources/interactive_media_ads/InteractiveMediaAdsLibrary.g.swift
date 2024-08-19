@@ -2678,6 +2678,8 @@ protocol PigeonApiDelegateIMAAdEvent {
   func type(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> AdEventType
   /// Stringified type of the event.
   func typeString(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> String
+  /// Extra data about the ad.
+  func adData(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> [String: Any]?
 }
 
 protocol PigeonApiProtocolIMAAdEvent {
@@ -2719,13 +2721,15 @@ final class PigeonApiIMAAdEvent: PigeonApiProtocolIMAAdEvent {
     let typeArg = try! pigeonDelegate.type(pigeonApi: self, pigeonInstance: pigeonInstance)
     let typeStringArg = try! pigeonDelegate.typeString(
       pigeonApi: self, pigeonInstance: pigeonInstance)
+    let adDataArg = try! pigeonDelegate.adData(pigeonApi: self, pigeonInstance: pigeonInstance)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
       "dev.flutter.pigeon.interactive_media_ads.IMAAdEvent.pigeon_newInstance"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonIdentifierArg, typeArg, typeStringArg] as [Any?]) { response in
+    channel.sendMessage([pigeonIdentifierArg, typeArg, typeStringArg, adDataArg] as [Any?]) {
+      response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return

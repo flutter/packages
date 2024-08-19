@@ -8,9 +8,7 @@ import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart'
 import 'package:interactive_media_ads/src/ios/interactive_media_ads_proxy.dart';
 import 'package:interactive_media_ads/src/ios/ios_ads_manager_delegate.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
-import 'package:mockito/annotations.dart';
 
-@GenerateNiceMocks(<MockSpec<Object>>[MockSpec<ima.IMAAdsManager>()])
 void main() {
   group('IOSAdsManagerDelegate', () {
     test('didReceiveAdEvent calls onAdEvent', () {
@@ -57,6 +55,7 @@ void main() {
         IOSAdsManagerDelegateCreationParams(
           onAdEvent: expectAsync1((AdEvent event) {
             expect(event.type, AdEventType.allAdsCompleted);
+            expect(event.adData, <String, String>{'hello': 'world'});
           }),
           proxy: imaProxy,
         ),
@@ -74,6 +73,7 @@ void main() {
         ima.IMAAdEvent.pigeon_detached(
           type: ima.AdEventType.allAdsCompleted,
           typeString: 'typeString',
+          adData: const <String, String>{'hello': 'world'},
           pigeon_instanceManager: instanceManager,
         ),
       );

@@ -1,3 +1,12 @@
+## 21.2.0
+
+* Removes restriction on number of custom types.
+* [java] Fixes bug with multiple enums.
+* [java] Removes `Object` from generics.
+* [objc] Fixes bug with multiple enums per data class.
+* Updates `varPrefix` and `classMemberNamePrefix`.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
 ## 21.1.0
 
 * Adds GObject (Linux) support.

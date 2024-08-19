@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
 ## 2.7.1
 
 - Fixes readme typos and uses code excerpts.

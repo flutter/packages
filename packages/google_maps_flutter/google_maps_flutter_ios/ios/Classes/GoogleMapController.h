@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FLTGoogleMapController : NSObject <GMSMapViewDelegate, FlutterPlatformView>
 - (instancetype)initWithFrame:(CGRect)frame
                viewIdentifier:(int64_t)viewId
-                    arguments:(nullable id)args
+           creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 - (void)showAtOrigin:(CGPoint)origin;
 - (void)hide;

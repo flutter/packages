@@ -29,6 +29,15 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+/// Pigeon equivalent of MapType
+enum PlatformMapType {
+  none,
+  normal,
+  satellite,
+  terrain,
+  hybrid,
+}
+
 enum PlatformRendererType {
   legacy,
   latest,
@@ -99,24 +108,61 @@ class PlatformCameraUpdate {
 /// Pigeon equivalent of the Circle class.
 class PlatformCircle {
   PlatformCircle({
-    required this.json,
+    this.consumeTapEvents = false,
+    this.fillColor = 0x00000000,
+    this.strokeColor = 0xFF000000,
+    this.visible = true,
+    this.strokeWidth = 10,
+    this.zIndex = 0.0,
+    required this.center,
+    this.radius = 0,
+    required this.circleId,
   });
 
-  /// The circle data, as JSON. This should only be set from
-  /// Circle.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  Map<String?, Object?> json;
+  bool consumeTapEvents;
+
+  int fillColor;
+
+  int strokeColor;
+
+  bool visible;
+
+  int strokeWidth;
+
+  double zIndex;
+
+  PlatformLatLng center;
+
+  double radius;
+
+  String circleId;
 
   Object encode() {
     return <Object?>[
-      json,
+      consumeTapEvents,
+      fillColor,
+      strokeColor,
+      visible,
+      strokeWidth,
+      zIndex,
+      center,
+      radius,
+      circleId,
     ];
   }
 
   static PlatformCircle decode(Object result) {
     result as List<Object?>;
     return PlatformCircle(
-      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
+      consumeTapEvents: result[0]! as bool,
+      fillColor: result[1]! as int,
+      strokeColor: result[2]! as int,
+      visible: result[3]! as bool,
+      strokeWidth: result[4]! as int,
+      zIndex: result[5]! as double,
+      center: result[6]! as PlatformLatLng,
+      radius: result[7]! as double,
+      circleId: result[8]! as String,
     );
   }
 }
@@ -168,27 +214,143 @@ class PlatformClusterManager {
   }
 }
 
-/// Pigeon equivalent of the Marker class.
-class PlatformMarker {
-  PlatformMarker({
-    required this.json,
+/// Pigeon equivalent of the Offset class.
+class PlatformOffset {
+  PlatformOffset({
+    required this.dx,
+    required this.dy,
   });
 
-  /// The marker data, as JSON. This should only be set from
-  /// Marker.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  Map<String?, Object?> json;
+  double dx;
+
+  double dy;
 
   Object encode() {
     return <Object?>[
-      json,
+      dx,
+      dy,
+    ];
+  }
+
+  static PlatformOffset decode(Object result) {
+    result as List<Object?>;
+    return PlatformOffset(
+      dx: result[0]! as double,
+      dy: result[1]! as double,
+    );
+  }
+}
+
+/// Pigeon equivalent of the InfoWindow class.
+class PlatformInfoWindow {
+  PlatformInfoWindow({
+    this.title,
+    this.snippet,
+    required this.anchor,
+  });
+
+  String? title;
+
+  String? snippet;
+
+  PlatformOffset anchor;
+
+  Object encode() {
+    return <Object?>[
+      title,
+      snippet,
+      anchor,
+    ];
+  }
+
+  static PlatformInfoWindow decode(Object result) {
+    result as List<Object?>;
+    return PlatformInfoWindow(
+      title: result[0] as String?,
+      snippet: result[1] as String?,
+      anchor: result[2]! as PlatformOffset,
+    );
+  }
+}
+
+/// Pigeon equivalent of the Marker class.
+class PlatformMarker {
+  PlatformMarker({
+    this.alpha = 1.0,
+    required this.anchor,
+    this.consumeTapEvents = false,
+    this.draggable = false,
+    this.flat = false,
+    this.icon = const <Object>['defaultMarker'],
+    required this.infoWindow,
+    required this.position,
+    this.rotation = 0.0,
+    this.visible = true,
+    this.zIndex = 0.0,
+    required this.markerId,
+    this.clusterManagerId,
+  });
+
+  double alpha;
+
+  PlatformOffset anchor;
+
+  bool consumeTapEvents;
+
+  bool draggable;
+
+  bool flat;
+
+  Object icon;
+
+  PlatformInfoWindow infoWindow;
+
+  PlatformLatLng position;
+
+  double rotation;
+
+  bool visible;
+
+  double zIndex;
+
+  String markerId;
+
+  String? clusterManagerId;
+
+  Object encode() {
+    return <Object?>[
+      alpha,
+      anchor,
+      consumeTapEvents,
+      draggable,
+      flat,
+      icon,
+      infoWindow,
+      position,
+      rotation,
+      visible,
+      zIndex,
+      markerId,
+      clusterManagerId,
     ];
   }
 
   static PlatformMarker decode(Object result) {
     result as List<Object?>;
     return PlatformMarker(
-      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
+      alpha: result[0]! as double,
+      anchor: result[1]! as PlatformOffset,
+      consumeTapEvents: result[2]! as bool,
+      draggable: result[3]! as bool,
+      flat: result[4]! as bool,
+      icon: result[5]!,
+      infoWindow: result[6]! as PlatformInfoWindow,
+      position: result[7]! as PlatformLatLng,
+      rotation: result[8]! as double,
+      visible: result[9]! as bool,
+      zIndex: result[10]! as double,
+      markerId: result[11]! as String,
+      clusterManagerId: result[12] as String?,
     );
   }
 }
@@ -300,6 +462,43 @@ class PlatformTileOverlay {
   }
 }
 
+/// Pigeon equivalent of Flutter's EdgeInsets.
+class PlatformEdgeInsets {
+  PlatformEdgeInsets({
+    required this.top,
+    required this.bottom,
+    required this.left,
+    required this.right,
+  });
+
+  double top;
+
+  double bottom;
+
+  double left;
+
+  double right;
+
+  Object encode() {
+    return <Object?>[
+      top,
+      bottom,
+      left,
+      right,
+    ];
+  }
+
+  static PlatformEdgeInsets decode(Object result) {
+    result as List<Object?>;
+    return PlatformEdgeInsets(
+      top: result[0]! as double,
+      bottom: result[1]! as double,
+      left: result[2]! as double,
+      right: result[3]! as double,
+    );
+  }
+}
+
 /// Pigeon equivalent of LatLng.
 class PlatformLatLng {
   PlatformLatLng({
@@ -391,27 +590,209 @@ class PlatformCluster {
   }
 }
 
-/// Pigeon equivalent of MapConfiguration.
-class PlatformMapConfiguration {
-  PlatformMapConfiguration({
-    required this.json,
+/// Pigeon equivalent of CameraTargetBounds.
+///
+/// As with the Dart version, it exists to distinguish between not setting a
+/// a target, and having an explicitly unbounded target (null [bounds]).
+class PlatformCameraTargetBounds {
+  PlatformCameraTargetBounds({
+    this.bounds,
   });
 
-  /// The configuration options, as JSON. This should only be set from
-  /// _jsonForMapConfiguration, and the native code must interpret it according
-  /// to the internal implementation details of that method.
-  Map<String?, Object?> json;
+  PlatformLatLngBounds? bounds;
 
   Object encode() {
     return <Object?>[
-      json,
+      bounds,
+    ];
+  }
+
+  static PlatformCameraTargetBounds decode(Object result) {
+    result as List<Object?>;
+    return PlatformCameraTargetBounds(
+      bounds: result[0] as PlatformLatLngBounds?,
+    );
+  }
+}
+
+/// Information passed to the platform view creation.
+class PlatformMapViewCreationParams {
+  PlatformMapViewCreationParams({
+    required this.initialCameraPosition,
+    required this.mapConfiguration,
+    required this.initialCircles,
+    required this.initialMarkers,
+    required this.initialPolygons,
+    required this.initialPolylines,
+    required this.initialHeatmaps,
+    required this.initialTileOverlays,
+    required this.initialClusterManagers,
+  });
+
+  PlatformCameraPosition initialCameraPosition;
+
+  PlatformMapConfiguration mapConfiguration;
+
+  List<PlatformCircle?> initialCircles;
+
+  List<PlatformMarker?> initialMarkers;
+
+  List<PlatformPolygon?> initialPolygons;
+
+  List<PlatformPolyline?> initialPolylines;
+
+  List<PlatformHeatmap?> initialHeatmaps;
+
+  List<PlatformTileOverlay?> initialTileOverlays;
+
+  List<PlatformClusterManager?> initialClusterManagers;
+
+  Object encode() {
+    return <Object?>[
+      initialCameraPosition,
+      mapConfiguration,
+      initialCircles,
+      initialMarkers,
+      initialPolygons,
+      initialPolylines,
+      initialHeatmaps,
+      initialTileOverlays,
+      initialClusterManagers,
+    ];
+  }
+
+  static PlatformMapViewCreationParams decode(Object result) {
+    result as List<Object?>;
+    return PlatformMapViewCreationParams(
+      initialCameraPosition: result[0]! as PlatformCameraPosition,
+      mapConfiguration: result[1]! as PlatformMapConfiguration,
+      initialCircles: (result[2] as List<Object?>?)!.cast<PlatformCircle?>(),
+      initialMarkers: (result[3] as List<Object?>?)!.cast<PlatformMarker?>(),
+      initialPolygons: (result[4] as List<Object?>?)!.cast<PlatformPolygon?>(),
+      initialPolylines:
+          (result[5] as List<Object?>?)!.cast<PlatformPolyline?>(),
+      initialHeatmaps: (result[6] as List<Object?>?)!.cast<PlatformHeatmap?>(),
+      initialTileOverlays:
+          (result[7] as List<Object?>?)!.cast<PlatformTileOverlay?>(),
+      initialClusterManagers:
+          (result[8] as List<Object?>?)!.cast<PlatformClusterManager?>(),
+    );
+  }
+}
+
+/// Pigeon equivalent of MapConfiguration.
+class PlatformMapConfiguration {
+  PlatformMapConfiguration({
+    this.compassEnabled,
+    this.cameraTargetBounds,
+    this.mapType,
+    this.minMaxZoomPreference,
+    this.mapToolbarEnabled,
+    this.rotateGesturesEnabled,
+    this.scrollGesturesEnabled,
+    this.tiltGesturesEnabled,
+    this.trackCameraPosition,
+    this.zoomControlsEnabled,
+    this.zoomGesturesEnabled,
+    this.myLocationEnabled,
+    this.myLocationButtonEnabled,
+    this.padding,
+    this.indoorViewEnabled,
+    this.trafficEnabled,
+    this.buildingsEnabled,
+    this.liteModeEnabled,
+    this.cloudMapId,
+    this.style,
+  });
+
+  bool? compassEnabled;
+
+  PlatformCameraTargetBounds? cameraTargetBounds;
+
+  PlatformMapType? mapType;
+
+  PlatformZoomRange? minMaxZoomPreference;
+
+  bool? mapToolbarEnabled;
+
+  bool? rotateGesturesEnabled;
+
+  bool? scrollGesturesEnabled;
+
+  bool? tiltGesturesEnabled;
+
+  bool? trackCameraPosition;
+
+  bool? zoomControlsEnabled;
+
+  bool? zoomGesturesEnabled;
+
+  bool? myLocationEnabled;
+
+  bool? myLocationButtonEnabled;
+
+  PlatformEdgeInsets? padding;
+
+  bool? indoorViewEnabled;
+
+  bool? trafficEnabled;
+
+  bool? buildingsEnabled;
+
+  bool? liteModeEnabled;
+
+  String? cloudMapId;
+
+  String? style;
+
+  Object encode() {
+    return <Object?>[
+      compassEnabled,
+      cameraTargetBounds,
+      mapType,
+      minMaxZoomPreference,
+      mapToolbarEnabled,
+      rotateGesturesEnabled,
+      scrollGesturesEnabled,
+      tiltGesturesEnabled,
+      trackCameraPosition,
+      zoomControlsEnabled,
+      zoomGesturesEnabled,
+      myLocationEnabled,
+      myLocationButtonEnabled,
+      padding,
+      indoorViewEnabled,
+      trafficEnabled,
+      buildingsEnabled,
+      liteModeEnabled,
+      cloudMapId,
+      style,
     ];
   }
 
   static PlatformMapConfiguration decode(Object result) {
     result as List<Object?>;
     return PlatformMapConfiguration(
-      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
+      compassEnabled: result[0] as bool?,
+      cameraTargetBounds: result[1] as PlatformCameraTargetBounds?,
+      mapType: result[2] as PlatformMapType?,
+      minMaxZoomPreference: result[3] as PlatformZoomRange?,
+      mapToolbarEnabled: result[4] as bool?,
+      rotateGesturesEnabled: result[5] as bool?,
+      scrollGesturesEnabled: result[6] as bool?,
+      tiltGesturesEnabled: result[7] as bool?,
+      trackCameraPosition: result[8] as bool?,
+      zoomControlsEnabled: result[9] as bool?,
+      zoomGesturesEnabled: result[10] as bool?,
+      myLocationEnabled: result[11] as bool?,
+      myLocationButtonEnabled: result[12] as bool?,
+      padding: result[13] as PlatformEdgeInsets?,
+      indoorViewEnabled: result[14] as bool?,
+      trafficEnabled: result[15] as bool?,
+      buildingsEnabled: result[16] as bool?,
+      liteModeEnabled: result[17] as bool?,
+      cloudMapId: result[18] as String?,
+      style: result[19] as String?,
     );
   }
 }
@@ -483,13 +864,13 @@ class PlatformTileLayer {
 /// Possible outcomes of launching a URL.
 class PlatformZoomRange {
   PlatformZoomRange({
-    required this.min,
-    required this.max,
+    this.min,
+    this.max,
   });
 
-  double min;
+  double? min;
 
-  double max;
+  double? max;
 
   Object encode() {
     return <Object?>[
@@ -501,8 +882,8 @@ class PlatformZoomRange {
   static PlatformZoomRange decode(Object result) {
     result as List<Object?>;
     return PlatformZoomRange(
-      min: result[0]! as double,
-      max: result[1]! as double,
+      min: result[0] as double?,
+      max: result[1] as double?,
     );
   }
 }
@@ -526,44 +907,62 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformClusterManager) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMarker) {
+    } else if (value is PlatformOffset) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPolygon) {
+    } else if (value is PlatformInfoWindow) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPolyline) {
+    } else if (value is PlatformMarker) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTile) {
+    } else if (value is PlatformPolygon) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileOverlay) {
+    } else if (value is PlatformPolyline) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLng) {
+    } else if (value is PlatformTile) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLngBounds) {
+    } else if (value is PlatformTileOverlay) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCluster) {
+    } else if (value is PlatformEdgeInsets) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapConfiguration) {
+    } else if (value is PlatformLatLng) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else if (value is PlatformLatLngBounds) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileLayer) {
+    } else if (value is PlatformCluster) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformZoomRange) {
+    } else if (value is PlatformCameraTargetBounds) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformRendererType) {
+    } else if (value is PlatformMapViewCreationParams) {
       buffer.putUint8(146);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformMapConfiguration) {
+      buffer.putUint8(147);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPoint) {
+      buffer.putUint8(148);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformTileLayer) {
+      buffer.putUint8(149);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformZoomRange) {
+      buffer.putUint8(150);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformMapType) {
+      buffer.putUint8(151);
+      writeValue(buffer, value.index);
+    } else if (value is PlatformRendererType) {
+      buffer.putUint8(152);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -584,30 +983,43 @@ class _PigeonCodec extends StandardMessageCodec {
       case 133:
         return PlatformClusterManager.decode(readValue(buffer)!);
       case 134:
-        return PlatformMarker.decode(readValue(buffer)!);
+        return PlatformOffset.decode(readValue(buffer)!);
       case 135:
-        return PlatformPolygon.decode(readValue(buffer)!);
+        return PlatformInfoWindow.decode(readValue(buffer)!);
       case 136:
-        return PlatformPolyline.decode(readValue(buffer)!);
+        return PlatformMarker.decode(readValue(buffer)!);
       case 137:
-        return PlatformTile.decode(readValue(buffer)!);
+        return PlatformPolygon.decode(readValue(buffer)!);
       case 138:
-        return PlatformTileOverlay.decode(readValue(buffer)!);
+        return PlatformPolyline.decode(readValue(buffer)!);
       case 139:
-        return PlatformLatLng.decode(readValue(buffer)!);
+        return PlatformTile.decode(readValue(buffer)!);
       case 140:
-        return PlatformLatLngBounds.decode(readValue(buffer)!);
+        return PlatformTileOverlay.decode(readValue(buffer)!);
       case 141:
-        return PlatformCluster.decode(readValue(buffer)!);
+        return PlatformEdgeInsets.decode(readValue(buffer)!);
       case 142:
-        return PlatformMapConfiguration.decode(readValue(buffer)!);
+        return PlatformLatLng.decode(readValue(buffer)!);
       case 143:
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformLatLngBounds.decode(readValue(buffer)!);
       case 144:
-        return PlatformTileLayer.decode(readValue(buffer)!);
+        return PlatformCluster.decode(readValue(buffer)!);
       case 145:
-        return PlatformZoomRange.decode(readValue(buffer)!);
+        return PlatformCameraTargetBounds.decode(readValue(buffer)!);
       case 146:
+        return PlatformMapViewCreationParams.decode(readValue(buffer)!);
+      case 147:
+        return PlatformMapConfiguration.decode(readValue(buffer)!);
+      case 148:
+        return PlatformPoint.decode(readValue(buffer)!);
+      case 149:
+        return PlatformTileLayer.decode(readValue(buffer)!);
+      case 150:
+        return PlatformZoomRange.decode(readValue(buffer)!);
+      case 151:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PlatformMapType.values[value];
+      case 152:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformRendererType.values[value];
       default:
@@ -1778,6 +2190,49 @@ class MapsInitializerApi {
       );
     } else {
       return (__pigeon_replyList[0] as PlatformRendererType?)!;
+    }
+  }
+}
+
+/// Dummy interface to force generation of the platform view creation params,
+/// which are not used in any Pigeon calls, only the platform view creation
+/// call made internally by Flutter.
+class MapsPlatformViewApi {
+  /// Constructor for [MapsPlatformViewApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  MapsPlatformViewApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  final BinaryMessenger? __pigeon_binaryMessenger;
+
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String __pigeon_messageChannelSuffix;
+
+  Future<void> createView(PlatformMapViewCreationParams? type) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsPlatformViewApi.createView$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[type]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
     }
   }
 }

@@ -1,3 +1,7 @@
+## 6.3.9
+
+* Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.
+
 ## 6.3.8
 
 * Bumps androidx.browser:browser from 1.5.0 to 1.8.0.

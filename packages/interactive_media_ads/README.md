@@ -13,7 +13,11 @@ a separate video player positioned on top of the app's content video player.
 |-------------|---------|-------|
 | **Support** | SDK 21+ | 12.0+ |
 
-**This package is still in development.**
+**NOTE:**
+* The initial release for this package supports linear pre-roll video ads on iOS and Android
+* platforms.
+* Companion ads, Background Audio ads and Google Dynamic Ad Insertion methods are currently not
+* supported.
 
 ## IMA client-side overview
 
@@ -203,7 +207,7 @@ Future<void> _requestAds(AdDisplayContainer container) {
 
       manager.setAdsManagerDelegate(AdsManagerDelegate(
         onAdEvent: (AdEvent event) {
-          debugPrint('OnAdEvent: ${event.type}');
+          debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
           switch (event.type) {
             case AdEventType.loaded:
               manager.start();
@@ -216,6 +220,7 @@ Future<void> _requestAds(AdDisplayContainer container) {
               _adsManager = null;
             case AdEventType.clicked:
             case AdEventType.complete:
+            case _:
           }
         },
         onAdErrorEvent: (AdErrorEvent event) {

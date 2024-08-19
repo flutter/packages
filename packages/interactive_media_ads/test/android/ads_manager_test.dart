@@ -12,7 +12,7 @@ import 'package:interactive_media_ads/src/platform_interface/platform_interface.
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'ads_manager_tests.mocks.dart';
+import 'ads_manager_test.mocks.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<ima.AdError>(),
@@ -78,13 +78,17 @@ void main() {
       await adsManager.setAdsManagerDelegate(
         AndroidAdsManagerDelegate(
           PlatformAdsManagerDelegateCreationParams(
-            onAdEvent: expectAsync1((_) {}),
+            onAdEvent: expectAsync1((AdEvent event) {
+              expect(event.type, AdEventType.allAdsCompleted);
+              expect(event.adData, <String, String>{'hello': 'world'});
+            }),
           ),
         ),
       );
 
       final MockAdEvent mockAdEvent = MockAdEvent();
       when(mockAdEvent.type).thenReturn(ima.AdEventType.allAdsCompleted);
+      when(mockAdEvent.adData).thenReturn(<String, String>{'hello': 'world'});
       onAdEventCallback(MockAdEventListener(), mockAdEvent);
     });
 

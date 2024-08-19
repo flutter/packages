@@ -1,3 +1,26 @@
+## 0.2.1
+
+* Add `Breakpoint.activeBreakpointOf(context)` to find the currently active breakpoint.
+* Don't check for height on Desktop platforms.
+
+## 0.2.0
+
+* Add breakpoints for mediumLarge and extraLarge.
+* Add height and orientation based breakpoint checks.
+* **BREAKING CHANGES**:
+  * Removes `WidthPlatformBreakpoint`
+  * Breakpoints can now be constructed directly with `Breakpoint`
+  * Checks for `andUp` or `platform` can be done as parameter: `Breakpoint.small(andUp: true, platform: Breakpoint.mobile)`
+
+## 0.1.12
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Expose `labelType` for NavigationRails.
+* Add `navigationRailDestinationBuilder` to apply custom Destinations.
+* Add `groupAlignment` property to change alignment.
+* Set `navRailTheme` when using the Drawer just like the other NavigationRails.
+
 ## 0.1.11+1
 
 * Allows custom animation duration for the NavigationRail and 
