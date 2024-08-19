@@ -95,7 +95,7 @@ public class ConvertTest {
     point.add(longitude);
     ArrayList<ArrayList<Double>> pointsList = new ArrayList<>();
     pointsList.add(point);
-    List<LatLng> latLngs = Convert.pointsFromPigeon(pointsList);
+    List<LatLng> latLngs = Convert.toPoints(pointsList);
     LatLng latLng = latLngs.get(0);
     Assert.assertEquals(latitude, latLng.latitude, 1e-15);
     Assert.assertEquals(longitude, latLng.longitude, 1e-15);
@@ -107,7 +107,7 @@ public class ConvertTest {
     double longitude = -87.90466904649;
     Messages.PlatformLatLng platLng =
         new Messages.PlatformLatLng.Builder().setLatitude(latitude).setLongitude(longitude).build();
-    List<LatLng> latLngs = Convert.toPoints(Collections.singletonList(platLng));
+    List<LatLng> latLngs = Convert.pointsFromPigeon(Collections.singletonList(platLng));
     LatLng latLng = latLngs.get(0);
     Assert.assertEquals(latitude, latLng.latitude, 1e-15);
     Assert.assertEquals(longitude, latLng.longitude, 1e-15);

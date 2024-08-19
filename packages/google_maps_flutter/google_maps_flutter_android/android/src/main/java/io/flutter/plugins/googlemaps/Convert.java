@@ -698,7 +698,7 @@ class Convert {
     sink.setStrokeColor(polygon.getStrokeColor().intValue());
     sink.setStrokeWidth(polygon.getStrokeWidth());
     sink.setZIndex(polygon.getZIndex());
-    sink.setPoints(toPoints(polygon.getPoints()));
+    sink.setPoints(pointsFromPigeon(polygon.getPoints()));
     sink.setHoles(toHoles(polygon.getHoles()));
     return polygon.getPolygonId();
   }
@@ -717,7 +717,7 @@ class Convert {
     sink.setVisible(polyline.getVisible());
     sink.setWidth(polyline.getWidth());
     sink.setZIndex(polyline.getZIndex());
-    sink.setPoints(toPoints(polyline.getPoints()));
+    sink.setPoints(pointsFromPigeon(polyline.getPoints()));
     sink.setPattern(toPattern(polyline.getPatterns()));
     return polyline.getPolylineId();
   }
@@ -784,7 +784,7 @@ class Convert {
   }
 
   @VisibleForTesting
-  static List<LatLng> pointsFromPigeon(Object o) {
+  static List<LatLng> toPoints(Object o) {
     final List<?> data = toList(o);
     final List<LatLng> points = new ArrayList<>(data.size());
 
@@ -795,7 +795,7 @@ class Convert {
     return points;
   }
 
-  static List<LatLng> toPoints(List<Messages.PlatformLatLng> data) {
+  static List<LatLng> pointsFromPigeon(List<Messages.PlatformLatLng> data) {
     final List<LatLng> points = new ArrayList<>(data.size());
 
     for (Messages.PlatformLatLng rawPoint : data) {
@@ -864,7 +864,7 @@ class Convert {
     final List<List<LatLng>> holes = new ArrayList<>(data.size());
 
     for (List<Messages.PlatformLatLng> hole : data) {
-      holes.add(toPoints(hole));
+      holes.add(pointsFromPigeon(hole));
     }
     return holes;
   }

@@ -202,6 +202,8 @@ class PlatformPolyline {
   final bool consumesTapEvents;
   final int color;
   final bool geodesic;
+
+  /// The joint type as an integer. This must be a value corresponding to one of the values defined in the platform interface package's JointType enum. The integer values specified in this enum must match those used by the native SDK.
   // TODO(schectman): Convert field to enum.
   final int jointType;
 
