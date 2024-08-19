@@ -476,6 +476,13 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypes() {
     return E_FAIL;
   }
 
+  hr = source->SetCurrentDeviceMediaType(
+      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW,
+      base_preview_media_type_.Get());
+  if (FAILED(hr)) {
+    return hr;
+  }
+
   // Find base media type for record and photo capture.
   if (!FindBestMediaType(
           (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD,
