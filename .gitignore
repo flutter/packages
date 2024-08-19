@@ -5,6 +5,7 @@
 .pub/
 .dart_tool/
 .vscode/
+.history/
 *.iml
 
 # Gradle?
