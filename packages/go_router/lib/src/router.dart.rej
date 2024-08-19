@@ -1,0 +1,68 @@
+--- packages/go_router/lib/src/router.dart
++++ packages/go_router/lib/src/router.dart
+@@ -325,7 +325,8 @@ class GoRouter implements RouterConfig<RouteMatchList> {
+   String namedLocation(
+     String name, {
+     Map<String, String> pathParameters = const <String, String>{},
+-    Map<String, dynamic> queryParameters = const <String, dynamic>{}, String? fragment,
++    Map<String, dynamic> queryParameters = const <String, dynamic>{},
++    String? fragment,
+   }) =>
+       configuration.namedLocation(
+         name,
+@@ -352,32 +353,31 @@ class GoRouter implements RouterConfig<RouteMatchList> {
+   /// Navigate to a named route w/ optional parameters, e.g.
+   /// `name='person', pathParameters={'fid': 'f2', 'pid': 'p1'}`
+   /// Navigate to the named route.
+- void goNamed(
+-  String name, {
+-  Map<String, String> pathParameters = const <String, String>{},
+-  Map<String, dynamic> queryParameters = const <String, dynamic>{},
+-  Object? extra,
+-  String? fragment, // Add fragment parameter
+-}) {
+-  // Create the base location using namedLocation
+-  String location = namedLocation(
+-    name,
+-    pathParameters: pathParameters,
+-    queryParameters: queryParameters,
+-  );
+-
+-  // If a fragment is provided, append it to the location
+-  if (fragment != null && fragment.isNotEmpty) {
+-    location = '$location#$fragment';
+-  }
++  void goNamed(
++    String name, {
++    Map<String, String> pathParameters = const <String, String>{},
++    Map<String, dynamic> queryParameters = const <String, dynamic>{},
++    Object? extra,
++    String? fragment, // Add fragment parameter
++  }) {
++    // Create the base location using namedLocation
++    String location = namedLocation(
++      name,
++      pathParameters: pathParameters,
++      queryParameters: queryParameters,
++    );
+ 
+-  // Use the modified location with fragment (if any) to navigate
+-  go(
+-    location,
+-    extra: extra,
+-  );
+-}
++    // If a fragment is provided, append it to the location
++    if (fragment != null && fragment.isNotEmpty) {
++      location = '$location#$fragment';
++    }
+ 
++    // Use the modified location with fragment (if any) to navigate
++    go(
++      location,
++      extra: extra,
++    );
++  }
+ 
+   /// Push a URI location onto the page stack w/ optional query parameters, e.g.
+   /// `/family/f2/person/p1?color=blue`.

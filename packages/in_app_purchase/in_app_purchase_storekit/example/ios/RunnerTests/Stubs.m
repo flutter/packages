@@ -1,1 +1,1 @@
-../../shared/RunnerTests/Stubs.m
+../../ shared / RunnerTests / Stubs.m
