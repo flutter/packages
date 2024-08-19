@@ -1,3 +1,7 @@
+## 0.6.8+1
+
+* Re-lands support for Impeller.
+
 ## 0.6.8
 
 * Updates Guava version to 33.3.0.
