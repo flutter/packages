@@ -783,18 +783,6 @@ class Convert {
     }
   }
 
-  @VisibleForTesting
-  static List<LatLng> toPoints(Object o) {
-    final List<?> data = toList(o);
-    final List<LatLng> points = new ArrayList<>(data.size());
-
-    for (Object rawPoint : data) {
-      final List<?> point = toList(rawPoint);
-      points.add(new LatLng(toDouble(point.get(0)), toDouble(point.get(1))));
-    }
-    return points;
-  }
-
   static List<LatLng> pointsFromPigeon(List<Messages.PlatformLatLng> data) {
     final List<LatLng> points = new ArrayList<>(data.size());
 
