@@ -43,7 +43,6 @@ import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
