@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ForgotPasswordPage extends StatelessWidget {
   const ForgotPasswordPage({Key? key}) : super(key: key);
 
-  static const String path = '/forgot_password';
+  static const String path = 'forgot_password';
   static const String name = 'ForgotPassword';
 
   @override
