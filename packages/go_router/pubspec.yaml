@@ -10,13 +10,13 @@ environment:
   flutter: ">=3.19.0"
 
 dependencies:
-  collection: ^1.18.0
+  collection: ^1.15.0
   flutter:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
   logging: ^1.0.0
-  meta: ^1.12.0
+  meta: ^1.11.0
 
 dev_dependencies:
   flutter_test:
