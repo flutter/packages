@@ -55,14 +55,27 @@ class PlatformCameraUpdate {
 
 /// Pigeon equivalent of the Circle class.
 class PlatformCircle {
-  PlatformCircle(this.json);
+  PlatformCircle({
+    required this.circleId,
+    required this.center,
+    this.consumeTapEvents = false,
+    this.fillColor = 0x00000000,
+    this.strokeColor = 0xFF000000,
+    this.visible = true,
+    this.strokeWidth = 10,
+    this.zIndex = 0.0,
+    this.radius = 0,
+  });
 
-  /// The circle data, as JSON. This should only be set from
-  /// Circle.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Map<String?, Object?> json;
+  final bool consumeTapEvents;
+  final int fillColor;
+  final int strokeColor;
+  final bool visible;
+  final int strokeWidth;
+  final double zIndex;
+  final PlatformLatLng center;
+  final double radius;
+  final String circleId;
 }
 
 /// Pigeon equivalent of the Heatmap class.
@@ -84,16 +97,61 @@ class PlatformClusterManager {
   final String identifier;
 }
 
+/// Pigeon equivalent of the Offset class.
+class PlatformOffset {
+  PlatformOffset(this.dx, this.dy);
+
+  final double dx;
+  final double dy;
+}
+
+/// Pigeon equivalent of the InfoWindow class.
+class PlatformInfoWindow {
+  PlatformInfoWindow({
+    required this.anchor,
+    this.title,
+    this.snippet,
+  });
+
+  final String? title;
+  final String? snippet;
+  final PlatformOffset anchor;
+}
+
 /// Pigeon equivalent of the Marker class.
 class PlatformMarker {
-  PlatformMarker(this.json);
+  PlatformMarker({
+    required this.markerId,
+    this.alpha = 1.0,
+    required this.anchor,
+    this.consumeTapEvents = false,
+    this.draggable = false,
+    this.flat = false,
+    this.icon = const <Object>['defaultMarker'],
+    required this.infoWindow,
+    required this.position,
+    this.rotation = 0.0,
+    this.visible = true,
+    this.zIndex = 0.0,
+    this.clusterManagerId,
+  });
 
-  /// The marker data, as JSON. This should only be set from
-  /// Marker.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Map<String?, Object?> json;
+  final double alpha;
+  final PlatformOffset anchor;
+  final bool consumeTapEvents;
+  final bool draggable;
+  final bool flat;
+
+  /// The icon as JSON data.
+  // TODO(schectman): replace this with structured data.
+  final Object icon;
+  final PlatformInfoWindow infoWindow;
+  final PlatformLatLng position;
+  final double rotation;
+  final bool visible;
+  final double zIndex;
+  final String markerId;
+  final String? clusterManagerId;
 }
 
 /// Pigeon equivalent of the Polygon class.

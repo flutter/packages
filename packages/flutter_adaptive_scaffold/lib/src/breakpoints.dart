@@ -4,6 +4,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../flutter_adaptive_scaffold.dart';
+
 /// A group of standard breakpoints built according to the material
 /// specifications for screen width size.
 ///
@@ -193,6 +195,7 @@ class Breakpoint {
   bool isActive(BuildContext context) {
     final TargetPlatform host = Theme.of(context).platform;
     final bool isRightPlatform = platform?.contains(host) ?? true;
+    final bool isDesktop = Breakpoint.desktop.contains(host);
 
     final double width = MediaQuery.sizeOf(context).width;
     final double height = MediaQuery.sizeOf(context).height;
@@ -208,11 +211,92 @@ class Breakpoint {
         ? width >= lowerBoundWidth
         : width >= lowerBoundWidth && width < upperBoundWidth;
 
-    final bool isHeightActive = (orientation == Orientation.landscape &&
+    final bool isHeightActive = isDesktop ||
+        orientation == Orientation.portrait ||
+        (orientation == Orientation.landscape &&
             height >= lowerBoundHeight &&
-            height < upperBoundHeight) ||
-        orientation == Orientation.portrait;
+            height < upperBoundHeight);
 
     return isWidthActive && isHeightActive && isRightPlatform;
+  }
+
+  /// Returns the currently active [Breakpoint] based on the [SlotLayout] in the
+  /// context.
+  static Breakpoint? maybeActiveBreakpointFromSlotLayout(BuildContext context) {
+    final SlotLayout? slotLayout =
+        context.findAncestorWidgetOfExactType<SlotLayout>();
+    Breakpoint? fallbackBreakpoint;
+
+    if (slotLayout != null) {
+      for (final MapEntry<Breakpoint, SlotLayoutConfig?> config
+          in slotLayout.config.entries) {
+        if (config.key.isActive(context)) {
+          if (config.key.platform != null) {
+            return config.key;
+          } else {
+            fallbackBreakpoint ??= config.key;
+          }
+        }
+      }
+    }
+    return fallbackBreakpoint;
+  }
+
+  /// Returns the default [Breakpoint] based on the [BuildContext].
+  static Breakpoint defaultBreakpointOf(BuildContext context) {
+    final TargetPlatform host = Theme.of(context).platform;
+    final bool isDesktop = Breakpoint.desktop.contains(host);
+    final bool isMobile = Breakpoint.mobile.contains(host);
+
+    for (final Breakpoint breakpoint in <Breakpoint>[
+      Breakpoints.small,
+      Breakpoints.medium,
+      Breakpoints.mediumLarge,
+      Breakpoints.large,
+      Breakpoints.extraLarge,
+    ]) {
+      if (breakpoint.isActive(context)) {
+        if (isDesktop) {
+          switch (breakpoint) {
+            case Breakpoints.small:
+              return Breakpoints.smallDesktop;
+            case Breakpoints.medium:
+              return Breakpoints.mediumDesktop;
+            case Breakpoints.mediumLarge:
+              return Breakpoints.mediumLargeDesktop;
+            case Breakpoints.large:
+              return Breakpoints.largeDesktop;
+            case Breakpoints.extraLarge:
+              return Breakpoints.extraLargeDesktop;
+            default:
+              return Breakpoints.standard;
+          }
+        } else if (isMobile) {
+          switch (breakpoint) {
+            case Breakpoints.small:
+              return Breakpoints.smallMobile;
+            case Breakpoints.medium:
+              return Breakpoints.mediumMobile;
+            case Breakpoints.mediumLarge:
+              return Breakpoints.mediumLargeMobile;
+            case Breakpoints.large:
+              return Breakpoints.largeMobile;
+            case Breakpoints.extraLarge:
+              return Breakpoints.extraLargeMobile;
+            default:
+              return Breakpoints.standard;
+          }
+        } else {
+          return breakpoint;
+        }
+      }
+    }
+    return Breakpoints.standard;
+  }
+
+  /// Returns the currently active [Breakpoint].
+  static Breakpoint activeBreakpointOf(BuildContext context) {
+    return maybeActiveBreakpointFromSlotLayout(context) ??
+        defaultBreakpointOf(context);
   }
 }
