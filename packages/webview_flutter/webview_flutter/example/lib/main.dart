@@ -7,8 +7,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -191,7 +191,7 @@ Page resource error:
       ..loadRequest(Uri.parse('https://flutter.dev'));
 
     // setBackgroundColor is not currently supported on macOS.
-    if (!Platform.isMacOS) {
+    if (kIsWeb || !Platform.isMacOS) {
       controller.setBackgroundColor(const Color(0x80000000));
     }
 
