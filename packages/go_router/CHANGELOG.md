@@ -1,3 +1,11 @@
+## 14.2.6
+
+- Fixes replace and pushReplacement uri when only one route match in current route match list.
+
+## 14.2.5
+
+- Fixes an issue where android back button pops pages in the wrong order.
+
 ## 14.2.4
 
 - Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.

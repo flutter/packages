@@ -1,3 +1,7 @@
+## 0.6.8+2
+
+* Marks uses of `Camera2Interop` with `@OptIn` annotation.
+
 ## 0.6.8+1
 
 * Re-lands support for Impeller.
