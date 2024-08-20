@@ -3388,12 +3388,14 @@ public class Messages {
           return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 150:
           return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 151:
+        case (byte) 151: {
           Object value = readValue(buffer);
           return value == null ? null : PlatformMapType.values()[(int) value];
-        case (byte) 152:
+        }
+        case (byte) 152: {
           Object value = readValue(buffer);
           return value == null ? null : PlatformRendererType.values()[(int) value];
+        }
         default:
           return super.readValueOfType(type, buffer);
       }

@@ -31,17 +31,13 @@ class TileOverlaysController {
 
   void addTileOverlays(@NonNull List<Messages.PlatformTileOverlay> tileOverlaysToAdd) {
     for (Messages.PlatformTileOverlay tileOverlayToAdd : tileOverlaysToAdd) {
-      @SuppressWarnings("unchecked")
-      final Map<String, ?> overlayJson = (Map<String, ?>) tileOverlayToAdd.getJson();
-      addJsonTileOverlay(overlayJson);
+      addTileOverlay(tileOverlayToAdd);
     }
   }
 
   void changeTileOverlays(@NonNull List<Messages.PlatformTileOverlay> tileOverlaysToChange) {
     for (Messages.PlatformTileOverlay tileOverlayToChange : tileOverlaysToChange) {
-      @SuppressWarnings("unchecked")
-      final Map<String, ?> overlayJson = (Map<String, ?>) tileOverlayToChange.getJson();
-      changeJsonTileOverlay(overlayJson);
+      changeTileOverlay(tileOverlayToChange);
     }
   }
 
@@ -79,13 +75,10 @@ class TileOverlaysController {
     return tileOverlayController.getTileOverlay();
   }
 
-  private void addJsonTileOverlay(Map<String, ?> tileOverlayOptions) {
-    if (tileOverlayOptions == null) {
-      return;
-    }
+  private void addTileOverlay(@NonNull Messages.PlatformTileOverlay platformTileOverlay) {
     TileOverlayBuilder tileOverlayOptionsBuilder = new TileOverlayBuilder();
     String tileOverlayId =
-        Convert.interpretTileOverlayOptions(tileOverlayOptions, tileOverlayOptionsBuilder);
+        Convert.interpretTileOverlayOptions(platformTileOverlay, tileOverlayOptionsBuilder);
     TileProviderController tileProviderController =
         new TileProviderController(flutterApi, tileOverlayId);
     tileOverlayOptionsBuilder.setTileProvider(tileProviderController);
@@ -95,14 +88,11 @@ class TileOverlaysController {
     tileOverlayIdToController.put(tileOverlayId, tileOverlayController);
   }
 
-  private void changeJsonTileOverlay(Map<String, ?> tileOverlayOptions) {
-    if (tileOverlayOptions == null) {
-      return;
-    }
-    String tileOverlayId = getTileOverlayId(tileOverlayOptions);
+  private void changeTileOverlay(@NonNull Messages.PlatformTileOverlay platformTileOverlay) {
+    String tileOverlayId = platformTileOverlay.getTileOverlayId();
     TileOverlayController tileOverlayController = tileOverlayIdToController.get(tileOverlayId);
     if (tileOverlayController != null) {
-      Convert.interpretTileOverlayOptions(tileOverlayOptions, tileOverlayController);
+      Convert.interpretTileOverlayOptions(platformTileOverlay, tileOverlayController);
     }
   }
 
