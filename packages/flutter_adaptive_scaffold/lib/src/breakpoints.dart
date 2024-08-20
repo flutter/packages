@@ -247,8 +247,7 @@ class Breakpoint {
     final bool isHeightActive = isDesktop ||
         orientation == Orientation.portrait ||
         (orientation == Orientation.landscape && andUp
-            ? isWidthActive && height <= lowerBoundHeight ||
-                height >= lowerBoundHeight
+            ? isWidthActive || height >= lowerBoundHeight
             : height >= lowerBoundHeight && height < upperBoundHeight);
 
     return isWidthActive && isHeightActive && isRightPlatform;
