@@ -15,9 +15,9 @@ a separate video player positioned on top of the app's content video player.
 
 **NOTE:**
 * The initial release for this package supports linear pre-roll video ads on iOS and Android
-* platforms.
+  platforms.
 * Companion ads, Background Audio ads and Google Dynamic Ad Insertion methods are currently not
-* supported.
+  supported.
 
 ## IMA client-side overview
 
