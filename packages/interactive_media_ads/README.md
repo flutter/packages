@@ -268,6 +268,10 @@ void dispose() {
 That's it! You're now requesting and displaying ads with the IMA SDK. To learn about additional SDK
 features, see the [API reference](https://pub.dev/documentation/interactive_media_ads/latest/).
 
+## Contributing
+
+For information on contributing to this plugin, see [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
 [1]: https://developers.google.com/interactive-media-ads
 [2]: https://www.iab.com/guidelines/vast/
 [3]: https://pub.dev/documentation/interactive_media_ads/latest/interactive_media_ads/AdDisplayContainer-class.html

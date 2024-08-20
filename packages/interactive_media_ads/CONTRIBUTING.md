@@ -17,8 +17,8 @@ This plugin uses the native IMA SDKs for Android and iOS. The API for the SDK of
 relatively similar, so this plugin attempts to maintain an interface that is similar to the native
 SDKs.
 
-The app-facing interface uses delegation to interact with the underlying platform implementation.
-Therefore the platform interface is similar to the app-facing interfaces with the differences being
+The app-facing interface uses delegation to interact with the underlying platform implementations.
+Therefore, the platform interface is similar to the app-facing interface with the differences being
 explained in the sections below. Many classes will contain a `platform` field that is used to call
 methods on the platform implementation:
 
@@ -49,14 +49,14 @@ final AdsLoader loader = AdsLoader();
 ```
 
 The other classes/enums included in the app-facing interface are typically exported from the
-platform interface. Data classes being a good example of a class that is exported.
+platform interface. A Data class being a good example of a class that is exported.
 
 ### Platform Interface
 
 Code location: `lib/src/platform_interface/`.
 
-This declares an interface that each platform must implement to be supported by the
-app-facing interface.
+This declares an interface that each platform must implement to be supported by the app-facing
+interface.
 
 The design of the platform interface should prioritize:
 * Minimizing the chances of needing a breaking change when adding a new feature.
@@ -69,20 +69,20 @@ instance of a platform implementation of `InteractiveMediaAdsPlatform`.
 
 ### Platform Interface Class Types
 
-Below are the types of classes in the interface.
+Below are some of the types of classes in the interface.
 
 #### Delegate Platform Class
 
 These are classes where the app-facing interface needs to delegate handling to the platform
-implementation. These classes are prefixed with `Platform`.
+implementation. These classes are typically prefixed with `Platform`.
 
 If the corresponding app-facing class can be instantiated by the app (e.g. `AdsLoader`),
 the `InteractiveMediaAdsPlatform.instance` field should be used in a factory to instantiate the
 correct platform implementation. See `PlatformAdsLoader` as an example. This class should should
 also take a creation params class as the only constructor parameter. 
 
-If the corresponding app-facing class can't instantiated by the app (e.g. AdsManager), the class
-should only have a single protected constructor. See `PlatformAdsManager`.
+If the corresponding app-facing class can't be instantiated by the app (e.g. `AdsManager`), the
+class should only have a single protected constructor. See `PlatformAdsManager`.
 
 If the corresponding app-facing class needs to be a `Widget` (e.g. `AdDisplayContainer`), this
 should follow the same pattern as being instantiable by the app except it should contain a single
@@ -93,9 +93,9 @@ method: `Widget build(BuildContext)`. See `PlatformAdDisplayContainer`.
 Every method should contain no more than one parameter. This allows the platform interface and
 platform implementation to add new features without requiring a breaking change.
 
-#### Data Class
+#### Data Classes
 
-Each data class should be made `@immutable`.
+These classes contain only fields and no methods. Each data class should be made `@immutable`.
 
 ### Platform Implementations
 
@@ -110,24 +110,29 @@ platform classes that are returned by this.
 
 The platform implementations use Dart wrappers of their native SDKs. The SDKs are wrapped using
 using the `pigeon` package. However, the code that handles generating the wrappers are still in the
-process of review and must use a git dependency in the pubspec.
+process of review, so this plugin must use a git dependency in the pubspec.
 
-The wrappers for the SDK of each platform can be updated and modify by changing the pigeon files:
+The wrappers for the SDK of each platform can be updated and modified by changing the pigeon files:
+
+Android: `pigeons/interactive_media_ads_android.dart`
+iOS: `pigeons/interactive_media_ads_ios.dart`
+
+The generated files are located:
 * Android:
-    * `pigeons/interactive_media_ads_android.dart`
-    * `android/src/main/kotlin/dev/flutter/packages/interactive_media_ads/InteractiveMediaAdsLibrary.g.kt`
-* iOS: 
-    * `pigeons/interactive_media_ads_ios.dart`
-    * `ios/interactive_media_ads/Sources/interactive_media_ads/InteractiveMediaAdsLibrary.g.swift`
+  * `lib/src/android/interactive_media_ads.g.dart`
+  * `android/src/main/kotlin/dev/flutter/packages/interactive_media_ads/InteractiveMediaAdsLibrary.g.kt`
+* iOS
+  * `lib/src/ios/interactive_media_ads.g.dart`
+  *  `ios/interactive_media_ads/Sources/interactive_media_ads/InteractiveMediaAdsLibrary.g.swift`
 
-To update a wrapper for a platform, follow the steps below:
+To update a wrapper for a platform, follow the steps:
 
 1. Ensure the project has been built at least once.
 
 Android: Run `flutter build apk --debug` in `example/`.
 iOS: Run `flutter build ios --simulator` in `example/`
 
-2. Add pigeon to `dev_depdencies` in the `pubspec.yaml` and run `pub upgrade`.
+2. Add the correct `pigeon` package to `dev_depdencies` in the `pubspec.yaml` and run `pub upgrade`.
 
 Android:
 
@@ -154,7 +159,7 @@ pigeon:
 Android: `pigeons/interactive_media_ads_android.dart`
 iOS: `pigeons/interactive_media_ads_ios.dart`
 
-4. Make changes that match the native SDK. 
+4. Make changes that match the native SDK.
 
 Android SDK: https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/package-summary
 iOS SDK: https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes
@@ -178,18 +183,38 @@ iOS: Open `example/ios/` in Xcode.
 Assuming a non-static method or constructor was added to the native wrapper, a native test will need
 to be added.
 
-Android:
-
-
+Android native tests location: `android/src/test/kotlin/dev/flutter/packages/interactive_media_ads/`
+iOS native tests location `example/ios/RunnerTests/`
 
 ### App-facing Interface
 
-Code location: `lib/src/`.
+Code location: `lib/src/`
 
+The app-facing interface shares the same structure as the platform interface and uses delegation
+to forward handling to the platform implementation. Note a few differences from the platform
+interface:
+
+* Constructors and methods can contain more than one parameter.
+* Platform classes can be instantiated with a platform implementation or creation params of
+  the corresponding platform interface class. See `AdsLoader.fromPlatform` and
+  `AdsLoader.fromPlatformCreationParams`.
 
 ## Recommended Process for Adding a New Feature
 
-* Create an issue that includes the specific native classes/methods that this feature requires on
-each platform.
+1. Create a new feature request issue in the `flutter/flutter` repo. See
+https://github.com/flutter/flutter/issues/new?assignees=&labels=&projects=&template=3_feature_request.yml
 
-* provide where this could be included in the platform interface and app-facing interface 
+2. In that issue add the specific native classes/methods that this feature requires for each
+platform:
+
+Android SDK: https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/package-summary
+iOS SDK: https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes
+
+Add a note if this feature only exist for a single platform. 
+
+3. Add a design where the feature can be added to the platform interface and app-facing interface.
+If this is only supported on a single platform, add where it can be added in the platform 
+implementation.
+
+4. Work can be started on the feature request or you can wait for feedback from a Flutter
+contributor.
