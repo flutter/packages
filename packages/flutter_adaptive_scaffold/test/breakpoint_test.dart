@@ -342,7 +342,7 @@ void main() {
           find.byKey(const Key('Breakpoints.extraLargeMobile')), findsNothing);
     }, variant: TargetPlatformVariant.desktop());
 
-    // Additional landscape tests for `maybeActiveBreakpointFromSlotLayout`
+    // Additional landscape tests for `maybeActiveBreakpointFromSlotLayout`.
     testWidgets(
         'maybeActiveBreakpointFromSlotLayout returns correct breakpoint on mobile (landscape)',
         (WidgetTester tester) async {
@@ -399,7 +399,7 @@ void main() {
           Breakpoints.largeDesktop);
     }, variant: TargetPlatformVariant.desktop());
 
-    // Additional landscape tests for `defaultBreakpointOf`
+    // Additional landscape tests for `defaultBreakpointOf`.
     testWidgets(
         'defaultBreakpointOf returns correct default breakpoint on mobile (landscape)',
         (WidgetTester tester) async {
@@ -450,7 +450,7 @@ void main() {
           Breakpoints.largeDesktop);
     }, variant: TargetPlatformVariant.desktop());
 
-    // Additional landscape tests for `activeBreakpointOf`
+    // Additional landscape tests for `activeBreakpointOf`.
     testWidgets(
         'activeBreakpointOf returns correct active breakpoint on mobile (landscape)',
         (WidgetTester tester) async {
