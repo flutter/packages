@@ -1,6 +1,10 @@
-## 0.1.2+1
+## 0.1.2+2
 
 * Adds a contribution guide. See `CONTRIBUTING.md`.
+
+## 0.1.2+1
+
+* Updates README to clarify supported features and link to issues tracker.
 
 ## 0.1.2
 
