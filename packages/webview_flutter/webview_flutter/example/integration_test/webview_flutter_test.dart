@@ -948,7 +948,7 @@ Future<void> main() async {
           'localStorage.getItem("myCat");',
         ) as String;
       } catch (exception) {
-        if (defaultTargetPlatform == TargetPlatform.iOS &&
+        if (_isWKWebView() &&
             exception is ArgumentError &&
             (exception.message as String).contains(
                 'Result of JavaScript execution returned a `null` value.')) {
@@ -960,10 +960,10 @@ Future<void> main() async {
   );
 }
 
-// JavaScript `null` evaluate to different string values on Android and iOS.
+// JavaScript `null` evaluate to different string values per platform.
 // This utility method returns the string boolean value of the current platform.
 String _webViewNull() {
-  if (defaultTargetPlatform == TargetPlatform.iOS) {
+  if (_isWKWebView()) {
     return '<null>';
   }
   return 'null';
@@ -972,11 +972,15 @@ String _webViewNull() {
 // JavaScript String evaluates to different strings depending on the platform.
 // This utility method returns the string boolean value of the current platform.
 String _webViewString(String value) {
-  if (defaultTargetPlatform == TargetPlatform.iOS ||
-      defaultTargetPlatform == TargetPlatform.macOS) {
+  if (_isWKWebView()) {
     return value;
   }
   return '"$value"';
+}
+
+bool _isWKWebView() {
+  return defaultTargetPlatform == TargetPlatform.iOS ||
+      defaultTargetPlatform == TargetPlatform.macOS;
 }
 
 class ResizableWebView extends StatefulWidget {
