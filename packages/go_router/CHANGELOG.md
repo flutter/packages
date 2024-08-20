@@ -1,4 +1,4 @@
-## 14.2.5
+## 14.3.4
 
   - Adds support for handling fragments/hashes as a first-party parameter in the GoRouter package.
   - Introduces a fragment parameter to the GoRoute constructor in `extensions.dart` to allow direct specification of a fragment when defining a route.
