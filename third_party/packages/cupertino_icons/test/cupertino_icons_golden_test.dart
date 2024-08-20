@@ -22,7 +22,14 @@ const int iconsPerImage = iconsPerRow * iconsPerCol;
 void main() async {
   // Do not run on web since this test uses dart:io.
   // The golden test runs on Linux only to avoid platform rendering differences.
-  if (kIsWeb || !Platform.isLinux) {
+  if (kIsWeb || !Platform.isLinux || !isMainChannel) {
+    return;
+  }
+  final bool isMainChannel = !Platform.environment.containsKey('CHANNEL')
+    || Platform.environment['CHANNEL'] == 'main'
+    || Platform.environment['CHANNEL'] == 'master';
+  // Only test against main to avoid rendering differences between flutter channels.
+  if (!isMainChannel) {
     return;
   }
   // Load font.
