@@ -1,3 +1,11 @@
+## 2.3.2
+
+* Bumps `com.android.tools.build:gradle` from 7.2.2 to 8.5.1.
+
+## 2.3.1
+
+* Fixes `getStringList` returning immutable list.
+
 ## 2.3.0
 
 * Adds new `SharedPreferencesAsyncAndroid` API.

@@ -126,7 +126,12 @@ class GoogleMapController
     this.lifecycleProvider = lifecycleProvider;
     this.clusterManagersController = new ClusterManagersController(flutterApi, context);
     this.markersController =
-        new MarkersController(flutterApi, clusterManagersController, assetManager, density);
+        new MarkersController(
+            flutterApi,
+            clusterManagersController,
+            assetManager,
+            density,
+            new Convert.BitmapDescriptorFactoryWrapper());
     this.polygonsController = new PolygonsController(flutterApi, density);
     this.polylinesController = new PolylinesController(flutterApi, assetManager, density);
     this.circlesController = new CirclesController(flutterApi, density);
