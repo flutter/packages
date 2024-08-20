@@ -1368,13 +1368,18 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory category,
   // Setup the audio output.
   _audioOutput = [[AVCaptureAudioDataOutput alloc] init];
 
-  dispatch_sync(dispatch_get_main_queue(), ^{
+  dispatch_block_t block = ^{
     upgradeAudioSessionCategory(AVAudioSessionCategoryPlayAndRecord,
                                 AVAudioSessionCategoryOptionDefaultToSpeaker |
                                     AVAudioSessionCategoryOptionAllowBluetoothA2DP |
                                     AVAudioSessionCategoryOptionAllowAirPlay,
                                 0);
-  });
+  };
+  if (!NSThread.isMainThread) {
+    dispatch_sync(dispatch_get_main_queue(), block);
+  } else {
+    block();
+  }
 
   if ([_audioCaptureSession canAddInput:audioInput]) {
     [_audioCaptureSession addInput:audioInput];
