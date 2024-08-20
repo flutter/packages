@@ -14,10 +14,6 @@ import com.google.ads.interactivemedia.v3.api.AdsManager
  */
 class AdsManagerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdsManager(pigeonRegistrar) {
-  override fun adCuePoints(pigeon_instance: AdsManager): List<Double> {
-    return pigeon_instance.adCuePoints.map { it.toDouble() }
-  }
-
   override fun discardAdBreak(pigeon_instance: AdsManager) {
     pigeon_instance.discardAdBreak()
   }
@@ -28,6 +24,10 @@ class AdsManagerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
 
   override fun start(pigeon_instance: AdsManager) {
     pigeon_instance.start()
+  }
+
+  override fun getAdCuePoints(pigeon_instance: AdsManager): List<Double> {
+    return pigeon_instance.adCuePoints.map { it.toDouble() }
   }
 
   override fun resume(pigeon_instance: AdsManager) {

@@ -43,13 +43,14 @@ class AdsManagerProxyApiTest {
   }
 
   @Test
-  fun adCuePoints() {
+  fun getAdCuePoints() {
     val api = TestProxyApiRegistrar().getPigeonApiAdsManager()
 
     val instance = mock<AdsManager>()
-    whenever(instance.adCuePoints).thenReturn(listOf(1.0f, 2.0f))
+    val value = listOf(1.0)
+    whenever(instance.adCuePoints).thenReturn(listOf(1.0f))
 
-    assertEquals(api.adCuePoints(instance), listOf(1.0, 2.0))
+    assertEquals(value, api.getAdCuePoints(instance))
   }
 
   @Test
