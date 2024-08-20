@@ -199,7 +199,7 @@ class Breakpoint {
     TargetPlatform.iOS,
   };
 
-  /// When set to true, it will include any size above the set width.
+  /// When set to true, it will include any size above the set width and any height above the set height.
   final bool andUp;
 
   /// The beginning width dp value. If left null then the [Breakpoint] will have
