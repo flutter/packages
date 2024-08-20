@@ -7,8 +7,8 @@
 .atom/
 .buildlog/
 .history/
-history/
-
+.coverage/
+.gitignore
 .svn/
 migrate_working_dir/
 
