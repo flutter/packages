@@ -351,7 +351,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
         break;
       case AVPlayerItemStatusReadyToPlay:
         [item addOutput:_videoOutput];
-        [self setupEventSinkIfReadyToPlayOrReportFailure];
+        [self setupEventSinkIfReadyToPlay];
         [self updatePlayingState];
         break;
     }
@@ -361,7 +361,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       // Due to an apparent bug, when the player item is ready, it still may not have determined
       // its presentation size or duration. When these properties are finally set, re-check if
       // all required properties and instantiate the event sink if it is not already set up.
-      [self setupEventSinkIfReadyToPlayOrReportFailure];
+      [self setupEventSinkIfReadyToPlay];
       [self updatePlayingState];
     }
   } else if (context == playbackLikelyToKeepUpContext) {
@@ -418,19 +418,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   _eventSink([FlutterError errorWithCode:@"VideoError" message:message details:nil]);
 }
 
-- (void)setupEventSinkIfReadyToPlayOrReportFailure {
+- (void)setupEventSinkIfReadyToPlay {
   if (_eventSink && !_isInitialized) {
     AVPlayerItem *currentItem = self.player.currentItem;
-    // if status is Failed this was probably called from onListenWithArguments, which means
-    // _eventSink was initialized to non-nil probably only after observeValueForKeyPath already
-    // observed Failed status and it did not send error, therefore we need to send it here
-    // see comment in onListenWithArguments
-    // https://github.com/flutter/flutter/issues/151475
-    // https://github.com/flutter/flutter/issues/147707
-    if (currentItem.status == AVPlayerItemStatusFailed) {
-      [self sendFailedToLoadVideoEvent:currentItem.error];
-      return;
-    }
     CGSize size = currentItem.presentationSize;
     CGFloat width = size.width;
     CGFloat height = size.height;
@@ -623,7 +613,14 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // This line ensures the 'initialized' event is sent when the event
   // 'AVPlayerItemStatusReadyToPlay' fires before _eventSink is set (this function
   // onListenWithArguments is called)
-  [self setupEventSinkIfReadyToPlayOrReportFailure];
+  // and also send error in similar case with 'AVPlayerItemStatusFailed'
+  // https://github.com/flutter/flutter/issues/151475
+  // https://github.com/flutter/flutter/issues/147707
+  if (self.player.currentItem.status == AVPlayerItemStatusFailed) {
+    [self sendFailedToLoadVideoEvent:self.player.currentItem.error];
+    return nil;
+  }
+  [self setupEventSinkIfReadyToPlay];
   return nil;
 }
 
