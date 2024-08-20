@@ -729,14 +729,23 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('maps serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<Object?, Object?> echoObject = await api.echoMap(map);
+      expect(mapEquals(echoObject, map), true);
+    });
 
-      const Map<String?, Object?> sentObject = <String?, Object?>{
-        'a': 1,
-        'b': 2.3,
-        'c': 'four',
-      };
-      final Map<String?, Object?> echoObject = await api.echoMap(sentObject);
-      expect(mapEquals(echoObject, sentObject), true);
+    testWidgets('string maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<String?, String?> echoObject =
+          await api.echoStringMap(stringMap);
+      expect(mapEquals(echoObject, stringMap), true);
+    });
+
+    testWidgets('int maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<int?, int?> echoObject = await api.echoIntMap(intMap);
+      expect(mapEquals(echoObject, intMap), true);
     });
 
     testWidgets('enums serialize and deserialize correctly',
@@ -950,16 +959,23 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('nullable maps serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<Object?, Object?>? echoObject = await api.echoNullableMap(map);
+      expect(mapEquals(echoObject, map), true);
+    });
 
-      const Map<String?, Object?> sentObject = <String?, Object?>{
-        'a': 1,
-        'b': 2.3,
-        'c': 'four',
-        'd': null,
-      };
-      final Map<String?, Object?>? echoObject =
-          await api.echoNullableMap(sentObject);
-      expect(mapEquals(echoObject, sentObject), true);
+    testWidgets('nullable string maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<String?, String?>? echoObject =
+          await api.echoNullableStringMap(stringMap);
+      expect(mapEquals(echoObject, stringMap), true);
+    });
+
+    testWidgets('nullable int maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<int?, int?>? echoObject = await api.echoNullableIntMap(intMap);
+      expect(mapEquals(echoObject, intMap), true);
     });
 
     testWidgets('nullable enums serialize and deserialize correctly',
@@ -1001,7 +1017,24 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final Map<String?, Object?>? echoObject = await api.echoNullableMap(null);
+      final Map<Object?, Object?>? echoObject = await api.echoNullableMap(null);
+      expect(mapEquals(echoObject, null), true);
+    });
+
+    testWidgets('null string maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final Map<String?, String?>? echoObject =
+          await api.echoNullableStringMap(null);
+      expect(mapEquals(echoObject, null), true);
+    });
+
+    testWidgets('null int maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final Map<int?, int?>? echoObject = await api.echoNullableIntMap(null);
       expect(mapEquals(echoObject, null), true);
     });
 
@@ -1253,15 +1286,23 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('maps serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<Object?, Object?> echoObject = await api.echoAsyncMap(map);
+      expect(mapEquals(echoObject, map), true);
+    });
 
-      const Map<String?, Object?> sentObject = <String?, Object?>{
-        'a': 1,
-        'b': 2.3,
-        'c': 'four',
-      };
-      final Map<String?, Object?> echoObject =
-          await api.echoAsyncMap(sentObject);
-      expect(mapEquals(echoObject, sentObject), true);
+    testWidgets('string maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<String?, String?> echoObject =
+          await api.echoAsyncStringMap(stringMap);
+      expect(mapEquals(echoObject, stringMap), true);
+    });
+
+    testWidgets('int maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<int?, int?> echoObject = await api.echoAsyncIntMap(intMap);
+      expect(mapEquals(echoObject, intMap), true);
     });
 
     testWidgets('enums serialize and deserialize correctly',
@@ -1388,15 +1429,25 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('nullable maps serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<Object?, Object?>? echoObject =
+          await api.echoAsyncNullableMap(map);
+      expect(mapEquals(echoObject, map), true);
+    });
 
-      const Map<String?, Object?> sentObject = <String?, Object?>{
-        'a': 1,
-        'b': 2.3,
-        'c': 'four',
-      };
-      final Map<String?, Object?>? echoObject =
-          await api.echoAsyncNullableMap(sentObject);
-      expect(mapEquals(echoObject, sentObject), true);
+    testWidgets('nullable string maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<String?, String?>? echoObject =
+          await api.echoAsyncNullableStringMap(stringMap);
+      expect(mapEquals(echoObject, stringMap), true);
+    });
+
+    testWidgets('nullable int maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<int?, int?>? echoObject =
+          await api.echoAsyncNullableIntMap(intMap);
+      expect(mapEquals(echoObject, intMap), true);
     });
 
     testWidgets('nullable enums serialize and deserialize correctly',
@@ -1488,8 +1539,26 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final Map<String?, Object?>? echoObject =
+      final Map<Object?, Object?>? echoObject =
           await api.echoAsyncNullableMap(null);
+      expect(mapEquals(echoObject, null), true);
+    });
+
+    testWidgets('null string maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final Map<String?, String?>? echoObject =
+          await api.echoAsyncNullableStringMap(null);
+      expect(mapEquals(echoObject, null), true);
+    });
+
+    testWidgets('null int maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final Map<int?, int?>? echoObject =
+          await api.echoAsyncNullableIntMap(null);
       expect(mapEquals(echoObject, null), true);
     });
 
@@ -1721,15 +1790,25 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('maps serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<Object?, Object?> echoObject =
+          await api.callFlutterEchoMap(map);
+      expect(mapEquals(echoObject, map), true);
+    });
 
-      const Map<String?, Object?> sentObject = <String?, Object?>{
-        'a': 1,
-        'b': 2.3,
-        'c': 'four',
-      };
-      final Map<String?, Object?> echoObject =
-          await api.callFlutterEchoMap(sentObject);
-      expect(mapEquals(echoObject, sentObject), true);
+    testWidgets('string maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<String?, String?> echoObject =
+          await api.callFlutterEchoStringMap(stringMap);
+      expect(mapEquals(echoObject, stringMap), true);
+    });
+
+    testWidgets('int maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<int?, int?> echoObject =
+          await api.callFlutterEchoIntMap(intMap);
+      expect(mapEquals(echoObject, intMap), true);
     });
 
     testWidgets('enums serialize and deserialize correctly',
@@ -1895,23 +1974,51 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('nullable maps serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-
-      const Map<String?, Object?> sentObject = <String?, Object?>{
-        'a': 1,
-        'b': 2.3,
-        'c': 'four',
-      };
-      final Map<String?, Object?>? echoObject =
-          await api.callFlutterEchoNullableMap(sentObject);
-      expect(mapEquals(echoObject, sentObject), true);
+      final Map<Object?, Object?>? echoObject =
+          await api.callFlutterEchoNullableMap(map);
+      expect(mapEquals(echoObject, map), true);
     });
 
     testWidgets('null maps serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final Map<String?, Object?>? echoObject =
+      final Map<Object?, Object?>? echoObject =
           await api.callFlutterEchoNullableMap(null);
+      expect(mapEquals(echoObject, null), true);
+    });
+
+    testWidgets('nullable string maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<String?, String?>? echoObject =
+          await api.callFlutterEchoNullableStringMap(stringMap);
+      expect(mapEquals(echoObject, stringMap), true);
+    });
+
+    testWidgets('null string maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final Map<String?, String?>? echoObject =
+          await api.callFlutterEchoNullableStringMap(null);
+      expect(mapEquals(echoObject, null), true);
+    });
+
+    testWidgets('nullable int maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<int?, int?>? echoObject =
+          await api.callFlutterEchoNullableIntMap(intMap);
+      expect(mapEquals(echoObject, intMap), true);
+    });
+
+    testWidgets('null maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final Map<int?, int?>? echoObject =
+          await api.callFlutterEchoNullableIntMap(null);
       expect(mapEquals(echoObject, null), true);
     });
 
@@ -2053,7 +2160,14 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   List<Object?> echoList(List<Object?> list) => list;
 
   @override
-  Map<String?, Object?> echoMap(Map<String?, Object?> aMap) => aMap;
+  Map<Object?, Object?> echoMap(Map<Object?, Object?> map) => map;
+
+  @override
+  Map<String?, String?> echoStringMap(Map<String?, String?> stringMap) =>
+      stringMap;
+
+  @override
+  Map<int?, int?> echoIntMap(Map<int?, int?> intMap) => intMap;
 
   @override
   AnEnum echoEnum(AnEnum anEnum) => anEnum;
@@ -2074,7 +2188,15 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   List<Object?>? echoNullableList(List<Object?>? list) => list;
 
   @override
-  Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap) => aMap;
+  Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map) => map;
+
+  @override
+  Map<String?, String?>? echoNullableStringMap(
+          Map<String?, String?>? stringMap) =>
+      stringMap;
+
+  @override
+  Map<int?, int?>? echoNullableIntMap(Map<int?, int?>? intMap) => intMap;
 
   @override
   String? echoNullableString(String? aString) => aString;

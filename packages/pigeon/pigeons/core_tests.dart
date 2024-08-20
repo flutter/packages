@@ -300,9 +300,19 @@ abstract class HostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoMap:')
   @SwiftFunction('echo(_:)')
-  Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
+  Map<Object?, Object?> echoMap(Map<Object?, Object?> map);
 
-  /// Returns the passed map to test nested class serialization and deserialization.
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoStringMap:')
+  @SwiftFunction('echo(stringMap:)')
+  Map<String?, String?> echoStringMap(Map<String?, String?> stringMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoIntMap:')
+  @SwiftFunction('echo(intMap:)')
+  Map<int?, int?> echoIntMap(Map<int?, int?> intMap);
+
+  /// Returns the passed class to test nested class serialization and deserialization.
   @ObjCSelector('echoClassWrapper:')
   @SwiftFunction('echo(_:)')
   AllClassesWrapper echoClassWrapper(AllClassesWrapper wrapper);
@@ -408,7 +418,18 @@ abstract class HostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableMap:')
   @SwiftFunction('echoNullable(_:)')
-  Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aNullableMap);
+  Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableStringMap:')
+  @SwiftFunction('echoNullable(stringMap:)')
+  Map<String?, String?>? echoNullableStringMap(
+      Map<String?, String?>? stringMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableIntMap:')
+  @SwiftFunction('echoNullable(intMap:)')
+  Map<int?, int?>? echoNullableIntMap(Map<int?, int?>? intMap);
 
   @ObjCSelector('echoNullableEnum:')
   @SwiftFunction('echoNullable(_:)')
@@ -481,7 +502,19 @@ abstract class HostIntegrationCoreApi {
   @async
   @ObjCSelector('echoAsyncMap:')
   @SwiftFunction('echoAsync(_:)')
-  Map<String?, Object?> echoAsyncMap(Map<String?, Object?> aMap);
+  Map<Object?, Object?> echoAsyncMap(Map<Object?, Object?> map);
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncStringMap:')
+  @SwiftFunction('echoAsync(stringMap:)')
+  Map<String?, String?> echoAsyncStringMap(Map<String?, String?> stringMap);
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncIntMap:')
+  @SwiftFunction('echoAsync(intMap:)')
+  Map<int?, int?> echoAsyncIntMap(Map<int?, int?> intMap);
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   @async
@@ -574,7 +607,20 @@ abstract class HostIntegrationCoreApi {
   @async
   @ObjCSelector('echoAsyncNullableMap:')
   @SwiftFunction('echoAsyncNullable(_:)')
-  Map<String?, Object?>? echoAsyncNullableMap(Map<String?, Object?>? aMap);
+  Map<Object?, Object?>? echoAsyncNullableMap(Map<Object?, Object?>? map);
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncNullableStringMap:')
+  @SwiftFunction('echoAsyncNullable(stringMap:)')
+  Map<String?, String?>? echoAsyncNullableStringMap(
+      Map<String?, String?>? stringMap);
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncNullableIntMap:')
+  @SwiftFunction('echoAsyncNullable(intMap:)')
+  Map<int?, int?>? echoAsyncNullableIntMap(Map<int?, int?>? intMap);
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   @async
@@ -665,7 +711,18 @@ abstract class HostIntegrationCoreApi {
   @async
   @ObjCSelector('callFlutterEchoMap:')
   @SwiftFunction('callFlutterEcho(_:)')
-  Map<String?, Object?> callFlutterEchoMap(Map<String?, Object?> aMap);
+  Map<Object?, Object?> callFlutterEchoMap(Map<Object?, Object?> map);
+
+  @async
+  @ObjCSelector('callFlutterEchoStringMap:')
+  @SwiftFunction('callFlutterEcho(stringMap:)')
+  Map<String?, String?> callFlutterEchoStringMap(
+      Map<String?, String?> stringMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoIntMap:')
+  @SwiftFunction('callFlutterEcho(intMap:)')
+  Map<int?, int?> callFlutterEchoIntMap(Map<int?, int?> intMap);
 
   @async
   @ObjCSelector('callFlutterEchoEnum:')
@@ -710,8 +767,18 @@ abstract class HostIntegrationCoreApi {
   @async
   @ObjCSelector('callFlutterEchoNullableMap:')
   @SwiftFunction('callFlutterEchoNullable(_:)')
-  Map<String?, Object?>? callFlutterEchoNullableMap(
-      Map<String?, Object?>? aMap);
+  Map<Object?, Object?>? callFlutterEchoNullableMap(Map<Object?, Object?>? map);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableStringMap:')
+  @SwiftFunction('callFlutterEchoNullable(stringMap:)')
+  Map<String?, String?>? callFlutterEchoNullableStringMap(
+      Map<String?, String?>? stringMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableIntMap:')
+  @SwiftFunction('callFlutterEchoNullable(intMap:)')
+  Map<int?, int?>? callFlutterEchoNullableIntMap(Map<int?, int?>? intMap);
 
   @async
   @ObjCSelector('callFlutterEchoNullableEnum:')
@@ -811,7 +878,17 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoMap:')
   @SwiftFunction('echo(_:)')
-  Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
+  Map<Object?, Object?> echoMap(Map<Object?, Object?> map);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoStringMap:')
+  @SwiftFunction('echo(stringMap:)')
+  Map<String?, String?> echoStringMap(Map<String?, String?> stringMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoIntMap:')
+  @SwiftFunction('echo(intMap:)')
+  Map<int?, int?> echoIntMap(Map<int?, int?> intMap);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoEnum:')
@@ -858,7 +935,18 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableMap:')
   @SwiftFunction('echoNullable(_:)')
-  Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
+  Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableStringMap:')
+  @SwiftFunction('echoNullable(stringMap:)')
+  Map<String?, String?>? echoNullableStringMap(
+      Map<String?, String?>? stringMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableIntMap:')
+  @SwiftFunction('echoNullable(intMap:)')
+  Map<int?, int?>? echoNullableIntMap(Map<int?, int?>? intMap);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoNullableEnum:')

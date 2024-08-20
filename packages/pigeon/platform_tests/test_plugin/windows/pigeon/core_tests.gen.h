@@ -641,8 +641,14 @@ class HostIntegrationCoreApi {
       const flutter::EncodableList& list) = 0;
   // Returns the passed map, to test serialization and deserialization.
   virtual ErrorOr<flutter::EncodableMap> EchoMap(
-      const flutter::EncodableMap& a_map) = 0;
-  // Returns the passed map to test nested class serialization and
+      const flutter::EncodableMap& map) = 0;
+  // Returns the passed map, to test serialization and deserialization.
+  virtual ErrorOr<flutter::EncodableMap> EchoStringMap(
+      const flutter::EncodableMap& string_map) = 0;
+  // Returns the passed map, to test serialization and deserialization.
+  virtual ErrorOr<flutter::EncodableMap> EchoIntMap(
+      const flutter::EncodableMap& int_map) = 0;
+  // Returns the passed class to test nested class serialization and
   // deserialization.
   virtual ErrorOr<AllClassesWrapper> EchoClassWrapper(
       const AllClassesWrapper& wrapper) = 0;
@@ -705,7 +711,13 @@ class HostIntegrationCoreApi {
       const flutter::EncodableList* a_nullable_list) = 0;
   // Returns the passed map, to test serialization and deserialization.
   virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableMap(
-      const flutter::EncodableMap* a_nullable_map) = 0;
+      const flutter::EncodableMap* map) = 0;
+  // Returns the passed map, to test serialization and deserialization.
+  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableStringMap(
+      const flutter::EncodableMap* string_map) = 0;
+  // Returns the passed map, to test serialization and deserialization.
+  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableIntMap(
+      const flutter::EncodableMap* int_map) = 0;
   virtual ErrorOr<std::optional<AnEnum>> EchoNullableEnum(
       const AnEnum* an_enum) = 0;
   virtual ErrorOr<std::optional<AnotherEnum>> EchoAnotherNullableEnum(
@@ -749,7 +761,17 @@ class HostIntegrationCoreApi {
   // Returns the passed map, to test asynchronous serialization and
   // deserialization.
   virtual void EchoAsyncMap(
-      const flutter::EncodableMap& a_map,
+      const flutter::EncodableMap& map,
+      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+  // Returns the passed map, to test asynchronous serialization and
+  // deserialization.
+  virtual void EchoAsyncStringMap(
+      const flutter::EncodableMap& string_map,
+      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+  // Returns the passed map, to test asynchronous serialization and
+  // deserialization.
+  virtual void EchoAsyncIntMap(
+      const flutter::EncodableMap& int_map,
       std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
   // Returns the passed enum, to test asynchronous serialization and
   // deserialization.
@@ -823,7 +845,19 @@ class HostIntegrationCoreApi {
   // Returns the passed map, to test asynchronous serialization and
   // deserialization.
   virtual void EchoAsyncNullableMap(
-      const flutter::EncodableMap* a_map,
+      const flutter::EncodableMap* map,
+      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
+          result) = 0;
+  // Returns the passed map, to test asynchronous serialization and
+  // deserialization.
+  virtual void EchoAsyncNullableStringMap(
+      const flutter::EncodableMap* string_map,
+      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
+          result) = 0;
+  // Returns the passed map, to test asynchronous serialization and
+  // deserialization.
+  virtual void EchoAsyncNullableIntMap(
+      const flutter::EncodableMap* int_map,
       std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
           result) = 0;
   // Returns the passed enum, to test asynchronous serialization and
@@ -881,7 +915,13 @@ class HostIntegrationCoreApi {
       const flutter::EncodableList& list,
       std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
   virtual void CallFlutterEchoMap(
-      const flutter::EncodableMap& a_map,
+      const flutter::EncodableMap& map,
+      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+  virtual void CallFlutterEchoStringMap(
+      const flutter::EncodableMap& string_map,
+      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+  virtual void CallFlutterEchoIntMap(
+      const flutter::EncodableMap& int_map,
       std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
   virtual void CallFlutterEchoEnum(
       const AnEnum& an_enum,
@@ -911,7 +951,15 @@ class HostIntegrationCoreApi {
       std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
           result) = 0;
   virtual void CallFlutterEchoNullableMap(
-      const flutter::EncodableMap* a_map,
+      const flutter::EncodableMap* map,
+      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
+          result) = 0;
+  virtual void CallFlutterEchoNullableStringMap(
+      const flutter::EncodableMap* string_map,
+      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
+          result) = 0;
+  virtual void CallFlutterEchoNullableIntMap(
+      const flutter::EncodableMap* int_map,
       std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
           result) = 0;
   virtual void CallFlutterEchoNullableEnum(
@@ -1015,9 +1063,19 @@ class FlutterIntegrationCoreApi {
                 std::function<void(const flutter::EncodableList&)>&& on_success,
                 std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
-  void EchoMap(const flutter::EncodableMap& a_map,
+  void EchoMap(const flutter::EncodableMap& map,
                std::function<void(const flutter::EncodableMap&)>&& on_success,
                std::function<void(const FlutterError&)>&& on_error);
+  // Returns the passed map, to test serialization and deserialization.
+  void EchoStringMap(
+      const flutter::EncodableMap& string_map,
+      std::function<void(const flutter::EncodableMap&)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
+  // Returns the passed map, to test serialization and deserialization.
+  void EchoIntMap(
+      const flutter::EncodableMap& int_map,
+      std::function<void(const flutter::EncodableMap&)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed enum to test serialization and deserialization.
   void EchoEnum(const AnEnum& an_enum,
                 std::function<void(const AnEnum&)>&& on_success,
@@ -1054,7 +1112,17 @@ class FlutterIntegrationCoreApi {
       std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNullableMap(
-      const flutter::EncodableMap* a_map,
+      const flutter::EncodableMap* map,
+      std::function<void(const flutter::EncodableMap*)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
+  // Returns the passed map, to test serialization and deserialization.
+  void EchoNullableStringMap(
+      const flutter::EncodableMap* string_map,
+      std::function<void(const flutter::EncodableMap*)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
+  // Returns the passed map, to test serialization and deserialization.
+  void EchoNullableIntMap(
+      const flutter::EncodableMap* int_map,
       std::function<void(const flutter::EncodableMap*)>&& on_success,
       std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed enum to test serialization and deserialization.

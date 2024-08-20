@@ -2155,8 +2155,14 @@ public class CoreTests {
     List<Object> echoList(@NonNull List<Object> list);
     /** Returns the passed map, to test serialization and deserialization. */
     @NonNull
-    Map<String, Object> echoMap(@NonNull Map<String, Object> aMap);
-    /** Returns the passed map to test nested class serialization and deserialization. */
+    Map<Object, Object> echoMap(@NonNull Map<Object, Object> map);
+    /** Returns the passed map, to test serialization and deserialization. */
+    @NonNull
+    Map<String, String> echoStringMap(@NonNull Map<String, String> stringMap);
+    /** Returns the passed map, to test serialization and deserialization. */
+    @NonNull
+    Map<Long, Long> echoIntMap(@NonNull Map<Long, Long> intMap);
+    /** Returns the passed class to test nested class serialization and deserialization. */
     @NonNull
     AllClassesWrapper echoClassWrapper(@NonNull AllClassesWrapper wrapper);
     /** Returns the passed enum to test serialization and deserialization. */
@@ -2226,7 +2232,13 @@ public class CoreTests {
     List<Object> echoNullableList(@Nullable List<Object> aNullableList);
     /** Returns the passed map, to test serialization and deserialization. */
     @Nullable
-    Map<String, Object> echoNullableMap(@Nullable Map<String, Object> aNullableMap);
+    Map<Object, Object> echoNullableMap(@Nullable Map<Object, Object> map);
+    /** Returns the passed map, to test serialization and deserialization. */
+    @Nullable
+    Map<String, String> echoNullableStringMap(@Nullable Map<String, String> stringMap);
+    /** Returns the passed map, to test serialization and deserialization. */
+    @Nullable
+    Map<Long, Long> echoNullableIntMap(@Nullable Map<Long, Long> intMap);
 
     @Nullable
     AnEnum echoNullableEnum(@Nullable AnEnum anEnum);
@@ -2260,7 +2272,12 @@ public class CoreTests {
     void echoAsyncList(@NonNull List<Object> list, @NonNull Result<List<Object>> result);
     /** Returns the passed map, to test asynchronous serialization and deserialization. */
     void echoAsyncMap(
-        @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result);
+        @NonNull Map<Object, Object> map, @NonNull Result<Map<Object, Object>> result);
+    /** Returns the passed map, to test asynchronous serialization and deserialization. */
+    void echoAsyncStringMap(
+        @NonNull Map<String, String> stringMap, @NonNull Result<Map<String, String>> result);
+    /** Returns the passed map, to test asynchronous serialization and deserialization. */
+    void echoAsyncIntMap(@NonNull Map<Long, Long> intMap, @NonNull Result<Map<Long, Long>> result);
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
     void echoAsyncEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result);
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
@@ -2299,7 +2316,14 @@ public class CoreTests {
         @Nullable List<Object> list, @NonNull NullableResult<List<Object>> result);
     /** Returns the passed map, to test asynchronous serialization and deserialization. */
     void echoAsyncNullableMap(
-        @Nullable Map<String, Object> aMap, @NonNull NullableResult<Map<String, Object>> result);
+        @Nullable Map<Object, Object> map, @NonNull NullableResult<Map<Object, Object>> result);
+    /** Returns the passed map, to test asynchronous serialization and deserialization. */
+    void echoAsyncNullableStringMap(
+        @Nullable Map<String, String> stringMap,
+        @NonNull NullableResult<Map<String, String>> result);
+    /** Returns the passed map, to test asynchronous serialization and deserialization. */
+    void echoAsyncNullableIntMap(
+        @Nullable Map<Long, Long> intMap, @NonNull NullableResult<Map<Long, Long>> result);
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
     void echoAsyncNullableEnum(@Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result);
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
@@ -2346,7 +2370,13 @@ public class CoreTests {
     void callFlutterEchoList(@NonNull List<Object> list, @NonNull Result<List<Object>> result);
 
     void callFlutterEchoMap(
-        @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result);
+        @NonNull Map<Object, Object> map, @NonNull Result<Map<Object, Object>> result);
+
+    void callFlutterEchoStringMap(
+        @NonNull Map<String, String> stringMap, @NonNull Result<Map<String, String>> result);
+
+    void callFlutterEchoIntMap(
+        @NonNull Map<Long, Long> intMap, @NonNull Result<Map<Long, Long>> result);
 
     void callFlutterEchoEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result);
 
@@ -2371,7 +2401,14 @@ public class CoreTests {
         @Nullable List<Object> list, @NonNull NullableResult<List<Object>> result);
 
     void callFlutterEchoNullableMap(
-        @Nullable Map<String, Object> aMap, @NonNull NullableResult<Map<String, Object>> result);
+        @Nullable Map<Object, Object> map, @NonNull NullableResult<Map<Object, Object>> result);
+
+    void callFlutterEchoNullableStringMap(
+        @Nullable Map<String, String> stringMap,
+        @NonNull NullableResult<Map<String, String>> result);
+
+    void callFlutterEchoNullableIntMap(
+        @Nullable Map<Long, Long> intMap, @NonNull NullableResult<Map<Long, Long>> result);
 
     void callFlutterEchoNullableEnum(
         @Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result);
@@ -2703,9 +2740,59 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
+                Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
                 try {
-                  Map<String, Object> output = api.echoMap(aMapArg);
+                  Map<Object, Object> output = api.echoMap(mapArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
+                try {
+                  Map<String, String> output = api.echoStringMap(stringMapArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
+                try {
+                  Map<Long, Long> output = api.echoIntMap(intMapArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
@@ -3213,9 +3300,59 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Map<String, Object> aNullableMapArg = (Map<String, Object>) args.get(0);
+                Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
                 try {
-                  Map<String, Object> output = api.echoNullableMap(aNullableMapArg);
+                  Map<Object, Object> output = api.echoNullableMap(mapArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableStringMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
+                try {
+                  Map<String, String> output = api.echoNullableStringMap(stringMapArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableIntMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
+                try {
+                  Map<Long, Long> output = api.echoNullableIntMap(intMapArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
@@ -3592,10 +3729,10 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
-                Result<Map<String, Object>> resultCallback =
-                    new Result<Map<String, Object>>() {
-                      public void success(Map<String, Object> result) {
+                Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
+                Result<Map<Object, Object>> resultCallback =
+                    new Result<Map<Object, Object>>() {
+                      public void success(Map<Object, Object> result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
                       }
@@ -3606,7 +3743,71 @@ public class CoreTests {
                       }
                     };
 
-                api.echoAsyncMap(aMapArg, resultCallback);
+                api.echoAsyncMap(mapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncStringMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
+                Result<Map<String, String>> resultCallback =
+                    new Result<Map<String, String>>() {
+                      public void success(Map<String, String> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAsyncStringMap(stringMapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncIntMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
+                Result<Map<Long, Long>> resultCallback =
+                    new Result<Map<Long, Long>>() {
+                      public void success(Map<Long, Long> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAsyncIntMap(intMapArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4100,10 +4301,10 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
-                NullableResult<Map<String, Object>> resultCallback =
-                    new NullableResult<Map<String, Object>>() {
-                      public void success(Map<String, Object> result) {
+                Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
+                NullableResult<Map<Object, Object>> resultCallback =
+                    new NullableResult<Map<Object, Object>>() {
+                      public void success(Map<Object, Object> result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
                       }
@@ -4114,7 +4315,71 @@ public class CoreTests {
                       }
                     };
 
-                api.echoAsyncNullableMap(aMapArg, resultCallback);
+                api.echoAsyncNullableMap(mapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableStringMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
+                NullableResult<Map<String, String>> resultCallback =
+                    new NullableResult<Map<String, String>>() {
+                      public void success(Map<String, String> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAsyncNullableStringMap(stringMapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableIntMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
+                NullableResult<Map<Long, Long>> resultCallback =
+                    new NullableResult<Map<Long, Long>>() {
+                      public void success(Map<Long, Long> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAsyncNullableIntMap(intMapArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4645,10 +4910,10 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
-                Result<Map<String, Object>> resultCallback =
-                    new Result<Map<String, Object>>() {
-                      public void success(Map<String, Object> result) {
+                Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
+                Result<Map<Object, Object>> resultCallback =
+                    new Result<Map<Object, Object>>() {
+                      public void success(Map<Object, Object> result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
                       }
@@ -4659,7 +4924,71 @@ public class CoreTests {
                       }
                     };
 
-                api.callFlutterEchoMap(aMapArg, resultCallback);
+                api.callFlutterEchoMap(mapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoStringMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
+                Result<Map<String, String>> resultCallback =
+                    new Result<Map<String, String>>() {
+                      public void success(Map<String, String> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterEchoStringMap(stringMapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoIntMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
+                Result<Map<Long, Long>> resultCallback =
+                    new Result<Map<Long, Long>>() {
+                      public void success(Map<Long, Long> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterEchoIntMap(intMapArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4933,10 +5262,10 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
-                NullableResult<Map<String, Object>> resultCallback =
-                    new NullableResult<Map<String, Object>>() {
-                      public void success(Map<String, Object> result) {
+                Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
+                NullableResult<Map<Object, Object>> resultCallback =
+                    new NullableResult<Map<Object, Object>>() {
+                      public void success(Map<Object, Object> result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
                       }
@@ -4947,7 +5276,71 @@ public class CoreTests {
                       }
                     };
 
-                api.callFlutterEchoNullableMap(aMapArg, resultCallback);
+                api.callFlutterEchoNullableMap(mapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableStringMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
+                NullableResult<Map<String, String>> resultCallback =
+                    new NullableResult<Map<String, String>>() {
+                      public void success(Map<String, String> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterEchoNullableStringMap(stringMapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableIntMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
+                NullableResult<Map<Long, Long>> resultCallback =
+                    new NullableResult<Map<Long, Long>>() {
+                      public void success(Map<Long, Long> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterEchoNullableIntMap(intMapArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5515,14 +5908,14 @@ public class CoreTests {
     }
     /** Returns the passed map, to test serialization and deserialization. */
     public void echoMap(
-        @NonNull Map<String, Object> aMapArg, @NonNull Result<Map<String, Object>> result) {
+        @NonNull Map<Object, Object> mapArg, @NonNull Result<Map<Object, Object>> result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap"
               + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<>(Collections.singletonList(aMapArg)),
+          new ArrayList<>(Collections.singletonList(mapArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
@@ -5538,7 +5931,73 @@ public class CoreTests {
                         ""));
               } else {
                 @SuppressWarnings("ConstantConditions")
-                Map<String, Object> output = (Map<String, Object>) listReply.get(0);
+                Map<Object, Object> output = (Map<Object, Object>) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Returns the passed map, to test serialization and deserialization. */
+    public void echoStringMap(
+        @NonNull Map<String, String> stringMapArg, @NonNull Result<Map<String, String>> result) {
+      final String channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoStringMap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<>(Collections.singletonList(stringMapArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Map<String, String> output = (Map<String, String>) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Returns the passed map, to test serialization and deserialization. */
+    public void echoIntMap(
+        @NonNull Map<Long, Long> intMapArg, @NonNull Result<Map<Long, Long>> result) {
+      final String channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoIntMap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<>(Collections.singletonList(intMapArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Map<Long, Long> output = (Map<Long, Long>) listReply.get(0);
                 result.success(output);
               }
             } else {
@@ -5774,15 +6233,14 @@ public class CoreTests {
     }
     /** Returns the passed map, to test serialization and deserialization. */
     public void echoNullableMap(
-        @Nullable Map<String, Object> aMapArg,
-        @NonNull NullableResult<Map<String, Object>> result) {
+        @Nullable Map<Object, Object> mapArg, @NonNull NullableResult<Map<Object, Object>> result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap"
               + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<>(Collections.singletonList(aMapArg)),
+          new ArrayList<>(Collections.singletonList(mapArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
@@ -5792,7 +6250,62 @@ public class CoreTests {
                         (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 @SuppressWarnings("ConstantConditions")
-                Map<String, Object> output = (Map<String, Object>) listReply.get(0);
+                Map<Object, Object> output = (Map<Object, Object>) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Returns the passed map, to test serialization and deserialization. */
+    public void echoNullableStringMap(
+        @Nullable Map<String, String> stringMapArg,
+        @NonNull NullableResult<Map<String, String>> result) {
+      final String channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableStringMap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<>(Collections.singletonList(stringMapArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Map<String, String> output = (Map<String, String>) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Returns the passed map, to test serialization and deserialization. */
+    public void echoNullableIntMap(
+        @Nullable Map<Long, Long> intMapArg, @NonNull NullableResult<Map<Long, Long>> result) {
+      final String channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableIntMap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<>(Collections.singletonList(intMapArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Map<Long, Long> output = (Map<Long, Long>) listReply.get(0);
                 result.success(output);
               }
             } else {
