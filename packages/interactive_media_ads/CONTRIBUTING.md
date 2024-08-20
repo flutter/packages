@@ -4,7 +4,7 @@
 
 The structure of this plugin is similar to a [federated plugin](https://docs.flutter.dev/packages-and-plugins/developing-packages#federated-plugins),
 except the code for each package (platform interface, platform implementations, and app-facing
-interface) are maintained in this one plugin. The sections below will provide overview how this
+interface) are maintained in this single plugin. The sections below will provide overview how this
 plugin implements each portion.
 
 If you are familiar with [changing federated plugin](https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins)
@@ -13,14 +13,14 @@ plugin. Therefore, it is not necessary to run the script that makes dependencies
 
 ### Quick Overview
 
-This plugin uses the native IMA SDKs for Android and iOS. The API for the SDK of both platforms are
-relatively similar, so this plugin attempts to maintain an interface that is similar to the native
-SDKs.
+This plugin uses the native [IMA SDKs] for Android and iOS. The API for the SDK of both platforms
+are relatively similar, so this plugin attempts to maintain an interface that is similar to the
+native SDKs.
 
 The app-facing interface uses delegation to interact with the underlying platform implementations.
 Therefore, the platform interface is similar to the app-facing interface with the differences being
-explained in the sections below. Many classes will contain a `platform` field that is used to call
-methods on the platform implementation:
+explained in the sections below. Many app-facing interface classes will contain a `platform` field
+that is used to forward handling to the platform implementation:
 
 ```dart
 // App-facing class used by apps
@@ -49,7 +49,7 @@ final AdsLoader loader = AdsLoader();
 ```
 
 The other classes/enums included in the app-facing interface are typically exported from the
-platform interface. A Data class being a good example of a class that is exported.
+platform interface. A data class being a good example of a class that is exported.
 
 ### Platform Interface
 
@@ -61,7 +61,7 @@ interface.
 The design of the platform interface should prioritize:
 * Minimizing the chances of needing a breaking change when adding a new feature.
 * Allowing platform implementations to easily add platform specific features.
-* Being easy to unit test.
+* Being straight-forward to write unit tests.
 
 Each platform creates a subclass of the central [InteractiveMediaAdsPlatform](lib/src/platform_interface/interactive_media_ads_platform.dart)
 class. A platform implementation is set by setting `InteractiveMediaAdsPlatform.instance` to an
@@ -76,17 +76,17 @@ Below are some of the types of classes in the interface.
 These are classes where the app-facing interface needs to delegate handling to the platform
 implementation. These classes are typically prefixed with `Platform`.
 
-If the corresponding app-facing class can be instantiated by the app (e.g. `AdsLoader`),
+If the corresponding app-facing class can be instantiated by the app (e.g. [AdsLoader]),
 the `InteractiveMediaAdsPlatform.instance` field should be used in a factory to instantiate the
-correct platform implementation. See `PlatformAdsLoader` as an example. This class should should
+correct platform implementation. See [PlatformAdsLoader] as an example. This class should should
 also take a creation params class as the only constructor parameter. 
 
 If the corresponding app-facing class can't be instantiated by the app (e.g. `AdsManager`), the
-class should only have a single protected constructor. See `PlatformAdsManager`.
+class should only have a single protected constructor. See [PlatformAdsManager].
 
-If the corresponding app-facing class needs to be a `Widget` (e.g. `AdDisplayContainer`), this
+If the corresponding app-facing class needs to be a `Widget` (e.g. [AdDisplayContainer]), this
 should follow the same pattern as being instantiable by the app except it should contain a single
-method: `Widget build(BuildContext)`. See `PlatformAdDisplayContainer`.
+method: `Widget build(BuildContext)`. See [PlatformAdDisplayContainer].
 
 **Note**
 
@@ -160,10 +160,8 @@ Android: `pigeons/interactive_media_ads_android.dart`
 iOS: `pigeons/interactive_media_ads_ios.dart`
 
 4. Make changes that match the native SDK.
-
-[Android SDK][Android SDK]
-[Android SDK]
-iOS SDK: https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes
+  * [Android SDK]
+  * [iOS SDK]
 
 5. Run the code generator from the terminal.
 
@@ -220,5 +218,11 @@ implementation.
 4. Work can be started on the feature request or you can wait for feedback from a Flutter
 contributor.
 
+[IMA SDKs]: https://developers.google.com/interactive-media-ads
+[AdsLoader]: lib/src/ads_loader.dart
+[AdDisplayContainer]: lib/src/ad_display_container.dart.dart
+[PlatformAdsLoader]: lib/src/platform_interface/platform_ads_loader.dart
+[PlatformAdsManager]: lib/src/platform_interface/platform_ads_manager.dart
+[PlatformAdDisplayContainer]: lib/src/platform_interface/platform_ad_display_container.dart
 [Android SDK]: https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/package-summary
-[1]: https://developers.google.com/interactive-media-ads
+[iOS SDK]: https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes
