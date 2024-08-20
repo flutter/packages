@@ -49,6 +49,8 @@ DA:347,4
 DA:348,4
 DA:356,3
 DA:364,3
+DA:371,0
+DA:372,0
 DA:376,3
 DA:391,7
 DA:392,14
@@ -104,7 +106,7 @@ DA:563,19
 DA:573,21
 DA:574,21
 DA:579,20
-LF:105
+LF:107
 LH:100
 end_of_record
 SF:lib\src\builder.dart
