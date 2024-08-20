@@ -1,7 +1,11 @@
-## 0.1.2+1
+## 0.1.2+2
 
 * Removes dependency on org.jetbrains.kotlin:kotlin-bom.
 * Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 0.1.2+1
+
+* Updates README to clarify supported features and link to issues tracker.
 
 ## 0.1.2
 
