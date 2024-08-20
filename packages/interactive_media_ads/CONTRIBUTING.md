@@ -4,8 +4,8 @@
 
 The structure of this plugin is similar to a [federated plugin](https://docs.flutter.dev/packages-and-plugins/developing-packages#federated-plugins),
 except the code for each package (platform interface, platform implementations, and app-facing
-interface) are maintained in this single plugin. The sections below will provide overview how this
-plugin implements each portion.
+interface) are maintained in this single plugin. The sections below will provide an overview of how
+this plugin implements each portion.
 
 If you are familiar with [changing federated plugin](https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins)
 in the `flutter/packages` repo, the process is similar except that all changes are made in this
@@ -91,7 +91,7 @@ method: `Widget build(BuildContext)`. See [PlatformAdDisplayContainer].
 **Note**
 
 Every method should contain no more than one parameter. This allows the platform interface and
-platform implementation to add new features without requiring a breaking change.
+platform implementations to add new features without requiring a breaking change.
 
 #### Data Classes
 
@@ -114,8 +114,8 @@ process of review, so this plugin must use a git dependency in the pubspec.
 
 The wrappers for the SDK of each platform can be updated and modified by changing the pigeon files:
 
-Android: `pigeons/interactive_media_ads_android.dart`
-iOS: `pigeons/interactive_media_ads_ios.dart`
+* Android: `pigeons/interactive_media_ads_android.dart`
+* iOS: `pigeons/interactive_media_ads_ios.dart`
 
 The generated files are located:
 * Android:
@@ -127,12 +127,12 @@ The generated files are located:
 
 To update a wrapper for a platform, follow the steps:
 
-1. Ensure the project has been built at least once.
+##### 1. Ensure the project has been built at least once.
 
-Android: Run `flutter build apk --debug` in `example/`.
-iOS: Run `flutter build ios --simulator` in `example/`
+* Android: Run `flutter build apk --debug` in `example/`.
+* iOS: Run `flutter build ios --simulator` in `example/`
 
-2. Add the correct `pigeon` package to `dev_depdencies` in the `pubspec.yaml` and run `pub upgrade`.
+##### 2. Add the correct `pigeon` package to `dev_depdencies` in the `pubspec.yaml` and run `pub upgrade`.
 
 Android:
 
@@ -154,36 +154,37 @@ pigeon:
       path: packages/pigeon
 ```
 
-3. Remove the multiline comments in the pigeon file.
+##### 3. Remove the multiline comments in the pigeon file.
 
-Android: `pigeons/interactive_media_ads_android.dart`
-iOS: `pigeons/interactive_media_ads_ios.dart`
+* Android: `pigeons/interactive_media_ads_android.dart`
+* iOS: `pigeons/interactive_media_ads_ios.dart`
 
-4. Make changes that match the native SDK.
-  * [Android SDK]
-  * [iOS SDK]
+##### 4. Make changes that match the native SDK.
 
-5. Run the code generator from the terminal.
+* [Android SDK]
+* [iOS SDK]
 
-Android: `dart run pigeon --input pigeons/interactive_media_ads_android.dart`
-iOS: `dart run pigeon --input pigeons/interactive_media_ads_ios.dart`
+##### 5. Run the code generator from the terminal.
 
-6. Update the generated APIs in native code. 
+* Android: `dart run pigeon --input pigeons/interactive_media_ads_android.dart`
+* iOS: `dart run pigeon --input pigeons/interactive_media_ads_ios.dart`
+
+##### 6. Update the generated APIs in native code. 
 
 Running the `flutter build` step from step 1 again should provide build errors and indicate what
 needs to be done. Alternatively, it can be easier to update native code with the platform's specific
 IDE:
 
-Android: Open `android/` in a separate Android Studio project.
-iOS: Open `example/ios/` in Xcode.
+* Android: Open `android/` in a separate Android Studio project.
+* iOS: Open `example/ios/` in Xcode.
 
-7. Write API tests.
+##### 7. Write API tests.
 
 Assuming a non-static method or constructor was added to the native wrapper, a native test will need
 to be added.
 
-Android native tests location: `android/src/test/kotlin/dev/flutter/packages/interactive_media_ads/`
-iOS native tests location `example/ios/RunnerTests/`
+* Android native tests location: `android/src/test/kotlin/dev/flutter/packages/interactive_media_ads/`
+* iOS native tests location `example/ios/RunnerTests/`
 
 ### App-facing Interface
 
@@ -206,8 +207,8 @@ https://github.com/flutter/flutter/issues/new?assignees=&labels=&projects=&templ
 2. In that issue add the specific native classes/methods that this feature requires for each
 platform:
 
-Android SDK: https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/package-summary
-iOS SDK: https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes
+* [Android SDK]
+* [iOS SDK]
 
 Add a note if this feature only exist for a single platform. 
 
@@ -220,7 +221,7 @@ contributor.
 
 [IMA SDKs]: https://developers.google.com/interactive-media-ads
 [AdsLoader]: lib/src/ads_loader.dart
-[AdDisplayContainer]: lib/src/ad_display_container.dart.dart
+[AdDisplayContainer]: lib/src/ad_display_container.dart
 [PlatformAdsLoader]: lib/src/platform_interface/platform_ads_loader.dart
 [PlatformAdsManager]: lib/src/platform_interface/platform_ads_manager.dart
 [PlatformAdDisplayContainer]: lib/src/platform_interface/platform_ad_display_container.dart
