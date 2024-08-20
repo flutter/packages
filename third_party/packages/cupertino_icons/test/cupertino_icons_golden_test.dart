@@ -22,7 +22,7 @@ const int iconsPerImage = iconsPerRow * iconsPerCol;
 void main() async {
   // Do not run on web since this test uses dart:io.
   // The golden test runs on Linux only to avoid platform rendering differences.
-  if (kIsWeb || !Platform.isLinux || !isMainChannel) {
+  if (kIsWeb || !Platform.isLinux) {
     return;
   }
   final bool isMainChannel = !Platform.environment.containsKey('CHANNEL')
