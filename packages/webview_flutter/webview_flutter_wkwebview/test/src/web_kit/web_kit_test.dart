@@ -50,9 +50,9 @@ void main() {
 
       setUp(() {
         mockPlatformHostApi = MockTestWKWebsiteDataStoreHostApi();
-        TestWKWebsiteDataStoreHostApi.setup(mockPlatformHostApi);
+        TestWKWebsiteDataStoreHostApi.setUp(mockPlatformHostApi);
 
-        TestWKWebViewConfigurationHostApi.setup(
+        TestWKWebViewConfigurationHostApi.setUp(
           MockTestWKWebViewConfigurationHostApi(),
         );
         webViewConfiguration = WKWebViewConfiguration(
@@ -66,8 +66,8 @@ void main() {
       });
 
       tearDown(() {
-        TestWKWebsiteDataStoreHostApi.setup(null);
-        TestWKWebViewConfigurationHostApi.setup(null);
+        TestWKWebsiteDataStoreHostApi.setUp(null);
+        TestWKWebViewConfigurationHostApi.setUp(null);
       });
 
       test('WKWebViewConfigurationFlutterApi.create', () {
@@ -139,12 +139,12 @@ void main() {
 
       setUp(() {
         mockPlatformHostApi = MockTestWKHttpCookieStoreHostApi();
-        TestWKHttpCookieStoreHostApi.setup(mockPlatformHostApi);
+        TestWKHttpCookieStoreHostApi.setUp(mockPlatformHostApi);
 
-        TestWKWebViewConfigurationHostApi.setup(
+        TestWKWebViewConfigurationHostApi.setUp(
           MockTestWKWebViewConfigurationHostApi(),
         );
-        TestWKWebsiteDataStoreHostApi.setup(
+        TestWKWebsiteDataStoreHostApi.setUp(
           MockTestWKWebsiteDataStoreHostApi(),
         );
 
@@ -160,9 +160,9 @@ void main() {
       });
 
       tearDown(() {
-        TestWKHttpCookieStoreHostApi.setup(null);
-        TestWKWebsiteDataStoreHostApi.setup(null);
-        TestWKWebViewConfigurationHostApi.setup(null);
+        TestWKHttpCookieStoreHostApi.setUp(null);
+        TestWKWebsiteDataStoreHostApi.setUp(null);
+        TestWKWebViewConfigurationHostApi.setUp(null);
       });
 
       test('createFromWebsiteDataStore', () {
@@ -200,7 +200,7 @@ void main() {
 
       setUp(() async {
         mockPlatformHostApi = MockTestWKScriptMessageHandlerHostApi();
-        TestWKScriptMessageHandlerHostApi.setup(mockPlatformHostApi);
+        TestWKScriptMessageHandlerHostApi.setUp(mockPlatformHostApi);
 
         scriptMessageHandler = WKScriptMessageHandler(
           didReceiveScriptMessage: (_, __) {},
@@ -209,7 +209,7 @@ void main() {
       });
 
       tearDown(() {
-        TestWKScriptMessageHandlerHostApi.setup(null);
+        TestWKScriptMessageHandlerHostApi.setUp(null);
       });
 
       test('create', () async {
@@ -264,9 +264,9 @@ void main() {
 
       setUp(() {
         mockPlatformHostApi = MockTestWKPreferencesHostApi();
-        TestWKPreferencesHostApi.setup(mockPlatformHostApi);
+        TestWKPreferencesHostApi.setUp(mockPlatformHostApi);
 
-        TestWKWebViewConfigurationHostApi.setup(
+        TestWKWebViewConfigurationHostApi.setUp(
           MockTestWKWebViewConfigurationHostApi(),
         );
         webViewConfiguration = WKWebViewConfiguration(
@@ -280,8 +280,8 @@ void main() {
       });
 
       tearDown(() {
-        TestWKPreferencesHostApi.setup(null);
-        TestWKWebViewConfigurationHostApi.setup(null);
+        TestWKPreferencesHostApi.setUp(null);
+        TestWKWebViewConfigurationHostApi.setUp(null);
       });
 
       test('createFromWebViewConfiguration', () async {
@@ -309,9 +309,9 @@ void main() {
 
       setUp(() {
         mockPlatformHostApi = MockTestWKUserContentControllerHostApi();
-        TestWKUserContentControllerHostApi.setup(mockPlatformHostApi);
+        TestWKUserContentControllerHostApi.setUp(mockPlatformHostApi);
 
-        TestWKWebViewConfigurationHostApi.setup(
+        TestWKWebViewConfigurationHostApi.setUp(
           MockTestWKWebViewConfigurationHostApi(),
         );
         webViewConfiguration = WKWebViewConfiguration(
@@ -326,8 +326,8 @@ void main() {
       });
 
       tearDown(() {
-        TestWKUserContentControllerHostApi.setup(null);
-        TestWKWebViewConfigurationHostApi.setup(null);
+        TestWKUserContentControllerHostApi.setUp(null);
+        TestWKWebViewConfigurationHostApi.setUp(null);
       });
 
       test('createFromWebViewConfiguration', () async {
@@ -338,7 +338,7 @@ void main() {
       });
 
       test('addScriptMessageHandler', () async {
-        TestWKScriptMessageHandlerHostApi.setup(
+        TestWKScriptMessageHandlerHostApi.setUp(
           MockTestWKScriptMessageHandlerHostApi(),
         );
         final WKScriptMessageHandler handler = WKScriptMessageHandler(
@@ -397,7 +397,7 @@ void main() {
 
       setUp(() async {
         mockPlatformHostApi = MockTestWKWebViewConfigurationHostApi();
-        TestWKWebViewConfigurationHostApi.setup(mockPlatformHostApi);
+        TestWKWebViewConfigurationHostApi.setUp(mockPlatformHostApi);
 
         webViewConfiguration = WKWebViewConfiguration(
           instanceManager: instanceManager,
@@ -405,7 +405,7 @@ void main() {
       });
 
       tearDown(() {
-        TestWKWebViewConfigurationHostApi.setup(null);
+        TestWKWebViewConfigurationHostApi.setUp(null);
       });
 
       test('create', () async {
@@ -417,8 +417,8 @@ void main() {
       });
 
       test('createFromWebView', () async {
-        TestWKWebViewHostApi.setup(MockTestWKWebViewHostApi());
-        final WKWebView webView = WKWebView(
+        TestWKWebViewHostApi.setUp(MockTestWKWebViewHostApi());
+        final WKWebView webView = WKWebViewIOS(
           webViewConfiguration,
           instanceManager: instanceManager,
         );
@@ -479,13 +479,13 @@ void main() {
 
       setUp(() async {
         mockPlatformHostApi = MockTestWKNavigationDelegateHostApi();
-        TestWKNavigationDelegateHostApi.setup(mockPlatformHostApi);
+        TestWKNavigationDelegateHostApi.setUp(mockPlatformHostApi);
 
-        TestWKWebViewConfigurationHostApi.setup(
+        TestWKWebViewConfigurationHostApi.setUp(
           MockTestWKWebViewConfigurationHostApi(),
         );
-        TestWKWebViewHostApi.setup(MockTestWKWebViewHostApi());
-        webView = WKWebView(
+        TestWKWebViewHostApi.setUp(MockTestWKWebViewHostApi());
+        webView = WKWebViewIOS(
           WKWebViewConfiguration(instanceManager: instanceManager),
           instanceManager: instanceManager,
         );
@@ -496,9 +496,9 @@ void main() {
       });
 
       tearDown(() {
-        TestWKNavigationDelegateHostApi.setup(null);
-        TestWKWebViewConfigurationHostApi.setup(null);
-        TestWKWebViewHostApi.setup(null);
+        TestWKNavigationDelegateHostApi.setUp(null);
+        TestWKWebViewConfigurationHostApi.setUp(null);
+        TestWKWebViewHostApi.setUp(null);
       });
 
       test('create', () async {
@@ -785,15 +785,15 @@ void main() {
 
       setUp(() {
         mockPlatformHostApi = MockTestWKWebViewHostApi();
-        TestWKWebViewHostApi.setup(mockPlatformHostApi);
+        TestWKWebViewHostApi.setUp(mockPlatformHostApi);
 
-        TestWKWebViewConfigurationHostApi.setup(
+        TestWKWebViewConfigurationHostApi.setUp(
             MockTestWKWebViewConfigurationHostApi());
         webViewConfiguration = WKWebViewConfiguration(
           instanceManager: instanceManager,
         );
 
-        webView = WKWebView(
+        webView = WKWebViewIOS(
           webViewConfiguration,
           instanceManager: instanceManager,
         );
@@ -801,8 +801,8 @@ void main() {
       });
 
       tearDown(() {
-        TestWKWebViewHostApi.setup(null);
-        TestWKWebViewConfigurationHostApi.setup(null);
+        TestWKWebViewHostApi.setUp(null);
+        TestWKWebViewConfigurationHostApi.setUp(null);
       });
 
       test('create', () async {
@@ -815,7 +815,7 @@ void main() {
       });
 
       test('setUIDelegate', () async {
-        TestWKUIDelegateHostApi.setup(MockTestWKUIDelegateHostApi());
+        TestWKUIDelegateHostApi.setUp(MockTestWKUIDelegateHostApi());
         final WKUIDelegate uiDelegate = WKUIDelegate(
           instanceManager: instanceManager,
         );
@@ -826,11 +826,11 @@ void main() {
           instanceManager.getIdentifier(uiDelegate),
         ));
 
-        TestWKUIDelegateHostApi.setup(null);
+        TestWKUIDelegateHostApi.setUp(null);
       });
 
       test('setNavigationDelegate', () async {
-        TestWKNavigationDelegateHostApi.setup(
+        TestWKNavigationDelegateHostApi.setUp(
           MockTestWKNavigationDelegateHostApi(),
         );
         final WKNavigationDelegate navigationDelegate = WKNavigationDelegate(
@@ -843,7 +843,7 @@ void main() {
           instanceManager.getIdentifier(navigationDelegate),
         ));
 
-        TestWKNavigationDelegateHostApi.setup(null);
+        TestWKNavigationDelegateHostApi.setUp(null);
       });
 
       test('getUrl', () {
@@ -979,13 +979,13 @@ void main() {
 
       setUp(() async {
         mockPlatformHostApi = MockTestWKUIDelegateHostApi();
-        TestWKUIDelegateHostApi.setup(mockPlatformHostApi);
+        TestWKUIDelegateHostApi.setUp(mockPlatformHostApi);
 
         uiDelegate = WKUIDelegate(instanceManager: instanceManager);
       });
 
       tearDown(() {
-        TestWKUIDelegateHostApi.setup(null);
+        TestWKUIDelegateHostApi.setUp(null);
       });
 
       test('create', () async {
@@ -1017,7 +1017,7 @@ void main() {
           },
         );
 
-        final WKWebView webView = WKWebView.detached(
+        final WKWebView webView = WKWebViewIOS.detached(
           instanceManager: instanceManager,
         );
         instanceManager.addHostCreatedInstance(webView, 2);
@@ -1090,7 +1090,7 @@ void main() {
           instanceManager: instanceManager,
         );
 
-        final WKWebView webView = WKWebView.detached(
+        final WKWebView webView = WKWebViewIOS.detached(
           instanceManager: instanceManager,
         );
         const int webViewIdentifier = 42;
