@@ -141,7 +141,6 @@ class _WebViewExampleState extends State<WebViewExample> {
 
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
@@ -190,6 +189,11 @@ Page resource error:
         },
       )
       ..loadRequest(Uri.parse('https://flutter.dev'));
+
+    // setBackgroundColor is not currently supported on macOS.
+    if (!Platform.isMacOS) {
+      _controller.setBackgroundColor(const Color(0x80000000));
+    }
 
     // #docregion platform_features
     if (controller.platform is AndroidWebViewController) {
