@@ -134,6 +134,7 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
    * Retrieves the {@link Camera2CameraControl} instance associated with the specified {@code
    * identifier}.
    */
+  @OptIn(markerClass = androidx.camera.camera2.interop.ExperimentalCamera2Interop.class)
   private Camera2CameraControl getCamera2CameraControlInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }

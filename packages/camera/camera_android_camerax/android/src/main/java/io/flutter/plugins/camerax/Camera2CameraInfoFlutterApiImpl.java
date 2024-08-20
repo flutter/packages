@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.annotation.Nullable;
 import androidx.camera.camera2.interop.Camera2CameraInfo;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -19,6 +20,7 @@ public class Camera2CameraInfoFlutterApiImpl extends Camera2CameraInfoFlutterApi
     this.instanceManager = instanceManager;
   }
 
+  @OptIn(markerClass = androidx.camera.camera2.interop.ExperimentalCamera2Interop.class)
   void create(@NonNull Camera2CameraInfo camera2CameraInfo, @Nullable Reply<Void> reply) {
     if (!instanceManager.containsInstance(camera2CameraInfo)) {
       create(instanceManager.addHostCreatedInstance(camera2CameraInfo), reply);

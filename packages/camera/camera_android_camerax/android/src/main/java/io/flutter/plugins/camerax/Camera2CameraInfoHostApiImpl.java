@@ -115,6 +115,7 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
     return proxy.getSensorOrientation(getCamera2CameraInfoInstance(identifier));
   }
 
+  @OptIn(markerClass = androidx.camera.camera2.interop.ExperimentalCamera2Interop.class)
   private Camera2CameraInfo getCamera2CameraInfoInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }
