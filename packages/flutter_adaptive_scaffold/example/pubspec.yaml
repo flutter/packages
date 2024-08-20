@@ -12,7 +12,8 @@ dependencies:
     sdk: flutter
   flutter_adaptive_scaffold:
     path: ..
-  go_router: ^14.2.3
+  go_router:
+    path: ../../go_router
 
 dev_dependencies:
   build_runner: ^2.4.12
