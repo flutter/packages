@@ -1,5 +1,8 @@
 # Contributing to `interactive_media_ads`
 
+Please start by taking a look at the general guide to contributing to `flutter/packages` repo:
+https://github.com/flutter/packages/blob/main/CONTRIBUTING.md
+
 ## Package Structure
 
 The structure of this plugin is similar to a [federated plugin](https://docs.flutter.dev/packages-and-plugins/developing-packages#federated-plugins),
@@ -186,6 +189,12 @@ to be added.
 * Android native tests location: `android/src/test/kotlin/dev/flutter/packages/interactive_media_ads/`
 * iOS native tests location `example/ios/RunnerTests/`
 
+#### Testing
+
+Tests for the platform implementations use [mockito] to generate mock objects of the native Dart
+wrappers. To generate the mock objects in `test/`, run
+`dart run build_runner build --delete-conflicting-outputs`.
+
 ### App-facing Interface
 
 Code location: `lib/src/`
@@ -227,3 +236,4 @@ contributor.
 [PlatformAdDisplayContainer]: lib/src/platform_interface/platform_ad_display_container.dart
 [Android SDK]: https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/package-summary
 [iOS SDK]: https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes
+[mockito]: https://pub.dev/packages/mockito
