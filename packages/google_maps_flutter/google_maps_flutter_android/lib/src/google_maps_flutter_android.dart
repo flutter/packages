@@ -765,7 +765,13 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     // See the TODOs at the top of this file and on the 'json' field in
     // messages.dart.
     return PlatformTileOverlay(
-        json: tileOverlay.toJson() as Map<String, Object?>);
+      tileOverlayId: tileOverlay.tileOverlayId.value,
+      fadeIn: tileOverlay.fadeIn,
+      transparency: tileOverlay.transparency,
+      zIndex: tileOverlay.zIndex,
+      visible: tileOverlay.visible,
+      tileSize: tileOverlay.tileSize,
+    );
   }
 }
 
