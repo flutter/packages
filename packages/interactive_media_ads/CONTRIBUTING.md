@@ -162,6 +162,7 @@ iOS: `pigeons/interactive_media_ads_ios.dart`
 4. Make changes that match the native SDK.
 
 [Android SDK][Android SDK]
+[Android SDK]
 iOS SDK: https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes
 
 5. Run the code generator from the terminal.
