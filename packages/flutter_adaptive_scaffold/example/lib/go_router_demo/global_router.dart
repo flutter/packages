@@ -13,31 +13,47 @@ final GlobalKey<NavigatorState> rootNavigatorKey =
 /// Routes that are `fullScreenDialogs` should also set `_rootNavigatorKey` as
 /// the `parentNavigatorKey` to ensure that the dialog is displayed correctly.
 class GlobalRouter {
+  /// The authentication status of the user.
+  static bool authenticated = false;
+
   /// The router with the routes of pages that should be displayed.
   static final GoRouter router = GoRouter(
     navigatorKey: rootNavigatorKey,
+    debugLogDiagnostics: true,
     errorPageBuilder: (BuildContext context, GoRouterState state) {
       return const MaterialPage<void>(child: NavigationErrorPage());
     },
     redirect: (BuildContext context, GoRouterState state) async {
-      // Check if the route we want navigate to is a shared route, so we don't
-      // need to check auth status.
-      if (Routes.commonRoutes.any(
-        (GoRoute e) => state.fullPath?.contains(e.path) ?? false,
-      )) {
+      // Get the path the user is trying to navigate to.
+      final String? path = state.fullPath;
+
+      // If the route is part of the common routes, no auth check is required.
+      if (Routes.commonRoutes
+          .any((GoRoute e) => path?.contains(e.path) ?? false)) {
         return null;
       }
 
-      // TODO: Implement authentication status check
-      final bool authenticated = false;
+      final Iterable<GoRoute> unauthenticatedRoutes =
+          RouteBase.routesRecursively(Routes.unauthenticatedRoutes.routes)
+              .whereType<GoRoute>();
+      final Iterable<GoRoute> authenticatedRoutes =
+          RouteBase.routesRecursively(Routes.authenticatedRoutes.routes)
+              .whereType<GoRoute>();
 
-      //TODO: check unauthenticated routes
-      // if (!authenticated && routes.unauthenticatedRoutes.any(state.fullPath)
-      // return null;
-      // else if(!authenticated)
-      // return LoginPage.path;
-      // else if(authenticated && state.fullPath == LoginPage.path)
-      // return HomePage.path;
+      // If the user is not authenticated
+      if (!authenticated) {
+        if (unauthenticatedRoutes.any((GoRoute route) => route.path == path)) {
+          return null; // Allow navigation to unauthenticated routes
+        } else {
+          return LoginPage.path; // Redirect to login page
+        }
+      } else if (authenticated) {
+        if (authenticatedRoutes.any((GoRoute route) => route.path == path)) {
+          return null; // Allow navigation to authenticated routes
+        } else {
+          return HomePage.path; // Redirect to home page
+        }
+      }
 
       // In any other case the redirect can be safely ignored and handled as is.
       return null;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:go_router/go_router.dart';
 
@@ -35,7 +34,7 @@ class ScaffoldShell extends StatelessWidget {
             CounterPage.name => const NavigationDestination(
                 icon: Icon(Icons.add), label: 'Counter'),
             MorePage.name => const NavigationDestination(
-                icon: Icon(Icons.more), label: 'More'),
+                icon: Icon(Icons.account_circle), label: 'More'),
             _ => throw UnimplementedError(
                 'The route ${e.defaultRoute?.name} is not implemented.',
               ),

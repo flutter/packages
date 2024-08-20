@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../global_router.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -8,9 +11,20 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: Text('Login Page'),
+        child: Column(
+          children: <Widget>[
+            const Text('Login Page'),
+            TextButton(
+              onPressed: () => <void>{
+                GlobalRouter.authenticated = true,
+                context.go('/'),
+              },
+              child: const Text('Login'),
+            ),
+          ],
+        ),
       ),
     );
   }
