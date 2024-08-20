@@ -1,6 +1,6 @@
 # Contributing to `interactive_media_ads`
 
-Please start by taking a look at the general guide to contributing to `flutter/packages` repo:
+Please start by taking a look at the general guide to contributing to the `flutter/packages` repo:
 https://github.com/flutter/packages/blob/main/CONTRIBUTING.md
 
 ## Package Structure
@@ -178,7 +178,7 @@ Running the `flutter build` step from step 1 again should provide build errors a
 needs to be done. Alternatively, it can be easier to update native code with the platform's specific
 IDE:
 
-* Android: Open `android/` in a separate Android Studio project.
+* Android: Open `example/android/` in a separate Android Studio project.
 * iOS: Open `example/ios/` in Xcode.
 
 ##### 7. Write API tests
@@ -189,7 +189,7 @@ to be added.
 * Android native tests location: `android/src/test/kotlin/dev/flutter/packages/interactive_media_ads/`
 * iOS native tests location `example/ios/RunnerTests/`
 
-#### Testing
+#### Dart Unit Testing
 
 Tests for the platform implementations use [mockito] to generate mock objects of the native Dart
 wrappers. To generate the mock objects in `test/`, run
@@ -210,11 +210,11 @@ interface:
 
 ## Recommended Process for Adding a New Feature
 
-### 1. Create a new feature request issue in the `flutter/flutter` repo. See
-https://github.com/flutter/flutter/issues/new?assignees=&labels=&projects=&template=3_feature_request.yml
+### 1. Create a new feature request issue in the `flutter/flutter` repo.
 
-### 2. In that issue add the specific native classes/methods that this feature requires for each
-platform:
+See https://github.com/flutter/flutter/issues/new?assignees=&labels=&projects=&template=3_feature_request.yml
+
+### 2. In that issue add the specific native classes/methods that this feature requires for each platform:
 
 * [Android SDK]
 * [iOS SDK]
@@ -222,11 +222,11 @@ platform:
 Add a note if this feature only exist for a single platform. 
 
 ### 3. Add a design where the feature can be added to the platform interface and app-facing interface.
+
 If this is only supported on a single platform, add where it can be added in the platform 
 implementation.
 
-### 4. Work can be started on the feature request or you can wait for feedback from a Flutter
-contributor.
+### 4. Work can be started on the feature request or you can wait for feedback from a Flutter contributor.
 
 [IMA SDKs]: https://developers.google.com/interactive-media-ads
 [AdsLoader]: lib/src/ads_loader.dart
