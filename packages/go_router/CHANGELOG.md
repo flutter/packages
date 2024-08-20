@@ -1,6 +1,7 @@
-## NEXT
+## 14.2.4
 
-* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+- Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+- Fix GoRouter configuration in `upgrading.md`
 
 ## 14.2.3
 
