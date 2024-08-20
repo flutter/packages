@@ -969,10 +969,11 @@ String _webViewNull() {
   return 'null';
 }
 
-// JavaScript String evaluate to different string values on Android and iOS.
+// JavaScript String evaluates to different strings depending on the platform.
 // This utility method returns the string boolean value of the current platform.
 String _webViewString(String value) {
-  if (defaultTargetPlatform == TargetPlatform.iOS) {
+  if (defaultTargetPlatform == TargetPlatform.iOS ||
+      defaultTargetPlatform == TargetPlatform.macOS) {
     return value;
   }
   return '"$value"';
