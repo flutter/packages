@@ -351,7 +351,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
         break;
       case AVPlayerItemStatusReadyToPlay:
         [item addOutput:_videoOutput];
-        [self setupEventSinkIfReadyToPlay];
+        [self setupEventSinkIfReadyToPlayOrReportFailure];
         [self updatePlayingState];
         break;
     }
@@ -361,7 +361,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       // Due to an apparent bug, when the player item is ready, it still may not have determined
       // its presentation size or duration. When these properties are finally set, re-check if
       // all required properties and instantiate the event sink if it is not already set up.
-      [self setupEventSinkIfReadyToPlay];
+      [self setupEventSinkIfReadyToPlayOrReportFailure];
       [self updatePlayingState];
     }
   } else if (context == playbackLikelyToKeepUpContext) {
@@ -411,7 +411,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     }
   };
   NSError *underlyingError = error.userInfo[NSUnderlyingErrorKey];
-  // https://github.com/flutter/flutter/issues/56665
   add(error.localizedDescription);
   add(error.localizedFailureReason);
   add(underlyingError.localizedDescription);
@@ -419,7 +418,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   _eventSink([FlutterError errorWithCode:@"VideoError" message:message details:nil]);
 }
 
-- (void)setupEventSinkIfReadyToPlay {
+- (void)setupEventSinkIfReadyToPlayOrReportFailure {
   if (_eventSink && !_isInitialized) {
     AVPlayerItem *currentItem = self.player.currentItem;
     // if status is Failed this was probably called from onListenWithArguments, which means
@@ -624,7 +623,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // This line ensures the 'initialized' event is sent when the event
   // 'AVPlayerItemStatusReadyToPlay' fires before _eventSink is set (this function
   // onListenWithArguments is called)
-  [self setupEventSinkIfReadyToPlay];
+  [self setupEventSinkIfReadyToPlayOrReportFailure];
   return nil;
 }
 
