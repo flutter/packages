@@ -978,7 +978,8 @@ class Convert {
     }
   }
 
-  static String interpretTileOverlayOptions(Messages.PlatformTileOverlay tileOverlay, TileOverlaySink sink) {
+  static String interpretTileOverlayOptions(
+      Messages.PlatformTileOverlay tileOverlay, TileOverlaySink sink) {
     sink.setFadeIn(tileOverlay.getFadeIn());
     sink.setTransparency(tileOverlay.getTransparency().floatValue());
     sink.setZIndex(tileOverlay.getZIndex());

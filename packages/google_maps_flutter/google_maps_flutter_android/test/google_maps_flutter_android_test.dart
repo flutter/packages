@@ -557,6 +557,7 @@ void main() {
         expected.tileSize,
       ]);
     }
+
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.tileOverlayId.value);

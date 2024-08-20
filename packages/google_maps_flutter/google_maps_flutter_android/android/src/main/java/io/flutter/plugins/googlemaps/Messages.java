@@ -23,7 +23,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -41,8 +40,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -61,14 +59,15 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
 
   @NonNull
   protected static FlutterError createConnectionError(@NonNull String channelName) {
-    return new FlutterError("channel-error",  "Unable to establish connection on channel: " + channelName + ".", "");
+    return new FlutterError(
+        "channel-error", "Unable to establish connection on channel: " + channelName + ".", "");
   }
 
   @Target(METHOD)
@@ -104,7 +103,7 @@ public class Messages {
   /**
    * Pigeon representatation of a CameraPosition.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformCameraPosition {
     private @NonNull Double bearing;
@@ -164,10 +163,17 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformCameraPosition that = (PlatformCameraPosition) o;
-      return bearing.equals(that.bearing) && target.equals(that.target) && tilt.equals(that.tilt) && zoom.equals(that.zoom);
+      return bearing.equals(that.bearing)
+          && target.equals(that.target)
+          && tilt.equals(that.tilt)
+          && zoom.equals(that.zoom);
     }
 
     @Override
@@ -246,13 +252,13 @@ public class Messages {
   /**
    * Pigeon representation of a CameraUpdate.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformCameraUpdate {
     /**
-     * The update data, as JSON. This should only be set from
-     * CameraUpdate.toJson, and the native code must interpret it according to the
-     * internal implementation details of the CameraUpdate class.
+     * The update data, as JSON. This should only be set from CameraUpdate.toJson, and the native
+     * code must interpret it according to the internal implementation details of the CameraUpdate
+     * class.
      */
     private @NonNull Object json;
 
@@ -272,8 +278,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformCameraUpdate that = (PlatformCameraUpdate) o;
       return json.equals(that.json);
     }
@@ -318,7 +328,7 @@ public class Messages {
   /**
    * Pigeon equivalent of the Circle class.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformCircle {
     private @NonNull Boolean consumeTapEvents;
@@ -443,15 +453,36 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformCircle that = (PlatformCircle) o;
-      return consumeTapEvents.equals(that.consumeTapEvents) && fillColor.equals(that.fillColor) && strokeColor.equals(that.strokeColor) && visible.equals(that.visible) && strokeWidth.equals(that.strokeWidth) && zIndex.equals(that.zIndex) && center.equals(that.center) && radius.equals(that.radius) && circleId.equals(that.circleId);
+      return consumeTapEvents.equals(that.consumeTapEvents)
+          && fillColor.equals(that.fillColor)
+          && strokeColor.equals(that.strokeColor)
+          && visible.equals(that.visible)
+          && strokeWidth.equals(that.strokeWidth)
+          && zIndex.equals(that.zIndex)
+          && center.equals(that.center)
+          && radius.equals(that.radius)
+          && circleId.equals(that.circleId);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(consumeTapEvents, fillColor, strokeColor, visible, strokeWidth, zIndex, center, radius, circleId);
+      return Objects.hash(
+          consumeTapEvents,
+          fillColor,
+          strokeColor,
+          visible,
+          strokeWidth,
+          zIndex,
+          center,
+          radius,
+          circleId);
     }
 
     public static final class Builder {
@@ -563,13 +594,22 @@ public class Messages {
       Object consumeTapEvents = __pigeon_list.get(0);
       pigeonResult.setConsumeTapEvents((Boolean) consumeTapEvents);
       Object fillColor = __pigeon_list.get(1);
-      pigeonResult.setFillColor((fillColor == null) ? null : ((fillColor instanceof Integer) ? (Integer) fillColor : (Long) fillColor));
+      pigeonResult.setFillColor(
+          (fillColor == null)
+              ? null
+              : ((fillColor instanceof Integer) ? (Integer) fillColor : (Long) fillColor));
       Object strokeColor = __pigeon_list.get(2);
-      pigeonResult.setStrokeColor((strokeColor == null) ? null : ((strokeColor instanceof Integer) ? (Integer) strokeColor : (Long) strokeColor));
+      pigeonResult.setStrokeColor(
+          (strokeColor == null)
+              ? null
+              : ((strokeColor instanceof Integer) ? (Integer) strokeColor : (Long) strokeColor));
       Object visible = __pigeon_list.get(3);
       pigeonResult.setVisible((Boolean) visible);
       Object strokeWidth = __pigeon_list.get(4);
-      pigeonResult.setStrokeWidth((strokeWidth == null) ? null : ((strokeWidth instanceof Integer) ? (Integer) strokeWidth : (Long) strokeWidth));
+      pigeonResult.setStrokeWidth(
+          (strokeWidth == null)
+              ? null
+              : ((strokeWidth instanceof Integer) ? (Integer) strokeWidth : (Long) strokeWidth));
       Object zIndex = __pigeon_list.get(5);
       pigeonResult.setZIndex((Double) zIndex);
       Object center = __pigeon_list.get(6);
@@ -585,13 +625,12 @@ public class Messages {
   /**
    * Pigeon equivalent of the Heatmap class.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformHeatmap {
     /**
-     * The heatmap data, as JSON. This should only be set from
-     * Heatmap.toJson, and the native code must interpret it according to the
-     * internal implementation details of that method.
+     * The heatmap data, as JSON. This should only be set from Heatmap.toJson, and the native code
+     * must interpret it according to the internal implementation details of that method.
      */
     private @NonNull Map<String, Object> json;
 
@@ -611,8 +650,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformHeatmap that = (PlatformHeatmap) o;
       return json.equals(that.json);
     }
@@ -657,7 +700,7 @@ public class Messages {
   /**
    * Pigeon equivalent of the ClusterManager class.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformClusterManager {
     private @NonNull String identifier;
@@ -678,8 +721,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformClusterManager that = (PlatformClusterManager) o;
       return identifier.equals(that.identifier);
     }
@@ -724,7 +771,7 @@ public class Messages {
   /**
    * Pigeon equivalent of the Offset class.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformOffset {
     private @NonNull Double dx;
@@ -758,8 +805,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformOffset that = (PlatformOffset) o;
       return dx.equals(that.dx) && dy.equals(that.dy);
     }
@@ -816,7 +867,7 @@ public class Messages {
   /**
    * Pigeon equivalent of the InfoWindow class.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformInfoWindow {
     private @Nullable String title;
@@ -857,10 +908,16 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformInfoWindow that = (PlatformInfoWindow) o;
-      return Objects.equals(title, that.title) && Objects.equals(snippet, that.snippet) && anchor.equals(that.anchor);
+      return Objects.equals(title, that.title)
+          && Objects.equals(snippet, that.snippet)
+          && anchor.equals(that.anchor);
     }
 
     @Override
@@ -927,7 +984,7 @@ public class Messages {
   /**
    * Pigeon equivalent of the Marker class.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformMarker {
     private @NonNull Double alpha;
@@ -1102,15 +1159,44 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformMarker that = (PlatformMarker) o;
-      return alpha.equals(that.alpha) && anchor.equals(that.anchor) && consumeTapEvents.equals(that.consumeTapEvents) && draggable.equals(that.draggable) && flat.equals(that.flat) && icon.equals(that.icon) && infoWindow.equals(that.infoWindow) && position.equals(that.position) && rotation.equals(that.rotation) && visible.equals(that.visible) && zIndex.equals(that.zIndex) && markerId.equals(that.markerId) && Objects.equals(clusterManagerId, that.clusterManagerId);
+      return alpha.equals(that.alpha)
+          && anchor.equals(that.anchor)
+          && consumeTapEvents.equals(that.consumeTapEvents)
+          && draggable.equals(that.draggable)
+          && flat.equals(that.flat)
+          && icon.equals(that.icon)
+          && infoWindow.equals(that.infoWindow)
+          && position.equals(that.position)
+          && rotation.equals(that.rotation)
+          && visible.equals(that.visible)
+          && zIndex.equals(that.zIndex)
+          && markerId.equals(that.markerId)
+          && Objects.equals(clusterManagerId, that.clusterManagerId);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(alpha, anchor, consumeTapEvents, draggable, flat, icon, infoWindow, position, rotation, visible, zIndex, markerId, clusterManagerId);
+      return Objects.hash(
+          alpha,
+          anchor,
+          consumeTapEvents,
+          draggable,
+          flat,
+          icon,
+          infoWindow,
+          position,
+          rotation,
+          visible,
+          zIndex,
+          markerId,
+          clusterManagerId);
     }
 
     public static final class Builder {
@@ -1292,13 +1378,12 @@ public class Messages {
   /**
    * Pigeon equivalent of the Polygon class.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPolygon {
     /**
-     * The polygon data, as JSON. This should only be set from
-     * Polygon.toJson, and the native code must interpret it according to the
-     * internal implementation details of that method.
+     * The polygon data, as JSON. This should only be set from Polygon.toJson, and the native code
+     * must interpret it according to the internal implementation details of that method.
      */
     private @NonNull Map<String, Object> json;
 
@@ -1318,8 +1403,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformPolygon that = (PlatformPolygon) o;
       return json.equals(that.json);
     }
@@ -1364,13 +1453,12 @@ public class Messages {
   /**
    * Pigeon equivalent of the Polyline class.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPolyline {
     /**
-     * The polyline data, as JSON. This should only be set from
-     * Polyline.toJson, and the native code must interpret it according to the
-     * internal implementation details of that method.
+     * The polyline data, as JSON. This should only be set from Polyline.toJson, and the native code
+     * must interpret it according to the internal implementation details of that method.
      */
     private @NonNull Map<String, Object> json;
 
@@ -1390,8 +1478,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformPolyline that = (PlatformPolyline) o;
       return json.equals(that.json);
     }
@@ -1436,7 +1528,7 @@ public class Messages {
   /**
    * Pigeon equivalent of the Tile class.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformTile {
     private @NonNull Long width;
@@ -1480,10 +1572,16 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformTile that = (PlatformTile) o;
-      return width.equals(that.width) && height.equals(that.height) && Arrays.equals(data, that.data);
+      return width.equals(that.width)
+          && height.equals(that.height)
+          && Arrays.equals(data, that.data);
     }
 
     @Override
@@ -1540,9 +1638,13 @@ public class Messages {
     static @NonNull PlatformTile fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformTile pigeonResult = new PlatformTile();
       Object width = __pigeon_list.get(0);
-      pigeonResult.setWidth((width == null) ? null : ((width instanceof Integer) ? (Integer) width : (Long) width));
+      pigeonResult.setWidth(
+          (width == null) ? null : ((width instanceof Integer) ? (Integer) width : (Long) width));
       Object height = __pigeon_list.get(1);
-      pigeonResult.setHeight((height == null) ? null : ((height instanceof Integer) ? (Integer) height : (Long) height));
+      pigeonResult.setHeight(
+          (height == null)
+              ? null
+              : ((height instanceof Integer) ? (Integer) height : (Long) height));
       Object data = __pigeon_list.get(2);
       pigeonResult.setData((byte[]) data);
       return pigeonResult;
@@ -1552,7 +1654,7 @@ public class Messages {
   /**
    * Pigeon equivalent of the TileOverlay class.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformTileOverlay {
     private @NonNull String tileOverlayId;
@@ -1638,10 +1740,19 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformTileOverlay that = (PlatformTileOverlay) o;
-      return tileOverlayId.equals(that.tileOverlayId) && fadeIn.equals(that.fadeIn) && transparency.equals(that.transparency) && zIndex.equals(that.zIndex) && visible.equals(that.visible) && tileSize.equals(that.tileSize);
+      return tileOverlayId.equals(that.tileOverlayId)
+          && fadeIn.equals(that.fadeIn)
+          && transparency.equals(that.transparency)
+          && zIndex.equals(that.zIndex)
+          && visible.equals(that.visible)
+          && tileSize.equals(that.tileSize);
     }
 
     @Override
@@ -1732,11 +1843,17 @@ public class Messages {
       Object transparency = __pigeon_list.get(2);
       pigeonResult.setTransparency((Double) transparency);
       Object zIndex = __pigeon_list.get(3);
-      pigeonResult.setZIndex((zIndex == null) ? null : ((zIndex instanceof Integer) ? (Integer) zIndex : (Long) zIndex));
+      pigeonResult.setZIndex(
+          (zIndex == null)
+              ? null
+              : ((zIndex instanceof Integer) ? (Integer) zIndex : (Long) zIndex));
       Object visible = __pigeon_list.get(4);
       pigeonResult.setVisible((Boolean) visible);
       Object tileSize = __pigeon_list.get(5);
-      pigeonResult.setTileSize((tileSize == null) ? null : ((tileSize instanceof Integer) ? (Integer) tileSize : (Long) tileSize));
+      pigeonResult.setTileSize(
+          (tileSize == null)
+              ? null
+              : ((tileSize instanceof Integer) ? (Integer) tileSize : (Long) tileSize));
       return pigeonResult;
     }
   }
@@ -1744,7 +1861,7 @@ public class Messages {
   /**
    * Pigeon equivalent of Flutter's EdgeInsets.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformEdgeInsets {
     private @NonNull Double top;
@@ -1804,10 +1921,17 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformEdgeInsets that = (PlatformEdgeInsets) o;
-      return top.equals(that.top) && bottom.equals(that.bottom) && left.equals(that.left) && right.equals(that.right);
+      return top.equals(that.top)
+          && bottom.equals(that.bottom)
+          && left.equals(that.left)
+          && right.equals(that.right);
     }
 
     @Override
@@ -1886,7 +2010,7 @@ public class Messages {
   /**
    * Pigeon equivalent of LatLng.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformLatLng {
     private @NonNull Double latitude;
@@ -1920,8 +2044,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformLatLng that = (PlatformLatLng) o;
       return latitude.equals(that.latitude) && longitude.equals(that.longitude);
     }
@@ -1978,7 +2106,7 @@ public class Messages {
   /**
    * Pigeon equivalent of LatLngBounds.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformLatLngBounds {
     private @NonNull PlatformLatLng northeast;
@@ -2012,8 +2140,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformLatLngBounds that = (PlatformLatLngBounds) o;
       return northeast.equals(that.northeast) && southwest.equals(that.southwest);
     }
@@ -2070,7 +2202,7 @@ public class Messages {
   /**
    * Pigeon equivalent of Cluster.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformCluster {
     private @NonNull String clusterManagerId;
@@ -2130,10 +2262,17 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformCluster that = (PlatformCluster) o;
-      return clusterManagerId.equals(that.clusterManagerId) && position.equals(that.position) && bounds.equals(that.bounds) && markerIds.equals(that.markerIds);
+      return clusterManagerId.equals(that.clusterManagerId)
+          && position.equals(that.position)
+          && bounds.equals(that.bounds)
+          && markerIds.equals(that.markerIds);
     }
 
     @Override
@@ -2212,10 +2351,10 @@ public class Messages {
   /**
    * Pigeon equivalent of CameraTargetBounds.
    *
-   * As with the Dart version, it exists to distinguish between not setting a
-   * a target, and having an explicitly unbounded target (null [bounds]).
+   * <p>As with the Dart version, it exists to distinguish between not setting a a target, and
+   * having an explicitly unbounded target (null [bounds]).
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformCameraTargetBounds {
     private @Nullable PlatformLatLngBounds bounds;
@@ -2230,8 +2369,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformCameraTargetBounds that = (PlatformCameraTargetBounds) o;
       return Objects.equals(bounds, that.bounds);
     }
@@ -2276,7 +2419,7 @@ public class Messages {
   /**
    * Information passed to the platform view creation.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformMapViewCreationParams {
     private @NonNull PlatformCameraPosition initialCameraPosition;
@@ -2401,15 +2544,36 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformMapViewCreationParams that = (PlatformMapViewCreationParams) o;
-      return initialCameraPosition.equals(that.initialCameraPosition) && mapConfiguration.equals(that.mapConfiguration) && initialCircles.equals(that.initialCircles) && initialMarkers.equals(that.initialMarkers) && initialPolygons.equals(that.initialPolygons) && initialPolylines.equals(that.initialPolylines) && initialHeatmaps.equals(that.initialHeatmaps) && initialTileOverlays.equals(that.initialTileOverlays) && initialClusterManagers.equals(that.initialClusterManagers);
+      return initialCameraPosition.equals(that.initialCameraPosition)
+          && mapConfiguration.equals(that.mapConfiguration)
+          && initialCircles.equals(that.initialCircles)
+          && initialMarkers.equals(that.initialMarkers)
+          && initialPolygons.equals(that.initialPolygons)
+          && initialPolylines.equals(that.initialPolylines)
+          && initialHeatmaps.equals(that.initialHeatmaps)
+          && initialTileOverlays.equals(that.initialTileOverlays)
+          && initialClusterManagers.equals(that.initialClusterManagers);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(initialCameraPosition, mapConfiguration, initialCircles, initialMarkers, initialPolygons, initialPolylines, initialHeatmaps, initialTileOverlays, initialClusterManagers);
+      return Objects.hash(
+          initialCameraPosition,
+          mapConfiguration,
+          initialCircles,
+          initialMarkers,
+          initialPolygons,
+          initialPolylines,
+          initialHeatmaps,
+          initialTileOverlays,
+          initialClusterManagers);
     }
 
     public static final class Builder {
@@ -2481,7 +2645,8 @@ public class Messages {
       private @Nullable List<PlatformClusterManager> initialClusterManagers;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setInitialClusterManagers(@NonNull List<PlatformClusterManager> setterArg) {
+      public @NonNull Builder setInitialClusterManagers(
+          @NonNull List<PlatformClusterManager> setterArg) {
         this.initialClusterManagers = setterArg;
         return this;
       }
@@ -2516,7 +2681,8 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PlatformMapViewCreationParams fromList(@NonNull ArrayList<Object> __pigeon_list) {
+    static @NonNull PlatformMapViewCreationParams fromList(
+        @NonNull ArrayList<Object> __pigeon_list) {
       PlatformMapViewCreationParams pigeonResult = new PlatformMapViewCreationParams();
       Object initialCameraPosition = __pigeon_list.get(0);
       pigeonResult.setInitialCameraPosition((PlatformCameraPosition) initialCameraPosition);
@@ -2543,7 +2709,7 @@ public class Messages {
   /**
    * Pigeon equivalent of MapConfiguration.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformMapConfiguration {
     private @Nullable Boolean compassEnabled;
@@ -2748,15 +2914,58 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformMapConfiguration that = (PlatformMapConfiguration) o;
-      return Objects.equals(compassEnabled, that.compassEnabled) && Objects.equals(cameraTargetBounds, that.cameraTargetBounds) && Objects.equals(mapType, that.mapType) && Objects.equals(minMaxZoomPreference, that.minMaxZoomPreference) && Objects.equals(mapToolbarEnabled, that.mapToolbarEnabled) && Objects.equals(rotateGesturesEnabled, that.rotateGesturesEnabled) && Objects.equals(scrollGesturesEnabled, that.scrollGesturesEnabled) && Objects.equals(tiltGesturesEnabled, that.tiltGesturesEnabled) && Objects.equals(trackCameraPosition, that.trackCameraPosition) && Objects.equals(zoomControlsEnabled, that.zoomControlsEnabled) && Objects.equals(zoomGesturesEnabled, that.zoomGesturesEnabled) && Objects.equals(myLocationEnabled, that.myLocationEnabled) && Objects.equals(myLocationButtonEnabled, that.myLocationButtonEnabled) && Objects.equals(padding, that.padding) && Objects.equals(indoorViewEnabled, that.indoorViewEnabled) && Objects.equals(trafficEnabled, that.trafficEnabled) && Objects.equals(buildingsEnabled, that.buildingsEnabled) && Objects.equals(liteModeEnabled, that.liteModeEnabled) && Objects.equals(cloudMapId, that.cloudMapId) && Objects.equals(style, that.style);
+      return Objects.equals(compassEnabled, that.compassEnabled)
+          && Objects.equals(cameraTargetBounds, that.cameraTargetBounds)
+          && Objects.equals(mapType, that.mapType)
+          && Objects.equals(minMaxZoomPreference, that.minMaxZoomPreference)
+          && Objects.equals(mapToolbarEnabled, that.mapToolbarEnabled)
+          && Objects.equals(rotateGesturesEnabled, that.rotateGesturesEnabled)
+          && Objects.equals(scrollGesturesEnabled, that.scrollGesturesEnabled)
+          && Objects.equals(tiltGesturesEnabled, that.tiltGesturesEnabled)
+          && Objects.equals(trackCameraPosition, that.trackCameraPosition)
+          && Objects.equals(zoomControlsEnabled, that.zoomControlsEnabled)
+          && Objects.equals(zoomGesturesEnabled, that.zoomGesturesEnabled)
+          && Objects.equals(myLocationEnabled, that.myLocationEnabled)
+          && Objects.equals(myLocationButtonEnabled, that.myLocationButtonEnabled)
+          && Objects.equals(padding, that.padding)
+          && Objects.equals(indoorViewEnabled, that.indoorViewEnabled)
+          && Objects.equals(trafficEnabled, that.trafficEnabled)
+          && Objects.equals(buildingsEnabled, that.buildingsEnabled)
+          && Objects.equals(liteModeEnabled, that.liteModeEnabled)
+          && Objects.equals(cloudMapId, that.cloudMapId)
+          && Objects.equals(style, that.style);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(compassEnabled, cameraTargetBounds, mapType, minMaxZoomPreference, mapToolbarEnabled, rotateGesturesEnabled, scrollGesturesEnabled, tiltGesturesEnabled, trackCameraPosition, zoomControlsEnabled, zoomGesturesEnabled, myLocationEnabled, myLocationButtonEnabled, padding, indoorViewEnabled, trafficEnabled, buildingsEnabled, liteModeEnabled, cloudMapId, style);
+      return Objects.hash(
+          compassEnabled,
+          cameraTargetBounds,
+          mapType,
+          minMaxZoomPreference,
+          mapToolbarEnabled,
+          rotateGesturesEnabled,
+          scrollGesturesEnabled,
+          tiltGesturesEnabled,
+          trackCameraPosition,
+          zoomControlsEnabled,
+          zoomGesturesEnabled,
+          myLocationEnabled,
+          myLocationButtonEnabled,
+          padding,
+          indoorViewEnabled,
+          trafficEnabled,
+          buildingsEnabled,
+          liteModeEnabled,
+          cloudMapId,
+          style);
     }
 
     public static final class Builder {
@@ -2772,7 +2981,8 @@ public class Messages {
       private @Nullable PlatformCameraTargetBounds cameraTargetBounds;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setCameraTargetBounds(@Nullable PlatformCameraTargetBounds setterArg) {
+      public @NonNull Builder setCameraTargetBounds(
+          @Nullable PlatformCameraTargetBounds setterArg) {
         this.cameraTargetBounds = setterArg;
         return this;
       }
@@ -3022,7 +3232,7 @@ public class Messages {
   /**
    * Pigeon representation of an x,y coordinate.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPoint {
     private @NonNull Long x;
@@ -3056,8 +3266,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformPoint that = (PlatformPoint) o;
       return x.equals(that.x) && y.equals(that.y);
     }
@@ -3114,7 +3328,7 @@ public class Messages {
   /**
    * Pigeon equivalent of native TileOverlay properties.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformTileLayer {
     private @NonNull Boolean visible;
@@ -3174,10 +3388,17 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformTileLayer that = (PlatformTileLayer) o;
-      return visible.equals(that.visible) && fadeIn.equals(that.fadeIn) && transparency.equals(that.transparency) && zIndex.equals(that.zIndex);
+      return visible.equals(that.visible)
+          && fadeIn.equals(that.fadeIn)
+          && transparency.equals(that.transparency)
+          && zIndex.equals(that.zIndex);
     }
 
     @Override
@@ -3256,7 +3477,7 @@ public class Messages {
   /**
    * Possible outcomes of launching a URL.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformZoomRange {
     private @Nullable Double min;
@@ -3281,8 +3502,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformZoomRange that = (PlatformZoomRange) o;
       return Objects.equals(min, that.min) && Objects.equals(max, that.max);
     }
@@ -3388,14 +3613,16 @@ public class Messages {
           return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 150:
           return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 151: {
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformMapType.values()[(int) value];
-        }
-        case (byte) 152: {
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformRendererType.values()[(int) value];
-        }
+        case (byte) 151:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformMapType.values()[(int) value];
+          }
+        case (byte) 152:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformRendererType.values()[(int) value];
+          }
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -3481,7 +3708,6 @@ public class Messages {
     }
   }
 
-
   /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
     /** Success case callback method for handling returns. */
@@ -3509,9 +3735,9 @@ public class Messages {
   /**
    * Interface for non-test interactions with the native SDK.
    *
-   * For test-only state queries, see [MapsInspectorApi].
+   * <p>For test-only state queries, see [MapsInspectorApi].
    *
-   * Generated interface from Pigeon that represents a handler of messages from Flutter.
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
    */
   public interface MapsApi {
     /** Returns once the map instance is available. */
@@ -3519,70 +3745,82 @@ public class Messages {
     /**
      * Updates the map's configuration options.
      *
-     * Only non-null configuration values will result in updates; options with
-     * null values will remain unchanged.
+     * <p>Only non-null configuration values will result in updates; options with null values will
+     * remain unchanged.
      */
     void updateMapConfiguration(@NonNull PlatformMapConfiguration configuration);
     /** Updates the set of circles on the map. */
-    void updateCircles(@NonNull List<PlatformCircle> toAdd, @NonNull List<PlatformCircle> toChange, @NonNull List<String> idsToRemove);
+    void updateCircles(
+        @NonNull List<PlatformCircle> toAdd,
+        @NonNull List<PlatformCircle> toChange,
+        @NonNull List<String> idsToRemove);
     /** Updates the set of heatmaps on the map. */
-    void updateHeatmaps(@NonNull List<PlatformHeatmap> toAdd, @NonNull List<PlatformHeatmap> toChange, @NonNull List<String> idsToRemove);
+    void updateHeatmaps(
+        @NonNull List<PlatformHeatmap> toAdd,
+        @NonNull List<PlatformHeatmap> toChange,
+        @NonNull List<String> idsToRemove);
     /** Updates the set of custer managers for clusters on the map. */
-    void updateClusterManagers(@NonNull List<PlatformClusterManager> toAdd, @NonNull List<String> idsToRemove);
+    void updateClusterManagers(
+        @NonNull List<PlatformClusterManager> toAdd, @NonNull List<String> idsToRemove);
     /** Updates the set of markers on the map. */
-    void updateMarkers(@NonNull List<PlatformMarker> toAdd, @NonNull List<PlatformMarker> toChange, @NonNull List<String> idsToRemove);
+    void updateMarkers(
+        @NonNull List<PlatformMarker> toAdd,
+        @NonNull List<PlatformMarker> toChange,
+        @NonNull List<String> idsToRemove);
     /** Updates the set of polygonss on the map. */
-    void updatePolygons(@NonNull List<PlatformPolygon> toAdd, @NonNull List<PlatformPolygon> toChange, @NonNull List<String> idsToRemove);
+    void updatePolygons(
+        @NonNull List<PlatformPolygon> toAdd,
+        @NonNull List<PlatformPolygon> toChange,
+        @NonNull List<String> idsToRemove);
     /** Updates the set of polylines on the map. */
-    void updatePolylines(@NonNull List<PlatformPolyline> toAdd, @NonNull List<PlatformPolyline> toChange, @NonNull List<String> idsToRemove);
+    void updatePolylines(
+        @NonNull List<PlatformPolyline> toAdd,
+        @NonNull List<PlatformPolyline> toChange,
+        @NonNull List<String> idsToRemove);
     /** Updates the set of tile overlays on the map. */
-    void updateTileOverlays(@NonNull List<PlatformTileOverlay> toAdd, @NonNull List<PlatformTileOverlay> toChange, @NonNull List<String> idsToRemove);
+    void updateTileOverlays(
+        @NonNull List<PlatformTileOverlay> toAdd,
+        @NonNull List<PlatformTileOverlay> toChange,
+        @NonNull List<String> idsToRemove);
     /** Gets the screen coordinate for the given map location. */
-    @NonNull 
+    @NonNull
     PlatformPoint getScreenCoordinate(@NonNull PlatformLatLng latLng);
     /** Gets the map location for the given screen coordinate. */
-    @NonNull 
+    @NonNull
     PlatformLatLng getLatLng(@NonNull PlatformPoint screenCoordinate);
     /** Gets the map region currently displayed on the map. */
-    @NonNull 
+    @NonNull
     PlatformLatLngBounds getVisibleRegion();
-    /**
-     * Moves the camera according to [cameraUpdate] immediately, with no
-     * animation.
-     */
+    /** Moves the camera according to [cameraUpdate] immediately, with no animation. */
     void moveCamera(@NonNull PlatformCameraUpdate cameraUpdate);
     /** Moves the camera according to [cameraUpdate], animating the update. */
     void animateCamera(@NonNull PlatformCameraUpdate cameraUpdate);
     /** Gets the current map zoom level. */
-    @NonNull 
+    @NonNull
     Double getZoomLevel();
     /** Show the info window for the marker with the given ID. */
     void showInfoWindow(@NonNull String markerId);
     /** Hide the info window for the marker with the given ID. */
     void hideInfoWindow(@NonNull String markerId);
-    /**
-     * Returns true if the marker with the given ID is currently displaying its
-     * info window.
-     */
-    @NonNull 
+    /** Returns true if the marker with the given ID is currently displaying its info window. */
+    @NonNull
     Boolean isInfoWindowShown(@NonNull String markerId);
     /**
-     * Sets the style to the given map style string, where an empty string
-     * indicates that the style should be cleared.
+     * Sets the style to the given map style string, where an empty string indicates that the style
+     * should be cleared.
      *
-     * Returns false if there was an error setting the style, such as an invalid
-     * style string.
+     * <p>Returns false if there was an error setting the style, such as an invalid style string.
      */
-    @NonNull 
+    @NonNull
     Boolean setStyle(@NonNull String style);
     /**
-     * Returns true if the last attempt to set a style, either via initial map
-     * style or setMapStyle, succeeded.
+     * Returns true if the last attempt to set a style, either via initial map style or setMapStyle,
+     * succeeded.
      *
-     * This allows checking asynchronously for initial style failures, as there
-     * is no way to return failures from map initialization.
+     * <p>This allows checking asynchronously for initial style failures, as there is no way to
+     * return failures from map initialization.
      */
-    @NonNull 
+    @NonNull
     Boolean didLastStyleSucceed();
     /** Clears the cache of tiles previously requseted from the tile provider. */
     void clearTileCache(@NonNull String tileOverlayId);
@@ -3593,16 +3831,23 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `MapsApi` to handle messages through the `binaryMessenger`. */
+    /** Sets up an instance of `MapsApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable MapsApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable MapsApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable MapsApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.waitForMap" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.waitForMap"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3629,7 +3874,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMapConfiguration" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMapConfiguration"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3639,8 +3887,7 @@ public class Messages {
                 try {
                   api.updateMapConfiguration(configurationArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3653,7 +3900,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateCircles" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateCircles"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3665,8 +3915,7 @@ public class Messages {
                 try {
                   api.updateCircles(toAddArg, toChangeArg, idsToRemoveArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3679,7 +3928,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateHeatmaps" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateHeatmaps"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3691,8 +3943,7 @@ public class Messages {
                 try {
                   api.updateHeatmaps(toAddArg, toChangeArg, idsToRemoveArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3705,7 +3956,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateClusterManagers" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateClusterManagers"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3716,8 +3970,7 @@ public class Messages {
                 try {
                   api.updateClusterManagers(toAddArg, idsToRemoveArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3730,7 +3983,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMarkers" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMarkers"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3742,8 +3998,7 @@ public class Messages {
                 try {
                   api.updateMarkers(toAddArg, toChangeArg, idsToRemoveArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3756,7 +4011,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolygons" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolygons"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3768,8 +4026,7 @@ public class Messages {
                 try {
                   api.updatePolygons(toAddArg, toChangeArg, idsToRemoveArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3782,7 +4039,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolylines" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolylines"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3794,8 +4054,7 @@ public class Messages {
                 try {
                   api.updatePolylines(toAddArg, toChangeArg, idsToRemoveArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3808,7 +4067,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateTileOverlays" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateTileOverlays"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3820,8 +4082,7 @@ public class Messages {
                 try {
                   api.updateTileOverlays(toAddArg, toChangeArg, idsToRemoveArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3834,7 +4095,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getScreenCoordinate" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getScreenCoordinate"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3844,8 +4108,7 @@ public class Messages {
                 try {
                   PlatformPoint output = api.getScreenCoordinate(latLngArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3858,7 +4121,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getLatLng" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getLatLng"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3868,8 +4134,7 @@ public class Messages {
                 try {
                   PlatformLatLng output = api.getLatLng(screenCoordinateArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3882,7 +4147,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getVisibleRegion" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getVisibleRegion"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3890,8 +4158,7 @@ public class Messages {
                 try {
                   PlatformLatLngBounds output = api.getVisibleRegion();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3904,7 +4171,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.moveCamera" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.moveCamera"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3914,8 +4184,7 @@ public class Messages {
                 try {
                   api.moveCamera(cameraUpdateArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3928,7 +4197,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.animateCamera" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.animateCamera"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3938,8 +4210,7 @@ public class Messages {
                 try {
                   api.animateCamera(cameraUpdateArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3952,7 +4223,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getZoomLevel" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getZoomLevel"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3960,8 +4234,7 @@ public class Messages {
                 try {
                   Double output = api.getZoomLevel();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3974,7 +4247,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.showInfoWindow" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.showInfoWindow"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3984,8 +4260,7 @@ public class Messages {
                 try {
                   api.showInfoWindow(markerIdArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -3998,7 +4273,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.hideInfoWindow" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.hideInfoWindow"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4008,8 +4286,7 @@ public class Messages {
                 try {
                   api.hideInfoWindow(markerIdArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4022,7 +4299,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.isInfoWindowShown" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.isInfoWindowShown"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4032,8 +4312,7 @@ public class Messages {
                 try {
                   Boolean output = api.isInfoWindowShown(markerIdArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4046,7 +4325,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.setStyle" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.setStyle"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4056,8 +4338,7 @@ public class Messages {
                 try {
                   Boolean output = api.setStyle(styleArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4070,7 +4351,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.didLastStyleSucceed" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.didLastStyleSucceed"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4078,8 +4362,7 @@ public class Messages {
                 try {
                   Boolean output = api.didLastStyleSucceed();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4092,7 +4375,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.clearTileCache" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.clearTileCache"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4102,8 +4388,7 @@ public class Messages {
                 try {
                   api.clearTileCache(tileOverlayIdArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4116,7 +4401,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.takeSnapshot" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.takeSnapshot"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4150,366 +4438,470 @@ public class Messages {
     public MapsCallbackApi(@NonNull BinaryMessenger argBinaryMessenger) {
       this(argBinaryMessenger, "");
     }
-    public MapsCallbackApi(@NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
+
+    public MapsCallbackApi(
+        @NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
       this.binaryMessenger = argBinaryMessenger;
       this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
     }
 
-    /** Public interface for sending reply. */ 
+    /** Public interface for sending reply. */
     /** The codec used by MapsCallbackApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
     /** Called when the map camera starts moving. */
     public void onCameraMoveStarted(@NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMoveStarted" + messageChannelSuffix;
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMoveStarted"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           null,
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when the map camera moves. */
-    public void onCameraMove(@NonNull PlatformCameraPosition cameraPositionArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMove" + messageChannelSuffix;
+    public void onCameraMove(
+        @NonNull PlatformCameraPosition cameraPositionArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMove"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(cameraPositionArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when the map camera stops moving. */
     public void onCameraIdle(@NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraIdle" + messageChannelSuffix;
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraIdle"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           null,
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when the map, not a specifc map object, is tapped. */
     public void onTap(@NonNull PlatformLatLng positionArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onTap" + messageChannelSuffix;
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onTap"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(positionArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when the map, not a specifc map object, is long pressed. */
     public void onLongPress(@NonNull PlatformLatLng positionArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onLongPress" + messageChannelSuffix;
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onLongPress"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(positionArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when a marker is tapped. */
     public void onMarkerTap(@NonNull String markerIdArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerTap" + messageChannelSuffix;
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerTap"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(markerIdArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when a marker drag starts. */
-    public void onMarkerDragStart(@NonNull String markerIdArg, @NonNull PlatformLatLng positionArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart" + messageChannelSuffix;
+    public void onMarkerDragStart(
+        @NonNull String markerIdArg,
+        @NonNull PlatformLatLng positionArg,
+        @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(markerIdArg, positionArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when a marker drag updates. */
-    public void onMarkerDrag(@NonNull String markerIdArg, @NonNull PlatformLatLng positionArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag" + messageChannelSuffix;
+    public void onMarkerDrag(
+        @NonNull String markerIdArg,
+        @NonNull PlatformLatLng positionArg,
+        @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(markerIdArg, positionArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when a marker drag ends. */
-    public void onMarkerDragEnd(@NonNull String markerIdArg, @NonNull PlatformLatLng positionArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd" + messageChannelSuffix;
+    public void onMarkerDragEnd(
+        @NonNull String markerIdArg,
+        @NonNull PlatformLatLng positionArg,
+        @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(markerIdArg, positionArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when a marker's info window is tapped. */
     public void onInfoWindowTap(@NonNull String markerIdArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onInfoWindowTap" + messageChannelSuffix;
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onInfoWindowTap"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(markerIdArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when a circle is tapped. */
     public void onCircleTap(@NonNull String circleIdArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCircleTap" + messageChannelSuffix;
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCircleTap"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(circleIdArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when a marker cluster is tapped. */
     public void onClusterTap(@NonNull PlatformCluster clusterArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onClusterTap" + messageChannelSuffix;
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onClusterTap"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(clusterArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when a polygon is tapped. */
     public void onPolygonTap(@NonNull String polygonIdArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolygonTap" + messageChannelSuffix;
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolygonTap"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(polygonIdArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when a polyline is tapped. */
     public void onPolylineTap(@NonNull String polylineIdArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolylineTap" + messageChannelSuffix;
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolylineTap"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(polylineIdArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called to get data for a map tile. */
-    public void getTileOverlayTile(@NonNull String tileOverlayIdArg, @NonNull PlatformPoint locationArg, @NonNull Long zoomArg, @NonNull Result<PlatformTile> result) {
-      final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile" + messageChannelSuffix;
+    public void getTileOverlayTile(
+        @NonNull String tileOverlayIdArg,
+        @NonNull PlatformPoint locationArg,
+        @NonNull Long zoomArg,
+        @NonNull Result<PlatformTile> result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(tileOverlayIdArg, locationArg, zoomArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else if (listReply.get(0) == null) {
-                result.error(new FlutterError("null-error", "Flutter api returned null value for non-null return value.", ""));
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
               } else {
                 @SuppressWarnings("ConstantConditions")
                 PlatformTile output = (PlatformTile) listReply.get(0);
                 result.success(output);
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
   }
   /**
    * Interface for global SDK initialization.
    *
-   * Generated interface from Pigeon that represents a handler of messages from Flutter.
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
    */
   public interface MapsInitializerApi {
     /**
      * Initializes the Google Maps SDK with the given renderer preference.
      *
-     * A null renderer preference will result in the default renderer.
+     * <p>A null renderer preference will result in the default renderer.
      *
-     * Calling this more than once in the lifetime of an application will result
-     * in an error.
+     * <p>Calling this more than once in the lifetime of an application will result in an error.
      */
-    void initializeWithPreferredRenderer(@Nullable PlatformRendererType type, @NonNull Result<PlatformRendererType> result);
+    void initializeWithPreferredRenderer(
+        @Nullable PlatformRendererType type, @NonNull Result<PlatformRendererType> result);
 
     /** The codec used by MapsInitializerApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `MapsInitializerApi` to handle messages through the `binaryMessenger`. */
+    /**
+     * Sets up an instance of `MapsInitializerApi` to handle messages through the `binaryMessenger`.
+     */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable MapsInitializerApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable MapsInitializerApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable MapsInitializerApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.initializeWithPreferredRenderer" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.initializeWithPreferredRenderer"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4538,11 +4930,10 @@ public class Messages {
     }
   }
   /**
-   * Dummy interface to force generation of the platform view creation params,
-   * which are not used in any Pigeon calls, only the platform view creation
-   * call made internally by Flutter.
+   * Dummy interface to force generation of the platform view creation params, which are not used in
+   * any Pigeon calls, only the platform view creation call made internally by Flutter.
    *
-   * Generated interface from Pigeon that represents a handler of messages from Flutter.
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
    */
   public interface MapsPlatformViewApi {
 
@@ -4552,16 +4943,26 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `MapsPlatformViewApi` to handle messages through the `binaryMessenger`. */
+    /**
+     * Sets up an instance of `MapsPlatformViewApi` to handle messages through the
+     * `binaryMessenger`.
+     */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable MapsPlatformViewApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable MapsPlatformViewApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable MapsPlatformViewApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsPlatformViewApi.createView" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsPlatformViewApi.createView"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4571,8 +4972,7 @@ public class Messages {
                 try {
                   api.createView(typeArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4587,66 +4987,75 @@ public class Messages {
   /**
    * Inspector API only intended for use in integration tests.
    *
-   * Generated interface from Pigeon that represents a handler of messages from Flutter.
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
    */
   public interface MapsInspectorApi {
 
-    @NonNull 
+    @NonNull
     Boolean areBuildingsEnabled();
 
-    @NonNull 
+    @NonNull
     Boolean areRotateGesturesEnabled();
 
-    @NonNull 
+    @NonNull
     Boolean areZoomControlsEnabled();
 
-    @NonNull 
+    @NonNull
     Boolean areScrollGesturesEnabled();
 
-    @NonNull 
+    @NonNull
     Boolean areTiltGesturesEnabled();
 
-    @NonNull 
+    @NonNull
     Boolean areZoomGesturesEnabled();
 
-    @NonNull 
+    @NonNull
     Boolean isCompassEnabled();
 
-    @Nullable 
+    @Nullable
     Boolean isLiteModeEnabled();
 
-    @NonNull 
+    @NonNull
     Boolean isMapToolbarEnabled();
 
-    @NonNull 
+    @NonNull
     Boolean isMyLocationButtonEnabled();
 
-    @NonNull 
+    @NonNull
     Boolean isTrafficEnabled();
 
-    @Nullable 
+    @Nullable
     PlatformTileLayer getTileOverlayInfo(@NonNull String tileOverlayId);
 
-    @NonNull 
+    @NonNull
     PlatformZoomRange getZoomRange();
 
-    @NonNull 
+    @NonNull
     List<PlatformCluster> getClusters(@NonNull String clusterManagerId);
 
     /** The codec used by MapsInspectorApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `MapsInspectorApi` to handle messages through the `binaryMessenger`. */
+    /**
+     * Sets up an instance of `MapsInspectorApi` to handle messages through the `binaryMessenger`.
+     */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable MapsInspectorApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable MapsInspectorApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable MapsInspectorApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areBuildingsEnabled" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areBuildingsEnabled"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4654,8 +5063,7 @@ public class Messages {
                 try {
                   Boolean output = api.areBuildingsEnabled();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4668,7 +5076,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areRotateGesturesEnabled" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areRotateGesturesEnabled"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4676,8 +5087,7 @@ public class Messages {
                 try {
                   Boolean output = api.areRotateGesturesEnabled();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4690,7 +5100,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areZoomControlsEnabled" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areZoomControlsEnabled"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4698,8 +5111,7 @@ public class Messages {
                 try {
                   Boolean output = api.areZoomControlsEnabled();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4712,7 +5124,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areScrollGesturesEnabled" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areScrollGesturesEnabled"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4720,8 +5135,7 @@ public class Messages {
                 try {
                   Boolean output = api.areScrollGesturesEnabled();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4734,7 +5148,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areTiltGesturesEnabled" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areTiltGesturesEnabled"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4742,8 +5159,7 @@ public class Messages {
                 try {
                   Boolean output = api.areTiltGesturesEnabled();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4756,7 +5172,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areZoomGesturesEnabled" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areZoomGesturesEnabled"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4764,8 +5183,7 @@ public class Messages {
                 try {
                   Boolean output = api.areZoomGesturesEnabled();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4778,7 +5196,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isCompassEnabled" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isCompassEnabled"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4786,8 +5207,7 @@ public class Messages {
                 try {
                   Boolean output = api.isCompassEnabled();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4800,7 +5220,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isLiteModeEnabled" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isLiteModeEnabled"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4808,8 +5231,7 @@ public class Messages {
                 try {
                   Boolean output = api.isLiteModeEnabled();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4822,7 +5244,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isMapToolbarEnabled" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isMapToolbarEnabled"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4830,8 +5255,7 @@ public class Messages {
                 try {
                   Boolean output = api.isMapToolbarEnabled();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4844,7 +5268,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isMyLocationButtonEnabled" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isMyLocationButtonEnabled"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4852,8 +5279,7 @@ public class Messages {
                 try {
                   Boolean output = api.isMyLocationButtonEnabled();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4866,7 +5292,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isTrafficEnabled" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isTrafficEnabled"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4874,8 +5303,7 @@ public class Messages {
                 try {
                   Boolean output = api.isTrafficEnabled();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4888,7 +5316,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getTileOverlayInfo" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getTileOverlayInfo"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4898,8 +5329,7 @@ public class Messages {
                 try {
                   PlatformTileLayer output = api.getTileOverlayInfo(tileOverlayIdArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4912,7 +5342,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getZoomRange" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getZoomRange"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4920,8 +5353,7 @@ public class Messages {
                 try {
                   PlatformZoomRange output = api.getZoomRange();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -4934,7 +5366,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getClusters" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getClusters"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -4944,8 +5379,7 @@ public class Messages {
                 try {
                   List<PlatformCluster> output = api.getClusters(clusterManagerIdArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
