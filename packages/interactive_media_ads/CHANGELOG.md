@@ -1,3 +1,7 @@
+## 0.1.2+1
+
+* Adds a contribution guide. See `CONTRIBUTING.md`.
+
 ## 0.1.2
 
 * Adds support for all `AdEventType`s and ad data. See `AdEvent.adData`.

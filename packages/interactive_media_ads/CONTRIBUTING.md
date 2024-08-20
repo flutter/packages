@@ -161,7 +161,7 @@ iOS: `pigeons/interactive_media_ads_ios.dart`
 
 4. Make changes that match the native SDK.
 
-Android SDK: https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/package-summary
+[Android SDK][Android SDK]
 iOS SDK: https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes
 
 5. Run the code generator from the terminal.
@@ -218,3 +218,6 @@ implementation.
 
 4. Work can be started on the feature request or you can wait for feedback from a Flutter
 contributor.
+
+[Android SDK]: https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/package-summary
+[1]: https://developers.google.com/interactive-media-ads
