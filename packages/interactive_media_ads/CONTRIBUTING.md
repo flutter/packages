@@ -201,10 +201,10 @@ interface:
 
 ## Recommended Process for Adding a New Feature
 
-1. Create a new feature request issue in the `flutter/flutter` repo. See
+### 1. Create a new feature request issue in the `flutter/flutter` repo. See
 https://github.com/flutter/flutter/issues/new?assignees=&labels=&projects=&template=3_feature_request.yml
 
-2. In that issue add the specific native classes/methods that this feature requires for each
+### 2. In that issue add the specific native classes/methods that this feature requires for each
 platform:
 
 * [Android SDK]
@@ -212,11 +212,11 @@ platform:
 
 Add a note if this feature only exist for a single platform. 
 
-3. Add a design where the feature can be added to the platform interface and app-facing interface.
+### 3. Add a design where the feature can be added to the platform interface and app-facing interface.
 If this is only supported on a single platform, add where it can be added in the platform 
 implementation.
 
-4. Work can be started on the feature request or you can wait for feedback from a Flutter
+### 4. Work can be started on the feature request or you can wait for feedback from a Flutter
 contributor.
 
 [IMA SDKs]: https://developers.google.com/interactive-media-ads
