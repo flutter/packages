@@ -20,6 +20,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       restorationScopeId: 'demo',
       routerConfig: GlobalRouter.router,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
+          primary: Colors.blue,
+        ),
+        useMaterial3: true,
+      ),
     );
   }
 }

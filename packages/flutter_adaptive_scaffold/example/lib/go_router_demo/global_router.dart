@@ -16,6 +16,14 @@ class GlobalRouter {
   /// The authentication status of the user.
   static bool authenticated = false;
 
+  static final Iterable<GoRoute> _unauthenticatedGoRoutes =
+      RouteBase.routesRecursively(Routes.unauthenticatedRoutes.routes)
+          .whereType<GoRoute>();
+
+  static final Iterable<GoRoute> _authenticatedGoRoutes =
+      RouteBase.routesRecursively(Routes.authenticatedRoutes.routes)
+          .whereType<GoRoute>();
+
   /// The router with the routes of pages that should be displayed.
   static final GoRouter router = GoRouter(
     navigatorKey: rootNavigatorKey,
@@ -25,30 +33,23 @@ class GlobalRouter {
     },
     redirect: (BuildContext context, GoRouterState state) async {
       // Get the path the user is trying to navigate to.
-      final String? path = state.fullPath;
+      final String? path = state.topRoute?.path ?? state.fullPath;
 
       // If the route is part of the common routes, no auth check is required.
-      if (Routes.commonRoutes
-          .any((GoRoute e) => path?.contains(e.path) ?? false)) {
+      if (Routes.commonRoutes.any((GoRoute route) => route.path == path)) {
         return null;
       }
 
-      final Iterable<GoRoute> unauthenticatedRoutes =
-          RouteBase.routesRecursively(Routes.unauthenticatedRoutes.routes)
-              .whereType<GoRoute>();
-      final Iterable<GoRoute> authenticatedRoutes =
-          RouteBase.routesRecursively(Routes.authenticatedRoutes.routes)
-              .whereType<GoRoute>();
-
       // If the user is not authenticated
       if (!authenticated) {
-        if (unauthenticatedRoutes.any((GoRoute route) => route.path == path)) {
+        if (_unauthenticatedGoRoutes
+            .any((GoRoute route) => route.path == path)) {
           return null; // Allow navigation to unauthenticated routes
         } else {
           return LoginPage.path; // Redirect to login page
         }
       } else if (authenticated) {
-        if (authenticatedRoutes.any((GoRoute route) => route.path == path)) {
+        if (_authenticatedGoRoutes.any((GoRoute route) => route.path == path)) {
           return null; // Allow navigation to authenticated routes
         } else {
           return HomePage.path; // Redirect to home page

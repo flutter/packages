@@ -14,9 +14,11 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('Login Page'),
-            TextButton(
+            const SizedBox(height: 16),
+            ElevatedButton(
               onPressed: () => <void>{
                 GlobalRouter.authenticated = true,
                 context.go('/'),
