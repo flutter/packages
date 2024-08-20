@@ -192,7 +192,7 @@ Page resource error:
 
     // setBackgroundColor is not currently supported on macOS.
     if (!Platform.isMacOS) {
-      _controller.setBackgroundColor(const Color(0x80000000));
+      controller.setBackgroundColor(const Color(0x80000000));
     }
 
     // #docregion platform_features
