@@ -68,9 +68,11 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   @override
   void initState() {
     super.initState();
+    // #enddocregion ad_and_content_players
     // Adds this instance as an observer for `AppLifecycleState` changes.
     WidgetsBinding.instance.addObserver(this);
 
+    // #docregion ad_and_content_players
     _contentVideoController = VideoPlayerController.networkUrl(
       Uri.parse(
         'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
@@ -89,7 +91,6 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   }
   // #enddocregion ad_and_content_players
 
-  // #docregion listen_for_lifecycle_state
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
@@ -112,7 +113,6 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
     }
     _lastLifecycleState = state;
   }
-  // #enddocregion listen_for_lifecycle_state
 
   // #docregion request_ads
   Future<void> _requestAds(AdDisplayContainer container) {
@@ -178,7 +178,9 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
     super.dispose();
     _contentVideoController.dispose();
     _adsManager?.destroy();
+    // #enddocregion dispose
     WidgetsBinding.instance.removeObserver(this);
+    // #docregion dispose
   }
   // #enddocregion dispose
 

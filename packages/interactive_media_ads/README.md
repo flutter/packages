@@ -128,9 +128,7 @@ late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
 @override
 void initState() {
   super.initState();
-  // Adds this instance as an observer for `AppLifecycleState` changes.
-  WidgetsBinding.instance.addObserver(this);
-
+  // ···
   _contentVideoController = VideoPlayerController.networkUrl(
     Uri.parse(
       'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
@@ -139,8 +137,8 @@ void initState() {
     ..addListener(() {
       if (_contentVideoController.value.isCompleted) {
         _adsLoader.contentComplete();
-        setState(() {});
       }
+      setState(() {});
     })
     ..initialize().then((_) {
       // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
@@ -262,34 +260,7 @@ Future<void> _pauseContent() {
 }
 ```
 
-### 7. Handle Lifecycle State Changes
-
-Control ad playback in response to app lifecycle changes.
-
-<?code-excerpt "example/lib/main.dart (listen_for_lifecycle_state)"?>
-```dart
-@override
-void didChangeAppLifecycleState(AppLifecycleState state) {
-  switch (state) {
-    case AppLifecycleState.resumed:
-      _adsManager?.resume();
-    case AppLifecycleState.inactive:
-      // Pausing the Ad video player on Android can only be done in this state
-      // because it corresponds to `Activity.onPause`. This state is also
-      // triggered before resume, so this will only pause the Ad if the app is
-      // in the process of being sent to the background.
-      if (_lastLifecycleState == AppLifecycleState.resumed) {
-        _adsManager?.pause();
-      }
-    case AppLifecycleState.hidden:
-    case AppLifecycleState.paused:
-    case AppLifecycleState.detached:
-  }
-  _lastLifecycleState = state;
-}
-```
-
-### 8. Dispose Resources
+### 7. Dispose Resources
 
 Dispose the content player, destroy the [AdsManager][6] and stop listening to lifecycle state
 changes.
@@ -301,7 +272,7 @@ void dispose() {
   super.dispose();
   _contentVideoController.dispose();
   _adsManager?.destroy();
-  WidgetsBinding.instance.removeObserver(this);
+  // ···
 }
 ```
 
