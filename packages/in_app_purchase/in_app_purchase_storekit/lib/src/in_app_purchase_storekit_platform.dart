@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 
 import '../in_app_purchase_storekit.dart';
+import '../store_kit_2_wrappers.dart';
 import '../store_kit_wrappers.dart';
 
 /// [IAPError.code] code for failed purchases.
@@ -16,6 +17,8 @@ const String kPurchaseErrorCode = 'purchase_error';
 
 /// Indicates store front is Apple AppStore.
 const String kIAPSource = 'app_store';
+
+const bool useStoreKit2 = true;
 
 /// An [InAppPurchasePlatform] that wraps StoreKit.
 ///
@@ -65,7 +68,12 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   }
 
   @override
-  Future<bool> isAvailable() => SKPaymentQueueWrapper.canMakePayments();
+  Future<bool> isAvailable() {
+    if (useStoreKit2) {
+      return AppStore().canMakePayments();
+    }
+    return SKPaymentQueueWrapper.canMakePayments();
+  }
 
   @override
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {
@@ -119,6 +127,30 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @override
   Future<ProductDetailsResponse> queryProductDetails(
       Set<String> identifiers) async {
+    if (useStoreKit2) {
+      List<SK2Product> products = <SK2Product>[];
+      Set<String> invalidProductIdentifiers;
+      PlatformException? exception;
+      try {
+        products = await SK2Product.products(identifiers.toList());
+        // Storekit 2 no longer automatically returns a list of invalid identifiers,
+        // so get the difference between given identifiers and returned products
+        invalidProductIdentifiers = identifiers.difference(
+            products.map((SK2Product product) => product.id).toSet());
+      } on PlatformException catch (e) {
+        exception = e;
+        invalidProductIdentifiers = identifiers;
+      }
+      List<AppStoreProduct2Details> productDetails;
+      productDetails = products
+          .map((SK2Product productWrapper) =>
+          AppStoreProduct2Details.fromSK2Product(productWrapper))
+          .toList();
+      final ProductDetailsResponse response = ProductDetailsResponse(
+          productDetails: productDetails,
+          notFoundIDs: invalidProductIdentifiers.toList());
+      return response;
+    }
     final SKRequestMaker requestMaker = SKRequestMaker();
     SkProductResponseWrapper response;
     PlatformException? exception;
