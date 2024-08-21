@@ -248,36 +248,37 @@ void main() {
       // Should redirect to /route/1 without error.
       expect(tester.takeException(), isAssertionError);
     });
-testWidgets('throw if redirect to itself.', (WidgetTester tester) async {
-  final GoRouter router = await createRouter(
-    <RouteBase>[
-      GoRoute(
-        path: '/',
-        builder: (_, __) => const Text('home'),
-        routes: <RouteBase>[
+    testWidgets('throw if redirect to itself.', (WidgetTester tester) async {
+      final GoRouter router = await createRouter(
+        <RouteBase>[
           GoRoute(
-            path: 'route',
-            name: 'route', // Named route
-            redirect: (_, __) => '/route',
+            path: '/',
+            builder: (_, __) => const Text('home'),
             routes: <RouteBase>[
               GoRoute(
-                path: '1',
-                builder: (_, __) => const Text('/route/1/2'),
+                path: 'route',
+                name: 'route', // Named route
+                redirect: (_, __) => '/route',
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '1',
+                    builder: (_, __) => const Text('/route/1/2'),
+                  ),
+                ],
               ),
             ],
           ),
         ],
-      ),
-    ],
-    tester,
-  );
-  expect(find.text('home'), findsOneWidget);
+        tester,
+      );
+      expect(find.text('home'), findsOneWidget);
 
-  router.goNamed('route', fragment: '2');  // Use the name instead of the path
-  await tester.pumpAndSettle();
-  
-  expect(tester.takeException(), isAssertionError);
-});
+      router.goNamed('route',
+          fragment: '2'); // Use the name instead of the path
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isAssertionError);
+    });
 
     testWidgets('throw if sub route does not conform with parent navigator key',
         (WidgetTester tester) async {
