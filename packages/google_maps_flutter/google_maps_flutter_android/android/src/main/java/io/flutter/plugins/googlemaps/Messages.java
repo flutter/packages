@@ -1052,6 +1052,7 @@ public class Messages {
       this.flat = setterArg;
     }
 
+    /** The icon as JSON data. */
     private @NonNull Object icon;
 
     public @NonNull Object getIcon() {
@@ -1380,21 +1381,134 @@ public class Messages {
    * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPolygon {
-    /**
-     * The polygon data, as JSON. This should only be set from Polygon.toJson, and the native code
-     * must interpret it according to the internal implementation details of that method.
-     */
-    private @NonNull Map<String, Object> json;
+    private @NonNull String polygonId;
 
-    public @NonNull Map<String, Object> getJson() {
-      return json;
+    public @NonNull String getPolygonId() {
+      return polygonId;
     }
 
-    public void setJson(@NonNull Map<String, Object> setterArg) {
+    public void setPolygonId(@NonNull String setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"json\" is null.");
+        throw new IllegalStateException("Nonnull field \"polygonId\" is null.");
       }
-      this.json = setterArg;
+      this.polygonId = setterArg;
+    }
+
+    private @NonNull Boolean consumesTapEvents;
+
+    public @NonNull Boolean getConsumesTapEvents() {
+      return consumesTapEvents;
+    }
+
+    public void setConsumesTapEvents(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"consumesTapEvents\" is null.");
+      }
+      this.consumesTapEvents = setterArg;
+    }
+
+    private @NonNull Long fillColor;
+
+    public @NonNull Long getFillColor() {
+      return fillColor;
+    }
+
+    public void setFillColor(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"fillColor\" is null.");
+      }
+      this.fillColor = setterArg;
+    }
+
+    private @NonNull Boolean geodesic;
+
+    public @NonNull Boolean getGeodesic() {
+      return geodesic;
+    }
+
+    public void setGeodesic(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"geodesic\" is null.");
+      }
+      this.geodesic = setterArg;
+    }
+
+    private @NonNull List<PlatformLatLng> points;
+
+    public @NonNull List<PlatformLatLng> getPoints() {
+      return points;
+    }
+
+    public void setPoints(@NonNull List<PlatformLatLng> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"points\" is null.");
+      }
+      this.points = setterArg;
+    }
+
+    private @NonNull List<List<PlatformLatLng>> holes;
+
+    public @NonNull List<List<PlatformLatLng>> getHoles() {
+      return holes;
+    }
+
+    public void setHoles(@NonNull List<List<PlatformLatLng>> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"holes\" is null.");
+      }
+      this.holes = setterArg;
+    }
+
+    private @NonNull Boolean visible;
+
+    public @NonNull Boolean getVisible() {
+      return visible;
+    }
+
+    public void setVisible(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"visible\" is null.");
+      }
+      this.visible = setterArg;
+    }
+
+    private @NonNull Long strokeColor;
+
+    public @NonNull Long getStrokeColor() {
+      return strokeColor;
+    }
+
+    public void setStrokeColor(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"strokeColor\" is null.");
+      }
+      this.strokeColor = setterArg;
+    }
+
+    private @NonNull Long strokeWidth;
+
+    public @NonNull Long getStrokeWidth() {
+      return strokeWidth;
+    }
+
+    public void setStrokeWidth(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"strokeWidth\" is null.");
+      }
+      this.strokeWidth = setterArg;
+    }
+
+    private @NonNull Long zIndex;
+
+    public @NonNull Long getZIndex() {
+      return zIndex;
+    }
+
+    public void setZIndex(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"zIndex\" is null.");
+      }
+      this.zIndex = setterArg;
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
@@ -1409,42 +1523,181 @@ public class Messages {
         return false;
       }
       PlatformPolygon that = (PlatformPolygon) o;
-      return json.equals(that.json);
+      return polygonId.equals(that.polygonId)
+          && consumesTapEvents.equals(that.consumesTapEvents)
+          && fillColor.equals(that.fillColor)
+          && geodesic.equals(that.geodesic)
+          && points.equals(that.points)
+          && holes.equals(that.holes)
+          && visible.equals(that.visible)
+          && strokeColor.equals(that.strokeColor)
+          && strokeWidth.equals(that.strokeWidth)
+          && zIndex.equals(that.zIndex);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(json);
+      return Objects.hash(
+          polygonId,
+          consumesTapEvents,
+          fillColor,
+          geodesic,
+          points,
+          holes,
+          visible,
+          strokeColor,
+          strokeWidth,
+          zIndex);
     }
 
     public static final class Builder {
 
-      private @Nullable Map<String, Object> json;
+      private @Nullable String polygonId;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setJson(@NonNull Map<String, Object> setterArg) {
-        this.json = setterArg;
+      public @NonNull Builder setPolygonId(@NonNull String setterArg) {
+        this.polygonId = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean consumesTapEvents;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setConsumesTapEvents(@NonNull Boolean setterArg) {
+        this.consumesTapEvents = setterArg;
+        return this;
+      }
+
+      private @Nullable Long fillColor;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setFillColor(@NonNull Long setterArg) {
+        this.fillColor = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean geodesic;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setGeodesic(@NonNull Boolean setterArg) {
+        this.geodesic = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformLatLng> points;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPoints(@NonNull List<PlatformLatLng> setterArg) {
+        this.points = setterArg;
+        return this;
+      }
+
+      private @Nullable List<List<PlatformLatLng>> holes;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setHoles(@NonNull List<List<PlatformLatLng>> setterArg) {
+        this.holes = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean visible;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setVisible(@NonNull Boolean setterArg) {
+        this.visible = setterArg;
+        return this;
+      }
+
+      private @Nullable Long strokeColor;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setStrokeColor(@NonNull Long setterArg) {
+        this.strokeColor = setterArg;
+        return this;
+      }
+
+      private @Nullable Long strokeWidth;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setStrokeWidth(@NonNull Long setterArg) {
+        this.strokeWidth = setterArg;
+        return this;
+      }
+
+      private @Nullable Long zIndex;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setZIndex(@NonNull Long setterArg) {
+        this.zIndex = setterArg;
         return this;
       }
 
       public @NonNull PlatformPolygon build() {
         PlatformPolygon pigeonReturn = new PlatformPolygon();
-        pigeonReturn.setJson(json);
+        pigeonReturn.setPolygonId(polygonId);
+        pigeonReturn.setConsumesTapEvents(consumesTapEvents);
+        pigeonReturn.setFillColor(fillColor);
+        pigeonReturn.setGeodesic(geodesic);
+        pigeonReturn.setPoints(points);
+        pigeonReturn.setHoles(holes);
+        pigeonReturn.setVisible(visible);
+        pigeonReturn.setStrokeColor(strokeColor);
+        pigeonReturn.setStrokeWidth(strokeWidth);
+        pigeonReturn.setZIndex(zIndex);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(1);
-      toListResult.add(json);
+      ArrayList<Object> toListResult = new ArrayList<Object>(10);
+      toListResult.add(polygonId);
+      toListResult.add(consumesTapEvents);
+      toListResult.add(fillColor);
+      toListResult.add(geodesic);
+      toListResult.add(points);
+      toListResult.add(holes);
+      toListResult.add(visible);
+      toListResult.add(strokeColor);
+      toListResult.add(strokeWidth);
+      toListResult.add(zIndex);
       return toListResult;
     }
 
     static @NonNull PlatformPolygon fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformPolygon pigeonResult = new PlatformPolygon();
-      Object json = __pigeon_list.get(0);
-      pigeonResult.setJson((Map<String, Object>) json);
+      Object polygonId = __pigeon_list.get(0);
+      pigeonResult.setPolygonId((String) polygonId);
+      Object consumesTapEvents = __pigeon_list.get(1);
+      pigeonResult.setConsumesTapEvents((Boolean) consumesTapEvents);
+      Object fillColor = __pigeon_list.get(2);
+      pigeonResult.setFillColor(
+          (fillColor == null)
+              ? null
+              : ((fillColor instanceof Integer) ? (Integer) fillColor : (Long) fillColor));
+      Object geodesic = __pigeon_list.get(3);
+      pigeonResult.setGeodesic((Boolean) geodesic);
+      Object points = __pigeon_list.get(4);
+      pigeonResult.setPoints((List<PlatformLatLng>) points);
+      Object holes = __pigeon_list.get(5);
+      pigeonResult.setHoles((List<List<PlatformLatLng>>) holes);
+      Object visible = __pigeon_list.get(6);
+      pigeonResult.setVisible((Boolean) visible);
+      Object strokeColor = __pigeon_list.get(7);
+      pigeonResult.setStrokeColor(
+          (strokeColor == null)
+              ? null
+              : ((strokeColor instanceof Integer) ? (Integer) strokeColor : (Long) strokeColor));
+      Object strokeWidth = __pigeon_list.get(8);
+      pigeonResult.setStrokeWidth(
+          (strokeWidth == null)
+              ? null
+              : ((strokeWidth instanceof Integer) ? (Integer) strokeWidth : (Long) strokeWidth));
+      Object zIndex = __pigeon_list.get(9);
+      pigeonResult.setZIndex(
+          (zIndex == null)
+              ? null
+              : ((zIndex instanceof Integer) ? (Integer) zIndex : (Long) zIndex));
       return pigeonResult;
     }
   }
@@ -1455,21 +1708,160 @@ public class Messages {
    * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPolyline {
-    /**
-     * The polyline data, as JSON. This should only be set from Polyline.toJson, and the native code
-     * must interpret it according to the internal implementation details of that method.
-     */
-    private @NonNull Map<String, Object> json;
+    private @NonNull String polylineId;
 
-    public @NonNull Map<String, Object> getJson() {
-      return json;
+    public @NonNull String getPolylineId() {
+      return polylineId;
     }
 
-    public void setJson(@NonNull Map<String, Object> setterArg) {
+    public void setPolylineId(@NonNull String setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"json\" is null.");
+        throw new IllegalStateException("Nonnull field \"polylineId\" is null.");
       }
-      this.json = setterArg;
+      this.polylineId = setterArg;
+    }
+
+    private @NonNull Boolean consumesTapEvents;
+
+    public @NonNull Boolean getConsumesTapEvents() {
+      return consumesTapEvents;
+    }
+
+    public void setConsumesTapEvents(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"consumesTapEvents\" is null.");
+      }
+      this.consumesTapEvents = setterArg;
+    }
+
+    private @NonNull Long color;
+
+    public @NonNull Long getColor() {
+      return color;
+    }
+
+    public void setColor(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"color\" is null.");
+      }
+      this.color = setterArg;
+    }
+
+    private @NonNull Boolean geodesic;
+
+    public @NonNull Boolean getGeodesic() {
+      return geodesic;
+    }
+
+    public void setGeodesic(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"geodesic\" is null.");
+      }
+      this.geodesic = setterArg;
+    }
+
+    private @NonNull Long jointType;
+
+    public @NonNull Long getJointType() {
+      return jointType;
+    }
+
+    public void setJointType(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"jointType\" is null.");
+      }
+      this.jointType = setterArg;
+    }
+
+    private @NonNull List<Object> patterns;
+
+    public @NonNull List<Object> getPatterns() {
+      return patterns;
+    }
+
+    public void setPatterns(@NonNull List<Object> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"patterns\" is null.");
+      }
+      this.patterns = setterArg;
+    }
+
+    private @NonNull List<PlatformLatLng> points;
+
+    public @NonNull List<PlatformLatLng> getPoints() {
+      return points;
+    }
+
+    public void setPoints(@NonNull List<PlatformLatLng> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"points\" is null.");
+      }
+      this.points = setterArg;
+    }
+
+    private @NonNull Object startCap;
+
+    public @NonNull Object getStartCap() {
+      return startCap;
+    }
+
+    public void setStartCap(@NonNull Object setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"startCap\" is null.");
+      }
+      this.startCap = setterArg;
+    }
+
+    private @NonNull Object endCap;
+
+    public @NonNull Object getEndCap() {
+      return endCap;
+    }
+
+    public void setEndCap(@NonNull Object setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"endCap\" is null.");
+      }
+      this.endCap = setterArg;
+    }
+
+    private @NonNull Boolean visible;
+
+    public @NonNull Boolean getVisible() {
+      return visible;
+    }
+
+    public void setVisible(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"visible\" is null.");
+      }
+      this.visible = setterArg;
+    }
+
+    private @NonNull Long width;
+
+    public @NonNull Long getWidth() {
+      return width;
+    }
+
+    public void setWidth(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"width\" is null.");
+      }
+      this.width = setterArg;
+    }
+
+    private @NonNull Long zIndex;
+
+    public @NonNull Long getZIndex() {
+      return zIndex;
+    }
+
+    public void setZIndex(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"zIndex\" is null.");
+      }
+      this.zIndex = setterArg;
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
@@ -1484,42 +1876,205 @@ public class Messages {
         return false;
       }
       PlatformPolyline that = (PlatformPolyline) o;
-      return json.equals(that.json);
+      return polylineId.equals(that.polylineId)
+          && consumesTapEvents.equals(that.consumesTapEvents)
+          && color.equals(that.color)
+          && geodesic.equals(that.geodesic)
+          && jointType.equals(that.jointType)
+          && patterns.equals(that.patterns)
+          && points.equals(that.points)
+          && startCap.equals(that.startCap)
+          && endCap.equals(that.endCap)
+          && visible.equals(that.visible)
+          && width.equals(that.width)
+          && zIndex.equals(that.zIndex);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(json);
+      return Objects.hash(
+          polylineId,
+          consumesTapEvents,
+          color,
+          geodesic,
+          jointType,
+          patterns,
+          points,
+          startCap,
+          endCap,
+          visible,
+          width,
+          zIndex);
     }
 
     public static final class Builder {
 
-      private @Nullable Map<String, Object> json;
+      private @Nullable String polylineId;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setJson(@NonNull Map<String, Object> setterArg) {
-        this.json = setterArg;
+      public @NonNull Builder setPolylineId(@NonNull String setterArg) {
+        this.polylineId = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean consumesTapEvents;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setConsumesTapEvents(@NonNull Boolean setterArg) {
+        this.consumesTapEvents = setterArg;
+        return this;
+      }
+
+      private @Nullable Long color;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setColor(@NonNull Long setterArg) {
+        this.color = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean geodesic;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setGeodesic(@NonNull Boolean setterArg) {
+        this.geodesic = setterArg;
+        return this;
+      }
+
+      private @Nullable Long jointType;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setJointType(@NonNull Long setterArg) {
+        this.jointType = setterArg;
+        return this;
+      }
+
+      private @Nullable List<Object> patterns;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPatterns(@NonNull List<Object> setterArg) {
+        this.patterns = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformLatLng> points;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPoints(@NonNull List<PlatformLatLng> setterArg) {
+        this.points = setterArg;
+        return this;
+      }
+
+      private @Nullable Object startCap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setStartCap(@NonNull Object setterArg) {
+        this.startCap = setterArg;
+        return this;
+      }
+
+      private @Nullable Object endCap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setEndCap(@NonNull Object setterArg) {
+        this.endCap = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean visible;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setVisible(@NonNull Boolean setterArg) {
+        this.visible = setterArg;
+        return this;
+      }
+
+      private @Nullable Long width;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setWidth(@NonNull Long setterArg) {
+        this.width = setterArg;
+        return this;
+      }
+
+      private @Nullable Long zIndex;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setZIndex(@NonNull Long setterArg) {
+        this.zIndex = setterArg;
         return this;
       }
 
       public @NonNull PlatformPolyline build() {
         PlatformPolyline pigeonReturn = new PlatformPolyline();
-        pigeonReturn.setJson(json);
+        pigeonReturn.setPolylineId(polylineId);
+        pigeonReturn.setConsumesTapEvents(consumesTapEvents);
+        pigeonReturn.setColor(color);
+        pigeonReturn.setGeodesic(geodesic);
+        pigeonReturn.setJointType(jointType);
+        pigeonReturn.setPatterns(patterns);
+        pigeonReturn.setPoints(points);
+        pigeonReturn.setStartCap(startCap);
+        pigeonReturn.setEndCap(endCap);
+        pigeonReturn.setVisible(visible);
+        pigeonReturn.setWidth(width);
+        pigeonReturn.setZIndex(zIndex);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(1);
-      toListResult.add(json);
+      ArrayList<Object> toListResult = new ArrayList<Object>(12);
+      toListResult.add(polylineId);
+      toListResult.add(consumesTapEvents);
+      toListResult.add(color);
+      toListResult.add(geodesic);
+      toListResult.add(jointType);
+      toListResult.add(patterns);
+      toListResult.add(points);
+      toListResult.add(startCap);
+      toListResult.add(endCap);
+      toListResult.add(visible);
+      toListResult.add(width);
+      toListResult.add(zIndex);
       return toListResult;
     }
 
     static @NonNull PlatformPolyline fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformPolyline pigeonResult = new PlatformPolyline();
-      Object json = __pigeon_list.get(0);
-      pigeonResult.setJson((Map<String, Object>) json);
+      Object polylineId = __pigeon_list.get(0);
+      pigeonResult.setPolylineId((String) polylineId);
+      Object consumesTapEvents = __pigeon_list.get(1);
+      pigeonResult.setConsumesTapEvents((Boolean) consumesTapEvents);
+      Object color = __pigeon_list.get(2);
+      pigeonResult.setColor(
+          (color == null) ? null : ((color instanceof Integer) ? (Integer) color : (Long) color));
+      Object geodesic = __pigeon_list.get(3);
+      pigeonResult.setGeodesic((Boolean) geodesic);
+      Object jointType = __pigeon_list.get(4);
+      pigeonResult.setJointType(
+          (jointType == null)
+              ? null
+              : ((jointType instanceof Integer) ? (Integer) jointType : (Long) jointType));
+      Object patterns = __pigeon_list.get(5);
+      pigeonResult.setPatterns((List<Object>) patterns);
+      Object points = __pigeon_list.get(6);
+      pigeonResult.setPoints((List<PlatformLatLng>) points);
+      Object startCap = __pigeon_list.get(7);
+      pigeonResult.setStartCap(startCap);
+      Object endCap = __pigeon_list.get(8);
+      pigeonResult.setEndCap(endCap);
+      Object visible = __pigeon_list.get(9);
+      pigeonResult.setVisible((Boolean) visible);
+      Object width = __pigeon_list.get(10);
+      pigeonResult.setWidth(
+          (width == null) ? null : ((width instanceof Integer) ? (Integer) width : (Long) width));
+      Object zIndex = __pigeon_list.get(11);
+      pigeonResult.setZIndex(
+          (zIndex == null)
+              ? null
+              : ((zIndex instanceof Integer) ? (Integer) zIndex : (Long) zIndex));
       return pigeonResult;
     }
   }
@@ -3482,15 +4037,11 @@ public class Messages {
         case (byte) 150:
           return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 151:
-          // Manual edit to fix https://github.com/flutter/flutter/issues/150108
-          // the way the generator will fix it once the PR lands.
           {
             Object value = readValue(buffer);
             return value == null ? null : PlatformMapType.values()[(int) value];
           }
         case (byte) 152:
-          // Manual edit to fix https://github.com/flutter/flutter/issues/150108
-          // the way the generator will fix it once the PR lands.
           {
             Object value = readValue(buffer);
             return value == null ? null : PlatformRendererType.values()[(int) value];
