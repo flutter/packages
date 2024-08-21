@@ -122,3 +122,12 @@ extension Product.SubscriptionOffer.PaymentMode {
   }
 }
 
+extension Locale {
+  func convertToPigeon() -> SK2PriceLocaleMessage {
+    return SK2PriceLocaleMessage(
+      currencyCode: currencyCode ?? "",
+      currencySymbol: currencySymbol ?? ""
+    )
+  }
+}
+
