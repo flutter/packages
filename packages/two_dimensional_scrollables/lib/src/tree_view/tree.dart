@@ -907,7 +907,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
               // This is because the node's children are no longer active.
               if (!node._expanded) {
                 setState(() {
-                   _unpackActiveNodes();
+                  _unpackActiveNodes();
                 });
               }
             case AnimationStatus.forward:
