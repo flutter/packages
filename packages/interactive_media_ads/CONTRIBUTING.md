@@ -135,7 +135,7 @@ To update a wrapper for a platform, follow the steps:
 * Android: Run `flutter build apk --debug` in `example/`.
 * iOS: Run `flutter build ios --simulator` in `example/`
 
-##### 2. Add the correct `pigeon` package to `dev_depdencies` in the `pubspec.yaml` and run `pub upgrade`
+##### 2. Add the correct `pigeon` package to `dev_dependencies` in the `pubspec.yaml` and run `pub upgrade`
 
 Android:
 
