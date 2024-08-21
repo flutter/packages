@@ -2,6 +2,10 @@
 
 * Converts `PlatformPolygon` and `PlatformPolyline` to pigeon.
 
+## 2.14.2
+
+* Bumps `com.android.tools.build:gradle` from 7.3.1 to 8.5.1.
+
 ## 2.14.1
 
 * Converts `PlatformCircle` and `PlatformMarker` to pigeon.
