@@ -8,17 +8,25 @@ import 'adaptive_layout.dart';
 import 'breakpoints.dart';
 import 'slot_layout.dart';
 
-/// Spacing value between different parts of the body slot according to
+/// Spacing value of the compact breakpoint according to
 /// the material 3 design spec.
-const double kMaterialSpacing = 24;
+const double kMaterialCompactSpacing = 0;
 
-/// Margin value of the compact breakpoint layout according to the material
+/// Spacing value of the medium and up breakpoint according to
+/// the material 3 design spec.
+const double kMaterialMediumAndUpSpacing = 24;
+
+/// Margin value of the compact breakpoint according to the material
 /// design 3 spec.
 const double kMaterialCompactMargin = 16;
 
-/// Margin value of the medium breakpoint layout according to the material
+/// Margin value of the medium breakpoint according to the material
 /// design 3 spec.
 const double kMaterialMediumAndUpMargin = 24;
+
+/// Padding value of the compact breakpoint according to the material
+/// design 3 spec.
+const double kMaterialPadding = 4;
 
 /// Signature for a builder used by [AdaptiveScaffold.navigationRailDestinationBuilder] that converts a
 /// [NavigationDestination] to a [NavigationRailDestination].
