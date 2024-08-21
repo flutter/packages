@@ -45,9 +45,11 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   // AdsManager exposes methods to control ad playback and listen to ad events.
   AdsManager? _adsManager;
 
+  // #enddocregion example_widget
   // Last state received in `didChangeAppLifecycleState`.
   AppLifecycleState _lastLifecycleState = AppLifecycleState.resumed;
 
+  // #docregion example_widget
   // Whether the widget should be displaying the content video. The content
   // player is hidden while Ads are playing.
   bool _shouldShowContentVideo = true;

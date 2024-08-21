@@ -92,9 +92,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   // AdsManager exposes methods to control ad playback and listen to ad events.
   AdsManager? _adsManager;
 
-  // Last state received in `didChangeAppLifecycleState`.
-  AppLifecycleState _lastLifecycleState = AppLifecycleState.resumed;
-
+  // ···
   // Whether the widget should be displaying the content video. The content
   // player is hidden while Ads are playing.
   bool _shouldShowContentVideo = true;
@@ -262,8 +260,7 @@ Future<void> _pauseContent() {
 
 ### 7. Dispose Resources
 
-Dispose the content player, destroy the [AdsManager][6] and stop listening to lifecycle state
-changes.
+Dispose the content player and destroy the [AdsManager][6].
 
 <?code-excerpt "example/lib/main.dart (dispose)"?>
 ```dart
