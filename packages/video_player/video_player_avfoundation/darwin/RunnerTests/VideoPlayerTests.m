@@ -125,7 +125,6 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
 /** This display link to return. */
 @property(nonatomic, strong) FVPDisplayLink *displayLink;
-@property(nonatomic) void (^fireDisplayLink)(void);
 
 - (instancetype)initWithDisplayLink:(FVPDisplayLink *)displayLink;
 
@@ -139,7 +138,6 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 - (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
                                     callback:(void (^)(void))callback {
-  self.fireDisplayLink = callback;
   return self.displayLink;
 }
 
@@ -245,14 +243,13 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
       .ignoringNonObjectArgs()
       .andReturn(YES);
-  CVPixelBufferRef bufferRef;
-  CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
+  // Any non-zero value is fine here since it won't actually be used, just NULL-checked.
+  CVPixelBufferRef fakeBufferRef = (CVPixelBufferRef)1;
   OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero itemTimeForDisplay:NULL])
       .ignoringNonObjectArgs()
-      .andReturn(bufferRef);
+      .andReturn(fakeBufferRef);
   // Simulate a callback from the engine to request a new frame.
-  stubDisplayLinkFactory.fireDisplayLink();
-  CFRelease([player copyPixelBuffer]);
+  [player copyPixelBuffer];
   // Since a frame was found, and the video is paused, the display link should be paused again.
   OCMVerify([mockDisplayLink setRunning:NO]);
 }
@@ -297,15 +294,14 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
       .ignoringNonObjectArgs()
       .andReturn(YES);
-  CVPixelBufferRef bufferRef;
-  CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
+  // Any non-zero value is fine here since it won't actually be used, just NULL-checked.
+  CVPixelBufferRef fakeBufferRef = (CVPixelBufferRef)1;
   OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero itemTimeForDisplay:NULL])
       .ignoringNonObjectArgs()
-      .andReturn(bufferRef);
+      .andReturn(fakeBufferRef);
   // Simulate a callback from the engine to request a new frame.
   FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
-  stubDisplayLinkFactory.fireDisplayLink();
-  CFRelease([player copyPixelBuffer]);
+  [player copyPixelBuffer];
   // Since a frame was found, and the video is paused, the display link should be paused again.
   OCMVerify([mockDisplayLink setRunning:NO]);
 }
@@ -361,14 +357,13 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
       .ignoringNonObjectArgs()
       .andReturn(YES);
-  CVPixelBufferRef bufferRef;
-  CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
+  // Any non-zero value is fine here since it won't actually be used, just NULL-checked.
+  CVPixelBufferRef fakeBufferRef = (CVPixelBufferRef)1;
   OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero itemTimeForDisplay:NULL])
       .ignoringNonObjectArgs()
-      .andReturn(bufferRef);
+      .andReturn(fakeBufferRef);
   // Simulate a callback from the engine to request a new frame.
-  stubDisplayLinkFactory.fireDisplayLink();
-  CFRelease([player copyPixelBuffer]);
+  [player copyPixelBuffer];
   // Since the video was playing, the display link should not be paused after getting a buffer.
   OCMVerify(never(), [mockDisplayLink setRunning:NO]);
 }
@@ -793,82 +788,6 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
   XCTAssertNotNil(publishedValue);
   XCTAssertTrue([publishedValue isKindOfClass:[FVPVideoPlayerPlugin class]]);
-}
-
-- (void)testPlayerShouldNotDropEverySecondFrame {
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"testPlayerShouldNotDropEverySecondFrame"];
-  NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-
-  FVPDisplayLink *displayLink = [[FVPDisplayLink alloc] initWithRegistrar:registrar
-                                                                 callback:^(){
-                                                                 }];
-  StubFVPDisplayLinkFactory *stubDisplayLinkFactory =
-      [[StubFVPDisplayLinkFactory alloc] initWithDisplayLink:displayLink];
-  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
-  FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
-      displayLinkFactory:stubDisplayLinkFactory
-               registrar:partialRegistrar];
-
-  FlutterError *error;
-  [videoPlayerPlugin initialize:&error];
-  XCTAssertNil(error);
-  FVPCreationOptions *create = [FVPCreationOptions
-      makeWithAsset:nil
-                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
-        packageName:nil
-         formatHint:nil
-        httpHeaders:@{}];
-  NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
-  FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
-
-  __block CMTime currentTime = kCMTimeZero;
-  OCMStub([mockVideoOutput itemTimeForHostTime:0])
-      .ignoringNonObjectArgs()
-      .andDo(^(NSInvocation *invocation) {
-        [invocation setReturnValue:&currentTime];
-      });
-  __block NSMutableSet *pixelBuffers = NSMutableSet.new;
-  OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
-      .ignoringNonObjectArgs()
-      .andDo(^(NSInvocation *invocation) {
-        CMTime itemTime;
-        [invocation getArgument:&itemTime atIndex:2];
-        BOOL has = [pixelBuffers containsObject:[NSValue valueWithCMTime:itemTime]];
-        [invocation setReturnValue:&has];
-      });
-  OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero
-                                   itemTimeForDisplay:[OCMArg anyPointer]])
-      .ignoringNonObjectArgs()
-      .andDo(^(NSInvocation *invocation) {
-        CMTime itemTime;
-        [invocation getArgument:&itemTime atIndex:2];
-        CVPixelBufferRef bufferRef = NULL;
-        if ([pixelBuffers containsObject:[NSValue valueWithCMTime:itemTime]]) {
-          CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
-        }
-        [pixelBuffers removeObject:[NSValue valueWithCMTime:itemTime]];
-        [invocation setReturnValue:&bufferRef];
-      });
-  void (^advanceFrame)(void) = ^{
-    currentTime.value++;
-    [pixelBuffers addObject:[NSValue valueWithCMTime:currentTime]];
-  };
-
-  advanceFrame();
-  OCMExpect([mockTextureRegistry textureFrameAvailable:textureId.intValue]);
-  stubDisplayLinkFactory.fireDisplayLink();
-  OCMVerifyAllWithDelay(mockTextureRegistry, 10);
-
-  advanceFrame();
-  OCMExpect([mockTextureRegistry textureFrameAvailable:textureId.intValue]);
-  CFRelease([player copyPixelBuffer]);
-  stubDisplayLinkFactory.fireDisplayLink();
-  OCMVerifyAllWithDelay(mockTextureRegistry, 10);
 }
 
 #if TARGET_OS_IOS

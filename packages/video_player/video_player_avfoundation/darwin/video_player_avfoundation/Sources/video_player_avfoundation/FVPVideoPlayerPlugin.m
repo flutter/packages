@@ -21,8 +21,8 @@
 @property(nonatomic, weak, readonly) NSObject<FlutterTextureRegistry> *registry;
 // The output that this updater is managing.
 @property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
-@property(nonatomic) CVPixelBufferRef latestPixelBuffer;
-@property(nonatomic) dispatch_queue_t pixelBufferSynchronizationQueue;
+// The last time that has been validated as avaliable according to hasNewPixelBufferForItemTime:.
+@property(nonatomic, assign) CMTime lastKnownAvailableTime;
 @end
 
 @implementation FVPFrameUpdater
@@ -30,6 +30,7 @@
   NSAssert(self, @"super init cannot be nil");
   if (self == nil) return nil;
   _registry = registry;
+  _lastKnownAvailableTime = kCMTimeInvalid;
   return self;
 }
 
@@ -37,20 +38,8 @@
   // Only report a new frame if one is actually available.
   CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
   if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
-    dispatch_async(self.pixelBufferSynchronizationQueue, ^{
-      if (self.latestPixelBuffer) {
-        CFRelease(self.latestPixelBuffer);
-      }
-      self.latestPixelBuffer = [self.videoOutput copyPixelBufferForItemTime:outputItemTime
-                                                         itemTimeForDisplay:NULL];
-    });
+    _lastKnownAvailableTime = outputItemTime;
     [_registry textureFrameAvailable:_textureId];
-  }
-}
-
-- (void)dealloc {
-  if (_latestPixelBuffer) {
-    CFRelease(_latestPixelBuffer);
   }
 }
 @end
@@ -103,7 +92,6 @@
 // (e.g., after a seek while paused). If YES, the display link should continue to run until the next
 // frame is successfully provided.
 @property(nonatomic, assign) BOOL waitingForFrame;
-@property(nonatomic) dispatch_queue_t pixelBufferSynchronizationQueue;
 
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FVPFrameUpdater *)frameUpdater
@@ -246,8 +234,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
   videoComposition.renderSize = CGSizeMake(width, height);
 
-  videoComposition.sourceTrackIDForFrameTiming = videoTrack.trackID;
-  videoComposition.frameDuration = videoTrack.minFrameDuration;
+  // TODO(@recastrodiaz): should we use videoTrack.nominalFrameRate ?
+  // Currently set at a constant 30 FPS
+  videoComposition.frameDuration = CMTimeMake(1, 30);
 
   return videoComposition;
 }
@@ -294,10 +283,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                         error:nil] == AVKeyValueStatusLoaded) {
             // Rotate the video by using a videoComposition and the preferredTransform
             self->_preferredTransform = FVPGetStandardizedTransformForTrack(videoTrack);
-            // do not use video composition when it is not needed
-            if (CGAffineTransformIsIdentity(self->_preferredTransform)) {
-              return;
-            }
             // Note:
             // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
             // Video composition can only be used with file-based media and is not supported for
@@ -334,10 +319,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   };
   _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
   frameUpdater.videoOutput = _videoOutput;
-
-  _pixelBufferSynchronizationQueue =
-      dispatch_queue_create("io.flutter.video_player.pixelBufferSynchronizationQueue", NULL);
-  frameUpdater.pixelBufferSynchronizationQueue = _pixelBufferSynchronizationQueue;
 
   [self addObserversForItem:item player:_player];
 
@@ -377,6 +358,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       case AVPlayerItemStatusReadyToPlay:
         [item addOutput:_videoOutput];
         [self setupEventSinkIfReadyToPlay];
+        [self updatePlayingState];
         break;
     }
   } else if (context == presentationSizeContext || context == durationContext) {
@@ -386,6 +368,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       // its presentation size or duration. When these properties are finally set, re-check if
       // all required properties and instantiate the event sink if it is not already set up.
       [self setupEventSinkIfReadyToPlay];
+      [self updatePlayingState];
     }
   } else if (context == playbackLikelyToKeepUpContext) {
     [self updatePlayingState];
@@ -464,8 +447,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     }
 
     _isInitialized = YES;
-    [self updatePlayingState];
-
     _eventSink(@{
       @"event" : @"initialized",
       @"duration" : @(duration),
@@ -562,11 +543,18 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (CVPixelBufferRef)copyPixelBuffer {
-  __block CVPixelBufferRef buffer = NULL;
-  dispatch_sync(self.pixelBufferSynchronizationQueue, ^{
-    buffer = self.frameUpdater.latestPixelBuffer;
-    self.frameUpdater.latestPixelBuffer = NULL;
-  });
+  CVPixelBufferRef buffer = NULL;
+  CMTime outputItemTime = [_videoOutput itemTimeForHostTime:CACurrentMediaTime()];
+  if ([_videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
+    buffer = [_videoOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
+  } else {
+    // If the current time isn't available yet, use the time that was checked when informing the
+    // engine that a frame was available (if any).
+    CMTime lastAvailableTime = self.frameUpdater.lastKnownAvailableTime;
+    if (CMTIME_IS_VALID(lastAvailableTime)) {
+      buffer = [_videoOutput copyPixelBufferForItemTime:lastAvailableTime itemTimeForDisplay:NULL];
+    }
+  }
 
   if (self.waitingForFrame && buffer) {
     self.waitingForFrame = NO;
