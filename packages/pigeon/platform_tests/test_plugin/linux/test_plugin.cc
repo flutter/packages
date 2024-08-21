@@ -420,12 +420,12 @@ static void echo_async_string_map(
       response_handle, string_map);
 }
 
-static void echo_async_string_map(
-    FlValue* string_map,
+static void echo_async_int_map(
+    FlValue* int_map,
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
     gpointer user_data) {
-  core_tests_pigeon_test_host_integration_core_api_respond_echo_async_string_map(
-      response_handle, string_map);
+  core_tests_pigeon_test_host_integration_core_api_respond_echo_async_int_map(
+      response_handle, int_map);
 }
 
 static void echo_async_enum(

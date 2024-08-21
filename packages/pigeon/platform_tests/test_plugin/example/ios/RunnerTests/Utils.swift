@@ -26,7 +26,7 @@ func equalsList(_ x: [Any?]?, _ y: [Any?]?) -> Bool {
   return (0..<x.count).allSatisfy { equals(x[$0], y[$0]) }
 }
 
-func equalsDictionary(_ x: [AnyHashable: Any?]?, _ y: [AnyHashable: Any?]?) -> Bool {
+func equalsDictionary(_ x: [AnyHashable?: Any?]?, _ y: [AnyHashable?: Any?]?) -> Bool {
   if x == nil, y == nil {
     return true
   }
