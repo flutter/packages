@@ -97,7 +97,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @override
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {
     if (useStoreKit2) {
-      print("dart purchase");
+      print("dart purchase ${purchaseParam.productDetails.title} with id ${purchaseParam.productDetails.id}");
       await SK2Product.purchase(purchaseParam.productDetails.id);
       return true;
     }

@@ -8,6 +8,7 @@ import StoreKitTest
 @testable import in_app_purchase_storekit
 
 class InAppPurchasePluginStub: InAppPurchasePlugin {
+  // StoreKit 1
   override func getProductRequest(withIdentifiers productIdentifiers: Set<String>)
     -> SKProductsRequest
   {
@@ -23,4 +24,7 @@ class InAppPurchasePluginStub: InAppPurchasePlugin {
   override func getRefreshReceiptRequest(properties: [String: Any]?) -> SKReceiptRefreshRequest {
     return SKReceiptRefreshRequest(receiptProperties: properties)
   }
+
+  // StoreKit 2
+
 }

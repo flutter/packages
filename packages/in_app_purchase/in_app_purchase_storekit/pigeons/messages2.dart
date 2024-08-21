@@ -158,7 +158,7 @@ class SK2ProductPurchaseOptionsMessage {
   final int? quantity;
 }
 
-@HostApi()
+@HostApi(dartHostTestHandler: 'TestInAppPurchase2Api')
 abstract class InAppPurchase2API {
   // https://developer.apple.com/documentation/storekit/appstore/3822277-canmakepayments
   // SK1 canMakePayments

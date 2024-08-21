@@ -15,7 +15,6 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     id: String, options: SK2ProductPurchaseOptionsMessage?,
     completion: @escaping (Result<SK2ProductPurchaseResultMessage, any Error>) -> Void
   ) {
-
     Task {
       do {
         let product = try await rawProducts(identifiers: [id]).first
@@ -31,10 +30,8 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         case .success(let verification):
           switch verification {
           case .verified(let transaction):
-            // return transaction here too?
-            // need to pass in if it succeeded?
-            print("purchase verified native")
             TransactionCache.shared.add(transaction: transaction)
+            print("purchase \(transaction)")
             self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
             completion(.success(result.convertToPigeon()))
           case .unverified(_, let error):
@@ -97,17 +94,16 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     Task {
       print("native finish")
       let transaction = TransactionCache.shared.get(id: Int(id))
-      let transactionId = transaction.id
-      await transaction.finish()
-      TransactionCache.shared.remove(id: Int(transactionId))
-      completion(.success(()))
+      if let transaction = transaction {
+        await transaction.finish()
+        TransactionCache.shared.remove(id: Int(id))
+      }
+
     }
   }
 
   func startListeningToTransactions() throws {
-    print("start listening")
     self.updateListenerTask = self.listenForTransactions()
-
   }
 
   func stopListeningToTransactions() throws {
@@ -119,7 +115,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       for await verificationResult in Transaction.updates {
         switch verificationResult {
         case .verified(let transaction):
-          print(transaction.id)
+          print("listened \(transaction.productID)")
           TransactionCache.shared.add(transaction: transaction)
           self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
         case .unverified(let transaction, _):
@@ -141,6 +137,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       for await completedPurchase in Transaction.currentEntitlements {
         switch completedPurchase {
         case .verified(let purchase):
+          print("restoring \(purchase)");
           self.transactionListenerAPI?.transactionUpdated(
             updatedTransactions: purchase, restoring: true)
         case .unverified(_, _):
@@ -169,8 +166,6 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         break
       }
     }
-
     return transactions
   }
-
 }
