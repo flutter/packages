@@ -1,7 +1,7 @@
 ## 0.2.3
 
-* Update the margins to the latest material m3 specs.
-* Add `margin` and `recommendedPanes` with their Material value to `Breakpoint`.
+* Update the spacing and margins to the latest material m3 specs.
+* Add `margin`, `spacing`, `padding`, `recommendedPanes` and `maxPanes` with their Material value to `Breakpoint`.
 
 ## 0.2.2
 
