@@ -86,7 +86,6 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
       default:
         // By default, open web URLs in the application.
         inApp = url.startsWith('http:') || url.startsWith('https:');
-        break;
     }
 
     if (inApp) {
