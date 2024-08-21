@@ -160,7 +160,6 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         location = safeRoute.matches.uri.toString();
       }
     }
-
     return RouteInformation(
       uri: Uri.parse(location ?? configuration.uri.toString()),
       state: _routeMatchListCodec.encode(configuration),
@@ -194,22 +193,30 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         );
       case NavigatingType.pushReplacement:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
-        return baseRouteMatchList.remove(routeMatch).push(
-              ImperativeRouteMatch(
-                pageKey: _getUniqueValueKey(),
-                completer: completer!,
-                matches: newMatchList,
-              ),
-            );
+        baseRouteMatchList = baseRouteMatchList.remove(routeMatch);
+        if (baseRouteMatchList.isEmpty) {
+          return newMatchList;
+        }
+        return baseRouteMatchList.push(
+          ImperativeRouteMatch(
+            pageKey: _getUniqueValueKey(),
+            completer: completer!,
+            matches: newMatchList,
+          ),
+        );
       case NavigatingType.replace:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
-        return baseRouteMatchList.remove(routeMatch).push(
-              ImperativeRouteMatch(
-                pageKey: routeMatch.pageKey,
-                completer: completer!,
-                matches: newMatchList,
-              ),
-            );
+        baseRouteMatchList = baseRouteMatchList.remove(routeMatch);
+        if (baseRouteMatchList.isEmpty) {
+          return newMatchList;
+        }
+        return baseRouteMatchList.push(
+          ImperativeRouteMatch(
+            pageKey: routeMatch.pageKey,
+            completer: completer!,
+            matches: newMatchList,
+          ),
+        );
       case NavigatingType.go:
         return newMatchList;
       case NavigatingType.restore:

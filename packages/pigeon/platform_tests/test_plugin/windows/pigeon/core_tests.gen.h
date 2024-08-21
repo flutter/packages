@@ -73,6 +73,8 @@ enum class AnEnum {
   kFourHundredTwentyTwo = 4
 };
 
+enum class AnotherEnum { kJustInCase = 0 };
+
 // A class containing all supported types.
 //
 // Generated class from Pigeon that represents data sent in messages.
@@ -84,7 +86,8 @@ class AllTypes {
                     const std::vector<int32_t>& a4_byte_array,
                     const std::vector<int64_t>& a8_byte_array,
                     const std::vector<double>& a_float_array,
-                    const AnEnum& an_enum, const std::string& a_string,
+                    const AnEnum& an_enum, const AnotherEnum& another_enum,
+                    const std::string& a_string,
                     const flutter::EncodableValue& an_object,
                     const flutter::EncodableList& list,
                     const flutter::EncodableList& string_list,
@@ -120,6 +123,9 @@ class AllTypes {
   const AnEnum& an_enum() const;
   void set_an_enum(const AnEnum& value_arg);
 
+  const AnotherEnum& another_enum() const;
+  void set_another_enum(const AnotherEnum& value_arg);
+
   const std::string& a_string() const;
   void set_a_string(std::string_view value_arg);
 
@@ -153,7 +159,7 @@ class AllTypes {
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
-  friend class PigeonCodecSerializer;
+  friend class PigeonInternalCodecSerializer;
   friend class CoreTestsTest;
   bool a_bool_;
   int64_t an_int_;
@@ -164,6 +170,7 @@ class AllTypes {
   std::vector<int64_t> a8_byte_array_;
   std::vector<double> a_float_array_;
   AnEnum an_enum_;
+  AnotherEnum another_enum_;
   std::string a_string_;
   flutter::EncodableValue an_object_;
   flutter::EncodableList list_;
@@ -193,7 +200,8 @@ class AllNullableTypes {
       const flutter::EncodableList* nullable_nested_list,
       const flutter::EncodableMap* nullable_map_with_annotations,
       const flutter::EncodableMap* nullable_map_with_object,
-      const AnEnum* a_nullable_enum, const std::string* a_nullable_string,
+      const AnEnum* a_nullable_enum, const AnotherEnum* another_nullable_enum,
+      const std::string* a_nullable_string,
       const flutter::EncodableValue* a_nullable_object,
       const AllNullableTypes* all_nullable_types,
       const flutter::EncodableList* list,
@@ -259,6 +267,10 @@ class AllNullableTypes {
   void set_a_nullable_enum(const AnEnum* value_arg);
   void set_a_nullable_enum(const AnEnum& value_arg);
 
+  const AnotherEnum* another_nullable_enum() const;
+  void set_another_nullable_enum(const AnotherEnum* value_arg);
+  void set_another_nullable_enum(const AnotherEnum& value_arg);
+
   const std::string* a_nullable_string() const;
   void set_a_nullable_string(const std::string_view* value_arg);
   void set_a_nullable_string(std::string_view value_arg);
@@ -308,7 +320,7 @@ class AllNullableTypes {
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
-  friend class PigeonCodecSerializer;
+  friend class PigeonInternalCodecSerializer;
   friend class CoreTestsTest;
   std::optional<bool> a_nullable_bool_;
   std::optional<int64_t> a_nullable_int_;
@@ -322,6 +334,7 @@ class AllNullableTypes {
   std::optional<flutter::EncodableMap> nullable_map_with_annotations_;
   std::optional<flutter::EncodableMap> nullable_map_with_object_;
   std::optional<AnEnum> a_nullable_enum_;
+  std::optional<AnotherEnum> another_nullable_enum_;
   std::optional<std::string> a_nullable_string_;
   std::optional<flutter::EncodableValue> a_nullable_object_;
   std::unique_ptr<AllNullableTypes> all_nullable_types_;
@@ -355,7 +368,8 @@ class AllNullableTypesWithoutRecursion {
       const flutter::EncodableList* nullable_nested_list,
       const flutter::EncodableMap* nullable_map_with_annotations,
       const flutter::EncodableMap* nullable_map_with_object,
-      const AnEnum* a_nullable_enum, const std::string* a_nullable_string,
+      const AnEnum* a_nullable_enum, const AnotherEnum* another_nullable_enum,
+      const std::string* a_nullable_string,
       const flutter::EncodableValue* a_nullable_object,
       const flutter::EncodableList* list,
       const flutter::EncodableList* string_list,
@@ -414,6 +428,10 @@ class AllNullableTypesWithoutRecursion {
   void set_a_nullable_enum(const AnEnum* value_arg);
   void set_a_nullable_enum(const AnEnum& value_arg);
 
+  const AnotherEnum* another_nullable_enum() const;
+  void set_another_nullable_enum(const AnotherEnum* value_arg);
+  void set_another_nullable_enum(const AnotherEnum& value_arg);
+
   const std::string* a_nullable_string() const;
   void set_a_nullable_string(const std::string_view* value_arg);
   void set_a_nullable_string(std::string_view value_arg);
@@ -456,7 +474,7 @@ class AllNullableTypesWithoutRecursion {
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
-  friend class PigeonCodecSerializer;
+  friend class PigeonInternalCodecSerializer;
   friend class CoreTestsTest;
   std::optional<bool> a_nullable_bool_;
   std::optional<int64_t> a_nullable_int_;
@@ -470,6 +488,7 @@ class AllNullableTypesWithoutRecursion {
   std::optional<flutter::EncodableMap> nullable_map_with_annotations_;
   std::optional<flutter::EncodableMap> nullable_map_with_object_;
   std::optional<AnEnum> a_nullable_enum_;
+  std::optional<AnotherEnum> another_nullable_enum_;
   std::optional<std::string> a_nullable_string_;
   std::optional<flutter::EncodableValue> a_nullable_object_;
   std::optional<flutter::EncodableList> list_;
@@ -526,7 +545,7 @@ class AllClassesWrapper {
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
-  friend class PigeonCodecSerializer;
+  friend class PigeonInternalCodecSerializer;
   friend class CoreTestsTest;
   std::unique_ptr<AllNullableTypes> all_nullable_types_;
   std::unique_ptr<AllNullableTypesWithoutRecursion>
@@ -557,16 +576,16 @@ class TestMessage {
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
-  friend class PigeonCodecSerializer;
+  friend class PigeonInternalCodecSerializer;
   friend class CoreTestsTest;
   std::optional<flutter::EncodableList> test_list_;
 };
 
-class PigeonCodecSerializer : public flutter::StandardCodecSerializer {
+class PigeonInternalCodecSerializer : public flutter::StandardCodecSerializer {
  public:
-  PigeonCodecSerializer();
-  inline static PigeonCodecSerializer& GetInstance() {
-    static PigeonCodecSerializer sInstance;
+  PigeonInternalCodecSerializer();
+  inline static PigeonInternalCodecSerializer& GetInstance() {
+    static PigeonInternalCodecSerializer sInstance;
     return sInstance;
   }
 
@@ -626,6 +645,9 @@ class HostIntegrationCoreApi {
       const AllClassesWrapper& wrapper) = 0;
   // Returns the passed enum to test serialization and deserialization.
   virtual ErrorOr<AnEnum> EchoEnum(const AnEnum& an_enum) = 0;
+  // Returns the passed enum to test serialization and deserialization.
+  virtual ErrorOr<AnotherEnum> EchoAnotherEnum(
+      const AnotherEnum& another_enum) = 0;
   // Returns the default string.
   virtual ErrorOr<std::string> EchoNamedDefaultString(
       const std::string& a_string) = 0;
@@ -683,6 +705,8 @@ class HostIntegrationCoreApi {
       const flutter::EncodableMap* a_nullable_map) = 0;
   virtual ErrorOr<std::optional<AnEnum>> EchoNullableEnum(
       const AnEnum* an_enum) = 0;
+  virtual ErrorOr<std::optional<AnotherEnum>> EchoAnotherNullableEnum(
+      const AnotherEnum* another_enum) = 0;
   // Returns passed in int.
   virtual ErrorOr<std::optional<int64_t>> EchoOptionalNullableInt(
       const int64_t* a_nullable_int) = 0;
@@ -729,6 +753,11 @@ class HostIntegrationCoreApi {
   virtual void EchoAsyncEnum(
       const AnEnum& an_enum,
       std::function<void(ErrorOr<AnEnum> reply)> result) = 0;
+  // Returns the passed enum, to test asynchronous serialization and
+  // deserialization.
+  virtual void EchoAnotherAsyncEnum(
+      const AnotherEnum& another_enum,
+      std::function<void(ErrorOr<AnotherEnum> reply)> result) = 0;
   // Responds with an error from an async function returning a value.
   virtual void ThrowAsyncError(
       std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
@@ -799,6 +828,12 @@ class HostIntegrationCoreApi {
   virtual void EchoAsyncNullableEnum(
       const AnEnum* an_enum,
       std::function<void(ErrorOr<std::optional<AnEnum>> reply)> result) = 0;
+  // Returns the passed enum, to test asynchronous serialization and
+  // deserialization.
+  virtual void EchoAnotherAsyncNullableEnum(
+      const AnotherEnum* another_enum,
+      std::function<void(ErrorOr<std::optional<AnotherEnum>> reply)>
+          result) = 0;
   virtual void CallFlutterNoop(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
   virtual void CallFlutterThrowError(
@@ -848,6 +883,9 @@ class HostIntegrationCoreApi {
   virtual void CallFlutterEchoEnum(
       const AnEnum& an_enum,
       std::function<void(ErrorOr<AnEnum> reply)> result) = 0;
+  virtual void CallFlutterEchoAnotherEnum(
+      const AnotherEnum& another_enum,
+      std::function<void(ErrorOr<AnotherEnum> reply)> result) = 0;
   virtual void CallFlutterEchoNullableBool(
       const bool* a_bool,
       std::function<void(ErrorOr<std::optional<bool>> reply)> result) = 0;
@@ -876,6 +914,10 @@ class HostIntegrationCoreApi {
   virtual void CallFlutterEchoNullableEnum(
       const AnEnum* an_enum,
       std::function<void(ErrorOr<std::optional<AnEnum>> reply)> result) = 0;
+  virtual void CallFlutterEchoAnotherNullableEnum(
+      const AnotherEnum* another_enum,
+      std::function<void(ErrorOr<std::optional<AnotherEnum>> reply)>
+          result) = 0;
   virtual void CallFlutterSmallApiEchoString(
       const std::string& a_string,
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
@@ -977,6 +1019,10 @@ class FlutterIntegrationCoreApi {
   void EchoEnum(const AnEnum& an_enum,
                 std::function<void(const AnEnum&)>&& on_success,
                 std::function<void(const FlutterError&)>&& on_error);
+  // Returns the passed enum to test serialization and deserialization.
+  void EchoAnotherEnum(const AnotherEnum& another_enum,
+                       std::function<void(const AnotherEnum&)>&& on_success,
+                       std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed boolean, to test serialization and deserialization.
   void EchoNullableBool(const bool* a_bool,
                         std::function<void(const bool*)>&& on_success,
@@ -1012,6 +1058,11 @@ class FlutterIntegrationCoreApi {
   void EchoNullableEnum(const AnEnum* an_enum,
                         std::function<void(const AnEnum*)>&& on_success,
                         std::function<void(const FlutterError&)>&& on_error);
+  // Returns the passed enum to test serialization and deserialization.
+  void EchoAnotherNullableEnum(
+      const AnotherEnum* another_enum,
+      std::function<void(const AnotherEnum*)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
   // A no-op function taking no arguments and returning no value, to sanity
   // test basic asynchronous calling.
   void NoopAsync(std::function<void(void)>&& on_success,
