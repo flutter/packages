@@ -3181,7 +3181,7 @@ class VideoView extends View {
   }
 
   /// Sets the URI of the video.
-  Future<void> setVideoUri(String uri) async {
+  Future<void> setVideoUri(String? uri) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecVideoView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;

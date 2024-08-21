@@ -347,6 +347,20 @@ abstract class AdsManager extends BaseManager {
 
   /// Starts playing the ads.
   void start();
+
+  /// List of content time offsets in seconds at which ad breaks are scheduled.
+  ///
+  /// The list will be empty if no ad breaks are scheduled.
+  List<double> getAdCuePoints();
+
+  /// Resumes the current ad.
+  void resume();
+
+  /// Skips the current ad.
+  ///
+  /// `AdsManager.skip()` only skips ads if IMA does not render the 'Skip ad'
+  /// button.
+  void skip();
 }
 
 /// Base interface for managing ads..
@@ -548,7 +562,7 @@ abstract class VideoView extends View {
   late final void Function(MediaPlayer player, int what, int extra) onError;
 
   /// Sets the URI of the video.
-  void setVideoUri(String uri);
+  void setVideoUri(String? uri);
 
   /// The current position of the playing video.
   ///

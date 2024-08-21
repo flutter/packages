@@ -2,6 +2,7 @@
 
 * Adds support for pausing and resuming Ad playback. See `AdsManager.pause` and `AdsManager.resume`.
 * Adds support to skip an Ad. See `AdsManager.skip` and `AdsManager.discardAdBreak`.
+* Fixes bug where the ad would play when the app returned to foreground during content playback.
 * **Breaking Change** To keep platform consistency, Android no longer continues playing an Ad 
   whenever it returns from an Ad click. Call `AdsManager.resume` to resume Ad playback.
 

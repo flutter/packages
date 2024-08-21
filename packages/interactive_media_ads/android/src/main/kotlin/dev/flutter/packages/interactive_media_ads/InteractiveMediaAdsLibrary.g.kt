@@ -2586,7 +2586,7 @@ abstract class PigeonApiVideoView(
   abstract fun pigeon_defaultConstructor(): android.widget.VideoView
 
   /** Sets the URI of the video. */
-  abstract fun setVideoUri(pigeon_instance: android.widget.VideoView, uri: String)
+  abstract fun setVideoUri(pigeon_instance: android.widget.VideoView, uri: String?)
 
   /**
    * The current position of the playing video.
@@ -2634,7 +2634,7 @@ abstract class PigeonApiVideoView(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.widget.VideoView
-            val uriArg = args[1] as String
+            val uriArg = args[1] as String?
             val wrapped: List<Any?> =
                 try {
                   api.setVideoUri(pigeon_instanceArg, uriArg)

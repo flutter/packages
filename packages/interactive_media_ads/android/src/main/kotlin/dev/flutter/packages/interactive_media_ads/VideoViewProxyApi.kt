@@ -28,8 +28,8 @@ class VideoViewProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     return instance
   }
 
-  override fun setVideoUri(pigeon_instance: VideoView, uri: String) {
-    pigeon_instance.setVideoURI(Uri.parse(uri))
+  override fun setVideoUri(pigeon_instance: VideoView, uri: String?) {
+    pigeon_instance.setVideoURI(if (uri != null) Uri.parse(uri) else null)
   }
 
   override fun getCurrentPosition(pigeon_instance: VideoView): Long {

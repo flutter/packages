@@ -79,8 +79,8 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
       ..addListener(() {
         if (_contentVideoController.value.isCompleted) {
           _adsLoader.contentComplete();
-          setState(() {});
         }
+        setState(() {});
       })
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
@@ -94,13 +94,16 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        _adsManager?.resume();
+        if (!_shouldShowContentVideo) {
+          _adsManager?.resume();
+        }
       case AppLifecycleState.inactive:
         // Pausing the Ad video player on Android can only be done in this state
         // because it corresponds to `Activity.onPause`. This state is also
         // triggered before resume, so this will only pause the Ad if the app is
         // in the process of being sent to the background.
-        if (_lastLifecycleState == AppLifecycleState.resumed) {
+        if (!_shouldShowContentVideo &&
+            _lastLifecycleState == AppLifecycleState.resumed) {
           _adsManager?.pause();
         }
       case AppLifecycleState.hidden:
