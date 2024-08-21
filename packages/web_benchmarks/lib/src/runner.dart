@@ -161,8 +161,8 @@ class BenchmarkServer {
 
     // Serves the static files built for the app (html, js, images, fonts, etc)
     final Handler buildFolderHandler = createStaticHandler(
-        path.join(benchmarkAppDirectory.path, 'build', 'web'),
-        defaultDocument: 'index.html',
+      path.join(benchmarkAppDirectory.path, 'build', 'web'),
+      defaultDocument: 'index.html',
     );
     // We want our page to be crossOriginIsolated. This will allow us to run the
     // skwasm renderer, which uses a SharedArrayBuffer, which requires the page

@@ -30,7 +30,8 @@ Future<void> main() async {
     final List<BenchmarkScore>? scores = results.scores['simple'];
     expect(scores, isNotNull);
 
-    final BenchmarkScore isWasmScore = scores!.firstWhere((BenchmarkScore score) => score.metric == 'isWasm');
+    final BenchmarkScore isWasmScore =
+        scores!.firstWhere((BenchmarkScore score) => score.metric == 'isWasm');
     expect(isWasmScore.value, 0);
   }, timeout: Timeout.none);
 
@@ -48,7 +49,8 @@ Future<void> main() async {
       final List<BenchmarkScore>? scores = results.scores['simple'];
       expect(scores, isNotNull);
 
-      final BenchmarkScore isWasmScore = scores!.firstWhere((BenchmarkScore score) => score.metric == 'isWasm');
+      final BenchmarkScore isWasmScore = scores!
+          .firstWhere((BenchmarkScore score) => score.metric == 'isWasm');
       expect(isWasmScore.value, 1);
     },
     timeout: Timeout.none,
@@ -71,12 +73,12 @@ Future<BenchmarkResults> _runBenchmarks({
 
   // The skwasm renderer doesn't have preroll or apply frame steps in its rendering.
   final List<String> expectedMetrics = compilationOptions.useWasm
-    ? <String>[ 'drawFrameDuration' ]
-    : <String>[
-      'preroll_frame',
-      'apply_frame',
-      'drawFrameDuration',
-  ];
+      ? <String>['drawFrameDuration']
+      : <String>[
+          'preroll_frame',
+          'apply_frame',
+          'drawFrameDuration',
+        ];
 
   for (final String benchmarkName in benchmarkNames) {
     for (final String metricName in expectedMetrics) {
