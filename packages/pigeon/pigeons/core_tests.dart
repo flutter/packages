@@ -46,7 +46,7 @@ class AllTypes {
 
     // Lists
     // This name is in a different format than the others to ensure that name
-    // collision with the work 'list' doesn't occur in the generated files.
+    // collision with the word 'list' doesn't occur in the generated files.
     required this.list,
     required this.stringList,
     required this.intList,
@@ -109,7 +109,7 @@ class AllNullableTypes {
 
     // Lists
     // This name is in a different format than the others to ensure that name
-    // collision with the work 'list' doesn't occur in the generated files.
+    // collision with the word 'list' doesn't occur in the generated files.
     this.list,
     this.stringList,
     this.intList,
@@ -173,7 +173,7 @@ class AllNullableTypesWithoutRecursion {
 
     // Lists
     // This name is in a different format than the others to ensure that name
-    // collision with the work 'list' doesn't occur in the generated files.
+    // collision with the word 'list' doesn't occur in the generated files.
     this.list,
     this.stringList,
     this.intList,
@@ -207,22 +207,13 @@ class AllNullableTypesWithoutRecursion {
   List<int?>? intList;
   List<double?>? doubleList;
   List<bool?>? boolList;
-  // List<AnEnum?>? enumList;
-  // List<Object?>? objectList;
   List<List<Object?>?>? listList;
-  // List<Map<Object, Object?>?>? mapList;
 
   // Maps
   // ignore: strict_raw_type, always_specify_types
   Map? map;
   Map<String?, String?>? stringMap;
   Map<int?, int?>? intMap;
-  // Map<double, double?>? doubleMap;
-  // Map<int, bool?>? boolMap;
-  // Map<AnEnum, AnEnum?>? enumMap;
-  // Map<Object, Object?>? objectMap;
-  // Map<int, List<Object?>?>? listMap;
-  // Map<int, Map<Object, Object?>?>? mapMap;
 }
 
 /// A class for testing nested class handling.
