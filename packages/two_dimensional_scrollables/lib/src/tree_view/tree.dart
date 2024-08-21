@@ -902,6 +902,14 @@ class _TreeViewState<T> extends State<TreeView<T>>
               _currentAnimationForParent[node]!.controller.dispose();
               _currentAnimationForParent.remove(node);
               _updateActiveAnimations();
+              // If the node is collapsing, we need to rebuild the active nodes
+              // to reflect the new state.
+              // This is because the node's children are no longer active.
+              if (!node._expanded) {
+                setState(() {
+                   _unpackActiveNodes();
+                });
+              }
             case AnimationStatus.forward:
             case AnimationStatus.reverse:
           }
@@ -940,9 +948,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
           controller.forward();
         case false:
           // Collapsing
-          controller.reverse().then((_) {
-            _unpackActiveNodes();
-          });
+          controller.reverse();
       }
     });
   }
