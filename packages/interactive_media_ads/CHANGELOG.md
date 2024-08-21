@@ -1,3 +1,7 @@
+## 0.1.2+4
+
+* Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.
+
 ## 0.1.2+3
 
 * Adds a contribution guide. See `CONTRIBUTING.md`.
