@@ -164,22 +164,22 @@ class BenchmarkServer {
         path.join(benchmarkAppDirectory.path, 'build', 'web'),
         defaultDocument: 'index.html',
     );
-    if (compilationOptions.useWasm) {
-      // In wasm mode, we need cross origin isolation, so we need to serve the
-      // html document with COOP/COEP headers.
-      cascade = cascade.add((Request request) async {
-        final Response response = await buildFolderHandler(request);
-        if (response.mimeType == 'text/html') {
-          return response.change(headers: <String, String>{
-            'Cross-Origin-Opener-Policy': 'same-origin',
-            'Cross-Origin-Embedder-Policy': 'require-corp',
-          });
-        }
-        return response;
-      });
-    } else {
-      cascade = cascade.add(buildFolderHandler);
-    }
+    // We want our page to be crossOriginIsolated. This will allow us to run the
+    // skwasm renderer, which uses a SharedArrayBuffer, which requires the page
+    // to be crossOriginIsolated. But also, even in the non-skwasm case, running
+    // in crossOriginIsolated gives us access to more accurate timers which are
+    // useful for capturing good benchmarking data.
+    // See https://developer.mozilla.org/en-US/docs/Web/API/Performance_API/High_precision_timing#reduced_precision
+    cascade = cascade.add((Request request) async {
+      final Response response = await buildFolderHandler(request);
+      if (response.mimeType == 'text/html') {
+        return response.change(headers: <String, String>{
+          'Cross-Origin-Opener-Policy': 'same-origin',
+          'Cross-Origin-Embedder-Policy': 'require-corp',
+        });
+      }
+      return response;
+    });
 
     // Serves the benchmark server API used by the benchmark app to coordinate
     // the running of benchmarks.
