@@ -6,7 +6,7 @@
 // https://github.com/flutter/packages/pull/6371 lands. This file uses the
 // Kotlin ProxyApi feature from pigeon.
 // ignore_for_file: avoid_unused_constructor_parameters
-
+/*
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
@@ -732,3 +732,4 @@ abstract class AdEventListener {
   /// Respond to an occurrence of an AdEvent.
   late final void Function(AdEvent event) onAdEvent;
 }
+*/
