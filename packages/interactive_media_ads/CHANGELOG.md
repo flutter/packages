@@ -1,3 +1,7 @@
+## 0.1.2+3
+
+* Adds a contribution guide. See `CONTRIBUTING.md`.
+
 ## 0.1.2+2
 
 * Removes dependency on org.jetbrains.kotlin:kotlin-bom.
