@@ -535,7 +535,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
-    expect(code, contains('var field1: [AnyHashable: Any?]? = nil'));
+    expect(code, contains('var field1: [AnyHashable?: Any?]? = nil'));
     expect(code, isNot(contains('if (')));
   });
 

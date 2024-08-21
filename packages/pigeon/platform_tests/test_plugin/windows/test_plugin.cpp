@@ -145,6 +145,15 @@ ErrorOr<EncodableMap> TestPlugin::EchoMap(const EncodableMap& a_map) {
   return a_map;
 }
 
+ErrorOr<EncodableMap> TestPlugin::EchoStringMap(
+    const EncodableMap& string_map) {
+  return string_map;
+}
+
+ErrorOr<EncodableMap> TestPlugin::EchoIntMap(const EncodableMap& int_map) {
+  return int_map;
+}
+
 ErrorOr<AllClassesWrapper> TestPlugin::EchoClassWrapper(
     const AllClassesWrapper& wrapper) {
   return wrapper;
@@ -283,11 +292,27 @@ ErrorOr<std::optional<EncodableList>> TestPlugin::EchoNullableList(
 };
 
 ErrorOr<std::optional<EncodableMap>> TestPlugin::EchoNullableMap(
-    const EncodableMap* a_nullable_map) {
-  if (!a_nullable_map) {
+    const EncodableMap* map) {
+  if (!map) {
     return std::nullopt;
   }
-  return *a_nullable_map;
+  return *map;
+};
+
+ErrorOr<std::optional<EncodableMap>> TestPlugin::EchoNullableStringMap(
+    const EncodableMap* string_map) {
+  if (!string_map) {
+    return std::nullopt;
+  }
+  return *string_map;
+};
+
+ErrorOr<std::optional<EncodableMap>> TestPlugin::EchoNullableIntMap(
+    const EncodableMap* int_map) {
+  if (!int_map) {
+    return std::nullopt;
+  }
+  return *int_map;
 };
 
 ErrorOr<std::optional<AnEnum>> TestPlugin::EchoNullableEnum(
@@ -387,9 +412,21 @@ void TestPlugin::EchoAsyncList(
 }
 
 void TestPlugin::EchoAsyncMap(
-    const EncodableMap& a_map,
+    const EncodableMap& map,
     std::function<void(ErrorOr<EncodableMap> reply)> result) {
-  result(a_map);
+  result(map);
+}
+
+void TestPlugin::EchoAsyncStringMap(
+    const EncodableMap& string_map,
+    std::function<void(ErrorOr<EncodableMap> reply)> result) {
+  result(string_map);
+}
+
+void TestPlugin::EchoAsyncIntMap(
+    const EncodableMap& int_map,
+    std::function<void(ErrorOr<EncodableMap> reply)> result) {
+  result(int_map);
 }
 
 void TestPlugin::EchoAsyncEnum(
@@ -466,9 +503,21 @@ void TestPlugin::EchoAsyncNullableList(
 }
 
 void TestPlugin::EchoAsyncNullableMap(
-    const EncodableMap* a_map,
+    const EncodableMap* map,
     std::function<void(ErrorOr<std::optional<EncodableMap>> reply)> result) {
-  result(a_map ? std::optional<EncodableMap>(*a_map) : std::nullopt);
+  result(map ? std::optional<EncodableMap>(*map) : std::nullopt);
+}
+
+void TestPlugin::EchoAsyncNullableStringMap(
+    const EncodableMap* string_map,
+    std::function<void(ErrorOr<std::optional<EncodableMap>> reply)> result) {
+  result(string_map ? std::optional<EncodableMap>(*string_map) : std::nullopt);
+}
+
+void TestPlugin::EchoAsyncNullableIntMap(
+    const EncodableMap* int_map,
+    std::function<void(ErrorOr<std::optional<EncodableMap>> reply)> result) {
+  result(int_map ? std::optional<EncodableMap>(*int_map) : std::nullopt);
 }
 
 void TestPlugin::EchoAsyncNullableEnum(
@@ -608,10 +657,26 @@ void TestPlugin::CallFlutterEchoList(
 }
 
 void TestPlugin::CallFlutterEchoMap(
-    const EncodableMap& a_map,
+    const EncodableMap& map,
     std::function<void(ErrorOr<EncodableMap> reply)> result) {
   flutter_api_->EchoMap(
-      a_map, [result](const EncodableMap& echo) { result(echo); },
+      map, [result](const EncodableMap& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoStringMap(
+    const EncodableMap& string_map,
+    std::function<void(ErrorOr<EncodableMap> reply)> result) {
+  flutter_api_->EchoStringMap(
+      string_map, [result](const EncodableMap& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoIntMap(
+    const EncodableMap& int_map,
+    std::function<void(ErrorOr<EncodableMap> reply)> result) {
+  flutter_api_->EchoIntMap(
+      int_map, [result](const EncodableMap& echo) { result(echo); },
       [result](const FlutterError& error) { result(error); });
 }
 
@@ -699,10 +764,32 @@ void TestPlugin::CallFlutterEchoNullableList(
 }
 
 void TestPlugin::CallFlutterEchoNullableMap(
-    const EncodableMap* a_map,
+    const EncodableMap* map,
     std::function<void(ErrorOr<std::optional<EncodableMap>> reply)> result) {
   flutter_api_->EchoNullableMap(
-      a_map,
+      map,
+      [result](const EncodableMap* echo) {
+        result(echo ? std::optional<EncodableMap>(*echo) : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoNullableStringMap(
+    const EncodableMap* string_map,
+    std::function<void(ErrorOr<std::optional<EncodableMap>> reply)> result) {
+  flutter_api_->EchoNullableStringMap(
+      string_map,
+      [result](const EncodableMap* echo) {
+        result(echo ? std::optional<EncodableMap>(*echo) : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoNullableIntMap(
+    const EncodableMap* int_map,
+    std::function<void(ErrorOr<std::optional<EncodableMap>> reply)> result) {
+  flutter_api_->EchoNullableIntMap(
+      int_map,
       [result](const EncodableMap* echo) {
         result(echo ? std::optional<EncodableMap>(*echo) : std::nullopt);
       },

@@ -88,7 +88,7 @@ private object MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Int?)?.let { Code.ofRaw(it) }
+        return (readValue(buffer) as Long?)?.let { Code.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { MessageData.fromList(it) }
@@ -161,8 +161,8 @@ interface ExampleHostApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val aArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val bArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val aArg = args[0] as Long
+            val bArg = args[1] as Long
             val wrapped: List<Any?> =
                 try {
                   listOf(api.add(aArg, bArg))
