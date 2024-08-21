@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import 'pages/pages.dart';
 
+/// The [ScaffoldShell] is a [StatelessWidget] that uses the [AdaptiveScaffold]
+/// to create a shell for the application.
 class ScaffoldShell extends StatelessWidget {
   /// Create a new instance of [AppScaffoldShell]
   const ScaffoldShell({

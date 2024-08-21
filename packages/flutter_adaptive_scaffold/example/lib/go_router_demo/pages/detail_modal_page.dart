@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DetailModalPage extends StatelessWidget {
-  const DetailModalPage({Key? key}) : super(key: key);
+  const DetailModalPage({super.key});
 
   static const String path = 'detail-modal';
   static const String name = 'DetailModal';

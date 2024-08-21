@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../global_router.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   static const String path = '/login';
   static const String name = 'Login';

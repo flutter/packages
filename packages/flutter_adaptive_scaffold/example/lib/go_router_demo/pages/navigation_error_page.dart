@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class NavigationErrorPage extends StatelessWidget {
-  const NavigationErrorPage({Key? key}) : super(key: key);
+  const NavigationErrorPage({super.key});
 
   static const String path = '/error';
   static const String name = 'Error';

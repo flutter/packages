@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'pages.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   static const String path = '/home';
   static const String name = 'Home';
