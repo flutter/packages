@@ -2065,7 +2065,6 @@ Iterable<_Token> _tokenize(String file) sync* {
           default:
             // ignored, comment
             mode = _TokenizerMode.blockComment;
-            break;
         }
     }
   }
