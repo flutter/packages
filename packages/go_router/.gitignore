@@ -8,7 +8,6 @@
 .buildlog/
 .history/
 .coverage/
-.gitignore
 .svn/
 migrate_working_dir/
 
