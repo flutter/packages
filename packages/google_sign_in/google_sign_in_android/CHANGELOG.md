@@ -1,3 +1,7 @@
+## 6.1.29
+
+* Updates Guava to version 33.3.0.
+
 ## 6.1.28
 
 * Updates lint checks to ignore NewerVersionAvailable.

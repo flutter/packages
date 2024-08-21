@@ -1,3 +1,12 @@
+## 0.2.2
+
+* Fix a bug where landscape would not show body when using `andUp`.
+
+## 0.2.1
+
+* Add `Breakpoint.activeBreakpointOf(context)` to find the currently active breakpoint.
+* Don't check for height on Desktop platforms.
+
 ## 0.2.0
 
 * Add breakpoints for mediumLarge and extraLarge.
