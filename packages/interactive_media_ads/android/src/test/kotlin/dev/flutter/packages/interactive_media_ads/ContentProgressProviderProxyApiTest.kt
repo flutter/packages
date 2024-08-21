@@ -4,34 +4,33 @@
 
 package dev.flutter.packages.interactive_media_ads
 
-import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import org.mockito.kotlin.mock
 
-/**
- * ProxyApi implementation for [ContentProgressProvider].
- *
- * <p>This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
- */
-class ContentProgressProviderProxyApiTest(override val pigeonRegistrar: ProxyApiRegistrar) :
-    PigeonApiContentProgressProvider(pigeonRegistrar) {
-  internal class ContentProgressProviderImpl(val api: ContentProgressProviderProxyApi) :
-      ContentProgressProvider {
-    var currentProgress = VideoProgressUpdate.VIDEO_TIME_NOT_READY
+class ContentProgressProviderProxyApiTest {
+  @Test
+  fun pigeon_defaultConstructor() {
+    val api = TestProxyApiRegistrar().getPigeonApiContentProgressProvider()
 
-    override fun getContentProgress(): VideoProgressUpdate {
-      return currentProgress
-    }
+    assertTrue(
+        api.pigeon_defaultConstructor()
+            is ContentProgressProviderProxyApi.ContentProgressProviderImpl)
   }
 
-  override fun pigeon_defaultConstructor(): ContentProgressProvider {
-    return ContentProgressProviderImpl(this)
-  }
+  @Test
+  fun setContentProgress() {
+    val api = TestProxyApiRegistrar().getPigeonApiContentProgressProvider()
 
-  override fun setContentProgress(
-      pigeon_instance: ContentProgressProvider,
-      update: VideoProgressUpdate
-  ) {
-    (pigeon_instance as ContentProgressProviderImpl).currentProgress = update
+    val instance =
+        ContentProgressProviderProxyApi.ContentProgressProviderImpl(
+            api as ContentProgressProviderProxyApi)
+    val mockProgressUpdate = mock<VideoProgressUpdate>()
+    api.setContentProgress(instance, mockProgressUpdate)
+
+    assertEquals(mockProgressUpdate, instance.currentProgress)
+    assertEquals(mockProgressUpdate, instance.contentProgress)
   }
 }
