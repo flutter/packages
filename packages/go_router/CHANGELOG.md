@@ -4,6 +4,14 @@
   - Introduces a fragment parameter to the GoRoute constructor in `extensions.dart` to allow direct specification of a fragment when defining a route.
   - Updates GoRouterState in `state.dart` to manage fragments in the URI. The namedLocation method now takes an optional fragment parameter and automatically appends it to the location.
 
+## 14.2.6
+
+- Fixes replace and pushReplacement uri when only one route match in current route match list.
+
+## 14.2.5
+
+- Fixes an issue where android back button pops pages in the wrong order.
+
 ## 14.2.4
 
 - Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
