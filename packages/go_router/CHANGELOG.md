@@ -1,3 +1,7 @@
+## 14.2.7
+
+- Fixes an issue where redirects did not work when browser history was changed.
+
 ## 14.2.6
 
 - Fixes replace and pushReplacement uri when only one route match in current route match list.
