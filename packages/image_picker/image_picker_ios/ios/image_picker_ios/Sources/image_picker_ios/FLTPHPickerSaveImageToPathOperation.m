@@ -146,44 +146,37 @@ API_AVAILABLE(ios(14))
 
 /// Processes the video.
 - (void)processVideo API_AVAILABLE(ios(14)) {
- NSString *typeIdentifier = self.result.itemProvider.registeredTypeIdentifiers.firstObject;
-  
- [self.result.itemProvider
-   loadItemForTypeIdentifier:typeIdentifier
-            options:nil
-       completionHandler:^(NSURL *_Nullable videoURL, NSError *_Nullable error) {
-         if (error != nil) {
-           FlutterError *flutterError =
-             [FlutterError errorWithCode:@"invalid_image"
-                       message:error.localizedDescription
-                       details:error.domain];
-           [self completeOperationWithPath:nil error:flutterError];
-           return;
-         }
+  NSString *typeIdentifier = self.result.itemProvider.registeredTypeIdentifiers.firstObject;
+  [self.result.itemProvider
+      loadFileRepresentationForTypeIdentifier:typeIdentifier
+                            completionHandler:^(NSURL *_Nullable videoURL,
+                                                NSError *_Nullable error) {
+                              if (error != nil) {
+                                FlutterError *flutterError =
+                                    [FlutterError errorWithCode:@"invalid_image"
+                                                        message:error.localizedDescription
+                                                        details:error.domain];
+                                [self completeOperationWithPath:nil error:flutterError];
+                                return;
+                              }
 
-         // Check if the videoURL is already a file URL
-         if ([videoURL isFileURL]) {
-           [self completeOperationWithPath:[videoURL path] error:nil];
-         } else {
-           // Fallback to the original method if not a file URL
-           NSURL *destination =
-             [FLTImagePickerPhotoAssetUtil saveVideoFromURL:videoURL];
-           if (destination == nil) {
-             [self
-               completeOperationWithPath:nil
-                         error:[FlutterError
-                              errorWithCode:
-                                @"flutter_image_picker_copy_"
-                                @"video_error"
-                                 message:@"Could not cache "
-                                     @"the video file."
-                                 details:nil]];
-             return;
-           }
+                              NSURL *destination =
+                                  [FLTImagePickerPhotoAssetUtil saveVideoFromURL:videoURL];
+                              if (destination == nil) {
+                                [self
+                                    completeOperationWithPath:nil
+                                                        error:[FlutterError
+                                                                  errorWithCode:
+                                                                      @"flutter_image_picker_copy_"
+                                                                      @"video_error"
+                                                                        message:@"Could not cache "
+                                                                                @"the video file."
+                                                                        details:nil]];
+                                return;
+                              }
 
-           [self completeOperationWithPath:[destination path] error:nil];
-         }
-       }];
+                              [self completeOperationWithPath:[destination path] error:nil];
+                            }];
 }
 
 @end
