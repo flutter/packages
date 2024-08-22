@@ -23,11 +23,10 @@ void defineTests() {
         );
         expectWidgetTypes(widgets, <Type>[
           MarkdownBody,
-          Container,
           DecoratedBox,
           Padding,
           LimitedBox,
-          ConstrainedBox
+          SizedBox,
         ]);
       },
     );
@@ -44,11 +43,10 @@ void defineTests() {
         );
         expectWidgetTypes(widgets, <Type>[
           MarkdownBody,
-          Container,
           DecoratedBox,
           Padding,
           LimitedBox,
-          ConstrainedBox
+          SizedBox,
         ]);
       },
     );
@@ -65,11 +63,10 @@ void defineTests() {
         );
         expectWidgetTypes(widgets, <Type>[
           MarkdownBody,
-          Container,
           DecoratedBox,
           Padding,
           LimitedBox,
-          ConstrainedBox
+          SizedBox,
         ]);
       },
     );
@@ -97,11 +94,10 @@ void defineTests() {
           Text,
           RichText,
           SizedBox,
-          Container,
           DecoratedBox,
           Padding,
           LimitedBox,
-          ConstrainedBox
+          SizedBox,
         ]);
       },
     );

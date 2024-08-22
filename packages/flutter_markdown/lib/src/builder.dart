@@ -460,7 +460,21 @@ class MarkdownBuilder implements md.NodeVisitor {
           child: child,
         );
       } else if (tag == 'hr') {
-        child = Container(decoration: styleSheet.horizontalRuleDecoration);
+        child = const LimitedBox(
+          maxWidth: 0,
+          child: SizedBox(width: double.infinity),
+        );
+
+        final Decoration? decoration = styleSheet.horizontalRuleDecoration;
+        if (decoration != null) {
+          child = DecoratedBox(
+            decoration: decoration,
+            child: Padding(
+              padding: decoration.padding,
+              child: child,
+            ),
+          );
+        }
       }
 
       _addBlockChild(child);
