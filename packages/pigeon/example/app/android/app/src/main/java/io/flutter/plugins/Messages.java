@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
@@ -45,7 +46,7 @@ public class Messages {
 
   @NonNull
   protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
-    ArrayList<Object> errorList = new ArrayList<Object>(3);
+    ArrayList<Object> errorList = new ArrayList<>(3);
     if (exception instanceof FlutterError) {
       FlutterError error = (FlutterError) exception;
       errorList.add(error.code);
@@ -76,7 +77,7 @@ public class Messages {
 
     final int index;
 
-    private Code(final int index) {
+    Code(final int index) {
       this.index = index;
     }
   }
@@ -132,6 +133,26 @@ public class Messages {
     /** Constructor is non-public to enforce null safety; use Builder. */
     MessageData() {}
 
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      MessageData that = (MessageData) o;
+      return Objects.equals(name, that.name)
+          && Objects.equals(description, that.description)
+          && code.equals(that.code)
+          && data.equals(that.data);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(name, description, code, data);
+    }
+
     public static final class Builder {
 
       private @Nullable String name;
@@ -178,7 +199,7 @@ public class Messages {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(4);
+      ArrayList<Object> toListResult = new ArrayList<>(4);
       toListResult.add(name);
       toListResult.add(description);
       toListResult.add(code);
@@ -186,15 +207,15 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull MessageData fromList(@NonNull ArrayList<Object> __pigeon_list) {
+    static @NonNull MessageData fromList(@NonNull ArrayList<Object> pigeonVar_list) {
       MessageData pigeonResult = new MessageData();
-      Object name = __pigeon_list.get(0);
+      Object name = pigeonVar_list.get(0);
       pigeonResult.setName((String) name);
-      Object description = __pigeon_list.get(1);
+      Object description = pigeonVar_list.get(1);
       pigeonResult.setDescription((String) description);
-      Object code = __pigeon_list.get(2);
+      Object code = pigeonVar_list.get(2);
       pigeonResult.setCode((Code) code);
-      Object data = __pigeon_list.get(3);
+      Object data = pigeonVar_list.get(3);
       pigeonResult.setData((Map<String, String>) data);
       return pigeonResult;
     }
@@ -209,10 +230,12 @@ public class Messages {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 129:
-          return MessageData.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : Code.values()[((Long) value).intValue()];
+          }
         case (byte) 130:
-          Object value = readValue(buffer);
-          return value == null ? null : Code.values()[(int) value];
+          return MessageData.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -220,12 +243,12 @@ public class Messages {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof MessageData) {
+      if (value instanceof Code) {
         stream.write(129);
-        writeValue(stream, ((MessageData) value).toList());
-      } else if (value instanceof Code) {
-        stream.write(130);
         writeValue(stream, value == null ? null : ((Code) value).index);
+      } else if (value instanceof MessageData) {
+        stream.write(130);
+        writeValue(stream, ((MessageData) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -291,13 +314,12 @@ public class Messages {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   String output = api.getHostLanguage();
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -315,19 +337,15 @@ public class Messages {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Number aArg = (Number) args.get(0);
-                Number bArg = (Number) args.get(1);
+                Long aArg = (Long) args.get(0);
+                Long bArg = (Long) args.get(1);
                 try {
-                  Long output =
-                      api.add(
-                          (aArg == null) ? null : aArg.longValue(),
-                          (bArg == null) ? null : bArg.longValue());
+                  Long output = api.add(aArg, bArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -345,7 +363,7 @@ public class Messages {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 MessageData messageArg = (MessageData) args.get(0);
                 Result<Boolean> resultCallback =
@@ -384,8 +402,7 @@ public class Messages {
       this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
     }
 
-    /** Public interface for sending reply. */
-    /** The codec used by MessageFlutterApi. */
+    /** Public interface for sending reply. The codec used by MessageFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
@@ -397,16 +414,14 @@ public class Messages {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aStringArg)),
+          new ArrayList<>(Collections.singletonList(aStringArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(

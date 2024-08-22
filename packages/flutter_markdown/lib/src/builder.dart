@@ -438,12 +438,20 @@ class MarkdownBuilder implements md.NodeVisitor {
           );
         }
       } else if (tag == 'table') {
-        child = Table(
-          defaultColumnWidth: styleSheet.tableColumnWidth!,
-          defaultVerticalAlignment: styleSheet.tableVerticalAlignment,
-          border: styleSheet.tableBorder,
-          children: _tables.removeLast().rows,
-        );
+        if (styleSheet.tableColumnWidth is FixedColumnWidth) {
+          final ScrollController tableScrollController = ScrollController();
+          child = Scrollbar(
+            controller: tableScrollController,
+            child: SingleChildScrollView(
+              controller: tableScrollController,
+              scrollDirection: Axis.horizontal,
+              padding: styleSheet.tablePadding,
+              child: _buildTable(),
+            ),
+          );
+        } else {
+          child = _buildTable();
+        }
       } else if (tag == 'blockquote') {
         _isInBlockquote = false;
         child = DecoratedBox(
@@ -558,6 +566,15 @@ class MarkdownBuilder implements md.NodeVisitor {
     _lastVisitedTag = tag;
   }
 
+  Table _buildTable() {
+    return Table(
+      defaultColumnWidth: styleSheet.tableColumnWidth!,
+      defaultVerticalAlignment: styleSheet.tableVerticalAlignment,
+      border: styleSheet.tableBorder,
+      children: _tables.removeLast().rows,
+    );
+  }
+
   Widget _buildImage(String src, String? title, String? alt) {
     final List<String> parts = src.split('#');
     if (parts.isEmpty) {
@@ -653,7 +670,15 @@ class MarkdownBuilder implements md.NodeVisitor {
         child: DefaultTextStyle(
           style: styleSheet.tableBody!,
           textAlign: textAlign,
-          child: Wrap(children: children as List<Widget>),
+          child: Wrap(
+            alignment: switch (textAlign) {
+              TextAlign.left => WrapAlignment.start,
+              TextAlign.center => WrapAlignment.center,
+              TextAlign.right => WrapAlignment.end,
+              _ => WrapAlignment.start,
+            },
+            children: children as List<Widget>,
+          ),
         ),
       ),
     );

@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates UI test photo element query for iOS 18.
+
 ## 0.8.12
 
 * Re-adds Swift Package Manager compatibility.

@@ -1,3 +1,12 @@
+## 0.7.3+1
+
+* Fixes issue with table column alignments not being respected.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 0.7.3
+
+* Adds horizontal scrolling for table when using `tableColumnWidth: FixedColumnWidth(width)`.
+
 ## 0.7.2+1
 
 * Fixes a crash caused by text selection when `selectable` is true and `onSelectionChanged` is null.

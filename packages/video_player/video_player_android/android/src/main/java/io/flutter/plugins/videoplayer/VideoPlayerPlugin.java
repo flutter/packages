@@ -108,6 +108,8 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
         assetLookupKey = flutterState.keyForAsset.get(arg.getAsset());
       }
       videoAsset = VideoAsset.fromAssetUrl("asset:///" + assetLookupKey);
+    } else if (arg.getUri().startsWith("rtsp://")) {
+      videoAsset = VideoAsset.fromRtspUrl(arg.getUri());
     } else {
       VideoAsset.StreamingFormat streamingFormat = VideoAsset.StreamingFormat.UNKNOWN;
       String formatHint = arg.getFormatHint();

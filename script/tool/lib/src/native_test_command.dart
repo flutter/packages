@@ -500,7 +500,6 @@ this command.
           if (exampleHasUnitTests) {
             ranUnitTests = true;
           }
-          break;
       }
     }
 

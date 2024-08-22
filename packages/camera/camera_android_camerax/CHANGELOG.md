@@ -1,3 +1,40 @@
+## 0.6.8+3
+
+* Removes dependency on org.jetbrains.kotlin:kotlin-bom.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 0.6.8+2
+
+* Marks uses of `Camera2Interop` with `@OptIn` annotation.
+
+## 0.6.8+1
+
+* Re-lands support for Impeller.
+
+## 0.6.8
+
+* Updates Guava version to 33.3.0.
+
+## 0.6.7+2
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 0.6.7+1
+
+* Updates README to remove references to `maxVideoDuration`, as it was never
+  visible to app-facing clients, nor was it implemented in `camera_android`.
+
+## 0.6.7
+
+* Updates AGP version to 8.5.0.
+
+## 0.6.6
+
+* Adds logic to support building a camera preview with Android `Surface`s not backed by a `SurfaceTexture`
+  to which CameraX cannot not automatically apply the transformation required to achieve the correct rotation.
+* Adds fix for incorrect camera preview rotation on naturally landscape-oriented devices.
+* Updates example app's minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 0.6.5+6
 
 * Updates Guava version to 33.2.1.

@@ -1,3 +1,11 @@
+## 3.15.0
+
+* Adds macOS support.
+
+## 3.14.0
+
+* Adds Swift Package Manager compatibility.
+
 ## 3.13.1
 
 * Fixes `JSON.stringify()` cannot serialize cyclic structures.
@@ -84,7 +92,7 @@
 
 * Introduces `NSError.toString` for better diagnostics.
 
-## 3.6.2 
+## 3.6.2
 
 * Fixes unawaited_futures violations.
 

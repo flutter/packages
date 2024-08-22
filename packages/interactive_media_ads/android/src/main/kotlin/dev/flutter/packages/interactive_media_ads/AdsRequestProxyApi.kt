@@ -21,10 +21,14 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
      *
      * This must match the version in pubspec.yaml.
      */
-    const val pluginVersion = "0.0.2"
+    const val pluginVersion = "0.1.2+4"
   }
 
   override fun setAdTagUrl(pigeon_instance: AdsRequest, adTagUrl: String) {
+    // Ensure adTag can append a custom parameter.
+    require(adTagUrl.contains("?"))
+    require(!adTagUrl.contains("#"))
+
     pigeon_instance.adTagUrl = "$adTagUrl&request_agent=Flutter-IMA-$pluginVersion"
   }
 

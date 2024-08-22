@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
@@ -49,7 +50,7 @@ public class CoreTests {
 
   @NonNull
   protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
-    ArrayList<Object> errorList = new ArrayList<Object>(3);
+    ArrayList<Object> errorList = new ArrayList<>(3);
     if (exception instanceof FlutterError) {
       FlutterError error = (FlutterError) exception;
       errorList.add(error.code);
@@ -83,7 +84,17 @@ public class CoreTests {
 
     final int index;
 
-    private AnEnum(final int index) {
+    AnEnum(final int index) {
+      this.index = index;
+    }
+  }
+
+  public enum AnotherEnum {
+    JUST_IN_CASE(0);
+
+    final int index;
+
+    AnotherEnum(final int index) {
       this.index = index;
     }
   }
@@ -211,6 +222,19 @@ public class CoreTests {
       this.anEnum = setterArg;
     }
 
+    private @NonNull AnotherEnum anotherEnum;
+
+    public @NonNull AnotherEnum getAnotherEnum() {
+      return anotherEnum;
+    }
+
+    public void setAnotherEnum(@NonNull AnotherEnum setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"anotherEnum\" is null.");
+      }
+      this.anotherEnum = setterArg;
+    }
+
     private @NonNull String aString;
 
     public @NonNull String getAString() {
@@ -302,6 +326,19 @@ public class CoreTests {
       this.boolList = setterArg;
     }
 
+    private @NonNull List<List<Object>> listList;
+
+    public @NonNull List<List<Object>> getListList() {
+      return listList;
+    }
+
+    public void setListList(@NonNull List<List<Object>> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"listList\" is null.");
+      }
+      this.listList = setterArg;
+    }
+
     private @NonNull Map<Object, Object> map;
 
     public @NonNull Map<Object, Object> getMap() {
@@ -315,8 +352,94 @@ public class CoreTests {
       this.map = setterArg;
     }
 
+    private @NonNull Map<String, String> stringMap;
+
+    public @NonNull Map<String, String> getStringMap() {
+      return stringMap;
+    }
+
+    public void setStringMap(@NonNull Map<String, String> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"stringMap\" is null.");
+      }
+      this.stringMap = setterArg;
+    }
+
+    private @NonNull Map<Long, Long> intMap;
+
+    public @NonNull Map<Long, Long> getIntMap() {
+      return intMap;
+    }
+
+    public void setIntMap(@NonNull Map<Long, Long> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"intMap\" is null.");
+      }
+      this.intMap = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     AllTypes() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      AllTypes that = (AllTypes) o;
+      return aBool.equals(that.aBool)
+          && anInt.equals(that.anInt)
+          && anInt64.equals(that.anInt64)
+          && aDouble.equals(that.aDouble)
+          && Arrays.equals(aByteArray, that.aByteArray)
+          && Arrays.equals(a4ByteArray, that.a4ByteArray)
+          && Arrays.equals(a8ByteArray, that.a8ByteArray)
+          && Arrays.equals(aFloatArray, that.aFloatArray)
+          && anEnum.equals(that.anEnum)
+          && anotherEnum.equals(that.anotherEnum)
+          && aString.equals(that.aString)
+          && anObject.equals(that.anObject)
+          && list.equals(that.list)
+          && stringList.equals(that.stringList)
+          && intList.equals(that.intList)
+          && doubleList.equals(that.doubleList)
+          && boolList.equals(that.boolList)
+          && listList.equals(that.listList)
+          && map.equals(that.map)
+          && stringMap.equals(that.stringMap)
+          && intMap.equals(that.intMap);
+    }
+
+    @Override
+    public int hashCode() {
+      int pigeonVar_result =
+          Objects.hash(
+              aBool,
+              anInt,
+              anInt64,
+              aDouble,
+              anEnum,
+              anotherEnum,
+              aString,
+              anObject,
+              list,
+              stringList,
+              intList,
+              doubleList,
+              boolList,
+              listList,
+              map,
+              stringMap,
+              intMap);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(a4ByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(a8ByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aFloatArray);
+      return pigeonVar_result;
+    }
 
     public static final class Builder {
 
@@ -392,6 +515,14 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable AnotherEnum anotherEnum;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAnotherEnum(@NonNull AnotherEnum setterArg) {
+        this.anotherEnum = setterArg;
+        return this;
+      }
+
       private @Nullable String aString;
 
       @CanIgnoreReturnValue
@@ -448,11 +579,35 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable List<List<Object>> listList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setListList(@NonNull List<List<Object>> setterArg) {
+        this.listList = setterArg;
+        return this;
+      }
+
       private @Nullable Map<Object, Object> map;
 
       @CanIgnoreReturnValue
       public @NonNull Builder setMap(@NonNull Map<Object, Object> setterArg) {
         this.map = setterArg;
+        return this;
+      }
+
+      private @Nullable Map<String, String> stringMap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setStringMap(@NonNull Map<String, String> setterArg) {
+        this.stringMap = setterArg;
+        return this;
+      }
+
+      private @Nullable Map<Long, Long> intMap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setIntMap(@NonNull Map<Long, Long> setterArg) {
+        this.intMap = setterArg;
         return this;
       }
 
@@ -467,6 +622,7 @@ public class CoreTests {
         pigeonReturn.setA8ByteArray(a8ByteArray);
         pigeonReturn.setAFloatArray(aFloatArray);
         pigeonReturn.setAnEnum(anEnum);
+        pigeonReturn.setAnotherEnum(anotherEnum);
         pigeonReturn.setAString(aString);
         pigeonReturn.setAnObject(anObject);
         pigeonReturn.setList(list);
@@ -474,14 +630,17 @@ public class CoreTests {
         pigeonReturn.setIntList(intList);
         pigeonReturn.setDoubleList(doubleList);
         pigeonReturn.setBoolList(boolList);
+        pigeonReturn.setListList(listList);
         pigeonReturn.setMap(map);
+        pigeonReturn.setStringMap(stringMap);
+        pigeonReturn.setIntMap(intMap);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(17);
+      ArrayList<Object> toListResult = new ArrayList<>(21);
       toListResult.add(aBool);
       toListResult.add(anInt);
       toListResult.add(anInt64);
@@ -491,6 +650,7 @@ public class CoreTests {
       toListResult.add(a8ByteArray);
       toListResult.add(aFloatArray);
       toListResult.add(anEnum);
+      toListResult.add(anotherEnum);
       toListResult.add(aString);
       toListResult.add(anObject);
       toListResult.add(list);
@@ -498,50 +658,57 @@ public class CoreTests {
       toListResult.add(intList);
       toListResult.add(doubleList);
       toListResult.add(boolList);
+      toListResult.add(listList);
       toListResult.add(map);
+      toListResult.add(stringMap);
+      toListResult.add(intMap);
       return toListResult;
     }
 
-    static @NonNull AllTypes fromList(@NonNull ArrayList<Object> __pigeon_list) {
+    static @NonNull AllTypes fromList(@NonNull ArrayList<Object> pigeonVar_list) {
       AllTypes pigeonResult = new AllTypes();
-      Object aBool = __pigeon_list.get(0);
+      Object aBool = pigeonVar_list.get(0);
       pigeonResult.setABool((Boolean) aBool);
-      Object anInt = __pigeon_list.get(1);
-      pigeonResult.setAnInt(
-          (anInt == null) ? null : ((anInt instanceof Integer) ? (Integer) anInt : (Long) anInt));
-      Object anInt64 = __pigeon_list.get(2);
-      pigeonResult.setAnInt64(
-          (anInt64 == null)
-              ? null
-              : ((anInt64 instanceof Integer) ? (Integer) anInt64 : (Long) anInt64));
-      Object aDouble = __pigeon_list.get(3);
+      Object anInt = pigeonVar_list.get(1);
+      pigeonResult.setAnInt((Long) anInt);
+      Object anInt64 = pigeonVar_list.get(2);
+      pigeonResult.setAnInt64((Long) anInt64);
+      Object aDouble = pigeonVar_list.get(3);
       pigeonResult.setADouble((Double) aDouble);
-      Object aByteArray = __pigeon_list.get(4);
+      Object aByteArray = pigeonVar_list.get(4);
       pigeonResult.setAByteArray((byte[]) aByteArray);
-      Object a4ByteArray = __pigeon_list.get(5);
+      Object a4ByteArray = pigeonVar_list.get(5);
       pigeonResult.setA4ByteArray((int[]) a4ByteArray);
-      Object a8ByteArray = __pigeon_list.get(6);
+      Object a8ByteArray = pigeonVar_list.get(6);
       pigeonResult.setA8ByteArray((long[]) a8ByteArray);
-      Object aFloatArray = __pigeon_list.get(7);
+      Object aFloatArray = pigeonVar_list.get(7);
       pigeonResult.setAFloatArray((double[]) aFloatArray);
-      Object anEnum = __pigeon_list.get(8);
+      Object anEnum = pigeonVar_list.get(8);
       pigeonResult.setAnEnum((AnEnum) anEnum);
-      Object aString = __pigeon_list.get(9);
+      Object anotherEnum = pigeonVar_list.get(9);
+      pigeonResult.setAnotherEnum((AnotherEnum) anotherEnum);
+      Object aString = pigeonVar_list.get(10);
       pigeonResult.setAString((String) aString);
-      Object anObject = __pigeon_list.get(10);
+      Object anObject = pigeonVar_list.get(11);
       pigeonResult.setAnObject(anObject);
-      Object list = __pigeon_list.get(11);
+      Object list = pigeonVar_list.get(12);
       pigeonResult.setList((List<Object>) list);
-      Object stringList = __pigeon_list.get(12);
+      Object stringList = pigeonVar_list.get(13);
       pigeonResult.setStringList((List<String>) stringList);
-      Object intList = __pigeon_list.get(13);
+      Object intList = pigeonVar_list.get(14);
       pigeonResult.setIntList((List<Long>) intList);
-      Object doubleList = __pigeon_list.get(14);
+      Object doubleList = pigeonVar_list.get(15);
       pigeonResult.setDoubleList((List<Double>) doubleList);
-      Object boolList = __pigeon_list.get(15);
+      Object boolList = pigeonVar_list.get(16);
       pigeonResult.setBoolList((List<Boolean>) boolList);
-      Object map = __pigeon_list.get(16);
+      Object listList = pigeonVar_list.get(17);
+      pigeonResult.setListList((List<List<Object>>) listList);
+      Object map = pigeonVar_list.get(18);
       pigeonResult.setMap((Map<Object, Object>) map);
+      Object stringMap = pigeonVar_list.get(19);
+      pigeonResult.setStringMap((Map<String, String>) stringMap);
+      Object intMap = pigeonVar_list.get(20);
+      pigeonResult.setIntMap((Map<Long, Long>) intMap);
       return pigeonResult;
     }
   }
@@ -632,36 +799,6 @@ public class CoreTests {
       this.aNullableFloatArray = setterArg;
     }
 
-    private @Nullable List<List<Boolean>> nullableNestedList;
-
-    public @Nullable List<List<Boolean>> getNullableNestedList() {
-      return nullableNestedList;
-    }
-
-    public void setNullableNestedList(@Nullable List<List<Boolean>> setterArg) {
-      this.nullableNestedList = setterArg;
-    }
-
-    private @Nullable Map<String, String> nullableMapWithAnnotations;
-
-    public @Nullable Map<String, String> getNullableMapWithAnnotations() {
-      return nullableMapWithAnnotations;
-    }
-
-    public void setNullableMapWithAnnotations(@Nullable Map<String, String> setterArg) {
-      this.nullableMapWithAnnotations = setterArg;
-    }
-
-    private @Nullable Map<String, Object> nullableMapWithObject;
-
-    public @Nullable Map<String, Object> getNullableMapWithObject() {
-      return nullableMapWithObject;
-    }
-
-    public void setNullableMapWithObject(@Nullable Map<String, Object> setterArg) {
-      this.nullableMapWithObject = setterArg;
-    }
-
     private @Nullable AnEnum aNullableEnum;
 
     public @Nullable AnEnum getANullableEnum() {
@@ -670,6 +807,16 @@ public class CoreTests {
 
     public void setANullableEnum(@Nullable AnEnum setterArg) {
       this.aNullableEnum = setterArg;
+    }
+
+    private @Nullable AnotherEnum anotherNullableEnum;
+
+    public @Nullable AnotherEnum getAnotherNullableEnum() {
+      return anotherNullableEnum;
+    }
+
+    public void setAnotherNullableEnum(@Nullable AnotherEnum setterArg) {
+      this.anotherNullableEnum = setterArg;
     }
 
     private @Nullable String aNullableString;
@@ -752,14 +899,14 @@ public class CoreTests {
       this.boolList = setterArg;
     }
 
-    private @Nullable List<AllNullableTypes> nestedClassList;
+    private @Nullable List<List<Object>> listList;
 
-    public @Nullable List<AllNullableTypes> getNestedClassList() {
-      return nestedClassList;
+    public @Nullable List<List<Object>> getListList() {
+      return listList;
     }
 
-    public void setNestedClassList(@Nullable List<AllNullableTypes> setterArg) {
-      this.nestedClassList = setterArg;
+    public void setListList(@Nullable List<List<Object>> setterArg) {
+      this.listList = setterArg;
     }
 
     private @Nullable Map<Object, Object> map;
@@ -770,6 +917,88 @@ public class CoreTests {
 
     public void setMap(@Nullable Map<Object, Object> setterArg) {
       this.map = setterArg;
+    }
+
+    private @Nullable Map<String, String> stringMap;
+
+    public @Nullable Map<String, String> getStringMap() {
+      return stringMap;
+    }
+
+    public void setStringMap(@Nullable Map<String, String> setterArg) {
+      this.stringMap = setterArg;
+    }
+
+    private @Nullable Map<Long, Long> intMap;
+
+    public @Nullable Map<Long, Long> getIntMap() {
+      return intMap;
+    }
+
+    public void setIntMap(@Nullable Map<Long, Long> setterArg) {
+      this.intMap = setterArg;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      AllNullableTypes that = (AllNullableTypes) o;
+      return Objects.equals(aNullableBool, that.aNullableBool)
+          && Objects.equals(aNullableInt, that.aNullableInt)
+          && Objects.equals(aNullableInt64, that.aNullableInt64)
+          && Objects.equals(aNullableDouble, that.aNullableDouble)
+          && Arrays.equals(aNullableByteArray, that.aNullableByteArray)
+          && Arrays.equals(aNullable4ByteArray, that.aNullable4ByteArray)
+          && Arrays.equals(aNullable8ByteArray, that.aNullable8ByteArray)
+          && Arrays.equals(aNullableFloatArray, that.aNullableFloatArray)
+          && Objects.equals(aNullableEnum, that.aNullableEnum)
+          && Objects.equals(anotherNullableEnum, that.anotherNullableEnum)
+          && Objects.equals(aNullableString, that.aNullableString)
+          && Objects.equals(aNullableObject, that.aNullableObject)
+          && Objects.equals(allNullableTypes, that.allNullableTypes)
+          && Objects.equals(list, that.list)
+          && Objects.equals(stringList, that.stringList)
+          && Objects.equals(intList, that.intList)
+          && Objects.equals(doubleList, that.doubleList)
+          && Objects.equals(boolList, that.boolList)
+          && Objects.equals(listList, that.listList)
+          && Objects.equals(map, that.map)
+          && Objects.equals(stringMap, that.stringMap)
+          && Objects.equals(intMap, that.intMap);
+    }
+
+    @Override
+    public int hashCode() {
+      int pigeonVar_result =
+          Objects.hash(
+              aNullableBool,
+              aNullableInt,
+              aNullableInt64,
+              aNullableDouble,
+              aNullableEnum,
+              anotherNullableEnum,
+              aNullableString,
+              aNullableObject,
+              allNullableTypes,
+              list,
+              stringList,
+              intList,
+              doubleList,
+              boolList,
+              listList,
+              map,
+              stringMap,
+              intMap);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullableByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable4ByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable8ByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullableFloatArray);
+      return pigeonVar_result;
     }
 
     public static final class Builder {
@@ -838,36 +1067,19 @@ public class CoreTests {
         return this;
       }
 
-      private @Nullable List<List<Boolean>> nullableNestedList;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setNullableNestedList(@Nullable List<List<Boolean>> setterArg) {
-        this.nullableNestedList = setterArg;
-        return this;
-      }
-
-      private @Nullable Map<String, String> nullableMapWithAnnotations;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setNullableMapWithAnnotations(
-          @Nullable Map<String, String> setterArg) {
-        this.nullableMapWithAnnotations = setterArg;
-        return this;
-      }
-
-      private @Nullable Map<String, Object> nullableMapWithObject;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setNullableMapWithObject(@Nullable Map<String, Object> setterArg) {
-        this.nullableMapWithObject = setterArg;
-        return this;
-      }
-
       private @Nullable AnEnum aNullableEnum;
 
       @CanIgnoreReturnValue
       public @NonNull Builder setANullableEnum(@Nullable AnEnum setterArg) {
         this.aNullableEnum = setterArg;
+        return this;
+      }
+
+      private @Nullable AnotherEnum anotherNullableEnum;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAnotherNullableEnum(@Nullable AnotherEnum setterArg) {
+        this.anotherNullableEnum = setterArg;
         return this;
       }
 
@@ -935,11 +1147,11 @@ public class CoreTests {
         return this;
       }
 
-      private @Nullable List<AllNullableTypes> nestedClassList;
+      private @Nullable List<List<Object>> listList;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setNestedClassList(@Nullable List<AllNullableTypes> setterArg) {
-        this.nestedClassList = setterArg;
+      public @NonNull Builder setListList(@Nullable List<List<Object>> setterArg) {
+        this.listList = setterArg;
         return this;
       }
 
@@ -948,6 +1160,22 @@ public class CoreTests {
       @CanIgnoreReturnValue
       public @NonNull Builder setMap(@Nullable Map<Object, Object> setterArg) {
         this.map = setterArg;
+        return this;
+      }
+
+      private @Nullable Map<String, String> stringMap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setStringMap(@Nullable Map<String, String> setterArg) {
+        this.stringMap = setterArg;
+        return this;
+      }
+
+      private @Nullable Map<Long, Long> intMap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setIntMap(@Nullable Map<Long, Long> setterArg) {
+        this.intMap = setterArg;
         return this;
       }
 
@@ -961,10 +1189,8 @@ public class CoreTests {
         pigeonReturn.setANullable4ByteArray(aNullable4ByteArray);
         pigeonReturn.setANullable8ByteArray(aNullable8ByteArray);
         pigeonReturn.setANullableFloatArray(aNullableFloatArray);
-        pigeonReturn.setNullableNestedList(nullableNestedList);
-        pigeonReturn.setNullableMapWithAnnotations(nullableMapWithAnnotations);
-        pigeonReturn.setNullableMapWithObject(nullableMapWithObject);
         pigeonReturn.setANullableEnum(aNullableEnum);
+        pigeonReturn.setAnotherNullableEnum(anotherNullableEnum);
         pigeonReturn.setANullableString(aNullableString);
         pigeonReturn.setANullableObject(aNullableObject);
         pigeonReturn.setAllNullableTypes(allNullableTypes);
@@ -973,15 +1199,17 @@ public class CoreTests {
         pigeonReturn.setIntList(intList);
         pigeonReturn.setDoubleList(doubleList);
         pigeonReturn.setBoolList(boolList);
-        pigeonReturn.setNestedClassList(nestedClassList);
+        pigeonReturn.setListList(listList);
         pigeonReturn.setMap(map);
+        pigeonReturn.setStringMap(stringMap);
+        pigeonReturn.setIntMap(intMap);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(22);
+      ArrayList<Object> toListResult = new ArrayList<>(22);
       toListResult.add(aNullableBool);
       toListResult.add(aNullableInt);
       toListResult.add(aNullableInt64);
@@ -990,10 +1218,8 @@ public class CoreTests {
       toListResult.add(aNullable4ByteArray);
       toListResult.add(aNullable8ByteArray);
       toListResult.add(aNullableFloatArray);
-      toListResult.add(nullableNestedList);
-      toListResult.add(nullableMapWithAnnotations);
-      toListResult.add(nullableMapWithObject);
       toListResult.add(aNullableEnum);
+      toListResult.add(anotherNullableEnum);
       toListResult.add(aNullableString);
       toListResult.add(aNullableObject);
       toListResult.add(allNullableTypes);
@@ -1002,65 +1228,59 @@ public class CoreTests {
       toListResult.add(intList);
       toListResult.add(doubleList);
       toListResult.add(boolList);
-      toListResult.add(nestedClassList);
+      toListResult.add(listList);
       toListResult.add(map);
+      toListResult.add(stringMap);
+      toListResult.add(intMap);
       return toListResult;
     }
 
-    static @NonNull AllNullableTypes fromList(@NonNull ArrayList<Object> __pigeon_list) {
+    static @NonNull AllNullableTypes fromList(@NonNull ArrayList<Object> pigeonVar_list) {
       AllNullableTypes pigeonResult = new AllNullableTypes();
-      Object aNullableBool = __pigeon_list.get(0);
+      Object aNullableBool = pigeonVar_list.get(0);
       pigeonResult.setANullableBool((Boolean) aNullableBool);
-      Object aNullableInt = __pigeon_list.get(1);
-      pigeonResult.setANullableInt(
-          (aNullableInt == null)
-              ? null
-              : ((aNullableInt instanceof Integer) ? (Integer) aNullableInt : (Long) aNullableInt));
-      Object aNullableInt64 = __pigeon_list.get(2);
-      pigeonResult.setANullableInt64(
-          (aNullableInt64 == null)
-              ? null
-              : ((aNullableInt64 instanceof Integer)
-                  ? (Integer) aNullableInt64
-                  : (Long) aNullableInt64));
-      Object aNullableDouble = __pigeon_list.get(3);
+      Object aNullableInt = pigeonVar_list.get(1);
+      pigeonResult.setANullableInt((Long) aNullableInt);
+      Object aNullableInt64 = pigeonVar_list.get(2);
+      pigeonResult.setANullableInt64((Long) aNullableInt64);
+      Object aNullableDouble = pigeonVar_list.get(3);
       pigeonResult.setANullableDouble((Double) aNullableDouble);
-      Object aNullableByteArray = __pigeon_list.get(4);
+      Object aNullableByteArray = pigeonVar_list.get(4);
       pigeonResult.setANullableByteArray((byte[]) aNullableByteArray);
-      Object aNullable4ByteArray = __pigeon_list.get(5);
+      Object aNullable4ByteArray = pigeonVar_list.get(5);
       pigeonResult.setANullable4ByteArray((int[]) aNullable4ByteArray);
-      Object aNullable8ByteArray = __pigeon_list.get(6);
+      Object aNullable8ByteArray = pigeonVar_list.get(6);
       pigeonResult.setANullable8ByteArray((long[]) aNullable8ByteArray);
-      Object aNullableFloatArray = __pigeon_list.get(7);
+      Object aNullableFloatArray = pigeonVar_list.get(7);
       pigeonResult.setANullableFloatArray((double[]) aNullableFloatArray);
-      Object nullableNestedList = __pigeon_list.get(8);
-      pigeonResult.setNullableNestedList((List<List<Boolean>>) nullableNestedList);
-      Object nullableMapWithAnnotations = __pigeon_list.get(9);
-      pigeonResult.setNullableMapWithAnnotations((Map<String, String>) nullableMapWithAnnotations);
-      Object nullableMapWithObject = __pigeon_list.get(10);
-      pigeonResult.setNullableMapWithObject((Map<String, Object>) nullableMapWithObject);
-      Object aNullableEnum = __pigeon_list.get(11);
+      Object aNullableEnum = pigeonVar_list.get(8);
       pigeonResult.setANullableEnum((AnEnum) aNullableEnum);
-      Object aNullableString = __pigeon_list.get(12);
+      Object anotherNullableEnum = pigeonVar_list.get(9);
+      pigeonResult.setAnotherNullableEnum((AnotherEnum) anotherNullableEnum);
+      Object aNullableString = pigeonVar_list.get(10);
       pigeonResult.setANullableString((String) aNullableString);
-      Object aNullableObject = __pigeon_list.get(13);
+      Object aNullableObject = pigeonVar_list.get(11);
       pigeonResult.setANullableObject(aNullableObject);
-      Object allNullableTypes = __pigeon_list.get(14);
+      Object allNullableTypes = pigeonVar_list.get(12);
       pigeonResult.setAllNullableTypes((AllNullableTypes) allNullableTypes);
-      Object list = __pigeon_list.get(15);
+      Object list = pigeonVar_list.get(13);
       pigeonResult.setList((List<Object>) list);
-      Object stringList = __pigeon_list.get(16);
+      Object stringList = pigeonVar_list.get(14);
       pigeonResult.setStringList((List<String>) stringList);
-      Object intList = __pigeon_list.get(17);
+      Object intList = pigeonVar_list.get(15);
       pigeonResult.setIntList((List<Long>) intList);
-      Object doubleList = __pigeon_list.get(18);
+      Object doubleList = pigeonVar_list.get(16);
       pigeonResult.setDoubleList((List<Double>) doubleList);
-      Object boolList = __pigeon_list.get(19);
+      Object boolList = pigeonVar_list.get(17);
       pigeonResult.setBoolList((List<Boolean>) boolList);
-      Object nestedClassList = __pigeon_list.get(20);
-      pigeonResult.setNestedClassList((List<AllNullableTypes>) nestedClassList);
-      Object map = __pigeon_list.get(21);
+      Object listList = pigeonVar_list.get(18);
+      pigeonResult.setListList((List<List<Object>>) listList);
+      Object map = pigeonVar_list.get(19);
       pigeonResult.setMap((Map<Object, Object>) map);
+      Object stringMap = pigeonVar_list.get(20);
+      pigeonResult.setStringMap((Map<String, String>) stringMap);
+      Object intMap = pigeonVar_list.get(21);
+      pigeonResult.setIntMap((Map<Long, Long>) intMap);
       return pigeonResult;
     }
   }
@@ -1152,36 +1372,6 @@ public class CoreTests {
       this.aNullableFloatArray = setterArg;
     }
 
-    private @Nullable List<List<Boolean>> nullableNestedList;
-
-    public @Nullable List<List<Boolean>> getNullableNestedList() {
-      return nullableNestedList;
-    }
-
-    public void setNullableNestedList(@Nullable List<List<Boolean>> setterArg) {
-      this.nullableNestedList = setterArg;
-    }
-
-    private @Nullable Map<String, String> nullableMapWithAnnotations;
-
-    public @Nullable Map<String, String> getNullableMapWithAnnotations() {
-      return nullableMapWithAnnotations;
-    }
-
-    public void setNullableMapWithAnnotations(@Nullable Map<String, String> setterArg) {
-      this.nullableMapWithAnnotations = setterArg;
-    }
-
-    private @Nullable Map<String, Object> nullableMapWithObject;
-
-    public @Nullable Map<String, Object> getNullableMapWithObject() {
-      return nullableMapWithObject;
-    }
-
-    public void setNullableMapWithObject(@Nullable Map<String, Object> setterArg) {
-      this.nullableMapWithObject = setterArg;
-    }
-
     private @Nullable AnEnum aNullableEnum;
 
     public @Nullable AnEnum getANullableEnum() {
@@ -1190,6 +1380,16 @@ public class CoreTests {
 
     public void setANullableEnum(@Nullable AnEnum setterArg) {
       this.aNullableEnum = setterArg;
+    }
+
+    private @Nullable AnotherEnum anotherNullableEnum;
+
+    public @Nullable AnotherEnum getAnotherNullableEnum() {
+      return anotherNullableEnum;
+    }
+
+    public void setAnotherNullableEnum(@Nullable AnotherEnum setterArg) {
+      this.anotherNullableEnum = setterArg;
     }
 
     private @Nullable String aNullableString;
@@ -1262,6 +1462,16 @@ public class CoreTests {
       this.boolList = setterArg;
     }
 
+    private @Nullable List<List<Object>> listList;
+
+    public @Nullable List<List<Object>> getListList() {
+      return listList;
+    }
+
+    public void setListList(@Nullable List<List<Object>> setterArg) {
+      this.listList = setterArg;
+    }
+
     private @Nullable Map<Object, Object> map;
 
     public @Nullable Map<Object, Object> getMap() {
@@ -1270,6 +1480,86 @@ public class CoreTests {
 
     public void setMap(@Nullable Map<Object, Object> setterArg) {
       this.map = setterArg;
+    }
+
+    private @Nullable Map<String, String> stringMap;
+
+    public @Nullable Map<String, String> getStringMap() {
+      return stringMap;
+    }
+
+    public void setStringMap(@Nullable Map<String, String> setterArg) {
+      this.stringMap = setterArg;
+    }
+
+    private @Nullable Map<Long, Long> intMap;
+
+    public @Nullable Map<Long, Long> getIntMap() {
+      return intMap;
+    }
+
+    public void setIntMap(@Nullable Map<Long, Long> setterArg) {
+      this.intMap = setterArg;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      AllNullableTypesWithoutRecursion that = (AllNullableTypesWithoutRecursion) o;
+      return Objects.equals(aNullableBool, that.aNullableBool)
+          && Objects.equals(aNullableInt, that.aNullableInt)
+          && Objects.equals(aNullableInt64, that.aNullableInt64)
+          && Objects.equals(aNullableDouble, that.aNullableDouble)
+          && Arrays.equals(aNullableByteArray, that.aNullableByteArray)
+          && Arrays.equals(aNullable4ByteArray, that.aNullable4ByteArray)
+          && Arrays.equals(aNullable8ByteArray, that.aNullable8ByteArray)
+          && Arrays.equals(aNullableFloatArray, that.aNullableFloatArray)
+          && Objects.equals(aNullableEnum, that.aNullableEnum)
+          && Objects.equals(anotherNullableEnum, that.anotherNullableEnum)
+          && Objects.equals(aNullableString, that.aNullableString)
+          && Objects.equals(aNullableObject, that.aNullableObject)
+          && Objects.equals(list, that.list)
+          && Objects.equals(stringList, that.stringList)
+          && Objects.equals(intList, that.intList)
+          && Objects.equals(doubleList, that.doubleList)
+          && Objects.equals(boolList, that.boolList)
+          && Objects.equals(listList, that.listList)
+          && Objects.equals(map, that.map)
+          && Objects.equals(stringMap, that.stringMap)
+          && Objects.equals(intMap, that.intMap);
+    }
+
+    @Override
+    public int hashCode() {
+      int pigeonVar_result =
+          Objects.hash(
+              aNullableBool,
+              aNullableInt,
+              aNullableInt64,
+              aNullableDouble,
+              aNullableEnum,
+              anotherNullableEnum,
+              aNullableString,
+              aNullableObject,
+              list,
+              stringList,
+              intList,
+              doubleList,
+              boolList,
+              listList,
+              map,
+              stringMap,
+              intMap);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullableByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable4ByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable8ByteArray);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullableFloatArray);
+      return pigeonVar_result;
     }
 
     public static final class Builder {
@@ -1338,36 +1628,19 @@ public class CoreTests {
         return this;
       }
 
-      private @Nullable List<List<Boolean>> nullableNestedList;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setNullableNestedList(@Nullable List<List<Boolean>> setterArg) {
-        this.nullableNestedList = setterArg;
-        return this;
-      }
-
-      private @Nullable Map<String, String> nullableMapWithAnnotations;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setNullableMapWithAnnotations(
-          @Nullable Map<String, String> setterArg) {
-        this.nullableMapWithAnnotations = setterArg;
-        return this;
-      }
-
-      private @Nullable Map<String, Object> nullableMapWithObject;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setNullableMapWithObject(@Nullable Map<String, Object> setterArg) {
-        this.nullableMapWithObject = setterArg;
-        return this;
-      }
-
       private @Nullable AnEnum aNullableEnum;
 
       @CanIgnoreReturnValue
       public @NonNull Builder setANullableEnum(@Nullable AnEnum setterArg) {
         this.aNullableEnum = setterArg;
+        return this;
+      }
+
+      private @Nullable AnotherEnum anotherNullableEnum;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAnotherNullableEnum(@Nullable AnotherEnum setterArg) {
+        this.anotherNullableEnum = setterArg;
         return this;
       }
 
@@ -1427,11 +1700,35 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable List<List<Object>> listList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setListList(@Nullable List<List<Object>> setterArg) {
+        this.listList = setterArg;
+        return this;
+      }
+
       private @Nullable Map<Object, Object> map;
 
       @CanIgnoreReturnValue
       public @NonNull Builder setMap(@Nullable Map<Object, Object> setterArg) {
         this.map = setterArg;
+        return this;
+      }
+
+      private @Nullable Map<String, String> stringMap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setStringMap(@Nullable Map<String, String> setterArg) {
+        this.stringMap = setterArg;
+        return this;
+      }
+
+      private @Nullable Map<Long, Long> intMap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setIntMap(@Nullable Map<Long, Long> setterArg) {
+        this.intMap = setterArg;
         return this;
       }
 
@@ -1445,10 +1742,8 @@ public class CoreTests {
         pigeonReturn.setANullable4ByteArray(aNullable4ByteArray);
         pigeonReturn.setANullable8ByteArray(aNullable8ByteArray);
         pigeonReturn.setANullableFloatArray(aNullableFloatArray);
-        pigeonReturn.setNullableNestedList(nullableNestedList);
-        pigeonReturn.setNullableMapWithAnnotations(nullableMapWithAnnotations);
-        pigeonReturn.setNullableMapWithObject(nullableMapWithObject);
         pigeonReturn.setANullableEnum(aNullableEnum);
+        pigeonReturn.setAnotherNullableEnum(anotherNullableEnum);
         pigeonReturn.setANullableString(aNullableString);
         pigeonReturn.setANullableObject(aNullableObject);
         pigeonReturn.setList(list);
@@ -1456,14 +1751,17 @@ public class CoreTests {
         pigeonReturn.setIntList(intList);
         pigeonReturn.setDoubleList(doubleList);
         pigeonReturn.setBoolList(boolList);
+        pigeonReturn.setListList(listList);
         pigeonReturn.setMap(map);
+        pigeonReturn.setStringMap(stringMap);
+        pigeonReturn.setIntMap(intMap);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(20);
+      ArrayList<Object> toListResult = new ArrayList<>(21);
       toListResult.add(aNullableBool);
       toListResult.add(aNullableInt);
       toListResult.add(aNullableInt64);
@@ -1472,10 +1770,8 @@ public class CoreTests {
       toListResult.add(aNullable4ByteArray);
       toListResult.add(aNullable8ByteArray);
       toListResult.add(aNullableFloatArray);
-      toListResult.add(nullableNestedList);
-      toListResult.add(nullableMapWithAnnotations);
-      toListResult.add(nullableMapWithObject);
       toListResult.add(aNullableEnum);
+      toListResult.add(anotherNullableEnum);
       toListResult.add(aNullableString);
       toListResult.add(aNullableObject);
       toListResult.add(list);
@@ -1483,61 +1779,58 @@ public class CoreTests {
       toListResult.add(intList);
       toListResult.add(doubleList);
       toListResult.add(boolList);
+      toListResult.add(listList);
       toListResult.add(map);
+      toListResult.add(stringMap);
+      toListResult.add(intMap);
       return toListResult;
     }
 
     static @NonNull AllNullableTypesWithoutRecursion fromList(
-        @NonNull ArrayList<Object> __pigeon_list) {
+        @NonNull ArrayList<Object> pigeonVar_list) {
       AllNullableTypesWithoutRecursion pigeonResult = new AllNullableTypesWithoutRecursion();
-      Object aNullableBool = __pigeon_list.get(0);
+      Object aNullableBool = pigeonVar_list.get(0);
       pigeonResult.setANullableBool((Boolean) aNullableBool);
-      Object aNullableInt = __pigeon_list.get(1);
-      pigeonResult.setANullableInt(
-          (aNullableInt == null)
-              ? null
-              : ((aNullableInt instanceof Integer) ? (Integer) aNullableInt : (Long) aNullableInt));
-      Object aNullableInt64 = __pigeon_list.get(2);
-      pigeonResult.setANullableInt64(
-          (aNullableInt64 == null)
-              ? null
-              : ((aNullableInt64 instanceof Integer)
-                  ? (Integer) aNullableInt64
-                  : (Long) aNullableInt64));
-      Object aNullableDouble = __pigeon_list.get(3);
+      Object aNullableInt = pigeonVar_list.get(1);
+      pigeonResult.setANullableInt((Long) aNullableInt);
+      Object aNullableInt64 = pigeonVar_list.get(2);
+      pigeonResult.setANullableInt64((Long) aNullableInt64);
+      Object aNullableDouble = pigeonVar_list.get(3);
       pigeonResult.setANullableDouble((Double) aNullableDouble);
-      Object aNullableByteArray = __pigeon_list.get(4);
+      Object aNullableByteArray = pigeonVar_list.get(4);
       pigeonResult.setANullableByteArray((byte[]) aNullableByteArray);
-      Object aNullable4ByteArray = __pigeon_list.get(5);
+      Object aNullable4ByteArray = pigeonVar_list.get(5);
       pigeonResult.setANullable4ByteArray((int[]) aNullable4ByteArray);
-      Object aNullable8ByteArray = __pigeon_list.get(6);
+      Object aNullable8ByteArray = pigeonVar_list.get(6);
       pigeonResult.setANullable8ByteArray((long[]) aNullable8ByteArray);
-      Object aNullableFloatArray = __pigeon_list.get(7);
+      Object aNullableFloatArray = pigeonVar_list.get(7);
       pigeonResult.setANullableFloatArray((double[]) aNullableFloatArray);
-      Object nullableNestedList = __pigeon_list.get(8);
-      pigeonResult.setNullableNestedList((List<List<Boolean>>) nullableNestedList);
-      Object nullableMapWithAnnotations = __pigeon_list.get(9);
-      pigeonResult.setNullableMapWithAnnotations((Map<String, String>) nullableMapWithAnnotations);
-      Object nullableMapWithObject = __pigeon_list.get(10);
-      pigeonResult.setNullableMapWithObject((Map<String, Object>) nullableMapWithObject);
-      Object aNullableEnum = __pigeon_list.get(11);
+      Object aNullableEnum = pigeonVar_list.get(8);
       pigeonResult.setANullableEnum((AnEnum) aNullableEnum);
-      Object aNullableString = __pigeon_list.get(12);
+      Object anotherNullableEnum = pigeonVar_list.get(9);
+      pigeonResult.setAnotherNullableEnum((AnotherEnum) anotherNullableEnum);
+      Object aNullableString = pigeonVar_list.get(10);
       pigeonResult.setANullableString((String) aNullableString);
-      Object aNullableObject = __pigeon_list.get(13);
+      Object aNullableObject = pigeonVar_list.get(11);
       pigeonResult.setANullableObject(aNullableObject);
-      Object list = __pigeon_list.get(14);
+      Object list = pigeonVar_list.get(12);
       pigeonResult.setList((List<Object>) list);
-      Object stringList = __pigeon_list.get(15);
+      Object stringList = pigeonVar_list.get(13);
       pigeonResult.setStringList((List<String>) stringList);
-      Object intList = __pigeon_list.get(16);
+      Object intList = pigeonVar_list.get(14);
       pigeonResult.setIntList((List<Long>) intList);
-      Object doubleList = __pigeon_list.get(17);
+      Object doubleList = pigeonVar_list.get(15);
       pigeonResult.setDoubleList((List<Double>) doubleList);
-      Object boolList = __pigeon_list.get(18);
+      Object boolList = pigeonVar_list.get(16);
       pigeonResult.setBoolList((List<Boolean>) boolList);
-      Object map = __pigeon_list.get(19);
+      Object listList = pigeonVar_list.get(17);
+      pigeonResult.setListList((List<List<Object>>) listList);
+      Object map = pigeonVar_list.get(18);
       pigeonResult.setMap((Map<Object, Object>) map);
+      Object stringMap = pigeonVar_list.get(19);
+      pigeonResult.setStringMap((Map<String, String>) stringMap);
+      Object intMap = pigeonVar_list.get(20);
+      pigeonResult.setIntMap((Map<Long, Long>) intMap);
       return pigeonResult;
     }
   }
@@ -1589,6 +1882,25 @@ public class CoreTests {
     /** Constructor is non-public to enforce null safety; use Builder. */
     AllClassesWrapper() {}
 
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      AllClassesWrapper that = (AllClassesWrapper) o;
+      return allNullableTypes.equals(that.allNullableTypes)
+          && Objects.equals(allNullableTypesWithoutRecursion, that.allNullableTypesWithoutRecursion)
+          && Objects.equals(allTypes, that.allTypes);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(allNullableTypes, allNullableTypesWithoutRecursion, allTypes);
+    }
+
     public static final class Builder {
 
       private @Nullable AllNullableTypes allNullableTypes;
@@ -1627,21 +1939,21 @@ public class CoreTests {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(3);
+      ArrayList<Object> toListResult = new ArrayList<>(3);
       toListResult.add(allNullableTypes);
       toListResult.add(allNullableTypesWithoutRecursion);
       toListResult.add(allTypes);
       return toListResult;
     }
 
-    static @NonNull AllClassesWrapper fromList(@NonNull ArrayList<Object> __pigeon_list) {
+    static @NonNull AllClassesWrapper fromList(@NonNull ArrayList<Object> pigeonVar_list) {
       AllClassesWrapper pigeonResult = new AllClassesWrapper();
-      Object allNullableTypes = __pigeon_list.get(0);
+      Object allNullableTypes = pigeonVar_list.get(0);
       pigeonResult.setAllNullableTypes((AllNullableTypes) allNullableTypes);
-      Object allNullableTypesWithoutRecursion = __pigeon_list.get(1);
+      Object allNullableTypesWithoutRecursion = pigeonVar_list.get(1);
       pigeonResult.setAllNullableTypesWithoutRecursion(
           (AllNullableTypesWithoutRecursion) allNullableTypesWithoutRecursion);
-      Object allTypes = __pigeon_list.get(2);
+      Object allTypes = pigeonVar_list.get(2);
       pigeonResult.setAllTypes((AllTypes) allTypes);
       return pigeonResult;
     }
@@ -1663,6 +1975,23 @@ public class CoreTests {
       this.testList = setterArg;
     }
 
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      TestMessage that = (TestMessage) o;
+      return Objects.equals(testList, that.testList);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(testList);
+    }
+
     public static final class Builder {
 
       private @Nullable List<Object> testList;
@@ -1682,14 +2011,14 @@ public class CoreTests {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      ArrayList<Object> toListResult = new ArrayList<>(1);
       toListResult.add(testList);
       return toListResult;
     }
 
-    static @NonNull TestMessage fromList(@NonNull ArrayList<Object> __pigeon_list) {
+    static @NonNull TestMessage fromList(@NonNull ArrayList<Object> pigeonVar_list) {
       TestMessage pigeonResult = new TestMessage();
-      Object testList = __pigeon_list.get(0);
+      Object testList = pigeonVar_list.get(0);
       pigeonResult.setTestList((List<Object>) testList);
       return pigeonResult;
     }
@@ -1704,18 +2033,25 @@ public class CoreTests {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 129:
-          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AnEnum.values()[((Long) value).intValue()];
+          }
         case (byte) 130:
-          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AnotherEnum.values()[((Long) value).intValue()];
+          }
         case (byte) 131:
-          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
+          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
-          Object value = readValue(buffer);
-          return value == null ? null : AnEnum.values()[(int) value];
+          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 135:
+          return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -1723,24 +2059,27 @@ public class CoreTests {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof AllTypes) {
+      if (value instanceof AnEnum) {
         stream.write(129);
+        writeValue(stream, value == null ? null : ((AnEnum) value).index);
+      } else if (value instanceof AnotherEnum) {
+        stream.write(130);
+        writeValue(stream, value == null ? null : ((AnotherEnum) value).index);
+      } else if (value instanceof AllTypes) {
+        stream.write(131);
         writeValue(stream, ((AllTypes) value).toList());
       } else if (value instanceof AllNullableTypes) {
-        stream.write(130);
+        stream.write(132);
         writeValue(stream, ((AllNullableTypes) value).toList());
       } else if (value instanceof AllNullableTypesWithoutRecursion) {
-        stream.write(131);
+        stream.write(133);
         writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
       } else if (value instanceof AllClassesWrapper) {
-        stream.write(132);
+        stream.write(134);
         writeValue(stream, ((AllClassesWrapper) value).toList());
       } else if (value instanceof TestMessage) {
-        stream.write(133);
+        stream.write(135);
         writeValue(stream, ((TestMessage) value).toList());
-      } else if (value instanceof AnEnum) {
-        stream.write(134);
-        writeValue(stream, value == null ? null : ((AnEnum) value).index);
       } else {
         super.writeValue(stream, value);
       }
@@ -1816,13 +2155,22 @@ public class CoreTests {
     List<Object> echoList(@NonNull List<Object> list);
     /** Returns the passed map, to test serialization and deserialization. */
     @NonNull
-    Map<String, Object> echoMap(@NonNull Map<String, Object> aMap);
-    /** Returns the passed map to test nested class serialization and deserialization. */
+    Map<Object, Object> echoMap(@NonNull Map<Object, Object> map);
+    /** Returns the passed map, to test serialization and deserialization. */
+    @NonNull
+    Map<String, String> echoStringMap(@NonNull Map<String, String> stringMap);
+    /** Returns the passed map, to test serialization and deserialization. */
+    @NonNull
+    Map<Long, Long> echoIntMap(@NonNull Map<Long, Long> intMap);
+    /** Returns the passed class to test nested class serialization and deserialization. */
     @NonNull
     AllClassesWrapper echoClassWrapper(@NonNull AllClassesWrapper wrapper);
     /** Returns the passed enum to test serialization and deserialization. */
     @NonNull
     AnEnum echoEnum(@NonNull AnEnum anEnum);
+    /** Returns the passed enum to test serialization and deserialization. */
+    @NonNull
+    AnotherEnum echoAnotherEnum(@NonNull AnotherEnum anotherEnum);
     /** Returns the default string. */
     @NonNull
     String echoNamedDefaultString(@NonNull String aString);
@@ -1884,10 +2232,19 @@ public class CoreTests {
     List<Object> echoNullableList(@Nullable List<Object> aNullableList);
     /** Returns the passed map, to test serialization and deserialization. */
     @Nullable
-    Map<String, Object> echoNullableMap(@Nullable Map<String, Object> aNullableMap);
+    Map<Object, Object> echoNullableMap(@Nullable Map<Object, Object> map);
+    /** Returns the passed map, to test serialization and deserialization. */
+    @Nullable
+    Map<String, String> echoNullableStringMap(@Nullable Map<String, String> stringMap);
+    /** Returns the passed map, to test serialization and deserialization. */
+    @Nullable
+    Map<Long, Long> echoNullableIntMap(@Nullable Map<Long, Long> intMap);
 
     @Nullable
     AnEnum echoNullableEnum(@Nullable AnEnum anEnum);
+
+    @Nullable
+    AnotherEnum echoAnotherNullableEnum(@Nullable AnotherEnum anotherEnum);
     /** Returns passed in int. */
     @Nullable
     Long echoOptionalNullableInt(@Nullable Long aNullableInt);
@@ -1915,9 +2272,17 @@ public class CoreTests {
     void echoAsyncList(@NonNull List<Object> list, @NonNull Result<List<Object>> result);
     /** Returns the passed map, to test asynchronous serialization and deserialization. */
     void echoAsyncMap(
-        @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result);
+        @NonNull Map<Object, Object> map, @NonNull Result<Map<Object, Object>> result);
+    /** Returns the passed map, to test asynchronous serialization and deserialization. */
+    void echoAsyncStringMap(
+        @NonNull Map<String, String> stringMap, @NonNull Result<Map<String, String>> result);
+    /** Returns the passed map, to test asynchronous serialization and deserialization. */
+    void echoAsyncIntMap(@NonNull Map<Long, Long> intMap, @NonNull Result<Map<Long, Long>> result);
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
     void echoAsyncEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result);
+    /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+    void echoAnotherAsyncEnum(
+        @NonNull AnotherEnum anotherEnum, @NonNull Result<AnotherEnum> result);
     /** Responds with an error from an async function returning a value. */
     void throwAsyncError(@NonNull NullableResult<Object> result);
     /** Responds with an error from an async void function. */
@@ -1951,9 +2316,19 @@ public class CoreTests {
         @Nullable List<Object> list, @NonNull NullableResult<List<Object>> result);
     /** Returns the passed map, to test asynchronous serialization and deserialization. */
     void echoAsyncNullableMap(
-        @Nullable Map<String, Object> aMap, @NonNull NullableResult<Map<String, Object>> result);
+        @Nullable Map<Object, Object> map, @NonNull NullableResult<Map<Object, Object>> result);
+    /** Returns the passed map, to test asynchronous serialization and deserialization. */
+    void echoAsyncNullableStringMap(
+        @Nullable Map<String, String> stringMap,
+        @NonNull NullableResult<Map<String, String>> result);
+    /** Returns the passed map, to test asynchronous serialization and deserialization. */
+    void echoAsyncNullableIntMap(
+        @Nullable Map<Long, Long> intMap, @NonNull NullableResult<Map<Long, Long>> result);
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
     void echoAsyncNullableEnum(@Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result);
+    /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+    void echoAnotherAsyncNullableEnum(
+        @Nullable AnotherEnum anotherEnum, @NonNull NullableResult<AnotherEnum> result);
 
     void callFlutterNoop(@NonNull VoidResult result);
 
@@ -1995,9 +2370,18 @@ public class CoreTests {
     void callFlutterEchoList(@NonNull List<Object> list, @NonNull Result<List<Object>> result);
 
     void callFlutterEchoMap(
-        @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result);
+        @NonNull Map<Object, Object> map, @NonNull Result<Map<Object, Object>> result);
+
+    void callFlutterEchoStringMap(
+        @NonNull Map<String, String> stringMap, @NonNull Result<Map<String, String>> result);
+
+    void callFlutterEchoIntMap(
+        @NonNull Map<Long, Long> intMap, @NonNull Result<Map<Long, Long>> result);
 
     void callFlutterEchoEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result);
+
+    void callFlutterEchoAnotherEnum(
+        @NonNull AnotherEnum anotherEnum, @NonNull Result<AnotherEnum> result);
 
     void callFlutterEchoNullableBool(
         @Nullable Boolean aBool, @NonNull NullableResult<Boolean> result);
@@ -2017,10 +2401,20 @@ public class CoreTests {
         @Nullable List<Object> list, @NonNull NullableResult<List<Object>> result);
 
     void callFlutterEchoNullableMap(
-        @Nullable Map<String, Object> aMap, @NonNull NullableResult<Map<String, Object>> result);
+        @Nullable Map<Object, Object> map, @NonNull NullableResult<Map<Object, Object>> result);
+
+    void callFlutterEchoNullableStringMap(
+        @Nullable Map<String, String> stringMap,
+        @NonNull NullableResult<Map<String, String>> result);
+
+    void callFlutterEchoNullableIntMap(
+        @Nullable Map<Long, Long> intMap, @NonNull NullableResult<Map<Long, Long>> result);
 
     void callFlutterEchoNullableEnum(
         @Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result);
+
+    void callFlutterEchoAnotherNullableEnum(
+        @Nullable AnotherEnum anotherEnum, @NonNull NullableResult<AnotherEnum> result);
 
     void callFlutterSmallApiEchoString(@NonNull String aString, @NonNull Result<String> result);
 
@@ -2052,13 +2446,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   api.noop();
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2076,15 +2469,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllTypes everythingArg = (AllTypes) args.get(0);
                 try {
                   AllTypes output = api.echoAllTypes(everythingArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2102,13 +2494,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   Object output = api.throwError();
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2126,13 +2517,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   api.throwErrorFromVoid();
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2150,13 +2540,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   Object output = api.throwFlutterError();
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2174,15 +2563,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Number anIntArg = (Number) args.get(0);
+                Long anIntArg = (Long) args.get(0);
                 try {
-                  Long output = api.echoInt((anIntArg == null) ? null : anIntArg.longValue());
+                  Long output = api.echoInt(anIntArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2200,15 +2588,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aDoubleArg = (Double) args.get(0);
                 try {
                   Double output = api.echoDouble(aDoubleArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2226,15 +2613,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aBoolArg = (Boolean) args.get(0);
                 try {
                   Boolean output = api.echoBool(aBoolArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2252,15 +2638,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 try {
                   String output = api.echoString(aStringArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2278,15 +2663,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 byte[] aUint8ListArg = (byte[]) args.get(0);
                 try {
                   byte[] output = api.echoUint8List(aUint8ListArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2304,15 +2688,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Object anObjectArg = args.get(0);
                 try {
                   Object output = api.echoObject(anObjectArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2330,15 +2713,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<Object> listArg = (List<Object>) args.get(0);
                 try {
                   List<Object> output = api.echoList(listArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2356,15 +2738,64 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
+                Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
                 try {
-                  Map<String, Object> output = api.echoMap(aMapArg);
+                  Map<Object, Object> output = api.echoMap(mapArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
+                try {
+                  Map<String, String> output = api.echoStringMap(stringMapArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
+                try {
+                  Map<Long, Long> output = api.echoIntMap(intMapArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2382,15 +2813,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllClassesWrapper wrapperArg = (AllClassesWrapper) args.get(0);
                 try {
                   AllClassesWrapper output = api.echoClassWrapper(wrapperArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2408,15 +2838,39 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnEnum anEnumArg = (AnEnum) args.get(0);
                 try {
                   AnEnum output = api.echoEnum(anEnumArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherEnum"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AnotherEnum anotherEnumArg = (AnotherEnum) args.get(0);
+                try {
+                  AnotherEnum output = api.echoAnotherEnum(anotherEnumArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2434,15 +2888,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 try {
                   String output = api.echoNamedDefaultString(aStringArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2460,15 +2913,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aDoubleArg = (Double) args.get(0);
                 try {
                   Double output = api.echoOptionalDefaultDouble(aDoubleArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2486,16 +2938,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Number anIntArg = (Number) args.get(0);
+                Long anIntArg = (Long) args.get(0);
                 try {
-                  Long output =
-                      api.echoRequiredInt((anIntArg == null) ? null : anIntArg.longValue());
+                  Long output = api.echoRequiredInt(anIntArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2513,15 +2963,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
                 try {
                   AllNullableTypes output = api.echoAllNullableTypes(everythingArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2539,7 +2988,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypesWithoutRecursion everythingArg =
                     (AllNullableTypesWithoutRecursion) args.get(0);
@@ -2548,8 +2997,7 @@ public class CoreTests {
                       api.echoAllNullableTypesWithoutRecursion(everythingArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2567,15 +3015,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllClassesWrapper wrapperArg = (AllClassesWrapper) args.get(0);
                 try {
                   String output = api.extractNestedNullableString(wrapperArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2593,15 +3040,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String nullableStringArg = (String) args.get(0);
                 try {
                   AllClassesWrapper output = api.createNestedNullableString(nullableStringArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2619,21 +3065,18 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aNullableBoolArg = (Boolean) args.get(0);
-                Number aNullableIntArg = (Number) args.get(1);
+                Long aNullableIntArg = (Long) args.get(1);
                 String aNullableStringArg = (String) args.get(2);
                 try {
                   AllNullableTypes output =
                       api.sendMultipleNullableTypes(
-                          aNullableBoolArg,
-                          (aNullableIntArg == null) ? null : aNullableIntArg.longValue(),
-                          aNullableStringArg);
+                          aNullableBoolArg, aNullableIntArg, aNullableStringArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2651,21 +3094,18 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aNullableBoolArg = (Boolean) args.get(0);
-                Number aNullableIntArg = (Number) args.get(1);
+                Long aNullableIntArg = (Long) args.get(1);
                 String aNullableStringArg = (String) args.get(2);
                 try {
                   AllNullableTypesWithoutRecursion output =
                       api.sendMultipleNullableTypesWithoutRecursion(
-                          aNullableBoolArg,
-                          (aNullableIntArg == null) ? null : aNullableIntArg.longValue(),
-                          aNullableStringArg);
+                          aNullableBoolArg, aNullableIntArg, aNullableStringArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2683,17 +3123,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Number aNullableIntArg = (Number) args.get(0);
+                Long aNullableIntArg = (Long) args.get(0);
                 try {
-                  Long output =
-                      api.echoNullableInt(
-                          (aNullableIntArg == null) ? null : aNullableIntArg.longValue());
+                  Long output = api.echoNullableInt(aNullableIntArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2711,15 +3148,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aNullableDoubleArg = (Double) args.get(0);
                 try {
                   Double output = api.echoNullableDouble(aNullableDoubleArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2737,15 +3173,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aNullableBoolArg = (Boolean) args.get(0);
                 try {
                   Boolean output = api.echoNullableBool(aNullableBoolArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2763,15 +3198,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aNullableStringArg = (String) args.get(0);
                 try {
                   String output = api.echoNullableString(aNullableStringArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2789,15 +3223,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 byte[] aNullableUint8ListArg = (byte[]) args.get(0);
                 try {
                   byte[] output = api.echoNullableUint8List(aNullableUint8ListArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2815,15 +3248,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Object aNullableObjectArg = args.get(0);
                 try {
                   Object output = api.echoNullableObject(aNullableObjectArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2841,15 +3273,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<Object> aNullableListArg = (List<Object>) args.get(0);
                 try {
                   List<Object> output = api.echoNullableList(aNullableListArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2867,15 +3298,64 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Map<String, Object> aNullableMapArg = (Map<String, Object>) args.get(0);
+                Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
                 try {
-                  Map<String, Object> output = api.echoNullableMap(aNullableMapArg);
+                  Map<Object, Object> output = api.echoNullableMap(mapArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableStringMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
+                try {
+                  Map<String, String> output = api.echoNullableStringMap(stringMapArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableIntMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
+                try {
+                  Map<Long, Long> output = api.echoNullableIntMap(intMapArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2893,15 +3373,39 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnEnum anEnumArg = (AnEnum) args.get(0);
                 try {
                   AnEnum output = api.echoNullableEnum(anEnumArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherNullableEnum"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AnotherEnum anotherEnumArg = (AnotherEnum) args.get(0);
+                try {
+                  AnotherEnum output = api.echoAnotherNullableEnum(anotherEnumArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2919,17 +3423,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Number aNullableIntArg = (Number) args.get(0);
+                Long aNullableIntArg = (Long) args.get(0);
                 try {
-                  Long output =
-                      api.echoOptionalNullableInt(
-                          (aNullableIntArg == null) ? null : aNullableIntArg.longValue());
+                  Long output = api.echoOptionalNullableInt(aNullableIntArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2947,15 +3448,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aNullableStringArg = (String) args.get(0);
                 try {
                   String output = api.echoNamedNullableString(aNullableStringArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -2973,7 +3473,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 VoidResult resultCallback =
                     new VoidResult() {
                       public void success() {
@@ -3003,9 +3503,9 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Number anIntArg = (Number) args.get(0);
+                Long anIntArg = (Long) args.get(0);
                 Result<Long> resultCallback =
                     new Result<Long>() {
                       public void success(Long result) {
@@ -3019,7 +3519,7 @@ public class CoreTests {
                       }
                     };
 
-                api.echoAsyncInt((anIntArg == null) ? null : anIntArg.longValue(), resultCallback);
+                api.echoAsyncInt(anIntArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3035,7 +3535,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aDoubleArg = (Double) args.get(0);
                 Result<Double> resultCallback =
@@ -3067,7 +3567,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aBoolArg = (Boolean) args.get(0);
                 Result<Boolean> resultCallback =
@@ -3099,7 +3599,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 Result<String> resultCallback =
@@ -3131,7 +3631,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 byte[] aUint8ListArg = (byte[]) args.get(0);
                 Result<byte[]> resultCallback =
@@ -3163,7 +3663,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Object anObjectArg = args.get(0);
                 Result<Object> resultCallback =
@@ -3195,7 +3695,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<Object> listArg = (List<Object>) args.get(0);
                 Result<List<Object>> resultCallback =
@@ -3227,12 +3727,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
-                Result<Map<String, Object>> resultCallback =
-                    new Result<Map<String, Object>>() {
-                      public void success(Map<String, Object> result) {
+                Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
+                Result<Map<Object, Object>> resultCallback =
+                    new Result<Map<Object, Object>>() {
+                      public void success(Map<Object, Object> result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
                       }
@@ -3243,7 +3743,71 @@ public class CoreTests {
                       }
                     };
 
-                api.echoAsyncMap(aMapArg, resultCallback);
+                api.echoAsyncMap(mapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncStringMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
+                Result<Map<String, String>> resultCallback =
+                    new Result<Map<String, String>>() {
+                      public void success(Map<String, String> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAsyncStringMap(stringMapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncIntMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
+                Result<Map<Long, Long>> resultCallback =
+                    new Result<Map<Long, Long>>() {
+                      public void success(Map<Long, Long> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAsyncIntMap(intMapArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3259,7 +3823,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnEnum anEnumArg = (AnEnum) args.get(0);
                 Result<AnEnum> resultCallback =
@@ -3285,13 +3849,45 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncEnum"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AnotherEnum anotherEnumArg = (AnotherEnum) args.get(0);
+                Result<AnotherEnum> resultCallback =
+                    new Result<AnotherEnum>() {
+                      public void success(AnotherEnum result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAnotherAsyncEnum(anotherEnumArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError"
                     + messageChannelSuffix,
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 NullableResult<Object> resultCallback =
                     new NullableResult<Object>() {
                       public void success(Object result) {
@@ -3321,7 +3917,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 VoidResult resultCallback =
                     new VoidResult() {
                       public void success() {
@@ -3351,7 +3947,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 NullableResult<Object> resultCallback =
                     new NullableResult<Object>() {
                       public void success(Object result) {
@@ -3381,7 +3977,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllTypes everythingArg = (AllTypes) args.get(0);
                 Result<AllTypes> resultCallback =
@@ -3413,7 +4009,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
                 NullableResult<AllNullableTypes> resultCallback =
@@ -3445,7 +4041,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypesWithoutRecursion everythingArg =
                     (AllNullableTypesWithoutRecursion) args.get(0);
@@ -3479,9 +4075,9 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Number anIntArg = (Number) args.get(0);
+                Long anIntArg = (Long) args.get(0);
                 NullableResult<Long> resultCallback =
                     new NullableResult<Long>() {
                       public void success(Long result) {
@@ -3495,8 +4091,7 @@ public class CoreTests {
                       }
                     };
 
-                api.echoAsyncNullableInt(
-                    (anIntArg == null) ? null : anIntArg.longValue(), resultCallback);
+                api.echoAsyncNullableInt(anIntArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3512,7 +4107,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aDoubleArg = (Double) args.get(0);
                 NullableResult<Double> resultCallback =
@@ -3544,7 +4139,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aBoolArg = (Boolean) args.get(0);
                 NullableResult<Boolean> resultCallback =
@@ -3576,7 +4171,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 NullableResult<String> resultCallback =
@@ -3608,7 +4203,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 byte[] aUint8ListArg = (byte[]) args.get(0);
                 NullableResult<byte[]> resultCallback =
@@ -3640,7 +4235,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Object anObjectArg = args.get(0);
                 NullableResult<Object> resultCallback =
@@ -3672,7 +4267,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<Object> listArg = (List<Object>) args.get(0);
                 NullableResult<List<Object>> resultCallback =
@@ -3704,12 +4299,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
-                NullableResult<Map<String, Object>> resultCallback =
-                    new NullableResult<Map<String, Object>>() {
-                      public void success(Map<String, Object> result) {
+                Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
+                NullableResult<Map<Object, Object>> resultCallback =
+                    new NullableResult<Map<Object, Object>>() {
+                      public void success(Map<Object, Object> result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
                       }
@@ -3720,7 +4315,71 @@ public class CoreTests {
                       }
                     };
 
-                api.echoAsyncNullableMap(aMapArg, resultCallback);
+                api.echoAsyncNullableMap(mapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableStringMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
+                NullableResult<Map<String, String>> resultCallback =
+                    new NullableResult<Map<String, String>>() {
+                      public void success(Map<String, String> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAsyncNullableStringMap(stringMapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableIntMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
+                NullableResult<Map<Long, Long>> resultCallback =
+                    new NullableResult<Map<Long, Long>>() {
+                      public void success(Map<Long, Long> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAsyncNullableIntMap(intMapArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3736,7 +4395,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnEnum anEnumArg = (AnEnum) args.get(0);
                 NullableResult<AnEnum> resultCallback =
@@ -3762,13 +4421,45 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncNullableEnum"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AnotherEnum anotherEnumArg = (AnotherEnum) args.get(0);
+                NullableResult<AnotherEnum> resultCallback =
+                    new NullableResult<AnotherEnum>() {
+                      public void success(AnotherEnum result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAnotherAsyncNullableEnum(anotherEnumArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop"
                     + messageChannelSuffix,
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 VoidResult resultCallback =
                     new VoidResult() {
                       public void success() {
@@ -3798,7 +4489,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 NullableResult<Object> resultCallback =
                     new NullableResult<Object>() {
                       public void success(Object result) {
@@ -3828,7 +4519,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 VoidResult resultCallback =
                     new VoidResult() {
                       public void success() {
@@ -3858,7 +4549,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllTypes everythingArg = (AllTypes) args.get(0);
                 Result<AllTypes> resultCallback =
@@ -3890,7 +4581,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
                 NullableResult<AllNullableTypes> resultCallback =
@@ -3922,10 +4613,10 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aNullableBoolArg = (Boolean) args.get(0);
-                Number aNullableIntArg = (Number) args.get(1);
+                Long aNullableIntArg = (Long) args.get(1);
                 String aNullableStringArg = (String) args.get(2);
                 Result<AllNullableTypes> resultCallback =
                     new Result<AllNullableTypes>() {
@@ -3941,10 +4632,7 @@ public class CoreTests {
                     };
 
                 api.callFlutterSendMultipleNullableTypes(
-                    aNullableBoolArg,
-                    (aNullableIntArg == null) ? null : aNullableIntArg.longValue(),
-                    aNullableStringArg,
-                    resultCallback);
+                    aNullableBoolArg, aNullableIntArg, aNullableStringArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3960,7 +4648,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypesWithoutRecursion everythingArg =
                     (AllNullableTypesWithoutRecursion) args.get(0);
@@ -3993,10 +4681,10 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aNullableBoolArg = (Boolean) args.get(0);
-                Number aNullableIntArg = (Number) args.get(1);
+                Long aNullableIntArg = (Long) args.get(1);
                 String aNullableStringArg = (String) args.get(2);
                 Result<AllNullableTypesWithoutRecursion> resultCallback =
                     new Result<AllNullableTypesWithoutRecursion>() {
@@ -4012,10 +4700,7 @@ public class CoreTests {
                     };
 
                 api.callFlutterSendMultipleNullableTypesWithoutRecursion(
-                    aNullableBoolArg,
-                    (aNullableIntArg == null) ? null : aNullableIntArg.longValue(),
-                    aNullableStringArg,
-                    resultCallback);
+                    aNullableBoolArg, aNullableIntArg, aNullableStringArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4031,7 +4716,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aBoolArg = (Boolean) args.get(0);
                 Result<Boolean> resultCallback =
@@ -4063,9 +4748,9 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Number anIntArg = (Number) args.get(0);
+                Long anIntArg = (Long) args.get(0);
                 Result<Long> resultCallback =
                     new Result<Long>() {
                       public void success(Long result) {
@@ -4079,8 +4764,7 @@ public class CoreTests {
                       }
                     };
 
-                api.callFlutterEchoInt(
-                    (anIntArg == null) ? null : anIntArg.longValue(), resultCallback);
+                api.callFlutterEchoInt(anIntArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4096,7 +4780,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aDoubleArg = (Double) args.get(0);
                 Result<Double> resultCallback =
@@ -4128,7 +4812,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 Result<String> resultCallback =
@@ -4160,7 +4844,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 byte[] listArg = (byte[]) args.get(0);
                 Result<byte[]> resultCallback =
@@ -4192,7 +4876,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<Object> listArg = (List<Object>) args.get(0);
                 Result<List<Object>> resultCallback =
@@ -4224,12 +4908,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
-                Result<Map<String, Object>> resultCallback =
-                    new Result<Map<String, Object>>() {
-                      public void success(Map<String, Object> result) {
+                Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
+                Result<Map<Object, Object>> resultCallback =
+                    new Result<Map<Object, Object>>() {
+                      public void success(Map<Object, Object> result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
                       }
@@ -4240,7 +4924,71 @@ public class CoreTests {
                       }
                     };
 
-                api.callFlutterEchoMap(aMapArg, resultCallback);
+                api.callFlutterEchoMap(mapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoStringMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
+                Result<Map<String, String>> resultCallback =
+                    new Result<Map<String, String>>() {
+                      public void success(Map<String, String> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterEchoStringMap(stringMapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoIntMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
+                Result<Map<Long, Long>> resultCallback =
+                    new Result<Map<Long, Long>>() {
+                      public void success(Map<Long, Long> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterEchoIntMap(intMapArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4256,7 +5004,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnEnum anEnumArg = (AnEnum) args.get(0);
                 Result<AnEnum> resultCallback =
@@ -4282,13 +5030,45 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherEnum"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AnotherEnum anotherEnumArg = (AnotherEnum) args.get(0);
+                Result<AnotherEnum> resultCallback =
+                    new Result<AnotherEnum>() {
+                      public void success(AnotherEnum result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterEchoAnotherEnum(anotherEnumArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool"
                     + messageChannelSuffix,
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aBoolArg = (Boolean) args.get(0);
                 NullableResult<Boolean> resultCallback =
@@ -4320,9 +5100,9 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Number anIntArg = (Number) args.get(0);
+                Long anIntArg = (Long) args.get(0);
                 NullableResult<Long> resultCallback =
                     new NullableResult<Long>() {
                       public void success(Long result) {
@@ -4336,8 +5116,7 @@ public class CoreTests {
                       }
                     };
 
-                api.callFlutterEchoNullableInt(
-                    (anIntArg == null) ? null : anIntArg.longValue(), resultCallback);
+                api.callFlutterEchoNullableInt(anIntArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4353,7 +5132,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aDoubleArg = (Double) args.get(0);
                 NullableResult<Double> resultCallback =
@@ -4385,7 +5164,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 NullableResult<String> resultCallback =
@@ -4417,7 +5196,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 byte[] listArg = (byte[]) args.get(0);
                 NullableResult<byte[]> resultCallback =
@@ -4449,7 +5228,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<Object> listArg = (List<Object>) args.get(0);
                 NullableResult<List<Object>> resultCallback =
@@ -4481,12 +5260,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
-                NullableResult<Map<String, Object>> resultCallback =
-                    new NullableResult<Map<String, Object>>() {
-                      public void success(Map<String, Object> result) {
+                Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
+                NullableResult<Map<Object, Object>> resultCallback =
+                    new NullableResult<Map<Object, Object>>() {
+                      public void success(Map<Object, Object> result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
                       }
@@ -4497,7 +5276,71 @@ public class CoreTests {
                       }
                     };
 
-                api.callFlutterEchoNullableMap(aMapArg, resultCallback);
+                api.callFlutterEchoNullableMap(mapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableStringMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
+                NullableResult<Map<String, String>> resultCallback =
+                    new NullableResult<Map<String, String>>() {
+                      public void success(Map<String, String> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterEchoNullableStringMap(stringMapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableIntMap"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
+                NullableResult<Map<Long, Long>> resultCallback =
+                    new NullableResult<Map<Long, Long>>() {
+                      public void success(Map<Long, Long> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterEchoNullableIntMap(intMapArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4513,7 +5356,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnEnum anEnumArg = (AnEnum) args.get(0);
                 NullableResult<AnEnum> resultCallback =
@@ -4539,13 +5382,45 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherNullableEnum"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AnotherEnum anotherEnumArg = (AnotherEnum) args.get(0);
+                NullableResult<AnotherEnum> resultCallback =
+                    new NullableResult<AnotherEnum>() {
+                      public void success(AnotherEnum result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterEchoAnotherNullableEnum(anotherEnumArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSmallApiEchoString"
                     + messageChannelSuffix,
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 Result<String> resultCallback =
@@ -4589,8 +5464,7 @@ public class CoreTests {
       this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
     }
 
-    /** Public interface for sending reply. */
-    /** The codec used by FlutterIntegrationCoreApi. */
+    /** Public interface for sending reply. The codec used by FlutterIntegrationCoreApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
@@ -4611,9 +5485,7 @@ public class CoreTests {
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 result.success();
               }
@@ -4637,9 +5509,7 @@ public class CoreTests {
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 @SuppressWarnings("ConstantConditions")
                 Object output = listReply.get(0);
@@ -4665,9 +5535,7 @@ public class CoreTests {
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 result.success();
               }
@@ -4684,16 +5552,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(everythingArg)),
+          new ArrayList<>(Collections.singletonList(everythingArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(
@@ -4720,16 +5586,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(everythingArg)),
+          new ArrayList<>(Collections.singletonList(everythingArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 @SuppressWarnings("ConstantConditions")
                 AllNullableTypes output = (AllNullableTypes) listReply.get(0);
@@ -4756,17 +5620,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(
-              Arrays.asList(aNullableBoolArg, aNullableIntArg, aNullableStringArg)),
+          new ArrayList<>(Arrays.asList(aNullableBoolArg, aNullableIntArg, aNullableStringArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(
@@ -4793,16 +5654,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(everythingArg)),
+          new ArrayList<>(Collections.singletonList(everythingArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 @SuppressWarnings("ConstantConditions")
                 AllNullableTypesWithoutRecursion output =
@@ -4830,17 +5689,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(
-              Arrays.asList(aNullableBoolArg, aNullableIntArg, aNullableStringArg)),
+          new ArrayList<>(Arrays.asList(aNullableBoolArg, aNullableIntArg, aNullableStringArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(
@@ -4866,16 +5722,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aBoolArg)),
+          new ArrayList<>(Collections.singletonList(aBoolArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(
@@ -4900,16 +5754,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(anIntArg)),
+          new ArrayList<>(Collections.singletonList(anIntArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(
@@ -4918,8 +5770,7 @@ public class CoreTests {
                         ""));
               } else {
                 @SuppressWarnings("ConstantConditions")
-                Long output =
-                    listReply.get(0) == null ? null : ((Number) listReply.get(0)).longValue();
+                Long output = (Long) listReply.get(0);
                 result.success(output);
               }
             } else {
@@ -4935,16 +5786,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aDoubleArg)),
+          new ArrayList<>(Collections.singletonList(aDoubleArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(
@@ -4969,16 +5818,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aStringArg)),
+          new ArrayList<>(Collections.singletonList(aStringArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(
@@ -5003,16 +5850,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(listArg)),
+          new ArrayList<>(Collections.singletonList(listArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(
@@ -5037,16 +5882,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(listArg)),
+          new ArrayList<>(Collections.singletonList(listArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(
@@ -5065,23 +5908,21 @@ public class CoreTests {
     }
     /** Returns the passed map, to test serialization and deserialization. */
     public void echoMap(
-        @NonNull Map<String, Object> aMapArg, @NonNull Result<Map<String, Object>> result) {
+        @NonNull Map<Object, Object> mapArg, @NonNull Result<Map<Object, Object>> result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap"
               + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aMapArg)),
+          new ArrayList<>(Collections.singletonList(mapArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(
@@ -5090,7 +5931,73 @@ public class CoreTests {
                         ""));
               } else {
                 @SuppressWarnings("ConstantConditions")
-                Map<String, Object> output = (Map<String, Object>) listReply.get(0);
+                Map<Object, Object> output = (Map<Object, Object>) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Returns the passed map, to test serialization and deserialization. */
+    public void echoStringMap(
+        @NonNull Map<String, String> stringMapArg, @NonNull Result<Map<String, String>> result) {
+      final String channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoStringMap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<>(Collections.singletonList(stringMapArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Map<String, String> output = (Map<String, String>) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Returns the passed map, to test serialization and deserialization. */
+    public void echoIntMap(
+        @NonNull Map<Long, Long> intMapArg, @NonNull Result<Map<Long, Long>> result) {
+      final String channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoIntMap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<>(Collections.singletonList(intMapArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Map<Long, Long> output = (Map<Long, Long>) listReply.get(0);
                 result.success(output);
               }
             } else {
@@ -5106,16 +6013,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(anEnumArg)),
+          new ArrayList<>(Collections.singletonList(anEnumArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(
@@ -5132,6 +6037,39 @@ public class CoreTests {
             }
           });
     }
+    /** Returns the passed enum to test serialization and deserialization. */
+    public void echoAnotherEnum(
+        @NonNull AnotherEnum anotherEnumArg, @NonNull Result<AnotherEnum> result) {
+      final String channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherEnum"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<>(Collections.singletonList(anotherEnumArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                AnotherEnum output = (AnotherEnum) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
     /** Returns the passed boolean, to test serialization and deserialization. */
     public void echoNullableBool(
         @Nullable Boolean aBoolArg, @NonNull NullableResult<Boolean> result) {
@@ -5141,16 +6079,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aBoolArg)),
+          new ArrayList<>(Collections.singletonList(aBoolArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 @SuppressWarnings("ConstantConditions")
                 Boolean output = (Boolean) listReply.get(0);
@@ -5169,20 +6105,17 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(anIntArg)),
+          new ArrayList<>(Collections.singletonList(anIntArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 @SuppressWarnings("ConstantConditions")
-                Long output =
-                    listReply.get(0) == null ? null : ((Number) listReply.get(0)).longValue();
+                Long output = (Long) listReply.get(0);
                 result.success(output);
               }
             } else {
@@ -5199,16 +6132,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aDoubleArg)),
+          new ArrayList<>(Collections.singletonList(aDoubleArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 @SuppressWarnings("ConstantConditions")
                 Double output = (Double) listReply.get(0);
@@ -5228,16 +6159,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aStringArg)),
+          new ArrayList<>(Collections.singletonList(aStringArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 @SuppressWarnings("ConstantConditions")
                 String output = (String) listReply.get(0);
@@ -5257,16 +6186,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(listArg)),
+          new ArrayList<>(Collections.singletonList(listArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 @SuppressWarnings("ConstantConditions")
                 byte[] output = (byte[]) listReply.get(0);
@@ -5286,16 +6213,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(listArg)),
+          new ArrayList<>(Collections.singletonList(listArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 @SuppressWarnings("ConstantConditions")
                 List<Object> output = (List<Object>) listReply.get(0);
@@ -5308,27 +6233,79 @@ public class CoreTests {
     }
     /** Returns the passed map, to test serialization and deserialization. */
     public void echoNullableMap(
-        @Nullable Map<String, Object> aMapArg,
-        @NonNull NullableResult<Map<String, Object>> result) {
+        @Nullable Map<Object, Object> mapArg, @NonNull NullableResult<Map<Object, Object>> result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap"
               + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aMapArg)),
+          new ArrayList<>(Collections.singletonList(mapArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 @SuppressWarnings("ConstantConditions")
-                Map<String, Object> output = (Map<String, Object>) listReply.get(0);
+                Map<Object, Object> output = (Map<Object, Object>) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Returns the passed map, to test serialization and deserialization. */
+    public void echoNullableStringMap(
+        @Nullable Map<String, String> stringMapArg,
+        @NonNull NullableResult<Map<String, String>> result) {
+      final String channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableStringMap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<>(Collections.singletonList(stringMapArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Map<String, String> output = (Map<String, String>) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Returns the passed map, to test serialization and deserialization. */
+    public void echoNullableIntMap(
+        @Nullable Map<Long, Long> intMapArg, @NonNull NullableResult<Map<Long, Long>> result) {
+      final String channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableIntMap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<>(Collections.singletonList(intMapArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Map<Long, Long> output = (Map<Long, Long>) listReply.get(0);
                 result.success(output);
               }
             } else {
@@ -5345,19 +6322,44 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(anEnumArg)),
+          new ArrayList<>(Collections.singletonList(anEnumArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 @SuppressWarnings("ConstantConditions")
                 AnEnum output = (AnEnum) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Returns the passed enum to test serialization and deserialization. */
+    public void echoAnotherNullableEnum(
+        @Nullable AnotherEnum anotherEnumArg, @NonNull NullableResult<AnotherEnum> result) {
+      final String channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherNullableEnum"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<>(Collections.singletonList(anotherEnumArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                AnotherEnum output = (AnotherEnum) listReply.get(0);
                 result.success(output);
               }
             } else {
@@ -5383,9 +6385,7 @@ public class CoreTests {
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 result.success();
               }
@@ -5402,16 +6402,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aStringArg)),
+          new ArrayList<>(Collections.singletonList(aStringArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(
@@ -5462,13 +6460,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   api.noop();
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
+                  wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
               });
@@ -5513,7 +6510,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 Result<String> resultCallback =
@@ -5545,7 +6542,7 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> wrapped = new ArrayList<>();
                 VoidResult resultCallback =
                     new VoidResult() {
                       public void success() {
@@ -5586,8 +6583,7 @@ public class CoreTests {
       this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
     }
 
-    /** Public interface for sending reply. */
-    /** The codec used by FlutterSmallApi. */
+    /** Public interface for sending reply. The codec used by FlutterSmallApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
@@ -5599,16 +6595,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(msgArg)),
+          new ArrayList<>(Collections.singletonList(msgArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(
@@ -5633,16 +6627,14 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aStringArg)),
+          new ArrayList<>(Collections.singletonList(aStringArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(

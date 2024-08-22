@@ -39,12 +39,14 @@ AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
                    const std::vector<int32_t>& a4_byte_array,
                    const std::vector<int64_t>& a8_byte_array,
                    const std::vector<double>& a_float_array,
-                   const AnEnum& an_enum, const std::string& a_string,
-                   const EncodableValue& an_object, const EncodableList& list,
-                   const EncodableList& string_list,
+                   const AnEnum& an_enum, const AnotherEnum& another_enum,
+                   const std::string& a_string, const EncodableValue& an_object,
+                   const EncodableList& list, const EncodableList& string_list,
                    const EncodableList& int_list,
                    const EncodableList& double_list,
-                   const EncodableList& bool_list, const EncodableMap& map)
+                   const EncodableList& bool_list,
+                   const EncodableList& list_list, const EncodableMap& map,
+                   const EncodableMap& string_map, const EncodableMap& int_map)
     : a_bool_(a_bool),
       an_int_(an_int),
       an_int64_(an_int64),
@@ -54,6 +56,7 @@ AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
       a8_byte_array_(a8_byte_array),
       a_float_array_(a_float_array),
       an_enum_(an_enum),
+      another_enum_(another_enum),
       a_string_(a_string),
       an_object_(an_object),
       list_(list),
@@ -61,7 +64,10 @@ AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
       int_list_(int_list),
       double_list_(double_list),
       bool_list_(bool_list),
-      map_(map) {}
+      list_list_(list_list),
+      map_(map),
+      string_map_(string_map),
+      int_map_(int_map) {}
 
 bool AllTypes::a_bool() const { return a_bool_; }
 
@@ -115,6 +121,12 @@ const AnEnum& AllTypes::an_enum() const { return an_enum_; }
 
 void AllTypes::set_an_enum(const AnEnum& value_arg) { an_enum_ = value_arg; }
 
+const AnotherEnum& AllTypes::another_enum() const { return another_enum_; }
+
+void AllTypes::set_another_enum(const AnotherEnum& value_arg) {
+  another_enum_ = value_arg;
+}
+
 const std::string& AllTypes::a_string() const { return a_string_; }
 
 void AllTypes::set_a_string(std::string_view value_arg) {
@@ -155,13 +167,31 @@ void AllTypes::set_bool_list(const EncodableList& value_arg) {
   bool_list_ = value_arg;
 }
 
+const EncodableList& AllTypes::list_list() const { return list_list_; }
+
+void AllTypes::set_list_list(const EncodableList& value_arg) {
+  list_list_ = value_arg;
+}
+
 const EncodableMap& AllTypes::map() const { return map_; }
 
 void AllTypes::set_map(const EncodableMap& value_arg) { map_ = value_arg; }
 
+const EncodableMap& AllTypes::string_map() const { return string_map_; }
+
+void AllTypes::set_string_map(const EncodableMap& value_arg) {
+  string_map_ = value_arg;
+}
+
+const EncodableMap& AllTypes::int_map() const { return int_map_; }
+
+void AllTypes::set_int_map(const EncodableMap& value_arg) {
+  int_map_ = value_arg;
+}
+
 EncodableList AllTypes::ToEncodableList() const {
   EncodableList list;
-  list.reserve(17);
+  list.reserve(21);
   list.push_back(EncodableValue(a_bool_));
   list.push_back(EncodableValue(an_int_));
   list.push_back(EncodableValue(an_int64_));
@@ -171,6 +201,7 @@ EncodableList AllTypes::ToEncodableList() const {
   list.push_back(EncodableValue(a8_byte_array_));
   list.push_back(EncodableValue(a_float_array_));
   list.push_back(CustomEncodableValue(an_enum_));
+  list.push_back(CustomEncodableValue(another_enum_));
   list.push_back(EncodableValue(a_string_));
   list.push_back(an_object_);
   list.push_back(EncodableValue(list_));
@@ -178,22 +209,30 @@ EncodableList AllTypes::ToEncodableList() const {
   list.push_back(EncodableValue(int_list_));
   list.push_back(EncodableValue(double_list_));
   list.push_back(EncodableValue(bool_list_));
+  list.push_back(EncodableValue(list_list_));
   list.push_back(EncodableValue(map_));
+  list.push_back(EncodableValue(string_map_));
+  list.push_back(EncodableValue(int_map_));
   return list;
 }
 
 AllTypes AllTypes::FromEncodableList(const EncodableList& list) {
   AllTypes decoded(
-      std::get<bool>(list[0]), list[1].LongValue(), list[2].LongValue(),
-      std::get<double>(list[3]), std::get<std::vector<uint8_t>>(list[4]),
+      std::get<bool>(list[0]), std::get<int64_t>(list[1]),
+      std::get<int64_t>(list[2]), std::get<double>(list[3]),
+      std::get<std::vector<uint8_t>>(list[4]),
       std::get<std::vector<int32_t>>(list[5]),
       std::get<std::vector<int64_t>>(list[6]),
       std::get<std::vector<double>>(list[7]),
       std::any_cast<const AnEnum&>(std::get<CustomEncodableValue>(list[8])),
-      std::get<std::string>(list[9]), list[10],
-      std::get<EncodableList>(list[11]), std::get<EncodableList>(list[12]),
-      std::get<EncodableList>(list[13]), std::get<EncodableList>(list[14]),
-      std::get<EncodableList>(list[15]), std::get<EncodableMap>(list[16]));
+      std::any_cast<const AnotherEnum&>(
+          std::get<CustomEncodableValue>(list[9])),
+      std::get<std::string>(list[10]), list[11],
+      std::get<EncodableList>(list[12]), std::get<EncodableList>(list[13]),
+      std::get<EncodableList>(list[14]), std::get<EncodableList>(list[15]),
+      std::get<EncodableList>(list[16]), std::get<EncodableList>(list[17]),
+      std::get<EncodableMap>(list[18]), std::get<EncodableMap>(list[19]),
+      std::get<EncodableMap>(list[20]));
   return decoded;
 }
 
@@ -208,15 +247,14 @@ AllNullableTypes::AllNullableTypes(
     const std::vector<int32_t>* a_nullable4_byte_array,
     const std::vector<int64_t>* a_nullable8_byte_array,
     const std::vector<double>* a_nullable_float_array,
-    const EncodableList* nullable_nested_list,
-    const EncodableMap* nullable_map_with_annotations,
-    const EncodableMap* nullable_map_with_object, const AnEnum* a_nullable_enum,
+    const AnEnum* a_nullable_enum, const AnotherEnum* another_nullable_enum,
     const std::string* a_nullable_string,
     const EncodableValue* a_nullable_object,
     const AllNullableTypes* all_nullable_types, const EncodableList* list,
     const EncodableList* string_list, const EncodableList* int_list,
     const EncodableList* double_list, const EncodableList* bool_list,
-    const EncodableList* nested_class_list, const EncodableMap* map)
+    const EncodableList* list_list, const EncodableMap* map,
+    const EncodableMap* string_map, const EncodableMap* int_map)
     : a_nullable_bool_(a_nullable_bool ? std::optional<bool>(*a_nullable_bool)
                                        : std::nullopt),
       a_nullable_int_(a_nullable_int ? std::optional<int64_t>(*a_nullable_int)
@@ -243,19 +281,11 @@ AllNullableTypes::AllNullableTypes(
           a_nullable_float_array
               ? std::optional<std::vector<double>>(*a_nullable_float_array)
               : std::nullopt),
-      nullable_nested_list_(nullable_nested_list ? std::optional<EncodableList>(
-                                                       *nullable_nested_list)
-                                                 : std::nullopt),
-      nullable_map_with_annotations_(
-          nullable_map_with_annotations
-              ? std::optional<EncodableMap>(*nullable_map_with_annotations)
-              : std::nullopt),
-      nullable_map_with_object_(
-          nullable_map_with_object
-              ? std::optional<EncodableMap>(*nullable_map_with_object)
-              : std::nullopt),
       a_nullable_enum_(a_nullable_enum ? std::optional<AnEnum>(*a_nullable_enum)
                                        : std::nullopt),
+      another_nullable_enum_(another_nullable_enum ? std::optional<AnotherEnum>(
+                                                         *another_nullable_enum)
+                                                   : std::nullopt),
       a_nullable_string_(a_nullable_string
                              ? std::optional<std::string>(*a_nullable_string)
                              : std::nullopt),
@@ -275,10 +305,13 @@ AllNullableTypes::AllNullableTypes(
                                : std::nullopt),
       bool_list_(bool_list ? std::optional<EncodableList>(*bool_list)
                            : std::nullopt),
-      nested_class_list_(nested_class_list
-                             ? std::optional<EncodableList>(*nested_class_list)
+      list_list_(list_list ? std::optional<EncodableList>(*list_list)
+                           : std::nullopt),
+      map_(map ? std::optional<EncodableMap>(*map) : std::nullopt),
+      string_map_(string_map ? std::optional<EncodableMap>(*string_map)
                              : std::nullopt),
-      map_(map ? std::optional<EncodableMap>(*map) : std::nullopt) {}
+      int_map_(int_map ? std::optional<EncodableMap>(*int_map) : std::nullopt) {
+}
 
 AllNullableTypes::AllNullableTypes(const AllNullableTypes& other)
     : a_nullable_bool_(other.a_nullable_bool_
@@ -309,22 +342,13 @@ AllNullableTypes::AllNullableTypes(const AllNullableTypes& other)
                                   ? std::optional<std::vector<double>>(
                                         *other.a_nullable_float_array_)
                                   : std::nullopt),
-      nullable_nested_list_(
-          other.nullable_nested_list_
-              ? std::optional<EncodableList>(*other.nullable_nested_list_)
-              : std::nullopt),
-      nullable_map_with_annotations_(
-          other.nullable_map_with_annotations_
-              ? std::optional<EncodableMap>(
-                    *other.nullable_map_with_annotations_)
-              : std::nullopt),
-      nullable_map_with_object_(
-          other.nullable_map_with_object_
-              ? std::optional<EncodableMap>(*other.nullable_map_with_object_)
-              : std::nullopt),
       a_nullable_enum_(other.a_nullable_enum_
                            ? std::optional<AnEnum>(*other.a_nullable_enum_)
                            : std::nullopt),
+      another_nullable_enum_(
+          other.another_nullable_enum_
+              ? std::optional<AnotherEnum>(*other.another_nullable_enum_)
+              : std::nullopt),
       a_nullable_string_(
           other.a_nullable_string_
               ? std::optional<std::string>(*other.a_nullable_string_)
@@ -350,12 +374,16 @@ AllNullableTypes::AllNullableTypes(const AllNullableTypes& other)
       bool_list_(other.bool_list_
                      ? std::optional<EncodableList>(*other.bool_list_)
                      : std::nullopt),
-      nested_class_list_(
-          other.nested_class_list_
-              ? std::optional<EncodableList>(*other.nested_class_list_)
-              : std::nullopt),
+      list_list_(other.list_list_
+                     ? std::optional<EncodableList>(*other.list_list_)
+                     : std::nullopt),
       map_(other.map_ ? std::optional<EncodableMap>(*other.map_)
-                      : std::nullopt) {}
+                      : std::nullopt),
+      string_map_(other.string_map_
+                      ? std::optional<EncodableMap>(*other.string_map_)
+                      : std::nullopt),
+      int_map_(other.int_map_ ? std::optional<EncodableMap>(*other.int_map_)
+                              : std::nullopt) {}
 
 AllNullableTypes& AllNullableTypes::operator=(const AllNullableTypes& other) {
   a_nullable_bool_ = other.a_nullable_bool_;
@@ -366,10 +394,8 @@ AllNullableTypes& AllNullableTypes::operator=(const AllNullableTypes& other) {
   a_nullable4_byte_array_ = other.a_nullable4_byte_array_;
   a_nullable8_byte_array_ = other.a_nullable8_byte_array_;
   a_nullable_float_array_ = other.a_nullable_float_array_;
-  nullable_nested_list_ = other.nullable_nested_list_;
-  nullable_map_with_annotations_ = other.nullable_map_with_annotations_;
-  nullable_map_with_object_ = other.nullable_map_with_object_;
   a_nullable_enum_ = other.a_nullable_enum_;
+  another_nullable_enum_ = other.another_nullable_enum_;
   a_nullable_string_ = other.a_nullable_string_;
   a_nullable_object_ = other.a_nullable_object_;
   all_nullable_types_ =
@@ -381,8 +407,10 @@ AllNullableTypes& AllNullableTypes::operator=(const AllNullableTypes& other) {
   int_list_ = other.int_list_;
   double_list_ = other.double_list_;
   bool_list_ = other.bool_list_;
-  nested_class_list_ = other.nested_class_list_;
+  list_list_ = other.list_list_;
   map_ = other.map_;
+  string_map_ = other.string_map_;
+  int_map_ = other.int_map_;
   return *this;
 }
 
@@ -500,52 +528,6 @@ void AllNullableTypes::set_a_nullable_float_array(
   a_nullable_float_array_ = value_arg;
 }
 
-const EncodableList* AllNullableTypes::nullable_nested_list() const {
-  return nullable_nested_list_ ? &(*nullable_nested_list_) : nullptr;
-}
-
-void AllNullableTypes::set_nullable_nested_list(
-    const EncodableList* value_arg) {
-  nullable_nested_list_ =
-      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
-}
-
-void AllNullableTypes::set_nullable_nested_list(
-    const EncodableList& value_arg) {
-  nullable_nested_list_ = value_arg;
-}
-
-const EncodableMap* AllNullableTypes::nullable_map_with_annotations() const {
-  return nullable_map_with_annotations_ ? &(*nullable_map_with_annotations_)
-                                        : nullptr;
-}
-
-void AllNullableTypes::set_nullable_map_with_annotations(
-    const EncodableMap* value_arg) {
-  nullable_map_with_annotations_ =
-      value_arg ? std::optional<EncodableMap>(*value_arg) : std::nullopt;
-}
-
-void AllNullableTypes::set_nullable_map_with_annotations(
-    const EncodableMap& value_arg) {
-  nullable_map_with_annotations_ = value_arg;
-}
-
-const EncodableMap* AllNullableTypes::nullable_map_with_object() const {
-  return nullable_map_with_object_ ? &(*nullable_map_with_object_) : nullptr;
-}
-
-void AllNullableTypes::set_nullable_map_with_object(
-    const EncodableMap* value_arg) {
-  nullable_map_with_object_ =
-      value_arg ? std::optional<EncodableMap>(*value_arg) : std::nullopt;
-}
-
-void AllNullableTypes::set_nullable_map_with_object(
-    const EncodableMap& value_arg) {
-  nullable_map_with_object_ = value_arg;
-}
-
 const AnEnum* AllNullableTypes::a_nullable_enum() const {
   return a_nullable_enum_ ? &(*a_nullable_enum_) : nullptr;
 }
@@ -557,6 +539,19 @@ void AllNullableTypes::set_a_nullable_enum(const AnEnum* value_arg) {
 
 void AllNullableTypes::set_a_nullable_enum(const AnEnum& value_arg) {
   a_nullable_enum_ = value_arg;
+}
+
+const AnotherEnum* AllNullableTypes::another_nullable_enum() const {
+  return another_nullable_enum_ ? &(*another_nullable_enum_) : nullptr;
+}
+
+void AllNullableTypes::set_another_nullable_enum(const AnotherEnum* value_arg) {
+  another_nullable_enum_ =
+      value_arg ? std::optional<AnotherEnum>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypes::set_another_nullable_enum(const AnotherEnum& value_arg) {
+  another_nullable_enum_ = value_arg;
 }
 
 const std::string* AllNullableTypes::a_nullable_string() const {
@@ -665,17 +660,17 @@ void AllNullableTypes::set_bool_list(const EncodableList& value_arg) {
   bool_list_ = value_arg;
 }
 
-const EncodableList* AllNullableTypes::nested_class_list() const {
-  return nested_class_list_ ? &(*nested_class_list_) : nullptr;
+const EncodableList* AllNullableTypes::list_list() const {
+  return list_list_ ? &(*list_list_) : nullptr;
 }
 
-void AllNullableTypes::set_nested_class_list(const EncodableList* value_arg) {
-  nested_class_list_ =
+void AllNullableTypes::set_list_list(const EncodableList* value_arg) {
+  list_list_ =
       value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
 }
 
-void AllNullableTypes::set_nested_class_list(const EncodableList& value_arg) {
-  nested_class_list_ = value_arg;
+void AllNullableTypes::set_list_list(const EncodableList& value_arg) {
+  list_list_ = value_arg;
 }
 
 const EncodableMap* AllNullableTypes::map() const {
@@ -688,6 +683,31 @@ void AllNullableTypes::set_map(const EncodableMap* value_arg) {
 
 void AllNullableTypes::set_map(const EncodableMap& value_arg) {
   map_ = value_arg;
+}
+
+const EncodableMap* AllNullableTypes::string_map() const {
+  return string_map_ ? &(*string_map_) : nullptr;
+}
+
+void AllNullableTypes::set_string_map(const EncodableMap* value_arg) {
+  string_map_ =
+      value_arg ? std::optional<EncodableMap>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypes::set_string_map(const EncodableMap& value_arg) {
+  string_map_ = value_arg;
+}
+
+const EncodableMap* AllNullableTypes::int_map() const {
+  return int_map_ ? &(*int_map_) : nullptr;
+}
+
+void AllNullableTypes::set_int_map(const EncodableMap* value_arg) {
+  int_map_ = value_arg ? std::optional<EncodableMap>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypes::set_int_map(const EncodableMap& value_arg) {
+  int_map_ = value_arg;
 }
 
 EncodableList AllNullableTypes::ToEncodableList() const {
@@ -713,16 +733,11 @@ EncodableList AllNullableTypes::ToEncodableList() const {
   list.push_back(a_nullable_float_array_
                      ? EncodableValue(*a_nullable_float_array_)
                      : EncodableValue());
-  list.push_back(nullable_nested_list_ ? EncodableValue(*nullable_nested_list_)
-                                       : EncodableValue());
-  list.push_back(nullable_map_with_annotations_
-                     ? EncodableValue(*nullable_map_with_annotations_)
-                     : EncodableValue());
-  list.push_back(nullable_map_with_object_
-                     ? EncodableValue(*nullable_map_with_object_)
-                     : EncodableValue());
   list.push_back(a_nullable_enum_ ? CustomEncodableValue(*a_nullable_enum_)
                                   : EncodableValue());
+  list.push_back(another_nullable_enum_
+                     ? CustomEncodableValue(*another_nullable_enum_)
+                     : EncodableValue());
   list.push_back(a_nullable_string_ ? EncodableValue(*a_nullable_string_)
                                     : EncodableValue());
   list.push_back(a_nullable_object_ ? *a_nullable_object_ : EncodableValue());
@@ -736,9 +751,10 @@ EncodableList AllNullableTypes::ToEncodableList() const {
   list.push_back(double_list_ ? EncodableValue(*double_list_)
                               : EncodableValue());
   list.push_back(bool_list_ ? EncodableValue(*bool_list_) : EncodableValue());
-  list.push_back(nested_class_list_ ? EncodableValue(*nested_class_list_)
-                                    : EncodableValue());
+  list.push_back(list_list_ ? EncodableValue(*list_list_) : EncodableValue());
   list.push_back(map_ ? EncodableValue(*map_) : EncodableValue());
+  list.push_back(string_map_ ? EncodableValue(*string_map_) : EncodableValue());
+  list.push_back(int_map_ ? EncodableValue(*int_map_) : EncodableValue());
   return list;
 }
 
@@ -751,11 +767,11 @@ AllNullableTypes AllNullableTypes::FromEncodableList(
   }
   auto& encodable_a_nullable_int = list[1];
   if (!encodable_a_nullable_int.IsNull()) {
-    decoded.set_a_nullable_int(encodable_a_nullable_int.LongValue());
+    decoded.set_a_nullable_int(std::get<int64_t>(encodable_a_nullable_int));
   }
   auto& encodable_a_nullable_int64 = list[2];
   if (!encodable_a_nullable_int64.IsNull()) {
-    decoded.set_a_nullable_int64(encodable_a_nullable_int64.LongValue());
+    decoded.set_a_nullable_int64(std::get<int64_t>(encodable_a_nullable_int64));
   }
   auto& encodable_a_nullable_double = list[3];
   if (!encodable_a_nullable_double.IsNull()) {
@@ -782,68 +798,65 @@ AllNullableTypes AllNullableTypes::FromEncodableList(
     decoded.set_a_nullable_float_array(
         std::get<std::vector<double>>(encodable_a_nullable_float_array));
   }
-  auto& encodable_nullable_nested_list = list[8];
-  if (!encodable_nullable_nested_list.IsNull()) {
-    decoded.set_nullable_nested_list(
-        std::get<EncodableList>(encodable_nullable_nested_list));
-  }
-  auto& encodable_nullable_map_with_annotations = list[9];
-  if (!encodable_nullable_map_with_annotations.IsNull()) {
-    decoded.set_nullable_map_with_annotations(
-        std::get<EncodableMap>(encodable_nullable_map_with_annotations));
-  }
-  auto& encodable_nullable_map_with_object = list[10];
-  if (!encodable_nullable_map_with_object.IsNull()) {
-    decoded.set_nullable_map_with_object(
-        std::get<EncodableMap>(encodable_nullable_map_with_object));
-  }
-  auto& encodable_a_nullable_enum = list[11];
+  auto& encodable_a_nullable_enum = list[8];
   if (!encodable_a_nullable_enum.IsNull()) {
     decoded.set_a_nullable_enum(std::any_cast<const AnEnum&>(
         std::get<CustomEncodableValue>(encodable_a_nullable_enum)));
   }
-  auto& encodable_a_nullable_string = list[12];
+  auto& encodable_another_nullable_enum = list[9];
+  if (!encodable_another_nullable_enum.IsNull()) {
+    decoded.set_another_nullable_enum(std::any_cast<const AnotherEnum&>(
+        std::get<CustomEncodableValue>(encodable_another_nullable_enum)));
+  }
+  auto& encodable_a_nullable_string = list[10];
   if (!encodable_a_nullable_string.IsNull()) {
     decoded.set_a_nullable_string(
         std::get<std::string>(encodable_a_nullable_string));
   }
-  auto& encodable_a_nullable_object = list[13];
+  auto& encodable_a_nullable_object = list[11];
   if (!encodable_a_nullable_object.IsNull()) {
     decoded.set_a_nullable_object(encodable_a_nullable_object);
   }
-  auto& encodable_all_nullable_types = list[14];
+  auto& encodable_all_nullable_types = list[12];
   if (!encodable_all_nullable_types.IsNull()) {
     decoded.set_all_nullable_types(std::any_cast<const AllNullableTypes&>(
         std::get<CustomEncodableValue>(encodable_all_nullable_types)));
   }
-  auto& encodable_list = list[15];
+  auto& encodable_list = list[13];
   if (!encodable_list.IsNull()) {
     decoded.set_list(std::get<EncodableList>(encodable_list));
   }
-  auto& encodable_string_list = list[16];
+  auto& encodable_string_list = list[14];
   if (!encodable_string_list.IsNull()) {
     decoded.set_string_list(std::get<EncodableList>(encodable_string_list));
   }
-  auto& encodable_int_list = list[17];
+  auto& encodable_int_list = list[15];
   if (!encodable_int_list.IsNull()) {
     decoded.set_int_list(std::get<EncodableList>(encodable_int_list));
   }
-  auto& encodable_double_list = list[18];
+  auto& encodable_double_list = list[16];
   if (!encodable_double_list.IsNull()) {
     decoded.set_double_list(std::get<EncodableList>(encodable_double_list));
   }
-  auto& encodable_bool_list = list[19];
+  auto& encodable_bool_list = list[17];
   if (!encodable_bool_list.IsNull()) {
     decoded.set_bool_list(std::get<EncodableList>(encodable_bool_list));
   }
-  auto& encodable_nested_class_list = list[20];
-  if (!encodable_nested_class_list.IsNull()) {
-    decoded.set_nested_class_list(
-        std::get<EncodableList>(encodable_nested_class_list));
+  auto& encodable_list_list = list[18];
+  if (!encodable_list_list.IsNull()) {
+    decoded.set_list_list(std::get<EncodableList>(encodable_list_list));
   }
-  auto& encodable_map = list[21];
+  auto& encodable_map = list[19];
   if (!encodable_map.IsNull()) {
     decoded.set_map(std::get<EncodableMap>(encodable_map));
+  }
+  auto& encodable_string_map = list[20];
+  if (!encodable_string_map.IsNull()) {
+    decoded.set_string_map(std::get<EncodableMap>(encodable_string_map));
+  }
+  auto& encodable_int_map = list[21];
+  if (!encodable_int_map.IsNull()) {
+    decoded.set_int_map(std::get<EncodableMap>(encodable_int_map));
   }
   return decoded;
 }
@@ -859,14 +872,13 @@ AllNullableTypesWithoutRecursion::AllNullableTypesWithoutRecursion(
     const std::vector<int32_t>* a_nullable4_byte_array,
     const std::vector<int64_t>* a_nullable8_byte_array,
     const std::vector<double>* a_nullable_float_array,
-    const EncodableList* nullable_nested_list,
-    const EncodableMap* nullable_map_with_annotations,
-    const EncodableMap* nullable_map_with_object, const AnEnum* a_nullable_enum,
+    const AnEnum* a_nullable_enum, const AnotherEnum* another_nullable_enum,
     const std::string* a_nullable_string,
     const EncodableValue* a_nullable_object, const EncodableList* list,
     const EncodableList* string_list, const EncodableList* int_list,
     const EncodableList* double_list, const EncodableList* bool_list,
-    const EncodableMap* map)
+    const EncodableList* list_list, const EncodableMap* map,
+    const EncodableMap* string_map, const EncodableMap* int_map)
     : a_nullable_bool_(a_nullable_bool ? std::optional<bool>(*a_nullable_bool)
                                        : std::nullopt),
       a_nullable_int_(a_nullable_int ? std::optional<int64_t>(*a_nullable_int)
@@ -893,19 +905,11 @@ AllNullableTypesWithoutRecursion::AllNullableTypesWithoutRecursion(
           a_nullable_float_array
               ? std::optional<std::vector<double>>(*a_nullable_float_array)
               : std::nullopt),
-      nullable_nested_list_(nullable_nested_list ? std::optional<EncodableList>(
-                                                       *nullable_nested_list)
-                                                 : std::nullopt),
-      nullable_map_with_annotations_(
-          nullable_map_with_annotations
-              ? std::optional<EncodableMap>(*nullable_map_with_annotations)
-              : std::nullopt),
-      nullable_map_with_object_(
-          nullable_map_with_object
-              ? std::optional<EncodableMap>(*nullable_map_with_object)
-              : std::nullopt),
       a_nullable_enum_(a_nullable_enum ? std::optional<AnEnum>(*a_nullable_enum)
                                        : std::nullopt),
+      another_nullable_enum_(another_nullable_enum ? std::optional<AnotherEnum>(
+                                                         *another_nullable_enum)
+                                                   : std::nullopt),
       a_nullable_string_(a_nullable_string
                              ? std::optional<std::string>(*a_nullable_string)
                              : std::nullopt),
@@ -921,7 +925,13 @@ AllNullableTypesWithoutRecursion::AllNullableTypesWithoutRecursion(
                                : std::nullopt),
       bool_list_(bool_list ? std::optional<EncodableList>(*bool_list)
                            : std::nullopt),
-      map_(map ? std::optional<EncodableMap>(*map) : std::nullopt) {}
+      list_list_(list_list ? std::optional<EncodableList>(*list_list)
+                           : std::nullopt),
+      map_(map ? std::optional<EncodableMap>(*map) : std::nullopt),
+      string_map_(string_map ? std::optional<EncodableMap>(*string_map)
+                             : std::nullopt),
+      int_map_(int_map ? std::optional<EncodableMap>(*int_map) : std::nullopt) {
+}
 
 const bool* AllNullableTypesWithoutRecursion::a_nullable_bool() const {
   return a_nullable_bool_ ? &(*a_nullable_bool_) : nullptr;
@@ -1045,55 +1055,6 @@ void AllNullableTypesWithoutRecursion::set_a_nullable_float_array(
   a_nullable_float_array_ = value_arg;
 }
 
-const EncodableList* AllNullableTypesWithoutRecursion::nullable_nested_list()
-    const {
-  return nullable_nested_list_ ? &(*nullable_nested_list_) : nullptr;
-}
-
-void AllNullableTypesWithoutRecursion::set_nullable_nested_list(
-    const EncodableList* value_arg) {
-  nullable_nested_list_ =
-      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
-}
-
-void AllNullableTypesWithoutRecursion::set_nullable_nested_list(
-    const EncodableList& value_arg) {
-  nullable_nested_list_ = value_arg;
-}
-
-const EncodableMap*
-AllNullableTypesWithoutRecursion::nullable_map_with_annotations() const {
-  return nullable_map_with_annotations_ ? &(*nullable_map_with_annotations_)
-                                        : nullptr;
-}
-
-void AllNullableTypesWithoutRecursion::set_nullable_map_with_annotations(
-    const EncodableMap* value_arg) {
-  nullable_map_with_annotations_ =
-      value_arg ? std::optional<EncodableMap>(*value_arg) : std::nullopt;
-}
-
-void AllNullableTypesWithoutRecursion::set_nullable_map_with_annotations(
-    const EncodableMap& value_arg) {
-  nullable_map_with_annotations_ = value_arg;
-}
-
-const EncodableMap* AllNullableTypesWithoutRecursion::nullable_map_with_object()
-    const {
-  return nullable_map_with_object_ ? &(*nullable_map_with_object_) : nullptr;
-}
-
-void AllNullableTypesWithoutRecursion::set_nullable_map_with_object(
-    const EncodableMap* value_arg) {
-  nullable_map_with_object_ =
-      value_arg ? std::optional<EncodableMap>(*value_arg) : std::nullopt;
-}
-
-void AllNullableTypesWithoutRecursion::set_nullable_map_with_object(
-    const EncodableMap& value_arg) {
-  nullable_map_with_object_ = value_arg;
-}
-
 const AnEnum* AllNullableTypesWithoutRecursion::a_nullable_enum() const {
   return a_nullable_enum_ ? &(*a_nullable_enum_) : nullptr;
 }
@@ -1107,6 +1068,22 @@ void AllNullableTypesWithoutRecursion::set_a_nullable_enum(
 void AllNullableTypesWithoutRecursion::set_a_nullable_enum(
     const AnEnum& value_arg) {
   a_nullable_enum_ = value_arg;
+}
+
+const AnotherEnum* AllNullableTypesWithoutRecursion::another_nullable_enum()
+    const {
+  return another_nullable_enum_ ? &(*another_nullable_enum_) : nullptr;
+}
+
+void AllNullableTypesWithoutRecursion::set_another_nullable_enum(
+    const AnotherEnum* value_arg) {
+  another_nullable_enum_ =
+      value_arg ? std::optional<AnotherEnum>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypesWithoutRecursion::set_another_nullable_enum(
+    const AnotherEnum& value_arg) {
+  another_nullable_enum_ = value_arg;
 }
 
 const std::string* AllNullableTypesWithoutRecursion::a_nullable_string() const {
@@ -1214,6 +1191,21 @@ void AllNullableTypesWithoutRecursion::set_bool_list(
   bool_list_ = value_arg;
 }
 
+const EncodableList* AllNullableTypesWithoutRecursion::list_list() const {
+  return list_list_ ? &(*list_list_) : nullptr;
+}
+
+void AllNullableTypesWithoutRecursion::set_list_list(
+    const EncodableList* value_arg) {
+  list_list_ =
+      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypesWithoutRecursion::set_list_list(
+    const EncodableList& value_arg) {
+  list_list_ = value_arg;
+}
+
 const EncodableMap* AllNullableTypesWithoutRecursion::map() const {
   return map_ ? &(*map_) : nullptr;
 }
@@ -1226,9 +1218,38 @@ void AllNullableTypesWithoutRecursion::set_map(const EncodableMap& value_arg) {
   map_ = value_arg;
 }
 
+const EncodableMap* AllNullableTypesWithoutRecursion::string_map() const {
+  return string_map_ ? &(*string_map_) : nullptr;
+}
+
+void AllNullableTypesWithoutRecursion::set_string_map(
+    const EncodableMap* value_arg) {
+  string_map_ =
+      value_arg ? std::optional<EncodableMap>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypesWithoutRecursion::set_string_map(
+    const EncodableMap& value_arg) {
+  string_map_ = value_arg;
+}
+
+const EncodableMap* AllNullableTypesWithoutRecursion::int_map() const {
+  return int_map_ ? &(*int_map_) : nullptr;
+}
+
+void AllNullableTypesWithoutRecursion::set_int_map(
+    const EncodableMap* value_arg) {
+  int_map_ = value_arg ? std::optional<EncodableMap>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypesWithoutRecursion::set_int_map(
+    const EncodableMap& value_arg) {
+  int_map_ = value_arg;
+}
+
 EncodableList AllNullableTypesWithoutRecursion::ToEncodableList() const {
   EncodableList list;
-  list.reserve(20);
+  list.reserve(21);
   list.push_back(a_nullable_bool_ ? EncodableValue(*a_nullable_bool_)
                                   : EncodableValue());
   list.push_back(a_nullable_int_ ? EncodableValue(*a_nullable_int_)
@@ -1249,16 +1270,11 @@ EncodableList AllNullableTypesWithoutRecursion::ToEncodableList() const {
   list.push_back(a_nullable_float_array_
                      ? EncodableValue(*a_nullable_float_array_)
                      : EncodableValue());
-  list.push_back(nullable_nested_list_ ? EncodableValue(*nullable_nested_list_)
-                                       : EncodableValue());
-  list.push_back(nullable_map_with_annotations_
-                     ? EncodableValue(*nullable_map_with_annotations_)
-                     : EncodableValue());
-  list.push_back(nullable_map_with_object_
-                     ? EncodableValue(*nullable_map_with_object_)
-                     : EncodableValue());
   list.push_back(a_nullable_enum_ ? CustomEncodableValue(*a_nullable_enum_)
                                   : EncodableValue());
+  list.push_back(another_nullable_enum_
+                     ? CustomEncodableValue(*another_nullable_enum_)
+                     : EncodableValue());
   list.push_back(a_nullable_string_ ? EncodableValue(*a_nullable_string_)
                                     : EncodableValue());
   list.push_back(a_nullable_object_ ? *a_nullable_object_ : EncodableValue());
@@ -1269,7 +1285,10 @@ EncodableList AllNullableTypesWithoutRecursion::ToEncodableList() const {
   list.push_back(double_list_ ? EncodableValue(*double_list_)
                               : EncodableValue());
   list.push_back(bool_list_ ? EncodableValue(*bool_list_) : EncodableValue());
+  list.push_back(list_list_ ? EncodableValue(*list_list_) : EncodableValue());
   list.push_back(map_ ? EncodableValue(*map_) : EncodableValue());
+  list.push_back(string_map_ ? EncodableValue(*string_map_) : EncodableValue());
+  list.push_back(int_map_ ? EncodableValue(*int_map_) : EncodableValue());
   return list;
 }
 
@@ -1282,11 +1301,11 @@ AllNullableTypesWithoutRecursion::FromEncodableList(const EncodableList& list) {
   }
   auto& encodable_a_nullable_int = list[1];
   if (!encodable_a_nullable_int.IsNull()) {
-    decoded.set_a_nullable_int(encodable_a_nullable_int.LongValue());
+    decoded.set_a_nullable_int(std::get<int64_t>(encodable_a_nullable_int));
   }
   auto& encodable_a_nullable_int64 = list[2];
   if (!encodable_a_nullable_int64.IsNull()) {
-    decoded.set_a_nullable_int64(encodable_a_nullable_int64.LongValue());
+    decoded.set_a_nullable_int64(std::get<int64_t>(encodable_a_nullable_int64));
   }
   auto& encodable_a_nullable_double = list[3];
   if (!encodable_a_nullable_double.IsNull()) {
@@ -1313,58 +1332,60 @@ AllNullableTypesWithoutRecursion::FromEncodableList(const EncodableList& list) {
     decoded.set_a_nullable_float_array(
         std::get<std::vector<double>>(encodable_a_nullable_float_array));
   }
-  auto& encodable_nullable_nested_list = list[8];
-  if (!encodable_nullable_nested_list.IsNull()) {
-    decoded.set_nullable_nested_list(
-        std::get<EncodableList>(encodable_nullable_nested_list));
-  }
-  auto& encodable_nullable_map_with_annotations = list[9];
-  if (!encodable_nullable_map_with_annotations.IsNull()) {
-    decoded.set_nullable_map_with_annotations(
-        std::get<EncodableMap>(encodable_nullable_map_with_annotations));
-  }
-  auto& encodable_nullable_map_with_object = list[10];
-  if (!encodable_nullable_map_with_object.IsNull()) {
-    decoded.set_nullable_map_with_object(
-        std::get<EncodableMap>(encodable_nullable_map_with_object));
-  }
-  auto& encodable_a_nullable_enum = list[11];
+  auto& encodable_a_nullable_enum = list[8];
   if (!encodable_a_nullable_enum.IsNull()) {
     decoded.set_a_nullable_enum(std::any_cast<const AnEnum&>(
         std::get<CustomEncodableValue>(encodable_a_nullable_enum)));
   }
-  auto& encodable_a_nullable_string = list[12];
+  auto& encodable_another_nullable_enum = list[9];
+  if (!encodable_another_nullable_enum.IsNull()) {
+    decoded.set_another_nullable_enum(std::any_cast<const AnotherEnum&>(
+        std::get<CustomEncodableValue>(encodable_another_nullable_enum)));
+  }
+  auto& encodable_a_nullable_string = list[10];
   if (!encodable_a_nullable_string.IsNull()) {
     decoded.set_a_nullable_string(
         std::get<std::string>(encodable_a_nullable_string));
   }
-  auto& encodable_a_nullable_object = list[13];
+  auto& encodable_a_nullable_object = list[11];
   if (!encodable_a_nullable_object.IsNull()) {
     decoded.set_a_nullable_object(encodable_a_nullable_object);
   }
-  auto& encodable_list = list[14];
+  auto& encodable_list = list[12];
   if (!encodable_list.IsNull()) {
     decoded.set_list(std::get<EncodableList>(encodable_list));
   }
-  auto& encodable_string_list = list[15];
+  auto& encodable_string_list = list[13];
   if (!encodable_string_list.IsNull()) {
     decoded.set_string_list(std::get<EncodableList>(encodable_string_list));
   }
-  auto& encodable_int_list = list[16];
+  auto& encodable_int_list = list[14];
   if (!encodable_int_list.IsNull()) {
     decoded.set_int_list(std::get<EncodableList>(encodable_int_list));
   }
-  auto& encodable_double_list = list[17];
+  auto& encodable_double_list = list[15];
   if (!encodable_double_list.IsNull()) {
     decoded.set_double_list(std::get<EncodableList>(encodable_double_list));
   }
-  auto& encodable_bool_list = list[18];
+  auto& encodable_bool_list = list[16];
   if (!encodable_bool_list.IsNull()) {
     decoded.set_bool_list(std::get<EncodableList>(encodable_bool_list));
   }
-  auto& encodable_map = list[19];
+  auto& encodable_list_list = list[17];
+  if (!encodable_list_list.IsNull()) {
+    decoded.set_list_list(std::get<EncodableList>(encodable_list_list));
+  }
+  auto& encodable_map = list[18];
   if (!encodable_map.IsNull()) {
     decoded.set_map(std::get<EncodableMap>(encodable_map));
+  }
+  auto& encodable_string_map = list[19];
+  if (!encodable_string_map.IsNull()) {
+    decoded.set_string_map(std::get<EncodableMap>(encodable_string_map));
+  }
+  auto& encodable_int_map = list[20];
+  if (!encodable_int_map.IsNull()) {
+    decoded.set_int_map(std::get<EncodableMap>(encodable_int_map));
   }
   return decoded;
 }
@@ -1523,28 +1544,12 @@ TestMessage TestMessage::FromEncodableList(const EncodableList& list) {
   return decoded;
 }
 
-PigeonCodecSerializer::PigeonCodecSerializer() {}
+PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}
 
-EncodableValue PigeonCodecSerializer::ReadValueOfType(
+EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
-    case 129:
-      return CustomEncodableValue(AllTypes::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    case 130:
-      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    case 131:
-      return CustomEncodableValue(
-          AllNullableTypesWithoutRecursion::FromEncodableList(
-              std::get<EncodableList>(ReadValue(stream))));
-    case 132:
-      return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    case 133:
-      return CustomEncodableValue(TestMessage::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    case 134: {
+    case 129: {
       const auto& encodable_enum_arg = ReadValue(stream);
       const int64_t enum_arg_value =
           encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
@@ -1552,24 +1557,68 @@ EncodableValue PigeonCodecSerializer::ReadValueOfType(
                  ? EncodableValue()
                  : CustomEncodableValue(static_cast<AnEnum>(enum_arg_value));
     }
+    case 130: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<AnotherEnum>(enum_arg_value));
+    }
+    case 131: {
+      return CustomEncodableValue(AllTypes::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    }
+    case 132: {
+      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    }
+    case 133: {
+      return CustomEncodableValue(
+          AllNullableTypesWithoutRecursion::FromEncodableList(
+              std::get<EncodableList>(ReadValue(stream))));
+    }
+    case 134: {
+      return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    }
+    case 135: {
+      return CustomEncodableValue(TestMessage::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    }
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }
 }
 
-void PigeonCodecSerializer::WriteValue(
+void PigeonInternalCodecSerializer::WriteValue(
     const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
-    if (custom_value->type() == typeid(AllTypes)) {
+    if (custom_value->type() == typeid(AnEnum)) {
       stream->WriteByte(129);
+      WriteValue(EncodableValue(
+                     static_cast<int>(std::any_cast<AnEnum>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AnotherEnum)) {
+      stream->WriteByte(130);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<AnotherEnum>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AllTypes)) {
+      stream->WriteByte(131);
       WriteValue(EncodableValue(
                      std::any_cast<AllTypes>(*custom_value).ToEncodableList()),
                  stream);
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypes)) {
-      stream->WriteByte(130);
+      stream->WriteByte(132);
       WriteValue(
           EncodableValue(
               std::any_cast<AllNullableTypes>(*custom_value).ToEncodableList()),
@@ -1577,7 +1626,7 @@ void PigeonCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypesWithoutRecursion)) {
-      stream->WriteByte(131);
+      stream->WriteByte(133);
       WriteValue(EncodableValue(std::any_cast<AllNullableTypesWithoutRecursion>(
                                     *custom_value)
                                     .ToEncodableList()),
@@ -1585,25 +1634,18 @@ void PigeonCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllClassesWrapper)) {
-      stream->WriteByte(132);
+      stream->WriteByte(134);
       WriteValue(EncodableValue(std::any_cast<AllClassesWrapper>(*custom_value)
                                     .ToEncodableList()),
                  stream);
       return;
     }
     if (custom_value->type() == typeid(TestMessage)) {
-      stream->WriteByte(133);
+      stream->WriteByte(135);
       WriteValue(
           EncodableValue(
               std::any_cast<TestMessage>(*custom_value).ToEncodableList()),
           stream);
-      return;
-    }
-    if (custom_value->type() == typeid(AnEnum)) {
-      stream->WriteByte(134);
-      WriteValue(EncodableValue(
-                     static_cast<int>(std::any_cast<AnEnum>(*custom_value))),
-                 stream);
       return;
     }
   }
@@ -1613,7 +1655,7 @@ void PigeonCodecSerializer::WriteValue(
 /// The codec used by HostIntegrationCoreApi.
 const flutter::StandardMessageCodec& HostIntegrationCoreApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &PigeonCodecSerializer::GetInstance());
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
 // Sets up an instance of `HostIntegrationCoreApi` to handle messages through
@@ -2042,14 +2084,83 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_a_map_arg = args.at(0);
-              if (encodable_a_map_arg.IsNull()) {
-                reply(WrapError("a_map_arg unexpectedly null."));
+              const auto& encodable_map_arg = args.at(0);
+              if (encodable_map_arg.IsNull()) {
+                reply(WrapError("map_arg unexpectedly null."));
                 return;
               }
-              const auto& a_map_arg =
-                  std::get<EncodableMap>(encodable_a_map_arg);
-              ErrorOr<EncodableMap> output = api->EchoMap(a_map_arg);
+              const auto& map_arg = std::get<EncodableMap>(encodable_map_arg);
+              ErrorOr<EncodableMap> output = api->EchoMap(map_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostIntegrationCoreApi.echoStringMap" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_string_map_arg = args.at(0);
+              if (encodable_string_map_arg.IsNull()) {
+                reply(WrapError("string_map_arg unexpectedly null."));
+                return;
+              }
+              const auto& string_map_arg =
+                  std::get<EncodableMap>(encodable_string_map_arg);
+              ErrorOr<EncodableMap> output = api->EchoStringMap(string_map_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostIntegrationCoreApi.echoIntMap" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_int_map_arg = args.at(0);
+              if (encodable_int_map_arg.IsNull()) {
+                reply(WrapError("int_map_arg unexpectedly null."));
+                return;
+              }
+              const auto& int_map_arg =
+                  std::get<EncodableMap>(encodable_int_map_arg);
+              ErrorOr<EncodableMap> output = api->EchoIntMap(int_map_arg);
               if (output.has_error()) {
                 reply(WrapError(output.error()));
                 return;
@@ -2122,6 +2233,43 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto& an_enum_arg = std::any_cast<const AnEnum&>(
                   std::get<CustomEncodableValue>(encodable_an_enum_arg));
               ErrorOr<AnEnum> output = api->EchoEnum(an_enum_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(
+                  CustomEncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostIntegrationCoreApi.echoAnotherEnum" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_another_enum_arg = args.at(0);
+              if (encodable_another_enum_arg.IsNull()) {
+                reply(WrapError("another_enum_arg unexpectedly null."));
+                return;
+              }
+              const auto& another_enum_arg = std::any_cast<const AnotherEnum&>(
+                  std::get<CustomEncodableValue>(encodable_another_enum_arg));
+              ErrorOr<AnotherEnum> output =
+                  api->EchoAnotherEnum(another_enum_arg);
               if (output.has_error()) {
                 reply(WrapError(output.error()));
                 return;
@@ -2427,14 +2575,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto* a_nullable_bool_arg =
                   std::get_if<bool>(&encodable_a_nullable_bool_arg);
               const auto& encodable_a_nullable_int_arg = args.at(1);
-              const int64_t a_nullable_int_arg_value =
-                  encodable_a_nullable_int_arg.IsNull()
-                      ? 0
-                      : encodable_a_nullable_int_arg.LongValue();
               const auto* a_nullable_int_arg =
-                  encodable_a_nullable_int_arg.IsNull()
-                      ? nullptr
-                      : &a_nullable_int_arg_value;
+                  std::get_if<int64_t>(&encodable_a_nullable_int_arg);
               const auto& encodable_a_nullable_string_arg = args.at(2);
               const auto* a_nullable_string_arg =
                   std::get_if<std::string>(&encodable_a_nullable_string_arg);
@@ -2474,14 +2616,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto* a_nullable_bool_arg =
                   std::get_if<bool>(&encodable_a_nullable_bool_arg);
               const auto& encodable_a_nullable_int_arg = args.at(1);
-              const int64_t a_nullable_int_arg_value =
-                  encodable_a_nullable_int_arg.IsNull()
-                      ? 0
-                      : encodable_a_nullable_int_arg.LongValue();
               const auto* a_nullable_int_arg =
-                  encodable_a_nullable_int_arg.IsNull()
-                      ? nullptr
-                      : &a_nullable_int_arg_value;
+                  std::get_if<int64_t>(&encodable_a_nullable_int_arg);
               const auto& encodable_a_nullable_string_arg = args.at(2);
               const auto* a_nullable_string_arg =
                   std::get_if<std::string>(&encodable_a_nullable_string_arg);
@@ -2518,14 +2654,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             try {
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_a_nullable_int_arg = args.at(0);
-              const int64_t a_nullable_int_arg_value =
-                  encodable_a_nullable_int_arg.IsNull()
-                      ? 0
-                      : encodable_a_nullable_int_arg.LongValue();
               const auto* a_nullable_int_arg =
-                  encodable_a_nullable_int_arg.IsNull()
-                      ? nullptr
-                      : &a_nullable_int_arg_value;
+                  std::get_if<int64_t>(&encodable_a_nullable_int_arg);
               ErrorOr<std::optional<int64_t>> output =
                   api->EchoNullableInt(a_nullable_int_arg);
               if (output.has_error()) {
@@ -2791,11 +2921,88 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_a_nullable_map_arg = args.at(0);
-              const auto* a_nullable_map_arg =
-                  std::get_if<EncodableMap>(&encodable_a_nullable_map_arg);
+              const auto& encodable_map_arg = args.at(0);
+              const auto* map_arg =
+                  std::get_if<EncodableMap>(&encodable_map_arg);
               ErrorOr<std::optional<EncodableMap>> output =
-                  api->EchoNullableMap(a_nullable_map_arg);
+                  api->EchoNullableMap(map_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              auto output_optional = std::move(output).TakeValue();
+              if (output_optional) {
+                wrapped.push_back(
+                    EncodableValue(std::move(output_optional).value()));
+              } else {
+                wrapped.push_back(EncodableValue());
+              }
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoNullableStringMap" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_string_map_arg = args.at(0);
+              const auto* string_map_arg =
+                  std::get_if<EncodableMap>(&encodable_string_map_arg);
+              ErrorOr<std::optional<EncodableMap>> output =
+                  api->EchoNullableStringMap(string_map_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              auto output_optional = std::move(output).TakeValue();
+              if (output_optional) {
+                wrapped.push_back(
+                    EncodableValue(std::move(output_optional).value()));
+              } else {
+                wrapped.push_back(EncodableValue());
+              }
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostIntegrationCoreApi.echoNullableIntMap" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_int_map_arg = args.at(0);
+              const auto* int_map_arg =
+                  std::get_if<EncodableMap>(&encodable_int_map_arg);
+              ErrorOr<std::optional<EncodableMap>> output =
+                  api->EchoNullableIntMap(int_map_arg);
               if (output.has_error()) {
                 reply(WrapError(output.error()));
                 return;
@@ -2864,6 +3071,51 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoAnotherNullableEnum" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_another_enum_arg = args.at(0);
+              AnotherEnum another_enum_arg_value;
+              const AnotherEnum* another_enum_arg = nullptr;
+              if (!encodable_another_enum_arg.IsNull()) {
+                another_enum_arg_value = std::any_cast<const AnotherEnum&>(
+                    std::get<CustomEncodableValue>(encodable_another_enum_arg));
+                another_enum_arg = &another_enum_arg_value;
+              }
+              ErrorOr<std::optional<AnotherEnum>> output =
+                  api->EchoAnotherNullableEnum(
+                      another_enum_arg ? &(*another_enum_arg) : nullptr);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              auto output_optional = std::move(output).TakeValue();
+              if (output_optional) {
+                wrapped.push_back(
+                    CustomEncodableValue(std::move(output_optional).value()));
+              } else {
+                wrapped.push_back(EncodableValue());
+              }
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoOptionalNullableInt" +
             prepended_suffix,
         &GetCodec());
@@ -2874,14 +3126,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             try {
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_a_nullable_int_arg = args.at(0);
-              const int64_t a_nullable_int_arg_value =
-                  encodable_a_nullable_int_arg.IsNull()
-                      ? 0
-                      : encodable_a_nullable_int_arg.LongValue();
               const auto* a_nullable_int_arg =
-                  encodable_a_nullable_int_arg.IsNull()
-                      ? nullptr
-                      : &a_nullable_int_arg_value;
+                  std::get_if<int64_t>(&encodable_a_nullable_int_arg);
               ErrorOr<std::optional<int64_t>> output =
                   api->EchoOptionalNullableInt(a_nullable_int_arg);
               if (output.has_error()) {
@@ -3246,15 +3492,90 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_a_map_arg = args.at(0);
-              if (encodable_a_map_arg.IsNull()) {
-                reply(WrapError("a_map_arg unexpectedly null."));
+              const auto& encodable_map_arg = args.at(0);
+              if (encodable_map_arg.IsNull()) {
+                reply(WrapError("map_arg unexpectedly null."));
                 return;
               }
-              const auto& a_map_arg =
-                  std::get<EncodableMap>(encodable_a_map_arg);
+              const auto& map_arg = std::get<EncodableMap>(encodable_map_arg);
               api->EchoAsyncMap(
-                  a_map_arg, [reply](ErrorOr<EncodableMap>&& output) {
+                  map_arg, [reply](ErrorOr<EncodableMap>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        EncodableValue(std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostIntegrationCoreApi.echoAsyncStringMap" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_string_map_arg = args.at(0);
+              if (encodable_string_map_arg.IsNull()) {
+                reply(WrapError("string_map_arg unexpectedly null."));
+                return;
+              }
+              const auto& string_map_arg =
+                  std::get<EncodableMap>(encodable_string_map_arg);
+              api->EchoAsyncStringMap(
+                  string_map_arg, [reply](ErrorOr<EncodableMap>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        EncodableValue(std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostIntegrationCoreApi.echoAsyncIntMap" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_int_map_arg = args.at(0);
+              if (encodable_int_map_arg.IsNull()) {
+                reply(WrapError("int_map_arg unexpectedly null."));
+                return;
+              }
+              const auto& int_map_arg =
+                  std::get<EncodableMap>(encodable_int_map_arg);
+              api->EchoAsyncIntMap(
+                  int_map_arg, [reply](ErrorOr<EncodableMap>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
                       return;
@@ -3293,6 +3614,45 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                   std::get<CustomEncodableValue>(encodable_an_enum_arg));
               api->EchoAsyncEnum(
                   an_enum_arg, [reply](ErrorOr<AnEnum>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        CustomEncodableValue(std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoAnotherAsyncEnum" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_another_enum_arg = args.at(0);
+              if (encodable_another_enum_arg.IsNull()) {
+                reply(WrapError("another_enum_arg unexpectedly null."));
+                return;
+              }
+              const auto& another_enum_arg = std::any_cast<const AnotherEnum&>(
+                  std::get<CustomEncodableValue>(encodable_another_enum_arg));
+              api->EchoAnotherAsyncEnum(
+                  another_enum_arg, [reply](ErrorOr<AnotherEnum>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
                       return;
@@ -3555,12 +3915,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             try {
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_an_int_arg = args.at(0);
-              const int64_t an_int_arg_value =
-                  encodable_an_int_arg.IsNull()
-                      ? 0
-                      : encodable_an_int_arg.LongValue();
               const auto* an_int_arg =
-                  encodable_an_int_arg.IsNull() ? nullptr : &an_int_arg_value;
+                  std::get_if<int64_t>(&encodable_an_int_arg);
               api->EchoAsyncNullableInt(
                   an_int_arg,
                   [reply](ErrorOr<std::optional<int64_t>>&& output) {
@@ -3843,11 +4199,93 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_a_map_arg = args.at(0);
-              const auto* a_map_arg =
-                  std::get_if<EncodableMap>(&encodable_a_map_arg);
+              const auto& encodable_map_arg = args.at(0);
+              const auto* map_arg =
+                  std::get_if<EncodableMap>(&encodable_map_arg);
               api->EchoAsyncNullableMap(
-                  a_map_arg,
+                  map_arg,
+                  [reply](ErrorOr<std::optional<EncodableMap>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(
+                          EncodableValue(std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(EncodableValue());
+                    }
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoAsyncNullableStringMap" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_string_map_arg = args.at(0);
+              const auto* string_map_arg =
+                  std::get_if<EncodableMap>(&encodable_string_map_arg);
+              api->EchoAsyncNullableStringMap(
+                  string_map_arg,
+                  [reply](ErrorOr<std::optional<EncodableMap>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(
+                          EncodableValue(std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(EncodableValue());
+                    }
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoAsyncNullableIntMap" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_int_map_arg = args.at(0);
+              const auto* int_map_arg =
+                  std::get_if<EncodableMap>(&encodable_int_map_arg);
+              api->EchoAsyncNullableIntMap(
+                  int_map_arg,
                   [reply](ErrorOr<std::optional<EncodableMap>>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
@@ -3895,6 +4333,52 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               api->EchoAsyncNullableEnum(
                   an_enum_arg ? &(*an_enum_arg) : nullptr,
                   [reply](ErrorOr<std::optional<AnEnum>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(CustomEncodableValue(
+                          std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(EncodableValue());
+                    }
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoAnotherAsyncNullableEnum" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_another_enum_arg = args.at(0);
+              AnotherEnum another_enum_arg_value;
+              const AnotherEnum* another_enum_arg = nullptr;
+              if (!encodable_another_enum_arg.IsNull()) {
+                another_enum_arg_value = std::any_cast<const AnotherEnum&>(
+                    std::get<CustomEncodableValue>(encodable_another_enum_arg));
+                another_enum_arg = &another_enum_arg_value;
+              }
+              api->EchoAnotherAsyncNullableEnum(
+                  another_enum_arg ? &(*another_enum_arg) : nullptr,
+                  [reply](ErrorOr<std::optional<AnotherEnum>>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
                       return;
@@ -4113,14 +4597,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto* a_nullable_bool_arg =
                   std::get_if<bool>(&encodable_a_nullable_bool_arg);
               const auto& encodable_a_nullable_int_arg = args.at(1);
-              const int64_t a_nullable_int_arg_value =
-                  encodable_a_nullable_int_arg.IsNull()
-                      ? 0
-                      : encodable_a_nullable_int_arg.LongValue();
               const auto* a_nullable_int_arg =
-                  encodable_a_nullable_int_arg.IsNull()
-                      ? nullptr
-                      : &a_nullable_int_arg_value;
+                  std::get_if<int64_t>(&encodable_a_nullable_int_arg);
               const auto& encodable_a_nullable_string_arg = args.at(2);
               const auto* a_nullable_string_arg =
                   std::get_if<std::string>(&encodable_a_nullable_string_arg);
@@ -4209,14 +4687,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto* a_nullable_bool_arg =
                   std::get_if<bool>(&encodable_a_nullable_bool_arg);
               const auto& encodable_a_nullable_int_arg = args.at(1);
-              const int64_t a_nullable_int_arg_value =
-                  encodable_a_nullable_int_arg.IsNull()
-                      ? 0
-                      : encodable_a_nullable_int_arg.LongValue();
               const auto* a_nullable_int_arg =
-                  encodable_a_nullable_int_arg.IsNull()
-                      ? nullptr
-                      : &a_nullable_int_arg_value;
+                  std::get_if<int64_t>(&encodable_a_nullable_int_arg);
               const auto& encodable_a_nullable_string_arg = args.at(2);
               const auto* a_nullable_string_arg =
                   std::get_if<std::string>(&encodable_a_nullable_string_arg);
@@ -4482,15 +4954,92 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_a_map_arg = args.at(0);
-              if (encodable_a_map_arg.IsNull()) {
-                reply(WrapError("a_map_arg unexpectedly null."));
+              const auto& encodable_map_arg = args.at(0);
+              if (encodable_map_arg.IsNull()) {
+                reply(WrapError("map_arg unexpectedly null."));
                 return;
               }
-              const auto& a_map_arg =
-                  std::get<EncodableMap>(encodable_a_map_arg);
+              const auto& map_arg = std::get<EncodableMap>(encodable_map_arg);
               api->CallFlutterEchoMap(
-                  a_map_arg, [reply](ErrorOr<EncodableMap>&& output) {
+                  map_arg, [reply](ErrorOr<EncodableMap>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        EncodableValue(std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "callFlutterEchoStringMap" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_string_map_arg = args.at(0);
+              if (encodable_string_map_arg.IsNull()) {
+                reply(WrapError("string_map_arg unexpectedly null."));
+                return;
+              }
+              const auto& string_map_arg =
+                  std::get<EncodableMap>(encodable_string_map_arg);
+              api->CallFlutterEchoStringMap(
+                  string_map_arg, [reply](ErrorOr<EncodableMap>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        EncodableValue(std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "callFlutterEchoIntMap" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_int_map_arg = args.at(0);
+              if (encodable_int_map_arg.IsNull()) {
+                reply(WrapError("int_map_arg unexpectedly null."));
+                return;
+              }
+              const auto& int_map_arg =
+                  std::get<EncodableMap>(encodable_int_map_arg);
+              api->CallFlutterEchoIntMap(
+                  int_map_arg, [reply](ErrorOr<EncodableMap>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
                       return;
@@ -4529,6 +5078,45 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                   std::get<CustomEncodableValue>(encodable_an_enum_arg));
               api->CallFlutterEchoEnum(
                   an_enum_arg, [reply](ErrorOr<AnEnum>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        CustomEncodableValue(std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "callFlutterEchoAnotherEnum" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_another_enum_arg = args.at(0);
+              if (encodable_another_enum_arg.IsNull()) {
+                reply(WrapError("another_enum_arg unexpectedly null."));
+                return;
+              }
+              const auto& another_enum_arg = std::any_cast<const AnotherEnum&>(
+                  std::get<CustomEncodableValue>(encodable_another_enum_arg));
+              api->CallFlutterEchoAnotherEnum(
+                  another_enum_arg, [reply](ErrorOr<AnotherEnum>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
                       return;
@@ -4599,12 +5187,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             try {
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_an_int_arg = args.at(0);
-              const int64_t an_int_arg_value =
-                  encodable_an_int_arg.IsNull()
-                      ? 0
-                      : encodable_an_int_arg.LongValue();
               const auto* an_int_arg =
-                  encodable_an_int_arg.IsNull() ? nullptr : &an_int_arg_value;
+                  std::get_if<int64_t>(&encodable_an_int_arg);
               api->CallFlutterEchoNullableInt(
                   an_int_arg,
                   [reply](ErrorOr<std::optional<int64_t>>&& output) {
@@ -4808,11 +5392,93 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_a_map_arg = args.at(0);
-              const auto* a_map_arg =
-                  std::get_if<EncodableMap>(&encodable_a_map_arg);
+              const auto& encodable_map_arg = args.at(0);
+              const auto* map_arg =
+                  std::get_if<EncodableMap>(&encodable_map_arg);
               api->CallFlutterEchoNullableMap(
-                  a_map_arg,
+                  map_arg,
+                  [reply](ErrorOr<std::optional<EncodableMap>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(
+                          EncodableValue(std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(EncodableValue());
+                    }
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "callFlutterEchoNullableStringMap" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_string_map_arg = args.at(0);
+              const auto* string_map_arg =
+                  std::get_if<EncodableMap>(&encodable_string_map_arg);
+              api->CallFlutterEchoNullableStringMap(
+                  string_map_arg,
+                  [reply](ErrorOr<std::optional<EncodableMap>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(
+                          EncodableValue(std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(EncodableValue());
+                    }
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "callFlutterEchoNullableIntMap" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_int_map_arg = args.at(0);
+              const auto* int_map_arg =
+                  std::get_if<EncodableMap>(&encodable_int_map_arg);
+              api->CallFlutterEchoNullableIntMap(
+                  int_map_arg,
                   [reply](ErrorOr<std::optional<EncodableMap>>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
@@ -4860,6 +5526,52 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               api->CallFlutterEchoNullableEnum(
                   an_enum_arg ? &(*an_enum_arg) : nullptr,
                   [reply](ErrorOr<std::optional<AnEnum>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(CustomEncodableValue(
+                          std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(EncodableValue());
+                    }
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "callFlutterEchoAnotherNullableEnum" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_another_enum_arg = args.at(0);
+              AnotherEnum another_enum_arg_value;
+              const AnotherEnum* another_enum_arg = nullptr;
+              if (!encodable_another_enum_arg.IsNull()) {
+                another_enum_arg_value = std::any_cast<const AnotherEnum&>(
+                    std::get<CustomEncodableValue>(encodable_another_enum_arg));
+                another_enum_arg = &another_enum_arg_value;
+              }
+              api->CallFlutterEchoAnotherNullableEnum(
+                  another_enum_arg ? &(*another_enum_arg) : nullptr,
+                  [reply](ErrorOr<std::optional<AnotherEnum>>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
                       return;
@@ -4952,7 +5664,7 @@ FlutterIntegrationCoreApi::FlutterIntegrationCoreApi(
 
 const flutter::StandardMessageCodec& FlutterIntegrationCoreApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &PigeonCodecSerializer::GetInstance());
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
 void FlutterIntegrationCoreApi::Noop(
@@ -5489,7 +6201,7 @@ void FlutterIntegrationCoreApi::EchoList(
 }
 
 void FlutterIntegrationCoreApi::EchoMap(
-    const EncodableMap& a_map_arg,
+    const EncodableMap& map_arg,
     std::function<void(const EncodableMap&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
@@ -5498,7 +6210,83 @@ void FlutterIntegrationCoreApi::EchoMap(
       message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
-      EncodableValue(a_map_arg),
+      EncodableValue(map_arg),
+  });
+  channel.Send(
+      encoded_api_arguments, [channel_name, on_success = std::move(on_success),
+                              on_error = std::move(on_error)](
+                                 const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<EncodableValue> response =
+            GetCodec().DecodeMessage(reply, reply_size);
+        const auto& encodable_return_value = *response;
+        const auto* list_return_value =
+            std::get_if<EncodableList>(&encodable_return_value);
+        if (list_return_value) {
+          if (list_return_value->size() > 1) {
+            on_error(
+                FlutterError(std::get<std::string>(list_return_value->at(0)),
+                             std::get<std::string>(list_return_value->at(1)),
+                             list_return_value->at(2)));
+          } else {
+            const auto& return_value =
+                std::get<EncodableMap>(list_return_value->at(0));
+            on_success(return_value);
+          }
+        } else {
+          on_error(CreateConnectionError(channel_name));
+        }
+      });
+}
+
+void FlutterIntegrationCoreApi::EchoStringMap(
+    const EncodableMap& string_map_arg,
+    std::function<void(const EncodableMap&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  const std::string channel_name =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoStringMap" +
+      message_channel_suffix_;
+  BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
+  EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
+      EncodableValue(string_map_arg),
+  });
+  channel.Send(
+      encoded_api_arguments, [channel_name, on_success = std::move(on_success),
+                              on_error = std::move(on_error)](
+                                 const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<EncodableValue> response =
+            GetCodec().DecodeMessage(reply, reply_size);
+        const auto& encodable_return_value = *response;
+        const auto* list_return_value =
+            std::get_if<EncodableList>(&encodable_return_value);
+        if (list_return_value) {
+          if (list_return_value->size() > 1) {
+            on_error(
+                FlutterError(std::get<std::string>(list_return_value->at(0)),
+                             std::get<std::string>(list_return_value->at(1)),
+                             list_return_value->at(2)));
+          } else {
+            const auto& return_value =
+                std::get<EncodableMap>(list_return_value->at(0));
+            on_success(return_value);
+          }
+        } else {
+          on_error(CreateConnectionError(channel_name));
+        }
+      });
+}
+
+void FlutterIntegrationCoreApi::EchoIntMap(
+    const EncodableMap& int_map_arg,
+    std::function<void(const EncodableMap&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  const std::string channel_name =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoIntMap" +
+      message_channel_suffix_;
+  BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
+  EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
+      EncodableValue(int_map_arg),
   });
   channel.Send(
       encoded_api_arguments, [channel_name, on_success = std::move(on_success),
@@ -5563,6 +6351,44 @@ void FlutterIntegrationCoreApi::EchoEnum(
       });
 }
 
+void FlutterIntegrationCoreApi::EchoAnotherEnum(
+    const AnotherEnum& another_enum_arg,
+    std::function<void(const AnotherEnum&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  const std::string channel_name =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoAnotherEnum" +
+      message_channel_suffix_;
+  BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
+  EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
+      CustomEncodableValue(another_enum_arg),
+  });
+  channel.Send(
+      encoded_api_arguments, [channel_name, on_success = std::move(on_success),
+                              on_error = std::move(on_error)](
+                                 const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<EncodableValue> response =
+            GetCodec().DecodeMessage(reply, reply_size);
+        const auto& encodable_return_value = *response;
+        const auto* list_return_value =
+            std::get_if<EncodableList>(&encodable_return_value);
+        if (list_return_value) {
+          if (list_return_value->size() > 1) {
+            on_error(
+                FlutterError(std::get<std::string>(list_return_value->at(0)),
+                             std::get<std::string>(list_return_value->at(1)),
+                             list_return_value->at(2)));
+          } else {
+            const auto& return_value = std::any_cast<const AnotherEnum&>(
+                std::get<CustomEncodableValue>(list_return_value->at(0)));
+            on_success(return_value);
+          }
+        } else {
+          on_error(CreateConnectionError(channel_name));
+        }
+      });
+}
+
 void FlutterIntegrationCoreApi::EchoNullableBool(
     const bool* a_bool_arg, std::function<void(const bool*)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
@@ -5610,34 +6436,30 @@ void FlutterIntegrationCoreApi::EchoNullableInt(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       an_int_arg ? EncodableValue(*an_int_arg) : EncodableValue(),
   });
-  channel.Send(encoded_api_arguments, [channel_name,
-                                       on_success = std::move(on_success),
-                                       on_error = std::move(on_error)](
-                                          const uint8_t* reply,
-                                          size_t reply_size) {
-    std::unique_ptr<EncodableValue> response =
-        GetCodec().DecodeMessage(reply, reply_size);
-    const auto& encodable_return_value = *response;
-    const auto* list_return_value =
-        std::get_if<EncodableList>(&encodable_return_value);
-    if (list_return_value) {
-      if (list_return_value->size() > 1) {
-        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
-                              std::get<std::string>(list_return_value->at(1)),
-                              list_return_value->at(2)));
-      } else {
-        const int64_t return_value_value =
-            list_return_value->at(0).IsNull()
-                ? 0
-                : list_return_value->at(0).LongValue();
-        const auto* return_value =
-            list_return_value->at(0).IsNull() ? nullptr : &return_value_value;
-        on_success(return_value);
-      }
-    } else {
-      on_error(CreateConnectionError(channel_name));
-    }
-  });
+  channel.Send(
+      encoded_api_arguments, [channel_name, on_success = std::move(on_success),
+                              on_error = std::move(on_error)](
+                                 const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<EncodableValue> response =
+            GetCodec().DecodeMessage(reply, reply_size);
+        const auto& encodable_return_value = *response;
+        const auto* list_return_value =
+            std::get_if<EncodableList>(&encodable_return_value);
+        if (list_return_value) {
+          if (list_return_value->size() > 1) {
+            on_error(
+                FlutterError(std::get<std::string>(list_return_value->at(0)),
+                             std::get<std::string>(list_return_value->at(1)),
+                             list_return_value->at(2)));
+          } else {
+            const auto* return_value =
+                std::get_if<int64_t>(&list_return_value->at(0));
+            on_success(return_value);
+          }
+        } else {
+          on_error(CreateConnectionError(channel_name));
+        }
+      });
 }
 
 void FlutterIntegrationCoreApi::EchoNullableDouble(
@@ -5792,7 +6614,7 @@ void FlutterIntegrationCoreApi::EchoNullableList(
 }
 
 void FlutterIntegrationCoreApi::EchoNullableMap(
-    const EncodableMap* a_map_arg,
+    const EncodableMap* map_arg,
     std::function<void(const EncodableMap*)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
@@ -5801,7 +6623,83 @@ void FlutterIntegrationCoreApi::EchoNullableMap(
       message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
-      a_map_arg ? EncodableValue(*a_map_arg) : EncodableValue(),
+      map_arg ? EncodableValue(*map_arg) : EncodableValue(),
+  });
+  channel.Send(
+      encoded_api_arguments, [channel_name, on_success = std::move(on_success),
+                              on_error = std::move(on_error)](
+                                 const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<EncodableValue> response =
+            GetCodec().DecodeMessage(reply, reply_size);
+        const auto& encodable_return_value = *response;
+        const auto* list_return_value =
+            std::get_if<EncodableList>(&encodable_return_value);
+        if (list_return_value) {
+          if (list_return_value->size() > 1) {
+            on_error(
+                FlutterError(std::get<std::string>(list_return_value->at(0)),
+                             std::get<std::string>(list_return_value->at(1)),
+                             list_return_value->at(2)));
+          } else {
+            const auto* return_value =
+                std::get_if<EncodableMap>(&list_return_value->at(0));
+            on_success(return_value);
+          }
+        } else {
+          on_error(CreateConnectionError(channel_name));
+        }
+      });
+}
+
+void FlutterIntegrationCoreApi::EchoNullableStringMap(
+    const EncodableMap* string_map_arg,
+    std::function<void(const EncodableMap*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  const std::string channel_name =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoNullableStringMap" +
+      message_channel_suffix_;
+  BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
+  EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
+      string_map_arg ? EncodableValue(*string_map_arg) : EncodableValue(),
+  });
+  channel.Send(
+      encoded_api_arguments, [channel_name, on_success = std::move(on_success),
+                              on_error = std::move(on_error)](
+                                 const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<EncodableValue> response =
+            GetCodec().DecodeMessage(reply, reply_size);
+        const auto& encodable_return_value = *response;
+        const auto* list_return_value =
+            std::get_if<EncodableList>(&encodable_return_value);
+        if (list_return_value) {
+          if (list_return_value->size() > 1) {
+            on_error(
+                FlutterError(std::get<std::string>(list_return_value->at(0)),
+                             std::get<std::string>(list_return_value->at(1)),
+                             list_return_value->at(2)));
+          } else {
+            const auto* return_value =
+                std::get_if<EncodableMap>(&list_return_value->at(0));
+            on_success(return_value);
+          }
+        } else {
+          on_error(CreateConnectionError(channel_name));
+        }
+      });
+}
+
+void FlutterIntegrationCoreApi::EchoNullableIntMap(
+    const EncodableMap* int_map_arg,
+    std::function<void(const EncodableMap*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  const std::string channel_name =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoNullableIntMap" +
+      message_channel_suffix_;
+  BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
+  EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
+      int_map_arg ? EncodableValue(*int_map_arg) : EncodableValue(),
   });
   channel.Send(
       encoded_api_arguments, [channel_name, on_success = std::move(on_success),
@@ -5860,6 +6758,50 @@ void FlutterIntegrationCoreApi::EchoNullableEnum(
             const AnEnum* return_value = nullptr;
             if (!list_return_value->at(0).IsNull()) {
               return_value_value = std::any_cast<const AnEnum&>(
+                  std::get<CustomEncodableValue>(list_return_value->at(0)));
+              return_value = &return_value_value;
+            }
+            on_success(return_value);
+          }
+        } else {
+          on_error(CreateConnectionError(channel_name));
+        }
+      });
+}
+
+void FlutterIntegrationCoreApi::EchoAnotherNullableEnum(
+    const AnotherEnum* another_enum_arg,
+    std::function<void(const AnotherEnum*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  const std::string channel_name =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoAnotherNullableEnum" +
+      message_channel_suffix_;
+  BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
+  EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
+      another_enum_arg ? CustomEncodableValue(*another_enum_arg)
+                       : EncodableValue(),
+  });
+  channel.Send(
+      encoded_api_arguments, [channel_name, on_success = std::move(on_success),
+                              on_error = std::move(on_error)](
+                                 const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<EncodableValue> response =
+            GetCodec().DecodeMessage(reply, reply_size);
+        const auto& encodable_return_value = *response;
+        const auto* list_return_value =
+            std::get_if<EncodableList>(&encodable_return_value);
+        if (list_return_value) {
+          if (list_return_value->size() > 1) {
+            on_error(
+                FlutterError(std::get<std::string>(list_return_value->at(0)),
+                             std::get<std::string>(list_return_value->at(1)),
+                             list_return_value->at(2)));
+          } else {
+            AnotherEnum return_value_value;
+            const AnotherEnum* return_value = nullptr;
+            if (!list_return_value->at(0).IsNull()) {
+              return_value_value = std::any_cast<const AnotherEnum&>(
                   std::get<CustomEncodableValue>(list_return_value->at(0)));
               return_value = &return_value_value;
             }
@@ -5945,7 +6887,7 @@ void FlutterIntegrationCoreApi::EchoAsyncString(
 /// The codec used by HostTrivialApi.
 const flutter::StandardMessageCodec& HostTrivialApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &PigeonCodecSerializer::GetInstance());
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
 // Sets up an instance of `HostTrivialApi` to handle messages through the
@@ -6006,7 +6948,7 @@ EncodableValue HostTrivialApi::WrapError(const FlutterError& error) {
 /// The codec used by HostSmallApi.
 const flutter::StandardMessageCodec& HostSmallApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &PigeonCodecSerializer::GetInstance());
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
 // Sets up an instance of `HostSmallApi` to handle messages through the
@@ -6116,7 +7058,7 @@ FlutterSmallApi::FlutterSmallApi(flutter::BinaryMessenger* binary_messenger,
 
 const flutter::StandardMessageCodec& FlutterSmallApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
-      &PigeonCodecSerializer::GetInstance());
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
 void FlutterSmallApi::EchoWrappedList(

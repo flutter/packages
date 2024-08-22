@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		1096EF442A6BD9DB000CBDF7 /* FWFScrollViewDelegateHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1096EF432A6BD9DB000CBDF7 /* FWFScrollViewDelegateHostApiTests.m */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		4047B3FE2C3DEE8500A8BA05 /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 4047B3FD2C3DEE8500A8BA05 /* OCMock */; };
 		8F4FF949299ADC2D000A6586 /* FWFWebViewFlutterWKWebViewExternalAPITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4FF948299ADC2D000A6586 /* FWFWebViewFlutterWKWebViewExternalAPITests.m */; };
 		8F4FF94B29AC223F000A6586 /* FWFURLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4FF94A29AC223F000A6586 /* FWFURLTests.m */; };
 		8F562F902A56C02D00C2BED6 /* FWFURLCredentialHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F562F8F2A56C02D00C2BED6 /* FWFURLCredentialHostApiTests.m */; };
@@ -71,7 +72,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1096EF432A6BD9DB000CBDF7 /* FWFScrollViewDelegateHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFScrollViewDelegateHostApiTests.m; sourceTree = "<group>"; };
+		1096EF432A6BD9DB000CBDF7 /* FWFScrollViewDelegateHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFScrollViewDelegateHostApiTests.m; path = ../../darwin/Tests/FWFScrollViewDelegateHostApiTests.m; sourceTree = SOURCE_ROOT; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		17781D9462A1AEA7C99F8E45 /* libPods-RunnerTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RunnerTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -84,26 +85,26 @@
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7AFFD8ED1D35381100E5BB4D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		8F4FF948299ADC2D000A6586 /* FWFWebViewFlutterWKWebViewExternalAPITests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWFWebViewFlutterWKWebViewExternalAPITests.m; sourceTree = "<group>"; };
-		8F4FF94A29AC223F000A6586 /* FWFURLTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFURLTests.m; sourceTree = "<group>"; };
-		8F562F8F2A56C02D00C2BED6 /* FWFURLCredentialHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFURLCredentialHostApiTests.m; sourceTree = "<group>"; };
-		8F562F912A56C04F00C2BED6 /* FWFURLProtectionSpaceHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFURLProtectionSpaceHostApiTests.m; sourceTree = "<group>"; };
-		8F562F932A56C07B00C2BED6 /* FWFURLAuthenticationChallengeHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFURLAuthenticationChallengeHostApiTests.m; sourceTree = "<group>"; };
-		8F78EAA92A02CB9100C2E520 /* FWFErrorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFErrorTests.m; sourceTree = "<group>"; };
-		8FA6A87828062CD000A4B183 /* FWFInstanceManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFInstanceManagerTests.m; sourceTree = "<group>"; };
-		8FB79B5228134C3100C101D3 /* FWFWebViewHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFWebViewHostApiTests.m; sourceTree = "<group>"; };
-		8FB79B54281B24F600C101D3 /* FWFDataConvertersTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFDataConvertersTests.m; sourceTree = "<group>"; };
-		8FB79B662820453400C101D3 /* FWFHTTPCookieStoreHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFHTTPCookieStoreHostApiTests.m; sourceTree = "<group>"; };
-		8FB79B6828204E8700C101D3 /* FWFPreferencesHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFPreferencesHostApiTests.m; sourceTree = "<group>"; };
-		8FB79B6A28204EE500C101D3 /* FWFWebsiteDataStoreHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFWebsiteDataStoreHostApiTests.m; sourceTree = "<group>"; };
-		8FB79B6C2820533B00C101D3 /* FWFWebViewConfigurationHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFWebViewConfigurationHostApiTests.m; sourceTree = "<group>"; };
-		8FB79B72282096B500C101D3 /* FWFScriptMessageHandlerHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFScriptMessageHandlerHostApiTests.m; sourceTree = "<group>"; };
-		8FB79B7828209D1300C101D3 /* FWFUserContentControllerHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFUserContentControllerHostApiTests.m; sourceTree = "<group>"; };
-		8FB79B822820A39300C101D3 /* FWFNavigationDelegateHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFNavigationDelegateHostApiTests.m; sourceTree = "<group>"; };
-		8FB79B842820A3A400C101D3 /* FWFUIDelegateHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFUIDelegateHostApiTests.m; sourceTree = "<group>"; };
-		8FB79B8E2820BAB300C101D3 /* FWFScrollViewHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFScrollViewHostApiTests.m; sourceTree = "<group>"; };
-		8FB79B902820BAC700C101D3 /* FWFUIViewHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFUIViewHostApiTests.m; sourceTree = "<group>"; };
-		8FB79B962821985200C101D3 /* FWFObjectHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFObjectHostApiTests.m; sourceTree = "<group>"; };
+		8F4FF948299ADC2D000A6586 /* FWFWebViewFlutterWKWebViewExternalAPITests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFWebViewFlutterWKWebViewExternalAPITests.m; path = ../../darwin/Tests/FWFWebViewFlutterWKWebViewExternalAPITests.m; sourceTree = SOURCE_ROOT; };
+		8F4FF94A29AC223F000A6586 /* FWFURLTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFURLTests.m; path = ../../darwin/Tests/FWFURLTests.m; sourceTree = SOURCE_ROOT; };
+		8F562F8F2A56C02D00C2BED6 /* FWFURLCredentialHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFURLCredentialHostApiTests.m; path = ../../darwin/Tests/FWFURLCredentialHostApiTests.m; sourceTree = SOURCE_ROOT; };
+		8F562F912A56C04F00C2BED6 /* FWFURLProtectionSpaceHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFURLProtectionSpaceHostApiTests.m; path = ../../darwin/Tests/FWFURLProtectionSpaceHostApiTests.m; sourceTree = SOURCE_ROOT; };
+		8F562F932A56C07B00C2BED6 /* FWFURLAuthenticationChallengeHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFURLAuthenticationChallengeHostApiTests.m; path = ../../darwin/Tests/FWFURLAuthenticationChallengeHostApiTests.m; sourceTree = SOURCE_ROOT; };
+		8F78EAA92A02CB9100C2E520 /* FWFErrorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFErrorTests.m; path = ../../darwin/Tests/FWFErrorTests.m; sourceTree = SOURCE_ROOT; };
+		8FA6A87828062CD000A4B183 /* FWFInstanceManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFInstanceManagerTests.m; path = ../../darwin/Tests/FWFInstanceManagerTests.m; sourceTree = SOURCE_ROOT; };
+		8FB79B5228134C3100C101D3 /* FWFWebViewHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFWebViewHostApiTests.m; path = ../../darwin/Tests/FWFWebViewHostApiTests.m; sourceTree = SOURCE_ROOT; };
+		8FB79B54281B24F600C101D3 /* FWFDataConvertersTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFDataConvertersTests.m; path = ../../darwin/Tests/FWFDataConvertersTests.m; sourceTree = SOURCE_ROOT; };
+		8FB79B662820453400C101D3 /* FWFHTTPCookieStoreHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFHTTPCookieStoreHostApiTests.m; path = ../../darwin/Tests/FWFHTTPCookieStoreHostApiTests.m; sourceTree = SOURCE_ROOT; };
+		8FB79B6828204E8700C101D3 /* FWFPreferencesHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFPreferencesHostApiTests.m; path = ../../darwin/Tests/FWFPreferencesHostApiTests.m; sourceTree = SOURCE_ROOT; };
+		8FB79B6A28204EE500C101D3 /* FWFWebsiteDataStoreHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFWebsiteDataStoreHostApiTests.m; path = ../../darwin/Tests/FWFWebsiteDataStoreHostApiTests.m; sourceTree = SOURCE_ROOT; };
+		8FB79B6C2820533B00C101D3 /* FWFWebViewConfigurationHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFWebViewConfigurationHostApiTests.m; path = ../../darwin/Tests/FWFWebViewConfigurationHostApiTests.m; sourceTree = SOURCE_ROOT; };
+		8FB79B72282096B500C101D3 /* FWFScriptMessageHandlerHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFScriptMessageHandlerHostApiTests.m; path = ../../darwin/Tests/FWFScriptMessageHandlerHostApiTests.m; sourceTree = SOURCE_ROOT; };
+		8FB79B7828209D1300C101D3 /* FWFUserContentControllerHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFUserContentControllerHostApiTests.m; path = ../../darwin/Tests/FWFUserContentControllerHostApiTests.m; sourceTree = SOURCE_ROOT; };
+		8FB79B822820A39300C101D3 /* FWFNavigationDelegateHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFNavigationDelegateHostApiTests.m; path = ../../darwin/Tests/FWFNavigationDelegateHostApiTests.m; sourceTree = SOURCE_ROOT; };
+		8FB79B842820A3A400C101D3 /* FWFUIDelegateHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFUIDelegateHostApiTests.m; path = ../../darwin/Tests/FWFUIDelegateHostApiTests.m; sourceTree = SOURCE_ROOT; };
+		8FB79B8E2820BAB300C101D3 /* FWFScrollViewHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFScrollViewHostApiTests.m; path = ../../darwin/Tests/FWFScrollViewHostApiTests.m; sourceTree = SOURCE_ROOT; };
+		8FB79B902820BAC700C101D3 /* FWFUIViewHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFUIViewHostApiTests.m; path = ../../darwin/Tests/FWFUIViewHostApiTests.m; sourceTree = SOURCE_ROOT; };
+		8FB79B962821985200C101D3 /* FWFObjectHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWFObjectHostApiTests.m; path = ../../darwin/Tests/FWFObjectHostApiTests.m; sourceTree = SOURCE_ROOT; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,6 +125,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4047B3FE2C3DEE8500A8BA05 /* OCMock in Frameworks */,
 				D7587C3652F6906210B3AE88 /* libPods-RunnerTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -280,6 +282,9 @@
 				68BDCAEF23C3F7CB00D9C032 /* PBXTargetDependency */,
 			);
 			name = RunnerTests;
+			packageProductDependencies = (
+				4047B3FD2C3DEE8500A8BA05 /* OCMock */,
+			);
 			productName = webview_flutter_exampleTests;
 			productReference = 68BDCAE923C3F7CB00D9C032 /* RunnerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -358,6 +363,9 @@
 				Base,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
+			packageReferences = (
+				4047B3FC2C3DEE8500A8BA05 /* XCRemoteSwiftPackageReference "ocmock" */,
+			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -421,10 +429,12 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/path_provider_foundation/path_provider_foundation_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview_privacy.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/path_provider_foundation_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/webview_flutter_wkwebview_privacy.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -845,6 +855,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4047B3FC2C3DEE8500A8BA05 /* XCRemoteSwiftPackageReference "ocmock" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/erikdoe/ocmock";
+			requirement = {
+				kind = revision;
+				revision = fe1661a3efed11831a6452f4b1a0c5e6ddc08c3d;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4047B3FD2C3DEE8500A8BA05 /* OCMock */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4047B3FC2C3DEE8500A8BA05 /* XCRemoteSwiftPackageReference "ocmock" */;
+			productName = OCMock;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 97C146E61CF9000F007C117D /* Project object */;
 }

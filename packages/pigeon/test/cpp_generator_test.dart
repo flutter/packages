@@ -101,6 +101,10 @@ void main() {
   });
 
   test('naming follows style', () {
+    final Enum anEnum = Enum(name: 'AnEnum', members: <EnumMember>[
+      EnumMember(name: 'one'),
+      EnumMember(name: 'fortyTwo'),
+    ]);
     final Root root = Root(apis: <Api>[
       AstHostApi(name: 'Api', methods: <Method>[
         Method(
@@ -137,9 +141,19 @@ void main() {
               baseName: 'bool',
               isNullable: false,
             ),
-            name: 'outputField')
+            name: 'outputField'),
+        NamedType(
+          type: TypeDeclaration(
+            baseName: anEnum.name,
+            isNullable: false,
+            associatedEnum: anEnum,
+          ),
+          name: 'code',
+        )
       ])
-    ], enums: <Enum>[]);
+    ], enums: <Enum>[
+      anEnum
+    ]);
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
@@ -161,6 +175,9 @@ void main() {
       // Instance variables should be adjusted.
       expect(code, contains('bool input_field_'));
       expect(code, contains('bool output_field_'));
+      // Enum values should be adjusted.
+      expect(code, contains('kOne'));
+      expect(code, contains('kFortyTwo'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1180,16 +1197,14 @@ void main() {
           code,
           contains(
               'const auto* a_map_arg = std::get_if<EncodableMap>(&encodable_a_map_arg);'));
-      // Ints are complicated since there are two possible pointer types, but
-      // the parameter always needs an int64_t*.
       expect(
           code,
           contains(
-              'const int64_t an_int_arg_value = encodable_an_int_arg.IsNull() ? 0 : encodable_an_int_arg.LongValue();'));
+              'const auto* a_bool_arg = std::get_if<bool>(&encodable_a_bool_arg);'));
       expect(
           code,
           contains(
-              'const auto* an_int_arg = encodable_an_int_arg.IsNull() ? nullptr : &an_int_arg_value;'));
+              'const auto* an_int_arg = std::get_if<int64_t>(&encodable_an_int_arg);'));
       // Custom class types require an extra layer of extraction.
       expect(
           code,

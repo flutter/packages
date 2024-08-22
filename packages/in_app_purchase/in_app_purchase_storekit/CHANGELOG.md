@@ -1,3 +1,19 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 0.3.17+3
+
+* Converts TranslatorTests to swift.
+
+## 0.3.17+2
+
+* Converts FIAPPaymentQueueDeleteTests to swift.
+
+## 0.3.17+1
+
+* Converts main plugin tests to swift.
+
 ## 0.3.17
 
 * Removes OCMock from tests.

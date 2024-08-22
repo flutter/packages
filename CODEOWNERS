@@ -62,8 +62,9 @@ packages/video_player/video_player_web/**                @ditman
 packages/webview_flutter/webview_flutter_web/**          @ditman
 
 # - Android
-packages/camera/camera_android/**                        @camsim99
-packages/camera/camera_android_camerax/**                @camsim99
+# TODO(matanlurey): Remove @matanlurey after https://github.com/flutter/flutter/issues/151018.
+packages/camera/camera_android/**                        @camsim99 @matanlurey
+packages/camera/camera_android_camerax/**                @camsim99 @matanlurey
 packages/espresso/**                                     @reidbaker
 packages/file_selector/file_selector_android/**          @gmackall
 packages/flutter_plugin_android_lifecycle/**             @reidbaker
@@ -76,7 +77,7 @@ packages/path_provider/path_provider_android/**          @camsim99
 packages/quick_actions/quick_actions_android/**          @camsim99
 packages/shared_preferences/shared_preferences_android/**  @reidbaker
 packages/url_launcher/url_launcher_android/**            @gmackall
-packages/video_player/video_player_android/**            @camsim99
+packages/video_player/video_player_android/**            @camsim99 @matanlurey
 # Owned by ecosystem team for now during the wrapper evaluation.
 packages/webview_flutter/webview_flutter_android/**      @bparrishMines
 
