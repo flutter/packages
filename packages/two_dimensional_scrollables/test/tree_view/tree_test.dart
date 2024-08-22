@@ -719,7 +719,9 @@ void main() {
       expect(treeView.treeRowBuilder, isA<TreeViewRowBuilder<String>>());
     });
 
-    testWidgets('TreeSliverNode should close all children when collapsed when animation is completed', (WidgetTester tester) async {
+    testWidgets(
+        'TreeSliverNode should close all children when collapsed when animation is completed',
+        (WidgetTester tester) async {
       final TreeViewController controller = TreeViewController();
       final List<TreeViewNode<String>> tree = <TreeViewNode<String>>[
         TreeViewNode<String>('First'),
@@ -752,31 +754,31 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(
         home: TreeView<String>(
-              tree: tree,
-              controller: controller,
-              toggleAnimationStyle: AnimationStyle(
-                curve: Curves.easeInOut,
-                duration: const Duration(milliseconds: 200),
+          tree: tree,
+          controller: controller,
+          toggleAnimationStyle: AnimationStyle(
+            curve: Curves.easeInOut,
+            duration: const Duration(milliseconds: 200),
+          ),
+          treeNodeBuilder: (
+            BuildContext context,
+            TreeViewNode<Object?> node,
+            AnimationStyle animationStyle,
+          ) {
+            final Widget child = GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () => controller.toggleNode(node),
+              child: TreeView.defaultTreeNodeBuilder(
+                context,
+                node,
+                animationStyle,
               ),
-              treeNodeBuilder: (
-                BuildContext context,
-                TreeViewNode<Object?> node,
-                AnimationStyle animationStyle,
-              ) {
-                final Widget child = GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () => controller.toggleNode(node),
-                  child: TreeView.defaultTreeNodeBuilder(
-                    context,
-                    node,
-                    animationStyle,
-                  ),
-                );
+            );
 
-                return child;
-              },
-            ),
-        ));
+            return child;
+          },
+        ),
+      ));
 
       expect(find.text('First'), findsOneWidget);
       expect(find.text('Second'), findsOneWidget);
