@@ -719,8 +719,7 @@ void main() {
       expect(treeView.treeRowBuilder, isA<TreeViewRowBuilder<String>>());
     });
 
-    testWidgets(
-        'TreeSliverNode should close all children when collapsed when animation is completed',
+    testWidgets('TreeViewNode should expand/collapse correctly when the animation duration is set to zero.',
         (WidgetTester tester) async {
       final TreeViewController controller = TreeViewController();
       final List<TreeViewNode<String>> tree = <TreeViewNode<String>>[
