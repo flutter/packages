@@ -33,3 +33,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+   {google_maps_flutter_android: {path: ../../../google_maps_flutter/google_maps_flutter_android}, google_maps_flutter_platform_interface: {path: ../../../google_maps_flutter/google_maps_flutter_platform_interface}}
