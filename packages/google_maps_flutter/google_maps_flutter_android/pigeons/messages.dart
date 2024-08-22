@@ -40,57 +40,76 @@ class PlatformCameraPosition {
 
 /// Pigeon representation of a CameraUpdate.
 class PlatformCameraUpdate {
-  PlatformCameraUpdate(this.json);
+  PlatformCameraUpdate({
+    this.newCameraPosition,
+    this.newLatLng,
+    this.newLatLngZoom,
+    this.newLatLngBounds,
+    this.scrollBy,
+    this.zoomBy,
+    this.zoomIn,
+    this.zoomOut,
+    this.zoomTo,
+  });
 
-  /// The update data, as JSON. This should only be set from
-  /// CameraUpdate.toJson, and the native code must interpret it according to the
-  /// internal implementation details of the CameraUpdate class.
-  // TODO(stuartmorgan): Update the google_maps_platform_interface CameraUpdate
-  //  class to provide a structured representation of an update. Currently it
-  //  uses JSON as its only state, so there is no way to preserve structure.
-  //  This wrapper class exists as a placeholder for now to at least provide
-  //  type safety in the top-level call's arguments.
-  final Object json;
+  final PlatformNewCameraPosition? newCameraPosition;
+  final PlatformNewLatLng? newLatLng;
+  final PlatformNewLatLngBounds? newLatLngBounds;
+  final PlatformNewLatLngZoom? newLatLngZoom;
+  final PlatformScrollBy? scrollBy;
+  final PlatformZoomBy? zoomBy;
+  final PlatformZoomIn? zoomIn;
+  final PlatformZoomOut? zoomOut;
+  final PlatformZoomTo? zoomTo;
 }
 
+/// Pigeon equivalent of NewCameraPosition
 class PlatformNewCameraPosition {
   PlatformNewCameraPosition(this.cameraPosition);
   final PlatformCameraPosition cameraPosition;
 }
 
+/// Pigeon equivalent of NewCameraPosition
 class PlatformNewLatLng {
   PlatformNewLatLng(this.latLng);
   final PlatformLatLng latLng;
 }
 
+/// Pigeon equivalent of NewCameraPosition
 class PlatformNewLatLngBounds {
   PlatformNewLatLngBounds(this.bounds, this.padding);
   final PlatformLatLngBounds bounds;
   final double padding;
 }
 
+/// Pigeon equivalent of NewCameraPosition
 class PlatformNewLatLngZoom {
   PlatformNewLatLngZoom(this.latLng, this.zoom);
   final PlatformLatLng latLng;
   final double zoom;
 }
 
+/// Pigeon equivalent of NewCameraPosition
 class PlatformScrollBy {
   PlatformScrollBy(this.dx, this.dy);
   final double dx;
   final double dy;
 }
 
+/// Pigeon equivalent of NewCameraPosition
 class PlatformZoomBy {
   PlatformZoomBy(this.amount, [this.focus]);
   final double amount;
   final PlatformOffset? focus;
 }
 
+/// Pigeon equivalent of NewCameraPosition
 class PlatformZoomIn {}
 
+/// Pigeon equivalent of NewCameraPosition
 class PlatformZoomOut {}
 
+/// Pigeon equivalent of NewCameraPosition
 class PlatformZoomTo {
   PlatformZoomTo(this.zoom);
   final double zoom;
