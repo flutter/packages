@@ -53,6 +53,49 @@ class PlatformCameraUpdate {
   final Object json;
 }
 
+class PlatformNewCameraPosition {
+  PlatformNewCameraPosition(this.cameraPosition);
+  final PlatformCameraPosition cameraPosition;
+}
+
+class PlatformNewLatLng {
+  PlatformNewLatLng(this.latLng);
+  final PlatformLatLng latLng;
+}
+
+class PlatformNewLatLngBounds {
+  PlatformNewLatLngBounds(this.bounds, this.padding);
+  final PlatformLatLngBounds bounds;
+  final double padding;
+}
+
+class PlatformNewLatLngZoom {
+  PlatformNewLatLngZoom(this.latLng, this.zoom);
+  final PlatformLatLng latLng;
+  final double zoom;
+}
+
+class PlatformScrollBy {
+  PlatformScrollBy(this.dx, this.dy);
+  final double dx;
+  final double dy;
+}
+
+class PlatformZoomBy {
+  PlatformZoomBy(this.amount, [this.focus]);
+  final double amount;
+  final PlatformOffset? focus;
+}
+
+class PlatformZoomIn {}
+
+class PlatformZoomOut {}
+
+class PlatformZoomTo {
+  PlatformZoomTo(this.zoom);
+  final double zoom;
+}
+
 /// Pigeon equivalent of the Circle class.
 class PlatformCircle {
   PlatformCircle({
