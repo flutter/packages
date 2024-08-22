@@ -99,6 +99,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   PHPickerConfiguration *config =
       [[PHPickerConfiguration alloc] initWithPhotoLibrary:PHPhotoLibrary.sharedPhotoLibrary];
   config.selectionLimit = context.maxImageCount;
+  config.preferredAssetRepresentationMode = PHPickerConfigurationAssetRepresentationModeCurrent;
   if (context.includeVideo) {
     config.filter = [PHPickerFilter anyFilterMatchingSubfilters:@[
       [PHPickerFilter imagesFilter], [PHPickerFilter videosFilter]
