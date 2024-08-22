@@ -85,25 +85,20 @@ final class VideoPlayer {
         new TextureRegistry.SurfaceProducer.Callback() {
           @Override
           public void onSurfaceCreated() {
-            setExoPlayer(createVideoPlayer());
-            if (savedStateDuring != null) {
-              savedStateDuring.restore(exoPlayer);
-              savedStateDuring = null;
+            VideoPlayer.this.exoPlayer = VideoPlayer.this.createVideoPlayer();
+            if (VideoPlayer.this.savedStateDuring != null) {
+              VideoPlayer.this.savedStateDuring.restore(VideoPlayer.this.exoPlayer);
+              VideoPlayer.this.savedStateDuring = null;
             }
           }
 
           @Override
           public void onSurfaceDestroyed() {
-            exoPlayer.stop();
-            savedStateDuring = ExoPlayerState.save(exoPlayer);
-            exoPlayer.release();
+            VideoPlayer.this.exoPlayer.stop();
+            VideoPlayer.this.savedStateDuring = ExoPlayerState.save(VideoPlayer.this.exoPlayer);
+            VideoPlayer.this.exoPlayer.release();
           }
         });
-  }
-
-  // Used to avoid synthetic accessor.
-  private void setExoPlayer(@NonNull ExoPlayer exoPlayer) {
-    this.exoPlayer = exoPlayer;
   }
 
   private ExoPlayer createVideoPlayer() {
