@@ -19,27 +19,45 @@ Future<void> main() async {
   }, timeout: Timeout.none);
 
   test('Can run a web benchmark with an alternate initial page', () async {
-    await _runBenchmarks(
+    final BenchmarkResults results = await _runBenchmarks(
       benchmarkNames: <String>['simple'],
       entryPoint: 'lib/benchmarks/runner_simple.dart',
       initialPage: 'index.html#about',
     );
+
+    // The simple runner just puts an `isWasm` metric in there so we can make
+    // sure that we're running in the right environment.
+    final List<BenchmarkScore>? scores = results.scores['simple'];
+    expect(scores, isNotNull);
+
+    final BenchmarkScore isWasmScore =
+        scores!.firstWhere((BenchmarkScore score) => score.metric == 'isWasm');
+    expect(isWasmScore.value, 0);
   }, timeout: Timeout.none);
 
   test(
     'Can run a web benchmark with wasm',
     () async {
-      await _runBenchmarks(
+      final BenchmarkResults results = await _runBenchmarks(
         benchmarkNames: <String>['simple'],
         entryPoint: 'lib/benchmarks/runner_simple.dart',
         compilationOptions: const CompilationOptions.wasm(),
       );
+
+      // The simple runner just puts an `isWasm` metric in there so we can make
+      // sure that we're running in the right environment.
+      final List<BenchmarkScore>? scores = results.scores['simple'];
+      expect(scores, isNotNull);
+
+      final BenchmarkScore isWasmScore = scores!
+          .firstWhere((BenchmarkScore score) => score.metric == 'isWasm');
+      expect(isWasmScore.value, 1);
     },
     timeout: Timeout.none,
   );
 }
 
-Future<void> _runBenchmarks({
+Future<BenchmarkResults> _runBenchmarks({
   required List<String> benchmarkNames,
   required String entryPoint,
   String initialPage = defaultInitialPage,
@@ -53,12 +71,17 @@ Future<void> _runBenchmarks({
     compilationOptions: compilationOptions,
   );
 
+  // The skwasm renderer doesn't have preroll or apply frame steps in its rendering.
+  final List<String> expectedMetrics = compilationOptions.useWasm
+      ? <String>['drawFrameDuration']
+      : <String>[
+          'preroll_frame',
+          'apply_frame',
+          'drawFrameDuration',
+        ];
+
   for (final String benchmarkName in benchmarkNames) {
-    for (final String metricName in <String>[
-      'preroll_frame',
-      'apply_frame',
-      'drawFrameDuration',
-    ]) {
+    for (final String metricName in expectedMetrics) {
       for (final String valueName in <String>[
         'average',
         'outlierAverage',
@@ -83,4 +106,5 @@ Future<void> _runBenchmarks({
     const JsonEncoder.withIndent('  ').convert(taskResult.toJson()),
     isA<String>(),
   );
+  return taskResult;
 }

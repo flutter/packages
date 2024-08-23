@@ -1,6 +1,12 @@
-## 21.3.0
+## 22.1.0
 
 * [kotlin] Adds implementation for `@ProxyApi`.
+
+## 22.0.0
+
+* [dart] Changes codec to send int64 instead of int32.
+* **Breaking Change** [swift] Changes generic `map` to nullable keys of `AnyHashable` to conform to other platforms.
+* Adds tests to validate collections of ints.
 
 ## 21.2.0
 

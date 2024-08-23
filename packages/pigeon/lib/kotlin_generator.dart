@@ -364,9 +364,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             indent.writeln('${customType.name}.fromList(it)');
           });
         } else if (customType.type == CustomTypes.customEnum) {
-          indent.write('return (readValue(buffer) as Int?)?.let ');
+          indent.write('return (readValue(buffer) as Long?)?.let ');
           indent.addScoped('{', '}', () {
-            indent.writeln('${customType.name}.ofRaw(it)');
+            indent.writeln('${customType.name}.ofRaw(it.toInt())');
           });
         }
       });
@@ -438,7 +438,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }) {
     final NamedType overflowInt = NamedType(
         name: 'type',
-        type: const TypeDeclaration(baseName: 'Int', isNullable: false));
+        type: const TypeDeclaration(baseName: 'int', isNullable: false));
     final NamedType overflowObject = NamedType(
         name: 'wrapped',
         type: const TypeDeclaration(baseName: 'Object', isNullable: true));
@@ -465,7 +465,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 companion object {
   fun fromList(${varNamePrefix}list: List<Any?>): Any? {
     val wrapper = ${generatorOptions.fileSpecificClassNameComponent}$_overflowClassName(
-      type = ${varNamePrefix}list[0] as Int,
+      type = ${varNamePrefix}list[0] as Long,
       wrapped = ${varNamePrefix}list[1],
     );
     return wrapper.unwrap()
@@ -479,14 +479,15 @@ if (wrapped == null) {
   return null
 }
     ''');
-        indent.writeScoped('when (type) {', '}', () {
+        indent.writeScoped('when (type.toInt()) {', '}', () {
           for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
             indent.writeScoped('${i - totalCustomCodecKeysAllowed} ->', '', () {
               if (types[i].type == CustomTypes.customClass) {
                 indent.writeln(
                     'return ${types[i].name}.fromList(wrapped as List<Any?>)');
               } else if (types[i].type == CustomTypes.customEnum) {
-                indent.writeln('return ${types[i].name}.ofRaw(wrapped as Int)');
+                indent.writeln(
+                    'return ${types[i].name}.ofRaw((wrapped as Long).toInt())');
               }
             });
           }
@@ -2079,13 +2080,5 @@ String _cast(Indent indent, String variable, {required TypeDeclaration type}) {
   if (type.isNullable && typeString == 'Any') {
     return variable;
   }
-  if (typeString == 'Int' || typeString == 'Long') {
-    return '$variable${_castInt(type.isNullable)}';
-  }
   return '$variable as ${_nullSafeKotlinTypeForDartType(type)}';
-}
-
-String _castInt(bool isNullable) {
-  final String nullability = isNullable ? '?' : '';
-  return '.let { num -> if (num is Int) num.toLong() else num as Long$nullability }';
 }
