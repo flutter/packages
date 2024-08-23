@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/src/messages.g.dart';
 import 'package:in_app_purchase_storekit/src/sk2_pigeon.g.dart';
+import 'package:in_app_purchase_storekit/src/store_kit_2_wrappers/sk2_product_wrapper.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 import '../sk2_test_api.g.dart';
@@ -278,6 +279,10 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 }
 
 class FakeStoreKit2Platform implements TestInAppPurchase2Api {
+
+  late Set<String> validProductIDs;
+  late Map<String, SK2Product> validProducts;
+
   @override
   bool canMakePayments() {
     return true;
@@ -285,8 +290,16 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
 
   @override
   Future<List<SK2ProductMessage?>> products(List<String?> identifiers) {
-    // TODO: implement products
-    throw UnimplementedError();
+    final List<String?> productIDS = identifiers;
+    final List<String> invalidFound = <String>[];
+    final List<SKProductWrapper> products = <SKProductWrapper>[];
+    for (final String? productID in productIDS) {
+      if (!validProductIDs.contains(productID)) {
+        invalidFound.add(productID!);
+      } else {
+        products.add(validProducts[productID]!);
+      }
+    }
   }
 
 }
