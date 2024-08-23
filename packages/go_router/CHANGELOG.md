@@ -1,4 +1,4 @@
-## 14.2.
+## 14.2.7
 
 - Fixes issue so that the parseRouteInformationWithContext can handle non-http Uris.
 
