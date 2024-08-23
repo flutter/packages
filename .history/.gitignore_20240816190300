@@ -1,0 +1,59 @@
+.DS_Store
+.atom/
+.idea
+.packages
+.pub/
+.dart_tool/
+.vscode/
+*.iml
+
+# Gradle?
+.uuid
+
+pubspec.lock
+
+# iOS and macOS dependencies
+.build/
+Podfile.lock
+Pods/
+.swiftpm/
+.symlinks/
+
+*instrumentscli*.trace
+*.cipd
+
+# Build directories are produced when building using the Flutter CLI.
+build
+
+# This file is produced as a back-up when web_benchmarks fails to parse a
+# Chrome trace.
+chrome-trace.json
+
+# Generated files on example apps
+flutter_export_environment.sh
+.flutter-plugins*
+local.properties
+keystore.properties
+**/Flutter/Generated.xcconfig
+**/Flutter/App.framework/
+**/Flutter/ephemeral/
+**/Flutter/Flutter.podspec
+**/Flutter/Flutter.framework/
+**/Flutter/flutter_assets/
+
+ServiceDefinitions.json
+xcuserdata/
+**/DerivedData/
+
+generated_plugin_registrant.*
+GeneratedPluginRegistrant.*
+
+# Gradle 
+**/gradle-wrapper.jar
+.gradle/
+gradlew
+gradlew.bat
+
+.project
+.classpath
+.settings
