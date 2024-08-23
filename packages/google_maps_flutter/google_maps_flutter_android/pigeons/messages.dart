@@ -233,14 +233,21 @@ class PlatformTile {
 
 /// Pigeon equivalent of the TileOverlay class.
 class PlatformTileOverlay {
-  PlatformTileOverlay(this.json);
+  PlatformTileOverlay({
+    required this.tileOverlayId,
+    required this.fadeIn,
+    required this.transparency,
+    required this.zIndex,
+    required this.visible,
+    required this.tileSize,
+  });
 
-  /// The tile overlay data, as JSON. This should only be set from
-  /// TileOverlay.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Map<String?, Object?> json;
+  final String tileOverlayId;
+  final bool fadeIn;
+  final double transparency;
+  final int zIndex;
+  final bool visible;
+  final int tileSize;
 }
 
 /// Pigeon equivalent of Flutter's EdgeInsets.
