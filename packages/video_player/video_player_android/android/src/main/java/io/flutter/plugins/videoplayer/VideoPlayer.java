@@ -10,6 +10,7 @@ import static androidx.media3.common.Player.REPEAT_MODE_OFF;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
@@ -18,7 +19,7 @@ import androidx.media3.common.PlaybackParameters;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.view.TextureRegistry;
 
-final class VideoPlayer {
+final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
   @NonNull private final ExoPlayerProvider exoPlayerProvider;
   @NonNull private final MediaItem mediaItem;
   @NonNull private final TextureRegistry.SurfaceProducer surfaceProducer;
@@ -80,25 +81,23 @@ final class VideoPlayer {
     this.mediaItem = mediaItem;
     this.options = options;
     this.exoPlayer = createVideoPlayer();
+    surfaceProducer.setCallback(this);
+  }
 
-    surfaceProducer.setCallback(
-        new TextureRegistry.SurfaceProducer.Callback() {
-          @Override
-          public void onSurfaceCreated() {
-            VideoPlayer.this.exoPlayer = VideoPlayer.this.createVideoPlayer();
-            if (VideoPlayer.this.savedStateDuring != null) {
-              VideoPlayer.this.savedStateDuring.restore(VideoPlayer.this.exoPlayer);
-              VideoPlayer.this.savedStateDuring = null;
-            }
-          }
+  @RestrictTo(RestrictTo.Scope.LIBRARY)
+  public void onSurfaceCreated() {
+    exoPlayer = createVideoPlayer();
+    if (savedStateDuring != null) {
+      savedStateDuring.restore(exoPlayer);
+      savedStateDuring = null;
+    }
+  }
 
-          @Override
-          public void onSurfaceDestroyed() {
-            VideoPlayer.this.exoPlayer.stop();
-            VideoPlayer.this.savedStateDuring = ExoPlayerState.save(VideoPlayer.this.exoPlayer);
-            VideoPlayer.this.exoPlayer.release();
-          }
-        });
+  @RestrictTo(RestrictTo.Scope.LIBRARY)
+  public void onSurfaceDestroyed () {
+    exoPlayer.stop();
+    savedStateDuring = ExoPlayerState.save(exoPlayer);
+    exoPlayer.release();
   }
 
   private ExoPlayer createVideoPlayer() {
