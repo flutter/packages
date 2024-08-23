@@ -62,7 +62,10 @@ class AllTypes {
     required this.intList,
     required this.doubleList,
     required this.boolList,
+    required this.listList,
     required this.map,
+    required this.stringMap,
+    required this.intMap,
   });
 
   bool aBool;
@@ -99,7 +102,13 @@ class AllTypes {
 
   List<bool?> boolList;
 
+  List<List<Object?>?> listList;
+
   Map<Object?, Object?> map;
+
+  Map<String?, String?> stringMap;
+
+  Map<int?, int?> intMap;
 
   Object encode() {
     return <Object?>[
@@ -120,7 +129,10 @@ class AllTypes {
       intList,
       doubleList,
       boolList,
+      listList,
       map,
+      stringMap,
+      intMap,
     ];
   }
 
@@ -144,7 +156,11 @@ class AllTypes {
       intList: (result[14] as List<Object?>?)!.cast<int?>(),
       doubleList: (result[15] as List<Object?>?)!.cast<double?>(),
       boolList: (result[16] as List<Object?>?)!.cast<bool?>(),
-      map: result[17]! as Map<Object?, Object?>,
+      listList: (result[17] as List<Object?>?)!.cast<List<Object?>?>(),
+      map: result[18]! as Map<Object?, Object?>,
+      stringMap:
+          (result[19] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+      intMap: (result[20] as Map<Object?, Object?>?)!.cast<int?, int?>(),
     );
   }
 }
@@ -160,9 +176,6 @@ class AllNullableTypes {
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
     this.aNullableFloatArray,
-    this.nullableNestedList,
-    this.nullableMapWithAnnotations,
-    this.nullableMapWithObject,
     this.aNullableEnum,
     this.anotherNullableEnum,
     this.aNullableString,
@@ -173,8 +186,10 @@ class AllNullableTypes {
     this.intList,
     this.doubleList,
     this.boolList,
-    this.nestedClassList,
+    this.listList,
     this.map,
+    this.stringMap,
+    this.intMap,
   });
 
   bool? aNullableBool;
@@ -192,12 +207,6 @@ class AllNullableTypes {
   Int64List? aNullable8ByteArray;
 
   Float64List? aNullableFloatArray;
-
-  List<List<bool?>?>? nullableNestedList;
-
-  Map<String?, String?>? nullableMapWithAnnotations;
-
-  Map<String?, Object?>? nullableMapWithObject;
 
   AnEnum? aNullableEnum;
 
@@ -219,9 +228,13 @@ class AllNullableTypes {
 
   List<bool?>? boolList;
 
-  List<AllNullableTypes?>? nestedClassList;
+  List<List<Object?>?>? listList;
 
   Map<Object?, Object?>? map;
+
+  Map<String?, String?>? stringMap;
+
+  Map<int?, int?>? intMap;
 
   Object encode() {
     return <Object?>[
@@ -233,9 +246,6 @@ class AllNullableTypes {
       aNullable4ByteArray,
       aNullable8ByteArray,
       aNullableFloatArray,
-      nullableNestedList,
-      nullableMapWithAnnotations,
-      nullableMapWithObject,
       aNullableEnum,
       anotherNullableEnum,
       aNullableString,
@@ -246,8 +256,10 @@ class AllNullableTypes {
       intList,
       doubleList,
       boolList,
-      nestedClassList,
+      listList,
       map,
+      stringMap,
+      intMap,
     ];
   }
 
@@ -262,24 +274,21 @@ class AllNullableTypes {
       aNullable4ByteArray: result[5] as Int32List?,
       aNullable8ByteArray: result[6] as Int64List?,
       aNullableFloatArray: result[7] as Float64List?,
-      nullableNestedList: (result[8] as List<Object?>?)?.cast<List<bool?>?>(),
-      nullableMapWithAnnotations:
-          (result[9] as Map<Object?, Object?>?)?.cast<String?, String?>(),
-      nullableMapWithObject:
-          (result[10] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
-      aNullableEnum: result[11] as AnEnum?,
-      anotherNullableEnum: result[12] as AnotherEnum?,
-      aNullableString: result[13] as String?,
-      aNullableObject: result[14],
-      allNullableTypes: result[15] as AllNullableTypes?,
-      list: result[16] as List<Object?>?,
-      stringList: (result[17] as List<Object?>?)?.cast<String?>(),
-      intList: (result[18] as List<Object?>?)?.cast<int?>(),
-      doubleList: (result[19] as List<Object?>?)?.cast<double?>(),
-      boolList: (result[20] as List<Object?>?)?.cast<bool?>(),
-      nestedClassList:
-          (result[21] as List<Object?>?)?.cast<AllNullableTypes?>(),
-      map: result[22] as Map<Object?, Object?>?,
+      aNullableEnum: result[8] as AnEnum?,
+      anotherNullableEnum: result[9] as AnotherEnum?,
+      aNullableString: result[10] as String?,
+      aNullableObject: result[11],
+      allNullableTypes: result[12] as AllNullableTypes?,
+      list: result[13] as List<Object?>?,
+      stringList: (result[14] as List<Object?>?)?.cast<String?>(),
+      intList: (result[15] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[16] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[17] as List<Object?>?)?.cast<bool?>(),
+      listList: (result[18] as List<Object?>?)?.cast<List<Object?>?>(),
+      map: result[19] as Map<Object?, Object?>?,
+      stringMap:
+          (result[20] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      intMap: (result[21] as Map<Object?, Object?>?)?.cast<int?, int?>(),
     );
   }
 }
@@ -297,9 +306,6 @@ class AllNullableTypesWithoutRecursion {
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
     this.aNullableFloatArray,
-    this.nullableNestedList,
-    this.nullableMapWithAnnotations,
-    this.nullableMapWithObject,
     this.aNullableEnum,
     this.anotherNullableEnum,
     this.aNullableString,
@@ -309,7 +315,10 @@ class AllNullableTypesWithoutRecursion {
     this.intList,
     this.doubleList,
     this.boolList,
+    this.listList,
     this.map,
+    this.stringMap,
+    this.intMap,
   });
 
   bool? aNullableBool;
@@ -327,12 +336,6 @@ class AllNullableTypesWithoutRecursion {
   Int64List? aNullable8ByteArray;
 
   Float64List? aNullableFloatArray;
-
-  List<List<bool?>?>? nullableNestedList;
-
-  Map<String?, String?>? nullableMapWithAnnotations;
-
-  Map<String?, Object?>? nullableMapWithObject;
 
   AnEnum? aNullableEnum;
 
@@ -352,7 +355,13 @@ class AllNullableTypesWithoutRecursion {
 
   List<bool?>? boolList;
 
+  List<List<Object?>?>? listList;
+
   Map<Object?, Object?>? map;
+
+  Map<String?, String?>? stringMap;
+
+  Map<int?, int?>? intMap;
 
   Object encode() {
     return <Object?>[
@@ -364,9 +373,6 @@ class AllNullableTypesWithoutRecursion {
       aNullable4ByteArray,
       aNullable8ByteArray,
       aNullableFloatArray,
-      nullableNestedList,
-      nullableMapWithAnnotations,
-      nullableMapWithObject,
       aNullableEnum,
       anotherNullableEnum,
       aNullableString,
@@ -376,7 +382,10 @@ class AllNullableTypesWithoutRecursion {
       intList,
       doubleList,
       boolList,
+      listList,
       map,
+      stringMap,
+      intMap,
     ];
   }
 
@@ -391,21 +400,20 @@ class AllNullableTypesWithoutRecursion {
       aNullable4ByteArray: result[5] as Int32List?,
       aNullable8ByteArray: result[6] as Int64List?,
       aNullableFloatArray: result[7] as Float64List?,
-      nullableNestedList: (result[8] as List<Object?>?)?.cast<List<bool?>?>(),
-      nullableMapWithAnnotations:
-          (result[9] as Map<Object?, Object?>?)?.cast<String?, String?>(),
-      nullableMapWithObject:
-          (result[10] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
-      aNullableEnum: result[11] as AnEnum?,
-      anotherNullableEnum: result[12] as AnotherEnum?,
-      aNullableString: result[13] as String?,
-      aNullableObject: result[14],
-      list: result[15] as List<Object?>?,
-      stringList: (result[16] as List<Object?>?)?.cast<String?>(),
-      intList: (result[17] as List<Object?>?)?.cast<int?>(),
-      doubleList: (result[18] as List<Object?>?)?.cast<double?>(),
-      boolList: (result[19] as List<Object?>?)?.cast<bool?>(),
-      map: result[20] as Map<Object?, Object?>?,
+      aNullableEnum: result[8] as AnEnum?,
+      anotherNullableEnum: result[9] as AnotherEnum?,
+      aNullableString: result[10] as String?,
+      aNullableObject: result[11],
+      list: result[12] as List<Object?>?,
+      stringList: (result[13] as List<Object?>?)?.cast<String?>(),
+      intList: (result[14] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[15] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[16] as List<Object?>?)?.cast<bool?>(),
+      listList: (result[17] as List<Object?>?)?.cast<List<Object?>?>(),
+      map: result[18] as Map<Object?, Object?>?,
+      stringMap:
+          (result[19] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      intMap: (result[20] as Map<Object?, Object?>?)?.cast<int?, int?>(),
     );
   }
 }
@@ -473,7 +481,10 @@ class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AnEnum) {
+    if (value is int) {
+      buffer.putUint8(4);
+      buffer.putInt64(value);
+    } else if (value is AnEnum) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
     } else if (value is AnotherEnum) {
@@ -883,7 +894,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  Future<Map<String?, Object?>> echoMap(Map<String?, Object?> aMap) async {
+  Future<Map<Object?, Object?>> echoMap(Map<Object?, Object?> map) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
@@ -893,7 +904,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[aMap]) as List<Object?>?;
+        await pigeonVar_channel.send(<Object?>[map]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -909,11 +920,74 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
-          .cast<String?, Object?>();
+          .cast<Object?, Object?>();
     }
   }
 
-  /// Returns the passed map to test nested class serialization and deserialization.
+  /// Returns the passed map, to test serialization and deserialization.
+  Future<Map<String?, String?>> echoStringMap(
+      Map<String?, String?> stringMap) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[stringMap]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<String?, String?>();
+    }
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  Future<Map<int?, int?>> echoIntMap(Map<int?, int?> intMap) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[intMap]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<int?, int?>();
+    }
+  }
+
+  /// Returns the passed class to test nested class serialization and deserialization.
   Future<AllClassesWrapper> echoClassWrapper(AllClassesWrapper wrapper) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper$pigeonVar_messageChannelSuffix';
@@ -1446,8 +1520,8 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  Future<Map<String?, Object?>?> echoNullableMap(
-      Map<String?, Object?>? aNullableMap) async {
+  Future<Map<Object?, Object?>?> echoNullableMap(
+      Map<Object?, Object?>? map) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
@@ -1457,7 +1531,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[aNullableMap]) as List<Object?>?;
+        await pigeonVar_channel.send(<Object?>[map]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -1468,7 +1542,60 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
-          ?.cast<String?, Object?>();
+          ?.cast<Object?, Object?>();
+    }
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  Future<Map<String?, String?>?> echoNullableStringMap(
+      Map<String?, String?>? stringMap) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableStringMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[stringMap]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<String?, String?>();
+    }
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  Future<Map<int?, int?>?> echoNullableIntMap(Map<int?, int?>? intMap) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableIntMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[intMap]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<int?, int?>();
     }
   }
 
@@ -1807,7 +1934,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  Future<Map<String?, Object?>> echoAsyncMap(Map<String?, Object?> aMap) async {
+  Future<Map<Object?, Object?>> echoAsyncMap(Map<Object?, Object?> map) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
@@ -1817,7 +1944,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[aMap]) as List<Object?>?;
+        await pigeonVar_channel.send(<Object?>[map]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -1833,7 +1960,70 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
-          .cast<String?, Object?>();
+          .cast<Object?, Object?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<String?, String?>> echoAsyncStringMap(
+      Map<String?, String?> stringMap) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncStringMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[stringMap]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<String?, String?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<int?, int?>> echoAsyncIntMap(Map<int?, int?> intMap) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncIntMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[intMap]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<int?, int?>();
     }
   }
 
@@ -2231,8 +2421,8 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  Future<Map<String?, Object?>?> echoAsyncNullableMap(
-      Map<String?, Object?>? aMap) async {
+  Future<Map<Object?, Object?>?> echoAsyncNullableMap(
+      Map<Object?, Object?>? map) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
@@ -2242,7 +2432,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[aMap]) as List<Object?>?;
+        await pigeonVar_channel.send(<Object?>[map]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -2253,7 +2443,61 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
-          ?.cast<String?, Object?>();
+          ?.cast<Object?, Object?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<String?, String?>?> echoAsyncNullableStringMap(
+      Map<String?, String?>? stringMap) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableStringMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[stringMap]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<String?, String?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<int?, int?>?> echoAsyncNullableIntMap(
+      Map<int?, int?>? intMap) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableIntMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[intMap]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<int?, int?>();
     }
   }
 
@@ -2697,8 +2941,8 @@ class HostIntegrationCoreApi {
     }
   }
 
-  Future<Map<String?, Object?>> callFlutterEchoMap(
-      Map<String?, Object?> aMap) async {
+  Future<Map<Object?, Object?>> callFlutterEchoMap(
+      Map<Object?, Object?> map) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
@@ -2708,7 +2952,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[aMap]) as List<Object?>?;
+        await pigeonVar_channel.send(<Object?>[map]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -2724,7 +2968,68 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
-          .cast<String?, Object?>();
+          .cast<Object?, Object?>();
+    }
+  }
+
+  Future<Map<String?, String?>> callFlutterEchoStringMap(
+      Map<String?, String?> stringMap) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoStringMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[stringMap]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<String?, String?>();
+    }
+  }
+
+  Future<Map<int?, int?>> callFlutterEchoIntMap(Map<int?, int?> intMap) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoIntMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[intMap]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<int?, int?>();
     }
   }
 
@@ -2932,8 +3237,8 @@ class HostIntegrationCoreApi {
     }
   }
 
-  Future<Map<String?, Object?>?> callFlutterEchoNullableMap(
-      Map<String?, Object?>? aMap) async {
+  Future<Map<Object?, Object?>?> callFlutterEchoNullableMap(
+      Map<Object?, Object?>? map) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
@@ -2943,7 +3248,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[aMap]) as List<Object?>?;
+        await pigeonVar_channel.send(<Object?>[map]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -2954,7 +3259,59 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
-          ?.cast<String?, Object?>();
+          ?.cast<Object?, Object?>();
+    }
+  }
+
+  Future<Map<String?, String?>?> callFlutterEchoNullableStringMap(
+      Map<String?, String?>? stringMap) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableStringMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[stringMap]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<String?, String?>();
+    }
+  }
+
+  Future<Map<int?, int?>?> callFlutterEchoNullableIntMap(
+      Map<int?, int?>? intMap) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableIntMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[intMap]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<int?, int?>();
     }
   }
 
@@ -3093,7 +3450,13 @@ abstract class FlutterIntegrationCoreApi {
   List<Object?> echoList(List<Object?> list);
 
   /// Returns the passed map, to test serialization and deserialization.
-  Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
+  Map<Object?, Object?> echoMap(Map<Object?, Object?> map);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  Map<String?, String?> echoStringMap(Map<String?, String?> stringMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  Map<int?, int?> echoIntMap(Map<int?, int?> intMap);
 
   /// Returns the passed enum to test serialization and deserialization.
   AnEnum echoEnum(AnEnum anEnum);
@@ -3120,7 +3483,14 @@ abstract class FlutterIntegrationCoreApi {
   List<Object?>? echoNullableList(List<Object?>? list);
 
   /// Returns the passed map, to test serialization and deserialization.
-  Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
+  Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  Map<String?, String?>? echoNullableStringMap(
+      Map<String?, String?>? stringMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  Map<int?, int?>? echoNullableIntMap(Map<int?, int?>? intMap);
 
   /// Returns the passed enum to test serialization and deserialization.
   AnEnum? echoNullableEnum(AnEnum? anEnum);
@@ -3548,12 +3918,73 @@ abstract class FlutterIntegrationCoreApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final Map<String?, Object?>? arg_aMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
-          assert(arg_aMap != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap was null, expected non-null Map<String?, Object?>.');
+          final Map<Object?, Object?>? arg_map =
+              (args[0] as Map<Object?, Object?>?)?.cast<Object?, Object?>();
+          assert(arg_map != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap was null, expected non-null Map<Object?, Object?>.');
           try {
-            final Map<String?, Object?> output = api.echoMap(arg_aMap!);
+            final Map<Object?, Object?> output = api.echoMap(arg_map!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoStringMap$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoStringMap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final Map<String?, String?>? arg_stringMap =
+              (args[0] as Map<Object?, Object?>?)?.cast<String?, String?>();
+          assert(arg_stringMap != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoStringMap was null, expected non-null Map<String?, String?>.');
+          try {
+            final Map<String?, String?> output =
+                api.echoStringMap(arg_stringMap!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoIntMap$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoIntMap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final Map<int?, int?>? arg_intMap =
+              (args[0] as Map<Object?, Object?>?)?.cast<int?, int?>();
+          assert(arg_intMap != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoIntMap was null, expected non-null Map<int?, int?>.');
+          try {
+            final Map<int?, int?> output = api.echoIntMap(arg_intMap!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -3799,10 +4230,67 @@ abstract class FlutterIntegrationCoreApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final Map<String?, Object?>? arg_aMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
+          final Map<Object?, Object?>? arg_map =
+              (args[0] as Map<Object?, Object?>?)?.cast<Object?, Object?>();
           try {
-            final Map<String?, Object?>? output = api.echoNullableMap(arg_aMap);
+            final Map<Object?, Object?>? output = api.echoNullableMap(arg_map);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableStringMap$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableStringMap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final Map<String?, String?>? arg_stringMap =
+              (args[0] as Map<Object?, Object?>?)?.cast<String?, String?>();
+          try {
+            final Map<String?, String?>? output =
+                api.echoNullableStringMap(arg_stringMap);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableIntMap$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableIntMap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final Map<int?, int?>? arg_intMap =
+              (args[0] as Map<Object?, Object?>?)?.cast<int?, int?>();
+          try {
+            final Map<int?, int?>? output = api.echoNullableIntMap(arg_intMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

@@ -18,7 +18,10 @@ class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is MessageRequestState) {
+    if (value is int) {
+      buffer.putUint8(4);
+      buffer.putInt64(value);
+    } else if (value is MessageRequestState) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
     } else if (value is MessageSearchRequest) {
