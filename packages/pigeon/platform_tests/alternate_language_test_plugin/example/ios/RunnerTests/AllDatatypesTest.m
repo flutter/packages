@@ -58,13 +58,15 @@
       typedDataWithInt64:[@"12345678" dataUsingEncoding:NSUTF8StringEncoding]];
   everything.aNullableFloatArray = [FlutterStandardTypedData
       typedDataWithFloat64:[@"12345678" dataUsingEncoding:NSUTF8StringEncoding]];
-  everything.nullableMapWithObject = @{@"hello" : @(1234), @"goodbye" : @"world"};
+  everything.list = @[ @"string", @1 ];
   everything.boolList = @[ @YES, @NO ];
   everything.intList = @[ @1, @2 ];
   everything.doubleList = @[ @1.1, @2.2 ];
   everything.stringList = @[ @"string", @"another one" ];
-  everything.list = @[ @"string", @1 ];
+  everything.listList = @[ @[ @"string" ], @[ @"another one" ] ];
   everything.map = @{@"hello" : @(1234), @"goodbye" : @"world"};
+  everything.stringMap = @{@"hello" : @"you", @"goodbye" : @"world"};
+  everything.intMap = @{@(1) : @(0), @(2) : @(-2)};
   EchoBinaryMessenger *binaryMessenger =
       [[EchoBinaryMessenger alloc] initWithCodec:FLTGetCoreTestsCodec()];
   FLTFlutterIntegrationCoreApi *api =
@@ -84,14 +86,15 @@
                                          everything.aNullable8ByteArray.data);
                    XCTAssertEqualObjects(result.aNullableFloatArray.data,
                                          everything.aNullableFloatArray.data);
-                   XCTAssertEqualObjects(result.nullableMapWithObject,
-                                         everything.nullableMapWithObject);
                    XCTAssertEqualObjects(result.list, everything.list);
                    XCTAssertEqualObjects(result.boolList, everything.boolList);
                    XCTAssertEqualObjects(result.intList, everything.intList);
                    XCTAssertEqualObjects(result.doubleList, everything.doubleList);
                    XCTAssertEqualObjects(result.stringList, everything.stringList);
+                   XCTAssertEqualObjects(result.listList, everything.listList);
                    XCTAssertEqualObjects(result.map, everything.map);
+                   XCTAssertEqualObjects(result.stringMap, everything.stringMap);
+                   XCTAssertEqualObjects(result.intMap, everything.intMap);
                    [expectation fulfill];
                  }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];

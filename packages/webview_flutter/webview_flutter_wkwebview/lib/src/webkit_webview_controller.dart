@@ -640,7 +640,6 @@ class WebKitWebViewController extends PlatformWebViewController {
             case 'log':
             default:
               level = JavaScriptLogLevel.log;
-              break;
           }
 
           _onConsoleMessageCallback!(

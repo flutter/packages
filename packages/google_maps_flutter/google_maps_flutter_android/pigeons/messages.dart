@@ -156,26 +156,70 @@ class PlatformMarker {
 
 /// Pigeon equivalent of the Polygon class.
 class PlatformPolygon {
-  PlatformPolygon(this.json);
+  PlatformPolygon({
+    required this.polygonId,
+    required this.consumesTapEvents,
+    required this.fillColor,
+    required this.geodesic,
+    required this.points,
+    required this.holes,
+    required this.visible,
+    required this.strokeColor,
+    required this.strokeWidth,
+    required this.zIndex,
+  });
 
-  /// The polygon data, as JSON. This should only be set from
-  /// Polygon.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Map<String?, Object?> json;
+  final String polygonId;
+  final bool consumesTapEvents;
+  final int fillColor;
+  final bool geodesic;
+  final List<PlatformLatLng?> points;
+  final List<List<PlatformLatLng?>?> holes;
+  final bool visible;
+  final int strokeColor;
+  final int strokeWidth;
+  final int zIndex;
 }
 
 /// Pigeon equivalent of the Polyline class.
 class PlatformPolyline {
-  PlatformPolyline(this.json);
+  PlatformPolyline({
+    required this.polylineId,
+    required this.consumesTapEvents,
+    required this.color,
+    required this.geodesic,
+    required this.jointType,
+    required this.patterns,
+    required this.points,
+    required this.startCap,
+    required this.endCap,
+    required this.visible,
+    required this.width,
+    required this.zIndex,
+  });
 
-  /// The polyline data, as JSON. This should only be set from
-  /// Polyline.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Map<String?, Object?> json;
+  final String polylineId;
+  final bool consumesTapEvents;
+  final int color;
+  final bool geodesic;
+
+  /// The joint type as an integer. This must be a value corresponding to one of the values defined in the platform interface package's JointType enum. The integer values specified in this enum must match those used by the native SDK.
+  // TODO(schectman): Convert field to enum.
+  // https://github.com/flutter/flutter/issues/153718
+  final int jointType;
+
+  /// The pattern data, as JSON. Each element in this list should be set only from PatternItem.toJson, and the native code must interpret it according to the internal implementation details of that method.
+  // TODO(schectman): Convert field to structured data.
+  final List<Object?> patterns;
+  final List<PlatformLatLng?> points;
+
+  /// The start and end cap data, as JSON. These should be set only from Cap.toJson, and the native code must interpret it according to the internal implementation details of that method.
+  // TODO(schectman): Convert below two fields to structured data.
+  final Object startCap;
+  final Object endCap;
+  final bool visible;
+  final int width;
+  final int zIndex;
 }
 
 /// Pigeon equivalent of the Tile class.

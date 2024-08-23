@@ -746,17 +746,46 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformPolygon _platformPolygonFromPolygon(Polygon polygon) {
-    // This cast is not ideal, but the Java code already assumes this format.
-    // See the TODOs at the top of this file and on the 'json' field in
-    // messages.dart.
-    return PlatformPolygon(json: polygon.toJson() as Map<String, Object?>);
+    final List<PlatformLatLng?> points =
+        polygon.points.map(_platformLatLngFromLatLng).toList();
+    final List<List<PlatformLatLng?>?> holes =
+        polygon.holes.map((List<LatLng> hole) {
+      return hole.map(_platformLatLngFromLatLng).toList();
+    }).toList();
+    return PlatformPolygon(
+      polygonId: polygon.polygonId.value,
+      fillColor: polygon.fillColor.value,
+      geodesic: polygon.geodesic,
+      consumesTapEvents: polygon.consumeTapEvents,
+      points: points,
+      holes: holes,
+      strokeColor: polygon.strokeColor.value,
+      strokeWidth: polygon.strokeWidth,
+      zIndex: polygon.zIndex,
+      visible: polygon.visible,
+    );
   }
 
   static PlatformPolyline _platformPolylineFromPolyline(Polyline polyline) {
-    // This cast is not ideal, but the Java code already assumes this format.
-    // See the TODOs at the top of this file and on the 'json' field in
-    // messages.dart.
-    return PlatformPolyline(json: polyline.toJson() as Map<String, Object?>);
+    final List<PlatformLatLng?> points =
+        polyline.points.map(_platformLatLngFromLatLng).toList();
+    final List<Object?> pattern = polyline.patterns.map((PatternItem item) {
+      return item.toJson();
+    }).toList();
+    return PlatformPolyline(
+      polylineId: polyline.polylineId.value,
+      consumesTapEvents: polyline.consumeTapEvents,
+      color: polyline.color.value,
+      startCap: polyline.startCap.toJson(),
+      endCap: polyline.endCap.toJson(),
+      geodesic: polyline.geodesic,
+      visible: polyline.visible,
+      width: polyline.width,
+      zIndex: polyline.zIndex,
+      points: points,
+      jointType: polyline.jointType.value,
+      patterns: pattern,
+    );
   }
 
   static PlatformTileOverlay _platformTileOverlayFromTileOverlay(

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:web_benchmarks/client.dart';
 
@@ -12,7 +13,11 @@ class SimpleRecorder extends AppRecorder {
 
   @override
   Future<void> automate() async {
-    // Do nothing.
+    // Record whether we are in wasm mode or not. Ideally, we'd have a more
+    // first-class way to add metadata like this, but this will work for us to
+    // pass information about the environment back to the server for the
+    // purposes of our own tests.
+    profile.extraData['isWasm'] = kIsWasm ? 1 : 0;
   }
 }
 
