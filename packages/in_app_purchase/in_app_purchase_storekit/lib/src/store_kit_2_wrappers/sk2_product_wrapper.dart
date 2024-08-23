@@ -111,7 +111,7 @@ extension on SK2SubscriptionInfoMessage {
         promotionalOffers: promotionalOffers
             .whereType<SK2SubscriptionOfferMessage>()
             .map((SK2SubscriptionOfferMessage offer) =>
-            offer.convertFromPigeon())
+                offer.convertFromPigeon())
             .toList(),
         subscriptionPeriod: subscriptionPeriod.convertFromPigeon());
   }
@@ -252,7 +252,7 @@ class SK2Product {
   /// from the returned list.
   static Future<List<SK2Product>> products(List<String> identifiers) async {
     final List<SK2ProductMessage?> productsMsg =
-    await _hostApi.products(identifiers);
+        await _hostApi.products(identifiers);
     if (productsMsg.isEmpty && identifiers.isNotEmpty) {
       throw PlatformException(
         code: 'storekit_no_response',

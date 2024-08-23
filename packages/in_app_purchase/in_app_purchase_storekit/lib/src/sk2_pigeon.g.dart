@@ -18,7 +18,8 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -31,10 +32,13 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
 enum SK2ProductTypeMessage {
   /// A consumable in-app purchase.
   consumable,
+
   /// A non-consumable in-app purchase.
   nonConsumable,
+
   /// A non-renewing subscription.
   nonRenewable,
+
   /// An auto-renewable subscription.
   autoRenewable,
 }
@@ -98,7 +102,8 @@ class SK2SubscriptionOfferMessage {
       type: SK2SubscriptionOfferTypeMessage.values[result[2]! as int],
       period: SK2SubscriptionPeriodMessage.decode(result[3]! as List<Object?>),
       periodCount: result[4]! as int,
-      paymentMode: SK2SubscriptionOfferPaymentModeMessage.values[result[5]! as int],
+      paymentMode:
+          SK2SubscriptionOfferPaymentModeMessage.values[result[5]! as int],
     );
   }
 }
@@ -160,9 +165,11 @@ class SK2SubscriptionInfoMessage {
   static SK2SubscriptionInfoMessage decode(Object result) {
     result as List<Object?>;
     return SK2SubscriptionInfoMessage(
-      promotionalOffers: (result[0] as List<Object?>?)!.cast<SK2SubscriptionOfferMessage?>(),
+      promotionalOffers:
+          (result[0] as List<Object?>?)!.cast<SK2SubscriptionOfferMessage?>(),
       subscriptionGroupID: result[1]! as String,
-      subscriptionPeriod: SK2SubscriptionPeriodMessage.decode(result[2]! as List<Object?>),
+      subscriptionPeriod:
+          SK2SubscriptionPeriodMessage.decode(result[2]! as List<Object?>),
     );
   }
 }
@@ -288,15 +295,15 @@ class _InAppPurchase2APICodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return SK2PriceLocaleMessage.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return SK2ProductMessage.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return SK2SubscriptionInfoMessage.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return SK2SubscriptionOfferMessage.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return SK2SubscriptionPeriodMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -312,11 +319,14 @@ class InAppPurchase2API {
       : __pigeon_binaryMessenger = binaryMessenger;
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec = _InAppPurchase2APICodec();
+  static const MessageCodec<Object?> pigeonChannelCodec =
+      _InAppPurchase2APICodec();
 
   Future<bool> canMakePayments() async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -342,8 +352,10 @@ class InAppPurchase2API {
   }
 
   Future<List<SK2ProductMessage?>> products(List<String?> identifiers) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -364,7 +376,8 @@ class InAppPurchase2API {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (__pigeon_replyList[0] as List<Object?>?)!.cast<SK2ProductMessage?>();
+      return (__pigeon_replyList[0] as List<Object?>?)!
+          .cast<SK2ProductMessage?>();
     }
   }
 }

@@ -144,7 +144,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
       List<AppStoreProduct2Details> productDetails;
       productDetails = products
           .map((SK2Product productWrapper) =>
-          AppStoreProduct2Details.fromSK2Product(productWrapper))
+              AppStoreProduct2Details.fromSK2Product(productWrapper))
           .toList();
       final ProductDetailsResponse response = ProductDetailsResponse(
           productDetails: productDetails,

@@ -305,7 +305,8 @@ class InAppPurchase2APICodec: FlutterStandardMessageCodec {
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol InAppPurchase2API {
   func canMakePayments() throws -> Bool
-  func products(identifiers: [String], completion: @escaping (Result<[SK2ProductMessage], Error>) -> Void)
+  func products(
+    identifiers: [String], completion: @escaping (Result<[SK2ProductMessage], Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -314,7 +315,9 @@ class InAppPurchase2APISetup {
   static var codec: FlutterStandardMessageCodec { InAppPurchase2APICodec.shared }
   /// Sets up an instance of `InAppPurchase2API` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: InAppPurchase2API?) {
-    let canMakePaymentsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments", binaryMessenger: binaryMessenger, codec: codec)
+    let canMakePaymentsChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       canMakePaymentsChannel.setMessageHandler { _, reply in
         do {
@@ -327,7 +330,9 @@ class InAppPurchase2APISetup {
     } else {
       canMakePaymentsChannel.setMessageHandler(nil)
     }
-    let productsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products", binaryMessenger: binaryMessenger, codec: codec)
+    let productsChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       productsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]

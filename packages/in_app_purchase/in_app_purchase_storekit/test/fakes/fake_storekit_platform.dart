@@ -6,8 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/src/messages.g.dart';
+import 'package:in_app_purchase_storekit/src/sk2_pigeon.g.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
+import '../sk2_test_api.g.dart';
 import '../store_kit_wrappers/sk_test_stub_objects.dart';
 import '../test_api.g.dart';
 
@@ -273,4 +275,18 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   void stopObservingPaymentQueue() {
     queueIsActive = false;
   }
+}
+
+class FakeStoreKit2Platform implements TestInAppPurchase2Api {
+  @override
+  bool canMakePayments() {
+    return true;
+  }
+
+  @override
+  Future<List<SK2ProductMessage?>> products(List<String?> identifiers) {
+    // TODO: implement products
+    throw UnimplementedError();
+  }
+
 }

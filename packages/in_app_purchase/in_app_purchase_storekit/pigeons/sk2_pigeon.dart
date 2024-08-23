@@ -1,4 +1,3 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -86,13 +85,13 @@ class SK2SubscriptionInfoMessage {
 class SK2ProductMessage {
   const SK2ProductMessage(
       {required this.id,
-        required this.displayName,
-        required this.displayPrice,
-        required this.description,
-        required this.price,
-        required this.type,
-        this.subscription,
-        required this.priceLocale});
+      required this.displayName,
+      required this.displayPrice,
+      required this.description,
+      required this.price,
+      required this.type,
+      this.subscription,
+      required this.priceLocale});
 
   /// The unique product identifier.
   final String id;
