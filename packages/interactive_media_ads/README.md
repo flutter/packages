@@ -15,9 +15,9 @@ a separate video player positioned on top of the app's content video player.
 
 **NOTE:**
 * The initial release for this package supports linear pre-roll video ads on iOS and Android
-* platforms.
+  platforms.
 * Companion ads, Background Audio ads and Google Dynamic Ad Insertion methods are currently not
-* supported.
+  supported.
 
 ## IMA client-side overview
 
@@ -271,6 +271,10 @@ void dispose() {
 
 That's it! You're now requesting and displaying ads with the IMA SDK. To learn about additional SDK
 features, see the [API reference](https://pub.dev/documentation/interactive_media_ads/latest/).
+
+## Contributing
+
+For information on contributing to this plugin, see [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 [1]: https://developers.google.com/interactive-media-ads
 [2]: https://www.iab.com/guidelines/vast/

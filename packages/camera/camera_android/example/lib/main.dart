@@ -699,7 +699,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           showInSnackBar('Unknown permission error.');
         default:
           _showCameraException(e);
-          break;
       }
     }
 

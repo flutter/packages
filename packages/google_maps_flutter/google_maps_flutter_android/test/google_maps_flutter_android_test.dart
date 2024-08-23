@@ -481,12 +481,41 @@ void main() {
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.polygonId.value);
+    void expectPolygon(PlatformPolygon actual, Polygon expected) {
+      final List<Object?> encoded = actual.encode() as List<Object?>;
+      expect(encoded.sublist(0, 4), <Object>[
+        expected.polygonId.value,
+        expected.consumeTapEvents,
+        expected.fillColor.value,
+        expected.geodesic,
+      ]);
+      expect(actual.points.length, expected.points.length);
+      for (final (int i, PlatformLatLng? point) in actual.points.indexed) {
+        expect(point?.latitude, actual.points[i]?.latitude);
+        expect(point?.longitude, actual.points[i]?.longitude);
+      }
+      expect(actual.holes.length, expected.holes.length);
+      for (final (int i, List<PlatformLatLng?>? hole) in actual.holes.indexed) {
+        final List<LatLng> expectedHole = expected.holes[i];
+        for (final (int j, PlatformLatLng? point) in hole!.indexed) {
+          expect(point?.latitude, expectedHole[j].latitude);
+          expect(point?.longitude, expectedHole[j].longitude);
+        }
+      }
+      expect(encoded.sublist(6), <Object>[
+        expected.visible,
+        expected.strokeColor.value,
+        expected.strokeWidth,
+        expected.zIndex,
+      ]);
+    }
+
     // Object two should be changed.
     expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    expectPolygon(toChange.first!, object2new);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    expectPolygon(toAdd.first!, object3);
   });
 
   test('updatePolylines passes expected arguments', () async {
@@ -510,15 +539,40 @@ void main() {
     final List<PlatformPolyline?> toChange =
         verification.captured[1] as List<PlatformPolyline?>;
     final List<String?> toRemove = verification.captured[2] as List<String?>;
+    void expectPolyline(PlatformPolyline actual, Polyline expected) {
+      final List<Object?> encoded = actual.encode() as List<Object?>;
+      expect(encoded.sublist(0, 5), <Object?>[
+        expected.polylineId.value,
+        expected.consumeTapEvents,
+        expected.color.value,
+        expected.geodesic,
+        expected.jointType.value,
+      ]);
+      expect(encoded.sublist(9), <Object?>[
+        expected.visible,
+        expected.width,
+        expected.zIndex,
+      ]);
+      expect(actual.points.length, expected.points.length);
+      for (final (int i, PlatformLatLng? point) in actual.points.indexed) {
+        expect(point?.latitude, actual.points[i]?.latitude);
+        expect(point?.longitude, actual.points[i]?.longitude);
+      }
+      expect(actual.patterns.length, expected.patterns.length);
+      for (final (int i, Object? pattern) in actual.patterns.indexed) {
+        expect(pattern, expected.patterns[i].toJson());
+      }
+    }
+
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.polylineId.value);
     // Object two should be changed.
     expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    expectPolyline(toChange.first!, object2new);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    expectPolyline(toAdd.first!, object3);
   });
 
   test('updateTileOverlays passes expected arguments', () async {
