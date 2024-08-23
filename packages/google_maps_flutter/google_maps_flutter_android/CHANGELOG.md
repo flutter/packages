@@ -1,10 +1,10 @@
+## 2.14.4
+
+* Converts 'PlatformTileOverlay' to pigeon.
+
 ## 2.14.3
 
 * Converts `PlatformPolygon` and `PlatformPolyline` to pigeon.
-
-## 2.14.2
-
-* Converts 'PlatformTileOverlay' to pigeon.
 
 ## 2.14.2
 

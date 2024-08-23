@@ -790,9 +790,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
 
   static PlatformTileOverlay _platformTileOverlayFromTileOverlay(
       TileOverlay tileOverlay) {
-    // This cast is not ideal, but the Java code already assumes this format.
-    // See the TODOs at the top of this file and on the 'json' field in
-    // messages.dart.
     return PlatformTileOverlay(
       tileOverlayId: tileOverlay.tileOverlayId.value,
       fadeIn: tileOverlay.fadeIn,
