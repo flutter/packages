@@ -1,6 +1,10 @@
-## 14.2.7
+## 14.2.8
 
 - Fixes an issue where redirects did not work when browser history was changed.
+
+## 14.2.7
+
+- Fixes issue so that the parseRouteInformationWithContext can handle non-http Uris.
 
 ## 14.2.6
 

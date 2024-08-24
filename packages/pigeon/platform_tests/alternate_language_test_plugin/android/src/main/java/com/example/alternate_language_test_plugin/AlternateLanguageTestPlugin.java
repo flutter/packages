@@ -115,8 +115,18 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public @NonNull Map<String, Object> echoMap(@NonNull Map<String, Object> aMap) {
-    return aMap;
+  public @NonNull Map<Object, Object> echoMap(@NonNull Map<Object, Object> map) {
+    return map;
+  }
+
+  @Override
+  public @NonNull Map<String, String> echoStringMap(@NonNull Map<String, String> stringMap) {
+    return stringMap;
+  }
+
+  @Override
+  public @NonNull Map<Long, Long> echoIntMap(@NonNull Map<Long, Long> intMap) {
+    return intMap;
   }
 
   @Override
@@ -221,8 +231,19 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public @Nullable Map<String, Object> echoNullableMap(@Nullable Map<String, Object> aNullableMap) {
-    return aNullableMap;
+  public @Nullable Map<Object, Object> echoNullableMap(@Nullable Map<Object, Object> map) {
+    return map;
+  }
+
+  @Override
+  public @Nullable Map<String, String> echoNullableStringMap(
+      @Nullable Map<String, String> stringMap) {
+    return stringMap;
+  }
+
+  @Override
+  public @Nullable Map<Long, Long> echoNullableIntMap(@Nullable Map<Long, Long> intMap) {
+    return intMap;
   }
 
   @Override
@@ -320,8 +341,20 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void echoAsyncMap(
-      @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result) {
-    result.success(aMap);
+      @NonNull Map<Object, Object> map, @NonNull Result<Map<Object, Object>> result) {
+    result.success(map);
+  }
+
+  @Override
+  public void echoAsyncStringMap(
+      @NonNull Map<String, String> stringMap, @NonNull Result<Map<String, String>> result) {
+    result.success(stringMap);
+  }
+
+  @Override
+  public void echoAsyncIntMap(
+      @NonNull Map<Long, Long> intMap, @NonNull Result<Map<Long, Long>> result) {
+    result.success(intMap);
   }
 
   @Override
@@ -378,8 +411,21 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void echoAsyncNullableMap(
-      @Nullable Map<String, Object> aMap, @NonNull NullableResult<Map<String, Object>> result) {
-    result.success(aMap);
+      @Nullable Map<Object, Object> map, @NonNull NullableResult<Map<Object, Object>> result) {
+    result.success(map);
+  }
+
+  @Override
+  public void echoAsyncNullableStringMap(
+      @Nullable Map<String, String> stringMap,
+      @NonNull NullableResult<Map<String, String>> result) {
+    result.success(stringMap);
+  }
+
+  @Override
+  public void echoAsyncNullableIntMap(
+      @Nullable Map<Long, Long> intMap, @NonNull NullableResult<Map<Long, Long>> result) {
+    result.success(intMap);
   }
 
   @Override
@@ -494,9 +540,23 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void callFlutterEchoMap(
-      @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result) {
+      @NonNull Map<Object, Object> map, @NonNull Result<Map<Object, Object>> result) {
     assert flutterApi != null;
-    flutterApi.echoMap(aMap, result);
+    flutterApi.echoMap(map, result);
+  }
+
+  @Override
+  public void callFlutterEchoStringMap(
+      @NonNull Map<String, String> stringMap, @NonNull Result<Map<String, String>> result) {
+    assert flutterApi != null;
+    flutterApi.echoStringMap(stringMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoIntMap(
+      @NonNull Map<Long, Long> intMap, @NonNull Result<Map<Long, Long>> result) {
+    assert flutterApi != null;
+    flutterApi.echoIntMap(intMap, result);
   }
 
   @Override
@@ -556,9 +616,24 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void callFlutterEchoNullableMap(
-      @Nullable Map<String, Object> aMap, @NonNull NullableResult<Map<String, Object>> result) {
+      @Nullable Map<Object, Object> map, @NonNull NullableResult<Map<Object, Object>> result) {
     assert flutterApi != null;
-    flutterApi.echoNullableMap(aMap, result);
+    flutterApi.echoNullableMap(map, result);
+  }
+
+  @Override
+  public void callFlutterEchoNullableStringMap(
+      @Nullable Map<String, String> stringMap,
+      @NonNull NullableResult<Map<String, String>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableStringMap(stringMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoNullableIntMap(
+      @Nullable Map<Long, Long> intMap, @NonNull NullableResult<Map<Long, Long>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableIntMap(intMap, result);
   }
 
   @Override

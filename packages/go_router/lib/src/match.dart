@@ -944,7 +944,7 @@ class _RouteMatchListDecoder
           ?.decode(encodedExtra[RouteMatchListCodec._encodedKey]);
     }
     RouteMatchList matchList =
-        configuration.findMatch(rootLocation, extra: extra);
+        configuration.findMatch(Uri.parse(rootLocation), extra: extra);
 
     final List<Object?>? imperativeMatches =
         input[RouteMatchListCodec._imperativeMatchesKey] as List<Object?>?;
