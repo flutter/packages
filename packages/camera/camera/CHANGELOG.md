@@ -1,3 +1,7 @@
+## 0.11.0+3
+
+* Disposing Camera Example app's focus mode row animation controller.
+
 ## 0.11.0+2
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
