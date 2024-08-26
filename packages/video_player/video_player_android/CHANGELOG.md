@@ -1,3 +1,19 @@
+## 2.7.2
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+* Re-adds Impeller support.
+
+
+## 2.7.1
+
+* Revert Impeller support.
+
+
+## 2.7.0
+
+* Re-adds [support for Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
+
 ## 2.6.0
 
 * Adds RTSP support.
