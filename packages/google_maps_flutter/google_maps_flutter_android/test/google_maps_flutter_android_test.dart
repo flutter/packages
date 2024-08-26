@@ -115,7 +115,10 @@ void main() {
     final VerificationResult verification = verify(api.moveCamera(captureAny));
     final PlatformCameraUpdate passedUpdate =
         verification.captured[0] as PlatformCameraUpdate;
-    expect(passedUpdate.json, update.toJson());
+    expect(passedUpdate.scrollBy == null, false);
+    update as ScrollBy;
+    expect(passedUpdate.scrollBy!.dx, update.dx);
+    expect(passedUpdate.scrollBy!.dy, update.dy);
   });
 
   test('animateCamera calls through', () async {
@@ -130,7 +133,10 @@ void main() {
         verify(api.animateCamera(captureAny));
     final PlatformCameraUpdate passedUpdate =
         verification.captured[0] as PlatformCameraUpdate;
-    expect(passedUpdate.json, update.toJson());
+    expect(passedUpdate.scrollBy == null, false);
+    update as ScrollBy;
+    expect(passedUpdate.scrollBy!.dx, update.dx);
+    expect(passedUpdate.scrollBy!.dy, update.dy);
   });
 
   test('getZoomLevel passes values correctly', () async {
