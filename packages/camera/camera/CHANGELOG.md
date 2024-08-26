@@ -1,3 +1,7 @@
+## 0.11.0+3
+
+* Refactor Camera Example app's setExposureOffset to be possibly more robust.
+
 ## 0.11.0+2
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
