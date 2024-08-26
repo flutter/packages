@@ -2,6 +2,8 @@
 
 * Updates minimum supported SDK version to Flutter 3.24.
 
+* Re-adds Impeller support.
+
 
 ## 2.7.1
 
