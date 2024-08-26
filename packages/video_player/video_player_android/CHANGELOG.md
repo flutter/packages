@@ -1,6 +1,11 @@
-## 2.7.1
+## 2.7.2
 
 * Updates minimum supported SDK version to Flutter 3.24.
+
+
+## 2.7.1
+
+* Revert Impeller support.
 
 
 ## 2.7.0
