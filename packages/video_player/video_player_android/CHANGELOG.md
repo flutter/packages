@@ -1,3 +1,8 @@
+## 2.7.1
+
+* Updates minimum supported SDK version to Flutter 3.24.
+
+
 ## 2.7.0
 
 * Re-adds [support for Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
