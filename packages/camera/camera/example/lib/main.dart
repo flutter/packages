@@ -949,11 +949,13 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       return;
     }
 
-    setState(() {
-      _currentExposureOffset = offset;
-    });
     try {
-      offset = await controller!.setExposureOffset(offset);
+      final appliedOffset = await controller!.setExposureOffset(offset);
+      if (appliedOffset != _currentExposureOffset) {
+        setState(() {
+          _currentExposureOffset = appliedOffset;
+        });
+      }
     } on CameraException catch (e) {
       _showCameraException(e);
       rethrow;
