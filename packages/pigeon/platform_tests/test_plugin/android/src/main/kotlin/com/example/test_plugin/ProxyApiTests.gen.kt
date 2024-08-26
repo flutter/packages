@@ -282,7 +282,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi(val binaryMessenger: BinaryM
         if (instanceManager != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val identifierArg = args[0] as Long
             val wrapped: List<Any?> =
                 try {
                   instanceManager.remove<Any?>(identifierArg)
@@ -486,7 +486,7 @@ private open class ProxyApiTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Int?)?.let { ProxyApiTestEnum.ofRaw(it) }
+        return (readValue(buffer) as Long?)?.let { ProxyApiTestEnum.ofRaw(it.toInt()) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -1021,10 +1021,9 @@ abstract class PigeonApiProxyApiTestClass(
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val pigeon_identifierArg = args[0] as Long
             val aBoolArg = args[1] as Boolean
-            val anIntArg = args[2].let { num -> if (num is Int) num.toLong() else num as Long }
+            val anIntArg = args[2] as Long
             val aDoubleArg = args[3] as Double
             val aStringArg = args[4] as String
             val aUint8ListArg = args[5] as ByteArray
@@ -1033,8 +1032,7 @@ abstract class PigeonApiProxyApiTestClass(
             val anEnumArg = args[8] as ProxyApiTestEnum
             val aProxyApiArg = args[9] as com.example.test_plugin.ProxyApiSuperClass
             val aNullableBoolArg = args[10] as Boolean?
-            val aNullableIntArg =
-                args[11].let { num -> if (num is Int) num.toLong() else num as Long? }
+            val aNullableIntArg = args[11] as Long?
             val aNullableDoubleArg = args[12] as Double?
             val aNullableStringArg = args[13] as String?
             val aNullableUint8ListArg = args[14] as ByteArray?
@@ -1043,7 +1041,7 @@ abstract class PigeonApiProxyApiTestClass(
             val aNullableEnumArg = args[17] as ProxyApiTestEnum?
             val aNullableProxyApiArg = args[18] as com.example.test_plugin.ProxyApiSuperClass?
             val boolParamArg = args[19] as Boolean
-            val intParamArg = args[20].let { num -> if (num is Int) num.toLong() else num as Long }
+            val intParamArg = args[20] as Long
             val doubleParamArg = args[21] as Double
             val stringParamArg = args[22] as String
             val aUint8ListParamArg = args[23] as ByteArray
@@ -1052,8 +1050,7 @@ abstract class PigeonApiProxyApiTestClass(
             val enumParamArg = args[26] as ProxyApiTestEnum
             val proxyApiParamArg = args[27] as com.example.test_plugin.ProxyApiSuperClass
             val nullableBoolParamArg = args[28] as Boolean?
-            val nullableIntParamArg =
-                args[29].let { num -> if (num is Int) num.toLong() else num as Long? }
+            val nullableIntParamArg = args[29] as Long?
             val nullableDoubleParamArg = args[30] as Double?
             val nullableStringParamArg = args[31] as String?
             val nullableUint8ListParamArg = args[32] as ByteArray?
@@ -1122,8 +1119,7 @@ abstract class PigeonApiProxyApiTestClass(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
-            val pigeon_identifierArg =
-                args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val pigeon_identifierArg = args[1] as Long
             val wrapped: List<Any?> =
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
@@ -1147,8 +1143,7 @@ abstract class PigeonApiProxyApiTestClass(
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val pigeon_identifierArg = args[0] as Long
             val wrapped: List<Any?> =
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
@@ -1263,7 +1258,7 @@ abstract class PigeonApiProxyApiTestClass(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
-            val anIntArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val anIntArg = args[1] as Long
             val wrapped: List<Any?> =
                 try {
                   listOf(api.echoInt(pigeon_instanceArg, anIntArg))
@@ -1539,8 +1534,7 @@ abstract class PigeonApiProxyApiTestClass(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
-            val aNullableIntArg =
-                args[1].let { num -> if (num is Int) num.toLong() else num as Long? }
+            val aNullableIntArg = args[1] as Long?
             val wrapped: List<Any?> =
                 try {
                   listOf(api.echoNullableInt(pigeon_instanceArg, aNullableIntArg))
@@ -1793,7 +1787,7 @@ abstract class PigeonApiProxyApiTestClass(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
-            val anIntArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val anIntArg = args[1] as Long
             api.echoAsyncInt(pigeon_instanceArg, anIntArg) { result: Result<Long> ->
               val error = result.exceptionOrNull()
               if (error != null) {
@@ -2089,7 +2083,7 @@ abstract class PigeonApiProxyApiTestClass(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
-            val anIntArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long? }
+            val anIntArg = args[1] as Long?
             api.echoAsyncNullableInt(pigeon_instanceArg, anIntArg) { result: Result<Long?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
@@ -2476,7 +2470,7 @@ abstract class PigeonApiProxyApiTestClass(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
-            val anIntArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val anIntArg = args[1] as Long
             api.callFlutterEchoInt(pigeon_instanceArg, anIntArg) { result: Result<Long> ->
               val error = result.exceptionOrNull()
               if (error != null) {
@@ -2758,7 +2752,7 @@ abstract class PigeonApiProxyApiTestClass(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
-            val anIntArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long? }
+            val anIntArg = args[1] as Long?
             api.callFlutterEchoNullableInt(pigeon_instanceArg, anIntArg) { result: Result<Long?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
@@ -3237,7 +3231,7 @@ abstract class PigeonApiProxyApiTestClass(
                       "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
-          val output = it[0].let { num -> if (num is Int) num.toLong() else num as Long }
+          val output = it[0] as Long
           callback(Result.success(output))
         }
       } else {
@@ -3662,7 +3656,7 @@ abstract class PigeonApiProxyApiTestClass(
               Result.failure(
                   ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
-          val output = it[0].let { num -> if (num is Int) num.toLong() else num as Long? }
+          val output = it[0] as Long?
           callback(Result.success(output))
         }
       } else {
@@ -4007,8 +4001,7 @@ abstract class PigeonApiProxyApiSuperClass(
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_identifierArg =
-                args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+            val pigeon_identifierArg = args[0] as Long
             val wrapped: List<Any?> =
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
@@ -4182,8 +4175,7 @@ abstract class PigeonApiClassWithApiRequirement(
           if (api != null) {
             channel.setMessageHandler { message, reply ->
               val args = message as List<Any?>
-              val pigeon_identifierArg =
-                  args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+              val pigeon_identifierArg = args[0] as Long
               val wrapped: List<Any?> =
                   try {
                     api.pigeonRegistrar.instanceManager.addDartCreatedInstance(

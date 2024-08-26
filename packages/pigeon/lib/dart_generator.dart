@@ -630,7 +630,8 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                         ],
                         returnType: const TypeDeclaration.voidDeclaration(),
                         channelName: makeRemoveStrongReferenceChannelName(
-                            dartPackageName),
+                          dartPackageName,
+                        ),
                         isMockHandler: false,
                         isAsynchronous: false,
                         nullHandlerExpression:
