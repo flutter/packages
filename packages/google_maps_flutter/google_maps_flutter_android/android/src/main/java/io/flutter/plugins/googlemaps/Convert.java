@@ -340,37 +340,43 @@ class Convert {
     return builder.build();
   }
 
-  static CameraUpdate toCameraUpdate(Object o, float density) {
-    final List<?> data = toList(o);
-    switch (toString(data.get(0))) {
-      case "newCameraPosition":
-        return CameraUpdateFactory.newCameraPosition(toCameraPosition(data.get(1)));
-      case "newLatLng":
-        return CameraUpdateFactory.newLatLng(toLatLng(data.get(1)));
-      case "newLatLngBounds":
-        return CameraUpdateFactory.newLatLngBounds(
-            toLatLngBounds(data.get(1)), toPixels(data.get(2), density));
-      case "newLatLngZoom":
-        return CameraUpdateFactory.newLatLngZoom(toLatLng(data.get(1)), toFloat(data.get(2)));
-      case "scrollBy":
-        return CameraUpdateFactory.scrollBy( //
-            toFractionalPixels(data.get(1), density), //
-            toFractionalPixels(data.get(2), density));
-      case "zoomBy":
-        if (data.size() == 2) {
-          return CameraUpdateFactory.zoomBy(toFloat(data.get(1)));
-        } else {
-          return CameraUpdateFactory.zoomBy(toFloat(data.get(1)), toPoint(data.get(2), density));
-        }
-      case "zoomIn":
-        return CameraUpdateFactory.zoomIn();
-      case "zoomOut":
-        return CameraUpdateFactory.zoomOut();
-      case "zoomTo":
-        return CameraUpdateFactory.zoomTo(toFloat(data.get(1)));
-      default:
-        throw new IllegalArgumentException("Cannot interpret " + o + " as CameraUpdate");
+  static CameraUpdate cameraUpdateFromPigeon(Messages.PlatformCameraUpdate update, float density) {
+    Messages.PlatformNewCameraPosition newCameraPosition = update.getNewCameraPosition();
+    if (newCameraPosition != null) {
+      return CameraUpdateFactory.newCameraPosition(cameraPositionFromPigeon(newCameraPosition.getCameraPosition()));
     }
+    Messages.PlatformNewLatLng newLatLng = update.getNewLatLng();
+    if (newLatLng != null) {
+      return CameraUpdateFactory.newLatLng(latLngFromPigeon(newLatLng.getLatLng()));
+    }
+    Messages.PlatformNewLatLngZoom newLatLngZoom = update.getNewLatLngZoom();
+    if (newLatLngZoom != null) {
+      return CameraUpdateFactory.newLatLngZoom(latLngFromPigeon(newLatLngZoom.getLatLng()), newLatLngZoom.getZoom().floatValue());
+    }
+    Messages.PlatformNewLatLngBounds newLatLngBounds = update.getNewLatLngBounds();
+    if (newLatLngBounds != null) {
+      return CameraUpdateFactory.newLatLngBounds(latLngBoundsFromPigeon(newLatLngBounds.getBounds()), (int) (newLatLngBounds.getPadding() * density));
+    }
+    Messages.PlatformScrollBy scrollBy = update.getScrollBy();
+    if (scrollBy != null) {
+      return CameraUpdateFactory.scrollBy(scrollBy.getDx().floatValue() * density, scrollBy.getDy().floatValue() * density);
+    }
+    Messages.PlatformZoomBy zoomBy = update.getZoomBy();
+    if (zoomBy != null) {
+      final Point focus = pointFromPigeon(zoomBy.getFocus(), density);
+      return (focus != null) ? CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue(), focus) : CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue());
+    }
+    Messages.PlatformZoomTo zoomTo = update.getZoomTo();
+    if (zoomTo != null) {
+      return CameraUpdateFactory.zoomTo(zoomTo.getZoom().floatValue());
+    }
+    if (update.getZoomIn()) {
+      return CameraUpdateFactory.zoomIn();
+    }
+    if (update.getZoomOut()) {
+      return CameraUpdateFactory.zoomOut();
+    }
+    throw new IllegalArgumentException("PlatformCameraUpdate must have one non-null member.");
   }
 
   private static double toDouble(Object o) {
@@ -492,6 +498,14 @@ class Convert {
 
   static Point pointFromPigeon(Messages.PlatformPoint point) {
     return new Point(point.getX().intValue(), point.getY().intValue());
+  }
+
+  @Nullable
+  static Point pointFromPigeon(@Nullable Messages.PlatformOffset point, float density) {
+    if (point == null) {
+      return null;
+    }
+    return new Point((int) (point.getDx() * density), (int) (point.getDy() * density));
   }
 
   static Messages.PlatformPoint pointToPigeon(Point point) {

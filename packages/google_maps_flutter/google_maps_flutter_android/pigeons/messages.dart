@@ -47,8 +47,8 @@ class PlatformCameraUpdate {
     this.newLatLngBounds,
     this.scrollBy,
     this.zoomBy,
-    this.zoomIn,
-    this.zoomOut,
+    this.zoomIn = false,
+    this.zoomOut = false,
     this.zoomTo,
   });
 
@@ -58,8 +58,8 @@ class PlatformCameraUpdate {
   final PlatformNewLatLngZoom? newLatLngZoom;
   final PlatformScrollBy? scrollBy;
   final PlatformZoomBy? zoomBy;
-  final PlatformZoomIn? zoomIn;
-  final PlatformZoomOut? zoomOut;
+  final bool zoomIn;
+  final bool zoomOut;
   final PlatformZoomTo? zoomTo;
 }
 

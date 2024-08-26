@@ -814,9 +814,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     } else if (update is ZoomBy) {
       return PlatformCameraUpdate(zoomBy: PlatformZoomBy(amount: update.amount, focus: update.focus == null ? null : _platformOffsetFromOffset(update.focus!)));
     } else if (update is ZoomIn) {
-      return PlatformCameraUpdate(zoomIn: PlatformZoomIn());
+      return PlatformCameraUpdate(zoomIn: true);
     } else if (update is ZoomOut) {
-      return PlatformCameraUpdate(zoomOut: PlatformZoomOut());
+      return PlatformCameraUpdate(zoomOut: true);
     } else if (update is ScrollBy) {
       return PlatformCameraUpdate(scrollBy: PlatformScrollBy(dx: update.dx, dy: update.dy));
     }
