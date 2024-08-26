@@ -104,6 +104,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     WidgetsBinding.instance.removeObserver(this);
     _flashModeControlRowAnimationController.dispose();
     _exposureModeControlRowAnimationController.dispose();
+    _focusModeControlRowAnimationController.dispose();
     super.dispose();
   }
 
