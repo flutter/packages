@@ -343,7 +343,8 @@ class Convert {
   static CameraUpdate cameraUpdateFromPigeon(Messages.PlatformCameraUpdate update, float density) {
     Messages.PlatformNewCameraPosition newCameraPosition = update.getNewCameraPosition();
     if (newCameraPosition != null) {
-      return CameraUpdateFactory.newCameraPosition(cameraPositionFromPigeon(newCameraPosition.getCameraPosition()));
+      return CameraUpdateFactory.newCameraPosition(
+          cameraPositionFromPigeon(newCameraPosition.getCameraPosition()));
     }
     Messages.PlatformNewLatLng newLatLng = update.getNewLatLng();
     if (newLatLng != null) {
@@ -351,20 +352,26 @@ class Convert {
     }
     Messages.PlatformNewLatLngZoom newLatLngZoom = update.getNewLatLngZoom();
     if (newLatLngZoom != null) {
-      return CameraUpdateFactory.newLatLngZoom(latLngFromPigeon(newLatLngZoom.getLatLng()), newLatLngZoom.getZoom().floatValue());
+      return CameraUpdateFactory.newLatLngZoom(
+          latLngFromPigeon(newLatLngZoom.getLatLng()), newLatLngZoom.getZoom().floatValue());
     }
     Messages.PlatformNewLatLngBounds newLatLngBounds = update.getNewLatLngBounds();
     if (newLatLngBounds != null) {
-      return CameraUpdateFactory.newLatLngBounds(latLngBoundsFromPigeon(newLatLngBounds.getBounds()), (int) (newLatLngBounds.getPadding() * density));
+      return CameraUpdateFactory.newLatLngBounds(
+          latLngBoundsFromPigeon(newLatLngBounds.getBounds()),
+          (int) (newLatLngBounds.getPadding() * density));
     }
     Messages.PlatformScrollBy scrollBy = update.getScrollBy();
     if (scrollBy != null) {
-      return CameraUpdateFactory.scrollBy(scrollBy.getDx().floatValue() * density, scrollBy.getDy().floatValue() * density);
+      return CameraUpdateFactory.scrollBy(
+          scrollBy.getDx().floatValue() * density, scrollBy.getDy().floatValue() * density);
     }
     Messages.PlatformZoomBy zoomBy = update.getZoomBy();
     if (zoomBy != null) {
       final Point focus = pointFromPigeon(zoomBy.getFocus(), density);
-      return (focus != null) ? CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue(), focus) : CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue());
+      return (focus != null)
+          ? CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue(), focus)
+          : CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue());
     }
     Messages.PlatformZoomTo zoomTo = update.getZoomTo();
     if (zoomTo != null) {
