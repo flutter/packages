@@ -1,3 +1,11 @@
+## 2.7.1
+
+* Revert Impeller support.
+
+## 2.7.0
+
+* Re-adds [support for Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
+
 ## 2.6.0
 
 * Adds RTSP support.

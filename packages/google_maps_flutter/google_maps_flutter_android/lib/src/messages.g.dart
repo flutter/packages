@@ -535,24 +535,46 @@ class PlatformTile {
 /// Pigeon equivalent of the TileOverlay class.
 class PlatformTileOverlay {
   PlatformTileOverlay({
-    required this.json,
+    required this.tileOverlayId,
+    required this.fadeIn,
+    required this.transparency,
+    required this.zIndex,
+    required this.visible,
+    required this.tileSize,
   });
 
-  /// The tile overlay data, as JSON. This should only be set from
-  /// TileOverlay.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  Map<String?, Object?> json;
+  String tileOverlayId;
+
+  bool fadeIn;
+
+  double transparency;
+
+  int zIndex;
+
+  bool visible;
+
+  int tileSize;
 
   Object encode() {
     return <Object?>[
-      json,
+      tileOverlayId,
+      fadeIn,
+      transparency,
+      zIndex,
+      visible,
+      tileSize,
     ];
   }
 
   static PlatformTileOverlay decode(Object result) {
     result as List<Object?>;
     return PlatformTileOverlay(
-      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
+      tileOverlayId: result[0]! as String,
+      fadeIn: result[1]! as bool,
+      transparency: result[2]! as double,
+      zIndex: result[3]! as int,
+      visible: result[4]! as bool,
+      tileSize: result[5]! as int,
     );
   }
 }

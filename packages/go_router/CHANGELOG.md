@@ -2,6 +2,11 @@
 
 - Adds fragment support to GoRouter, enabling direct specification and automatic handling of fragments in routes.
 
+## 14.2.7
+
+- Fixes issue so that the parseRouteInformationWithContext can handle non-http Uris.
+
+
 ## 14.2.6
 
 - Fixes replace and pushReplacement uri when only one route match in current route match list.

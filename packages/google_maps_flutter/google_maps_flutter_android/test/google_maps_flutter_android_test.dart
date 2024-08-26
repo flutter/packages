@@ -601,15 +601,26 @@ void main() {
     final List<PlatformTileOverlay?> toChange =
         verification.captured[1] as List<PlatformTileOverlay?>;
     final List<String?> toRemove = verification.captured[2] as List<String?>;
+    void expectTileOverlay(PlatformTileOverlay? actual, TileOverlay expected) {
+      expect(actual?.encode(), <Object?>[
+        expected.tileOverlayId.value,
+        expected.fadeIn,
+        expected.transparency,
+        expected.zIndex,
+        expected.visible,
+        expected.tileSize,
+      ]);
+    }
+
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.tileOverlayId.value);
     // Object two should be changed.
     expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    expectTileOverlay(toChange.first, object2new);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    expectTileOverlay(toAdd.first, object3);
   });
 
   test('markers send drag event to correct streams', () async {
