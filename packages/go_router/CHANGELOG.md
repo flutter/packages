@@ -2,6 +2,10 @@
 
 - Adds `popUntil` method to pop multiple routes from a predicate.
 
+## 14.2.7
+
+- Fixes issue so that the parseRouteInformationWithContext can handle non-http Uris.
+
 ## 14.2.6
 
 - Fixes replace and pushReplacement uri when only one route match in current route match list.

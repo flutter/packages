@@ -31,7 +31,10 @@ struct _CoreTestsPigeonTestAllTypes {
   FlValue* int_list;
   FlValue* double_list;
   FlValue* bool_list;
+  FlValue* list_list;
   FlValue* map;
+  FlValue* string_map;
+  FlValue* int_map;
 };
 
 G_DEFINE_TYPE(CoreTestsPigeonTestAllTypes, core_tests_pigeon_test_all_types,
@@ -46,7 +49,10 @@ static void core_tests_pigeon_test_all_types_dispose(GObject* object) {
   g_clear_pointer(&self->int_list, fl_value_unref);
   g_clear_pointer(&self->double_list, fl_value_unref);
   g_clear_pointer(&self->bool_list, fl_value_unref);
+  g_clear_pointer(&self->list_list, fl_value_unref);
   g_clear_pointer(&self->map, fl_value_unref);
+  g_clear_pointer(&self->string_map, fl_value_unref);
+  g_clear_pointer(&self->int_map, fl_value_unref);
   G_OBJECT_CLASS(core_tests_pigeon_test_all_types_parent_class)
       ->dispose(object);
 }
@@ -68,7 +74,8 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
     CoreTestsPigeonTestAnEnum an_enum,
     CoreTestsPigeonTestAnotherEnum another_enum, const gchar* a_string,
     FlValue* an_object, FlValue* list, FlValue* string_list, FlValue* int_list,
-    FlValue* double_list, FlValue* bool_list, FlValue* map) {
+    FlValue* double_list, FlValue* bool_list, FlValue* list_list, FlValue* map,
+    FlValue* string_map, FlValue* int_map) {
   CoreTestsPigeonTestAllTypes* self = CORE_TESTS_PIGEON_TEST_ALL_TYPES(
       g_object_new(core_tests_pigeon_test_all_types_get_type(), nullptr));
   self->a_bool = a_bool;
@@ -99,7 +106,10 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
   self->int_list = fl_value_ref(int_list);
   self->double_list = fl_value_ref(double_list);
   self->bool_list = fl_value_ref(bool_list);
+  self->list_list = fl_value_ref(list_list);
   self->map = fl_value_ref(map);
+  self->string_map = fl_value_ref(string_map);
+  self->int_map = fl_value_ref(int_map);
   return self;
 }
 
@@ -212,10 +222,28 @@ FlValue* core_tests_pigeon_test_all_types_get_bool_list(
   return self->bool_list;
 }
 
+FlValue* core_tests_pigeon_test_all_types_get_list_list(
+    CoreTestsPigeonTestAllTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
+  return self->list_list;
+}
+
 FlValue* core_tests_pigeon_test_all_types_get_map(
     CoreTestsPigeonTestAllTypes* self) {
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
   return self->map;
+}
+
+FlValue* core_tests_pigeon_test_all_types_get_string_map(
+    CoreTestsPigeonTestAllTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
+  return self->string_map;
+}
+
+FlValue* core_tests_pigeon_test_all_types_get_int_map(
+    CoreTestsPigeonTestAllTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
+  return self->int_map;
 }
 
 static FlValue* core_tests_pigeon_test_all_types_to_list(
@@ -250,7 +278,10 @@ static FlValue* core_tests_pigeon_test_all_types_to_list(
   fl_value_append_take(values, fl_value_ref(self->int_list));
   fl_value_append_take(values, fl_value_ref(self->double_list));
   fl_value_append_take(values, fl_value_ref(self->bool_list));
+  fl_value_append_take(values, fl_value_ref(self->list_list));
   fl_value_append_take(values, fl_value_ref(self->map));
+  fl_value_append_take(values, fl_value_ref(self->string_map));
+  fl_value_append_take(values, fl_value_ref(self->int_map));
   return values;
 }
 
@@ -300,12 +331,19 @@ core_tests_pigeon_test_all_types_new_from_list(FlValue* values) {
   FlValue* value16 = fl_value_get_list_value(values, 16);
   FlValue* bool_list = value16;
   FlValue* value17 = fl_value_get_list_value(values, 17);
-  FlValue* map = value17;
+  FlValue* list_list = value17;
+  FlValue* value18 = fl_value_get_list_value(values, 18);
+  FlValue* map = value18;
+  FlValue* value19 = fl_value_get_list_value(values, 19);
+  FlValue* string_map = value19;
+  FlValue* value20 = fl_value_get_list_value(values, 20);
+  FlValue* int_map = value20;
   return core_tests_pigeon_test_all_types_new(
       a_bool, an_int, an_int64, a_double, a_byte_array, a_byte_array_length,
       a4_byte_array, a4_byte_array_length, a8_byte_array, a8_byte_array_length,
       a_float_array, a_float_array_length, an_enum, another_enum, a_string,
-      an_object, list, string_list, int_list, double_list, bool_list, map);
+      an_object, list, string_list, int_list, double_list, bool_list, list_list,
+      map, string_map, int_map);
 }
 
 struct _CoreTestsPigeonTestAllNullableTypes {
@@ -323,9 +361,6 @@ struct _CoreTestsPigeonTestAllNullableTypes {
   size_t a_nullable8_byte_array_length;
   double* a_nullable_float_array;
   size_t a_nullable_float_array_length;
-  FlValue* nullable_nested_list;
-  FlValue* nullable_map_with_annotations;
-  FlValue* nullable_map_with_object;
   CoreTestsPigeonTestAnEnum* a_nullable_enum;
   CoreTestsPigeonTestAnotherEnum* another_nullable_enum;
   gchar* a_nullable_string;
@@ -336,8 +371,10 @@ struct _CoreTestsPigeonTestAllNullableTypes {
   FlValue* int_list;
   FlValue* double_list;
   FlValue* bool_list;
-  FlValue* nested_class_list;
+  FlValue* list_list;
   FlValue* map;
+  FlValue* string_map;
+  FlValue* int_map;
 };
 
 G_DEFINE_TYPE(CoreTestsPigeonTestAllNullableTypes,
@@ -350,9 +387,6 @@ static void core_tests_pigeon_test_all_nullable_types_dispose(GObject* object) {
   g_clear_pointer(&self->a_nullable_int, g_free);
   g_clear_pointer(&self->a_nullable_int64, g_free);
   g_clear_pointer(&self->a_nullable_double, g_free);
-  g_clear_pointer(&self->nullable_nested_list, fl_value_unref);
-  g_clear_pointer(&self->nullable_map_with_annotations, fl_value_unref);
-  g_clear_pointer(&self->nullable_map_with_object, fl_value_unref);
   g_clear_pointer(&self->a_nullable_enum, g_free);
   g_clear_pointer(&self->another_nullable_enum, g_free);
   g_clear_pointer(&self->a_nullable_string, g_free);
@@ -363,8 +397,10 @@ static void core_tests_pigeon_test_all_nullable_types_dispose(GObject* object) {
   g_clear_pointer(&self->int_list, fl_value_unref);
   g_clear_pointer(&self->double_list, fl_value_unref);
   g_clear_pointer(&self->bool_list, fl_value_unref);
-  g_clear_pointer(&self->nested_class_list, fl_value_unref);
+  g_clear_pointer(&self->list_list, fl_value_unref);
   g_clear_pointer(&self->map, fl_value_unref);
+  g_clear_pointer(&self->string_map, fl_value_unref);
+  g_clear_pointer(&self->int_map, fl_value_unref);
   G_OBJECT_CLASS(core_tests_pigeon_test_all_nullable_types_parent_class)
       ->dispose(object);
 }
@@ -386,14 +422,13 @@ core_tests_pigeon_test_all_nullable_types_new(
     const int32_t* a_nullable4_byte_array, size_t a_nullable4_byte_array_length,
     const int64_t* a_nullable8_byte_array, size_t a_nullable8_byte_array_length,
     const double* a_nullable_float_array, size_t a_nullable_float_array_length,
-    FlValue* nullable_nested_list, FlValue* nullable_map_with_annotations,
-    FlValue* nullable_map_with_object,
     CoreTestsPigeonTestAnEnum* a_nullable_enum,
     CoreTestsPigeonTestAnotherEnum* another_nullable_enum,
     const gchar* a_nullable_string, FlValue* a_nullable_object,
     CoreTestsPigeonTestAllNullableTypes* all_nullable_types, FlValue* list,
     FlValue* string_list, FlValue* int_list, FlValue* double_list,
-    FlValue* bool_list, FlValue* nested_class_list, FlValue* map) {
+    FlValue* bool_list, FlValue* list_list, FlValue* map, FlValue* string_map,
+    FlValue* int_map) {
   CoreTestsPigeonTestAllNullableTypes* self =
       CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(g_object_new(
           core_tests_pigeon_test_all_nullable_types_get_type(), nullptr));
@@ -460,22 +495,6 @@ core_tests_pigeon_test_all_nullable_types_new(
     self->a_nullable_float_array = nullptr;
     self->a_nullable_float_array_length = 0;
   }
-  if (nullable_nested_list != nullptr) {
-    self->nullable_nested_list = fl_value_ref(nullable_nested_list);
-  } else {
-    self->nullable_nested_list = nullptr;
-  }
-  if (nullable_map_with_annotations != nullptr) {
-    self->nullable_map_with_annotations =
-        fl_value_ref(nullable_map_with_annotations);
-  } else {
-    self->nullable_map_with_annotations = nullptr;
-  }
-  if (nullable_map_with_object != nullptr) {
-    self->nullable_map_with_object = fl_value_ref(nullable_map_with_object);
-  } else {
-    self->nullable_map_with_object = nullptr;
-  }
   if (a_nullable_enum != nullptr) {
     self->a_nullable_enum = static_cast<CoreTestsPigeonTestAnEnum*>(
         malloc(sizeof(CoreTestsPigeonTestAnEnum)));
@@ -531,15 +550,25 @@ core_tests_pigeon_test_all_nullable_types_new(
   } else {
     self->bool_list = nullptr;
   }
-  if (nested_class_list != nullptr) {
-    self->nested_class_list = fl_value_ref(nested_class_list);
+  if (list_list != nullptr) {
+    self->list_list = fl_value_ref(list_list);
   } else {
-    self->nested_class_list = nullptr;
+    self->list_list = nullptr;
   }
   if (map != nullptr) {
     self->map = fl_value_ref(map);
   } else {
     self->map = nullptr;
+  }
+  if (string_map != nullptr) {
+    self->string_map = fl_value_ref(string_map);
+  } else {
+    self->string_map = nullptr;
+  }
+  if (int_map != nullptr) {
+    self->int_map = fl_value_ref(int_map);
+  } else {
+    self->int_map = nullptr;
   }
   return self;
 }
@@ -606,28 +635,6 @@ core_tests_pigeon_test_all_nullable_types_get_a_nullable_float_array(
                        nullptr);
   *length = self->a_nullable_float_array_length;
   return self->a_nullable_float_array;
-}
-
-FlValue* core_tests_pigeon_test_all_nullable_types_get_nullable_nested_list(
-    CoreTestsPigeonTestAllNullableTypes* self) {
-  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
-                       nullptr);
-  return self->nullable_nested_list;
-}
-
-FlValue*
-core_tests_pigeon_test_all_nullable_types_get_nullable_map_with_annotations(
-    CoreTestsPigeonTestAllNullableTypes* self) {
-  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
-                       nullptr);
-  return self->nullable_map_with_annotations;
-}
-
-FlValue* core_tests_pigeon_test_all_nullable_types_get_nullable_map_with_object(
-    CoreTestsPigeonTestAllNullableTypes* self) {
-  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
-                       nullptr);
-  return self->nullable_map_with_object;
 }
 
 CoreTestsPigeonTestAnEnum*
@@ -703,11 +710,11 @@ FlValue* core_tests_pigeon_test_all_nullable_types_get_bool_list(
   return self->bool_list;
 }
 
-FlValue* core_tests_pigeon_test_all_nullable_types_get_nested_class_list(
+FlValue* core_tests_pigeon_test_all_nullable_types_get_list_list(
     CoreTestsPigeonTestAllNullableTypes* self) {
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
                        nullptr);
-  return self->nested_class_list;
+  return self->list_list;
 }
 
 FlValue* core_tests_pigeon_test_all_nullable_types_get_map(
@@ -715,6 +722,20 @@ FlValue* core_tests_pigeon_test_all_nullable_types_get_map(
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
                        nullptr);
   return self->map;
+}
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_string_map(
+    CoreTestsPigeonTestAllNullableTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
+                       nullptr);
+  return self->string_map;
+}
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_int_map(
+    CoreTestsPigeonTestAllNullableTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
+                       nullptr);
+  return self->int_map;
 }
 
 static FlValue* core_tests_pigeon_test_all_nullable_types_to_list(
@@ -753,17 +774,6 @@ static FlValue* core_tests_pigeon_test_all_nullable_types_to_list(
                   ? fl_value_new_float_list(self->a_nullable_float_array,
                                             self->a_nullable_float_array_length)
                   : fl_value_new_null());
-  fl_value_append_take(values, self->nullable_nested_list != nullptr
-                                   ? fl_value_ref(self->nullable_nested_list)
-                                   : fl_value_new_null());
-  fl_value_append_take(values,
-                       self->nullable_map_with_annotations != nullptr
-                           ? fl_value_ref(self->nullable_map_with_annotations)
-                           : fl_value_new_null());
-  fl_value_append_take(values,
-                       self->nullable_map_with_object != nullptr
-                           ? fl_value_ref(self->nullable_map_with_object)
-                           : fl_value_new_null());
   fl_value_append_take(
       values,
       self->a_nullable_enum != nullptr
@@ -802,11 +812,17 @@ static FlValue* core_tests_pigeon_test_all_nullable_types_to_list(
   fl_value_append_take(values, self->bool_list != nullptr
                                    ? fl_value_ref(self->bool_list)
                                    : fl_value_new_null());
-  fl_value_append_take(values, self->nested_class_list != nullptr
-                                   ? fl_value_ref(self->nested_class_list)
+  fl_value_append_take(values, self->list_list != nullptr
+                                   ? fl_value_ref(self->list_list)
                                    : fl_value_new_null());
   fl_value_append_take(values, self->map != nullptr ? fl_value_ref(self->map)
                                                     : fl_value_new_null());
+  fl_value_append_take(values, self->string_map != nullptr
+                                   ? fl_value_ref(self->string_map)
+                                   : fl_value_new_null());
+  fl_value_append_take(values, self->int_map != nullptr
+                                   ? fl_value_ref(self->int_map)
+                                   : fl_value_new_null());
   return values;
 }
 
@@ -869,99 +885,93 @@ core_tests_pigeon_test_all_nullable_types_new_from_list(FlValue* values) {
     a_nullable_float_array_length = fl_value_get_length(value7);
   }
   FlValue* value8 = fl_value_get_list_value(values, 8);
-  FlValue* nullable_nested_list = nullptr;
-  if (fl_value_get_type(value8) != FL_VALUE_TYPE_NULL) {
-    nullable_nested_list = value8;
-  }
-  FlValue* value9 = fl_value_get_list_value(values, 9);
-  FlValue* nullable_map_with_annotations = nullptr;
-  if (fl_value_get_type(value9) != FL_VALUE_TYPE_NULL) {
-    nullable_map_with_annotations = value9;
-  }
-  FlValue* value10 = fl_value_get_list_value(values, 10);
-  FlValue* nullable_map_with_object = nullptr;
-  if (fl_value_get_type(value10) != FL_VALUE_TYPE_NULL) {
-    nullable_map_with_object = value10;
-  }
-  FlValue* value11 = fl_value_get_list_value(values, 11);
   CoreTestsPigeonTestAnEnum* a_nullable_enum = nullptr;
   CoreTestsPigeonTestAnEnum a_nullable_enum_value;
-  if (fl_value_get_type(value11) != FL_VALUE_TYPE_NULL) {
+  if (fl_value_get_type(value8) != FL_VALUE_TYPE_NULL) {
     a_nullable_enum_value = static_cast<CoreTestsPigeonTestAnEnum>(
         fl_value_get_int(reinterpret_cast<FlValue*>(
-            const_cast<gpointer>(fl_value_get_custom_value(value11)))));
+            const_cast<gpointer>(fl_value_get_custom_value(value8)))));
     a_nullable_enum = &a_nullable_enum_value;
   }
-  FlValue* value12 = fl_value_get_list_value(values, 12);
+  FlValue* value9 = fl_value_get_list_value(values, 9);
   CoreTestsPigeonTestAnotherEnum* another_nullable_enum = nullptr;
   CoreTestsPigeonTestAnotherEnum another_nullable_enum_value;
-  if (fl_value_get_type(value12) != FL_VALUE_TYPE_NULL) {
+  if (fl_value_get_type(value9) != FL_VALUE_TYPE_NULL) {
     another_nullable_enum_value = static_cast<CoreTestsPigeonTestAnotherEnum>(
         fl_value_get_int(reinterpret_cast<FlValue*>(
-            const_cast<gpointer>(fl_value_get_custom_value(value12)))));
+            const_cast<gpointer>(fl_value_get_custom_value(value9)))));
     another_nullable_enum = &another_nullable_enum_value;
   }
-  FlValue* value13 = fl_value_get_list_value(values, 13);
+  FlValue* value10 = fl_value_get_list_value(values, 10);
   const gchar* a_nullable_string = nullptr;
+  if (fl_value_get_type(value10) != FL_VALUE_TYPE_NULL) {
+    a_nullable_string = fl_value_get_string(value10);
+  }
+  FlValue* value11 = fl_value_get_list_value(values, 11);
+  FlValue* a_nullable_object = nullptr;
+  if (fl_value_get_type(value11) != FL_VALUE_TYPE_NULL) {
+    a_nullable_object = value11;
+  }
+  FlValue* value12 = fl_value_get_list_value(values, 12);
+  CoreTestsPigeonTestAllNullableTypes* all_nullable_types = nullptr;
+  if (fl_value_get_type(value12) != FL_VALUE_TYPE_NULL) {
+    all_nullable_types = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+        fl_value_get_custom_value_object(value12));
+  }
+  FlValue* value13 = fl_value_get_list_value(values, 13);
+  FlValue* list = nullptr;
   if (fl_value_get_type(value13) != FL_VALUE_TYPE_NULL) {
-    a_nullable_string = fl_value_get_string(value13);
+    list = value13;
   }
   FlValue* value14 = fl_value_get_list_value(values, 14);
-  FlValue* a_nullable_object = nullptr;
+  FlValue* string_list = nullptr;
   if (fl_value_get_type(value14) != FL_VALUE_TYPE_NULL) {
-    a_nullable_object = value14;
+    string_list = value14;
   }
   FlValue* value15 = fl_value_get_list_value(values, 15);
-  CoreTestsPigeonTestAllNullableTypes* all_nullable_types = nullptr;
+  FlValue* int_list = nullptr;
   if (fl_value_get_type(value15) != FL_VALUE_TYPE_NULL) {
-    all_nullable_types = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
-        fl_value_get_custom_value_object(value15));
+    int_list = value15;
   }
   FlValue* value16 = fl_value_get_list_value(values, 16);
-  FlValue* list = nullptr;
+  FlValue* double_list = nullptr;
   if (fl_value_get_type(value16) != FL_VALUE_TYPE_NULL) {
-    list = value16;
+    double_list = value16;
   }
   FlValue* value17 = fl_value_get_list_value(values, 17);
-  FlValue* string_list = nullptr;
+  FlValue* bool_list = nullptr;
   if (fl_value_get_type(value17) != FL_VALUE_TYPE_NULL) {
-    string_list = value17;
+    bool_list = value17;
   }
   FlValue* value18 = fl_value_get_list_value(values, 18);
-  FlValue* int_list = nullptr;
+  FlValue* list_list = nullptr;
   if (fl_value_get_type(value18) != FL_VALUE_TYPE_NULL) {
-    int_list = value18;
+    list_list = value18;
   }
   FlValue* value19 = fl_value_get_list_value(values, 19);
-  FlValue* double_list = nullptr;
+  FlValue* map = nullptr;
   if (fl_value_get_type(value19) != FL_VALUE_TYPE_NULL) {
-    double_list = value19;
+    map = value19;
   }
   FlValue* value20 = fl_value_get_list_value(values, 20);
-  FlValue* bool_list = nullptr;
+  FlValue* string_map = nullptr;
   if (fl_value_get_type(value20) != FL_VALUE_TYPE_NULL) {
-    bool_list = value20;
+    string_map = value20;
   }
   FlValue* value21 = fl_value_get_list_value(values, 21);
-  FlValue* nested_class_list = nullptr;
+  FlValue* int_map = nullptr;
   if (fl_value_get_type(value21) != FL_VALUE_TYPE_NULL) {
-    nested_class_list = value21;
-  }
-  FlValue* value22 = fl_value_get_list_value(values, 22);
-  FlValue* map = nullptr;
-  if (fl_value_get_type(value22) != FL_VALUE_TYPE_NULL) {
-    map = value22;
+    int_map = value21;
   }
   return core_tests_pigeon_test_all_nullable_types_new(
       a_nullable_bool, a_nullable_int, a_nullable_int64, a_nullable_double,
       a_nullable_byte_array, a_nullable_byte_array_length,
       a_nullable4_byte_array, a_nullable4_byte_array_length,
       a_nullable8_byte_array, a_nullable8_byte_array_length,
-      a_nullable_float_array, a_nullable_float_array_length,
-      nullable_nested_list, nullable_map_with_annotations,
-      nullable_map_with_object, a_nullable_enum, another_nullable_enum,
-      a_nullable_string, a_nullable_object, all_nullable_types, list,
-      string_list, int_list, double_list, bool_list, nested_class_list, map);
+      a_nullable_float_array, a_nullable_float_array_length, a_nullable_enum,
+      another_nullable_enum, a_nullable_string, a_nullable_object,
+      all_nullable_types, list, string_list, int_list, double_list, bool_list,
+      list_list, map, string_map, int_map);
 }
 
 struct _CoreTestsPigeonTestAllNullableTypesWithoutRecursion {
@@ -979,9 +989,6 @@ struct _CoreTestsPigeonTestAllNullableTypesWithoutRecursion {
   size_t a_nullable8_byte_array_length;
   double* a_nullable_float_array;
   size_t a_nullable_float_array_length;
-  FlValue* nullable_nested_list;
-  FlValue* nullable_map_with_annotations;
-  FlValue* nullable_map_with_object;
   CoreTestsPigeonTestAnEnum* a_nullable_enum;
   CoreTestsPigeonTestAnotherEnum* another_nullable_enum;
   gchar* a_nullable_string;
@@ -991,7 +998,10 @@ struct _CoreTestsPigeonTestAllNullableTypesWithoutRecursion {
   FlValue* int_list;
   FlValue* double_list;
   FlValue* bool_list;
+  FlValue* list_list;
   FlValue* map;
+  FlValue* string_map;
+  FlValue* int_map;
 };
 
 G_DEFINE_TYPE(CoreTestsPigeonTestAllNullableTypesWithoutRecursion,
@@ -1006,9 +1016,6 @@ static void core_tests_pigeon_test_all_nullable_types_without_recursion_dispose(
   g_clear_pointer(&self->a_nullable_int, g_free);
   g_clear_pointer(&self->a_nullable_int64, g_free);
   g_clear_pointer(&self->a_nullable_double, g_free);
-  g_clear_pointer(&self->nullable_nested_list, fl_value_unref);
-  g_clear_pointer(&self->nullable_map_with_annotations, fl_value_unref);
-  g_clear_pointer(&self->nullable_map_with_object, fl_value_unref);
   g_clear_pointer(&self->a_nullable_enum, g_free);
   g_clear_pointer(&self->another_nullable_enum, g_free);
   g_clear_pointer(&self->a_nullable_string, g_free);
@@ -1018,7 +1025,10 @@ static void core_tests_pigeon_test_all_nullable_types_without_recursion_dispose(
   g_clear_pointer(&self->int_list, fl_value_unref);
   g_clear_pointer(&self->double_list, fl_value_unref);
   g_clear_pointer(&self->bool_list, fl_value_unref);
+  g_clear_pointer(&self->list_list, fl_value_unref);
   g_clear_pointer(&self->map, fl_value_unref);
+  g_clear_pointer(&self->string_map, fl_value_unref);
+  g_clear_pointer(&self->int_map, fl_value_unref);
   G_OBJECT_CLASS(
       core_tests_pigeon_test_all_nullable_types_without_recursion_parent_class)
       ->dispose(object);
@@ -1042,13 +1052,12 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
     const int32_t* a_nullable4_byte_array, size_t a_nullable4_byte_array_length,
     const int64_t* a_nullable8_byte_array, size_t a_nullable8_byte_array_length,
     const double* a_nullable_float_array, size_t a_nullable_float_array_length,
-    FlValue* nullable_nested_list, FlValue* nullable_map_with_annotations,
-    FlValue* nullable_map_with_object,
     CoreTestsPigeonTestAnEnum* a_nullable_enum,
     CoreTestsPigeonTestAnotherEnum* another_nullable_enum,
     const gchar* a_nullable_string, FlValue* a_nullable_object, FlValue* list,
     FlValue* string_list, FlValue* int_list, FlValue* double_list,
-    FlValue* bool_list, FlValue* map) {
+    FlValue* bool_list, FlValue* list_list, FlValue* map, FlValue* string_map,
+    FlValue* int_map) {
   CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self =
       CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(g_object_new(
           core_tests_pigeon_test_all_nullable_types_without_recursion_get_type(),
@@ -1116,22 +1125,6 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
     self->a_nullable_float_array = nullptr;
     self->a_nullable_float_array_length = 0;
   }
-  if (nullable_nested_list != nullptr) {
-    self->nullable_nested_list = fl_value_ref(nullable_nested_list);
-  } else {
-    self->nullable_nested_list = nullptr;
-  }
-  if (nullable_map_with_annotations != nullptr) {
-    self->nullable_map_with_annotations =
-        fl_value_ref(nullable_map_with_annotations);
-  } else {
-    self->nullable_map_with_annotations = nullptr;
-  }
-  if (nullable_map_with_object != nullptr) {
-    self->nullable_map_with_object = fl_value_ref(nullable_map_with_object);
-  } else {
-    self->nullable_map_with_object = nullptr;
-  }
   if (a_nullable_enum != nullptr) {
     self->a_nullable_enum = static_cast<CoreTestsPigeonTestAnEnum*>(
         malloc(sizeof(CoreTestsPigeonTestAnEnum)));
@@ -1181,10 +1174,25 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
   } else {
     self->bool_list = nullptr;
   }
+  if (list_list != nullptr) {
+    self->list_list = fl_value_ref(list_list);
+  } else {
+    self->list_list = nullptr;
+  }
   if (map != nullptr) {
     self->map = fl_value_ref(map);
   } else {
     self->map = nullptr;
+  }
+  if (string_map != nullptr) {
+    self->string_map = fl_value_ref(string_map);
+  } else {
+    self->string_map = nullptr;
+  }
+  if (int_map != nullptr) {
+    self->int_map = fl_value_ref(int_map);
+  } else {
+    self->int_map = nullptr;
   }
   return self;
 }
@@ -1263,33 +1271,6 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_float
       nullptr);
   *length = self->a_nullable_float_array_length;
   return self->a_nullable_float_array;
-}
-
-FlValue*
-core_tests_pigeon_test_all_nullable_types_without_recursion_get_nullable_nested_list(
-    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
-  g_return_val_if_fail(
-      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
-      nullptr);
-  return self->nullable_nested_list;
-}
-
-FlValue*
-core_tests_pigeon_test_all_nullable_types_without_recursion_get_nullable_map_with_annotations(
-    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
-  g_return_val_if_fail(
-      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
-      nullptr);
-  return self->nullable_map_with_annotations;
-}
-
-FlValue*
-core_tests_pigeon_test_all_nullable_types_without_recursion_get_nullable_map_with_object(
-    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
-  g_return_val_if_fail(
-      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
-      nullptr);
-  return self->nullable_map_with_object;
 }
 
 CoreTestsPigeonTestAnEnum*
@@ -1372,12 +1353,39 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_get_bool_list(
   return self->bool_list;
 }
 
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_list_list(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
+      nullptr);
+  return self->list_list;
+}
+
 FlValue* core_tests_pigeon_test_all_nullable_types_without_recursion_get_map(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
   g_return_val_if_fail(
       CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
       nullptr);
   return self->map;
+}
+
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_string_map(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
+      nullptr);
+  return self->string_map;
+}
+
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_int_map(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
+      nullptr);
+  return self->int_map;
 }
 
 static FlValue*
@@ -1417,17 +1425,6 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_to_list(
                   ? fl_value_new_float_list(self->a_nullable_float_array,
                                             self->a_nullable_float_array_length)
                   : fl_value_new_null());
-  fl_value_append_take(values, self->nullable_nested_list != nullptr
-                                   ? fl_value_ref(self->nullable_nested_list)
-                                   : fl_value_new_null());
-  fl_value_append_take(values,
-                       self->nullable_map_with_annotations != nullptr
-                           ? fl_value_ref(self->nullable_map_with_annotations)
-                           : fl_value_new_null());
-  fl_value_append_take(values,
-                       self->nullable_map_with_object != nullptr
-                           ? fl_value_ref(self->nullable_map_with_object)
-                           : fl_value_new_null());
   fl_value_append_take(
       values,
       self->a_nullable_enum != nullptr
@@ -1461,8 +1458,17 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_to_list(
   fl_value_append_take(values, self->bool_list != nullptr
                                    ? fl_value_ref(self->bool_list)
                                    : fl_value_new_null());
+  fl_value_append_take(values, self->list_list != nullptr
+                                   ? fl_value_ref(self->list_list)
+                                   : fl_value_new_null());
   fl_value_append_take(values, self->map != nullptr ? fl_value_ref(self->map)
                                                     : fl_value_new_null());
+  fl_value_append_take(values, self->string_map != nullptr
+                                   ? fl_value_ref(self->string_map)
+                                   : fl_value_new_null());
+  fl_value_append_take(values, self->int_map != nullptr
+                                   ? fl_value_ref(self->int_map)
+                                   : fl_value_new_null());
   return values;
 }
 
@@ -1526,88 +1532,87 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new_from_list(
     a_nullable_float_array_length = fl_value_get_length(value7);
   }
   FlValue* value8 = fl_value_get_list_value(values, 8);
-  FlValue* nullable_nested_list = nullptr;
-  if (fl_value_get_type(value8) != FL_VALUE_TYPE_NULL) {
-    nullable_nested_list = value8;
-  }
-  FlValue* value9 = fl_value_get_list_value(values, 9);
-  FlValue* nullable_map_with_annotations = nullptr;
-  if (fl_value_get_type(value9) != FL_VALUE_TYPE_NULL) {
-    nullable_map_with_annotations = value9;
-  }
-  FlValue* value10 = fl_value_get_list_value(values, 10);
-  FlValue* nullable_map_with_object = nullptr;
-  if (fl_value_get_type(value10) != FL_VALUE_TYPE_NULL) {
-    nullable_map_with_object = value10;
-  }
-  FlValue* value11 = fl_value_get_list_value(values, 11);
   CoreTestsPigeonTestAnEnum* a_nullable_enum = nullptr;
   CoreTestsPigeonTestAnEnum a_nullable_enum_value;
-  if (fl_value_get_type(value11) != FL_VALUE_TYPE_NULL) {
+  if (fl_value_get_type(value8) != FL_VALUE_TYPE_NULL) {
     a_nullable_enum_value = static_cast<CoreTestsPigeonTestAnEnum>(
         fl_value_get_int(reinterpret_cast<FlValue*>(
-            const_cast<gpointer>(fl_value_get_custom_value(value11)))));
+            const_cast<gpointer>(fl_value_get_custom_value(value8)))));
     a_nullable_enum = &a_nullable_enum_value;
   }
-  FlValue* value12 = fl_value_get_list_value(values, 12);
+  FlValue* value9 = fl_value_get_list_value(values, 9);
   CoreTestsPigeonTestAnotherEnum* another_nullable_enum = nullptr;
   CoreTestsPigeonTestAnotherEnum another_nullable_enum_value;
-  if (fl_value_get_type(value12) != FL_VALUE_TYPE_NULL) {
+  if (fl_value_get_type(value9) != FL_VALUE_TYPE_NULL) {
     another_nullable_enum_value = static_cast<CoreTestsPigeonTestAnotherEnum>(
         fl_value_get_int(reinterpret_cast<FlValue*>(
-            const_cast<gpointer>(fl_value_get_custom_value(value12)))));
+            const_cast<gpointer>(fl_value_get_custom_value(value9)))));
     another_nullable_enum = &another_nullable_enum_value;
   }
-  FlValue* value13 = fl_value_get_list_value(values, 13);
+  FlValue* value10 = fl_value_get_list_value(values, 10);
   const gchar* a_nullable_string = nullptr;
+  if (fl_value_get_type(value10) != FL_VALUE_TYPE_NULL) {
+    a_nullable_string = fl_value_get_string(value10);
+  }
+  FlValue* value11 = fl_value_get_list_value(values, 11);
+  FlValue* a_nullable_object = nullptr;
+  if (fl_value_get_type(value11) != FL_VALUE_TYPE_NULL) {
+    a_nullable_object = value11;
+  }
+  FlValue* value12 = fl_value_get_list_value(values, 12);
+  FlValue* list = nullptr;
+  if (fl_value_get_type(value12) != FL_VALUE_TYPE_NULL) {
+    list = value12;
+  }
+  FlValue* value13 = fl_value_get_list_value(values, 13);
+  FlValue* string_list = nullptr;
   if (fl_value_get_type(value13) != FL_VALUE_TYPE_NULL) {
-    a_nullable_string = fl_value_get_string(value13);
+    string_list = value13;
   }
   FlValue* value14 = fl_value_get_list_value(values, 14);
-  FlValue* a_nullable_object = nullptr;
+  FlValue* int_list = nullptr;
   if (fl_value_get_type(value14) != FL_VALUE_TYPE_NULL) {
-    a_nullable_object = value14;
+    int_list = value14;
   }
   FlValue* value15 = fl_value_get_list_value(values, 15);
-  FlValue* list = nullptr;
+  FlValue* double_list = nullptr;
   if (fl_value_get_type(value15) != FL_VALUE_TYPE_NULL) {
-    list = value15;
+    double_list = value15;
   }
   FlValue* value16 = fl_value_get_list_value(values, 16);
-  FlValue* string_list = nullptr;
+  FlValue* bool_list = nullptr;
   if (fl_value_get_type(value16) != FL_VALUE_TYPE_NULL) {
-    string_list = value16;
+    bool_list = value16;
   }
   FlValue* value17 = fl_value_get_list_value(values, 17);
-  FlValue* int_list = nullptr;
+  FlValue* list_list = nullptr;
   if (fl_value_get_type(value17) != FL_VALUE_TYPE_NULL) {
-    int_list = value17;
+    list_list = value17;
   }
   FlValue* value18 = fl_value_get_list_value(values, 18);
-  FlValue* double_list = nullptr;
+  FlValue* map = nullptr;
   if (fl_value_get_type(value18) != FL_VALUE_TYPE_NULL) {
-    double_list = value18;
+    map = value18;
   }
   FlValue* value19 = fl_value_get_list_value(values, 19);
-  FlValue* bool_list = nullptr;
+  FlValue* string_map = nullptr;
   if (fl_value_get_type(value19) != FL_VALUE_TYPE_NULL) {
-    bool_list = value19;
+    string_map = value19;
   }
   FlValue* value20 = fl_value_get_list_value(values, 20);
-  FlValue* map = nullptr;
+  FlValue* int_map = nullptr;
   if (fl_value_get_type(value20) != FL_VALUE_TYPE_NULL) {
-    map = value20;
+    int_map = value20;
   }
   return core_tests_pigeon_test_all_nullable_types_without_recursion_new(
       a_nullable_bool, a_nullable_int, a_nullable_int64, a_nullable_double,
       a_nullable_byte_array, a_nullable_byte_array_length,
       a_nullable4_byte_array, a_nullable4_byte_array_length,
       a_nullable8_byte_array, a_nullable8_byte_array_length,
-      a_nullable_float_array, a_nullable_float_array_length,
-      nullable_nested_list, nullable_map_with_annotations,
-      nullable_map_with_object, a_nullable_enum, another_nullable_enum,
-      a_nullable_string, a_nullable_object, list, string_list, int_list,
-      double_list, bool_list, map);
+      a_nullable_float_array, a_nullable_float_array_length, a_nullable_enum,
+      another_nullable_enum, a_nullable_string, a_nullable_object, list,
+      string_list, int_list, double_list, bool_list, list_list, map, string_map,
+      int_map);
 }
 
 struct _CoreTestsPigeonTestAllClassesWrapper {
@@ -2987,6 +2992,135 @@ core_tests_pigeon_test_host_integration_core_api_echo_map_response_new_error(
   return self;
 }
 
+struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoStringMapResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoStringMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_string_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_string_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_STRING_MAP_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_string_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_string_map_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoStringMapResponse* self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_string_map_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoStringMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_string_map_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoStringMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_string_map_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_STRING_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_string_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_ref(return_value));
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoStringMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_string_map_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_STRING_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_string_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoIntMapResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoIntMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_int_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_int_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_INT_MAP_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_int_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_int_map_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoIntMapResponse* self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_int_map_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoIntMapResponseClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_int_map_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoIntMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_int_map_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_INT_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_int_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_ref(return_value));
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoIntMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_int_map_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_INT_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_int_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
 struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoClassWrapperResponse {
   GObject parent_instance;
 
@@ -4339,6 +4473,142 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_map_response_new_
   return self;
 }
 
+struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableStringMapResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableStringMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_NULLABLE_STRING_MAP_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_map_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableStringMapResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_map_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableStringMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_map_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableStringMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_map_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_NULLABLE_STRING_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, return_value != nullptr
+                                        ? fl_value_ref(return_value)
+                                        : fl_value_new_null());
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableStringMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_map_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_NULLABLE_STRING_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableIntMapResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableIntMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_NULLABLE_INT_MAP_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_map_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableIntMapResponse* self) {
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_map_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableIntMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_map_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableIntMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_map_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_NULLABLE_INT_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, return_value != nullptr
+                                        ? fl_value_ref(return_value)
+                                        : fl_value_new_null());
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableIntMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_map_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_NULLABLE_INT_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
 struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableEnumResponse {
   GObject parent_instance;
 
@@ -5244,6 +5514,149 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_map_response_new_err
       CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ASYNC_MAP_RESPONSE(
           g_object_new(
               core_tests_pigeon_test_host_integration_core_api_echo_async_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncStringMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_ECHO_ASYNC_STRING_MAP_RESPONSE, GObject)
+
+struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncStringMapResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncStringMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ASYNC_STRING_MAP_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncStringMapResponse* self) {
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncStringMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_response_dispose;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncStringMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ASYNC_STRING_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_ref(return_value));
+  return self;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncStringMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ASYNC_STRING_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncIntMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_ECHO_ASYNC_INT_MAP_RESPONSE, GObject)
+
+struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncIntMapResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncIntMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ASYNC_INT_MAP_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncIntMapResponse* self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncIntMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_response_dispose;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncIntMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ASYNC_INT_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_ref(return_value));
+  return self;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncIntMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ASYNC_INT_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_response_get_type(),
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
@@ -6436,6 +6849,156 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_map_respons
       CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ASYNC_NULLABLE_MAP_RESPONSE(
           g_object_new(
               core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableStringMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_ECHO_ASYNC_NULLABLE_STRING_MAP_RESPONSE, GObject)
+
+struct
+    _CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableStringMapResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableStringMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ASYNC_NULLABLE_STRING_MAP_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableStringMapResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableStringMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_response_dispose;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableStringMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ASYNC_NULLABLE_STRING_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, return_value != nullptr
+                                        ? fl_value_ref(return_value)
+                                        : fl_value_new_null());
+  return self;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableStringMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ASYNC_NULLABLE_STRING_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableIntMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_ECHO_ASYNC_NULLABLE_INT_MAP_RESPONSE, GObject)
+
+struct
+    _CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableIntMapResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableIntMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ASYNC_NULLABLE_INT_MAP_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableIntMapResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableIntMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_response_dispose;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableIntMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ASYNC_NULLABLE_INT_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, return_value != nullptr
+                                        ? fl_value_ref(return_value)
+                                        : fl_value_new_null());
+  return self;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableIntMapResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ASYNC_NULLABLE_INT_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_response_get_type(),
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
@@ -7710,6 +8273,151 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_map_response_
 }
 
 G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoStringMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_STRING_MAP_RESPONSE, GObject)
+
+struct
+    _CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoStringMapResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoStringMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_STRING_MAP_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoStringMapResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoStringMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_response_dispose;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoStringMapResponse*
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_STRING_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_ref(return_value));
+  return self;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoStringMapResponse*
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_STRING_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoIntMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_INT_MAP_RESPONSE, GObject)
+
+struct _CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoIntMapResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoIntMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_INT_MAP_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoIntMapResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoIntMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_response_dispose;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoIntMapResponse*
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_INT_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_ref(return_value));
+  return self;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoIntMapResponse*
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_INT_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+G_DECLARE_FINAL_TYPE(
     CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoEnumResponse,
     core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_enum_response,
     CORE_TESTS_PIGEON_TEST,
@@ -8393,6 +9101,160 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_map_
 }
 
 G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableStringMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_NULLABLE_STRING_MAP_RESPONSE,
+    GObject)
+
+struct
+    _CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableStringMapResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableStringMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableStringMapResponse*
+      self =
+          CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_NULLABLE_STRING_MAP_RESPONSE(
+              object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableStringMapResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableStringMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_response_dispose;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableStringMapResponse*
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableStringMapResponse*
+      self = CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_NULLABLE_STRING_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, return_value != nullptr
+                                        ? fl_value_ref(return_value)
+                                        : fl_value_new_null());
+  return self;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableStringMapResponse*
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableStringMapResponse*
+      self = CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_NULLABLE_STRING_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableIntMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_NULLABLE_INT_MAP_RESPONSE,
+    GObject)
+
+struct
+    _CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableIntMapResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableIntMapResponse,
+    core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableIntMapResponse*
+      self =
+          CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_NULLABLE_INT_MAP_RESPONSE(
+              object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableIntMapResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableIntMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_response_dispose;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableIntMapResponse*
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_NULLABLE_INT_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, return_value != nullptr
+                                        ? fl_value_ref(return_value)
+                                        : fl_value_new_null());
+  return self;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableIntMapResponse*
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_ECHO_NULLABLE_INT_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+G_DECLARE_FINAL_TYPE(
     CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableEnumResponse,
     core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_enum_response,
     CORE_TESTS_PIGEON_TEST,
@@ -9021,9 +9883,9 @@ static void core_tests_pigeon_test_host_integration_core_api_echo_map_cb(
   }
 
   FlValue* value0 = fl_value_get_list_value(message_, 0);
-  FlValue* a_map = value0;
+  FlValue* map = value0;
   g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiEchoMapResponse) response =
-      self->vtable->echo_map(a_map, self->user_data);
+      self->vtable->echo_map(map, self->user_data);
   if (response == nullptr) {
     g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
               "echoMap");
@@ -9035,6 +9897,62 @@ static void core_tests_pigeon_test_host_integration_core_api_echo_map_cb(
                                         response->value, &error)) {
     g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
               "echoMap", error->message);
+  }
+}
+
+static void core_tests_pigeon_test_host_integration_core_api_echo_string_map_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->echo_string_map == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* string_map = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiEchoStringMapResponse)
+      response = self->vtable->echo_string_map(string_map, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "echoStringMap");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoStringMap", error->message);
+  }
+}
+
+static void core_tests_pigeon_test_host_integration_core_api_echo_int_map_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->echo_int_map == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* int_map = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiEchoIntMapResponse)
+      response = self->vtable->echo_int_map(int_map, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "echoIntMap");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoIntMap", error->message);
   }
 }
 
@@ -9693,10 +10611,9 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_map_cb(
   }
 
   FlValue* value0 = fl_value_get_list_value(message_, 0);
-  FlValue* a_nullable_map = value0;
+  FlValue* map = value0;
   g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableMapResponse)
-      response =
-          self->vtable->echo_nullable_map(a_nullable_map, self->user_data);
+      response = self->vtable->echo_nullable_map(map, self->user_data);
   if (response == nullptr) {
     g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
               "echoNullableMap");
@@ -9708,6 +10625,68 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_map_cb(
                                         response->value, &error)) {
     g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
               "echoNullableMap", error->message);
+  }
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_map_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->echo_nullable_string_map == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* string_map = value0;
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableStringMapResponse)
+      response =
+          self->vtable->echo_nullable_string_map(string_map, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "echoNullableStringMap");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoNullableStringMap", error->message);
+  }
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_map_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->echo_nullable_int_map == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* int_map = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableIntMapResponse)
+      response = self->vtable->echo_nullable_int_map(int_map, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "echoNullableIntMap");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoNullableIntMap", error->message);
   }
 }
 
@@ -10015,11 +10994,50 @@ static void core_tests_pigeon_test_host_integration_core_api_echo_async_map_cb(
   }
 
   FlValue* value0 = fl_value_get_list_value(message_, 0);
-  FlValue* a_map = value0;
+  FlValue* map = value0;
   g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
       core_tests_pigeon_test_host_integration_core_api_response_handle_new(
           channel, response_handle);
-  self->vtable->echo_async_map(a_map, handle, self->user_data);
+  self->vtable->echo_async_map(map, handle, self->user_data);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->echo_async_string_map == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* string_map = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
+      core_tests_pigeon_test_host_integration_core_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->echo_async_string_map(string_map, handle, self->user_data);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->echo_async_int_map == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* int_map = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
+      core_tests_pigeon_test_host_integration_core_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->echo_async_int_map(int_map, handle, self->user_data);
 }
 
 static void core_tests_pigeon_test_host_integration_core_api_echo_async_enum_cb(
@@ -10356,11 +11374,52 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_map_cb(
   }
 
   FlValue* value0 = fl_value_get_list_value(message_, 0);
-  FlValue* a_map = value0;
+  FlValue* map = value0;
   g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
       core_tests_pigeon_test_host_integration_core_api_response_handle_new(
           channel, response_handle);
-  self->vtable->echo_async_nullable_map(a_map, handle, self->user_data);
+  self->vtable->echo_async_nullable_map(map, handle, self->user_data);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->echo_async_nullable_string_map == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* string_map = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
+      core_tests_pigeon_test_host_integration_core_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->echo_async_nullable_string_map(string_map, handle,
+                                               self->user_data);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->echo_async_nullable_int_map == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* int_map = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
+      core_tests_pigeon_test_host_integration_core_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->echo_async_nullable_int_map(int_map, handle, self->user_data);
 }
 
 static void
@@ -10749,11 +11808,52 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_map_cb(
   }
 
   FlValue* value0 = fl_value_get_list_value(message_, 0);
-  FlValue* a_map = value0;
+  FlValue* map = value0;
   g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
       core_tests_pigeon_test_host_integration_core_api_response_handle_new(
           channel, response_handle);
-  self->vtable->call_flutter_echo_map(a_map, handle, self->user_data);
+  self->vtable->call_flutter_echo_map(map, handle, self->user_data);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->call_flutter_echo_string_map == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* string_map = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
+      core_tests_pigeon_test_host_integration_core_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->call_flutter_echo_string_map(string_map, handle,
+                                             self->user_data);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->call_flutter_echo_int_map == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* int_map = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
+      core_tests_pigeon_test_host_integration_core_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->call_flutter_echo_int_map(int_map, handle, self->user_data);
 }
 
 static void
@@ -10955,11 +12055,53 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_map_
   }
 
   FlValue* value0 = fl_value_get_list_value(message_, 0);
-  FlValue* a_map = value0;
+  FlValue* map = value0;
   g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
       core_tests_pigeon_test_host_integration_core_api_response_handle_new(
           channel, response_handle);
-  self->vtable->call_flutter_echo_nullable_map(a_map, handle, self->user_data);
+  self->vtable->call_flutter_echo_nullable_map(map, handle, self->user_data);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->call_flutter_echo_nullable_string_map == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* string_map = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
+      core_tests_pigeon_test_host_integration_core_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->call_flutter_echo_nullable_string_map(string_map, handle,
+                                                      self->user_data);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->call_flutter_echo_nullable_int_map == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* int_map = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
+      core_tests_pigeon_test_host_integration_core_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->call_flutter_echo_nullable_int_map(int_map, handle,
+                                                   self->user_data);
 }
 
 static void
@@ -11192,6 +12334,28 @@ void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
   fl_basic_message_channel_set_message_handler(
       echo_map_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_map_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_string_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoStringMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_string_map_channel =
+      fl_basic_message_channel_new(messenger, echo_string_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_string_map_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_string_map_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_int_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoIntMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_int_map_channel =
+      fl_basic_message_channel_new(messenger, echo_int_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_int_map_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_int_map_cb,
       g_object_ref(api_data), g_object_unref);
   g_autofree gchar* echo_class_wrapper_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
@@ -11431,6 +12595,30 @@ void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
       echo_nullable_map_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_nullable_map_cb,
       g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_nullable_string_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNullableStringMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_nullable_string_map_channel =
+      fl_basic_message_channel_new(messenger,
+                                   echo_nullable_string_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_nullable_string_map_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_map_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_nullable_int_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNullableIntMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_nullable_int_map_channel =
+      fl_basic_message_channel_new(messenger,
+                                   echo_nullable_int_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_nullable_int_map_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_map_cb,
+      g_object_ref(api_data), g_object_unref);
   g_autofree gchar* echo_nullable_enum_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "echoNullableEnum%s",
@@ -11577,6 +12765,29 @@ void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
   fl_basic_message_channel_set_message_handler(
       echo_async_map_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_map_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_async_string_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncStringMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_async_string_map_channel =
+      fl_basic_message_channel_new(messenger,
+                                   echo_async_string_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_async_string_map_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_async_int_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncIntMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_async_int_map_channel =
+      fl_basic_message_channel_new(messenger, echo_async_int_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_async_int_map_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_cb,
       g_object_ref(api_data), g_object_unref);
   g_autofree gchar* echo_async_enum_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
@@ -11774,6 +12985,31 @@ void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
   fl_basic_message_channel_set_message_handler(
       echo_async_nullable_map_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_map_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_async_nullable_string_map_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "echoAsyncNullableStringMap%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_async_nullable_string_map_channel =
+      fl_basic_message_channel_new(messenger,
+                                   echo_async_nullable_string_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_async_nullable_string_map_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_async_nullable_int_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncNullableIntMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_async_nullable_int_map_channel =
+      fl_basic_message_channel_new(messenger,
+                                   echo_async_nullable_int_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_async_nullable_int_map_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_cb,
       g_object_ref(api_data), g_object_unref);
   g_autofree gchar* echo_async_nullable_enum_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
@@ -11994,6 +13230,30 @@ void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
       call_flutter_echo_map_channel,
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_map_cb,
       g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* call_flutter_echo_string_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterEchoStringMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) call_flutter_echo_string_map_channel =
+      fl_basic_message_channel_new(messenger,
+                                   call_flutter_echo_string_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      call_flutter_echo_string_map_channel,
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* call_flutter_echo_int_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterEchoIntMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) call_flutter_echo_int_map_channel =
+      fl_basic_message_channel_new(messenger,
+                                   call_flutter_echo_int_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      call_flutter_echo_int_map_channel,
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_cb,
+      g_object_ref(api_data), g_object_unref);
   g_autofree gchar* call_flutter_echo_enum_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "callFlutterEchoEnum%s",
@@ -12110,6 +13370,33 @@ void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
   fl_basic_message_channel_set_message_handler(
       call_flutter_echo_nullable_map_channel,
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_map_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* call_flutter_echo_nullable_string_map_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterEchoNullableStringMap%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel)
+      call_flutter_echo_nullable_string_map_channel =
+          fl_basic_message_channel_new(
+              messenger, call_flutter_echo_nullable_string_map_channel_name,
+              FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      call_flutter_echo_nullable_string_map_channel,
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* call_flutter_echo_nullable_int_map_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterEchoNullableIntMap%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel) call_flutter_echo_nullable_int_map_channel =
+      fl_basic_message_channel_new(
+          messenger, call_flutter_echo_nullable_int_map_channel_name,
+          FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      call_flutter_echo_nullable_int_map_channel,
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_cb,
       g_object_ref(api_data), g_object_unref);
   g_autofree gchar* call_flutter_echo_nullable_enum_channel_name =
       g_strdup_printf(
@@ -12276,6 +13563,24 @@ void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
       fl_basic_message_channel_new(messenger, echo_map_channel_name,
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(echo_map_channel, nullptr,
+                                               nullptr, nullptr);
+  g_autofree gchar* echo_string_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoStringMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_string_map_channel =
+      fl_basic_message_channel_new(messenger, echo_string_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(echo_string_map_channel, nullptr,
+                                               nullptr, nullptr);
+  g_autofree gchar* echo_int_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoIntMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_int_map_channel =
+      fl_basic_message_channel_new(messenger, echo_int_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(echo_int_map_channel, nullptr,
                                                nullptr, nullptr);
   g_autofree gchar* echo_class_wrapper_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
@@ -12477,6 +13782,26 @@ void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(echo_nullable_map_channel,
                                                nullptr, nullptr, nullptr);
+  g_autofree gchar* echo_nullable_string_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNullableStringMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_nullable_string_map_channel =
+      fl_basic_message_channel_new(messenger,
+                                   echo_nullable_string_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(echo_nullable_string_map_channel,
+                                               nullptr, nullptr, nullptr);
+  g_autofree gchar* echo_nullable_int_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNullableIntMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_nullable_int_map_channel =
+      fl_basic_message_channel_new(messenger,
+                                   echo_nullable_int_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(echo_nullable_int_map_channel,
+                                               nullptr, nullptr, nullptr);
   g_autofree gchar* echo_nullable_enum_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "echoNullableEnum%s",
@@ -12598,6 +13923,25 @@ void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(echo_async_map_channel, nullptr,
                                                nullptr, nullptr);
+  g_autofree gchar* echo_async_string_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncStringMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_async_string_map_channel =
+      fl_basic_message_channel_new(messenger,
+                                   echo_async_string_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(echo_async_string_map_channel,
+                                               nullptr, nullptr, nullptr);
+  g_autofree gchar* echo_async_int_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncIntMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_async_int_map_channel =
+      fl_basic_message_channel_new(messenger, echo_async_int_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(echo_async_int_map_channel,
+                                               nullptr, nullptr, nullptr);
   g_autofree gchar* echo_async_enum_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "echoAsyncEnum%s",
@@ -12765,6 +14109,27 @@ void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(echo_async_nullable_map_channel,
                                                nullptr, nullptr, nullptr);
+  g_autofree gchar* echo_async_nullable_string_map_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "echoAsyncNullableStringMap%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_async_nullable_string_map_channel =
+      fl_basic_message_channel_new(messenger,
+                                   echo_async_nullable_string_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_async_nullable_string_map_channel, nullptr, nullptr, nullptr);
+  g_autofree gchar* echo_async_nullable_int_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncNullableIntMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_async_nullable_int_map_channel =
+      fl_basic_message_channel_new(messenger,
+                                   echo_async_nullable_int_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_async_nullable_int_map_channel, nullptr, nullptr, nullptr);
   g_autofree gchar* echo_async_nullable_enum_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "echoAsyncNullableEnum%s",
@@ -12953,6 +14318,26 @@ void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(call_flutter_echo_map_channel,
                                                nullptr, nullptr, nullptr);
+  g_autofree gchar* call_flutter_echo_string_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterEchoStringMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) call_flutter_echo_string_map_channel =
+      fl_basic_message_channel_new(messenger,
+                                   call_flutter_echo_string_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      call_flutter_echo_string_map_channel, nullptr, nullptr, nullptr);
+  g_autofree gchar* call_flutter_echo_int_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterEchoIntMap%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) call_flutter_echo_int_map_channel =
+      fl_basic_message_channel_new(messenger,
+                                   call_flutter_echo_int_map_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      call_flutter_echo_int_map_channel, nullptr, nullptr, nullptr);
   g_autofree gchar* call_flutter_echo_enum_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "callFlutterEchoEnum%s",
@@ -13052,6 +14437,29 @@ void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       call_flutter_echo_nullable_map_channel, nullptr, nullptr, nullptr);
+  g_autofree gchar* call_flutter_echo_nullable_string_map_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterEchoNullableStringMap%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel)
+      call_flutter_echo_nullable_string_map_channel =
+          fl_basic_message_channel_new(
+              messenger, call_flutter_echo_nullable_string_map_channel_name,
+              FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      call_flutter_echo_nullable_string_map_channel, nullptr, nullptr, nullptr);
+  g_autofree gchar* call_flutter_echo_nullable_int_map_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterEchoNullableIntMap%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel) call_flutter_echo_nullable_int_map_channel =
+      fl_basic_message_channel_new(
+          messenger, call_flutter_echo_nullable_int_map_channel_name,
+          FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      call_flutter_echo_nullable_int_map_channel, nullptr, nullptr, nullptr);
   g_autofree gchar* call_flutter_echo_nullable_enum_channel_name =
       g_strdup_printf(
           "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
@@ -13372,6 +14780,70 @@ void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_async_m
                                         response->value, &error)) {
     g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
               "echoAsyncMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_echo_async_string_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    FlValue* return_value) {
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncStringMapResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_response_new(
+              return_value);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoAsyncStringMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_async_string_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncStringMapResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_echo_async_string_map_response_new_error(
+              code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoAsyncStringMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_echo_async_int_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    FlValue* return_value) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncIntMapResponse) response =
+      core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_response_new(
+          return_value);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoAsyncIntMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_async_int_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncIntMapResponse) response =
+      core_tests_pigeon_test_host_integration_core_api_echo_async_int_map_response_new_error(
+          code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoAsyncIntMap", error->message);
   }
 }
 
@@ -13910,6 +15382,74 @@ void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_async_n
                                         response->value, &error)) {
     g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
               "echoAsyncNullableMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_string_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    FlValue* return_value) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableStringMapResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_response_new(
+              return_value);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoAsyncNullableStringMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_async_nullable_string_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableStringMapResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_map_response_new_error(
+              code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoAsyncNullableStringMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_int_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    FlValue* return_value) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableIntMapResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_response_new(
+              return_value);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoAsyncNullableIntMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_async_nullable_int_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableIntMapResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_map_response_new_error(
+              code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoAsyncNullableIntMap", error->message);
   }
 }
 
@@ -14485,6 +16025,74 @@ void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter
   }
 }
 
+void core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_string_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    FlValue* return_value) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoStringMapResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_response_new(
+              return_value);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "callFlutterEchoStringMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_string_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoStringMapResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_map_response_new_error(
+              code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "callFlutterEchoStringMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_int_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    FlValue* return_value) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoIntMapResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_response_new(
+              return_value);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "callFlutterEchoIntMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_int_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoIntMapResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_map_response_new_error(
+              code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "callFlutterEchoIntMap", error->message);
+  }
+}
+
 void core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_enum(
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
     CoreTestsPigeonTestAnEnum return_value) {
@@ -14788,6 +16396,74 @@ void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter
                                         response->value, &error)) {
     g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
               "callFlutterEchoNullableMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_string_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    FlValue* return_value) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableStringMapResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_response_new(
+              return_value);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "callFlutterEchoNullableStringMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_string_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableStringMapResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_map_response_new_error(
+              code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "callFlutterEchoNullableStringMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_int_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    FlValue* return_value) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableIntMapResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_response_new(
+              return_value);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "callFlutterEchoNullableIntMap", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_int_map(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterEchoNullableIntMapResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_map_response_new_error(
+              code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "callFlutterEchoNullableIntMap", error->message);
   }
 }
 
@@ -17347,11 +19023,11 @@ static void core_tests_pigeon_test_flutter_integration_core_api_echo_map_cb(
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_map(
-    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* a_map,
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* map,
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_value_append_take(args, fl_value_ref(a_map));
+  fl_value_append_take(args, fl_value_ref(map));
   g_autofree gchar* channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
       "echoMap%s",
@@ -17381,6 +19057,329 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_map_finish(
     return nullptr;
   }
   return core_tests_pigeon_test_flutter_integration_core_api_echo_map_response_new(
+      response);
+}
+
+struct _CoreTestsPigeonTestFlutterIntegrationCoreApiEchoStringMapResponse {
+  GObject parent_instance;
+
+  FlValue* error;
+  FlValue* return_value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoStringMapResponse,
+    core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestFlutterIntegrationCoreApiEchoStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API_ECHO_STRING_MAP_RESPONSE(
+          object);
+  g_clear_pointer(&self->error, fl_value_unref);
+  g_clear_pointer(&self->return_value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_init(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoStringMapResponse* self) {}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_class_init(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoStringMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_dispose;
+}
+
+static CoreTestsPigeonTestFlutterIntegrationCoreApiEchoStringMapResponse*
+core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_new(
+    FlValue* response) {
+  CoreTestsPigeonTestFlutterIntegrationCoreApiEchoStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API_ECHO_STRING_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_get_type(),
+              nullptr));
+  if (fl_value_get_length(response) > 1) {
+    self->error = fl_value_ref(response);
+  } else {
+    FlValue* value = fl_value_get_list_value(response, 0);
+    self->return_value = fl_value_ref(value);
+  }
+  return self;
+}
+
+gboolean
+core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_is_error(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoStringMapResponse* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_STRING_MAP_RESPONSE(
+          self),
+      FALSE);
+  return self->error != nullptr;
+}
+
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_get_error_code(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoStringMapResponse* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_STRING_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_is_error(
+          self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 0));
+}
+
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_get_error_message(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoStringMapResponse* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_STRING_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_is_error(
+          self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 1));
+}
+
+FlValue*
+core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_get_error_details(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoStringMapResponse* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_STRING_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_is_error(
+          self));
+  return fl_value_get_list_value(self->error, 2);
+}
+
+FlValue*
+core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_get_return_value(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoStringMapResponse* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_STRING_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      !core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_is_error(
+          self));
+  return self->return_value;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
+}
+
+void core_tests_pigeon_test_flutter_integration_core_api_echo_string_map(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* string_map,
+    GCancellable* cancellable, GAsyncReadyCallback callback,
+    gpointer user_data) {
+  g_autoptr(FlValue) args = fl_value_new_list();
+  fl_value_append_take(args, fl_value_ref(string_map));
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoStringMap%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_cb,
+      task);
+}
+
+CoreTestsPigeonTestFlutterIntegrationCoreApiEchoStringMapResponse*
+core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_finish(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
+    GError** error) {
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
+  if (response == nullptr) {
+    return nullptr;
+  }
+  return core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_new(
+      response);
+}
+
+struct _CoreTestsPigeonTestFlutterIntegrationCoreApiEchoIntMapResponse {
+  GObject parent_instance;
+
+  FlValue* error;
+  FlValue* return_value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoIntMapResponse,
+    core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestFlutterIntegrationCoreApiEchoIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API_ECHO_INT_MAP_RESPONSE(
+          object);
+  g_clear_pointer(&self->error, fl_value_unref);
+  g_clear_pointer(&self->return_value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_init(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoIntMapResponse* self) {}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_class_init(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoIntMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_dispose;
+}
+
+static CoreTestsPigeonTestFlutterIntegrationCoreApiEchoIntMapResponse*
+core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_new(
+    FlValue* response) {
+  CoreTestsPigeonTestFlutterIntegrationCoreApiEchoIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API_ECHO_INT_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_get_type(),
+              nullptr));
+  if (fl_value_get_length(response) > 1) {
+    self->error = fl_value_ref(response);
+  } else {
+    FlValue* value = fl_value_get_list_value(response, 0);
+    self->return_value = fl_value_ref(value);
+  }
+  return self;
+}
+
+gboolean
+core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_is_error(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoIntMapResponse* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_INT_MAP_RESPONSE(
+          self),
+      FALSE);
+  return self->error != nullptr;
+}
+
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_get_error_code(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoIntMapResponse* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_INT_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_is_error(
+          self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 0));
+}
+
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_get_error_message(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoIntMapResponse* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_INT_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_is_error(
+          self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 1));
+}
+
+FlValue*
+core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_get_error_details(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoIntMapResponse* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_INT_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_is_error(
+          self));
+  return fl_value_get_list_value(self->error, 2);
+}
+
+FlValue*
+core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_get_return_value(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoIntMapResponse* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_INT_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      !core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_is_error(
+          self));
+  return self->return_value;
+}
+
+static void core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
+}
+
+void core_tests_pigeon_test_flutter_integration_core_api_echo_int_map(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* int_map,
+    GCancellable* cancellable, GAsyncReadyCallback callback,
+    gpointer user_data) {
+  g_autoptr(FlValue) args = fl_value_new_list();
+  fl_value_append_take(args, fl_value_ref(int_map));
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoIntMap%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_cb,
+      task);
+}
+
+CoreTestsPigeonTestFlutterIntegrationCoreApiEchoIntMapResponse*
+core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_finish(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
+    GError** error) {
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
+  if (response == nullptr) {
+    return nullptr;
+  }
+  return core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_new(
       response);
 }
 
@@ -18881,12 +20880,12 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_cb(
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map(
-    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* a_map,
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* map,
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(
-      args, a_map != nullptr ? fl_value_ref(a_map) : fl_value_new_null());
+      args, map != nullptr ? fl_value_ref(map) : fl_value_new_null());
   g_autofree gchar* channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
       "echoNullableMap%s",
@@ -18917,6 +20916,351 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_finish(
     return nullptr;
   }
   return core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_response_new(
+      response);
+}
+
+struct
+    _CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableStringMapResponse {
+  GObject parent_instance;
+
+  FlValue* error;
+  FlValue* return_value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableStringMapResponse,
+    core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API_ECHO_NULLABLE_STRING_MAP_RESPONSE(
+          object);
+  g_clear_pointer(&self->error, fl_value_unref);
+  g_clear_pointer(&self->return_value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_init(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableStringMapResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_class_init(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableStringMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_dispose;
+}
+
+static CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableStringMapResponse*
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_new(
+    FlValue* response) {
+  CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableStringMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API_ECHO_NULLABLE_STRING_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_get_type(),
+              nullptr));
+  if (fl_value_get_length(response) > 1) {
+    self->error = fl_value_ref(response);
+  } else {
+    FlValue* value = fl_value_get_list_value(response, 0);
+    self->return_value = fl_value_ref(value);
+  }
+  return self;
+}
+
+gboolean
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_is_error(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableStringMapResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_NULLABLE_STRING_MAP_RESPONSE(
+          self),
+      FALSE);
+  return self->error != nullptr;
+}
+
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_get_error_code(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableStringMapResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_NULLABLE_STRING_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_is_error(
+          self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 0));
+}
+
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_get_error_message(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableStringMapResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_NULLABLE_STRING_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_is_error(
+          self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 1));
+}
+
+FlValue*
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_get_error_details(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableStringMapResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_NULLABLE_STRING_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_is_error(
+          self));
+  return fl_value_get_list_value(self->error, 2);
+}
+
+FlValue*
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_get_return_value(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableStringMapResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_NULLABLE_STRING_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      !core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_is_error(
+          self));
+  if (fl_value_get_type(self->return_value) == FL_VALUE_TYPE_NULL) {
+    return nullptr;
+  }
+  return self->return_value;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
+}
+
+void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* string_map,
+    GCancellable* cancellable, GAsyncReadyCallback callback,
+    gpointer user_data) {
+  g_autoptr(FlValue) args = fl_value_new_list();
+  fl_value_append_take(args, string_map != nullptr ? fl_value_ref(string_map)
+                                                   : fl_value_new_null());
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoNullableStringMap%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_cb,
+      task);
+}
+
+CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableStringMapResponse*
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_finish(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
+    GError** error) {
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
+  if (response == nullptr) {
+    return nullptr;
+  }
+  return core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_response_new(
+      response);
+}
+
+struct _CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableIntMapResponse {
+  GObject parent_instance;
+
+  FlValue* error;
+  FlValue* return_value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableIntMapResponse,
+    core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API_ECHO_NULLABLE_INT_MAP_RESPONSE(
+          object);
+  g_clear_pointer(&self->error, fl_value_unref);
+  g_clear_pointer(&self->return_value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_init(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableIntMapResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_class_init(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableIntMapResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_dispose;
+}
+
+static CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableIntMapResponse*
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_new(
+    FlValue* response) {
+  CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableIntMapResponse* self =
+      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API_ECHO_NULLABLE_INT_MAP_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_get_type(),
+              nullptr));
+  if (fl_value_get_length(response) > 1) {
+    self->error = fl_value_ref(response);
+  } else {
+    FlValue* value = fl_value_get_list_value(response, 0);
+    self->return_value = fl_value_ref(value);
+  }
+  return self;
+}
+
+gboolean
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_is_error(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableIntMapResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_NULLABLE_INT_MAP_RESPONSE(
+          self),
+      FALSE);
+  return self->error != nullptr;
+}
+
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_get_error_code(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableIntMapResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_NULLABLE_INT_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_is_error(
+          self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 0));
+}
+
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_get_error_message(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableIntMapResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_NULLABLE_INT_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_is_error(
+          self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 1));
+}
+
+FlValue*
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_get_error_details(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableIntMapResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_NULLABLE_INT_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_is_error(
+          self));
+  return fl_value_get_list_value(self->error, 2);
+}
+
+FlValue*
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_get_return_value(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableIntMapResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_ECHO_NULLABLE_INT_MAP_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      !core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_is_error(
+          self));
+  if (fl_value_get_type(self->return_value) == FL_VALUE_TYPE_NULL) {
+    return nullptr;
+  }
+  return self->return_value;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
+}
+
+void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* int_map,
+    GCancellable* cancellable, GAsyncReadyCallback callback,
+    gpointer user_data) {
+  g_autoptr(FlValue) args = fl_value_new_list();
+  fl_value_append_take(
+      args, int_map != nullptr ? fl_value_ref(int_map) : fl_value_new_null());
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoNullableIntMap%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_cb,
+      task);
+}
+
+CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableIntMapResponse*
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_finish(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
+    GError** error) {
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
+  if (response == nullptr) {
+    return nullptr;
+  }
+  return core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_response_new(
       response);
 }
 
