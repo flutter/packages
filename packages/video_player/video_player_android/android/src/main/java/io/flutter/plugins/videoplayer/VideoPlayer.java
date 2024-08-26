@@ -8,9 +8,8 @@ import static androidx.media3.common.Player.REPEAT_MODE_ALL;
 import static androidx.media3.common.Player.REPEAT_MODE_OFF;
 
 import android.content.Context;
+import android.view.Surface;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
@@ -19,97 +18,60 @@ import androidx.media3.common.PlaybackParameters;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.view.TextureRegistry;
 
-final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
-  @NonNull private final ExoPlayerProvider exoPlayerProvider;
-  @NonNull private final MediaItem mediaItem;
-  @NonNull private final TextureRegistry.SurfaceProducer surfaceProducer;
-  @NonNull private final VideoPlayerCallbacks videoPlayerEvents;
-  @NonNull private final VideoPlayerOptions options;
-  @NonNull private ExoPlayer exoPlayer;
-  @Nullable private ExoPlayerState savedStateDuring;
+final class VideoPlayer {
+  private ExoPlayer exoPlayer;
+  private Surface surface;
+  private final TextureRegistry.SurfaceTextureEntry textureEntry;
+  private final VideoPlayerCallbacks videoPlayerEvents;
+  private final VideoPlayerOptions options;
 
   /**
    * Creates a video player.
    *
    * @param context application context.
    * @param events event callbacks.
-   * @param surfaceProducer produces a texture to render to.
+   * @param textureEntry texture to render to.
    * @param asset asset to play.
    * @param options options for playback.
    * @return a video player instance.
    */
   @NonNull
   static VideoPlayer create(
-      @NonNull Context context,
-      @NonNull VideoPlayerCallbacks events,
-      @NonNull TextureRegistry.SurfaceProducer surfaceProducer,
-      @NonNull VideoAsset asset,
-      @NonNull VideoPlayerOptions options) {
-    return new VideoPlayer(
-        () -> {
-          ExoPlayer.Builder builder =
-              new ExoPlayer.Builder(context)
-                  .setMediaSourceFactory(asset.getMediaSourceFactory(context));
-          return builder.build();
-        },
-        events,
-        surfaceProducer,
-        asset.getMediaItem(),
-        options);
-  }
-
-  /** A closure-compatible signature since {@link java.util.function.Supplier} is API level 24. */
-  interface ExoPlayerProvider {
-    /**
-     * Returns a new {@link ExoPlayer}.
-     *
-     * @return new instance.
-     */
-    ExoPlayer get();
+      Context context,
+      VideoPlayerCallbacks events,
+      TextureRegistry.SurfaceTextureEntry textureEntry,
+      VideoAsset asset,
+      VideoPlayerOptions options) {
+    ExoPlayer.Builder builder =
+        new ExoPlayer.Builder(context).setMediaSourceFactory(asset.getMediaSourceFactory(context));
+    return new VideoPlayer(builder, events, textureEntry, asset.getMediaItem(), options);
   }
 
   @VisibleForTesting
   VideoPlayer(
-      @NonNull ExoPlayerProvider exoPlayerProvider,
-      @NonNull VideoPlayerCallbacks events,
-      @NonNull TextureRegistry.SurfaceProducer surfaceProducer,
-      @NonNull MediaItem mediaItem,
-      @NonNull VideoPlayerOptions options) {
-    this.exoPlayerProvider = exoPlayerProvider;
+      ExoPlayer.Builder builder,
+      VideoPlayerCallbacks events,
+      TextureRegistry.SurfaceTextureEntry textureEntry,
+      MediaItem mediaItem,
+      VideoPlayerOptions options) {
     this.videoPlayerEvents = events;
-    this.surfaceProducer = surfaceProducer;
-    this.mediaItem = mediaItem;
+    this.textureEntry = textureEntry;
     this.options = options;
-    this.exoPlayer = createVideoPlayer();
-    surfaceProducer.setCallback(this);
-  }
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY)
-  public void onSurfaceCreated() {
-    exoPlayer = createVideoPlayer();
-    if (savedStateDuring != null) {
-      savedStateDuring.restore(exoPlayer);
-      savedStateDuring = null;
-    }
-  }
-
-  @RestrictTo(RestrictTo.Scope.LIBRARY)
-  public void onSurfaceDestroyed() {
-    exoPlayer.stop();
-    savedStateDuring = ExoPlayerState.save(exoPlayer);
-    exoPlayer.release();
-  }
-
-  private ExoPlayer createVideoPlayer() {
-    ExoPlayer exoPlayer = exoPlayerProvider.get();
+    ExoPlayer exoPlayer = builder.build();
     exoPlayer.setMediaItem(mediaItem);
     exoPlayer.prepare();
 
-    exoPlayer.setVideoSurface(surfaceProducer.getSurface());
-    exoPlayer.addListener(new ExoPlayerEventListener(exoPlayer, videoPlayerEvents));
-    setAudioAttributes(exoPlayer, options.mixWithOthers);
+    setUpVideoPlayer(exoPlayer);
+  }
 
-    return exoPlayer;
+  private void setUpVideoPlayer(ExoPlayer exoPlayer) {
+    this.exoPlayer = exoPlayer;
+
+    surface = new Surface(textureEntry.surfaceTexture());
+    exoPlayer.setVideoSurface(surface);
+    setAudioAttributes(exoPlayer, options.mixWithOthers);
+    exoPlayer.addListener(new ExoPlayerEventListener(exoPlayer, videoPlayerEvents));
   }
 
   void sendBufferingUpdate() {
@@ -123,11 +85,11 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
   }
 
   void play() {
-    exoPlayer.play();
+    exoPlayer.setPlayWhenReady(true);
   }
 
   void pause() {
-    exoPlayer.pause();
+    exoPlayer.setPlayWhenReady(false);
   }
 
   void setLooping(boolean value) {
@@ -156,7 +118,12 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
   }
 
   void dispose() {
-    surfaceProducer.release();
-    exoPlayer.release();
+    textureEntry.release();
+    if (surface != null) {
+      surface.release();
+    }
+    if (exoPlayer != null) {
+      exoPlayer.release();
+    }
   }
 }
