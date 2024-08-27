@@ -18,7 +18,8 @@ const String kPurchaseErrorCode = 'purchase_error';
 /// Indicates store front is Apple AppStore.
 const String kIAPSource = 'app_store';
 
-const bool useStoreKit2 = true;
+/// Experimental flag for StoreKit2.
+bool _useStoreKit2 = true;
 
 /// An [InAppPurchasePlatform] that wraps StoreKit.
 ///
@@ -69,7 +70,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   @override
   Future<bool> isAvailable() {
-    if (useStoreKit2) {
+    if (_useStoreKit2) {
       return AppStore().canMakePayments();
     }
     return SKPaymentQueueWrapper.canMakePayments();
@@ -127,7 +128,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @override
   Future<ProductDetailsResponse> queryProductDetails(
       Set<String> identifiers) async {
-    if (useStoreKit2) {
+    if (_useStoreKit2) {
       List<SK2Product> products = <SK2Product>[];
       Set<String> invalidProductIdentifiers;
       PlatformException? exception;
@@ -206,6 +207,11 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   /// Use countryCode instead.
   @Deprecated('Use countryCode')
   Future<String?> getCountryCode() => countryCode();
+
+  /// Turns on StoreKit2. You cannot disable this after it is enabled.
+  void enableStoreKit2() {
+    _useStoreKit2 = true;
+  }
 }
 
 enum _TransactionRestoreState {

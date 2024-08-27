@@ -289,9 +289,9 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
     for (final String validID in validProductIDs) {
       final SK2Product product = SK2Product(
           id: validID,
-          displayName: "test_product",
-          displayPrice: "0.99",
-          description: "description",
+          displayName: 'test_product',
+          displayPrice: '0.99',
+          description: 'description',
           price: 0.99,
           type: SK2ProductType.consumable,
           priceLocale:
@@ -318,7 +318,7 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
       }
     }
     final List<SK2ProductMessage?> result = <SK2ProductMessage?>[];
-    for (SK2Product p in products) {
+    for (final SK2Product p in products) {
       result.add(p.convertToPigeon());
     }
 

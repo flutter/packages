@@ -25,11 +25,12 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         }
         completion(.success(productMessages))
       } catch {
-        throw PigeonError(
-          code: "storekit2_products_error",
-          message: error.localizedDescription,
-          details: error.localizedDescription
-        )
+        completion(
+          .failure(
+            PigeonError(
+              code: "storekit2_products_error",
+              message: error.localizedDescription,
+              details: error.localizedDescription)))
       }
     }
   }

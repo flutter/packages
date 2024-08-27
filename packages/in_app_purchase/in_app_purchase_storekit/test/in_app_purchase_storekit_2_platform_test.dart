@@ -17,7 +17,7 @@ void main() {
   late InAppPurchaseStoreKitPlatform iapStoreKitPlatform;
 
   setUpAll(() {
-    TestInAppPurchase2Api.setup(fakeStoreKit2Platform);
+    TestInAppPurchase2Api.setUp(fakeStoreKit2Platform);
   });
 
   setUp(() {

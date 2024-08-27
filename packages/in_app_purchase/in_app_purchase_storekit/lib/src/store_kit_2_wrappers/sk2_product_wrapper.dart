@@ -3,11 +3,11 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
-import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import '../../store_kit_2_wrappers.dart';
 
 InAppPurchase2API _hostApi = InAppPurchase2API();
 
+/// A wrapper around StoreKit2's ProductType
 /// https://developer.apple.com/documentation/storekit/product/producttype
 /// The types of in-app purchases.
 enum SK2ProductType {
@@ -55,7 +55,16 @@ extension on SK2ProductType {
   }
 }
 
-enum SK2SubscriptionOfferType { introductory, promotional }
+/// A wrapper around StoreKit2's SubscriptionOfferType
+/// https://developer.apple.com/documentation/appstoreserverapi/offertype/
+/// The subscription offer types.
+enum SK2SubscriptionOfferType {
+  /// An introductory offer.
+  introductory,
+
+  /// A A promotional offer.
+  promotional
+}
 
 extension on SK2SubscriptionOfferTypeMessage {
   SK2SubscriptionOfferType convertFromPigeon() {
@@ -68,8 +77,12 @@ extension on SK2SubscriptionOfferTypeMessage {
   }
 }
 
+/// A wrapper around StoreKit2's SubscriptionOffer
+/// https://developer.apple.com/documentation/storekit/product/subscriptionoffer
+/// Information about a subscription offer on a product.
 class SK2SubscriptionOffer {
-  const SK2SubscriptionOffer({
+  /// Creates a new [SK2SubscriptionOffer]
+  SK2SubscriptionOffer({
     this.id,
     required this.price,
     required this.type,
@@ -77,11 +90,23 @@ class SK2SubscriptionOffer {
     required this.periodCount,
     required this.paymentMode,
   });
+
+  /// The subscription offer identifier.
   final String? id;
+
+  /// The decimal representation of the discounted price of the subscription offer.
   final double price;
+
+  /// The type of subscription offer, either introductory or promotional.
   final SK2SubscriptionOfferType type;
+
+  /// The subscription period for the subscription offer.
   final SK2SubscriptionPeriod period;
+
+  /// The number of periods that the subscription offer renews for.
   final int periodCount;
+
+  /// The payment modes for subscription offers that apply to a transaction.
   final SK2SubscriptionOfferPaymentMode paymentMode;
 }
 
@@ -97,10 +122,12 @@ extension on SK2SubscriptionOfferMessage {
   }
 }
 
+/// A wrapper around StoreKit2's SubscriptionInfo
 /// https://developer.apple.com/documentation/storekit/product/subscriptioninfo
-/// Information about an auto-renewable subscription, such as its status, period, subscription group, and subscription offer details.
+/// Information about an auto-renewable subscription,
+/// such as its status, period, subscription group, and subscription offer details.
 class SK2SubscriptionInfo {
-  /// Constructor
+  /// Creates a new instance of [SK2SubscriptionInfo]
   const SK2SubscriptionInfo({
     required this.subscriptionGroupID,
     required this.promotionalOffers,
@@ -122,7 +149,8 @@ extension on SK2SubscriptionInfoMessage {
     return SK2SubscriptionInfo(
         subscriptionGroupID: subscriptionGroupID,
         // Note that promotionalOffers should NOT be nullable, but is only declared
-        // so because of pigeon weirdness. There should be NO NULLS.
+        // so because of pigeon cannot handle non null lists.
+        // There should be NO NULLS.
         promotionalOffers: promotionalOffers
             .whereType<SK2SubscriptionOfferMessage>()
             .map((SK2SubscriptionOfferMessage offer) =>
@@ -132,9 +160,11 @@ extension on SK2SubscriptionInfoMessage {
   }
 }
 
-/// https://developer.apple.com/documentation/storekit/product/subscriptionperiod?changes=latest_minor
+/// A wrapper around StoreKit2's SubscriptionPeriod
+/// https://developer.apple.com/documentation/storekit/product/subscriptionperiod
 /// Values that represent the duration of time between subscription renewals.
 class SK2SubscriptionPeriod {
+  /// Creates a new instance of [SK2SubscriptionPeriod]
   const SK2SubscriptionPeriod({required this.value, required this.unit});
 
   /// The number of units that the period represents.
@@ -150,6 +180,7 @@ extension on SK2SubscriptionPeriodMessage {
   }
 }
 
+/// A wrapper around StoreKit2's SubscriptionPeriodUnit
 /// https://developer.apple.com/documentation/storekit/product/subscriptionperiod/3749576-unit
 /// The increment of time for the subscription period.
 enum SK2SubscriptionPeriodUnit {
@@ -181,7 +212,7 @@ extension on SK2SubscriptionPeriodUnitMessage {
   }
 }
 
-/// https://developer.apple.com/documentation/storekit/product/subscriptionoffer/paymentmode
+/// A wrapper around StoreKit2's [PaymentMode](https://developer.apple.com/documentation/storekit/product/subscriptionoffer/paymentmode)
 /// The payment modes for subscription offers that apply to a transaction.
 enum SK2SubscriptionOfferPaymentMode {
   /// A payment mode of a product discount that applies over a single billing period or multiple billing periods.
@@ -207,11 +238,19 @@ extension on SK2SubscriptionOfferPaymentModeMessage {
   }
 }
 
+/// A wrapper around StoreKit2's [Locale](https://developer.apple.com/documentation/foundation/locale)
+/// The payment modes for subscription offers that apply to a transaction.
 class SK2PriceLocale {
+  /// Creates a new instance of [SK2PriceLocale]
   SK2PriceLocale({required this.currencyCode, required this.currencySymbol});
+
+  /// The currency code this format style uses.
   final String currencyCode;
+
+  /// The currency symbol this format style uses.
   final String currencySymbol;
 
+  /// Convert this instance of [SK2PriceLocale] to [SK2PriceLocaleMessage]
   SK2PriceLocaleMessage convertToPigeon() {
     return SK2PriceLocaleMessage(
         currencyCode: currencyCode, currencySymbol: currencySymbol);
@@ -225,8 +264,7 @@ extension on SK2PriceLocaleMessage {
   }
 }
 
-/// Dart wrapper around StoreKit2's [Product](https://developer.apple.com/documentation/storekit/product).
-///
+/// A wrapper around StoreKit2's [Product](https://developer.apple.com/documentation/storekit/product).
 /// The Product type represents the in-app purchases that you configure in
 /// App Store Connect and make available for purchase within your app.
 class SK2Product {
@@ -286,6 +324,7 @@ class SK2Product {
         .toList();
   }
 
+  /// Converts this instance of [SK2Product] to it's pigeon representation [SK2ProductMessage]
   SK2ProductMessage convertToPigeon() {
     return SK2ProductMessage(
         id: id,
@@ -298,7 +337,6 @@ class SK2Product {
   }
 }
 
-// let me test what i wanted you to type
 extension on SK2ProductMessage {
   SK2Product convertFromPigeon() {
     return SK2Product(

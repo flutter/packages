@@ -61,13 +61,34 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .success(let productMessages):
         fetchedProductMsg = productMessages
         expectation.fulfill()
-      case .failure(let error):
-        // Handle the error
-        print("Failed to fetch products: \(error.localizedDescription)")
+      case .failure(_):
+        XCTFail("Products should be successfully fetched")
       }
     }
     await fulfillment(of: [expectation], timeout: 5)
 
     XCTAssert(fetchedProductMsg?.count == 0)
+  }
+
+  @available(iOS 17.0, *)
+  func testGetProductsWithStoreKitError() async throws {
+    try await session.setSimulatedError(
+      .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
+
+    let expectation = self.expectation(description: "products request should fail")
+
+    plugin.products(identifiers: ["subscription_silver"]) { result in
+      switch result {
+      case .success(_):
+        XCTFail("This `products` call should not succeed")
+      case .failure(let error):
+        expectation.fulfill()
+        XCTAssert(error.localizedDescription.contains("This operation couldn't be completed."))
+      }
+    }
+    await fulfillment(of: [expectation], timeout: 5)
+
+    // Reset test session
+    try await session.setSimulatedError(nil, forAPI: .loadProducts)
   }
 }
