@@ -1,4 +1,3 @@
-
 ## 0.11.1
 
 * Adds support for image streaming from windows platforms.
@@ -6,7 +5,6 @@
 ## 0.11.0+2
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
-
 
 ## 0.11.0+1
 
