@@ -45,6 +45,7 @@ packages/web_benchmarks/**                               @yjbanov
 packages/webview_flutter/**                              @bparrishMines
 packages/xdg_directories/**                              @stuartmorgan
 third_party/packages/cupertino_icons/**                  @MitchellGoodwin
+third_party/packages/cupertino_icons/test/goldens/**     @LongCatIsLooong
 
 # Plugin platform implementation rules. These should stay last, since the last
 # matching entry takes precedence.
