@@ -673,10 +673,15 @@ if (wrapped == null) {
             <String>['The codec used by $instanceManagerApiName.'],
             _docCommentSpec,
           );
-          indent.writeScoped('val codec: MessageCodec<Any?> by lazy {', '}',
-              () {
-            indent.writeln('StandardMessageCodec()');
-          });
+          indent.writeScoped(
+            'val codec: MessageCodec<Any?> by lazy {',
+            '}',
+            () {
+              indent.writeln(
+                '${generatorOptions.fileSpecificClassNameComponent}$_codecName()',
+              );
+            },
+          );
           indent.newln();
 
           addDocumentationComments(
