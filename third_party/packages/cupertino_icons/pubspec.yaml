@@ -14,7 +14,7 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  path: any
+  path: ^1.19.0
 
 flutter:
   fonts:

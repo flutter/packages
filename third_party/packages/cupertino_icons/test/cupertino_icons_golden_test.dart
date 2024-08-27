@@ -25,6 +25,13 @@ void main() async {
   if (kIsWeb || !Platform.isLinux) {
     return;
   }
+  final bool isMainChannel = !Platform.environment.containsKey('CHANNEL')
+    || Platform.environment['CHANNEL'] == 'main'
+    || Platform.environment['CHANNEL'] == 'master';
+  // Only test against main to avoid rendering differences between flutter channels.
+  if (!isMainChannel) {
+    return;
+  }
   // Load font.
   final String effectiveFontFamily = const TextStyle(fontFamily: CupertinoIcons.iconFont, package: CupertinoIcons.iconFontPackage).fontFamily!;
   final FontLoader fontLoader = FontLoader(effectiveFontFamily);
