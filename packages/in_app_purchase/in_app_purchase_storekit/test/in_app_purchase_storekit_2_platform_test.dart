@@ -23,7 +23,7 @@ void main() {
   setUp(() {
     InAppPurchaseStoreKitPlatform.registerPlatform();
     iapStoreKitPlatform =
-    InAppPurchasePlatform.instance as InAppPurchaseStoreKitPlatform;
+        InAppPurchasePlatform.instance as InAppPurchaseStoreKitPlatform;
     fakeStoreKit2Platform.reset();
   });
 
@@ -38,9 +38,9 @@ void main() {
   group('query product list', () {
     test('should get product list and correct invalid identifiers', () async {
       final InAppPurchaseStoreKitPlatform connection =
-      InAppPurchaseStoreKitPlatform();
+          InAppPurchaseStoreKitPlatform();
       final ProductDetailsResponse response =
-      await connection.queryProductDetails(<String>{'123', '456', '789'});
+          await connection.queryProductDetails(<String>{'123', '456', '789'});
       final List<ProductDetails> products = response.productDetails;
       expect(products.first.id, '123');
       expect(products[1].id, '456');
@@ -51,21 +51,22 @@ void main() {
     });
     test(
         'if query products throws error, should get error object in the response',
-            () async {
-          fakeStoreKit2Platform.queryProductException = PlatformException(
-              code: 'error_code',
-              message: 'error_message',
-              details: <Object, Object>{'info': 'error_info'});
-          final InAppPurchaseStoreKitPlatform connection =
+        () async {
+      fakeStoreKit2Platform.queryProductException = PlatformException(
+          code: 'error_code',
+          message: 'error_message',
+          details: <Object, Object>{'info': 'error_info'});
+      final InAppPurchaseStoreKitPlatform connection =
           InAppPurchaseStoreKitPlatform();
-          final ProductDetailsResponse response =
+      final ProductDetailsResponse response =
           await connection.queryProductDetails(<String>{'123', '456', '789'});
-          expect(response.productDetails, <ProductDetails>[]);
-          expect(response.notFoundIDs, <String>['123', '456', '789']);
-          expect(response.error, isNotNull);
-          expect(response.error!.source, kIAPSource);
-          expect(response.error!.code, 'error_code');
-          expect(response.error!.message, 'error_message');
-          expect(response.error!.details, <Object, Object>{'info': 'error_info'});
-        });
-});}
+      expect(response.productDetails, <ProductDetails>[]);
+      expect(response.notFoundIDs, <String>['123', '456', '789']);
+      expect(response.error, isNotNull);
+      expect(response.error!.source, kIAPSource);
+      expect(response.error!.code, 'error_code');
+      expect(response.error!.message, 'error_message');
+      expect(response.error!.details, <Object, Object>{'info': 'error_info'});
+    });
+  });
+}

@@ -279,7 +279,6 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 }
 
 class FakeStoreKit2Platform implements TestInAppPurchase2Api {
-
   late Set<String> validProductIDs;
   late Map<String, SK2Product> validProducts;
   PlatformException? queryProductException;
@@ -295,9 +294,8 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
           description: "description",
           price: 0.99,
           type: SK2ProductType.consumable,
-          priceLocale: SK2PriceLocale(
-              currencyCode: 'USD',
-              currencySymbol: r'$'));
+          priceLocale:
+              SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'));
       validProducts[validID] = product;
     }
   }
@@ -326,5 +324,4 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
 
     return Future<List<SK2ProductMessage?>>.value(result);
   }
-
 }

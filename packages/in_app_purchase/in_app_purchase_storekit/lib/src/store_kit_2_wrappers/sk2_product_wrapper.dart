@@ -213,7 +213,8 @@ class SK2PriceLocale {
   final String currencySymbol;
 
   SK2PriceLocaleMessage convertToPigeon() {
-    return SK2PriceLocaleMessage(currencyCode: currencyCode, currencySymbol: currencySymbol);
+    return SK2PriceLocaleMessage(
+        currencyCode: currencyCode, currencySymbol: currencySymbol);
   }
 }
 

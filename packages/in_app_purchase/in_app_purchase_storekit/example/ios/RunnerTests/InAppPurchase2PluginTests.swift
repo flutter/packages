@@ -59,7 +59,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     plugin.products(identifiers: ["invalid_product"]) { result in
       switch result {
       case .success(let productMessages):
-        fetchedProductMsg = productMessages;
+        fetchedProductMsg = productMessages
         expectation.fulfill()
       case .failure(let error):
         // Handle the error
