@@ -141,6 +141,9 @@ class SKProductMessage {
 
   final String productIdentifier;
   final String localizedTitle;
+  // This field should be nullable to handle occasional nulls in the StoreKit
+  // object despite the the StoreKit header showing that it is nonnullable
+  // https://github.com/flutter/flutter/issues/154047
   final String? localizedDescription;
   final SKPriceLocaleMessage priceLocale;
   final String? subscriptionGroupIdentifier;
