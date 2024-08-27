@@ -1,3 +1,7 @@
+## NEXT
+
+* Removes unused MapKit imports from iOS example app.
+
 ## 2.13.0
 
 * Updates map configuration and platform view creation parameters to use Pigeon.

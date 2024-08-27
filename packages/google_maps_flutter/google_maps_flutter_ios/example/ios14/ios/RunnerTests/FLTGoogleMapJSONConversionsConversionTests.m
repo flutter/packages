@@ -5,7 +5,6 @@
 @import google_maps_flutter_ios;
 @import google_maps_flutter_ios.Test;
 @import XCTest;
-@import MapKit;
 @import GoogleMaps;
 
 #import <OCMock/OCMock.h>
