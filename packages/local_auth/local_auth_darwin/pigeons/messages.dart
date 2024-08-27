@@ -25,16 +25,16 @@ class AuthStrings {
   const AuthStrings({
     required this.reason,
     required this.lockOut,
-    required this.goToSettingsButton,
-    required this.goToSettingsDescription,
+    this.goToSettingsButton,
+    this.goToSettingsDescription,
     required this.cancelButton,
     required this.localizedFallbackTitle,
   });
 
   final String reason;
   final String lockOut;
-  final String goToSettingsButton;
-  final String goToSettingsDescription;
+  final String? goToSettingsButton;
+  final String? goToSettingsDescription;
   final String cancelButton;
   final String? localizedFallbackTitle;
 }

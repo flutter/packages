@@ -1,3 +1,8 @@
+## 5.7.7
+
+* Fixes "callee requires a non-null parameter" analyzer warning.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
 ## 5.7.6
 
 * Upgrades GoogleSignIn iOS SDK to 7.1.

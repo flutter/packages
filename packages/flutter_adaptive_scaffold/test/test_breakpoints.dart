@@ -31,7 +31,23 @@ class TestBreakpoint800 extends Breakpoint {
 class TestBreakpoint1000 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 1000;
+    return MediaQuery.of(context).size.width >= 1000 &&
+        MediaQuery.of(context).size.width < 1200;
+  }
+}
+
+class TestBreakpoint1200 extends Breakpoint {
+  @override
+  bool isActive(BuildContext context) {
+    return MediaQuery.of(context).size.width >= 1200 &&
+        MediaQuery.of(context).size.width < 1600;
+  }
+}
+
+class TestBreakpoint1600 extends Breakpoint {
+  @override
+  bool isActive(BuildContext context) {
+    return MediaQuery.of(context).size.width >= 1600;
   }
 }
 

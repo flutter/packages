@@ -37,6 +37,9 @@ const String kEnableExperiment = 'enable-experiment';
 /// land (e.g., dependency overrides in federated plugin combination PRs).
 const String kDoNotLandWarning = 'DO NOT MERGE';
 
+/// Key for enabling web WASM compilation
+const String kWebWasmFlag = 'wasm';
+
 /// Target platforms supported by Flutter.
 // ignore: public_member_api_docs
 enum FlutterPlatform { android, ios, linux, macos, web, windows }
@@ -79,6 +82,8 @@ final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
   Version(3, 19, 0): Version(3, 3, 0),
   Version(3, 19, 6): Version(3, 3, 4),
   Version(3, 22, 0): Version(3, 4, 0),
+  Version(3, 22, 3): Version(3, 4, 4),
+  Version(3, 24, 0): Version(3, 5, 0),
 };
 
 /// Returns the version of the Dart SDK that shipped with the given Flutter

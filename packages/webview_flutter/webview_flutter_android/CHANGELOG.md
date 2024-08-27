@@ -1,3 +1,15 @@
+## 3.16.7
+
+* Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.
+
+## 3.16.6
+
+* Bumps androidx.annotation:annotation from 1.7.1 to 1.8.1.
+
+## 3.16.5
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 3.16.4
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

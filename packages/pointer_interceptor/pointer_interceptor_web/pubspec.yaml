@@ -2,11 +2,11 @@ name: pointer_interceptor_web
 description: Web implementation of the pointer_interceptor plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/pointer_interceptor/pointer_interceptor_web
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3Apointer_interceptor
-version: 0.10.2
+version: 0.10.2+1
 
 environment:
-  sdk: ^3.3.0
-  flutter: ">=3.19.0"
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
 
 flutter:
   plugin:
@@ -23,7 +23,7 @@ dependencies:
     sdk: flutter
   plugin_platform_interface: ^2.1.7
   pointer_interceptor_platform_interface: ^0.10.0
-  web: ^0.5.0
+  web: ">=0.5.1 <2.0.0"
 
 dev_dependencies:
   flutter_test:
