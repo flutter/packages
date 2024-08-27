@@ -1,3 +1,7 @@
+## 22.0.1
+
+* Validates enums and classes in collections.
+
 ## 22.0.0
 
 * [dart] Changes codec to send int64 instead of int32.
