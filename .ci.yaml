@@ -377,16 +377,14 @@ targets:
     timeout: 30
     properties:
       version_file: flutter_master.version
-      # TODO(stuartmorgan): Once stable requires JDK 17, and the
-      # legacy project is updated accordingly, this entire target
+      # TODO(stuartmorgan): This entire target
       # can be merged back into android_build_all_packages.
       # This file only builds a *legacy* version of the project.
       target_file: android_build_all_packages_legacy.yaml
       channel: master
-      # The legacy project build requires an older JDK.
       dependencies: >-
         [
-          {"dependency": "open_jdk", "version": "version:11"}
+          {"dependency": "open_jdk", "version": "version:17"}
         ]
       env_variables: >-
         {
@@ -415,10 +413,9 @@ targets:
       # This file only builds a *legacy* version of the project.
       target_file: android_build_all_packages_legacy.yaml
       channel: stable
-      # The legacy project build requires an older JDK.
       dependencies: >-
         [
-          {"dependency": "open_jdk", "version": "version:11"}
+          {"dependency": "open_jdk", "version": "version:17"}
         ]
       env_variables: >-
         {
