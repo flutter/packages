@@ -146,9 +146,17 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
           .map((SK2Product productWrapper) =>
               AppStoreProduct2Details.fromSK2Product(productWrapper))
           .toList();
-      final ProductDetailsResponse response = ProductDetailsResponse(
-          productDetails: productDetails,
-          notFoundIDs: invalidProductIdentifiers.toList());
+      final ProductDetailsResponse response =         ProductDetailsResponse(
+        productDetails: productDetails,
+        notFoundIDs: invalidProductIdentifiers.toList(),
+        error: exception == null
+            ? null
+            : IAPError(
+            source: kIAPSource,
+            code: exception.code,
+            message: exception.message ?? '',
+            details: exception.details),
+      );
       return response;
     }
     final SKRequestMaker requestMaker = SKRequestMaker();
@@ -198,6 +206,8 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   /// Use countryCode instead.
   @Deprecated('Use countryCode')
   Future<String?> getCountryCode() => countryCode();
+
+
 }
 
 enum _TransactionRestoreState {

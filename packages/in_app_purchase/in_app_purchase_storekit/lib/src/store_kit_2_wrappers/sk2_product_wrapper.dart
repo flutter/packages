@@ -40,6 +40,21 @@ extension on SK2ProductTypeMessage {
   }
 }
 
+extension on SK2ProductType {
+  SK2ProductTypeMessage convertToPigeon() {
+    switch (this) {
+      case SK2ProductType.autoRenewable:
+        return SK2ProductTypeMessage.autoRenewable;
+      case SK2ProductType.consumable:
+        return SK2ProductTypeMessage.consumable;
+      case SK2ProductType.nonConsumable:
+        return SK2ProductTypeMessage.nonConsumable;
+      case SK2ProductType.nonRenewable:
+        return SK2ProductTypeMessage.nonRenewable;
+    }
+  }
+}
+
 enum SK2SubscriptionOfferType { introductory, promotional }
 
 extension on SK2SubscriptionOfferTypeMessage {
@@ -196,6 +211,10 @@ class SK2PriceLocale {
   SK2PriceLocale({required this.currencyCode, required this.currencySymbol});
   final String currencyCode;
   final String currencySymbol;
+
+  SK2PriceLocaleMessage convertToPigeon() {
+    return SK2PriceLocaleMessage(currencyCode: currencyCode, currencySymbol: currencySymbol);
+  }
 }
 
 extension on SK2PriceLocaleMessage {
@@ -264,6 +283,17 @@ class SK2Product {
         .whereType<SK2ProductMessage>()
         .map((SK2ProductMessage product) => product.convertFromPigeon())
         .toList();
+  }
+
+  SK2ProductMessage convertToPigeon() {
+    return SK2ProductMessage(
+        id: id,
+        displayName: displayName,
+        description: description,
+        price: price,
+        displayPrice: displayPrice,
+        type: type.convertToPigeon(),
+        priceLocale: priceLocale.convertToPigeon());
   }
 }
 

@@ -282,6 +282,25 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
 
   late Set<String> validProductIDs;
   late Map<String, SK2Product> validProducts;
+  PlatformException? queryProductException;
+
+  void reset() {
+    validProductIDs = <String>{'123', '456'};
+    validProducts = <String, SK2Product>{};
+    for (final String validID in validProductIDs) {
+      final SK2Product product = SK2Product(
+          id: validID,
+          displayName: "test_product",
+          displayPrice: "0.99",
+          description: "description",
+          price: 0.99,
+          type: SK2ProductType.consumable,
+          priceLocale: SK2PriceLocale(
+              currencyCode: 'USD',
+              currencySymbol: r'$'));
+      validProducts[validID] = product;
+    }
+  }
 
   @override
   bool canMakePayments() {
@@ -290,16 +309,22 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
 
   @override
   Future<List<SK2ProductMessage?>> products(List<String?> identifiers) {
+    if (queryProductException != null) {
+      throw queryProductException!;
+    }
     final List<String?> productIDS = identifiers;
-    final List<String> invalidFound = <String>[];
-    final List<SKProductWrapper> products = <SKProductWrapper>[];
+    final List<SK2Product> products = <SK2Product>[];
     for (final String? productID in productIDS) {
-      if (!validProductIDs.contains(productID)) {
-        invalidFound.add(productID!);
-      } else {
+      if (validProductIDs.contains(productID)) {
         products.add(validProducts[productID]!);
       }
     }
+    final List<SK2ProductMessage?> result = <SK2ProductMessage?>[];
+    for (SK2Product p in products) {
+      result.add(p.convertToPigeon());
+    }
+
+    return Future<List<SK2ProductMessage?>>.value(result);
   }
 
 }
