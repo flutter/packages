@@ -19,7 +19,7 @@ const String kPurchaseErrorCode = 'purchase_error';
 const String kIAPSource = 'app_store';
 
 /// Experimental flag for StoreKit2.
-bool _useStoreKit2 = true;
+bool _useStoreKit2 = false;
 
 /// An [InAppPurchasePlatform] that wraps StoreKit.
 ///
@@ -209,7 +209,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   Future<String?> getCountryCode() => countryCode();
 
   /// Turns on StoreKit2. You cannot disable this after it is enabled.
-  void enableStoreKit2() {
+  static void enableStoreKit2() {
     _useStoreKit2 = true;
   }
 }
