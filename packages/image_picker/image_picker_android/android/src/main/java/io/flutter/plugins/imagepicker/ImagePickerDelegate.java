@@ -176,11 +176,19 @@ public class ImagePickerDelegate
 
           @Override
           public void getFullImagePath(final Uri imageUri, final OnPathReadyListener listener) {
-            MediaScannerConnection.scanFile(
-                activity,
-                new String[] {(imageUri != null) ? imageUri.getPath() : ""},
-                null,
-                (path, uri) -> listener.onPathReady(path));
+
+            // NOTE  Swap of MediaScannerConnection to MediaStore 
+            // broken on MEIZU device 
+            // MediaScannerConnection.scanFile(
+            //     activity,
+            //     new String[] {(imageUri != null) ? imageUri.getPath() : ""},
+            //     null,
+            //     (path, uri) -> listener.onPathReady(path));
+
+            SingleMediaScanner scanner = new  SingleMediaScanner(activity, imageUri.getPath(), (path, uri) -> {
+              listener.onPathReady(path);
+            });
+            scanner.scan();
           }
         },
         new FileUtils(),
