@@ -263,7 +263,7 @@ class ProxyApiTestsPigeonInstanceManager(
 private class ProxyApiTestsPigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
   companion object {
     /** The codec used by ProxyApiTestsPigeonInstanceManagerApi. */
-    val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
+    val codec: MessageCodec<Any?> by lazy { ProxyApiTestsPigeonCodec() }
 
     /**
      * Sets up an instance of `ProxyApiTestsPigeonInstanceManagerApi` to handle messages from the

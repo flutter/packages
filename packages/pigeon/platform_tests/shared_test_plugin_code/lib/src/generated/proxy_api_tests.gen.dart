@@ -292,8 +292,7 @@ class _PigeonInternalInstanceManagerApi {
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      StandardMessageCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   static void setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
