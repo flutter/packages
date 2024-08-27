@@ -584,7 +584,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                   ..type = cb.refer('MessageCodec<Object?>')
                   ..static = true
                   ..modifier = cb.FieldModifier.constant
-                  ..assignment = const cb.Code('StandardMessageCodec()');
+                  ..assignment = const cb.Code('$_pigeonCodec()');
               },
             )
           ],
