@@ -44,8 +44,8 @@ void main() {
     test('should get product list and correct invalid identifiers', () async {
       final InAppPurchaseStoreKitPlatform connection =
           InAppPurchaseStoreKitPlatform();
-      final ProductDetailsResponse response =
-          await connection.queryProductDetails(<String>{'123', '456', '789', '999'});
+      final ProductDetailsResponse response = await connection
+          .queryProductDetails(<String>{'123', '456', '789', '999'});
       final List<ProductDetails> products = response.productDetails;
       expect(products.first.id, '123');
       expect(products[1].id, '456');
