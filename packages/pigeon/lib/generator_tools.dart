@@ -450,6 +450,13 @@ const List<String> validTypes = <String>[
 ];
 
 /// The dedicated key for accessing an InstanceManager in ProxyApi base codecs.
+///
+/// Generated codecs override the `StandardMessageCodec` which reserves the byte
+/// keys of 0-127, so this value is chosen because it is the lowest available
+/// key.
+///
+/// See https://api.flutter.dev/flutter/services/StandardMessageCodec/writeValue.html
+/// for more information on keys in MessageCodecs.
 const int proxyApiCodecInstanceManagerKey = 128;
 
 /// Custom codecs' custom types are enumerations begin at this number to
