@@ -101,36 +101,6 @@ class UnusedClass {
   std::optional<flutter::EncodableValue> a_field_;
 };
 
-// Generated class from Pigeon that represents data sent in messages.
-class SimpleClass {
- public:
-  // Constructs an object setting all non-nullable fields.
-  explicit SimpleClass(bool a_bool);
-
-  // Constructs an object setting all fields.
-  explicit SimpleClass(const std::string* a_string, bool a_bool);
-
-  const std::string* a_string() const;
-  void set_a_string(const std::string_view* value_arg);
-  void set_a_string(std::string_view value_arg);
-
-  bool a_bool() const;
-  void set_a_bool(bool value_arg);
-
- private:
-  static SimpleClass FromEncodableList(const flutter::EncodableList& list);
-  flutter::EncodableList ToEncodableList() const;
-  friend class HostIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApi;
-  friend class HostTrivialApi;
-  friend class HostSmallApi;
-  friend class FlutterSmallApi;
-  friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
-  std::optional<std::string> a_string_;
-  bool a_bool_;
-};
-
 // A class containing all supported types.
 //
 // Generated class from Pigeon that represents data sent in messages.

@@ -69,48 +69,6 @@ UnusedClass UnusedClass::FromEncodableList(const EncodableList& list) {
   return decoded;
 }
 
-// SimpleClass
-
-SimpleClass::SimpleClass(bool a_bool) : a_bool_(a_bool) {}
-
-SimpleClass::SimpleClass(const std::string* a_string, bool a_bool)
-    : a_string_(a_string ? std::optional<std::string>(*a_string)
-                         : std::nullopt),
-      a_bool_(a_bool) {}
-
-const std::string* SimpleClass::a_string() const {
-  return a_string_ ? &(*a_string_) : nullptr;
-}
-
-void SimpleClass::set_a_string(const std::string_view* value_arg) {
-  a_string_ = value_arg ? std::optional<std::string>(*value_arg) : std::nullopt;
-}
-
-void SimpleClass::set_a_string(std::string_view value_arg) {
-  a_string_ = value_arg;
-}
-
-bool SimpleClass::a_bool() const { return a_bool_; }
-
-void SimpleClass::set_a_bool(bool value_arg) { a_bool_ = value_arg; }
-
-EncodableList SimpleClass::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(2);
-  list.push_back(a_string_ ? EncodableValue(*a_string_) : EncodableValue());
-  list.push_back(EncodableValue(a_bool_));
-  return list;
-}
-
-SimpleClass SimpleClass::FromEncodableList(const EncodableList& list) {
-  SimpleClass decoded(std::get<bool>(list[1]));
-  auto& encodable_a_string = list[0];
-  if (!encodable_a_string.IsNull()) {
-    decoded.set_a_string(std::get<std::string>(encodable_a_string));
-  }
-  return decoded;
-}
-
 // AllTypes
 
 AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
@@ -1650,27 +1608,23 @@ EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
           std::get<EncodableList>(ReadValue(stream))));
     }
     case 132: {
-      return CustomEncodableValue(SimpleClass::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    }
-    case 133: {
       return CustomEncodableValue(AllTypes::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
-    case 134: {
+    case 133: {
       return CustomEncodableValue(AllNullableTypes::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
-    case 135: {
+    case 134: {
       return CustomEncodableValue(
           AllNullableTypesWithoutRecursion::FromEncodableList(
               std::get<EncodableList>(ReadValue(stream))));
     }
-    case 136: {
+    case 135: {
       return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
-    case 137: {
+    case 136: {
       return CustomEncodableValue(TestMessage::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
@@ -1705,23 +1659,15 @@ void PigeonInternalCodecSerializer::WriteValue(
           stream);
       return;
     }
-    if (custom_value->type() == typeid(SimpleClass)) {
-      stream->WriteByte(132);
-      WriteValue(
-          EncodableValue(
-              std::any_cast<SimpleClass>(*custom_value).ToEncodableList()),
-          stream);
-      return;
-    }
     if (custom_value->type() == typeid(AllTypes)) {
-      stream->WriteByte(133);
+      stream->WriteByte(132);
       WriteValue(EncodableValue(
                      std::any_cast<AllTypes>(*custom_value).ToEncodableList()),
                  stream);
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypes)) {
-      stream->WriteByte(134);
+      stream->WriteByte(133);
       WriteValue(
           EncodableValue(
               std::any_cast<AllNullableTypes>(*custom_value).ToEncodableList()),
@@ -1729,7 +1675,7 @@ void PigeonInternalCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypesWithoutRecursion)) {
-      stream->WriteByte(135);
+      stream->WriteByte(134);
       WriteValue(EncodableValue(std::any_cast<AllNullableTypesWithoutRecursion>(
                                     *custom_value)
                                     .ToEncodableList()),
@@ -1737,14 +1683,14 @@ void PigeonInternalCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllClassesWrapper)) {
-      stream->WriteByte(136);
+      stream->WriteByte(135);
       WriteValue(EncodableValue(std::any_cast<AllClassesWrapper>(*custom_value)
                                     .ToEncodableList()),
                  stream);
       return;
     }
     if (custom_value->type() == typeid(TestMessage)) {
-      stream->WriteByte(137);
+      stream->WriteByte(136);
       WriteValue(
           EncodableValue(
               std::any_cast<TestMessage>(*custom_value).ToEncodableList()),

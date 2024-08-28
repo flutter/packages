@@ -66,12 +66,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
-@interface FLTSimpleClass ()
-+ (FLTSimpleClass *)fromList:(NSArray<id> *)list;
-+ (nullable FLTSimpleClass *)nullableFromList:(NSArray<id> *)list;
-- (NSArray<id> *)toList;
-@end
-
 @interface FLTAllTypes ()
 + (FLTAllTypes *)fromList:(NSArray<id> *)list;
 + (nullable FLTAllTypes *)nullableFromList:(NSArray<id> *)list;
@@ -119,30 +113,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList {
   return @[
     self.aField ?: [NSNull null],
-  ];
-}
-@end
-
-@implementation FLTSimpleClass
-+ (instancetype)makeWithAString:(nullable NSString *)aString aBool:(BOOL)aBool {
-  FLTSimpleClass *pigeonResult = [[FLTSimpleClass alloc] init];
-  pigeonResult.aString = aString;
-  pigeonResult.aBool = aBool;
-  return pigeonResult;
-}
-+ (FLTSimpleClass *)fromList:(NSArray<id> *)list {
-  FLTSimpleClass *pigeonResult = [[FLTSimpleClass alloc] init];
-  pigeonResult.aString = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.aBool = [GetNullableObjectAtIndex(list, 1) boolValue];
-  return pigeonResult;
-}
-+ (nullable FLTSimpleClass *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [FLTSimpleClass fromList:list] : nil;
-}
-- (NSArray<id> *)toList {
-  return @[
-    self.aString ?: [NSNull null],
-    @(self.aBool),
   ];
 }
 @end
@@ -528,16 +498,14 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 131:
       return [FLTUnusedClass fromList:[self readValue]];
     case 132:
-      return [FLTSimpleClass fromList:[self readValue]];
-    case 133:
       return [FLTAllTypes fromList:[self readValue]];
-    case 134:
+    case 133:
       return [FLTAllNullableTypes fromList:[self readValue]];
-    case 135:
+    case 134:
       return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
-    case 136:
+    case 135:
       return [FLTAllClassesWrapper fromList:[self readValue]];
-    case 137:
+    case 136:
       return [FLTTestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -560,23 +528,20 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FLTUnusedClass class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTSimpleClass class]]) {
+  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
+  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
-    [self writeByte:136];
-    [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FLTTestMessage class]]) {
-    [self writeByte:137];
+    [self writeByte:136];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];

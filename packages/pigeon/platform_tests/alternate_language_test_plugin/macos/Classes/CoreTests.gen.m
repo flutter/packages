@@ -66,12 +66,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
-@interface SimpleClass ()
-+ (SimpleClass *)fromList:(NSArray<id> *)list;
-+ (nullable SimpleClass *)nullableFromList:(NSArray<id> *)list;
-- (NSArray<id> *)toList;
-@end
-
 @interface AllTypes ()
 + (AllTypes *)fromList:(NSArray<id> *)list;
 + (nullable AllTypes *)nullableFromList:(NSArray<id> *)list;
@@ -119,30 +113,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList {
   return @[
     self.aField ?: [NSNull null],
-  ];
-}
-@end
-
-@implementation SimpleClass
-+ (instancetype)makeWithAString:(nullable NSString *)aString aBool:(BOOL)aBool {
-  SimpleClass *pigeonResult = [[SimpleClass alloc] init];
-  pigeonResult.aString = aString;
-  pigeonResult.aBool = aBool;
-  return pigeonResult;
-}
-+ (SimpleClass *)fromList:(NSArray<id> *)list {
-  SimpleClass *pigeonResult = [[SimpleClass alloc] init];
-  pigeonResult.aString = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.aBool = [GetNullableObjectAtIndex(list, 1) boolValue];
-  return pigeonResult;
-}
-+ (nullable SimpleClass *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [SimpleClass fromList:list] : nil;
-}
-- (NSArray<id> *)toList {
-  return @[
-    self.aString ?: [NSNull null],
-    @(self.aBool),
   ];
 }
 @end
@@ -526,16 +496,14 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 131:
       return [UnusedClass fromList:[self readValue]];
     case 132:
-      return [SimpleClass fromList:[self readValue]];
-    case 133:
       return [AllTypes fromList:[self readValue]];
-    case 134:
+    case 133:
       return [AllNullableTypes fromList:[self readValue]];
-    case 135:
+    case 134:
       return [AllNullableTypesWithoutRecursion fromList:[self readValue]];
-    case 136:
+    case 135:
       return [AllClassesWrapper fromList:[self readValue]];
-    case 137:
+    case 136:
       return [TestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -558,23 +526,20 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[UnusedClass class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[SimpleClass class]]) {
+  } else if ([value isKindOfClass:[AllTypes class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllTypes class]]) {
+  } else if ([value isKindOfClass:[AllNullableTypes class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllNullableTypes class]]) {
+  } else if ([value isKindOfClass:[AllNullableTypesWithoutRecursion class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllNullableTypesWithoutRecursion class]]) {
+  } else if ([value isKindOfClass:[AllClassesWrapper class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllClassesWrapper class]]) {
-    [self writeByte:136];
-    [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[TestMessage class]]) {
-    [self writeByte:137];
+    [self writeByte:136];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];

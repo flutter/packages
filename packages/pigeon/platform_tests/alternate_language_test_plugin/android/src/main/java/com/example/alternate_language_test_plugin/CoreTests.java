@@ -160,95 +160,6 @@ public class CoreTests {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class SimpleClass {
-    private @Nullable String aString;
-
-    public @Nullable String getAString() {
-      return aString;
-    }
-
-    public void setAString(@Nullable String setterArg) {
-      this.aString = setterArg;
-    }
-
-    private @NonNull Boolean aBool;
-
-    public @NonNull Boolean getABool() {
-      return aBool;
-    }
-
-    public void setABool(@NonNull Boolean setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"aBool\" is null.");
-      }
-      this.aBool = setterArg;
-    }
-
-    /** Constructor is non-public to enforce null safety; use Builder. */
-    SimpleClass() {}
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
-      SimpleClass that = (SimpleClass) o;
-      return Objects.equals(aString, that.aString) && aBool.equals(that.aBool);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(aString, aBool);
-    }
-
-    public static final class Builder {
-
-      private @Nullable String aString;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setAString(@Nullable String setterArg) {
-        this.aString = setterArg;
-        return this;
-      }
-
-      private @Nullable Boolean aBool;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setABool(@NonNull Boolean setterArg) {
-        this.aBool = setterArg;
-        return this;
-      }
-
-      public @NonNull SimpleClass build() {
-        SimpleClass pigeonReturn = new SimpleClass();
-        pigeonReturn.setAString(aString);
-        pigeonReturn.setABool(aBool);
-        return pigeonReturn;
-      }
-    }
-
-    @NonNull
-    ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(2);
-      toListResult.add(aString);
-      toListResult.add(aBool);
-      return toListResult;
-    }
-
-    static @NonNull SimpleClass fromList(@NonNull ArrayList<Object> pigeonVar_list) {
-      SimpleClass pigeonResult = new SimpleClass();
-      Object aString = pigeonVar_list.get(0);
-      pigeonResult.setAString((String) aString);
-      Object aBool = pigeonVar_list.get(1);
-      pigeonResult.setABool((Boolean) aBool);
-      return pigeonResult;
-    }
-  }
-
   /**
    * A class containing all supported types.
    *
@@ -2195,16 +2106,14 @@ public class CoreTests {
         case (byte) 131:
           return UnusedClass.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return SimpleClass.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 133:
           return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 134:
+        case (byte) 133:
           return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 135:
+        case (byte) 134:
           return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 136:
+        case (byte) 135:
           return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 137:
+        case (byte) 136:
           return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -2222,23 +2131,20 @@ public class CoreTests {
       } else if (value instanceof UnusedClass) {
         stream.write(131);
         writeValue(stream, ((UnusedClass) value).toList());
-      } else if (value instanceof SimpleClass) {
-        stream.write(132);
-        writeValue(stream, ((SimpleClass) value).toList());
       } else if (value instanceof AllTypes) {
-        stream.write(133);
+        stream.write(132);
         writeValue(stream, ((AllTypes) value).toList());
       } else if (value instanceof AllNullableTypes) {
-        stream.write(134);
+        stream.write(133);
         writeValue(stream, ((AllNullableTypes) value).toList());
       } else if (value instanceof AllNullableTypesWithoutRecursion) {
-        stream.write(135);
+        stream.write(134);
         writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
       } else if (value instanceof AllClassesWrapper) {
-        stream.write(136);
+        stream.write(135);
         writeValue(stream, ((AllClassesWrapper) value).toList());
       } else if (value instanceof TestMessage) {
-        stream.write(137);
+        stream.write(136);
         writeValue(stream, ((TestMessage) value).toList());
       } else {
         super.writeValue(stream, value);
