@@ -38,11 +38,26 @@ typedef NS_ENUM(NSUInteger, AnotherEnum) {
 - (instancetype)initWithValue:(AnotherEnum)value;
 @end
 
+@class UnusedClass;
+@class SimpleClass;
 @class AllTypes;
 @class AllNullableTypes;
 @class AllNullableTypesWithoutRecursion;
 @class AllClassesWrapper;
 @class TestMessage;
+
+@interface UnusedClass : NSObject
++ (instancetype)makeWithAField:(nullable id)aField;
+@property(nonatomic, strong, nullable) id aField;
+@end
+
+@interface SimpleClass : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithAString:(nullable NSString *)aString aBool:(BOOL)aBool;
+@property(nonatomic, copy, nullable) NSString *aString;
+@property(nonatomic, assign) BOOL aBool;
+@end
 
 /// A class containing all supported types.
 @interface AllTypes : NSObject

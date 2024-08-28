@@ -32,6 +32,85 @@ FlutterError CreateConnectionError(const std::string channel_name) {
       EncodableValue(""));
 }
 
+// UnusedClass
+
+UnusedClass::UnusedClass() {}
+
+UnusedClass::UnusedClass(const EncodableValue* a_field)
+    : a_field_(a_field ? std::optional<EncodableValue>(*a_field)
+                       : std::nullopt) {}
+
+const EncodableValue* UnusedClass::a_field() const {
+  return a_field_ ? &(*a_field_) : nullptr;
+}
+
+void UnusedClass::set_a_field(const EncodableValue* value_arg) {
+  a_field_ =
+      value_arg ? std::optional<EncodableValue>(*value_arg) : std::nullopt;
+}
+
+void UnusedClass::set_a_field(const EncodableValue& value_arg) {
+  a_field_ = value_arg;
+}
+
+EncodableList UnusedClass::ToEncodableList() const {
+  EncodableList list;
+  list.reserve(1);
+  list.push_back(a_field_ ? *a_field_ : EncodableValue());
+  return list;
+}
+
+UnusedClass UnusedClass::FromEncodableList(const EncodableList& list) {
+  UnusedClass decoded;
+  auto& encodable_a_field = list[0];
+  if (!encodable_a_field.IsNull()) {
+    decoded.set_a_field(encodable_a_field);
+  }
+  return decoded;
+}
+
+// SimpleClass
+
+SimpleClass::SimpleClass(bool a_bool) : a_bool_(a_bool) {}
+
+SimpleClass::SimpleClass(const std::string* a_string, bool a_bool)
+    : a_string_(a_string ? std::optional<std::string>(*a_string)
+                         : std::nullopt),
+      a_bool_(a_bool) {}
+
+const std::string* SimpleClass::a_string() const {
+  return a_string_ ? &(*a_string_) : nullptr;
+}
+
+void SimpleClass::set_a_string(const std::string_view* value_arg) {
+  a_string_ = value_arg ? std::optional<std::string>(*value_arg) : std::nullopt;
+}
+
+void SimpleClass::set_a_string(std::string_view value_arg) {
+  a_string_ = value_arg;
+}
+
+bool SimpleClass::a_bool() const { return a_bool_; }
+
+void SimpleClass::set_a_bool(bool value_arg) { a_bool_ = value_arg; }
+
+EncodableList SimpleClass::ToEncodableList() const {
+  EncodableList list;
+  list.reserve(2);
+  list.push_back(a_string_ ? EncodableValue(*a_string_) : EncodableValue());
+  list.push_back(EncodableValue(a_bool_));
+  return list;
+}
+
+SimpleClass SimpleClass::FromEncodableList(const EncodableList& list) {
+  SimpleClass decoded(std::get<bool>(list[1]));
+  auto& encodable_a_string = list[0];
+  if (!encodable_a_string.IsNull()) {
+    decoded.set_a_string(std::get<std::string>(encodable_a_string));
+  }
+  return decoded;
+}
+
 // AllTypes
 
 AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
@@ -1567,23 +1646,31 @@ EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
                        static_cast<AnotherEnum>(enum_arg_value));
     }
     case 131: {
-      return CustomEncodableValue(AllTypes::FromEncodableList(
+      return CustomEncodableValue(UnusedClass::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
     case 132: {
-      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
+      return CustomEncodableValue(SimpleClass::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
     case 133: {
+      return CustomEncodableValue(AllTypes::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    }
+    case 134: {
+      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    }
+    case 135: {
       return CustomEncodableValue(
           AllNullableTypesWithoutRecursion::FromEncodableList(
               std::get<EncodableList>(ReadValue(stream))));
     }
-    case 134: {
+    case 136: {
       return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
-    case 135: {
+    case 137: {
       return CustomEncodableValue(TestMessage::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
@@ -1610,15 +1697,31 @@ void PigeonInternalCodecSerializer::WriteValue(
                  stream);
       return;
     }
-    if (custom_value->type() == typeid(AllTypes)) {
+    if (custom_value->type() == typeid(UnusedClass)) {
       stream->WriteByte(131);
+      WriteValue(
+          EncodableValue(
+              std::any_cast<UnusedClass>(*custom_value).ToEncodableList()),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(SimpleClass)) {
+      stream->WriteByte(132);
+      WriteValue(
+          EncodableValue(
+              std::any_cast<SimpleClass>(*custom_value).ToEncodableList()),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AllTypes)) {
+      stream->WriteByte(133);
       WriteValue(EncodableValue(
                      std::any_cast<AllTypes>(*custom_value).ToEncodableList()),
                  stream);
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypes)) {
-      stream->WriteByte(132);
+      stream->WriteByte(134);
       WriteValue(
           EncodableValue(
               std::any_cast<AllNullableTypes>(*custom_value).ToEncodableList()),
@@ -1626,7 +1729,7 @@ void PigeonInternalCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypesWithoutRecursion)) {
-      stream->WriteByte(133);
+      stream->WriteByte(135);
       WriteValue(EncodableValue(std::any_cast<AllNullableTypesWithoutRecursion>(
                                     *custom_value)
                                     .ToEncodableList()),
@@ -1634,14 +1737,14 @@ void PigeonInternalCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllClassesWrapper)) {
-      stream->WriteByte(134);
+      stream->WriteByte(136);
       WriteValue(EncodableValue(std::any_cast<AllClassesWrapper>(*custom_value)
                                     .ToEncodableList()),
                  stream);
       return;
     }
     if (custom_value->type() == typeid(TestMessage)) {
-      stream->WriteByte(135);
+      stream->WriteByte(137);
       WriteValue(
           EncodableValue(
               std::any_cast<TestMessage>(*custom_value).ToEncodableList()),

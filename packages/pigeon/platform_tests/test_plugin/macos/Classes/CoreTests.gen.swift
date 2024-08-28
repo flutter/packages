@@ -86,6 +86,48 @@ enum AnotherEnum: Int {
   case justInCase = 0
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+struct UnusedClass {
+  var aField: Any? = nil
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> UnusedClass? {
+    let aField: Any? = pigeonVar_list[0]
+
+    return UnusedClass(
+      aField: aField
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      aField
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct SimpleClass {
+  var aString: String? = nil
+  var aBool: Bool
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> SimpleClass? {
+    let aString: String? = nilOrValue(pigeonVar_list[0])
+    let aBool = pigeonVar_list[1] as! Bool
+
+    return SimpleClass(
+      aString: aString,
+      aBool: aBool
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      aString,
+      aBool,
+    ]
+  }
+}
+
 /// A class containing all supported types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
@@ -531,14 +573,18 @@ private class CoreTestsPigeonCodecReader: FlutterStandardReader {
       }
       return nil
     case 131:
-      return AllTypes.fromList(self.readValue() as! [Any?])
+      return UnusedClass.fromList(self.readValue() as! [Any?])
     case 132:
-      return AllNullableTypes.fromList(self.readValue() as! [Any?])
+      return SimpleClass.fromList(self.readValue() as! [Any?])
     case 133:
-      return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
+      return AllTypes.fromList(self.readValue() as! [Any?])
     case 134:
-      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
+      return AllNullableTypes.fromList(self.readValue() as! [Any?])
     case 135:
+      return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
+    case 136:
+      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
+    case 137:
       return TestMessage.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -554,20 +600,26 @@ private class CoreTestsPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? AnotherEnum {
       super.writeByte(130)
       super.writeValue(value.rawValue)
-    } else if let value = value as? AllTypes {
+    } else if let value = value as? UnusedClass {
       super.writeByte(131)
       super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypes {
+    } else if let value = value as? SimpleClass {
       super.writeByte(132)
       super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypesWithoutRecursion {
+    } else if let value = value as? AllTypes {
       super.writeByte(133)
       super.writeValue(value.toList())
-    } else if let value = value as? AllClassesWrapper {
+    } else if let value = value as? AllNullableTypes {
       super.writeByte(134)
       super.writeValue(value.toList())
-    } else if let value = value as? TestMessage {
+    } else if let value = value as? AllNullableTypesWithoutRecursion {
       super.writeByte(135)
+      super.writeValue(value.toList())
+    } else if let value = value as? AllClassesWrapper {
+      super.writeByte(136)
+      super.writeValue(value.toList())
+    } else if let value = value as? TestMessage {
+      super.writeByte(137)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)

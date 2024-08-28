@@ -18,6 +18,13 @@ enum AnotherEnum {
   justInCase,
 }
 
+// This exists to show that unused data classes still generate.
+class UnusedClass {
+  UnusedClass({this.aField});
+
+  Object? aField;
+}
+
 class SimpleClass {
   SimpleClass({
     this.aString,

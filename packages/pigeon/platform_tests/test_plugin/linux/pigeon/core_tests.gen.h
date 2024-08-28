@@ -39,6 +39,80 @@ typedef enum {
 } CoreTestsPigeonTestAnotherEnum;
 
 /**
+ * CoreTestsPigeonTestUnusedClass:
+ *
+ */
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestUnusedClass,
+                     core_tests_pigeon_test_unused_class,
+                     CORE_TESTS_PIGEON_TEST, UNUSED_CLASS, GObject)
+
+/**
+ * core_tests_pigeon_test_unused_class_new:
+ * a_field: field in this object.
+ *
+ * Creates a new #UnusedClass object.
+ *
+ * Returns: a new #CoreTestsPigeonTestUnusedClass
+ */
+CoreTestsPigeonTestUnusedClass* core_tests_pigeon_test_unused_class_new(
+    FlValue* a_field);
+
+/**
+ * core_tests_pigeon_test_unused_class_get_a_field
+ * @object: a #CoreTestsPigeonTestUnusedClass.
+ *
+ * Gets the value of the aField field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_unused_class_get_a_field(
+    CoreTestsPigeonTestUnusedClass* object);
+
+/**
+ * CoreTestsPigeonTestSimpleClass:
+ *
+ */
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestSimpleClass,
+                     core_tests_pigeon_test_simple_class,
+                     CORE_TESTS_PIGEON_TEST, SIMPLE_CLASS, GObject)
+
+/**
+ * core_tests_pigeon_test_simple_class_new:
+ * a_string: field in this object.
+ * a_bool: field in this object.
+ *
+ * Creates a new #SimpleClass object.
+ *
+ * Returns: a new #CoreTestsPigeonTestSimpleClass
+ */
+CoreTestsPigeonTestSimpleClass* core_tests_pigeon_test_simple_class_new(
+    const gchar* a_string, gboolean a_bool);
+
+/**
+ * core_tests_pigeon_test_simple_class_get_a_string
+ * @object: a #CoreTestsPigeonTestSimpleClass.
+ *
+ * Gets the value of the aString field of @object.
+ *
+ * Returns: the field value.
+ */
+const gchar* core_tests_pigeon_test_simple_class_get_a_string(
+    CoreTestsPigeonTestSimpleClass* object);
+
+/**
+ * core_tests_pigeon_test_simple_class_get_a_bool
+ * @object: a #CoreTestsPigeonTestSimpleClass.
+ *
+ * Gets the value of the aBool field of @object.
+ *
+ * Returns: the field value.
+ */
+gboolean core_tests_pigeon_test_simple_class_get_a_bool(
+    CoreTestsPigeonTestSimpleClass* object);
+
+/**
  * CoreTestsPigeonTestAllTypes:
  *
  * A class containing all supported types.
