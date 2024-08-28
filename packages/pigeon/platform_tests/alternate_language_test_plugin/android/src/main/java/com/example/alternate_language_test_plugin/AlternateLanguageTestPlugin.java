@@ -690,7 +690,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   public CoreTests.UnusedClass testIfUnusedClassIsGenerated() {
-    return CoreTests.UnusedClass();
+    return new CoreTests.UnusedClass();
   }
 }
 
