@@ -723,7 +723,7 @@
       }];
 }
 
-- (FLTUnusedClass *)checkIfUnusedClassGenerated() {
+- (FLTUnusedClass *)checkIfUnusedClassGenerated {
   return [[FLTUnusedClass alloc] init];
 }
 
