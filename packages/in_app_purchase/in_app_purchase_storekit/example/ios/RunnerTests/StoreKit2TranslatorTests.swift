@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import Foundation
-import XCTest
 import StoreKitTest
+import XCTest
 
 @testable import in_app_purchase_storekit
 
@@ -16,20 +16,20 @@ class StoreKit2TranslatorTests: XCTestCase {
 
   // This is transcribed from the Configuration.storekit file.
   var productMessage: SK2ProductMessage =
-  SK2ProductMessage(
-    id: "subscription_silver",
-    displayName: "Subscription Silver",
-    description: "A lower level subscription.",
-    price: 4.99,
-    displayPrice: "$4.99",
-    type: SK2ProductTypeMessage.autoRenewable,
-    subscription: SK2SubscriptionInfoMessage(
-      promotionalOffers: [],
-      subscriptionGroupID: "D0FEE8D8",
-      subscriptionPeriod: SK2SubscriptionPeriodMessage(
-        value: 1,
-        unit: SK2SubscriptionPeriodUnitMessage.week)),
-    priceLocale: SK2PriceLocaleMessage(currencyCode: "USD", currencySymbol: "$"))
+    SK2ProductMessage(
+      id: "subscription_silver",
+      displayName: "Subscription Silver",
+      description: "A lower level subscription.",
+      price: 4.99,
+      displayPrice: "$4.99",
+      type: SK2ProductTypeMessage.autoRenewable,
+      subscription: SK2SubscriptionInfoMessage(
+        promotionalOffers: [],
+        subscriptionGroupID: "D0FEE8D8",
+        subscriptionPeriod: SK2SubscriptionPeriodMessage(
+          value: 1,
+          unit: SK2SubscriptionPeriodUnitMessage.week)),
+      priceLocale: SK2PriceLocaleMessage(currencyCode: "USD", currencySymbol: "$"))
 
   override func setUp() async throws {
     try await super.setUp()
@@ -40,43 +40,43 @@ class StoreKit2TranslatorTests: XCTestCase {
     plugin = InAppPurchasePluginStub(receiptManager: receiptManagerStub) { request in
       DefaultRequestHandler(requestHandler: FIAPRequestHandler(request: request))
     }
-    product = try await Product.products(for: ["subscription_silver"]).first!;
+    product = try await Product.products(for: ["subscription_silver"]).first!
 
   }
 
   func testPigeonConversionForProduct() async throws {
-    XCTAssertNotNil(product);
+    XCTAssertNotNil(product)
     let pigeonMessage = product.convertToPigeon()
-    XCTAssertEqual(pigeonMessage, productMessage);
+    XCTAssertEqual(pigeonMessage, productMessage)
   }
 
   func testPigeonConversionForSubscriptionInfo() async throws {
     guard let subscription = product.subscription else {
       XCTFail("SubscriptionInfo should not be nil")
-      return;
+      return
     }
     let pigeonMessage = subscription.convertToPigeon()
-    XCTAssertEqual(pigeonMessage, productMessage.subscription);
+    XCTAssertEqual(pigeonMessage, productMessage.subscription)
   }
 
   func testPigeonConversionForProductType() async throws {
     let type = product.type
     let pigeonMessage = type.convertToPigeon()
-    XCTAssertEqual(pigeonMessage, productMessage.type);
+    XCTAssertEqual(pigeonMessage, productMessage.type)
   }
 
   func testPigeonConversionForSubscriptionPeriod() async throws {
     guard let period = product.subscription?.subscriptionPeriod else {
       XCTFail("SubscriptionPeriod should not be nil")
-      return;
+      return
     }
     let pigeonMessage = period.convertToPigeon()
-    XCTAssertEqual(pigeonMessage, productMessage.subscription?.subscriptionPeriod);
+    XCTAssertEqual(pigeonMessage, productMessage.subscription?.subscriptionPeriod)
   }
 
   func testPigeonConversionForPriceLocale() async throws {
-    let locale = product.priceFormatStyle.locale;
+    let locale = product.priceFormatStyle.locale
     let pigeonMessage = locale.convertToPigeon()
-    XCTAssertEqual(pigeonMessage, productMessage.priceLocale);
+    XCTAssertEqual(pigeonMessage, productMessage.priceLocale)
   }
 }

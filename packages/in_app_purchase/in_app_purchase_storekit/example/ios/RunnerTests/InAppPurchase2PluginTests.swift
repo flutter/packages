@@ -83,7 +83,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
         XCTFail("This `products` call should not succeed")
       case .failure(let error):
         expectation.fulfill()
-        XCTAssert(error.localizedDescription.contains("This operation couldn't be completed."))
+        XCTAssert(error.localizedDescription.contains("The operation couldn't be completed."))
       }
     }
     await fulfillment(of: [expectation], timeout: 5)
