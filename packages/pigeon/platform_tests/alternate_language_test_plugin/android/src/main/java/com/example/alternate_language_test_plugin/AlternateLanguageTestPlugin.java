@@ -17,6 +17,7 @@ import com.example.alternate_language_test_plugin.CoreTests.FlutterSmallApi;
 import com.example.alternate_language_test_plugin.CoreTests.HostIntegrationCoreApi;
 import com.example.alternate_language_test_plugin.CoreTests.NullableResult;
 import com.example.alternate_language_test_plugin.CoreTests.Result;
+import com.example.alternate_language_test_plugin.CoreTests.UnusedClass;
 import com.example.alternate_language_test_plugin.CoreTests.VoidResult;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import java.util.List;
@@ -687,6 +688,10 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
           }
         };
     flutterSmallApiOne.echoString(aString, resultCallbackOne);
+  }
+
+  public UnusedClass testIfUnusedClassIsGenerated() {
+    return UnusedClass();
   }
 }
 

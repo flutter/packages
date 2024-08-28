@@ -550,6 +550,10 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
       }
     }
   }
+
+  fun testUnusedClassesGenerate(): UnusedClass {
+    val unusedClass = UnusedClass()
+  }
 }
 
 class TestPluginWithSuffix : HostSmallApi {
