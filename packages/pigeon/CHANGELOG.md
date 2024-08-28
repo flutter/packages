@@ -1,3 +1,9 @@
+## 22.0.0
+
+* [dart] Changes codec to send int64 instead of int32.
+* **Breaking Change** [swift] Changes generic `map` to nullable keys of `AnyHashable` to conform to other platforms.
+* Adds tests to validate collections of ints.
+
 ## 21.2.0
 
 * Removes restriction on number of custom types.

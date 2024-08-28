@@ -286,7 +286,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     required String dartPackageName,
   }) {
     void writeEncodeLogic(EnumeratedType customType) {
-      indent.writeScoped('if (value is ${customType.name}) {', '} else ', () {
+      indent.writeScoped('else if (value is ${customType.name}) {', '}', () {
         if (customType.enumeration < maximumCodecFieldKey) {
           indent.writeln('buffer.putUint8(${customType.enumeration});');
           if (customType.type == CustomTypes.customClass) {
@@ -343,11 +343,16 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         indent.writeln('@override');
         indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
         indent.addScoped('{', '}', () {
+          indent.writeScoped('if (value is int) {', '}', () {
+            indent.writeln('buffer.putUint8(4);');
+            indent.writeln('buffer.putInt64(value);');
+          }, addTrailingNewline: false);
+
           enumerate(enumeratedTypes,
               (int index, final EnumeratedType customType) {
             writeEncodeLogic(customType);
           });
-          indent.addScoped('{', '}', () {
+          indent.addScoped(' else {', '}', () {
             indent.writeln('super.writeValue(buffer, value);');
           });
         });
