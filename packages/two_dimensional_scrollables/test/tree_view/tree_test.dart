@@ -722,6 +722,7 @@ void main() {
     testWidgets(
         'TreeViewNode should expand/collapse correctly when the animation duration is set to zero.',
         (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/154292
       final TreeViewController controller = TreeViewController();
       final List<TreeViewNode<String>> tree = <TreeViewNode<String>>[
         TreeViewNode<String>('First'),
