@@ -1,3 +1,7 @@
+## 0.3.18+1
+
+* Adds support for StoreKit2's `canMakePayments` and `products` 
+
 ## 0.3.17+2
 
 * Converts FIAPPaymentQueueDeleteTests to swift.
