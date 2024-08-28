@@ -1,3 +1,12 @@
+## 1.0.44
+
+* Removes dependency on org.jetbrains.kotlin:kotlin-bom.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 1.0.43
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 1.0.42
 
 * Updates AGP version to 8.5.0.

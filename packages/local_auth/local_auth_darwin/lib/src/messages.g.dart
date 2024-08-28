@@ -49,8 +49,8 @@ class AuthStrings {
   AuthStrings({
     required this.reason,
     required this.lockOut,
-    required this.goToSettingsButton,
-    required this.goToSettingsDescription,
+    this.goToSettingsButton,
+    this.goToSettingsDescription,
     required this.cancelButton,
     this.localizedFallbackTitle,
   });
@@ -59,9 +59,9 @@ class AuthStrings {
 
   String lockOut;
 
-  String goToSettingsButton;
+  String? goToSettingsButton;
 
-  String goToSettingsDescription;
+  String? goToSettingsDescription;
 
   String cancelButton;
 
@@ -83,8 +83,8 @@ class AuthStrings {
     return AuthStrings(
       reason: result[0]! as String,
       lockOut: result[1]! as String,
-      goToSettingsButton: result[2]! as String,
-      goToSettingsDescription: result[3]! as String,
+      goToSettingsButton: result[2] as String?,
+      goToSettingsDescription: result[3] as String?,
       cancelButton: result[4]! as String,
       localizedFallbackTitle: result[5] as String?,
     );

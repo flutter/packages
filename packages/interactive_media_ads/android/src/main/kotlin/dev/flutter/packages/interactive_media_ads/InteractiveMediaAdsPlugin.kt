@@ -31,6 +31,7 @@ class InteractiveMediaAdsPlugin : FlutterPlugin, ActivityAware {
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+    registrar.ignoreCallsToDart = true
     registrar.tearDown()
     registrar.instanceManager.clear()
   }
@@ -52,8 +53,9 @@ class InteractiveMediaAdsPlugin : FlutterPlugin, ActivityAware {
   }
 }
 
-internal class FlutterViewFactory(private val instanceManager: PigeonInstanceManager) :
-    PlatformViewFactory(StandardMessageCodec.INSTANCE) {
+internal class FlutterViewFactory(
+    private val instanceManager: InteractiveMediaAdsLibraryPigeonInstanceManager
+) : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
 
   override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
     val identifier =

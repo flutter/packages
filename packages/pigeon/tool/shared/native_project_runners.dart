@@ -7,12 +7,15 @@ import 'process_utils.dart';
 
 Future<int> runFlutterCommand(
   String projectDirectory,
-  String command, [
-  List<String> commandArguments = const <String>[],
-]) {
+  String command,
+  List<String> commandArguments, {
+  String? wrapperCommand,
+}) {
+  final String flutterCommand = getFlutterCommand();
   return runProcess(
-    getFlutterCommand(),
+    wrapperCommand ?? flutterCommand,
     <String>[
+      if (wrapperCommand != null) flutterCommand,
       command,
       ...commandArguments,
     ],

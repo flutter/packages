@@ -10,11 +10,11 @@ import android.os.Looper
 import io.flutter.plugin.common.BinaryMessenger
 
 /**
- * Implementation of [PigeonProxyApiRegistrar] that provides each ProxyApi implementation and any
- * additional resources needed by an implementation.
+ * Implementation of [InteractiveMediaAdsLibraryPigeonProxyApiRegistrar] that provides each ProxyApi
+ * implementation and any additional resources needed by an implementation.
  */
 open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Context) :
-    PigeonProxyApiRegistrar(binaryMessenger) {
+    InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(binaryMessenger) {
 
   // Added to be overriden for tests. The test implementation calls `callback` immediately, instead
   // of waiting for the main thread to run it.

@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 0.2.5
+
+* Adds support for streaming frames.
+
 ## 0.2.4+1
 
 * Updates to pigeon 21.

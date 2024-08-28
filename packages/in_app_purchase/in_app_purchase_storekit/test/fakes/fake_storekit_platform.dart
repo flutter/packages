@@ -36,7 +36,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   void reset() {
     transactionList = <SKPaymentTransactionWrapper>[];
     receiptData = 'dummy base64data';
-    validProductIDs = <String>{'123', '456'};
+    validProductIDs = <String>{'123', '456', '789'};
     validProducts = <String, SKProductWrapper>{};
     for (final String validID in validProductIDs) {
       final Map<String, dynamic> productWrapperMap =
@@ -44,6 +44,9 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
       productWrapperMap['productIdentifier'] = validID;
       if (validID == '456') {
         productWrapperMap['priceLocale'] = buildLocaleMap(noSymbolLocale);
+      }
+      if (validID == '789') {
+        productWrapperMap['localizedDescription'] = null;
       }
       validProducts[validID] = SKProductWrapper.fromJson(productWrapperMap);
     }

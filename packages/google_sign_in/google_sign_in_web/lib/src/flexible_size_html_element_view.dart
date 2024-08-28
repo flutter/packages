@@ -78,6 +78,8 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
   ) {
     final web.DOMRectReadOnly rect = resizes.toDart.last.contentRect;
     if (rect.width > 0 && rect.height > 0) {
+      // TODO(dit): Remove the following ignore once the repo leaves web:0.5.1 behind. https://github.com/flutter/flutter/issues/152657
+      // ignore: noop_primitive_operations
       _doResize(Size(rect.width.toDouble(), rect.height.toDouble()));
     }
   }
