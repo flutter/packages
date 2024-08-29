@@ -686,19 +686,7 @@ void main() {
                   .element(find.byKey(const Key('Breakpoints.smallMobile'))))
               .spacing,
           kMaterialCompactSpacing);
-    }, variant: TargetPlatformVariant.desktop());
-
-    testWidgets('isMobile returns true on mobile platforms',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(SimulatedLayout.medium.slot(tester));
-      await tester.pumpAndSettle();
-
-      expect(Breakpoint.isDesktop(tester.element(find.byType(TestScaffold))),
-          isTrue);
-
-      expect(Breakpoint.isMobile(tester.element(find.byType(TestScaffold))),
-          isFalse);
-    }, variant: TargetPlatformVariant.mobile());
+    });
 
     testWidgets('returns kMaterialMediumAndUpSpacing for medium breakpoint',
         (WidgetTester tester) async {
@@ -970,62 +958,63 @@ void main() {
               .maxPanes,
           3);
     }, variant: TargetPlatformVariant.mobile());
-    group('Breakpoint method tests', () {
-      testWidgets('isDesktop returns true on desktop platforms',
-          (WidgetTester tester) async {
-        await tester.pumpWidget(const DummyWidget());
-        await tester.pumpAndSettle();
+  });
 
-        expect(Breakpoint.isDesktop(tester.element(find.byType(DummyWidget))),
-            isTrue);
+  group('Breakpoint method tests', () {
+    testWidgets('isMobile returns true on mobile platforms',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.medium.scaffold(tester));
+      await tester.pumpAndSettle();
 
-        expect(Breakpoint.isMobile(tester.element(find.byType(DummyWidget))),
-            isFalse);
-      }, variant: TargetPlatformVariant.desktop());
+      expect(Breakpoint.isMobile(tester.element(find.byType(TestScaffold))),
+          isTrue);
 
-      testWidgets('isMobile returns true on mobile platforms',
-          (WidgetTester tester) async {
-        await tester.pumpWidget(const DummyWidget());
-        await tester.pumpAndSettle();
+      expect(Breakpoint.isDesktop(tester.element(find.byType(TestScaffold))),
+          isFalse);
+    }, variant: TargetPlatformVariant.mobile());
 
-        expect(Breakpoint.isMobile(tester.element(find.byType(DummyWidget))),
-            isTrue);
+    testWidgets('isDesktop returns true on desktop platforms',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.medium.scaffold(tester));
+      await tester.pumpAndSettle();
 
-        expect(Breakpoint.isDesktop(tester.element(find.byType(DummyWidget))),
-            isFalse);
-      }, variant: TargetPlatformVariant.mobile());
+      expect(Breakpoint.isDesktop(tester.element(find.byType(TestScaffold))),
+          isTrue);
 
-      test('Breakpoint comparison operators work correctly', () {
-        const Breakpoint small = Breakpoints.small;
-        const Breakpoint medium = Breakpoints.medium;
-        const Breakpoint large = Breakpoints.large;
+      expect(Breakpoint.isMobile(tester.element(find.byType(TestScaffold))),
+          isFalse);
+    }, variant: TargetPlatformVariant.desktop());
 
-        expect(small < medium, isTrue);
-        expect(large > medium, isTrue);
-        expect(small <= Breakpoints.small, isTrue);
-        expect(large >= medium, isTrue);
-      });
+    test('Breakpoint comparison operators work correctly', () {
+      const Breakpoint small = Breakpoints.small;
+      const Breakpoint medium = Breakpoints.medium;
+      const Breakpoint large = Breakpoints.large;
 
-      test('Breakpoint equality and hashCode', () {
-        const Breakpoint small1 = Breakpoints.small;
-        const Breakpoint small2 = Breakpoints.small;
-        const Breakpoint medium = Breakpoints.medium;
+      expect(small < medium, isTrue);
+      expect(large > medium, isTrue);
+      expect(small <= Breakpoints.small, isTrue);
+      expect(large >= medium, isTrue);
+    });
 
-        expect(small1 == small2, isTrue);
-        expect(small1 == medium, isFalse);
-        expect(small1.hashCode == small2.hashCode, isTrue);
-        expect(small1.hashCode == medium.hashCode, isFalse);
-      });
+    test('Breakpoint equality and hashCode', () {
+      const Breakpoint small1 = Breakpoints.small;
+      const Breakpoint small2 = Breakpoints.small;
+      const Breakpoint medium = Breakpoints.medium;
 
-      test('Breakpoint between method works correctly', () {
-        const Breakpoint small = Breakpoints.small;
-        const Breakpoint medium = Breakpoints.medium;
-        const Breakpoint large = Breakpoints.large;
+      expect(small1 == small2, isTrue);
+      expect(small1 == medium, isFalse);
+      expect(small1.hashCode == small2.hashCode, isTrue);
+      expect(small1.hashCode == medium.hashCode, isFalse);
+    });
 
-        expect(medium.between(small, large), isTrue);
-        expect(small.between(medium, large), isFalse);
-        expect(large.between(small, medium), isFalse);
-      });
+    test('Breakpoint between method works correctly', () {
+      const Breakpoint small = Breakpoints.small;
+      const Breakpoint medium = Breakpoints.medium;
+      const Breakpoint large = Breakpoints.large;
+
+      expect(medium.between(small, large), isTrue);
+      expect(small.between(medium, large), isFalse);
+      expect(large.between(small, medium), isFalse);
     });
   });
 }
