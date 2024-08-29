@@ -6,8 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/src/messages.g.dart';
+import 'package:in_app_purchase_storekit/src/sk2_pigeon.g.dart';
+import 'package:in_app_purchase_storekit/src/store_kit_2_wrappers/sk2_product_wrapper.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
+import '../sk2_test_api.g.dart';
 import '../store_kit_wrappers/sk_test_stub_objects.dart';
 import '../test_api.g.dart';
 
@@ -275,5 +278,53 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   @override
   void stopObservingPaymentQueue() {
     queueIsActive = false;
+  }
+}
+
+class FakeStoreKit2Platform implements TestInAppPurchase2Api {
+  late Set<String> validProductIDs;
+  late Map<String, SK2Product> validProducts;
+  PlatformException? queryProductException;
+
+  void reset() {
+    validProductIDs = <String>{'123', '456'};
+    validProducts = <String, SK2Product>{};
+    for (final String validID in validProductIDs) {
+      final SK2Product product = SK2Product(
+          id: validID,
+          displayName: 'test_product',
+          displayPrice: '0.99',
+          description: 'description',
+          price: 0.99,
+          type: SK2ProductType.consumable,
+          priceLocale:
+              SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'));
+      validProducts[validID] = product;
+    }
+  }
+
+  @override
+  bool canMakePayments() {
+    return true;
+  }
+
+  @override
+  Future<List<SK2ProductMessage?>> products(List<String?> identifiers) {
+    if (queryProductException != null) {
+      throw queryProductException!;
+    }
+    final List<String?> productIDS = identifiers;
+    final List<SK2Product> products = <SK2Product>[];
+    for (final String? productID in productIDS) {
+      if (validProductIDs.contains(productID)) {
+        products.add(validProducts[productID]!);
+      }
+    }
+    final List<SK2ProductMessage?> result = <SK2ProductMessage?>[];
+    for (final SK2Product p in products) {
+      result.add(p.convertToPigeon());
+    }
+
+    return Future<List<SK2ProductMessage?>>.value(result);
   }
 }

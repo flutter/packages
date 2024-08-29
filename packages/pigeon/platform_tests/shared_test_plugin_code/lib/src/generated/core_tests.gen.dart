@@ -42,6 +42,27 @@ enum AnotherEnum {
   justInCase,
 }
 
+class UnusedClass {
+  UnusedClass({
+    this.aField,
+  });
+
+  Object? aField;
+
+  Object encode() {
+    return <Object?>[
+      aField,
+    ];
+  }
+
+  static UnusedClass decode(Object result) {
+    result as List<Object?>;
+    return UnusedClass(
+      aField: result[0],
+    );
+  }
+}
+
 /// A class containing all supported types.
 class AllTypes {
   AllTypes({
@@ -490,20 +511,23 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is AnotherEnum) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is AllTypes) {
+    } else if (value is UnusedClass) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypes) {
+    } else if (value is AllTypes) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypesWithoutRecursion) {
+    } else if (value is AllNullableTypes) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is AllClassesWrapper) {
+    } else if (value is AllNullableTypesWithoutRecursion) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
+    } else if (value is AllClassesWrapper) {
       buffer.putUint8(135);
+      writeValue(buffer, value.encode());
+    } else if (value is TestMessage) {
+      buffer.putUint8(136);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -520,14 +544,16 @@ class _PigeonCodec extends StandardMessageCodec {
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AnotherEnum.values[value];
       case 131:
-        return AllTypes.decode(readValue(buffer)!);
+        return UnusedClass.decode(readValue(buffer)!);
       case 132:
-        return AllNullableTypes.decode(readValue(buffer)!);
+        return AllTypes.decode(readValue(buffer)!);
       case 133:
-        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
+        return AllNullableTypes.decode(readValue(buffer)!);
       case 134:
-        return AllClassesWrapper.decode(readValue(buffer)!);
+        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       case 135:
+        return AllClassesWrapper.decode(readValue(buffer)!);
+      case 136:
         return TestMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
