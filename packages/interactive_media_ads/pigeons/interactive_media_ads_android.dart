@@ -6,7 +6,7 @@
 // https://github.com/flutter/packages/pull/6371 lands. This file uses the
 // Kotlin ProxyApi feature from pigeon.
 // ignore_for_file: avoid_unused_constructor_parameters
-/*
+
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
@@ -562,7 +562,7 @@ abstract class VideoView extends View {
   late final void Function(MediaPlayer player, int what, int extra) onError;
 
   /// Sets the URI of the video.
-  void setVideoUri(String uri);
+  void setVideoUri(String? uri);
 
   /// The current position of the playing video.
   ///
@@ -738,4 +738,3 @@ abstract class AdEventListener {
   /// Respond to an occurrence of an AdEvent.
   late final void Function(AdEvent event) onAdEvent;
 }
-*/
