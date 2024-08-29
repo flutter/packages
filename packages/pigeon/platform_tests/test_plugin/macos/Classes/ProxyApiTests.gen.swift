@@ -293,7 +293,7 @@ final class ProxyApiTestsPigeonInstanceManager {
 
 private class ProxyApiTestsPigeonInstanceManagerApi {
   /// The codec used for serializing messages.
-  let codec: FlutterStandardMessageCodec { ProxyApiTestsPigeonCodec.shared }
+  var codec: FlutterStandardMessageCodec { ProxyApiTestsPigeonCodec.shared }
 
   /// Handles sending and receiving messages with Dart.
   unowned let binaryMessenger: FlutterBinaryMessenger

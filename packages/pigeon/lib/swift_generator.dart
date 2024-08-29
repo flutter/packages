@@ -748,7 +748,7 @@ if (wrapped == nil) {
         _docCommentSpec,
       );
       indent.writeln(
-        'let codec: FlutterStandardMessageCodec { ${_getCodecName(generatorOptions)}.shared }',
+        'var codec: FlutterStandardMessageCodec { ${_getCodecName(generatorOptions)}.shared }',
       );
       indent.newln();
 
