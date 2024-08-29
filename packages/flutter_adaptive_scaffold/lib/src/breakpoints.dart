@@ -356,8 +356,11 @@ class Breakpoint {
     return Breakpoint.mobile.contains(Theme.of(context).platform);
   }
 
+  // #docregion Breakpoint operators
   /// Returns true if the current [Breakpoint] is greater than the given [Breakpoint].
-  bool operator >(Breakpoint breakpoint) {
+  bool operator >(Breakpoint breakpoint)
+  // #enddocregion Breakpoint operators
+  {
     return (beginWidth ?? double.negativeInfinity) >
             (breakpoint.beginWidth ?? double.negativeInfinity) &&
         (endWidth ?? double.infinity) >
@@ -368,8 +371,11 @@ class Breakpoint {
             (breakpoint.endHeight ?? double.infinity);
   }
 
+  // #docregion Breakpoint operators
   /// Returns true if the current [Breakpoint] is less than the given [Breakpoint].
-  bool operator <(Breakpoint breakpoint) {
+  bool operator <(Breakpoint breakpoint)
+  // #enddocregion Breakpoint operators
+  {
     return (endWidth ?? double.infinity) <
             (breakpoint.endWidth ?? double.infinity) &&
         (beginWidth ?? double.negativeInfinity) <
@@ -380,9 +386,12 @@ class Breakpoint {
             (breakpoint.beginHeight ?? double.negativeInfinity);
   }
 
+  // #docregion Breakpoint operators
   /// Returns true if the current [Breakpoint] is greater than or equal to the
   /// given [Breakpoint].
-  bool operator >=(Breakpoint breakpoint) {
+  bool operator >=(Breakpoint breakpoint)
+  // #enddocregion Breakpoint operators
+  {
     return (beginWidth ?? double.negativeInfinity) >=
             (breakpoint.beginWidth ?? double.negativeInfinity) &&
         (endWidth ?? double.infinity) >=
@@ -393,9 +402,12 @@ class Breakpoint {
             (breakpoint.endHeight ?? double.infinity);
   }
 
+  // #docregion Breakpoint operators
   /// Returns true if the current [Breakpoint] is less than or equal to the
   /// given [Breakpoint].
-  bool operator <=(Breakpoint breakpoint) {
+  bool operator <=(Breakpoint breakpoint)
+  // #enddocregion Breakpoint operators
+  {
     return (endWidth ?? double.infinity) <=
             (breakpoint.endWidth ?? double.infinity) &&
         (beginWidth ?? double.negativeInfinity) <=
@@ -406,8 +418,11 @@ class Breakpoint {
             (breakpoint.beginHeight ?? double.negativeInfinity);
   }
 
+  // #docregion Breakpoint operators
   /// Returns true if the current [Breakpoint] is between the given [Breakpoint]s.
-  bool between(Breakpoint lower, Breakpoint upper) {
+  bool between(Breakpoint lower, Breakpoint upper)
+  // #enddocregion Breakpoint operators
+  {
     return this >= lower && this < upper;
   }
 }

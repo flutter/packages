@@ -191,12 +191,24 @@ const Breakpoint.extraLarge({this.andUp = false, this.platform})
 
 It is possible to compare Breakpoints:
 
+<?code-excerpt "lib/src/breakpoints.dart (Breakpoint operators)"?>
 ```dart
-
-Breakpoints.small < Breakpoints.medium;
-Breakpoints.large => Breakpoints.extraLarge
-Breakpoints.medium.between(Breakpoints.small, Breakpoints.large);
-
+/// Returns true if the current [Breakpoint] is greater than the given [Breakpoint].
+bool operator >(Breakpoint breakpoint)
+// ···
+/// Returns true if the current [Breakpoint] is less than the given [Breakpoint].
+bool operator <(Breakpoint breakpoint)
+// ···
+/// Returns true if the current [Breakpoint] is greater than or equal to the
+/// given [Breakpoint].
+bool operator >=(Breakpoint breakpoint)
+// ···
+/// Returns true if the current [Breakpoint] is less than or equal to the
+/// given [Breakpoint].
+bool operator <=(Breakpoint breakpoint)
+// ···
+/// Returns true if the current [Breakpoint] is between the given [Breakpoint]s.
+bool between(Breakpoint lower, Breakpoint upper)
 ```
 
 ### AdaptiveLayout
