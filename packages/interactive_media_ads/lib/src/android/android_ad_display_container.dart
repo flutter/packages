@@ -123,7 +123,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   // Whether MediaPlayer.start() should be called whenever the VideoView
   // `onPrepared` callback is triggered. `onPrepared` is triggered whenever the
   // app is resumed after being inactive.
-  bool _playAdWhenVideoIsPrepared = true;
+  bool _startPlayerWhenVideoIsPrepared = true;
 
   late final AndroidAdDisplayContainerCreationParams _androidParams =
       params is AndroidAdDisplayContainerCreationParams
@@ -223,7 +223,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
             await player.seekTo(container._savedAdPosition);
           }
 
-          if (container._playAdWhenVideoIsPrepared) {
+          if (container._startPlayerWhenVideoIsPrepared) {
             await player.start();
             container._startAdProgressTracking();
           }
@@ -263,7 +263,9 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       pauseAd: (_, __) async {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
-          container._playAdWhenVideoIsPrepared = false;
+          // Setting this to false ensures the ad doesn't start playing if an
+          // app is returned to the foreground.
+          container._startPlayerWhenVideoIsPrepared = false;
           await container._mediaPlayer!.pause();
           container._savedAdPosition =
               await container._videoView.getCurrentPosition();
@@ -273,7 +275,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       playAd: (_, ima.AdMediaInfo adMediaInfo) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
-          container._playAdWhenVideoIsPrepared = true;
+          container._startPlayerWhenVideoIsPrepared = true;
           container._videoView.setVideoUri(adMediaInfo.url);
         }
       },
