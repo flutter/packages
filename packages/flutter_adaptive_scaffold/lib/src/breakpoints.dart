@@ -139,6 +139,11 @@ class Breakpoint {
     this.endHeight,
     this.andUp = false,
     this.platform,
+    this.spacing = kMaterialMediumAndUpSpacing,
+    this.margin = kMaterialMediumAndUpMargin,
+    this.padding = kMaterialPadding,
+    this.recommendedPanes = 1,
+    this.maxPanes = 1,
   });
 
   /// Returns a [Breakpoint] that can be used as a fallthrough in the
@@ -148,6 +153,11 @@ class Breakpoint {
         endWidth = null,
         beginHeight = null,
         endHeight = null,
+        spacing = kMaterialMediumAndUpSpacing,
+        margin = kMaterialMediumAndUpMargin,
+        padding = kMaterialPadding,
+        recommendedPanes = 1,
+        maxPanes = 1,
         andUp = true;
 
   /// Returns a [Breakpoint] with the given constraints for a small screen.
@@ -155,35 +165,60 @@ class Breakpoint {
       : beginWidth = 0,
         endWidth = 600,
         beginHeight = null,
-        endHeight = 480;
+        endHeight = 480,
+        spacing = kMaterialCompactSpacing,
+        margin = kMaterialCompactMargin,
+        padding = kMaterialPadding,
+        recommendedPanes = 1,
+        maxPanes = 1;
 
   /// Returns a [Breakpoint] with the given constraints for a medium screen.
   const Breakpoint.medium({this.andUp = false, this.platform})
       : beginWidth = 600,
         endWidth = 840,
         beginHeight = 480,
-        endHeight = 900;
+        endHeight = 900,
+        spacing = kMaterialMediumAndUpSpacing,
+        margin = kMaterialMediumAndUpMargin,
+        padding = kMaterialPadding * 2,
+        recommendedPanes = 1,
+        maxPanes = 2;
 
   /// Returns a [Breakpoint] with the given constraints for a mediumLarge screen.
   const Breakpoint.mediumLarge({this.andUp = false, this.platform})
       : beginWidth = 840,
         endWidth = 1200,
         beginHeight = 900,
-        endHeight = null;
+        endHeight = null,
+        spacing = kMaterialMediumAndUpSpacing,
+        margin = kMaterialMediumAndUpMargin,
+        padding = kMaterialPadding * 3,
+        recommendedPanes = 2,
+        maxPanes = 2;
 
   /// Returns a [Breakpoint] with the given constraints for a large screen.
   const Breakpoint.large({this.andUp = false, this.platform})
       : beginWidth = 1200,
         endWidth = 1600,
         beginHeight = 900,
-        endHeight = null;
+        endHeight = null,
+        spacing = kMaterialMediumAndUpSpacing,
+        margin = kMaterialMediumAndUpMargin,
+        padding = kMaterialPadding * 4,
+        recommendedPanes = 2,
+        maxPanes = 2;
 
   /// Returns a [Breakpoint] with the given constraints for an extraLarge screen.
   const Breakpoint.extraLarge({this.andUp = false, this.platform})
       : beginWidth = 1600,
         endWidth = null,
         beginHeight = 900,
-        endHeight = null;
+        endHeight = null,
+        spacing = kMaterialMediumAndUpSpacing,
+        margin = kMaterialMediumAndUpMargin,
+        padding = kMaterialPadding * 5,
+        recommendedPanes = 2,
+        maxPanes = 3;
 
   /// A set of [TargetPlatform]s that the [Breakpoint] will be active on desktop.
   static const Set<TargetPlatform> desktop = <TargetPlatform>{
@@ -221,6 +256,21 @@ class Breakpoint {
   /// A Set of [TargetPlatform]s that the [Breakpoint] will be active on. If
   /// left null then it will be active on all platforms.
   final Set<TargetPlatform>? platform;
+
+  /// The default material spacing for the [Breakpoint].
+  final double spacing;
+
+  /// The default material margin for the [Breakpoint].
+  final double margin;
+
+  /// The default material padding for the [Breakpoint].
+  final double padding;
+
+  /// The material recommended number of panes for the [Breakpoint].
+  final int recommendedPanes;
+
+  /// The material maximum number of panes that can be displayed on the [Breakpoint].
+  final int maxPanes;
 
   /// A method that returns true based on conditions related to the context of
   /// the screen such as MediaQuery.sizeOf(context).width, MediaQuery.sizeOf(context).height

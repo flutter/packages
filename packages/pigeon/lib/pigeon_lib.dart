@@ -1397,13 +1397,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         getReferencedTypes(_apis, _classes);
     final Set<String> referencedTypeNames =
         referencedTypes.keys.map((TypeDeclaration e) => e.baseName).toSet();
-    final List<Class> referencedClasses = List<Class>.from(_classes);
-    referencedClasses
-        .removeWhere((Class x) => !referencedTypeNames.contains(x.name));
+    final List<Class> nonReferencedClasses = List<Class>.from(_classes);
+    nonReferencedClasses
+        .removeWhere((Class x) => referencedTypeNames.contains(x.name));
+    for (final Class x in nonReferencedClasses) {
+      x.isReferenced = false;
+    }
 
     final List<Enum> referencedEnums = List<Enum>.from(_enums);
     final Root completeRoot =
-        Root(apis: _apis, classes: referencedClasses, enums: referencedEnums);
+        Root(apis: _apis, classes: _classes, enums: referencedEnums);
 
     final List<Error> validateErrors = _validateAst(completeRoot, source);
     final List<Error> totalErrors = List<Error>.from(_errors);
@@ -1411,9 +1414,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
     for (final MapEntry<TypeDeclaration, List<int>> element
         in referencedTypes.entries) {
-      if (!referencedClasses
-              .map((Class e) => e.name)
-              .contains(element.key.baseName) &&
+      if (!_classes.map((Class e) => e.name).contains(element.key.baseName) &&
           !referencedEnums
               .map((Enum e) => e.name)
               .contains(element.key.baseName) &&
@@ -1434,7 +1435,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             lineNumber: lineNumber));
       }
     }
-    for (final Class classDefinition in referencedClasses) {
+    for (final Class classDefinition in _classes) {
       classDefinition.fields = _attachAssociatedDefinitions(
         classDefinition.fields,
       );
