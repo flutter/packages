@@ -6,7 +6,10 @@ import 'pages.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  /// The path for the home page.
   static const String path = '/home';
+
+  /// The name for the home page.
   static const String name = 'Home';
 
   @override

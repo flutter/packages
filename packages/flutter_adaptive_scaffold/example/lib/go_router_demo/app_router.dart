@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'global_router.dart' as router show rootNavigatorKey;
-
-import 'global_router.dart';
 import 'pages/pages.dart';
 import 'scaffold_shell.dart';
+
+/// The root navigator key for the main router of the app.
+final GlobalKey<NavigatorState> rootNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'root');
 
 final GlobalKey<NavigatorState> _homeNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'home');
@@ -13,17 +14,36 @@ final GlobalKey<NavigatorState> _counterNavigatorKey =
 final GlobalKey<NavigatorState> _moreNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'more');
 
-/// Stores the routes that are accessible to unauthenticated users.
-class Routes {
-  /// The route for the login page.
-  static final GoRoute unauthenticatedRoutes = GoRoute(
+/// The [AppRouter] maintains the main route configuration for the app.
+///
+/// Routes that are `fullScreenDialogs` should also set `_rootNavigatorKey` as
+/// the `parentNavigatorKey` to ensure that the dialog is displayed correctly.
+class AppRouter {
+  /// The authentication status of the user.
+  static bool authenticated = false;
+
+  /// The router with the routes of pages that should be displayed.
+  static final GoRouter router = GoRouter(
+    navigatorKey: rootNavigatorKey,
+    debugLogDiagnostics: true,
+    errorPageBuilder: (BuildContext context, GoRouterState state) {
+      return const MaterialPage<void>(child: NavigationErrorPage());
+    },
+    routes: <RouteBase>[
+      _unauthenticatedRoutes,
+      _authenticatedRoutes,
+      ..._openRoutes,
+    ],
+  );
+
+  static final GoRoute _unauthenticatedRoutes = GoRoute(
     name: LoginPage.name,
     path: LoginPage.path,
     pageBuilder: (BuildContext context, GoRouterState state) {
       return const MaterialPage<void>(child: LoginPage());
     },
     redirect: (BuildContext context, GoRouterState state) {
-      if (GlobalRouter.authenticated) {
+      if (authenticated) {
         return HomePage.path;
       }
       return null;
@@ -41,10 +61,9 @@ class Routes {
     ],
   );
 
-  /// The routes for the authenticated user.
-  static final StatefulShellRoute authenticatedRoutes =
+  static final StatefulShellRoute _authenticatedRoutes =
       StatefulShellRoute.indexedStack(
-    parentNavigatorKey: router.rootNavigatorKey,
+    parentNavigatorKey: rootNavigatorKey,
     builder: (
       BuildContext context,
       GoRouterState state,
@@ -53,7 +72,7 @@ class Routes {
       return ScaffoldShell(navigationShell: navigationShell);
     },
     redirect: (BuildContext context, GoRouterState state) {
-      if (!GlobalRouter.authenticated) {
+      if (!authenticated) {
         return LoginPage.path;
       }
       return null;
@@ -75,7 +94,7 @@ class Routes {
               GoRoute(
                 name: DetailPage.name,
                 path: DetailPage.path,
-                parentNavigatorKey: router.rootNavigatorKey,
+                parentNavigatorKey: rootNavigatorKey,
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return const MaterialPage<void>(
                     child: DetailPage(),
@@ -85,7 +104,7 @@ class Routes {
               GoRoute(
                 name: DetailModalPage.name,
                 path: DetailModalPage.path,
-                parentNavigatorKey: router.rootNavigatorKey,
+                parentNavigatorKey: rootNavigatorKey,
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return const MaterialPage<void>(
                     fullscreenDialog: true,
@@ -143,7 +162,7 @@ class Routes {
     ],
   );
 
-  static final List<GoRoute> commonRoutes = <GoRoute>[
+  static final List<GoRoute> _openRoutes = <GoRoute>[
     GoRoute(
       name: LanguagePage.name,
       path: LanguagePage.path,

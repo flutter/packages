@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'go_router_demo/global_router.dart';
+import 'go_router_demo/app_router.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       restorationScopeId: 'demo',
-      routerConfig: GlobalRouter.router,
+      routerConfig: AppRouter.router,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.blue,
