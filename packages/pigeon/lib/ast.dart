@@ -652,6 +652,7 @@ class Class extends Node {
   Class({
     required this.name,
     required this.fields,
+    this.isReferenced = true,
     this.isSwiftClass = false,
     this.documentationComments = const <String>[],
   });
@@ -661,6 +662,9 @@ class Class extends Node {
 
   /// All the fields contained in the class.
   List<NamedType> fields;
+
+  /// Whether the class is referenced in any API.
+  bool isReferenced;
 
   /// Determines whether the defined class should be represented as a struct or
   /// a class in Swift generation.

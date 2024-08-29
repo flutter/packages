@@ -60,6 +60,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@interface FLTUnusedClass ()
++ (FLTUnusedClass *)fromList:(NSArray<id> *)list;
++ (nullable FLTUnusedClass *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @interface FLTAllTypes ()
 + (FLTAllTypes *)fromList:(NSArray<id> *)list;
 + (nullable FLTAllTypes *)nullableFromList:(NSArray<id> *)list;
@@ -88,6 +94,27 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 + (FLTTestMessage *)fromList:(NSArray<id> *)list;
 + (nullable FLTTestMessage *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
+@end
+
+@implementation FLTUnusedClass
++ (instancetype)makeWithAField:(nullable id)aField {
+  FLTUnusedClass *pigeonResult = [[FLTUnusedClass alloc] init];
+  pigeonResult.aField = aField;
+  return pigeonResult;
+}
++ (FLTUnusedClass *)fromList:(NSArray<id> *)list {
+  FLTUnusedClass *pigeonResult = [[FLTUnusedClass alloc] init];
+  pigeonResult.aField = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable FLTUnusedClass *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTUnusedClass fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.aField ?: [NSNull null],
+  ];
+}
 @end
 
 @implementation FLTAllTypes
@@ -469,14 +496,16 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                  : [[FLTAnotherEnumBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
     case 131:
-      return [FLTAllTypes fromList:[self readValue]];
+      return [FLTUnusedClass fromList:[self readValue]];
     case 132:
-      return [FLTAllNullableTypes fromList:[self readValue]];
+      return [FLTAllTypes fromList:[self readValue]];
     case 133:
-      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
+      return [FLTAllNullableTypes fromList:[self readValue]];
     case 134:
-      return [FLTAllClassesWrapper fromList:[self readValue]];
+      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
     case 135:
+      return [FLTAllClassesWrapper fromList:[self readValue]];
+    case 136:
       return [FLTTestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -496,20 +525,23 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     FLTAnotherEnumBox *box = (FLTAnotherEnumBox *)value;
     [self writeByte:130];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
-  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
+  } else if ([value isKindOfClass:[FLTUnusedClass class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
+  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
     [self writeByte:135];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+    [self writeByte:136];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];

@@ -60,6 +60,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@interface UnusedClass ()
++ (UnusedClass *)fromList:(NSArray<id> *)list;
++ (nullable UnusedClass *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @interface AllTypes ()
 + (AllTypes *)fromList:(NSArray<id> *)list;
 + (nullable AllTypes *)nullableFromList:(NSArray<id> *)list;
@@ -88,6 +94,27 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 + (TestMessage *)fromList:(NSArray<id> *)list;
 + (nullable TestMessage *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
+@end
+
+@implementation UnusedClass
++ (instancetype)makeWithAField:(nullable id)aField {
+  UnusedClass *pigeonResult = [[UnusedClass alloc] init];
+  pigeonResult.aField = aField;
+  return pigeonResult;
+}
++ (UnusedClass *)fromList:(NSArray<id> *)list {
+  UnusedClass *pigeonResult = [[UnusedClass alloc] init];
+  pigeonResult.aField = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable UnusedClass *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [UnusedClass fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.aField ?: [NSNull null],
+  ];
+}
 @end
 
 @implementation AllTypes
@@ -467,14 +494,16 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                  : [[AnotherEnumBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
     case 131:
-      return [AllTypes fromList:[self readValue]];
+      return [UnusedClass fromList:[self readValue]];
     case 132:
-      return [AllNullableTypes fromList:[self readValue]];
+      return [AllTypes fromList:[self readValue]];
     case 133:
-      return [AllNullableTypesWithoutRecursion fromList:[self readValue]];
+      return [AllNullableTypes fromList:[self readValue]];
     case 134:
-      return [AllClassesWrapper fromList:[self readValue]];
+      return [AllNullableTypesWithoutRecursion fromList:[self readValue]];
     case 135:
+      return [AllClassesWrapper fromList:[self readValue]];
+    case 136:
       return [TestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -494,20 +523,23 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     AnotherEnumBox *box = (AnotherEnumBox *)value;
     [self writeByte:130];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
-  } else if ([value isKindOfClass:[AllTypes class]]) {
+  } else if ([value isKindOfClass:[UnusedClass class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllNullableTypes class]]) {
+  } else if ([value isKindOfClass:[AllTypes class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllNullableTypesWithoutRecursion class]]) {
+  } else if ([value isKindOfClass:[AllNullableTypes class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllClassesWrapper class]]) {
+  } else if ([value isKindOfClass:[AllNullableTypesWithoutRecursion class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[TestMessage class]]) {
+  } else if ([value isKindOfClass:[AllClassesWrapper class]]) {
     [self writeByte:135];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[TestMessage class]]) {
+    [self writeByte:136];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
