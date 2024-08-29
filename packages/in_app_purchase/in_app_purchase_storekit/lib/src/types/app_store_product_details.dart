@@ -44,7 +44,7 @@ class AppStoreProductDetails extends ProductDetails {
   final SKProductWrapper skProduct;
 }
 
-/// The class represents the information of a product as registered in the Apple
+/// The class represents the information of a StoreKit2 product as registered in the Apple
 /// AppStore.
 class AppStoreProduct2Details extends ProductDetails {
   /// Creates a new AppStore specific product details object with the provided
