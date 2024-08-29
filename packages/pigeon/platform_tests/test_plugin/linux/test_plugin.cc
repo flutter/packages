@@ -2170,7 +2170,8 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
     .call_flutter_echo_nullable_enum = call_flutter_echo_nullable_enum,
     .call_flutter_echo_another_nullable_enum =
         call_flutter_echo_another_nullable_enum,
-    .call_flutter_small_api_echo_string = call_flutter_small_api_echo_string};
+    .call_flutter_small_api_echo_string = call_flutter_small_api_echo_string,
+    .test_unused_class_generated = test_unused_class_generated};
 
 static void echo(const gchar* a_string,
                  CoreTestsPigeonTestHostSmallApiResponseHandle* response_handle,
