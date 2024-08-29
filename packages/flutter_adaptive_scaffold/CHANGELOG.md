@@ -1,3 +1,7 @@
+## 0.2.4
+
+* Compare breakpoints to each other using operators.
+
 ## 0.2.3
 
 * Update the spacing and margins to the latest material m3 specs.
