@@ -148,11 +148,7 @@ enum SimulatedLayout {
 
   Size get size => Size(_width, _height);
 
-  MaterialApp app({
-    int? initialIndex,
-    bool animations = true,
-    Breakpoint? appBarBreakpoint,
-  }) {
+  MaterialApp app(WidgetTester tester, {required Widget child}) {
     return MaterialApp(
       theme: ThemeData.light().copyWith(
         navigationRailTheme: const NavigationRailThemeData(
@@ -162,15 +158,27 @@ enum SimulatedLayout {
         ),
       ),
       home: MediaQuery(
-        data: MediaQueryData(
-          size: size,
+        data: MediaQueryData.fromView(tester.view).copyWith(
+          size: Size(_width, _height),
           padding: const EdgeInsets.only(top: 30),
         ),
-        child: TestScaffold(
-          initialIndex: initialIndex,
-          isAnimated: animations,
-          appBarBreakpoint: appBarBreakpoint,
-        ),
+        child: child,
+      ),
+    );
+  }
+
+  MaterialApp scaffold(
+    WidgetTester tester, {
+    int? initialIndex,
+    bool animations = true,
+    Breakpoint? appBarBreakpoint,
+  }) {
+    return app(
+      tester,
+      child: TestScaffold(
+        initialIndex: initialIndex,
+        isAnimated: animations,
+        appBarBreakpoint: appBarBreakpoint,
       ),
     );
   }

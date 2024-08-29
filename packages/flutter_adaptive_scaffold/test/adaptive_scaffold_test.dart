@@ -31,7 +31,7 @@ void main() {
     final Finder primaryNav3 = find.byKey(const Key('primaryNavigation3'));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.small.size);
-    await tester.pumpWidget(SimulatedLayout.small.app());
+    await tester.pumpWidget(SimulatedLayout.small.scaffold(tester));
     await tester.pumpAndSettle();
 
     expect(smallBody, findsOneWidget);
@@ -44,7 +44,7 @@ void main() {
     expect(tester.getTopLeft(bottomNav), const Offset(0, 1920));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
-    await tester.pumpWidget(SimulatedLayout.medium.app());
+    await tester.pumpWidget(SimulatedLayout.medium.scaffold(tester));
     await tester.pumpAndSettle();
 
     expect(smallBody, findsNothing);
@@ -60,7 +60,7 @@ void main() {
     expect(tester.getBottomRight(primaryNav), const Offset(88, 2000));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.mediumLarge.size);
-    await tester.pumpWidget(SimulatedLayout.mediumLarge.app());
+    await tester.pumpWidget(SimulatedLayout.mediumLarge.scaffold(tester));
     await tester.pumpAndSettle();
 
     expect(body, findsNothing);
@@ -76,7 +76,7 @@ void main() {
     expect(tester.getBottomRight(primaryNav1), const Offset(208, 2000));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.large.size);
-    await tester.pumpWidget(SimulatedLayout.large.app());
+    await tester.pumpWidget(SimulatedLayout.large.scaffold(tester));
     await tester.pumpAndSettle();
 
     expect(mediumLargeBody, findsNothing);
@@ -92,7 +92,7 @@ void main() {
     expect(tester.getBottomRight(primaryNav2), const Offset(208, 2000));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.extraLarge.size);
-    await tester.pumpWidget(SimulatedLayout.extraLarge.app());
+    await tester.pumpWidget(SimulatedLayout.extraLarge.scaffold(tester));
     await tester.pumpAndSettle();
 
     expect(largeBody, findsNothing);
@@ -114,9 +114,9 @@ void main() {
     final Finder sBody = find.byKey(const Key('sBody'));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.small.size);
-    await tester.pumpWidget(SimulatedLayout.small.app());
+    await tester.pumpWidget(SimulatedLayout.small.scaffold(tester));
     await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
-    await tester.pumpWidget(SimulatedLayout.medium.app());
+    await tester.pumpWidget(SimulatedLayout.medium.scaffold(tester));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
@@ -155,10 +155,12 @@ void main() {
     final Finder sBody = find.byKey(const Key('sBody'));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.small.size);
-    await tester.pumpWidget(SimulatedLayout.small.app(animations: false));
+    await tester
+        .pumpWidget(SimulatedLayout.small.scaffold(tester, animations: false));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
-    await tester.pumpWidget(SimulatedLayout.medium.app(animations: false));
+    await tester
+        .pumpWidget(SimulatedLayout.medium.scaffold(tester, animations: false));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
@@ -179,7 +181,8 @@ void main() {
     await Future.forEach(SimulatedLayout.values,
         (SimulatedLayout region) async {
       int selectedIndex = 0;
-      final MaterialApp app = region.app(initialIndex: selectedIndex);
+      final MaterialApp app =
+          region.scaffold(tester, initialIndex: selectedIndex);
       await tester.binding.setSurfaceSize(region.size);
       await tester.pumpWidget(app);
       await tester.pumpAndSettle();
@@ -242,7 +245,7 @@ void main() {
     (WidgetTester tester) async {
       await Future.forEach(SimulatedLayout.values,
           (SimulatedLayout region) async {
-        final MaterialApp app = region.app();
+        final MaterialApp app = region.scaffold(tester);
         await tester.binding.setSurfaceSize(region.size);
         await tester.pumpWidget(app);
         await tester.pumpAndSettle();
@@ -272,7 +275,8 @@ void main() {
       await Future.forEach(SimulatedLayout.values,
           (SimulatedLayout region) async {
         int? selectedIndex;
-        final MaterialApp app = region.app(initialIndex: selectedIndex);
+        final MaterialApp app =
+            region.scaffold(tester, initialIndex: selectedIndex);
         await tester.binding.setSurfaceSize(region.size);
         await tester.pumpWidget(app);
         await tester.pumpAndSettle();
@@ -453,7 +457,7 @@ void main() {
     'when view in medium screen, navigation rail must be visible as per theme data values.',
     (WidgetTester tester) async {
       await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
-      await tester.pumpWidget(SimulatedLayout.medium.app());
+      await tester.pumpWidget(SimulatedLayout.medium.scaffold(tester));
       await tester.pumpAndSettle();
 
       final Finder primaryNavigationMedium = find.byKey(
@@ -499,7 +503,7 @@ void main() {
     'when view in mediumLarge screen, navigation rail must be visible as per theme data values.',
     (WidgetTester tester) async {
       await tester.binding.setSurfaceSize(SimulatedLayout.mediumLarge.size);
-      await tester.pumpWidget(SimulatedLayout.mediumLarge.app());
+      await tester.pumpWidget(SimulatedLayout.mediumLarge.scaffold(tester));
       await tester.pumpAndSettle();
 
       final Finder primaryNavigationMediumLarge = find.byKey(
@@ -740,7 +744,7 @@ void main() {
     (WidgetTester tester) async {
       await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
       await tester.pumpWidget(SimulatedLayout.medium
-          .app(appBarBreakpoint: AppBarAlwaysOnBreakpoint()));
+          .scaffold(tester, appBarBreakpoint: AppBarAlwaysOnBreakpoint()));
       await tester.pumpAndSettle();
 
       final Finder appBar = find.byType(AppBar);
@@ -750,7 +754,7 @@ void main() {
 
       await tester.binding.setSurfaceSize(SimulatedLayout.mediumLarge.size);
       await tester.pumpWidget(SimulatedLayout.mediumLarge
-          .app(appBarBreakpoint: AppBarAlwaysOnBreakpoint()));
+          .scaffold(tester, appBarBreakpoint: AppBarAlwaysOnBreakpoint()));
       expect(drawer, findsNothing);
       await tester.pumpAndSettle();
 
