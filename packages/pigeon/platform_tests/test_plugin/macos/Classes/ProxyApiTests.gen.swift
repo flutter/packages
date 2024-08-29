@@ -293,7 +293,7 @@ final class ProxyApiTestsPigeonInstanceManager {
 
 private class ProxyApiTestsPigeonInstanceManagerApi {
   /// The codec used for serializing messages.
-  let codec = FlutterStandardMessageCodec.sharedInstance()
+  let codec: FlutterStandardMessageCodec { ProxyApiTestsPigeonCodec.shared }
 
   /// Handles sending and receiving messages with Dart.
   unowned let binaryMessenger: FlutterBinaryMessenger
@@ -306,7 +306,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
   static func setUpMessageHandlers(
     binaryMessenger: FlutterBinaryMessenger, instanceManager: ProxyApiTestsPigeonInstanceManager?
   ) {
-    let codec = FlutterStandardMessageCodec.sharedInstance()
+    let codec = ProxyApiTestsPigeonCodec.shared
     let removeStrongReferenceChannel = FlutterBasicMessageChannel(
       name:
         "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference",

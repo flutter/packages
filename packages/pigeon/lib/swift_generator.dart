@@ -748,7 +748,7 @@ if (wrapped == nil) {
         _docCommentSpec,
       );
       indent.writeln(
-        'let codec = FlutterStandardMessageCodec.sharedInstance()',
+        'let codec: FlutterStandardMessageCodec { ${_getCodecName(generatorOptions)}.shared }',
       );
       indent.newln();
 
@@ -781,7 +781,7 @@ if (wrapped == nil) {
         '}',
         () {
           indent.writeln(
-            'let codec = FlutterStandardMessageCodec.sharedInstance()',
+            'let codec = ${_getCodecName(generatorOptions)}.shared',
           );
           const String setHandlerCondition =
               'let instanceManager = instanceManager';
