@@ -689,7 +689,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
     flutterSmallApiOne.echoString(aString, resultCallbackOne);
   }
 
-  public CoreTests.UnusedClass testIfUnusedClassIsGenerated() {
+  public @NonNull CoreTests.UnusedClass testIfUnusedClassIsGenerated() {
     return new CoreTests.UnusedClass();
   }
 }
