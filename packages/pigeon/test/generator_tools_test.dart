@@ -455,7 +455,6 @@ void main() {
 
         print('hello');
       }''',
-      trimIndentation: true,
     );
 
     expect(buffer.toString(), '''
