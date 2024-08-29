@@ -686,6 +686,18 @@ void main() {
                   .element(find.byKey(const Key('Breakpoints.smallMobile'))))
               .spacing,
           kMaterialCompactSpacing);
+    }, variant: TargetPlatformVariant.desktop());
+
+    testWidgets('isMobile returns true on mobile platforms',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.medium.slot(tester));
+      await tester.pumpAndSettle();
+
+      expect(Breakpoint.isDesktop(tester.element(find.byType(TestScaffold))),
+          isTrue);
+
+      expect(Breakpoint.isMobile(tester.element(find.byType(TestScaffold))),
+          isFalse);
     }, variant: TargetPlatformVariant.mobile());
 
     testWidgets('returns kMaterialMediumAndUpSpacing for medium breakpoint',
