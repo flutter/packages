@@ -1,3 +1,7 @@
+## 0.1.2+5
+
+* Adds internal wrapper for remaining methods of the Android native `AdsManager`.
+
 ## 0.1.2+4
 
 * Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.
