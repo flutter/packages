@@ -283,6 +283,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       stopAd: (_, __) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
+          // Clear and reset all state.
           container._stopAdProgressTracking();
           container._clearMediaPlayer();
           container._loadedAdMediaInfo = null;
