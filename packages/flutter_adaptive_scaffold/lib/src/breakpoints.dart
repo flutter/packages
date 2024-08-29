@@ -130,7 +130,6 @@ class Breakpoints {
 ///
 ///  * [SlotLayout.config], which uses breakpoints to dictate the layout of the
 ///    screen.
-@immutable
 class Breakpoint {
   // #docregion Breakpoints
   /// Returns a const [Breakpoint] with the given constraints.
@@ -406,29 +405,6 @@ class Breakpoint {
         (beginHeight ?? double.negativeInfinity) <=
             (breakpoint.beginHeight ?? double.negativeInfinity);
   }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (other is! Breakpoint) {
-      return false;
-    }
-    return beginWidth == other.beginWidth &&
-        endWidth == other.endWidth &&
-        beginHeight == other.beginHeight &&
-        endHeight == other.endHeight &&
-        platform == other.platform;
-  }
-
-  @override
-  int get hashCode =>
-      beginWidth.hashCode ^
-      endWidth.hashCode ^
-      beginHeight.hashCode ^
-      endHeight.hashCode ^
-      platform.hashCode;
 
   /// Returns true if the current [Breakpoint] is between the given [Breakpoint]s.
   bool between(Breakpoint lower, Breakpoint upper) {
