@@ -55,13 +55,13 @@ class StoreKit2TranslatorTests: XCTestCase {
       XCTFail("SubscriptionInfo should not be nil")
       return
     }
-    let pigeonMessage = subscription.convertToPigeon()
+    let pigeonMessage = subscription.convertToPigeon
     XCTAssertEqual(pigeonMessage, productMessage.subscription)
   }
 
   func testPigeonConversionForProductType() async throws {
     let type = product.type
-    let pigeonMessage = type.convertToPigeon()
+    let pigeonMessage = type.convertToPigeon
     XCTAssertEqual(pigeonMessage, productMessage.type)
   }
 
@@ -70,13 +70,13 @@ class StoreKit2TranslatorTests: XCTestCase {
       XCTFail("SubscriptionPeriod should not be nil")
       return
     }
-    let pigeonMessage = period.convertToPigeon()
+    let pigeonMessage = period.convertToPigeon
     XCTAssertEqual(pigeonMessage, productMessage.subscription?.subscriptionPeriod)
   }
 
   func testPigeonConversionForPriceLocale() async throws {
     let locale = product.priceFormatStyle.locale
-    let pigeonMessage = locale.convertToPigeon()
+    let pigeonMessage = locale.convertToPigeon
     XCTAssertEqual(pigeonMessage, productMessage.priceLocale)
   }
 }
