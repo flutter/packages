@@ -1,5 +1,6 @@
 export 'counter_page.dart';
 export 'detail_modal_page.dart';
+export 'detail_overview_page.dart';
 export 'detail_page.dart';
 export 'forgot_password_page.dart';
 export 'home_page.dart';

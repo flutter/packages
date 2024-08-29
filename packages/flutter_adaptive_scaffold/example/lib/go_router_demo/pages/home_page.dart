@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               onPressed: () => <void>{
-                context.goNamed(DetailPage.name),
+                context.goNamed(DetailOverviewPage.name),
               },
               child: const Text('Detail page'),
             ),

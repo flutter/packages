@@ -99,15 +99,25 @@ class AppRouter {
             },
             routes: <RouteBase>[
               GoRoute(
-                name: DetailPage.name,
-                path: DetailPage.path,
-                parentNavigatorKey: rootNavigatorKey,
-                pageBuilder: (BuildContext context, GoRouterState state) {
-                  return const MaterialPage<void>(
-                    child: DetailPage(),
-                  );
-                },
-              ),
+                  name: DetailOverviewPage.name,
+                  path: DetailOverviewPage.path,
+                  pageBuilder: (BuildContext context, GoRouterState state) {
+                    return const MaterialPage<void>(
+                      child: DetailOverviewPage(),
+                    );
+                  },
+                  routes: <RouteBase>[
+                    GoRoute(
+                      name: DetailPage.name,
+                      path: DetailPage.path,
+                      pageBuilder: (BuildContext context, GoRouterState state) {
+                        return MaterialPage<void>(
+                          child: DetailPage(
+                              itemName: state.uri.queryParameters['itemName']!),
+                        );
+                      },
+                    ),
+                  ]),
               GoRoute(
                 name: DetailModalPage.name,
                 path: DetailModalPage.path,
