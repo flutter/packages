@@ -1,3 +1,7 @@
+## 0.1.2+6
+
+* Fixes bug where the ad would play when the app returned to foreground during content playback.
+
 ## 0.1.2+5
 
 * Adds internal wrapper for remaining methods of the Android native `AdsManager`.
