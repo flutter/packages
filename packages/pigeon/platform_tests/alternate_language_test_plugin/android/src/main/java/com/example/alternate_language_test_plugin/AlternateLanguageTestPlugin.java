@@ -848,6 +848,10 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
         };
     flutterSmallApiOne.echoString(aString, resultCallbackOne);
   }
+
+  public @NonNull CoreTests.UnusedClass testIfUnusedClassIsGenerated() {
+    return new CoreTests.UnusedClass();
+  }
 }
 
 class TestPluginWithSuffix implements CoreTests.HostSmallApi {

@@ -75,6 +75,32 @@ enum class AnEnum {
 
 enum class AnotherEnum { kJustInCase = 0 };
 
+// Generated class from Pigeon that represents data sent in messages.
+class UnusedClass {
+ public:
+  // Constructs an object setting all non-nullable fields.
+  UnusedClass();
+
+  // Constructs an object setting all fields.
+  explicit UnusedClass(const flutter::EncodableValue* a_field);
+
+  const flutter::EncodableValue* a_field() const;
+  void set_a_field(const flutter::EncodableValue* value_arg);
+  void set_a_field(const flutter::EncodableValue& value_arg);
+
+ private:
+  static UnusedClass FromEncodableList(const flutter::EncodableList& list);
+  flutter::EncodableList ToEncodableList() const;
+  friend class HostIntegrationCoreApi;
+  friend class FlutterIntegrationCoreApi;
+  friend class HostTrivialApi;
+  friend class HostSmallApi;
+  friend class FlutterSmallApi;
+  friend class PigeonInternalCodecSerializer;
+  friend class CoreTestsTest;
+  std::optional<flutter::EncodableValue> a_field_;
+};
+
 // A class containing all supported types.
 //
 // Generated class from Pigeon that represents data sent in messages.

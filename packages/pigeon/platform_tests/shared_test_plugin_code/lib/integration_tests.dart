@@ -1949,6 +1949,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoObject, sentObject);
     });
   });
+
+  testWidgets('Unused data class still generate', (_) async {
+    final UnusedClass unused = UnusedClass();
+    expect(unused, unused);
+  });
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {

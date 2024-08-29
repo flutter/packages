@@ -39,6 +39,37 @@ typedef enum {
 } CoreTestsPigeonTestAnotherEnum;
 
 /**
+ * CoreTestsPigeonTestUnusedClass:
+ *
+ */
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestUnusedClass,
+                     core_tests_pigeon_test_unused_class,
+                     CORE_TESTS_PIGEON_TEST, UNUSED_CLASS, GObject)
+
+/**
+ * core_tests_pigeon_test_unused_class_new:
+ * a_field: field in this object.
+ *
+ * Creates a new #UnusedClass object.
+ *
+ * Returns: a new #CoreTestsPigeonTestUnusedClass
+ */
+CoreTestsPigeonTestUnusedClass* core_tests_pigeon_test_unused_class_new(
+    FlValue* a_field);
+
+/**
+ * core_tests_pigeon_test_unused_class_get_a_field
+ * @object: a #CoreTestsPigeonTestUnusedClass.
+ *
+ * Gets the value of the aField field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_unused_class_get_a_field(
+    CoreTestsPigeonTestUnusedClass* object);
+
+/**
  * CoreTestsPigeonTestAllTypes:
  *
  * A class containing all supported types.

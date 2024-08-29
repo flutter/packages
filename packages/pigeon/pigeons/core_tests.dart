@@ -18,14 +18,11 @@ enum AnotherEnum {
   justInCase,
 }
 
-class SimpleClass {
-  SimpleClass({
-    this.aString,
-    this.aBool = true,
-  });
+// This exists to show that unused data classes still generate.
+class UnusedClass {
+  UnusedClass({this.aField});
 
-  String? aString;
-  bool aBool;
+  Object? aField;
 }
 
 /// A class containing all supported types.

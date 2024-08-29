@@ -1,6 +1,10 @@
-## 22.0.1
+## 22.1.1
 
 * Validates enums and classes in collections.
+
+## 22.1.0
+
+* Allows generation of classes that aren't referenced in an API.
 
 ## 22.0.0
 

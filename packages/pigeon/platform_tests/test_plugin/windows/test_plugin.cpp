@@ -1018,4 +1018,8 @@ void TestPlugin::CallFlutterSmallApiEchoString(
       [result](const FlutterError& error) { result(error); });
 }
 
+core_tests_pigeontest::UnusedClass TestPlugin::TestUnusedClassGenerates() {
+  return core_tests_pigeontest::UnusedClass();
+}
+
 }  // namespace test_plugin
