@@ -110,7 +110,7 @@ void main() {
       expect(
           code,
           contains(
-              'private class MyFilePigeonProxyApiBaseCodec(val registrar: MyFilePigeonProxyApiRegistrar) : MyFilePigeonCodec()'));
+              'class MyFilePigeonProxyApiBaseCodec(val registrar: MyFilePigeonProxyApiRegistrar) : MyFilePigeonCodec()'));
 
       // Proxy API class
       expect(
