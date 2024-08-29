@@ -15,7 +15,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   // Wrapper method around StoreKit2's products() method
   // https://developer.apple.com/documentation/storekit/product/3851116-products
   func products(
-    identifiers: [String], completion: @escaping (Result<[SK2ProductMessage], any Error>) -> Void
+    identifiers: [String], completion: @escaping (Result<[SK2ProductMessage], Error>) -> Void
   ) {
     Task {
       do {

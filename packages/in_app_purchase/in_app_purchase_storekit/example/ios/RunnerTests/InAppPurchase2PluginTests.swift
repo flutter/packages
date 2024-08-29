@@ -83,7 +83,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
         XCTFail("This `products` call should not succeed")
       case .failure(let error):
         expectation.fulfill()
-        XCTAssert(error.localizedDescription.contains("The operation couldn't be completed."))
+        print(error.localizedDescription)
+        XCTAssert(error.localizedDescription == "The operation couldn’t be completed. (in_app_purchase_storekit.PigeonError error 1.)")
       }
     }
     await fulfillment(of: [expectation], timeout: 5)
