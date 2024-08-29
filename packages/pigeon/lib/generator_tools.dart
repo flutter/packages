@@ -78,7 +78,7 @@ class Indent {
     String input, {
     bool leadingSpace = true,
     bool trailingNewline = true,
-    bool trimIndentation = false,
+    bool trimIndentation = true,
   }) {
     final List<String> lines = input.split('\n');
 
