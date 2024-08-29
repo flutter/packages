@@ -582,7 +582,7 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
   }
 }
 
-private class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
+class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
     val registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
 ) : InteractiveMediaAdsLibraryPigeonCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
