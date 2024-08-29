@@ -9,8 +9,8 @@ import XCTest
 
 @available(iOS 15.0, *)
 final class InAppPurchase2PluginTests: XCTestCase {
-  var session: SKTestSession!
-  var plugin: InAppPurchasePlugin!
+  private var session: SKTestSession!
+  private var plugin: InAppPurchasePlugin!
 
   override func setUp() async throws {
     try await super.setUp()
@@ -46,7 +46,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     let testProduct = try await Product.products(for: ["subscription_silver"]).first
 
-    let testProductMsg = testProduct?.convertToPigeon()
+    let testProductMsg = testProduct?.convertToPigeon
 
     XCTAssertNotNil(fetchedProductMsg)
     XCTAssertEqual(testProductMsg, fetchedProductMsg)
@@ -70,6 +70,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     XCTAssert(fetchedProductMsg?.count == 0)
   }
 
+  //TODO(louisehsu): Add testing for lower versions.
   @available(iOS 17.0, *)
   func testGetProductsWithStoreKitError() async throws {
     try await session.setSimulatedError(

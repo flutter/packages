@@ -18,9 +18,6 @@ const String kPurchaseErrorCode = 'purchase_error';
 /// Indicates store front is Apple AppStore.
 const String kIAPSource = 'app_store';
 
-/// Experimental flag for StoreKit2.
-bool _useStoreKit2 = false;
-
 /// An [InAppPurchasePlatform] that wraps StoreKit.
 ///
 /// This translates various `StoreKit` calls and responses into the
@@ -32,6 +29,9 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   /// get the connection from the [instance] getter.
   @visibleForTesting
   InAppPurchaseStoreKitPlatform();
+
+  /// Experimental flag for StoreKit2.
+  static bool _useStoreKit2 = false;
 
   static late SKPaymentQueueWrapper _skPaymentQueueWrapper;
   static late _TransactionObserver _observer;
@@ -209,7 +209,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   Future<String?> getCountryCode() => countryCode();
 
   /// Turns on StoreKit2. You cannot disable this after it is enabled.
-  static void enableStoreKit2() {
+  void enableStoreKit2() {
     _useStoreKit2 = true;
   }
 }

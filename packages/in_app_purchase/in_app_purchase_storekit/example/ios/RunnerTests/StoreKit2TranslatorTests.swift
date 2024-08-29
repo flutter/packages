@@ -46,7 +46,7 @@ class StoreKit2TranslatorTests: XCTestCase {
 
   func testPigeonConversionForProduct() async throws {
     XCTAssertNotNil(product)
-    let pigeonMessage = product.convertToPigeon()
+    let pigeonMessage = product.convertToPigeon
     XCTAssertEqual(pigeonMessage, productMessage)
   }
 
