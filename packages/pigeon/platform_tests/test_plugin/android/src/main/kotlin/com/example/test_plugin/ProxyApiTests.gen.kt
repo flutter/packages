@@ -347,8 +347,8 @@ abstract class ProxyApiTestsPigeonProxyApiRegistrar(val binaryMessenger: BinaryM
   /** Whether APIs should ignore calling to Dart. */
   public var ignoreCallsToDart = false
   val instanceManager: ProxyApiTestsPigeonInstanceManager
-  private var _codec: ProxyApiTestsPigeonProxyApiBaseCodec? = null
-  val codec: ProxyApiTestsPigeonProxyApiBaseCodec
+  private var _codec: MessageCodec<Any?>? = null
+  val codec: MessageCodec<Any?>
     get() {
       if (_codec == null) {
         _codec = ProxyApiTestsPigeonProxyApiBaseCodec(this)
@@ -416,8 +416,9 @@ abstract class ProxyApiTestsPigeonProxyApiRegistrar(val binaryMessenger: BinaryM
   }
 }
 
-class ProxyApiTestsPigeonProxyApiBaseCodec(val registrar: ProxyApiTestsPigeonProxyApiRegistrar) :
-    ProxyApiTestsPigeonCodec() {
+private class ProxyApiTestsPigeonProxyApiBaseCodec(
+    val registrar: ProxyApiTestsPigeonProxyApiRegistrar
+) : ProxyApiTestsPigeonCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       128.toByte() -> {
