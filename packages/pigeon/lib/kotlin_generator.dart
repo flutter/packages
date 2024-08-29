@@ -1390,8 +1390,8 @@ if (wrapped == null) {
             isOpen:
                 !api.hasAnyHostMessageCalls() && api.unattachedFields.isEmpty,
             documentationComments: <String>[
-              'An implementation of [$hostProxyApiPrefix${api.name}] used to add a new Dart instance of',
-              '`${api.name}` to the Dart `InstanceManager`.'
+              ' An implementation of [$hostProxyApiPrefix${api.name}] used to add a new Dart instance of',
+              ' `${api.name}` to the Dart `InstanceManager`.'
             ],
             returnType: TypeDeclaration(
               baseName: '$hostProxyApiPrefix${api.name}',
@@ -1777,7 +1777,7 @@ if (wrapped == null) {
       name: newInstanceMethodName,
       returnType: const TypeDeclaration.voidDeclaration(),
       documentationComments: <String>[
-        'Creates a Dart instance of ${api.name} and attaches it to [${classMemberNamePrefix}instanceArg].',
+        ' Creates a Dart instance of ${api.name} and attaches it to [${classMemberNamePrefix}instanceArg].',
       ],
       channelName: makeChannelNameWithStrings(
         apiName: api.name,
@@ -1955,7 +1955,7 @@ if (wrapped == null) {
         indent,
         name: '${classMemberNamePrefix}get$apiName',
         documentationComments: <String>[
-          'An implementation of [$apiName] used to access callback methods',
+          ' An implementation of [$apiName] used to access callback methods',
         ],
         returnType: TypeDeclaration(baseName: apiName, isNullable: false),
         parameters: <Parameter>[],
