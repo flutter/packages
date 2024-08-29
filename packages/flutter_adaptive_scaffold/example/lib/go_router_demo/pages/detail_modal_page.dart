@@ -11,8 +11,11 @@ class DetailModalPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Detail Modal Page'),
+      ),
+      body: const Center(
         child: Text('Detail modal Page'),
       ),
     );

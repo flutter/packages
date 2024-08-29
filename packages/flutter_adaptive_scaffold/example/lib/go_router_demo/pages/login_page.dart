@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../app_router.dart';
 
@@ -23,8 +22,7 @@ class LoginPage extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => <void>{
-                AppRouter.authenticated = true,
-                context.go('/'),
+                AppRouter.authenticatedNotifier.value = true,
               },
               child: const Text('Login'),
             ),

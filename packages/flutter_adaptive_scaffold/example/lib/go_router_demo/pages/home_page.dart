@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:go_router/go_router.dart';
 
 import 'pages.dart';
@@ -15,19 +16,20 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Home Page'),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('Home Page'),
-            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => <void>{
                 context.goNamed(DetailPage.name),
               },
               child: const Text('Detail page'),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: kMaterialGutterValue),
             ElevatedButton(
               onPressed: () => <void>{
                 context.goNamed(DetailModalPage.name),

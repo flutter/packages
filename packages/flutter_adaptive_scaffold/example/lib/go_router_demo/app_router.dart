@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import 'pages/pages.dart';
 import 'scaffold_shell.dart';
 
@@ -20,7 +21,7 @@ final GlobalKey<NavigatorState> _moreNavigatorKey =
 /// the `parentNavigatorKey` to ensure that the dialog is displayed correctly.
 class AppRouter {
   /// The authentication status of the user.
-  static bool authenticated = false;
+  static ValueNotifier<bool> authenticatedNotifier = ValueNotifier<bool>(false);
 
   /// The router with the routes of pages that should be displayed.
   static final GoRouter router = GoRouter(
@@ -29,6 +30,13 @@ class AppRouter {
     errorPageBuilder: (BuildContext context, GoRouterState state) {
       return const MaterialPage<void>(child: NavigationErrorPage());
     },
+    redirect: (BuildContext context, GoRouterState state) {
+      if (state.matchedLocation == '/') {
+        return HomePage.path;
+      }
+      return null;
+    },
+    refreshListenable: authenticatedNotifier,
     routes: <RouteBase>[
       _unauthenticatedRoutes,
       _authenticatedRoutes,
@@ -43,7 +51,7 @@ class AppRouter {
       return const MaterialPage<void>(child: LoginPage());
     },
     redirect: (BuildContext context, GoRouterState state) {
-      if (authenticated) {
+      if (authenticatedNotifier.value) {
         return HomePage.path;
       }
       return null;
@@ -72,7 +80,7 @@ class AppRouter {
       return ScaffoldShell(navigationShell: navigationShell);
     },
     redirect: (BuildContext context, GoRouterState state) {
-      if (!authenticated) {
+      if (!authenticatedNotifier.value) {
         return LoginPage.path;
       }
       return null;
@@ -85,8 +93,7 @@ class AppRouter {
             name: HomePage.name,
             path: HomePage.path,
             pageBuilder: (BuildContext context, GoRouterState state) {
-              //Maybe NoTransitionPage?
-              return const MaterialPage<void>(
+              return const NoTransitionPage<void>(
                 child: HomePage(),
               );
             },
@@ -123,7 +130,7 @@ class AppRouter {
             name: CounterPage.name,
             path: CounterPage.path,
             pageBuilder: (BuildContext context, GoRouterState state) {
-              return const MaterialPage<void>(child: CounterPage());
+              return const NoTransitionPage<void>(child: CounterPage());
             },
           ),
         ],
@@ -135,7 +142,7 @@ class AppRouter {
             name: MorePage.name,
             path: MorePage.path,
             pageBuilder: (BuildContext context, GoRouterState state) {
-              return const MaterialPage<void>(
+              return const NoTransitionPage<void>(
                 key: ValueKey<String>(MorePage.name),
                 child: MorePage(),
               );

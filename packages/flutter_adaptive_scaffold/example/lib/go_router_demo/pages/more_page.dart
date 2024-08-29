@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
+import 'package:go_router/go_router.dart';
+
+import 'pages.dart';
 
 class MorePage extends StatelessWidget {
   const MorePage({super.key});
@@ -11,9 +15,23 @@ class MorePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: Text('More Page'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text('More Page'),
+            ElevatedButton(
+              onPressed: () => context.goNamed(ProfilePage.name),
+              child: const Text('Profile'),
+            ),
+            const SizedBox(height: kMaterialGutterValue),
+            ElevatedButton(
+              onPressed: () => context.goNamed(SettingsPage.name),
+              child: const Text('Settings'),
+            ),
+          ],
+        ),
       ),
     );
   }
