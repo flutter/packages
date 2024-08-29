@@ -348,8 +348,8 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
   /** Whether APIs should ignore calling to Dart. */
   public var ignoreCallsToDart = false
   val instanceManager: InteractiveMediaAdsLibraryPigeonInstanceManager
-  private var _codec: InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec? = null
-  val codec: InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec
+  private var _codec: MessageCodec<Any?>? = null
+  val codec: MessageCodec<Any?>
     get() {
       if (_codec == null) {
         _codec = InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(this)
@@ -582,7 +582,7 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
   }
 }
 
-class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
+private class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
     val registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
 ) : InteractiveMediaAdsLibraryPigeonCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
