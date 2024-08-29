@@ -416,9 +416,8 @@ abstract class ProxyApiTestsPigeonProxyApiRegistrar(val binaryMessenger: BinaryM
   }
 }
 
-private class ProxyApiTestsPigeonProxyApiBaseCodec(
-    val registrar: ProxyApiTestsPigeonProxyApiRegistrar
-) : ProxyApiTestsPigeonCodec() {
+class ProxyApiTestsPigeonProxyApiBaseCodec(val registrar: ProxyApiTestsPigeonProxyApiRegistrar) :
+    ProxyApiTestsPigeonCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       128.toByte() -> {
