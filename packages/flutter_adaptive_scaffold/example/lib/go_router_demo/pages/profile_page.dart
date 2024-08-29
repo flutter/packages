@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../app_router.dart';
+
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
@@ -11,9 +13,22 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profile Page'),
+      ),
       body: Center(
-        child: Text('Profile Page'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () => <void>{
+                AppRouter.authenticatedNotifier.value = false,
+              },
+              child: const Text('Sign Out'),
+            ),
+          ],
+        ),
       ),
     );
   }

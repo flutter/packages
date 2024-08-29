@@ -11,8 +11,11 @@ class CounterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Counter Page'),
+      ),
+      body: const Center(
         child: Text('Counter Page'),
       ),
     );

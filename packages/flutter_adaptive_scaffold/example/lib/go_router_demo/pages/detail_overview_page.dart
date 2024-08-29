@@ -18,23 +18,19 @@ class DetailOverviewPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Detail Overview Page'),
       ),
-      body: ListView(
-        children: <Widget>[
-          ListTile(
-            title: const Text('Detail Page 1'),
-            onTap: () => <void>{
-              context.goNamed(DetailPage.name,
-                  queryParameters: <String, String>{'itemName': '1'}),
+      body: ListView.builder(
+        itemCount: 10,
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+            title: Text('Item $index'),
+            onTap: () {
+              context.goNamed(
+                DetailPage.name,
+                queryParameters: <String, String>{'itemName': '$index'},
+              );
             },
-          ),
-          ListTile(
-            title: const Text('Detail Page 2'),
-            onTap: () => <void>{
-              context.goNamed(DetailPage.name,
-                  queryParameters: <String, String>{'itemName': '2'}),
-            },
-          ),
-        ],
+          );
+        },
       ),
     );
   }

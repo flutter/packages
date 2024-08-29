@@ -16,11 +16,13 @@ class MorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('More Page'),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('More Page'),
             ElevatedButton(
               onPressed: () => context.goNamed(ProfilePage.name),
               child: const Text('Profile'),
