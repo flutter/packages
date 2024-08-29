@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'global_router.dart' as router show rootNavigatorKey;
 
+import 'global_router.dart';
 import 'pages/pages.dart';
 import 'scaffold_shell.dart';
 
@@ -20,6 +21,12 @@ class Routes {
     path: LoginPage.path,
     pageBuilder: (BuildContext context, GoRouterState state) {
       return const MaterialPage<void>(child: LoginPage());
+    },
+    redirect: (BuildContext context, GoRouterState state) {
+      if (GlobalRouter.authenticated) {
+        return HomePage.path;
+      }
+      return null;
     },
     routes: <RouteBase>[
       GoRoute(
@@ -44,6 +51,12 @@ class Routes {
       StatefulNavigationShell navigationShell,
     ) {
       return ScaffoldShell(navigationShell: navigationShell);
+    },
+    redirect: (BuildContext context, GoRouterState state) {
+      if (!GlobalRouter.authenticated) {
+        return LoginPage.path;
+      }
+      return null;
     },
     branches: <StatefulShellBranch>[
       StatefulShellBranch(

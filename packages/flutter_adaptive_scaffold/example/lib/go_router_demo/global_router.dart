@@ -31,34 +31,6 @@ class GlobalRouter {
     errorPageBuilder: (BuildContext context, GoRouterState state) {
       return const MaterialPage<void>(child: NavigationErrorPage());
     },
-    redirect: (BuildContext context, GoRouterState state) async {
-      // Get the path the user is trying to navigate to.
-      final String? path = state.topRoute?.path ?? state.fullPath;
-
-      // If the route is part of the common routes, no auth check is required.
-      if (Routes.commonRoutes.any((GoRoute route) => route.path == path)) {
-        return null;
-      }
-
-      // If the user is not authenticated
-      if (!authenticated) {
-        if (_unauthenticatedGoRoutes
-            .any((GoRoute route) => route.path == path)) {
-          return null; // Allow navigation to unauthenticated routes
-        } else {
-          return LoginPage.path; // Redirect to login page
-        }
-      } else if (authenticated) {
-        if (_authenticatedGoRoutes.any((GoRoute route) => route.path == path)) {
-          return null; // Allow navigation to authenticated routes
-        } else {
-          return HomePage.path; // Redirect to home page
-        }
-      }
-
-      // In any other case the redirect can be safely ignored and handled as is.
-      return null;
-    },
     routes: <RouteBase>[
       Routes.unauthenticatedRoutes,
       Routes.authenticatedRoutes,
