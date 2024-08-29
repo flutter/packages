@@ -60,6 +60,22 @@ enum class AnotherEnum(val raw: Int) {
   }
 }
 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class UnusedClass(val aField: Any? = null) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): UnusedClass {
+      val aField = pigeonVar_list[0]
+      return UnusedClass(aField)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        aField,
+    )
+  }
+}
+
 /**
  * A class containing all supported types.
  *
@@ -436,20 +452,23 @@ private object CoreTestsPigeonCodec : StandardMessageCodec() {
         return (readValue(buffer) as Long?)?.let { AnotherEnum.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { UnusedClass.fromList(it) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
       }
       133.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+      }
+      134.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           AllNullableTypesWithoutRecursion.fromList(it)
         }
       }
-      134.toByte() -> {
+      135.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
       }
-      135.toByte() -> {
+      136.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -466,24 +485,28 @@ private object CoreTestsPigeonCodec : StandardMessageCodec() {
         stream.write(130)
         writeValue(stream, value.raw)
       }
-      is AllTypes -> {
+      is UnusedClass -> {
         stream.write(131)
         writeValue(stream, value.toList())
       }
-      is AllNullableTypes -> {
+      is AllTypes -> {
         stream.write(132)
         writeValue(stream, value.toList())
       }
-      is AllNullableTypesWithoutRecursion -> {
+      is AllNullableTypes -> {
         stream.write(133)
         writeValue(stream, value.toList())
       }
-      is AllClassesWrapper -> {
+      is AllNullableTypesWithoutRecursion -> {
         stream.write(134)
         writeValue(stream, value.toList())
       }
-      is TestMessage -> {
+      is AllClassesWrapper -> {
         stream.write(135)
+        writeValue(stream, value.toList())
+      }
+      is TestMessage -> {
+        stream.write(136)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)

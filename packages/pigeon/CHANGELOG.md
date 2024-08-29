@@ -1,3 +1,7 @@
+## 22.1.0
+
+* Allows generation of classes that aren't referenced in an API.
+
 ## 22.0.0
 
 * [dart] Changes codec to send int64 instead of int32.

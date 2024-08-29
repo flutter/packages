@@ -99,6 +99,67 @@ public class CoreTests {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class UnusedClass {
+    private @Nullable Object aField;
+
+    public @Nullable Object getAField() {
+      return aField;
+    }
+
+    public void setAField(@Nullable Object setterArg) {
+      this.aField = setterArg;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      UnusedClass that = (UnusedClass) o;
+      return Objects.equals(aField, that.aField);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(aField);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Object aField;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAField(@Nullable Object setterArg) {
+        this.aField = setterArg;
+        return this;
+      }
+
+      public @NonNull UnusedClass build() {
+        UnusedClass pigeonReturn = new UnusedClass();
+        pigeonReturn.setAField(aField);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(1);
+      toListResult.add(aField);
+      return toListResult;
+    }
+
+    static @NonNull UnusedClass fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      UnusedClass pigeonResult = new UnusedClass();
+      Object aField = pigeonVar_list.get(0);
+      pigeonResult.setAField(aField);
+      return pigeonResult;
+    }
+  }
+
   /**
    * A class containing all supported types.
    *
@@ -2043,14 +2104,16 @@ public class CoreTests {
             return value == null ? null : AnotherEnum.values()[((Long) value).intValue()];
           }
         case (byte) 131:
-          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
+          return UnusedClass.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
+          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
+          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
-          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
+          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 136:
           return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -2065,20 +2128,23 @@ public class CoreTests {
       } else if (value instanceof AnotherEnum) {
         stream.write(130);
         writeValue(stream, value == null ? null : ((AnotherEnum) value).index);
-      } else if (value instanceof AllTypes) {
+      } else if (value instanceof UnusedClass) {
         stream.write(131);
+        writeValue(stream, ((UnusedClass) value).toList());
+      } else if (value instanceof AllTypes) {
+        stream.write(132);
         writeValue(stream, ((AllTypes) value).toList());
       } else if (value instanceof AllNullableTypes) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((AllNullableTypes) value).toList());
       } else if (value instanceof AllNullableTypesWithoutRecursion) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
       } else if (value instanceof AllClassesWrapper) {
-        stream.write(134);
+        stream.write(135);
         writeValue(stream, ((AllClassesWrapper) value).toList());
       } else if (value instanceof TestMessage) {
-        stream.write(135);
+        stream.write(136);
         writeValue(stream, ((TestMessage) value).toList());
       } else {
         super.writeValue(stream, value);
