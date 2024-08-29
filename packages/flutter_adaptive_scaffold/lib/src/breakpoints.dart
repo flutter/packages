@@ -130,6 +130,7 @@ class Breakpoints {
 ///
 ///  * [SlotLayout.config], which uses breakpoints to dictate the layout of the
 ///    screen.
+@immutable
 class Breakpoint {
   /// Returns a const [Breakpoint] with the given constraints.
   const Breakpoint({
@@ -278,7 +279,6 @@ class Breakpoint {
   bool isActive(BuildContext context) {
     final TargetPlatform host = Theme.of(context).platform;
     final bool isRightPlatform = platform?.contains(host) ?? true;
-    final bool isDesktop = Breakpoint.desktop.contains(host);
 
     final double width = MediaQuery.sizeOf(context).width;
     final double height = MediaQuery.sizeOf(context).height;
@@ -294,7 +294,7 @@ class Breakpoint {
         ? width >= lowerBoundWidth
         : width >= lowerBoundWidth && width < upperBoundWidth;
 
-    final bool isHeightActive = isDesktop ||
+    final bool isHeightActive = isDesktop(context) ||
         orientation == Orientation.portrait ||
         (orientation == Orientation.landscape && andUp
             ? isWidthActive || height >= lowerBoundHeight
@@ -343,5 +343,93 @@ class Breakpoint {
       }
     }
     return currentBreakpoint;
+  }
+
+  /// Returns true if the current platform is Desktop.
+  static bool isDesktop(BuildContext context) {
+    return Breakpoint.desktop.contains(Theme.of(context).platform);
+  }
+
+  /// Returns true if the current platform is Mobile.
+  static bool isMobile(BuildContext context) {
+    return Breakpoint.mobile.contains(Theme.of(context).platform);
+  }
+
+  /// Returns true if the current [Breakpoint] is greater than the given [Breakpoint].
+  bool operator >(Breakpoint breakpoint) {
+    return (beginWidth ?? double.negativeInfinity) >
+            (breakpoint.beginWidth ?? double.negativeInfinity) &&
+        (endWidth ?? double.infinity) >
+            (breakpoint.endWidth ?? double.infinity) &&
+        (beginHeight ?? double.negativeInfinity) >
+            (breakpoint.beginHeight ?? double.negativeInfinity) &&
+        (endHeight ?? double.infinity) >
+            (breakpoint.endHeight ?? double.infinity);
+  }
+
+  /// Returns true if the current [Breakpoint] is less than the given [Breakpoint].
+  bool operator <(Breakpoint breakpoint) {
+    return (endWidth ?? double.infinity) <
+            (breakpoint.endWidth ?? double.infinity) &&
+        (beginWidth ?? double.negativeInfinity) <
+            (breakpoint.beginWidth ?? double.negativeInfinity) &&
+        (endHeight ?? double.infinity) <
+            (breakpoint.endHeight ?? double.infinity) &&
+        (beginHeight ?? double.negativeInfinity) <
+            (breakpoint.beginHeight ?? double.negativeInfinity);
+  }
+
+  /// Returns true if the current [Breakpoint] is greater than or equal to the
+  /// given [Breakpoint].
+  bool operator >=(Breakpoint breakpoint) {
+    return (beginWidth ?? double.negativeInfinity) >=
+            (breakpoint.beginWidth ?? double.negativeInfinity) &&
+        (endWidth ?? double.infinity) >=
+            (breakpoint.endWidth ?? double.infinity) &&
+        (beginHeight ?? double.negativeInfinity) >=
+            (breakpoint.beginHeight ?? double.negativeInfinity) &&
+        (endHeight ?? double.infinity) >=
+            (breakpoint.endHeight ?? double.infinity);
+  }
+
+  /// Returns true if the current [Breakpoint] is less than or equal to the
+  /// given [Breakpoint].
+  bool operator <=(Breakpoint breakpoint) {
+    return (endWidth ?? double.infinity) <=
+            (breakpoint.endWidth ?? double.infinity) &&
+        (beginWidth ?? double.negativeInfinity) <=
+            (breakpoint.beginWidth ?? double.negativeInfinity) &&
+        (endHeight ?? double.infinity) <=
+            (breakpoint.endHeight ?? double.infinity) &&
+        (beginHeight ?? double.negativeInfinity) <=
+            (breakpoint.beginHeight ?? double.negativeInfinity);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Breakpoint) {
+      return false;
+    }
+    return beginWidth == other.beginWidth &&
+        endWidth == other.endWidth &&
+        beginHeight == other.beginHeight &&
+        endHeight == other.endHeight &&
+        platform == other.platform;
+  }
+
+  @override
+  int get hashCode =>
+      beginWidth.hashCode ^
+      endWidth.hashCode ^
+      beginHeight.hashCode ^
+      endHeight.hashCode ^
+      platform.hashCode;
+
+  /// Returns true if the current [Breakpoint] is between the given [Breakpoint]s.
+  bool between(Breakpoint lower, Breakpoint upper) {
+    return this >= lower && this < upper;
   }
 }
