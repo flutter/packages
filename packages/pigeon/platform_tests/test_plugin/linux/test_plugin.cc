@@ -2052,7 +2052,7 @@ static void call_flutter_small_api_echo_string(
       small_api_one_echo_string_cb, callback_data_new(self, response_handle));
 }
 
-static CoreTestsPigeonTestUnusedClass* test_unused_class_generated() {
+CoreTestsPigeonTestUnusedClass* test_unused_class_generated() {
   return core_tests_pigeon_test_unused_class_new(nullptr);
 }
 
@@ -2170,8 +2170,7 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
     .call_flutter_echo_nullable_enum = call_flutter_echo_nullable_enum,
     .call_flutter_echo_another_nullable_enum =
         call_flutter_echo_another_nullable_enum,
-    .call_flutter_small_api_echo_string = call_flutter_small_api_echo_string,
-    .test_unused_class_generated = test_unused_class_generated};
+    .call_flutter_small_api_echo_string = call_flutter_small_api_echo_string};
 
 static void echo(const gchar* a_string,
                  CoreTestsPigeonTestHostSmallApiResponseHandle* response_handle,
