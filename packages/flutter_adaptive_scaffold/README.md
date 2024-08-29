@@ -1,5 +1,3 @@
-<?code-excerpt path-base="example/lib"?>
-
 # Adaptive Scaffold
 
 `AdaptiveScaffold` reacts to input from users, devices and screen elements and
@@ -33,7 +31,7 @@ animation should use `AdaptiveLayout`.
 
 ### Example Usage
 
-<?code-excerpt "adaptive_scaffold_demo.dart (Example)"?>
+<?code-excerpt "example/lib/adaptive_scaffold_demo.dart (Example)"?>
 ```dart
 @override
 Widget build(BuildContext context) {
@@ -128,6 +126,79 @@ Widget build(BuildContext context) {
 These are the set of widgets that are used on a lower level and offer more
 customizability at a cost of more lines of code.
 
+### Breakpoint
+
+A `Breakpoint` controls the responsive behavior at different screens and configurations.
+
+You can either use a predefined Material3 breakpoint or create your own.
+
+<?code-excerpt "lib/src/breakpoints.dart (Breakpoints)"?>
+```dart
+/// Returns a const [Breakpoint] with the given constraints.
+const Breakpoint({
+  this.beginWidth,
+  this.endWidth,
+  this.beginHeight,
+  this.endHeight,
+  this.andUp = false,
+  this.platform,
+});
+
+/// Returns a [Breakpoint] that can be used as a fallthrough in the
+/// case that no other breakpoint is active.
+const Breakpoint.standard({this.platform})
+    : beginWidth = -1,
+      endWidth = null,
+      beginHeight = null,
+      endHeight = null,
+      andUp = true;
+
+/// Returns a [Breakpoint] with the given constraints for a small screen.
+const Breakpoint.small({this.andUp = false, this.platform})
+    : beginWidth = 0,
+      endWidth = 600,
+      beginHeight = null,
+      endHeight = 480;
+
+/// Returns a [Breakpoint] with the given constraints for a medium screen.
+const Breakpoint.medium({this.andUp = false, this.platform})
+    : beginWidth = 600,
+      endWidth = 840,
+      beginHeight = 480,
+      endHeight = 900;
+
+/// Returns a [Breakpoint] with the given constraints for a mediumLarge screen.
+const Breakpoint.mediumLarge({this.andUp = false, this.platform})
+    : beginWidth = 840,
+      endWidth = 1200,
+      beginHeight = 900,
+      endHeight = null;
+
+/// Returns a [Breakpoint] with the given constraints for a large screen.
+const Breakpoint.large({this.andUp = false, this.platform})
+    : beginWidth = 1200,
+      endWidth = 1600,
+      beginHeight = 900,
+      endHeight = null;
+
+/// Returns a [Breakpoint] with the given constraints for an extraLarge screen.
+const Breakpoint.extraLarge({this.andUp = false, this.platform})
+    : beginWidth = 1600,
+      endWidth = null,
+      beginHeight = 900,
+      endHeight = null;
+```
+
+It is possible to compare Breakpoints:
+
+```dart
+
+Breakpoints.small < Breakpoints.medium;
+Breakpoints.large => Breakpoints.extraLarge
+Breakpoints.medium.between(Breakpoints.small, Breakpoints.large);
+
+```
+
 ### AdaptiveLayout
 
 !["AdaptiveLayout's Assigned Slots Displayed on Screen"](example/demo_files/screenSlots.png)
@@ -151,7 +222,7 @@ displayed and the entrance animation and exit animation.
 
 ### Example Usage
 
-<?code-excerpt "adaptive_layout_demo.dart (Example)"?>
+<?code-excerpt "example/lib/adaptive_layout_demo.dart (Example)"?>
 ```dart
 // AdaptiveLayout has a number of slots that take SlotLayouts and these
 // SlotLayouts' configs take maps of Breakpoints to SlotLayoutConfigs.

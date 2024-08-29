@@ -132,6 +132,7 @@ class Breakpoints {
 ///    screen.
 @immutable
 class Breakpoint {
+  // #docregion Breakpoints
   /// Returns a const [Breakpoint] with the given constraints.
   const Breakpoint({
     this.beginWidth,
@@ -220,6 +221,7 @@ class Breakpoint {
         padding = kMaterialPadding * 5,
         recommendedPanes = 2,
         maxPanes = 3;
+  // #enddocregion Breakpoints
 
   /// A set of [TargetPlatform]s that the [Breakpoint] will be active on desktop.
   static const Set<TargetPlatform> desktop = <TargetPlatform>{
