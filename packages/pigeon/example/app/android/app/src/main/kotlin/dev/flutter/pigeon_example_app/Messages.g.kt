@@ -84,7 +84,7 @@ data class MessageData(
   }
 }
 
-private object MessagesPigeonCodec : StandardMessageCodec() {
+private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
@@ -122,7 +122,7 @@ interface ExampleHostApi {
 
   companion object {
     /** The codec used by ExampleHostApi. */
-    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec }
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
     /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
     @JvmOverloads
     fun setUp(
@@ -209,7 +209,7 @@ class MessageFlutterApi(
 ) {
   companion object {
     /** The codec used by MessageFlutterApi. */
-    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec }
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
   }
 
   fun flutterMethod(aStringArg: String?, callback: (Result<String>) -> Unit) {
