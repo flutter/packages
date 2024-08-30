@@ -142,6 +142,11 @@ const Breakpoint({
   this.endHeight,
   this.andUp = false,
   this.platform,
+  this.spacing = kMaterialMediumAndUpSpacing,
+  this.margin = kMaterialMediumAndUpMargin,
+  this.padding = kMaterialPadding,
+  this.recommendedPanes = 1,
+  this.maxPanes = 1,
 });
 
 /// Returns a [Breakpoint] that can be used as a fallthrough in the
@@ -151,6 +156,11 @@ const Breakpoint.standard({this.platform})
       endWidth = null,
       beginHeight = null,
       endHeight = null,
+      spacing = kMaterialMediumAndUpSpacing,
+      margin = kMaterialMediumAndUpMargin,
+      padding = kMaterialPadding,
+      recommendedPanes = 1,
+      maxPanes = 1,
       andUp = true;
 
 /// Returns a [Breakpoint] with the given constraints for a small screen.
@@ -158,35 +168,60 @@ const Breakpoint.small({this.andUp = false, this.platform})
     : beginWidth = 0,
       endWidth = 600,
       beginHeight = null,
-      endHeight = 480;
+      endHeight = 480,
+      spacing = kMaterialCompactSpacing,
+      margin = kMaterialCompactMargin,
+      padding = kMaterialPadding,
+      recommendedPanes = 1,
+      maxPanes = 1;
 
 /// Returns a [Breakpoint] with the given constraints for a medium screen.
 const Breakpoint.medium({this.andUp = false, this.platform})
     : beginWidth = 600,
       endWidth = 840,
       beginHeight = 480,
-      endHeight = 900;
+      endHeight = 900,
+      spacing = kMaterialMediumAndUpSpacing,
+      margin = kMaterialMediumAndUpMargin,
+      padding = kMaterialPadding * 2,
+      recommendedPanes = 1,
+      maxPanes = 2;
 
 /// Returns a [Breakpoint] with the given constraints for a mediumLarge screen.
 const Breakpoint.mediumLarge({this.andUp = false, this.platform})
     : beginWidth = 840,
       endWidth = 1200,
       beginHeight = 900,
-      endHeight = null;
+      endHeight = null,
+      spacing = kMaterialMediumAndUpSpacing,
+      margin = kMaterialMediumAndUpMargin,
+      padding = kMaterialPadding * 3,
+      recommendedPanes = 2,
+      maxPanes = 2;
 
 /// Returns a [Breakpoint] with the given constraints for a large screen.
 const Breakpoint.large({this.andUp = false, this.platform})
     : beginWidth = 1200,
       endWidth = 1600,
       beginHeight = 900,
-      endHeight = null;
+      endHeight = null,
+      spacing = kMaterialMediumAndUpSpacing,
+      margin = kMaterialMediumAndUpMargin,
+      padding = kMaterialPadding * 4,
+      recommendedPanes = 2,
+      maxPanes = 2;
 
 /// Returns a [Breakpoint] with the given constraints for an extraLarge screen.
 const Breakpoint.extraLarge({this.andUp = false, this.platform})
     : beginWidth = 1600,
       endWidth = null,
       beginHeight = 900,
-      endHeight = null;
+      endHeight = null,
+      spacing = kMaterialMediumAndUpSpacing,
+      margin = kMaterialMediumAndUpMargin,
+      padding = kMaterialPadding * 5,
+      recommendedPanes = 2,
+      maxPanes = 3;
 ```
 
 It is possible to compare Breakpoints:
