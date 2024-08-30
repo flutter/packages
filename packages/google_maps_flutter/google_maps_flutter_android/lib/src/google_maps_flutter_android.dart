@@ -766,6 +766,18 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     );
   }
 
+  static PlatformJointType _platformJointTypeFromJointType(
+      JointType jointType) {
+    switch (jointType) {
+      case JointType.mitered:
+        return PlatformJointType.mitered;
+      case JointType.bevel:
+        return PlatformJointType.bevel;
+      case JointType.round:
+        return PlatformJointType.round;
+    }
+  }
+
   static PlatformPolyline _platformPolylineFromPolyline(Polyline polyline) {
     final List<PlatformLatLng?> points =
         polyline.points.map(_platformLatLngFromLatLng).toList();
@@ -783,7 +795,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       width: polyline.width,
       zIndex: polyline.zIndex,
       points: points,
-      jointType: polyline.jointType.value,
+      jointType: _platformJointTypeFromJointType(polyline.jointType),
       patterns: pattern,
     );
   }

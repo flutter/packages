@@ -100,6 +100,18 @@ public class Messages {
     }
   }
 
+  public enum PlatformJointType {
+    MITERED(0),
+    BEVEL(1),
+    ROUND(2);
+
+    final int index;
+
+    private PlatformJointType(final int index) {
+      this.index = index;
+    }
+  }
+
   /**
    * Pigeon representatation of a CameraPosition.
    *
@@ -1760,19 +1772,29 @@ public class Messages {
       this.geodesic = setterArg;
     }
 
-    private @NonNull Long jointType;
+    /**
+     * The joint type as an integer. This must be a value corresponding to one of the values defined
+     * in the platform interface package's JointType enum. The integer values specified in this enum
+     * must match those used by the native SDK.
+     */
+    private @NonNull PlatformJointType jointType;
 
-    public @NonNull Long getJointType() {
+    public @NonNull PlatformJointType getJointType() {
       return jointType;
     }
 
-    public void setJointType(@NonNull Long setterArg) {
+    public void setJointType(@NonNull PlatformJointType setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"jointType\" is null.");
       }
       this.jointType = setterArg;
     }
 
+    /**
+     * The pattern data, as JSON. Each element in this list should be set only from
+     * PatternItem.toJson, and the native code must interpret it according to the internal
+     * implementation details of that method.
+     */
     private @NonNull List<Object> patterns;
 
     public @NonNull List<Object> getPatterns() {
@@ -1799,6 +1821,10 @@ public class Messages {
       this.points = setterArg;
     }
 
+    /**
+     * The start and end cap data, as JSON. These should be set only from Cap.toJson, and the native
+     * code must interpret it according to the internal implementation details of that method.
+     */
     private @NonNull Object startCap;
 
     public @NonNull Object getStartCap() {
@@ -1941,10 +1967,10 @@ public class Messages {
         return this;
       }
 
-      private @Nullable Long jointType;
+      private @Nullable PlatformJointType jointType;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setJointType(@NonNull Long setterArg) {
+      public @NonNull Builder setJointType(@NonNull PlatformJointType setterArg) {
         this.jointType = setterArg;
         return this;
       }
@@ -2053,10 +2079,7 @@ public class Messages {
       Object geodesic = __pigeon_list.get(3);
       pigeonResult.setGeodesic((Boolean) geodesic);
       Object jointType = __pigeon_list.get(4);
-      pigeonResult.setJointType(
-          (jointType == null)
-              ? null
-              : ((jointType instanceof Integer) ? (Integer) jointType : (Long) jointType));
+      pigeonResult.setJointType((PlatformJointType) jointType);
       Object patterns = __pigeon_list.get(5);
       pigeonResult.setPatterns((List<Object>) patterns);
       Object points = __pigeon_list.get(6);
@@ -4177,6 +4200,11 @@ public class Messages {
             Object value = readValue(buffer);
             return value == null ? null : PlatformRendererType.values()[(int) value];
           }
+        case (byte) 153:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformJointType.values()[(int) value];
+          }
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -4256,6 +4284,9 @@ public class Messages {
       } else if (value instanceof PlatformRendererType) {
         stream.write(152);
         writeValue(stream, value == null ? null : ((PlatformRendererType) value).index);
+      } else if (value instanceof PlatformJointType) {
+        stream.write(153);
+        writeValue(stream, value == null ? null : ((PlatformJointType) value).index);
       } else {
         super.writeValue(stream, value);
       }

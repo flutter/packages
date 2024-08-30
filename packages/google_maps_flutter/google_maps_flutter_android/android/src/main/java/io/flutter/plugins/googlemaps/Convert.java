@@ -713,7 +713,7 @@ class Convert {
     sink.setEndCap(toCap(polyline.getEndCap(), assetManager, density));
     sink.setStartCap(toCap(polyline.getStartCap(), assetManager, density));
     sink.setGeodesic(polyline.getGeodesic());
-    sink.setJointType(polyline.getJointType().intValue());
+    sink.setJointType(polyline.getJointType().index);
     sink.setVisible(polyline.getVisible());
     sink.setWidth(polyline.getWidth());
     sink.setZIndex(polyline.getZIndex());
