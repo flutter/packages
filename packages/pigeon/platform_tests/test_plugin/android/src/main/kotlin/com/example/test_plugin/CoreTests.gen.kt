@@ -442,7 +442,7 @@ data class TestMessage(val testList: List<Any?>? = null) {
   }
 }
 
-private object CoreTestsPigeonCodec : StandardMessageCodec() {
+private open class CoreTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
@@ -799,7 +799,7 @@ interface HostIntegrationCoreApi {
 
   companion object {
     /** The codec used by HostIntegrationCoreApi. */
-    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec }
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec() }
     /**
      * Sets up an instance of `HostIntegrationCoreApi` to handle messages through the
      * `binaryMessenger`.
@@ -3214,7 +3214,7 @@ class FlutterIntegrationCoreApi(
 ) {
   companion object {
     /** The codec used by FlutterIntegrationCoreApi. */
-    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec }
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec() }
   }
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   fun noop(callback: (Result<Unit>) -> Unit) {
@@ -4008,7 +4008,7 @@ interface HostTrivialApi {
 
   companion object {
     /** The codec used by HostTrivialApi. */
-    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec }
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec() }
     /** Sets up an instance of `HostTrivialApi` to handle messages through the `binaryMessenger`. */
     @JvmOverloads
     fun setUp(
@@ -4054,7 +4054,7 @@ interface HostSmallApi {
 
   companion object {
     /** The codec used by HostSmallApi. */
-    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec }
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec() }
     /** Sets up an instance of `HostSmallApi` to handle messages through the `binaryMessenger`. */
     @JvmOverloads
     fun setUp(
@@ -4123,7 +4123,7 @@ class FlutterSmallApi(
 ) {
   companion object {
     /** The codec used by FlutterSmallApi. */
-    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec }
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec() }
   }
 
   fun echoWrappedList(msgArg: TestMessage, callback: (Result<TestMessage>) -> Unit) {

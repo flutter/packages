@@ -4,7 +4,9 @@
 
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
+
 import 'generator_tools.dart';
+import 'kotlin_generator.dart' show KotlinProxyApiOptions;
 import 'pigeon_lib.dart';
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
@@ -140,6 +142,7 @@ class AstProxyApi extends Api {
     required this.fields,
     this.superClass,
     this.interfaces = const <TypeDeclaration>{},
+    this.kotlinOptions,
   });
 
   /// List of constructors inside the API.
@@ -153,6 +156,10 @@ class AstProxyApi extends Api {
 
   /// Name of the classes this class considers to be implemented.
   Set<TypeDeclaration> interfaces;
+
+  /// Options that control how Kotlin code will be generated for a specific
+  /// ProxyApi.
+  final KotlinProxyApiOptions? kotlinOptions;
 
   /// Methods implemented in the host platform language.
   Iterable<Method> get hostMethods => methods.where(
@@ -253,7 +260,7 @@ class AstProxyApi extends Api {
     }
   }
 
-  /// Whether the api has a method that callbacks to Dart to add a new instance
+  /// Whether the API has a method that callbacks to Dart to add a new instance
   /// to the InstanceManager.
   ///
   /// This is possible as long as no callback methods are required to
@@ -264,6 +271,21 @@ class AstProxyApi extends Api {
         .followedBy(flutterMethodsFromInterfaces())
         .every((Method method) => !method.isRequired);
   }
+
+  /// Whether the API has any message calls from Dart to host.
+  bool hasAnyHostMessageCalls() =>
+      constructors.isNotEmpty ||
+      attachedFields.isNotEmpty ||
+      hostMethods.isNotEmpty;
+
+  /// Whether the API has any message calls from host to Dart.
+  bool hasAnyFlutterMessageCalls() =>
+      hasCallbackConstructor() || flutterMethods.isNotEmpty;
+
+  /// Whether the host proxy API class will have methods that need to be
+  /// implemented.
+  bool hasMethodsRequiringImplementation() =>
+      hasAnyHostMessageCalls() || unattachedFields.isNotEmpty;
 
   // Recursively search for all the interfaces apis from a list of names of
   // interfaces.

@@ -285,6 +285,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         if (container != null) {
           // Clear and reset all state.
           container._stopAdProgressTracking();
+          container._videoView.setVideoUri(null);
           container._clearMediaPlayer();
           container._loadedAdMediaInfo = null;
           container._adDuration = null;

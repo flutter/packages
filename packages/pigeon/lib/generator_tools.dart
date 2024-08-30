@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:mirrors';
 
 import 'package:yaml/yaml.dart' as yaml;
@@ -13,7 +14,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '22.1.0';
+const String pigeonVersion = '22.2.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -70,11 +71,29 @@ class Indent {
   }
 
   /// Replaces the newlines and tabs of input and adds it to the stream.
-  void format(String input,
-      {bool leadingSpace = true, bool trailingNewline = true}) {
+  ///
+  /// [trimIndentation] flag finds the line with the fewest leading empty
+  /// spaces and trims the beginning of all lines by this number.
+  void format(
+    String input, {
+    bool leadingSpace = true,
+    bool trailingNewline = true,
+    bool trimIndentation = true,
+  }) {
     final List<String> lines = input.split('\n');
+
+    final int indentationToRemove = !trimIndentation
+        ? 0
+        : lines
+            .where((String line) => line.trim().isNotEmpty)
+            .map((String line) => line.length - line.trimLeft().length)
+            .reduce(min);
+
     for (int i = 0; i < lines.length; ++i) {
-      final String line = lines[i];
+      final String line = lines[i].length >= indentationToRemove
+          ? lines[i].substring(indentationToRemove)
+          : lines[i];
+
       if (i == 0 && !leadingSpace) {
         add(line.replaceAll('\t', tab));
       } else if (line.isNotEmpty) {
@@ -297,11 +316,17 @@ const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 /// parameters.
 const String classNamePrefix = 'PigeonInternal';
 
-/// Name for the generated InstanceManager for ProxyApis.
+/// Prefix for classes generated to use with ProxyApis.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
-const String instanceManagerClassName = '${classNamePrefix}InstanceManager';
+const String proxyApiClassNamePrefix = 'Pigeon';
+
+/// Prefix for APIs generated for ProxyApi.
+///
+/// Since ProxyApis are intended to wrap a class and will often share the name
+/// of said class, host APIs should prefix the API with this protected name.
+const String hostProxyApiPrefix = '${proxyApiClassNamePrefix}Api';
 
 /// Prefix for class member names not defined by the user.
 ///
@@ -309,7 +334,7 @@ const String instanceManagerClassName = '${classNamePrefix}InstanceManager';
 /// parameters.
 const String classMemberNamePrefix = 'pigeon_';
 
-/// Prefix for  variable names not defined by the user.
+/// Prefix for variable names not defined by the user.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
@@ -319,6 +344,8 @@ const String varNamePrefix = 'pigeonVar_';
 const List<String> disallowedPrefixes = <String>[
   classNamePrefix,
   classMemberNamePrefix,
+  hostProxyApiPrefix,
+  proxyApiClassNamePrefix,
   varNamePrefix,
   'pigeonChannelCodec'
 ];
@@ -422,9 +449,19 @@ const List<String> validTypes = <String>[
   'Object',
 ];
 
+/// The dedicated key for accessing an InstanceManager in ProxyApi base codecs.
+///
+/// Generated codecs override the `StandardMessageCodec` which reserves the byte
+/// keys of 0-127, so this value is chosen because it is the lowest available
+/// key.
+///
+/// See https://api.flutter.dev/flutter/services/StandardMessageCodec/writeValue.html
+/// for more information on keys in MessageCodecs.
+const int proxyApiCodecInstanceManagerKey = 128;
+
 /// Custom codecs' custom types are enumerations begin at this number to
 /// avoid collisions with the StandardMessageCodec.
-const int minimumCodecFieldKey = 129;
+const int minimumCodecFieldKey = proxyApiCodecInstanceManagerKey + 1;
 
 /// The maximum codec enumeration allowed.
 const int maximumCodecFieldKey = 255;
@@ -513,6 +550,48 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
     }
   }
   return references.map;
+}
+
+/// Find the [TypeDeclaration] that has the highest API requirement and its
+/// version, [T].
+///
+/// [T] depends on the language. For example, Android uses an int while iOS uses
+/// semantic versioning.
+({TypeDeclaration type, T version})?
+    findHighestApiRequirement<T extends Object>(
+  Iterable<TypeDeclaration> types, {
+  required T? Function(TypeDeclaration) onGetApiRequirement,
+  required Comparator<T> onCompare,
+}) {
+  Iterable<TypeDeclaration> addAllRecursive(TypeDeclaration type) sync* {
+    yield type;
+    if (type.typeArguments.isNotEmpty) {
+      for (final TypeDeclaration typeArg in type.typeArguments) {
+        yield* addAllRecursive(typeArg);
+      }
+    }
+  }
+
+  final Iterable<TypeDeclaration> allReferencedTypes = types
+      .expand(addAllRecursive)
+      .where((TypeDeclaration type) => onGetApiRequirement(type) != null);
+
+  if (allReferencedTypes.isEmpty) {
+    return null;
+  }
+
+  final TypeDeclaration typeWithHighestRequirement = allReferencedTypes.reduce(
+    (TypeDeclaration one, TypeDeclaration two) {
+      return onCompare(onGetApiRequirement(one)!, onGetApiRequirement(two)!) > 0
+          ? one
+          : two;
+    },
+  );
+
+  return (
+    type: typeWithHighestRequirement,
+    version: onGetApiRequirement(typeWithHighestRequirement)!,
+  );
 }
 
 /// All custom definable data types.
@@ -728,4 +807,27 @@ String toScreamingSnakeCase(String string) {
       .replaceAllMapped(
           RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => '_${m.group(0)}')
       .toUpperCase();
+}
+
+/// The channel name for the `removeStrongReference` method of the
+/// `InstanceManager` API.
+///
+/// This ensures the channel name is the same for all languages.
+String makeRemoveStrongReferenceChannelName(String dartPackageName) {
+  return makeChannelNameWithStrings(
+    apiName: '${classNamePrefix}InstanceManager',
+    methodName: 'removeStrongReference',
+    dartPackageName: dartPackageName,
+  );
+}
+
+/// The channel name for the `clear` method of the `InstanceManager` API.
+///
+/// This ensures the channel name is the same for all languages.
+String makeClearChannelName(String dartPackageName) {
+  return makeChannelNameWithStrings(
+    apiName: '${classNamePrefix}InstanceManager',
+    methodName: 'clear',
+    dartPackageName: dartPackageName,
+  );
 }
