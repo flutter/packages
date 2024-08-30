@@ -357,7 +357,7 @@ class Breakpoint {
   }
 
   // #docregion Breakpoint operators
-  /// Returns true if the current [Breakpoint] is greater than the given [Breakpoint].
+  /// Returns true if this [Breakpoint] is greater than the given [Breakpoint].
   bool operator >(Breakpoint breakpoint)
   // #enddocregion Breakpoint operators
   {
@@ -372,7 +372,7 @@ class Breakpoint {
   }
 
   // #docregion Breakpoint operators
-  /// Returns true if the current [Breakpoint] is less than the given [Breakpoint].
+  /// Returns true if this [Breakpoint] is less than the given [Breakpoint].
   bool operator <(Breakpoint breakpoint)
   // #enddocregion Breakpoint operators
   {
@@ -387,7 +387,7 @@ class Breakpoint {
   }
 
   // #docregion Breakpoint operators
-  /// Returns true if the current [Breakpoint] is greater than or equal to the
+  /// Returns true if this [Breakpoint] is greater than or equal to the
   /// given [Breakpoint].
   bool operator >=(Breakpoint breakpoint)
   // #enddocregion Breakpoint operators
@@ -403,7 +403,7 @@ class Breakpoint {
   }
 
   // #docregion Breakpoint operators
-  /// Returns true if the current [Breakpoint] is less than or equal to the
+  /// Returns true if this [Breakpoint] is less than or equal to the
   /// given [Breakpoint].
   bool operator <=(Breakpoint breakpoint)
   // #enddocregion Breakpoint operators
@@ -419,7 +419,7 @@ class Breakpoint {
   }
 
   // #docregion Breakpoint operators
-  /// Returns true if the current [Breakpoint] is between the given [Breakpoint]s.
+  /// Returns true if this [Breakpoint] is between the given [Breakpoint]s.
   bool between(Breakpoint lower, Breakpoint upper)
   // #enddocregion Breakpoint operators
   {
