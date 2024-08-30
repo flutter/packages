@@ -891,10 +891,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
       // and update the active nodes immediately. This ensures the tree
       // is updated correctly when the node's children are no longer active.
       if (widget.toggleAnimationStyle == AnimationStyle.noAnimation ||
-          (node._expanded &&
-              widget.toggleAnimationStyle?.duration == Duration.zero) ||
-          (!node._expanded &&
-              widget.toggleAnimationStyle?.reverseDuration == Duration.zero)) {
+          widget.toggleAnimationStyle?.duration == Duration.zero) {
         _unpackActiveNodes();
         return;
       }
