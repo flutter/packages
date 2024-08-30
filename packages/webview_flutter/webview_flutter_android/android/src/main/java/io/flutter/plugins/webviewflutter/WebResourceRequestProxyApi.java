@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 package io.flutter.plugins.webviewflutter;
 
 import android.os.Build;
@@ -9,7 +13,7 @@ import java.util.Map;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class WebResourceRequestProxyApi extends PigeonApiWebResourceRequest {
-  public WebResourceRequestProxyApi(@NonNull PigeonProxyApiRegistrar pigeonRegistrar) {
+  public WebResourceRequestProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
 

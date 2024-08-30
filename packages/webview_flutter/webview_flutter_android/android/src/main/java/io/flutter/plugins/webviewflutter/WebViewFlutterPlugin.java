@@ -82,7 +82,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
 
   /** Maintains instances used to communicate with the corresponding objects in Dart. */
   @Nullable
-  public PigeonInstanceManager getInstanceManager() {
+  public AndroidWebkitLibraryPigeonInstanceManager getInstanceManager() {
     return proxyApiRegistrar.getInstanceManager();
   }
 }
