@@ -803,40 +803,39 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   static PlatformCameraUpdate _platformCameraUpdateFromCameraUpdate(
       CameraUpdate update) {
     if (update is NewCameraPosition) {
-      return PlatformCameraUpdate(
-          newCameraPosition: PlatformNewCameraPosition(
+      return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateNewCameraPosition(
               cameraPosition: _platformCameraPositionFromCameraPosition(
                   update.cameraPosition)));
     } else if (update is NewLatLng) {
       return PlatformCameraUpdate(
-          newLatLng: PlatformNewLatLng(
+          cameraUpdate: PlatformCameraUpdateNewLatLng(
               latLng: _platformLatLngFromLatLng(update.latLng)));
     } else if (update is NewLatLngZoom) {
       return PlatformCameraUpdate(
-          newLatLngZoom: PlatformNewLatLngZoom(
+          cameraUpdate: PlatformCameraUpdateNewLatLngZoom(
               latLng: _platformLatLngFromLatLng(update.latLng),
               zoom: update.zoom));
     } else if (update is NewLatLngBounds) {
       return PlatformCameraUpdate(
-          newLatLngBounds: PlatformNewLatLngBounds(
+          cameraUpdate: PlatformCameraUpdateNewLatLngBounds(
               bounds: _platformLatLngBoundsFromLatLngBounds(update.bounds)!,
               padding: update.padding));
     } else if (update is ZoomTo) {
-      return PlatformCameraUpdate(zoomTo: PlatformZoomTo(zoom: update.zoom));
+      return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoomTo(zoom: update.zoom));
     } else if (update is ZoomBy) {
       return PlatformCameraUpdate(
-          zoomBy: PlatformZoomBy(
+          cameraUpdate: PlatformCameraUpdateZoomBy(
               amount: update.amount,
               focus: update.focus == null
                   ? null
                   : _platformOffsetFromOffset(update.focus!)));
     } else if (update is ZoomIn) {
-      return PlatformCameraUpdate(zoomIn: true);
+      return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoom(out: false));
     } else if (update is ZoomOut) {
-      return PlatformCameraUpdate(zoomOut: true);
+      return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoom(out: true));
     } else if (update is ScrollBy) {
       return PlatformCameraUpdate(
-          scrollBy: PlatformScrollBy(dx: update.dx, dy: update.dy));
+          cameraUpdate: PlatformCameraUpdateScrollBy(dx: update.dx, dy: update.dy));
     }
     throw ArgumentError(
         'update is not a valid concrete subclass of CameraUpdate', 'update');
