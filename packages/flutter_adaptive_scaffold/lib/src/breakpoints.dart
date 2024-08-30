@@ -284,6 +284,7 @@ class Breakpoint {
     final double width = MediaQuery.sizeOf(context).width;
     final double height = MediaQuery.sizeOf(context).height;
     final Orientation orientation = MediaQuery.orientationOf(context);
+    final bool isPortrait = orientation == Orientation.portrait;
 
     final double lowerBoundWidth = beginWidth ?? double.negativeInfinity;
     final double upperBoundWidth = endWidth ?? double.infinity;
@@ -295,11 +296,10 @@ class Breakpoint {
         ? width >= lowerBoundWidth
         : width >= lowerBoundWidth && width < upperBoundWidth;
 
-    final bool isHeightActive = isDesktop(context) ||
-        orientation == Orientation.portrait ||
-        (orientation == Orientation.landscape && andUp
+    final bool isHeightActive =
+        isPortrait || !isPortrait && isWidthActive || andUp
             ? isWidthActive || height >= lowerBoundHeight
-            : height >= lowerBoundHeight && height < upperBoundHeight);
+            : height >= lowerBoundHeight && height < upperBoundHeight;
 
     return isWidthActive && isHeightActive && isRightPlatform;
   }
