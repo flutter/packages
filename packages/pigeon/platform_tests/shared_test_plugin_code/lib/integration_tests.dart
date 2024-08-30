@@ -2271,6 +2271,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('echoNullableProxyApi', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoNullableProxyApi(null), null);
+
       final ProxyApiSuperClass proxyApi = ProxyApiSuperClass();
       expect(
         await api.echoNullableProxyApi(proxyApi),
@@ -2693,6 +2694,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         flutterEchoNullableProxyApi: (_, ProxyApiSuperClass? aProxyApi) =>
             aProxyApi,
       );
+
       expect(await api.callFlutterEchoNullableProxyApi(null), null);
 
       final ProxyApiSuperClass proxyApi = ProxyApiSuperClass();
