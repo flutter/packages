@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../app_router.dart';
 
+/// The profile page.
 class ProfilePage extends StatelessWidget {
+  /// Construct the profile page.
   const ProfilePage({super.key});
 
   /// The path for the profile page.

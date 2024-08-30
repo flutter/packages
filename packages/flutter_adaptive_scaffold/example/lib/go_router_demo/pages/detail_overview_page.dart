@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 
 import 'detail_page.dart';
 
+/// The detail overview page.
 class DetailOverviewPage extends StatelessWidget {
+  /// Construct the detail overview page.
   const DetailOverviewPage({super.key});
 
   /// The path for the detail page.

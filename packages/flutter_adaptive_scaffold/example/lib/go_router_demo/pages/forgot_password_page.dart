@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// The forgot password page.
 class ForgotPasswordPage extends StatelessWidget {
+  /// Construct the forgot password page.
   const ForgotPasswordPage({super.key});
 
   /// The path for the forgot password page.

@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import 'pages.dart';
 
+/// The more page.
 class MorePage extends StatelessWidget {
+  /// Construct the more page.
   const MorePage({super.key});
 
   /// The path for the more page.

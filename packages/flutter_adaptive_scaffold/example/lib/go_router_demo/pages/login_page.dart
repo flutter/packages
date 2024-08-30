@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../app_router.dart';
 
+/// The login page.
 class LoginPage extends StatelessWidget {
+  /// Construct the login page.
   const LoginPage({super.key});
 
   /// The path for the login page.

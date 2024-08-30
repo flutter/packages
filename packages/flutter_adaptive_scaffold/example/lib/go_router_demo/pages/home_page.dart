@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import 'pages.dart';
 
+/// The home page.
 class HomePage extends StatelessWidget {
+  /// Construct the home page.
   const HomePage({super.key});
 
   /// The path for the home page.

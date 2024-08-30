@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// The detail page.
 class DetailPage extends StatelessWidget {
+  /// Construct the detail page.
   const DetailPage({super.key, required this.itemName});
 
   /// The path for the detail page.

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// The counter page.
 class CounterPage extends StatelessWidget {
+  /// Construct the counter page.
   const CounterPage({super.key});
 
   /// The path for the counter page.

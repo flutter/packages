@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// The language page.
 class LanguagePage extends StatelessWidget {
+  /// Construct the language page.
   const LanguagePage({super.key});
 
   /// The path for the language page.
