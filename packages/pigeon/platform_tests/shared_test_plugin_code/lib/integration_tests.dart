@@ -2074,7 +2074,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       TargetGenerator.kotlin,
       TargetGenerator.swift,
     };
-    if (proxyApiSupportedLanguages.contains(targetGenerator)) {
+    if (!proxyApiSupportedLanguages.contains(targetGenerator)) {
       return;
     }
 
