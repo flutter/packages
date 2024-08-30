@@ -1,6 +1,6 @@
-## 22.1.1
+## 22.2.0
 
-* Validates enums and classes in collections.
+* Adds support for enums and classes in collections.
 
 ## 22.1.0
 

@@ -487,7 +487,8 @@ if (wrapped == nil) {
               getFieldsInSerializationOrder(classDefinition).last == field
                   ? ''
                   : ',';
-          // There's a swift bug that breaks force-casting nullable enums in maps.
+          // Force-casting nullable enums in maps doesn't work the same as other types.
+          // It needs soft-casting followed by force unwrapping.
           final String forceUnwrapMapWithNullableEnums =
               (field.type.baseName == 'Map' &&
                       !field.type.isNullable &&
@@ -659,7 +660,8 @@ if (wrapped == nil) {
     assert(!type.isVoid);
     if (type.baseName == 'Object') {
       return value + (type.isNullable ? '' : '!');
-      // There's a swift bug that breaks force-casting nullable enums in maps.
+      // Force-casting nullable enums in maps doesn't work the same as other types.
+      // It needs soft-casting followed by force unwrapping.
     } else if (type.baseName == 'Map' &&
         type.typeArguments.any((TypeDeclaration type) => type.isEnum)) {
       return '$value as? ${_swiftTypeForDartType(type)}';
