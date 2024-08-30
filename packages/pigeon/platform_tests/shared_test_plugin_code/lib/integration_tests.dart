@@ -2070,7 +2070,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   });
 
   group('Proxy API Tests', () {
-    const Set<TargetGenerator> proxyApiSupportedLanguages = <TargetGenerator>{TargetGenerator.kotlin, TargetGenerator.swift,};
+    const Set<TargetGenerator> proxyApiSupportedLanguages = <TargetGenerator>{
+      TargetGenerator.kotlin,
+      TargetGenerator.swift,
+    };
     if (proxyApiSupportedLanguages.contains(targetGenerator)) {
       return;
     }
