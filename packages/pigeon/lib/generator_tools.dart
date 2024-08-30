@@ -14,7 +14,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '22.1.0';
+const String pigeonVersion = '22.3.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -72,14 +72,13 @@ class Indent {
 
   /// Replaces the newlines and tabs of input and adds it to the stream.
   ///
-  ///
   /// [trimIndentation] flag finds the line with the fewest leading empty
   /// spaces and trims the beginning of all lines by this number.
   void format(
     String input, {
     bool leadingSpace = true,
     bool trailingNewline = true,
-    bool trimIndentation = false,
+    bool trimIndentation = true,
   }) {
     final List<String> lines = input.split('\n');
 
@@ -323,7 +322,7 @@ const String classNamePrefix = 'PigeonInternal';
 /// parameters.
 const String proxyApiClassNamePrefix = 'Pigeon';
 
-/// Prefix for apis generated for ProxyApi.
+/// Prefix for APIs generated for ProxyApi.
 ///
 /// Since ProxyApis are intended to wrap a class and will often share the name
 /// of said class, host APIs should prefix the API with this protected name.
@@ -335,7 +334,7 @@ const String hostProxyApiPrefix = '${proxyApiClassNamePrefix}Api';
 /// parameters.
 const String classMemberNamePrefix = 'pigeon_';
 
-/// Prefix for  variable names not defined by the user.
+/// Prefix for variable names not defined by the user.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
@@ -345,6 +344,7 @@ const String varNamePrefix = 'pigeonVar_';
 const List<String> disallowedPrefixes = <String>[
   classNamePrefix,
   classMemberNamePrefix,
+  hostProxyApiPrefix,
   proxyApiClassNamePrefix,
   varNamePrefix,
   'pigeonChannelCodec'
@@ -450,6 +450,13 @@ const List<String> validTypes = <String>[
 ];
 
 /// The dedicated key for accessing an InstanceManager in ProxyApi base codecs.
+///
+/// Generated codecs override the `StandardMessageCodec` which reserves the byte
+/// keys of 0-127, so this value is chosen because it is the lowest available
+/// key.
+///
+/// See https://api.flutter.dev/flutter/services/StandardMessageCodec/writeValue.html
+/// for more information on keys in MessageCodecs.
 const int proxyApiCodecInstanceManagerKey = 128;
 
 /// Custom codecs' custom types are enumerations begin at this number to
@@ -543,6 +550,48 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
     }
   }
   return references.map;
+}
+
+/// Find the [TypeDeclaration] that has the highest API requirement and its
+/// version, [T].
+///
+/// [T] depends on the language. For example, Android uses an int while iOS uses
+/// semantic versioning.
+({TypeDeclaration type, T version})?
+    findHighestApiRequirement<T extends Object>(
+  Iterable<TypeDeclaration> types, {
+  required T? Function(TypeDeclaration) onGetApiRequirement,
+  required Comparator<T> onCompare,
+}) {
+  Iterable<TypeDeclaration> addAllRecursive(TypeDeclaration type) sync* {
+    yield type;
+    if (type.typeArguments.isNotEmpty) {
+      for (final TypeDeclaration typeArg in type.typeArguments) {
+        yield* addAllRecursive(typeArg);
+      }
+    }
+  }
+
+  final Iterable<TypeDeclaration> allReferencedTypes = types
+      .expand(addAllRecursive)
+      .where((TypeDeclaration type) => onGetApiRequirement(type) != null);
+
+  if (allReferencedTypes.isEmpty) {
+    return null;
+  }
+
+  final TypeDeclaration typeWithHighestRequirement = allReferencedTypes.reduce(
+    (TypeDeclaration one, TypeDeclaration two) {
+      return onCompare(onGetApiRequirement(one)!, onGetApiRequirement(two)!) > 0
+          ? one
+          : two;
+    },
+  );
+
+  return (
+    type: typeWithHighestRequirement,
+    version: onGetApiRequirement(typeWithHighestRequirement)!,
+  );
 }
 
 /// All custom definable data types.
@@ -705,48 +754,6 @@ String? deducePackageName(String mainDartFile) {
   } catch (_) {
     return null;
   }
-}
-
-/// Find the [TypeDeclaration] that has the highest api requirement and its
-/// version, [T].
-///
-/// [T] depends on the language. For example, Android uses an int while iOS uses
-/// semantic versioning.
-({TypeDeclaration type, T version})?
-    findHighestApiRequirement<T extends Object>(
-  Iterable<TypeDeclaration> types, {
-  required T? Function(TypeDeclaration) onGetApiRequirement,
-  required Comparator<T> onCompare,
-}) {
-  Iterable<TypeDeclaration> addAllRecursive(TypeDeclaration type) sync* {
-    yield type;
-    if (type.typeArguments.isNotEmpty) {
-      for (final TypeDeclaration typeArg in type.typeArguments) {
-        yield* addAllRecursive(typeArg);
-      }
-    }
-  }
-
-  final Iterable<TypeDeclaration> allReferencedTypes = types
-      .expand(addAllRecursive)
-      .where((TypeDeclaration type) => onGetApiRequirement(type) != null);
-
-  if (allReferencedTypes.isEmpty) {
-    return null;
-  }
-
-  final TypeDeclaration typeWithHighestRequirement = allReferencedTypes.reduce(
-    (TypeDeclaration one, TypeDeclaration two) {
-      return onCompare(onGetApiRequirement(one)!, onGetApiRequirement(two)!) > 0
-          ? one
-          : two;
-    },
-  );
-
-  return (
-    type: typeWithHighestRequirement,
-    version: onGetApiRequirement(typeWithHighestRequirement)!,
-  );
 }
 
 /// Enum to specify api type when generating code.

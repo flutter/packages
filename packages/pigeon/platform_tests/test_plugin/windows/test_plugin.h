@@ -472,6 +472,7 @@ class TestPlugin : public flutter::Plugin,
       const std::string& a_string,
       std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
           result) override;
+  core_tests_pigeontest::UnusedClass TestUnusedClassGenerates();
 
  private:
   std::unique_ptr<core_tests_pigeontest::FlutterIntegrationCoreApi>

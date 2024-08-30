@@ -733,6 +733,10 @@
       }];
 }
 
+- (FLTUnusedClass *)checkIfUnusedClassGenerated {
+  return [[FLTUnusedClass alloc] init];
+}
+
 @end
 
 @interface AlternateLanguageTestAPIWithSuffix ()

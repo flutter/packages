@@ -723,6 +723,10 @@
       }];
 }
 
+- (UnusedClass *)checkIfUnusedClassGenerated {
+  return [[UnusedClass alloc] init];
+}
+
 @end
 
 @interface AlternateLanguageTestAPIWithSuffix ()

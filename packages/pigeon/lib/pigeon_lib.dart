@@ -140,7 +140,7 @@ class FlutterApi {
 /// methods.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
-  const ProxyApi({this.superClass, this.swiftOptions});
+  const ProxyApi({this.superClass, this.kotlinOptions, this.swiftOptions});
 
   /// The proxy api that is a super class to this one.
   ///
@@ -154,6 +154,10 @@ class ProxyApi {
   /// Options that control how Swift code will be generated for a specific
   /// ProxyApi.
   final SwiftProxyApiOptions? swiftOptions;
+
+  /// Options that control how Kotlin code will be generated for a specific
+  /// ProxyApi.
+  final KotlinProxyApiOptions? kotlinOptions;
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -1398,13 +1402,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         getReferencedTypes(_apis, _classes);
     final Set<String> referencedTypeNames =
         referencedTypes.keys.map((TypeDeclaration e) => e.baseName).toSet();
-    final List<Class> referencedClasses = List<Class>.from(_classes);
-    referencedClasses
-        .removeWhere((Class x) => !referencedTypeNames.contains(x.name));
+    final List<Class> nonReferencedClasses = List<Class>.from(_classes);
+    nonReferencedClasses
+        .removeWhere((Class x) => referencedTypeNames.contains(x.name));
+    for (final Class x in nonReferencedClasses) {
+      x.isReferenced = false;
+    }
 
     final List<Enum> referencedEnums = List<Enum>.from(_enums);
     final Root completeRoot =
-        Root(apis: _apis, classes: referencedClasses, enums: referencedEnums);
+        Root(apis: _apis, classes: _classes, enums: referencedEnums);
 
     final List<Error> validateErrors = _validateAst(completeRoot, source);
     final List<Error> totalErrors = List<Error>.from(_errors);
@@ -1412,9 +1419,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
     for (final MapEntry<TypeDeclaration, List<int>> element
         in referencedTypes.entries) {
-      if (!referencedClasses
-              .map((Class e) => e.name)
-              .contains(element.key.baseName) &&
+      if (!_classes.map((Class e) => e.name).contains(element.key.baseName) &&
           !referencedEnums
               .map((Enum e) => e.name)
               .contains(element.key.baseName) &&
@@ -1435,7 +1440,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             lineNumber: lineNumber));
       }
     }
-    for (final Class classDefinition in referencedClasses) {
+    for (final Class classDefinition in _classes) {
       classDefinition.fields = _attachAssociatedDefinitions(
         classDefinition.fields,
       );
@@ -1724,6 +1729,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         tryParseApiRequirement(swiftOptions?.minIosApi);
         tryParseApiRequirement(swiftOptions?.minMacosApi);
 
+        KotlinProxyApiOptions? kotlinOptions;
+        final Map<String, Object?>? kotlinOptionsMap =
+            annotationMap['kotlinOptions'] as Map<String, Object?>?;
+        if (kotlinOptionsMap != null) {
+          kotlinOptions = KotlinProxyApiOptions(
+            fullClassName: kotlinOptionsMap['fullClassName'] as String?,
+            minAndroidApi: kotlinOptionsMap['minAndroidApi'] as int?,
+          );
+        }
+
         _currentApi = AstProxyApi(
           name: node.name.lexeme,
           methods: <Method>[],
@@ -1732,6 +1747,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           superClass: superClass,
           interfaces: interfaces,
           swiftOptions: swiftOptions,
+          kotlinOptions: kotlinOptions,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );

@@ -789,6 +789,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       }
     }
   }
+
+  func testUnusedClassesGenerate() -> UnusedClass {
+    return UnusedClass()
+  }
 }
 
 public class TestPluginWithSuffix: HostSmallApi {
