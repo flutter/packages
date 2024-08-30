@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/ast.dart';
-import 'package:pigeon/dart_generator.dart';
+import 'package:pigeon/kotlin_generator.dart';
 import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
@@ -11,67 +11,82 @@ const String DEFAULT_PACKAGE_NAME = 'test_package';
 void main() {
   group('ProxyApi', () {
     test('one api', () {
-      final Root root = Root(apis: <Api>[
-        AstProxyApi(name: 'Api', constructors: <Constructor>[
-          Constructor(name: 'name', parameters: <Parameter>[
-            Parameter(
-              type: const TypeDeclaration(
-                baseName: 'Input',
-                isNullable: false,
+      final Root root = Root(
+        apis: <Api>[
+          AstProxyApi(
+            name: 'Api',
+            kotlinOptions: const KotlinProxyApiOptions(
+              fullClassName: 'my.library.Api',
+            ),
+            constructors: <Constructor>[
+              Constructor(
+                name: 'name',
+                parameters: <Parameter>[
+                  Parameter(
+                    type: const TypeDeclaration(
+                      baseName: 'Input',
+                      isNullable: false,
+                    ),
+                    name: 'input',
+                  ),
+                ],
               ),
-              name: 'input',
-            ),
-          ]),
-        ], fields: <ApiField>[
-          ApiField(
-            name: 'someField',
-            type: const TypeDeclaration(
-              baseName: 'int',
-              isNullable: false,
-            ),
+            ],
+            fields: <ApiField>[
+              ApiField(
+                name: 'someField',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                ),
+              )
+            ],
+            methods: <Method>[
+              Method(
+                name: 'doSomething',
+                location: ApiLocation.host,
+                parameters: <Parameter>[
+                  Parameter(
+                    type: const TypeDeclaration(
+                      baseName: 'Input',
+                      isNullable: false,
+                    ),
+                    name: 'input',
+                  )
+                ],
+                returnType: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                ),
+              ),
+              Method(
+                name: 'doSomethingElse',
+                location: ApiLocation.flutter,
+                isRequired: false,
+                parameters: <Parameter>[
+                  Parameter(
+                    type: const TypeDeclaration(
+                      baseName: 'Input',
+                      isNullable: false,
+                    ),
+                    name: 'input',
+                  ),
+                ],
+                returnType: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                ),
+              ),
+            ],
           )
-        ], methods: <Method>[
-          Method(
-            name: 'doSomething',
-            location: ApiLocation.host,
-            parameters: <Parameter>[
-              Parameter(
-                type: const TypeDeclaration(
-                  baseName: 'Input',
-                  isNullable: false,
-                ),
-                name: 'input',
-              )
-            ],
-            returnType: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: false,
-            ),
-          ),
-          Method(
-            name: 'doSomethingElse',
-            location: ApiLocation.flutter,
-            parameters: <Parameter>[
-              Parameter(
-                type: const TypeDeclaration(
-                  baseName: 'Input',
-                  isNullable: false,
-                ),
-                name: 'input',
-              )
-            ],
-            returnType: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: false,
-            ),
-            isRequired: false,
-          ),
-        ])
-      ], classes: <Class>[], enums: <Enum>[]);
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
       final StringBuffer sink = StringBuffer();
-      const DartGenerator generator = DartGenerator();
+      const KotlinGenerator generator = KotlinGenerator();
       generator.generate(
-        const DartOptions(),
+        const KotlinOptions(fileSpecificClassNameComponent: 'MyFile'),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -80,99 +95,70 @@ void main() {
       final String collapsedCode = _collapseNewlineAndIndentation(code);
 
       // Instance Manager
-      expect(code, contains(r'class PigeonInstanceManager'));
-      expect(code, contains(r'class _PigeonInternalInstanceManagerApi'));
+      expect(code, contains(r'class MyFilePigeonInstanceManager'));
+      expect(code, contains(r'class MyFilePigeonInstanceManagerApi'));
 
-      // Base Api class
+      // API registrar
       expect(
         code,
-        contains(r'abstract class PigeonInternalProxyApiBaseClass'),
+        contains(
+          'abstract class MyFilePigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger)',
+        ),
       );
 
-      // Codec and class
-      expect(code, contains('class _PigeonInternalProxyApiBaseCodec'));
+      // Codec
       expect(
-          code, contains(r'class Api extends PigeonInternalProxyApiBaseClass'));
+          code,
+          contains(
+              'private class MyFilePigeonProxyApiBaseCodec(val registrar: MyFilePigeonProxyApiRegistrar) : MyFilePigeonCodec()'));
+
+      // Proxy API class
+      expect(
+        code,
+        contains(
+          r'abstract class PigeonApiApi(open val pigeonRegistrar: MyFilePigeonProxyApiRegistrar)',
+        ),
+      );
 
       // Constructors
       expect(
         collapsedCode,
         contains(
-          r'Api.name({ super.pigeon_binaryMessenger, super.pigeon_instanceManager, required this.someField, this.doSomethingElse, required Input input, })',
+          r'abstract fun name(someField: Long, input: Input)',
         ),
       );
       expect(
-        code,
+        collapsedCode,
         contains(
-          r'Api.pigeon_detached',
+          r'fun pigeon_newInstance(pigeon_instanceArg: my.library.Api, callback: (Result<Unit>) -> Unit)',
         ),
       );
 
       // Field
-      expect(code, contains('final int someField;'));
+      expect(
+        code,
+        contains(
+          'abstract fun someField(pigeon_instance: my.library.Api): Long',
+        ),
+      );
 
       // Dart -> Host method
-      expect(code, contains('Future<String> doSomething(Input input)'));
+      expect(
+        collapsedCode,
+        contains('api.doSomething(pigeon_instanceArg, inputArg)'),
+      );
 
       // Host -> Dart method
-      expect(code, contains(r'static void pigeon_setUpMessageHandlers({'));
-      expect(
-        collapsedCode,
-        contains(
-          'final String Function( Api pigeon_instance, Input input, )? doSomethingElse;',
-        ),
-      );
-
-      // Copy method
-      expect(code, contains(r'Api pigeon_copy('));
-    });
-
-    test('InstanceManagerApi', () {
-      final Root root = Root(apis: <Api>[
-        AstProxyApi(
-          name: 'Api',
-          constructors: <Constructor>[],
-          fields: <ApiField>[],
-          methods: <Method>[],
-        )
-      ], classes: <Class>[], enums: <Enum>[]);
-      final StringBuffer sink = StringBuffer();
-      const DartGenerator generator = DartGenerator();
-      generator.generate(
-        const DartOptions(),
-        root,
-        sink,
-        dartPackageName: DEFAULT_PACKAGE_NAME,
-      );
-      final String code = sink.toString();
-      final String collapsedCode = _collapseNewlineAndIndentation(code);
-
-      expect(code, contains(r'class _PigeonInternalInstanceManagerApi'));
-
       expect(
         code,
         contains(
-          'Future<void> removeStrongReference(int identifier)',
+          r'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiApi?)',
         ),
       );
       expect(
         code,
         contains(
-          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInternalInstanceManager.removeStrongReference',
-        ),
-      );
-      expect(
-        collapsedCode,
-        contains(
-          '(instanceManager ?? PigeonInstanceManager.instance) .remove(arg_identifier!);',
-        ),
-      );
-
-      expect(code, contains('Future<void> clear()'));
-      expect(
-        code,
-        contains(
-          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInternalInstanceManager.clear',
+          'fun doSomethingElse(pigeon_instanceArg: my.library.Api, inputArg: Input, callback: (Result<String>) -> Unit)',
         ),
       );
     });
@@ -192,7 +178,7 @@ void main() {
             fields: <ApiField>[],
             methods: <Method>[],
             superClass: TypeDeclaration(
-              baseName: 'Api2',
+              baseName: api2.name,
               isNullable: false,
               associatedProxyApi: api2,
             ),
@@ -200,21 +186,18 @@ void main() {
           api2,
         ], classes: <Class>[], enums: <Enum>[]);
         final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const DartOptions(),
+          const KotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
-        expect(code, contains(r'class Api extends Api2'));
         expect(
           collapsedCode,
-          contains(
-            r'Api.pigeon_detached({ super.pigeon_binaryMessenger, super.pigeon_instanceManager, }) : super.pigeon_detached();',
-          ),
+          contains('fun pigeon_getPigeonApiApi2(): PigeonApiApi2'),
         );
       });
 
@@ -233,7 +216,7 @@ void main() {
             methods: <Method>[],
             interfaces: <TypeDeclaration>{
               TypeDeclaration(
-                baseName: 'Api2',
+                baseName: api2.name,
                 isNullable: false,
                 associatedProxyApi: api2,
               )
@@ -242,20 +225,15 @@ void main() {
           api2,
         ], classes: <Class>[], enums: <Enum>[]);
         final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const DartOptions(),
+          const KotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
-        expect(
-          code,
-          contains(
-            r'class Api extends PigeonInternalProxyApiBaseClass implements Api2',
-          ),
-        );
+        expect(code, contains('fun pigeon_getPigeonApiApi2(): PigeonApiApi2'));
       });
 
       test('implements 2 ProxyApis', () {
@@ -279,14 +257,14 @@ void main() {
             methods: <Method>[],
             interfaces: <TypeDeclaration>{
               TypeDeclaration(
-                baseName: 'Api2',
+                baseName: api2.name,
                 isNullable: false,
                 associatedProxyApi: api2,
               ),
               TypeDeclaration(
-                baseName: 'Api3',
+                baseName: api3.name,
                 isNullable: false,
-                associatedProxyApi: api2,
+                associatedProxyApi: api3,
               ),
             },
           ),
@@ -294,84 +272,16 @@ void main() {
           api3,
         ], classes: <Class>[], enums: <Enum>[]);
         final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const DartOptions(),
+          const KotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
-        expect(
-          code,
-          contains(
-            r'class Api extends PigeonInternalProxyApiBaseClass implements Api2, Api3',
-          ),
-        );
-      });
-
-      test('implements inherits flutter methods', () {
-        final AstProxyApi api2 = AstProxyApi(
-          name: 'Api2',
-          constructors: <Constructor>[],
-          fields: <ApiField>[],
-          methods: <Method>[
-            Method(
-              name: 'aFlutterMethod',
-              returnType: const TypeDeclaration.voidDeclaration(),
-              parameters: <Parameter>[],
-              location: ApiLocation.flutter,
-            ),
-            Method(
-              name: 'aNullableFlutterMethod',
-              returnType: const TypeDeclaration.voidDeclaration(),
-              parameters: <Parameter>[],
-              location: ApiLocation.flutter,
-              isRequired: false,
-            ),
-          ],
-        );
-        final Root root = Root(apis: <Api>[
-          AstProxyApi(
-            name: 'Api',
-            constructors: <Constructor>[],
-            fields: <ApiField>[],
-            methods: <Method>[],
-            interfaces: <TypeDeclaration>{
-              TypeDeclaration(
-                baseName: 'Api2',
-                isNullable: false,
-                associatedProxyApi: api2,
-              )
-            },
-          ),
-          api2,
-        ], classes: <Class>[], enums: <Enum>[]);
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
-        generator.generate(
-          const DartOptions(),
-          root,
-          sink,
-          dartPackageName: DEFAULT_PACKAGE_NAME,
-        );
-        final String code = sink.toString();
-        final String collapsedCode = _collapseNewlineAndIndentation(code);
-        expect(
-          code,
-          contains(
-            r'class Api extends PigeonInternalProxyApiBaseClass implements Api2',
-          ),
-        );
-        expect(
-          collapsedCode,
-          contains(
-            r'Api.pigeon_detached({ super.pigeon_binaryMessenger, '
-            r'super.pigeon_instanceManager, '
-            r'required this.aFlutterMethod, '
-            r'this.aNullableFlutterMethod, })',
-          ),
-        );
+        expect(code, contains('fun pigeon_getPigeonApiApi2(): PigeonApiApi2'));
+        expect(code, contains('fun pigeon_getPigeonApiApi3(): PigeonApiApi3'));
       });
     });
 
@@ -390,33 +300,35 @@ void main() {
           enums: <Enum>[],
         );
         final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const DartOptions(),
+          const KotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
-        expect(code, contains('class Api'));
+        expect(
+          code,
+          contains(
+            'abstract class PigeonApiApi(open val pigeonRegistrar: PigeonProxyApiRegistrar) ',
+          ),
+        );
+        expect(
+          collapsedCode,
+          contains('abstract fun pigeon_defaultConstructor(): Api'),
+        );
         expect(
           collapsedCode,
           contains(
-            r'Api({ super.pigeon_binaryMessenger, '
-            r'super.pigeon_instanceManager, })',
+            r'val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor"',
           ),
         );
         expect(
           collapsedCode,
           contains(
-            r"const String pigeonVar_channelName = 'dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor';",
-          ),
-        );
-        expect(
-          collapsedCode,
-          contains(
-            r'pigeonVar_channel .send(<Object?>[pigeonVar_instanceIdentifier])',
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(',
           ),
         );
       });
@@ -490,36 +402,35 @@ void main() {
           enums: <Enum>[anEnum],
         );
         final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const DartOptions(),
+          const KotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
-        expect(code, contains('class Api'));
         expect(
-          collapsedCode,
+          code,
           contains(
-            r'Api.name({ super.pigeon_binaryMessenger, '
-            r'super.pigeon_instanceManager, '
-            r'required int validType, '
-            r'required AnEnum enumType, '
-            r'required Api2 proxyApiType, '
-            r'int? nullableValidType, '
-            r'AnEnum? nullableEnumType, '
-            r'Api2? nullableProxyApiType, })',
+            'abstract class PigeonApiApi(open val pigeonRegistrar: PigeonProxyApiRegistrar) ',
           ),
         );
         expect(
           collapsedCode,
           contains(
-            r'pigeonVar_channel.send(<Object?>[ '
-            r'pigeonVar_instanceIdentifier, '
-            r'validType, enumType, proxyApiType, '
-            r'nullableValidType, nullableEnumType, nullableProxyApiType ])',
+            'abstract fun name(validType: Long, enumType: AnEnum, '
+            'proxyApiType: Api2, nullableValidType: Long?, '
+            'nullableEnumType: AnEnum?, nullableProxyApiType: Api2?): Api',
+          ),
+        );
+        expect(
+          collapsedCode,
+          contains(
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.name('
+            r'validTypeArg,enumTypeArg,proxyApiTypeArg,nullableValidTypeArg,'
+            r'nullableEnumTypeArg,nullableProxyApiTypeArg), pigeon_identifierArg)',
           ),
         );
       });
@@ -600,61 +511,68 @@ void main() {
           enums: <Enum>[anEnum],
         );
         final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const DartOptions(),
+          const KotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
-        expect(code, contains('class Api'));
         expect(
           collapsedCode,
           contains(
-            r'Api.name({ super.pigeon_binaryMessenger, '
-            r'super.pigeon_instanceManager, '
-            r'required this.validType, '
-            r'required this.enumType, '
-            r'required this.proxyApiType, '
-            r'this.nullableValidType, '
-            r'this.nullableEnumType, '
-            r'this.nullableProxyApiType, })',
+            'abstract fun name(validType: Long, enumType: AnEnum, '
+            'proxyApiType: Api2, nullableValidType: Long?, '
+            'nullableEnumType: AnEnum?, nullableProxyApiType: Api2?): Api',
           ),
         );
         expect(
           collapsedCode,
           contains(
-            r'pigeonVar_channel.send(<Object?>[ '
-            r'pigeonVar_instanceIdentifier, '
-            r'validType, enumType, proxyApiType, '
-            r'nullableValidType, nullableEnumType, nullableProxyApiType ])',
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.name('
+            r'validTypeArg,enumTypeArg,proxyApiTypeArg,nullableValidTypeArg,'
+            r'nullableEnumTypeArg,nullableProxyApiTypeArg), pigeon_identifierArg)',
+          ),
+        );
+        expect(
+          collapsedCode,
+          contains(
+            'channel.send(listOf(pigeon_identifierArg, validTypeArg, '
+            'enumTypeArg, proxyApiTypeArg, nullableValidTypeArg, '
+            'nullableEnumTypeArg, nullableProxyApiTypeArg))',
           ),
         );
         expect(
           code,
-          contains(r'final int validType;'),
+          contains(r'abstract fun validType(pigeon_instance: Api): Long'),
         );
         expect(
           code,
-          contains(r'final AnEnum enumType;'),
+          contains(r'abstract fun enumType(pigeon_instance: Api): AnEnum'),
         );
         expect(
           code,
-          contains(r'final Api2 proxyApiType;'),
+          contains(r'abstract fun proxyApiType(pigeon_instance: Api): Api2'),
         );
         expect(
           code,
-          contains(r'final int? nullableValidType;'),
+          contains(
+            r'abstract fun nullableValidType(pigeon_instance: Api): Long?',
+          ),
         );
         expect(
           code,
-          contains(r'final AnEnum? nullableEnumType;'),
+          contains(
+            r'abstract fun nullableEnumType(pigeon_instance: Api): AnEnum?',
+          ),
         );
         expect(
           code,
-          contains(r'final Api2? nullableProxyApiType;'),
+          contains(
+            r'abstract fun nullableProxyApiType(pigeon_instance: Api): Api2?',
+          ),
         );
       });
 
@@ -689,17 +607,24 @@ void main() {
           enums: <Enum>[],
         );
         final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const DartOptions(),
+          const KotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
-        expect(code, contains('class Api'));
-        expect(code, contains(r'late final Api2 aField = pigeonVar_aField();'));
-        expect(code, contains(r'Api2 pigeonVar_aField()'));
+        expect(
+          code,
+          contains(r'abstract fun aField(pigeon_instance: Api): Api2'),
+        );
+        expect(
+          code,
+          contains(
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.aField(pigeon_instanceArg), pigeon_identifierArg)',
+          ),
+        );
       });
 
       test('static attached field', () {
@@ -734,18 +659,24 @@ void main() {
           enums: <Enum>[],
         );
         final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const DartOptions(),
+          const KotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
-        expect(code, contains('class Api'));
         expect(
-            code, contains(r'static final Api2 aField = pigeonVar_aField();'));
-        expect(code, contains(r'static Api2 pigeonVar_aField()'));
+          code,
+          contains(r'abstract fun aField(): Api2'),
+        );
+        expect(
+          code,
+          contains(
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.aField(), pigeon_identifierArg)',
+          ),
+        );
       });
     });
 
@@ -826,30 +757,29 @@ void main() {
           enums: <Enum>[anEnum],
         );
         final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const DartOptions(),
+          const KotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
-        expect(code, contains('class Api'));
         expect(
           collapsedCode,
           contains(
-            r'Future<void> doSomething( int validType, AnEnum enumType, '
-            r'Api2 proxyApiType, int? nullableValidType, '
-            r'AnEnum? nullableEnumType, Api2? nullableProxyApiType, )',
+            'abstract fun doSomething(pigeon_instance: Api, validType: Long, '
+            'enumType: AnEnum, proxyApiType: Api2, nullableValidType: Long?, '
+            'nullableEnumType: AnEnum?, nullableProxyApiType: Api2?)',
           ),
         );
         expect(
           collapsedCode,
           contains(
-            r'await pigeonVar_channel.send(<Object?>[ this, validType, '
-            r'enumType, proxyApiType, nullableValidType, '
-            r'nullableEnumType, nullableProxyApiType ])',
+            r'api.doSomething(pigeon_instanceArg, validTypeArg, enumTypeArg, '
+            r'proxyApiTypeArg, nullableValidTypeArg, nullableEnumTypeArg, '
+            r'nullableProxyApiTypeArg)',
           ),
         );
       });
@@ -876,27 +806,17 @@ void main() {
           enums: <Enum>[],
         );
         final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const DartOptions(),
+          const KotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
-        expect(code, contains('class Api'));
-        expect(
-          collapsedCode,
-          contains(
-            r'static Future<void> doSomething({ BinaryMessenger? pigeon_binaryMessenger, '
-            r'PigeonInstanceManager? pigeon_instanceManager, })',
-          ),
-        );
-        expect(
-          collapsedCode,
-          contains(r'await pigeonVar_channel.send(null)'),
-        );
+        expect(collapsedCode, contains('abstract fun doSomething()'));
+        expect(collapsedCode, contains(r'api.doSomething()'));
       });
     });
 
@@ -915,7 +835,6 @@ void main() {
                 Method(
                   name: 'doSomething',
                   location: ApiLocation.flutter,
-                  isRequired: false,
                   parameters: <Parameter>[
                     Parameter(
                       type: const TypeDeclaration(
@@ -963,74 +882,36 @@ void main() {
                     ),
                   ],
                   returnType: const TypeDeclaration.voidDeclaration(),
-                ),
+                )
               ])
         ], classes: <Class>[], enums: <Enum>[
           anEnum
         ]);
         final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const DartOptions(),
+          const KotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
-        expect(code, contains('class Api'));
         expect(
           collapsedCode,
           contains(
-            r'final void Function( Api pigeon_instance, int validType, '
-            r'AnEnum enumType, Api2 proxyApiType, int? nullableValidType, '
-            r'AnEnum? nullableEnumType, Api2? nullableProxyApiType, )? '
-            r'doSomething;',
+            'fun doSomething(pigeon_instanceArg: Api, validTypeArg: Long, '
+            'enumTypeArg: AnEnum, proxyApiTypeArg: Api2, nullableValidTypeArg: Long?, '
+            'nullableEnumTypeArg: AnEnum?, nullableProxyApiTypeArg: Api2?, '
+            'callback: (Result<Unit>) -> Unit)',
           ),
         );
         expect(
           collapsedCode,
           contains(
-              r'void Function( Api pigeon_instance, int validType, AnEnum enumType, '
-              r'Api2 proxyApiType, int? nullableValidType, '
-              r'AnEnum? nullableEnumType, Api2? nullableProxyApiType, )? '
-              r'doSomething'),
-        );
-        expect(
-          code,
-          contains(r'final Api? arg_pigeon_instance = (args[0] as Api?);'),
-        );
-        expect(
-          code,
-          contains(r'final int? arg_validType = (args[1] as int?);'),
-        );
-        expect(
-          code,
-          contains(
-            r'final AnEnum? arg_enumType = (args[2] as AnEnum?);',
-          ),
-        );
-        expect(
-          code,
-          contains(r'final Api2? arg_proxyApiType = (args[3] as Api2?);'),
-        );
-        expect(
-          code,
-          contains(r'final int? arg_nullableValidType = (args[4] as int?);'),
-        );
-        expect(
-          code,
-          contains(
-            r'final AnEnum? arg_nullableEnumType = (args[5] as AnEnum?);',
-          ),
-        );
-        expect(
-          collapsedCode,
-          contains(
-            r'(doSomething ?? arg_pigeon_instance!.doSomething)?.call( arg_pigeon_instance!, '
-            r'arg_validType!, arg_enumType!, arg_proxyApiType!, '
-            r'arg_nullableValidType, arg_nullableEnumType, '
-            r'arg_nullableProxyApiType);',
+            r'channel.send(listOf(pigeon_instanceArg, validTypeArg, enumTypeArg, '
+            r'proxyApiTypeArg, nullableValidTypeArg, nullableEnumTypeArg, '
+            r'nullableProxyApiTypeArg))',
           ),
         );
       });

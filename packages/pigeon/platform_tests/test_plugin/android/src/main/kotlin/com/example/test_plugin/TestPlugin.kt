@@ -12,6 +12,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   private var flutterApi: FlutterIntegrationCoreApi? = null
   private var flutterSmallApiOne: FlutterSmallApi? = null
   private var flutterSmallApiTwo: FlutterSmallApi? = null
+  private var proxyApiRegistrar: ProxyApiRegistrar? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -22,9 +23,14 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
     flutterSmallApiTwo = FlutterSmallApi(binding.binaryMessenger, "suffixTwo")
+
+    proxyApiRegistrar = ProxyApiRegistrar(binding.binaryMessenger)
+    proxyApiRegistrar!!.setUp()
   }
 
-  override fun onDetachedFromEngine(binding: FlutterPluginBinding) {}
+  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+    proxyApiRegistrar?.tearDown()
+  }
 
   // HostIntegrationCoreApi
 
