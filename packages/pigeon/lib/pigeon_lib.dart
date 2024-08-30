@@ -979,13 +979,6 @@ List<Error> _validateAst(Root root, String source) {
             lineNumber: _calculateLineNumberNullable(source, field.offset),
           ));
         }
-        if (customEnums.contains(typeArgument.baseName)) {
-          result.add(Error(
-            message:
-                'Enum types aren\'t supported in type arguments in "${field.name}" in class "${classDefinition.name}".',
-            lineNumber: _calculateLineNumberNullable(source, field.offset),
-          ));
-        }
       }
       if (!(validTypes.contains(field.type.baseName) ||
           customClasses.contains(field.type.baseName) ||
