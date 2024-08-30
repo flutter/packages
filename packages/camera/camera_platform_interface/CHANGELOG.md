@@ -1,5 +1,6 @@
-## NEXT
+## 2.9.0
 
+* Adds support for video stabilization.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 2.8.0
@@ -7,6 +8,7 @@
 * Deprecates `maxVideoDuration`/`maxDuration`, as it was never implemented on
   most platforms, and there is no plan to implement it in the future.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
 
 ## 2.7.4
 
