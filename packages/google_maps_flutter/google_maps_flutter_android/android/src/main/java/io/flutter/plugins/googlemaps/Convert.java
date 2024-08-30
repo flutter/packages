@@ -703,6 +703,19 @@ class Convert {
     return polygon.getPolygonId();
   }
 
+  static int jointTypeFromPigeon(Messages.PlatformJointType jointType) {
+    switch (jointType) {
+      case MITERED:
+        return 0;
+      case BEVEL:
+        return 1;
+      case ROUND:
+        return 2;
+    }
+    // These integer values come from a different package. This fallback ensures some value is returned in case a new enum value is added.
+    return 0;
+  }
+
   static String interpretPolylineOptions(
       Messages.PlatformPolyline polyline,
       PolylineOptionsSink sink,
@@ -713,7 +726,7 @@ class Convert {
     sink.setEndCap(toCap(polyline.getEndCap(), assetManager, density));
     sink.setStartCap(toCap(polyline.getStartCap(), assetManager, density));
     sink.setGeodesic(polyline.getGeodesic());
-    sink.setJointType(polyline.getJointType().index);
+    sink.setJointType(jointTypeFromPigeon(polyline.getJointType()));
     sink.setVisible(polyline.getVisible());
     sink.setWidth(polyline.getWidth());
     sink.setZIndex(polyline.getZIndex());

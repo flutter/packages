@@ -181,7 +181,7 @@ class PlatformPolygon {
   final int zIndex;
 }
 
-/// Join types for polyline joints. The indices of this enum must match those used internally by the maps SDK.
+/// Join types for polyline joints.
 enum PlatformJointType {
   mitered,
   bevel,

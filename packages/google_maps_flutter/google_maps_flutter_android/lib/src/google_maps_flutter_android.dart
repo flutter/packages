@@ -1148,8 +1148,7 @@ PlatformZoomRange? _platformZoomRangeFromMinMaxZoomPreferenceJson(
 
 /// Converts platform interface's JointType to Pigeon's PlatformJointType.
 @visibleForTesting
-PlatformJointType platformJointTypeFromJointType(
-    JointType jointType) {
+PlatformJointType platformJointTypeFromJointType(JointType jointType) {
   switch (jointType) {
     case JointType.mitered:
       return PlatformJointType.mitered;
