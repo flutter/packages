@@ -1,6 +1,6 @@
 ## 0.2.5
 
-* Fix breakpoint not being active in certain cases like foldables
+* Fix breakpoint not being active in certain cases like foldables.
 
 ## 0.2.4
 
