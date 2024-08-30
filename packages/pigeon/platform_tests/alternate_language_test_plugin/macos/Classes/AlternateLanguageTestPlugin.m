@@ -7,24 +7,26 @@
 #import "CoreTests.gen.h"
 
 @interface AlternateLanguageTestPlugin ()
-@property(nonatomic) FlutterSmallApi *flutterSmallApiOne;
-@property(nonatomic) FlutterSmallApi *flutterSmallApiTwo;
-@property(nonatomic) FlutterIntegrationCoreApi *flutterAPI;
+@property(nonatomic) FLTFlutterSmallApi *flutterSmallApiOne;
+@property(nonatomic) FLTFlutterSmallApi *flutterSmallApiTwo;
+@property(nonatomic) FLTFlutterIntegrationCoreApi *flutterAPI;
 @end
 
 /// This plugin handles the native side of the integration tests in example/integration_test/.
 @implementation AlternateLanguageTestPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   AlternateLanguageTestPlugin *plugin = [[AlternateLanguageTestPlugin alloc] init];
-  SetUpHostIntegrationCoreApi(registrar.messenger, plugin);
+  SetUpFLTHostIntegrationCoreApi([registrar messenger], plugin);
   [AlternateLanguageTestAPIWithSuffix registerWithRegistrar:registrar suffix:@"suffixOne"];
   [AlternateLanguageTestAPIWithSuffix registerWithRegistrar:registrar suffix:@"suffixTwo"];
   plugin.flutterAPI =
-      [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:registrar.messenger];
-  plugin.flutterSmallApiOne = [[FlutterSmallApi alloc] initWithBinaryMessenger:registrar.messenger
-                                                          messageChannelSuffix:@"suffixOne"];
-  plugin.flutterSmallApiTwo = [[FlutterSmallApi alloc] initWithBinaryMessenger:registrar.messenger
-                                                          messageChannelSuffix:@"suffixTwo"];
+      [[FLTFlutterIntegrationCoreApi alloc] initWithBinaryMessenger:[registrar messenger]];
+  plugin.flutterSmallApiOne =
+      [[FLTFlutterSmallApi alloc] initWithBinaryMessenger:[registrar messenger]
+                                     messageChannelSuffix:@"suffixOne"];
+  plugin.flutterSmallApiTwo =
+      [[FLTFlutterSmallApi alloc] initWithBinaryMessenger:[registrar messenger]
+                                     messageChannelSuffix:@"suffixTwo"];
 }
 
 #pragma mark HostIntegrationCoreApi implementation
@@ -32,18 +34,18 @@
 - (void)noopWithError:(FlutterError *_Nullable *_Nonnull)error {
 }
 
-- (nullable AllTypes *)echoAllTypes:(AllTypes *)everything
-                              error:(FlutterError *_Nullable *_Nonnull)error {
+- (nullable FLTAllTypes *)echoAllTypes:(FLTAllTypes *)everything
+                                 error:(FlutterError *_Nullable *_Nonnull)error {
   return everything;
 }
 
-- (nullable AllNullableTypes *)echoAllNullableTypes:(nullable AllNullableTypes *)everything
-                                              error:(FlutterError *_Nullable *_Nonnull)error {
+- (nullable FLTAllNullableTypes *)echoAllNullableTypes:(nullable FLTAllNullableTypes *)everything
+                                                 error:(FlutterError *_Nullable *_Nonnull)error {
   return everything;
 }
 
-- (nullable AllNullableTypesWithoutRecursion *)
-    echoAllNullableTypesWithoutRecursion:(nullable AllNullableTypesWithoutRecursion *)everything
+- (nullable FLTAllNullableTypesWithoutRecursion *)
+    echoAllNullableTypesWithoutRecursion:(nullable FLTAllNullableTypesWithoutRecursion *)everything
                                    error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   return everything;
 }
@@ -93,6 +95,17 @@
   return list;
 }
 
+- (nullable NSArray<FLTAnEnumBox *> *)echoEnumList:(NSArray<FLTAnEnumBox *> *)enumList
+                                             error:(FlutterError *_Nullable *_Nonnull)error {
+  return enumList;
+}
+
+- (nullable NSArray<FLTAllNullableTypes *> *)
+    echoClassList:(NSArray<FLTAllNullableTypes *> *)classList
+            error:(FlutterError *_Nullable *_Nonnull)error {
+  return classList;
+}
+
 - (nullable NSDictionary<id, id> *)echoMap:(NSDictionary<id, id> *)map
                                      error:(FlutterError *_Nullable *_Nonnull)error {
   return map;
@@ -110,18 +123,31 @@
   return intMap;
 }
 
-- (nullable AllClassesWrapper *)echoClassWrapper:(AllClassesWrapper *)wrapper
-                                           error:(FlutterError *_Nullable *_Nonnull)error {
+- (nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)
+    echoEnumMap:(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+          error:(FlutterError *_Nullable *_Nonnull)error {
+  return enumMap;
+}
+
+- (nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)
+    echoClassMap:(NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
+           error:(FlutterError *_Nullable *_Nonnull)error {
+  return classMap;
+}
+
+- (nullable FLTAllClassesWrapper *)echoClassWrapper:(FLTAllClassesWrapper *)wrapper
+                                              error:(FlutterError *_Nullable *_Nonnull)error {
   return wrapper;
 }
 
-- (AnEnumBox *_Nullable)echoEnum:(AnEnum)anEnum error:(FlutterError *_Nullable *_Nonnull)error {
-  return [[AnEnumBox alloc] initWithValue:anEnum];
+- (FLTAnEnumBox *_Nullable)echoEnum:(FLTAnEnum)anEnum
+                              error:(FlutterError *_Nullable *_Nonnull)error {
+  return [[FLTAnEnumBox alloc] initWithValue:anEnum];
 }
 
-- (AnotherEnumBox *_Nullable)echoAnotherEnum:(AnotherEnum)anotherEnum
-                                       error:(FlutterError *_Nullable *_Nonnull)error {
-  return [[AnotherEnumBox alloc] initWithValue:anotherEnum];
+- (FLTAnotherEnumBox *_Nullable)echoAnotherEnum:(FLTAnotherEnum)anotherEnum
+                                          error:(FlutterError *_Nullable *_Nonnull)error {
+  return [[FLTAnotherEnumBox alloc] initWithValue:anotherEnum];
 }
 
 - (nullable NSString *)echoNamedDefaultString:(NSString *)aString
@@ -139,41 +165,46 @@
   return @(anInt);
 }
 
-- (nullable NSString *)extractNestedNullableStringFrom:(AllClassesWrapper *)wrapper
+- (nullable NSString *)extractNestedNullableStringFrom:(FLTAllClassesWrapper *)wrapper
                                                  error:(FlutterError *_Nullable *_Nonnull)error {
   return wrapper.allNullableTypes.aNullableString;
 }
 
-- (nullable AllClassesWrapper *)
+- (nullable FLTAllClassesWrapper *)
     createNestedObjectWithNullableString:(nullable NSString *)nullableString
                                    error:(FlutterError *_Nullable *_Nonnull)error {
-  AllNullableTypes *innerObject = [[AllNullableTypes alloc] init];
+  FLTAllNullableTypes *innerObject = [[FLTAllNullableTypes alloc] init];
   innerObject.aNullableString = nullableString;
-  return [AllClassesWrapper makeWithAllNullableTypes:innerObject
-                    allNullableTypesWithoutRecursion:nil
-                                            allTypes:nil];
+  return [FLTAllClassesWrapper makeWithAllNullableTypes:innerObject
+                       allNullableTypesWithoutRecursion:nil
+                                               allTypes:nil
+                                              classList:@[]
+                                      nullableClassList:nil
+                                               classMap:@{}
+                                       nullableClassMap:nil];
 }
 
-- (nullable AllNullableTypes *)sendMultipleNullableTypesABool:(nullable NSNumber *)aNullableBool
-                                                        anInt:(nullable NSNumber *)aNullableInt
-                                                      aString:(nullable NSString *)aNullableString
-                                                        error:(FlutterError *_Nullable *_Nonnull)
-                                                                  error {
-  AllNullableTypes *someTypes = [[AllNullableTypes alloc] init];
+- (nullable FLTAllNullableTypes *)
+    sendMultipleNullableTypesABool:(nullable NSNumber *)aNullableBool
+                             anInt:(nullable NSNumber *)aNullableInt
+                           aString:(nullable NSString *)aNullableString
+                             error:(FlutterError *_Nullable *_Nonnull)error {
+  FLTAllNullableTypes *someTypes = [[FLTAllNullableTypes alloc] init];
   someTypes.aNullableBool = aNullableBool;
   someTypes.aNullableInt = aNullableInt;
   someTypes.aNullableString = aNullableString;
   return someTypes;
 }
 
-- (nullable AllNullableTypesWithoutRecursion *)
+- (nullable FLTAllNullableTypesWithoutRecursion *)
     sendMultipleNullableTypesWithoutRecursionABool:(nullable NSNumber *)aNullableBool
                                              anInt:(nullable NSNumber *)aNullableInt
                                            aString:(nullable NSString *)aNullableString
                                              error:
                                                  (FlutterError *_Nullable __autoreleasing *_Nonnull)
                                                      error {
-  AllNullableTypesWithoutRecursion *someTypes = [[AllNullableTypesWithoutRecursion alloc] init];
+  FLTAllNullableTypesWithoutRecursion *someTypes =
+      [[FLTAllNullableTypesWithoutRecursion alloc] init];
   someTypes.aNullableBool = aNullableBool;
   someTypes.aNullableInt = aNullableInt;
   someTypes.aNullableString = aNullableString;
@@ -216,6 +247,18 @@
   return aNullableList;
 }
 
+- (nullable NSArray<FLTAnEnumBox *> *)
+    echoNullableEnumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
+                   error:(FlutterError *_Nullable *_Nonnull)error {
+  return enumList;
+}
+
+- (nullable NSArray<FLTAllNullableTypes *> *)
+    echoNullableClassList:(nullable NSArray<FLTAllNullableTypes *> *)FLTAllNullableTypes
+                    error:(FlutterError *_Nullable *_Nonnull)error {
+  return FLTAllNullableTypes;
+}
+
 - (nullable NSDictionary<id, id> *)echoNullableMap:(nullable NSDictionary<id, id> *)map
                                              error:(FlutterError *_Nullable *_Nonnull)error {
   return map;
@@ -233,13 +276,26 @@
   return intMap;
 }
 
-- (AnEnumBox *_Nullable)echoNullableEnum:(nullable AnEnumBox *)AnEnumBoxed
-                                   error:(FlutterError *_Nullable *_Nonnull)error {
+- (nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)
+    echoNullableEnumMap:(nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                  error:(FlutterError *_Nullable *_Nonnull)error {
+  return enumMap;
+}
+
+- (nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)
+    echoNullableClassMap:(nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
+                   error:(FlutterError *_Nullable *_Nonnull)error {
+  return classMap;
+}
+
+- (FLTAnEnumBox *_Nullable)echoNullableEnum:(nullable FLTAnEnumBox *)AnEnumBoxed
+                                      error:(FlutterError *_Nullable *_Nonnull)error {
   return AnEnumBoxed;
 }
 
-- (AnotherEnumBox *_Nullable)echoAnotherNullableEnum:(nullable AnotherEnumBox *)AnotherEnumBoxed
-                                               error:(FlutterError *_Nullable *_Nonnull)error {
+- (FLTAnotherEnumBox *_Nullable)echoAnotherNullableEnum:
+                                    (nullable FLTAnotherEnumBox *)AnotherEnumBoxed
+                                                  error:(FlutterError *_Nullable *_Nonnull)error {
   return AnotherEnumBoxed;
 }
 
@@ -270,23 +326,24 @@
   completion(nil, [FlutterError errorWithCode:@"code" message:@"message" details:@"details"]);
 }
 
-- (void)echoAsyncAllTypes:(AllTypes *)everything
-               completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion {
+- (void)echoAsyncAllTypes:(FLTAllTypes *)everything
+               completion:(void (^)(FLTAllTypes *_Nullable, FlutterError *_Nullable))completion {
   completion(everything, nil);
 }
 
-- (void)echoAsyncNullableAllNullableTypes:(nullable AllNullableTypes *)everything
-                               completion:(void (^)(AllNullableTypes *_Nullable,
+- (void)echoAsyncNullableAllNullableTypes:(nullable FLTAllNullableTypes *)everything
+                               completion:(void (^)(FLTAllNullableTypes *_Nullable,
                                                     FlutterError *_Nullable))completion {
   completion(everything, nil);
 }
 
-- (void)echoAsyncNullableAllNullableTypesWithoutRecursion:
-            (nullable AllNullableTypesWithoutRecursion *)everything
-                                               completion:
-                                                   (nonnull void (^)(
-                                                       AllNullableTypesWithoutRecursion *_Nullable,
-                                                       FlutterError *_Nullable))completion {
+- (void)
+    echoAsyncNullableAllNullableTypesWithoutRecursion:
+        (nullable FLTAllNullableTypesWithoutRecursion *)everything
+                                           completion:
+                                               (nonnull void (^)(
+                                                   FLTAllNullableTypesWithoutRecursion *_Nullable,
+                                                   FlutterError *_Nullable))completion {
   completion(everything, nil);
 }
 
@@ -326,6 +383,18 @@
   completion(list, nil);
 }
 
+- (void)echoAsyncEnumList:(NSArray<FLTAnEnumBox *> *)enumList
+               completion:(void (^)(NSArray<FLTAnEnumBox *> *_Nullable,
+                                    FlutterError *_Nullable))completion {
+  completion(enumList, nil);
+}
+
+- (void)echoAsyncClassList:(NSArray<FLTAllNullableTypes *> *)classList
+                completion:(void (^)(NSArray<FLTAllNullableTypes *> *_Nullable,
+                                     FlutterError *_Nullable))completion {
+  completion(classList, nil);
+}
+
 - (void)echoAsyncMap:(NSDictionary<id, id> *)map
           completion:
               (void (^)(NSDictionary<id, id> *_Nullable, FlutterError *_Nullable))completion {
@@ -344,15 +413,27 @@
   completion(intMap, nil);
 }
 
-- (void)echoAsyncEnum:(AnEnum)anEnum
-           completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion {
-  completion([[AnEnumBox alloc] initWithValue:anEnum], nil);
+- (void)echoAsyncEnumMap:(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+              completion:(void (^)(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *_Nullable,
+                                   FlutterError *_Nullable))completion {
+  completion(enumMap, nil);
 }
 
-- (void)echoAnotherAsyncEnum:(AnotherEnum)anotherEnum
+- (void)echoAsyncClassMap:(NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
+               completion:(void (^)(NSDictionary<NSNumber *, FLTAllNullableTypes *> *_Nullable,
+                                    FlutterError *_Nullable))completion {
+  completion(classMap, nil);
+}
+
+- (void)echoAsyncEnum:(FLTAnEnum)anEnum
+           completion:(void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion {
+  completion([[FLTAnEnumBox alloc] initWithValue:anEnum], nil);
+}
+
+- (void)echoAnotherAsyncEnum:(FLTAnotherEnum)anotherEnum
                   completion:
-                      (void (^)(AnotherEnumBox *_Nullable, FlutterError *_Nullable))completion {
-  completion([[AnotherEnumBox alloc] initWithValue:anotherEnum], nil);
+                      (void (^)(FLTAnotherEnumBox *_Nullable, FlutterError *_Nullable))completion {
+  completion([[FLTAnotherEnumBox alloc] initWithValue:anotherEnum], nil);
 }
 
 - (void)echoAsyncNullableInt:(nullable NSNumber *)anInt
@@ -392,6 +473,18 @@
   completion(list, nil);
 }
 
+- (void)echoAsyncNullableEnumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
+                       completion:(void (^)(NSArray<FLTAnEnumBox *> *_Nullable,
+                                            FlutterError *_Nullable))completion {
+  completion(enumList, nil);
+}
+
+- (void)echoAsyncNullableClassList:(nullable NSArray<FLTAllNullableTypes *> *)classList
+                        completion:(void (^)(NSArray<FLTAllNullableTypes *> *_Nullable,
+                                             FlutterError *_Nullable))completion {
+  completion(classList, nil);
+}
+
 - (void)echoAsyncNullableMap:(nullable NSDictionary<id, id> *)map
                   completion:(void (^)(NSDictionary<id, id> *_Nullable,
                                        FlutterError *_Nullable))completion {
@@ -410,13 +503,27 @@
   completion(intMap, nil);
 }
 
-- (void)echoAsyncNullableEnum:(nullable AnEnumBox *)AnEnumBoxed
-                   completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion {
+- (void)echoAsyncNullableEnumMap:(nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                      completion:(void (^)(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *_Nullable,
+                                           FlutterError *_Nullable))completion {
+  completion(enumMap, nil);
+}
+
+- (void)
+    echoAsyncNullableClassMap:(nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
+                   completion:(void (^)(NSDictionary<NSNumber *, FLTAllNullableTypes *> *_Nullable,
+                                        FlutterError *_Nullable))completion {
+  completion(classMap, nil);
+}
+
+- (void)echoAsyncNullableEnum:(nullable FLTAnEnumBox *)AnEnumBoxed
+                   completion:
+                       (void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion {
   completion(AnEnumBoxed, nil);
 }
 
-- (void)echoAnotherAsyncNullableEnum:(nullable AnotherEnumBox *)AnotherEnumBoxed
-                          completion:(void (^)(AnotherEnumBox *_Nullable,
+- (void)echoAnotherAsyncNullableEnum:(nullable FLTAnotherEnumBox *)AnotherEnumBoxed
+                          completion:(void (^)(FLTAnotherEnumBox *_Nullable,
                                                FlutterError *_Nullable))completion {
   completion(AnotherEnumBoxed, nil);
 }
@@ -440,10 +547,11 @@
   }];
 }
 
-- (void)callFlutterEchoAllTypes:(AllTypes *)everything
-                     completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion {
+- (void)callFlutterEchoAllTypes:(FLTAllTypes *)everything
+                     completion:
+                         (void (^)(FLTAllTypes *_Nullable, FlutterError *_Nullable))completion {
   [self.flutterAPI echoAllTypes:everything
-                     completion:^(AllTypes *value, FlutterError *error) {
+                     completion:^(FLTAllTypes *value, FlutterError *error) {
                        completion(value, error);
                      }];
 }
@@ -451,14 +559,15 @@
 - (void)callFlutterSendMultipleNullableTypesABool:(nullable NSNumber *)aNullableBool
                                             anInt:(nullable NSNumber *)aNullableInt
                                           aString:(nullable NSString *)aNullableString
-                                       completion:(void (^)(AllNullableTypes *_Nullable,
+                                       completion:(void (^)(FLTAllNullableTypes *_Nullable,
                                                             FlutterError *_Nullable))completion {
-  [self.flutterAPI sendMultipleNullableTypesABool:aNullableBool
-                                            anInt:aNullableInt
-                                          aString:aNullableString
-                                       completion:^(AllNullableTypes *value, FlutterError *error) {
-                                         completion(value, error);
-                                       }];
+  [self.flutterAPI
+      sendMultipleNullableTypesABool:aNullableBool
+                               anInt:aNullableInt
+                             aString:aNullableString
+                          completion:^(FLTAllNullableTypes *value, FlutterError *error) {
+                            completion(value, error);
+                          }];
 }
 
 - (void)callFlutterSendMultipleNullableTypesWithoutRecursionABool:(nullable NSNumber *)aNullableBool
@@ -467,14 +576,14 @@
                                                               (nullable NSString *)aNullableString
                                                        completion:
                                                            (nonnull void (^)(
-                                                               AllNullableTypesWithoutRecursion
+                                                               FLTAllNullableTypesWithoutRecursion
                                                                    *_Nullable,
                                                                FlutterError *_Nullable))completion {
   [self.flutterAPI
       sendMultipleNullableTypesWithoutRecursionABool:aNullableBool
                                                anInt:aNullableInt
                                              aString:aNullableString
-                                          completion:^(AllNullableTypesWithoutRecursion *value,
+                                          completion:^(FLTAllNullableTypesWithoutRecursion *value,
                                                        FlutterError *error) {
                                             completion(value, error);
                                           }];
@@ -529,6 +638,24 @@
                  }];
 }
 
+- (void)callFlutterEchoEnumList:(NSArray<FLTAnEnumBox *> *)enumList
+                     completion:(void (^)(NSArray<FLTAnEnumBox *> *_Nullable,
+                                          FlutterError *_Nullable))completion {
+  [self.flutterAPI echoEnumList:enumList
+                     completion:^(NSArray<FLTAnEnumBox *> *value, FlutterError *error) {
+                       completion(value, error);
+                     }];
+}
+
+- (void)callFlutterEchoClassList:(NSArray<FLTAllNullableTypes *> *)classList
+                      completion:(void (^)(NSArray<FLTAllNullableTypes *> *_Nullable,
+                                           FlutterError *_Nullable))completion {
+  [self.flutterAPI echoClassList:classList
+                      completion:^(NSArray<FLTAllNullableTypes *> *value, FlutterError *error) {
+                        completion(value, error);
+                      }];
+}
+
 - (void)callFlutterEchoMap:(NSDictionary<id, id> *)map
                 completion:
                     (void (^)(NSDictionary<id, id> *_Nullable, FlutterError *_Nullable))completion {
@@ -557,43 +684,65 @@
                    }];
 }
 
-- (void)callFlutterEchoEnum:(AnEnum)anEnum
-                 completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion {
+- (void)callFlutterEchoEnumMap:(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                    completion:(void (^)(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *_Nullable,
+                                         FlutterError *_Nullable))completion {
+  [self.flutterAPI
+      echoEnumMap:enumMap
+       completion:^(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *value, FlutterError *error) {
+         completion(value, error);
+       }];
+}
+
+- (void)callFlutterEchoClassMap:(NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
+                     completion:
+                         (void (^)(NSDictionary<NSNumber *, FLTAllNullableTypes *> *_Nullable,
+                                   FlutterError *_Nullable))completion {
+  [self.flutterAPI
+      echoClassMap:classMap
+        completion:^(NSDictionary<NSNumber *, FLTAllNullableTypes *> *value, FlutterError *error) {
+          completion(value, error);
+        }];
+}
+
+- (void)callFlutterEchoEnum:(FLTAnEnum)anEnum
+                 completion:(void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion {
   [self.flutterAPI echoEnum:anEnum
-                 completion:^(AnEnumBox *value, FlutterError *error) {
+                 completion:^(FLTAnEnumBox *value, FlutterError *error) {
                    completion(value, error);
                  }];
 }
 
-- (void)callFlutterEchoAnotherEnum:(AnotherEnum)anotherEnum
-                        completion:(void (^)(AnotherEnumBox *_Nullable,
+- (void)callFlutterEchoAnotherEnum:(FLTAnotherEnum)anotherEnum
+                        completion:(void (^)(FLTAnotherEnumBox *_Nullable,
                                              FlutterError *_Nullable))completion {
   [self.flutterAPI echoAnotherEnum:anotherEnum
-                        completion:^(AnotherEnumBox *value, FlutterError *error) {
+                        completion:^(FLTAnotherEnumBox *value, FlutterError *error) {
                           completion(value, error);
                         }];
 }
 
-- (void)callFlutterEchoAllNullableTypes:(nullable AllNullableTypes *)everything
-                             completion:(void (^)(AllNullableTypes *_Nullable,
+- (void)callFlutterEchoAllNullableTypes:(nullable FLTAllNullableTypes *)everything
+                             completion:(void (^)(FLTAllNullableTypes *_Nullable,
                                                   FlutterError *_Nullable))completion {
   [self.flutterAPI echoAllNullableTypes:everything
-                             completion:^(AllNullableTypes *value, FlutterError *error) {
+                             completion:^(FLTAllNullableTypes *value, FlutterError *error) {
                                completion(value, error);
                              }];
 }
 
 - (void)callFlutterEchoAllNullableTypesWithoutRecursion:
-            (nullable AllNullableTypesWithoutRecursion *)everything
+            (nullable FLTAllNullableTypesWithoutRecursion *)everything
                                              completion:
                                                  (nonnull void (^)(
-                                                     AllNullableTypesWithoutRecursion *_Nullable,
+                                                     FLTAllNullableTypesWithoutRecursion *_Nullable,
                                                      FlutterError *_Nullable))completion {
-  [self.flutterAPI echoAllNullableTypesWithoutRecursion:everything
-                                             completion:^(AllNullableTypesWithoutRecursion *value,
-                                                          FlutterError *error) {
-                                               completion(value, error);
-                                             }];
+  [self.flutterAPI
+      echoAllNullableTypesWithoutRecursion:everything
+                                completion:^(FLTAllNullableTypesWithoutRecursion *value,
+                                             FlutterError *error) {
+                                  completion(value, error);
+                                }];
 }
 
 - (void)callFlutterEchoNullableBool:(nullable NSNumber *)aBool
@@ -650,6 +799,25 @@
                          }];
 }
 
+- (void)callFlutterEchoNullableEnumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
+                             completion:(void (^)(NSArray<FLTAnEnumBox *> *_Nullable,
+                                                  FlutterError *_Nullable))completion {
+  [self.flutterAPI echoNullableEnumList:enumList
+                             completion:^(NSArray<FLTAnEnumBox *> *value, FlutterError *error) {
+                               completion(value, error);
+                             }];
+}
+
+- (void)callFlutterEchoNullableClassList:(nullable NSArray<FLTAllNullableTypes *> *)classList
+                              completion:(void (^)(NSArray<FLTAllNullableTypes *> *_Nullable,
+                                                   FlutterError *_Nullable))completion {
+  [self.flutterAPI
+      echoNullableClassList:classList
+                 completion:^(NSArray<FLTAllNullableTypes *> *value, FlutterError *error) {
+                   completion(value, error);
+                 }];
+}
+
 - (void)callFlutterEchoNullableMap:(nullable NSDictionary<id, id> *)map
                         completion:(void (^)(NSDictionary<id, id> *_Nullable,
                                              FlutterError *_Nullable))completion {
@@ -679,20 +847,45 @@
               }];
 }
 
-- (void)callFlutterEchoNullableEnum:(nullable AnEnumBox *)AnEnumBoxed
+- (void)callFlutterEchoNullableEnumMap:
+            (nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                            completion:
+                                (void (^)(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *_Nullable,
+                                          FlutterError *_Nullable))completion {
+  [self.flutterAPI echoNullableEnumMap:enumMap
+                            completion:^(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *value,
+                                         FlutterError *error) {
+                              completion(value, error);
+                            }];
+}
+
+- (void)
+    callFlutterEchoNullableClassMap:
+        (nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
                          completion:
-                             (void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion {
+                             (void (^)(NSDictionary<NSNumber *, FLTAllNullableTypes *> *_Nullable,
+                                       FlutterError *_Nullable))completion {
+  [self.flutterAPI echoNullableClassMap:classMap
+                             completion:^(NSDictionary<NSNumber *, FLTAllNullableTypes *> *value,
+                                          FlutterError *error) {
+                               completion(value, error);
+                             }];
+}
+
+- (void)callFlutterEchoNullableEnum:(nullable FLTAnEnumBox *)AnEnumBoxed
+                         completion:(void (^)(FLTAnEnumBox *_Nullable,
+                                              FlutterError *_Nullable))completion {
   [self.flutterAPI echoNullableEnum:AnEnumBoxed
-                         completion:^(AnEnumBox *value, FlutterError *error) {
+                         completion:^(FLTAnEnumBox *value, FlutterError *error) {
                            completion(value, error);
                          }];
 }
 
-- (void)callFlutterEchoAnotherNullableEnum:(nullable AnotherEnumBox *)AnotherEnumBoxed
-                                completion:(void (^)(AnotherEnumBox *_Nullable,
+- (void)callFlutterEchoAnotherNullableEnum:(nullable FLTAnotherEnumBox *)AnotherEnumBoxed
+                                completion:(void (^)(FLTAnotherEnumBox *_Nullable,
                                                      FlutterError *_Nullable))completion {
   [self.flutterAPI echoAnotherNullableEnum:AnotherEnumBoxed
-                                completion:^(AnotherEnumBox *value, FlutterError *error) {
+                                completion:^(FLTAnotherEnumBox *value, FlutterError *error) {
                                   completion(value, error);
                                 }];
 }
@@ -723,8 +916,8 @@
       }];
 }
 
-- (UnusedClass *)checkIfUnusedClassGenerated {
-  return [[UnusedClass alloc] init];
+- (FLTUnusedClass *)checkIfUnusedClassGenerated {
+  return [[FLTUnusedClass alloc] init];
 }
 
 @end
@@ -736,7 +929,7 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
                        suffix:(NSString *)suffix {
   AlternateLanguageTestAPIWithSuffix *api = [[AlternateLanguageTestAPIWithSuffix alloc] init];
-  SetUpHostSmallApiWithSuffix(registrar.messenger, api, suffix);
+  SetUpFLTHostSmallApiWithSuffix([registrar messenger], api, suffix);
 }
 
 #pragma mark HostSmallAPI implementation

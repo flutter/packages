@@ -562,7 +562,7 @@ abstract class VideoView extends View {
   late final void Function(MediaPlayer player, int what, int extra) onError;
 
   /// Sets the URI of the video.
-  void setVideoUri(String uri);
+  void setVideoUri(String? uri);
 
   /// The current position of the playing video.
   ///

@@ -208,7 +208,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
       indent.nest(1, () {
         if (customType.type == CustomTypes.customEnum) {
           indent.writeln(
-              'let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)');
+              'let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)');
           indent.writeScoped('if let enumResultAsInt = enumResultAsInt {', '}',
               () {
             indent.writeln(
@@ -482,7 +482,7 @@ if (wrapped == nil) {
   }
 
   void _writeClassField(Indent indent, NamedType field, {bool addNil = true}) {
-    indent.add('${field.name}: ${_nullsafeSwiftTypeForDartType(field.type)}');
+    indent.add('${field.name}: ${_nullSafeSwiftTypeForDartType(field.type)}');
     final String defaultNil = field.type.isNullable && addNil ? ' = nil' : '';
     indent.add(defaultNil);
   }
@@ -550,7 +550,17 @@ if (wrapped == nil) {
               getFieldsInSerializationOrder(classDefinition).last == field
                   ? ''
                   : ',';
-          indent.writeln('${field.name}: ${field.name}$comma');
+          // Force-casting nullable enums in maps doesn't work the same as other types.
+          // It needs soft-casting followed by force unwrapping.
+          final String forceUnwrapMapWithNullableEnums =
+              (field.type.baseName == 'Map' &&
+                      !field.type.isNullable &&
+                      field.type.typeArguments
+                          .any((TypeDeclaration type) => type.isEnum))
+                  ? '!'
+                  : '';
+          indent.writeln(
+              '${field.name}: ${field.name}$forceUnwrapMapWithNullableEnums$comma');
         }
       });
     });
@@ -1186,14 +1196,11 @@ if (wrapped == nil) {
     assert(!type.isVoid);
     if (type.baseName == 'Object') {
       return value + (type.isNullable ? '' : '!');
-    } else if (type.baseName == 'int') {
-      if (type.isNullable) {
-        // Nullable ints need to check for NSNull, and Int32 before casting can be done safely.
-        // This nested ternary is a necessary evil to avoid less efficient conversions.
-        return 'isNullish($value) ? nil : ($value is Int64? ? $value as! Int64? : Int64($value as! Int32))';
-      } else {
-        return '$value is Int64 ? $value as! Int64 : Int64($value as! Int32)';
-      }
+      // Force-casting nullable enums in maps doesn't work the same as other types.
+      // It needs soft-casting followed by force unwrapping.
+    } else if (type.baseName == 'Map' &&
+        type.typeArguments.any((TypeDeclaration type) => type.isEnum)) {
+      return '$value as? ${_swiftTypeForDartType(type)}';
     } else if (type.isNullable) {
       return 'nilOrValue($value)';
     } else {
@@ -1401,6 +1408,27 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           );
           indent.writeln('completion(.success(result))');
         }
+        indent.addScoped('else {', '}', () {
+          if (returnType.isVoid) {
+            indent.writeln('completion(.success(Void()))');
+          } else {
+            final String fieldType = _swiftTypeForDartType(returnType);
+            _writeGenericCasting(
+              indent: indent,
+              value: 'listResponse[0]',
+              variableName: 'result',
+              fieldType: fieldType,
+              type: returnType,
+            );
+            // There is a swift bug with unwrapping maps of nullable Enums;
+            final String enumMapForceUnwrap = returnType.baseName == 'Map' &&
+                    returnType.typeArguments
+                        .any((TypeDeclaration type) => type.isEnum)
+                ? '!'
+                : '';
+            indent.writeln('completion(.success(result$enumMapForceUnwrap))');
+          }
+        });
       });
     });
   }
@@ -1442,6 +1470,12 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
             final String argName = _getSafeArgumentName(index, arg.namedType);
             final String argIndex = 'args[$index]';
             final String fieldType = _swiftTypeForDartType(arg.type);
+            // There is a swift bug with unwrapping maps of nullable Enums;
+            final String enumMapForceUnwrap = arg.type.baseName == 'Map' &&
+                    arg.type.typeArguments
+                        .any((TypeDeclaration type) => type.isEnum)
+                ? '!'
+                : '';
 
             _writeGenericCasting(
                 indent: indent,
@@ -1451,9 +1485,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
                 type: arg.type);
 
             if (arg.label == '_') {
-              methodArgument.add(argName);
+              methodArgument.add('$argName$enumMapForceUnwrap');
             } else {
-              methodArgument.add('${arg.label ?? arg.name}: $argName');
+              methodArgument
+                  .add('${arg.label ?? arg.name}: $argName$enumMapForceUnwrap');
             }
           });
         }
@@ -2500,9 +2535,9 @@ String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
     }
   } else {
     if (type.baseName == 'List') {
-      return '[${_nullsafeSwiftTypeForDartType(type.typeArguments.first)}]';
+      return '[${_nullSafeSwiftTypeForDartType(type.typeArguments.first)}]';
     } else if (type.baseName == 'Map') {
-      return '[${_nullsafeSwiftTypeForDartType(type.typeArguments.first)}: ${_nullsafeSwiftTypeForDartType(type.typeArguments.last)}]';
+      return '[${_nullSafeSwiftTypeForDartType(type.typeArguments.first)}: ${_nullSafeSwiftTypeForDartType(type.typeArguments.last)}]';
     } else {
       return '${type.baseName}<${_flattenTypeArguments(type.typeArguments)}>';
     }
@@ -2548,7 +2583,7 @@ String _swiftTypeForDartType(TypeDeclaration type) {
       type.baseName;
 }
 
-String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
+String _nullSafeSwiftTypeForDartType(TypeDeclaration type) {
   final String nullSafe = type.isNullable ? '?' : '';
   return '${_swiftTypeForDartType(type)}$nullSafe';
 }
@@ -2570,10 +2605,10 @@ String _getMethodSignature({
     swiftFunction: swiftFunction,
   );
   final String returnTypeString =
-      returnType.isVoid ? 'Void' : _nullsafeSwiftTypeForDartType(returnType);
+      returnType.isVoid ? 'Void' : _nullSafeSwiftTypeForDartType(returnType);
 
   final Iterable<String> types =
-      parameters.map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
+      parameters.map((NamedType e) => _nullSafeSwiftTypeForDartType(e.type));
   final Iterable<String> labels = indexMap(components.arguments,
       (int index, _SwiftFunctionArgument argument) {
     return argument.label ?? _getArgumentName(index, argument.namedType);

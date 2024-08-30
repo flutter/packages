@@ -1,6 +1,10 @@
-## 22.3.0
+## 22.4.0
 
 * [swift] Adds implementation for `@ProxyApi`.
+
+## 22.3.0
+
+* Adds support for enums and classes in collections.
 
 ## 22.2.0
 

@@ -147,20 +147,8 @@ public class AllDatatypesTest {
     assertTrue(didCall[0]);
   }
 
-  private static HashMap<Object, Object> makeMap(String key, Integer value) {
-    HashMap<Object, Object> result = new HashMap<Object, Object>();
-    result.put(key, value);
-    return result;
-  }
-
-  private static HashMap<String, String> makeStringMap(String key, String value) {
-    HashMap<String, String> result = new HashMap<String, String>();
-    result.put(key, value);
-    return result;
-  }
-
-  private static HashMap<Long, Long> makeIntMap(Long key, Long value) {
-    HashMap<Long, Long> result = new HashMap<Long, Long>();
+  private static <K, J> HashMap<K, J> makeMap(K key, J value) {
+    HashMap<K, J> result = new HashMap<K, J>();
     result.put(key, value);
     return result;
   }
@@ -202,10 +190,14 @@ public class AllDatatypesTest {
             .setDoubleList(Arrays.asList(new Double[] {0.5, 0.25, 1.5, 1.25}))
             .setIntList(Arrays.asList(new Long[] {1l, 2l, 3l, 4l}))
             .setStringList(Arrays.asList(new String[] {"string", "another one"}))
+            .setEnumList(
+                Arrays.asList(
+                    new CoreTests.AnEnum[] {CoreTests.AnEnum.ONE, CoreTests.AnEnum.FORTY_TWO}))
             .setListList(listList)
             .setMap(makeMap("hello", 1234))
-            .setIntMap(makeIntMap(1L, 0L))
-            .setStringMap(makeStringMap("hello", "you"))
+            .setIntMap(makeMap(1L, 0L))
+            .setStringMap(makeMap("hello", "you"))
+            .setEnumMap(makeMap(CoreTests.AnEnum.ONE, CoreTests.AnEnum.FOUR_HUNDRED_TWENTY_TWO))
             .build();
 
     AllNullableTypes everything =
@@ -226,8 +218,8 @@ public class AllDatatypesTest {
             .setStringList(Arrays.asList(new String[] {"string", "another one"}))
             .setListList(listList)
             .setMap(makeMap("hello", 1234))
-            .setStringMap(makeStringMap("hello", "you"))
-            .setIntMap(makeIntMap(2L, -2L))
+            .setStringMap(makeMap("hello", "you"))
+            .setIntMap(makeMap(2L, -2L))
             .build();
 
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
