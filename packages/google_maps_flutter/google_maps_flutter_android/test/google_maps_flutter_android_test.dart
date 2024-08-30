@@ -546,7 +546,7 @@ void main() {
         expected.consumeTapEvents,
         expected.color.value,
         expected.geodesic,
-        expected.jointType.value,
+        platformJointTypeFromJointType(expected.jointType),
       ]);
       expect(encoded.sublist(9), <Object?>[
         expected.visible,

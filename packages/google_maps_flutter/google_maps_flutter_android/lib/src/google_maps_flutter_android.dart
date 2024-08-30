@@ -766,18 +766,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     );
   }
 
-  static PlatformJointType _platformJointTypeFromJointType(
-      JointType jointType) {
-    switch (jointType) {
-      case JointType.mitered:
-        return PlatformJointType.mitered;
-      case JointType.bevel:
-        return PlatformJointType.bevel;
-      case JointType.round:
-        return PlatformJointType.round;
-    }
-  }
-
   static PlatformPolyline _platformPolylineFromPolyline(Polyline polyline) {
     final List<PlatformLatLng?> points =
         polyline.points.map(_platformLatLngFromLatLng).toList();
@@ -795,7 +783,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       width: polyline.width,
       zIndex: polyline.zIndex,
       points: points,
-      jointType: _platformJointTypeFromJointType(polyline.jointType),
+      jointType: platformJointTypeFromJointType(polyline.jointType),
       patterns: pattern,
     );
   }
@@ -1156,6 +1144,18 @@ PlatformZoomRange? _platformZoomRangeFromMinMaxZoomPreferenceJson(
   final List<double?> minMaxZoom =
       (zoomPrefsJson as List<Object?>).cast<double?>();
   return PlatformZoomRange(min: minMaxZoom[0], max: minMaxZoom[1]);
+}
+
+PlatformJointType platformJointTypeFromJointType(
+    JointType jointType) {
+  switch (jointType) {
+    case JointType.mitered:
+      return PlatformJointType.mitered;
+    case JointType.bevel:
+      return PlatformJointType.bevel;
+    case JointType.round:
+      return PlatformJointType.round;
+  }
 }
 
 /// Update specification for a set of [TileOverlay]s.
