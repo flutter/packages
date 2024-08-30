@@ -41,6 +41,9 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     registrar.addMethodCallDelegate(instance, channel: channel)
     registrar.addApplicationDelegate(instance)
     SetUpInAppPurchaseAPI(messenger, instance)
+    if #available(iOS 15.0, macOS 12.0, *) {
+      InAppPurchase2APISetup.setUp(binaryMessenger: messenger, api: instance)
+    }
   }
 
   // This init is used for tests

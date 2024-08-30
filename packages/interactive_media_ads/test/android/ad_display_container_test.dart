@@ -514,5 +514,50 @@ void main() {
 
       verify(mockVideoView.setVideoUri(videoUrl));
     });
+
+    test('stop ad sets video uri to null', () async {
+      late final void Function(
+        ima.VideoAdPlayer,
+        ima.AdMediaInfo,
+      ) stopAdCallback;
+
+      final MockVideoView mockVideoView = MockVideoView();
+      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+        newFrameLayout: () => MockFrameLayout(),
+        newVideoView: ({
+          dynamic onError,
+          dynamic onPrepared,
+          dynamic onCompletion,
+        }) {
+          return mockVideoView;
+        },
+        createAdDisplayContainerImaSdkFactory: (_, __) async {
+          return MockAdDisplayContainer();
+        },
+        newVideoAdPlayer: ({
+          required dynamic addCallback,
+          required dynamic loadAd,
+          required dynamic pauseAd,
+          required dynamic playAd,
+          required dynamic release,
+          required dynamic removeCallback,
+          required void Function(ima.VideoAdPlayer, ima.AdMediaInfo) stopAd,
+        }) {
+          stopAdCallback = stopAd;
+          return MockVideoAdPlayer();
+        },
+      );
+
+      AndroidAdDisplayContainer(
+        AndroidAdDisplayContainerCreationParams(
+          onContainerAdded: (_) {},
+          imaProxy: imaProxy,
+        ),
+      );
+
+      stopAdCallback(MockVideoAdPlayer(), MockAdMediaInfo());
+
+      verify(mockVideoView.setVideoUri(null));
+    });
   });
 }

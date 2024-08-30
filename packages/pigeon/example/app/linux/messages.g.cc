@@ -91,7 +91,7 @@ static FlValue* pigeon_example_package_message_data_to_list(
                                    ? fl_value_new_string(self->description)
                                    : fl_value_new_null());
   fl_value_append_take(values,
-                       fl_value_new_custom(130, fl_value_new_int(self->code),
+                       fl_value_new_custom(129, fl_value_new_int(self->code),
                                            (GDestroyNotify)fl_value_unref));
   fl_value_append_take(values, fl_value_ref(self->data));
   return values;
@@ -132,23 +132,23 @@ G_DEFINE_TYPE(PigeonExamplePackageMessageCodec,
               fl_standard_message_codec_get_type())
 
 static gboolean
+pigeon_example_package_message_codec_write_pigeon_example_package_code(
+    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
+    GError** error) {
+  uint8_t type = 129;
+  g_byte_array_append(buffer, &type, sizeof(uint8_t));
+  return fl_standard_message_codec_write_value(codec, buffer, value, error);
+}
+
+static gboolean
 pigeon_example_package_message_codec_write_pigeon_example_package_message_data(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     PigeonExamplePackageMessageData* value, GError** error) {
-  uint8_t type = 129;
+  uint8_t type = 130;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
   g_autoptr(FlValue) values =
       pigeon_example_package_message_data_to_list(value);
   return fl_standard_message_codec_write_value(codec, buffer, values, error);
-}
-
-static gboolean
-pigeon_example_package_message_codec_write_pigeon_example_package_code(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  uint8_t type = 130;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  return fl_standard_message_codec_write_value(codec, buffer, value, error);
 }
 
 static gboolean pigeon_example_package_message_codec_write_value(
@@ -157,16 +157,16 @@ static gboolean pigeon_example_package_message_codec_write_value(
   if (fl_value_get_type(value) == FL_VALUE_TYPE_CUSTOM) {
     switch (fl_value_get_custom_type(value)) {
       case 129:
-        return pigeon_example_package_message_codec_write_pigeon_example_package_message_data(
-            codec, buffer,
-            PIGEON_EXAMPLE_PACKAGE_MESSAGE_DATA(
-                fl_value_get_custom_value_object(value)),
-            error);
-      case 130:
         return pigeon_example_package_message_codec_write_pigeon_example_package_code(
             codec, buffer,
             reinterpret_cast<FlValue*>(
                 const_cast<gpointer>(fl_value_get_custom_value(value))),
+            error);
+      case 130:
+        return pigeon_example_package_message_codec_write_pigeon_example_package_message_data(
+            codec, buffer,
+            PIGEON_EXAMPLE_PACKAGE_MESSAGE_DATA(
+                fl_value_get_custom_value_object(value)),
             error);
     }
   }
@@ -174,6 +174,15 @@ static gboolean pigeon_example_package_message_codec_write_value(
   return FL_STANDARD_MESSAGE_CODEC_CLASS(
              pigeon_example_package_message_codec_parent_class)
       ->write_value(codec, buffer, value, error);
+}
+
+static FlValue*
+pigeon_example_package_message_codec_read_pigeon_example_package_code(
+    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
+    GError** error) {
+  return fl_value_new_custom(
+      129, fl_standard_message_codec_read_value(codec, buffer, offset, error),
+      (GDestroyNotify)fl_value_unref);
 }
 
 static FlValue*
@@ -194,16 +203,7 @@ pigeon_example_package_message_codec_read_pigeon_example_package_message_data(
     return nullptr;
   }
 
-  return fl_value_new_custom_object(129, G_OBJECT(value));
-}
-
-static FlValue*
-pigeon_example_package_message_codec_read_pigeon_example_package_code(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  return fl_value_new_custom(
-      130, fl_standard_message_codec_read_value(codec, buffer, offset, error),
-      (GDestroyNotify)fl_value_unref);
+  return fl_value_new_custom_object(130, G_OBJECT(value));
 }
 
 static FlValue* pigeon_example_package_message_codec_read_value_of_type(
@@ -211,10 +211,10 @@ static FlValue* pigeon_example_package_message_codec_read_value_of_type(
     GError** error) {
   switch (type) {
     case 129:
-      return pigeon_example_package_message_codec_read_pigeon_example_package_message_data(
+      return pigeon_example_package_message_codec_read_pigeon_example_package_code(
           codec, buffer, offset, error);
     case 130:
-      return pigeon_example_package_message_codec_read_pigeon_example_package_code(
+      return pigeon_example_package_message_codec_read_pigeon_example_package_message_data(
           codec, buffer, offset, error);
     default:
       return FL_STANDARD_MESSAGE_CODEC_CLASS(

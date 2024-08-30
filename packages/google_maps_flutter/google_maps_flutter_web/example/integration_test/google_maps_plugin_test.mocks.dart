@@ -137,6 +137,7 @@ class MockGoogleMapController extends _i1.Mock
     _i4.DebugSetOptionsFunction? setOptions,
     _i4.MarkersController? markers,
     _i4.CirclesController? circles,
+    _i4.HeatmapsController? heatmaps,
     _i4.PolygonsController? polygons,
     _i4.PolylinesController? polylines,
     _i6.ClusterManagersController? clusterManagers,
@@ -151,6 +152,7 @@ class MockGoogleMapController extends _i1.Mock
             #setOptions: setOptions,
             #markers: markers,
             #circles: circles,
+            #heatmaps: heatmaps,
             #polygons: polygons,
             #polylines: polylines,
             #clusterManagers: clusterManagers,
@@ -284,6 +286,15 @@ class MockGoogleMapController extends _i1.Mock
   void updateCircles(_i2.CircleUpdates? updates) => super.noSuchMethod(
         Invocation.method(
           #updateCircles,
+          [updates],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void updateHeatmaps(_i2.HeatmapUpdates? updates) => super.noSuchMethod(
+        Invocation.method(
+          #updateHeatmaps,
           [updates],
         ),
         returnValueForMissingStub: null,

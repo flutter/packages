@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 0.9.17+3
+
+* Fixes deallocation of camera on dispose.
+
 ## 0.9.17+2
 
 * Fixes stopVideoRecording waiting indefinitely and lag at start of video.

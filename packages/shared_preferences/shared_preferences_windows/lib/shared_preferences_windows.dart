@@ -254,7 +254,7 @@ base class SharedPreferencesAsyncWindows
     SharedPreferencesOptions options,
   ) async {
     final Map<String, Object> data = await _readAll(<String>{key}, options);
-    return (data[key] as List<String>?)?.toList();
+    return (data[key] as List<Object?>?)?.cast<String>().toList();
   }
 
   @override
@@ -281,6 +281,14 @@ base class SharedPreferencesAsyncWindows
     SharedPreferencesOptions options,
   ) async {
     return _readAll(parameters.filter.allowList, options);
+  }
+
+  /// Reloads preferences from file.
+  @visibleForTesting
+  Future<void> reload(
+    SharedPreferencesWindowsOptions options,
+  ) async {
+    _cachedPreferences = await _readFromFile(options.fileName);
   }
 
   Future<Map<String, Object>> _readAll(

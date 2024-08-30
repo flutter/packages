@@ -243,7 +243,7 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
   ) async {
     final Map<String, Object> data =
         await _readAllFromLocalStorage(<String>{key}, options);
-    return data[key] as List<String>?;
+    return (data[key] as List<String>?)?.toList();
   }
 }
 

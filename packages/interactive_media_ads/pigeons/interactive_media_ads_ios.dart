@@ -488,6 +488,9 @@ abstract class IMAAdEvent extends NSObject {
 
   /// Stringified type of the event.
   late final String typeString;
+
+  /// Extra data about the ad.
+  late final Map<String, Object>? adData;
 }
 
 /// Set of properties that influence how ads are rendered.

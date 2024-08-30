@@ -1,3 +1,7 @@
+## 2.3.3
+
+* Changes `launchUrl` so it always returns `true`, except for disallowed URL schemes.
+
 ## 2.3.2
 
 * Adds support for `web: ^1.0.0`.

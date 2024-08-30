@@ -183,18 +183,6 @@ If you have been using `SharedPreferences` with the default prefix but wish to c
 to a new prefix, you will need to transform your current preferences manually to add 
 the new prefix otherwise the old preferences will be inaccessible.
 
-### Testing
-
-In tests, you can replace the standard `SharedPreferences` implementation with
-a mock implementation with initial values. This implementation is in-memory
-only, and will not persist values to the usual preference store.
-
-<?code-excerpt "readme_excerpts.dart (Tests)"?>
-```dart
-final Map<String, Object> values = <String, Object>{'counter': 1};
-SharedPreferences.setMockInitialValues(values);
-```
-
 ### Storage location by platform
 
 | Platform | SharedPreferences | SharedPreferencesAsync/WithCache |

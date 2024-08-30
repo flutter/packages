@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.5.10
+
+* Adds support for heatmap layers.
+
 ## 0.5.9+2
 
 * Restores support for Dart `^3.3.0` and Flutter `^3.19.0`.

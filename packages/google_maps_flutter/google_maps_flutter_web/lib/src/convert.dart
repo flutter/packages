@@ -32,6 +32,11 @@ double _getCssOpacity(Color color) {
   return color.opacity;
 }
 
+// Converts a [Color] into a valid CSS value rgba(R, G, B, A).
+String _getCssColorWithAlpha(Color color) {
+  return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${(color.alpha / 255).toStringAsFixed(2)})';
+}
+
 // Converts options from the plugin into gmaps.MapOptions that can be used by the JS SDK.
 // The following options are not handled here, for various reasons:
 // The following are not available in web, because the map doesn't rotate there:
@@ -473,6 +478,33 @@ gmaps.CircleOptions _circleOptionsFromCircle(Circle circle) {
     ..visible = circle.visible
     ..zIndex = circle.zIndex;
   return circleOptions;
+}
+
+visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(Heatmap heatmap) {
+  final Iterable<Color>? gradientColors =
+      heatmap.gradient?.colors.map((HeatmapGradientColor e) => e.color);
+  final visualization.HeatmapLayerOptions heatmapOptions =
+      visualization.HeatmapLayerOptions()
+        ..data = heatmap.data
+            .map(
+              (WeightedLatLng e) => visualization.WeightedLocation()
+                ..location = gmaps.LatLng(e.point.latitude, e.point.longitude)
+                ..weight = e.weight,
+            )
+            .toList()
+            .toJS
+        ..dissipating = heatmap.dissipating
+        ..gradient = gradientColors == null
+            ? null
+            : <Color>[
+                // Web needs a first color with 0 alpha
+                gradientColors.first.withAlpha(0),
+                ...gradientColors,
+              ].map(_getCssColorWithAlpha).toList()
+        ..maxIntensity = heatmap.maxIntensity
+        ..opacity = heatmap.opacity
+        ..radius = heatmap.radius.radius;
+  return heatmapOptions;
 }
 
 gmaps.PolygonOptions _polygonOptionsFromPolygon(
