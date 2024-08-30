@@ -802,43 +802,51 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
 
   static PlatformCameraUpdate _platformCameraUpdateFromCameraUpdate(
       CameraUpdate update) {
-    if (update is NewCameraPosition) {
-      return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateNewCameraPosition(
-              cameraPosition: _platformCameraPositionFromCameraPosition(
-                  update.cameraPosition)));
-    } else if (update is NewLatLng) {
-      return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateNewLatLng(
-              latLng: _platformLatLngFromLatLng(update.latLng)));
-    } else if (update is NewLatLngZoom) {
-      return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateNewLatLngZoom(
-              latLng: _platformLatLngFromLatLng(update.latLng),
-              zoom: update.zoom));
-    } else if (update is NewLatLngBounds) {
-      return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateNewLatLngBounds(
-              bounds: _platformLatLngBoundsFromLatLngBounds(update.bounds)!,
-              padding: update.padding));
-    } else if (update is ZoomTo) {
-      return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoomTo(zoom: update.zoom));
-    } else if (update is ZoomBy) {
-      return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateZoomBy(
-              amount: update.amount,
-              focus: update.focus == null
-                  ? null
-                  : _platformOffsetFromOffset(update.focus!)));
-    } else if (update is ZoomIn) {
-      return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoom(out: false));
-    } else if (update is ZoomOut) {
-      return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoom(out: true));
-    } else if (update is ScrollBy) {
-      return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateScrollBy(dx: update.dx, dy: update.dy));
+    switch (update.updateType) {
+      case CameraUpdateType.newCameraPosition:
+        update as CameraUpdateNewCameraPosition;
+    return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateNewCameraPosition(
+    cameraPosition: _platformCameraPositionFromCameraPosition(
+    update.cameraPosition)));
+      case CameraUpdateType.newLatLng:
+        update as CameraUpdateNewLatLng;
+    return PlatformCameraUpdate(
+    cameraUpdate: PlatformCameraUpdateNewLatLng(
+    latLng: _platformLatLngFromLatLng(update.latLng)));
+      case CameraUpdateType.newLatLngZoom:
+        update as CameraUpdateNewLatLngZoom;
+    return PlatformCameraUpdate(
+    cameraUpdate: PlatformCameraUpdateNewLatLngZoom(
+    latLng: _platformLatLngFromLatLng(update.latLng),
+    zoom: update.zoom));
+      case CameraUpdateType.newLatLngBounds:
+        update as CameraUpdateNewLatLngBounds;
+    return PlatformCameraUpdate(
+    cameraUpdate: PlatformCameraUpdateNewLatLngBounds(
+    bounds: _platformLatLngBoundsFromLatLngBounds(update.bounds)!,
+    padding: update.padding));
+      case CameraUpdateType.zoomTo:
+        update as CameraUpdateZoomTo;
+    return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoomTo(zoom: update.zoom));
+      case CameraUpdateType.zoomBy:
+        update as CameraUpdateZoomBy;
+    return PlatformCameraUpdate(
+    cameraUpdate: PlatformCameraUpdateZoomBy(
+    amount: update.amount,
+    focus: update.focus == null
+    ? null
+        : _platformOffsetFromOffset(update.focus!)));
+      case CameraUpdateType.zoomIn:
+        update as CameraUpdateZoomIn;
+    return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoom(out: false));
+      case CameraUpdateType.zoomOut:
+        update as CameraUpdateZoomOut;
+    return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoom(out: true));
+      case CameraUpdateType.scrollBy:
+        update as CameraUpdateScrollBy;
+    return PlatformCameraUpdate(
+    cameraUpdate: PlatformCameraUpdateScrollBy(dx: update.dx, dy: update.dy));
     }
-    throw ArgumentError(
-        'update is not a valid concrete subclass of CameraUpdate', 'update');
   }
 }
 
