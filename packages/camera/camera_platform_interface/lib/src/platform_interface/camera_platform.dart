@@ -273,10 +273,6 @@ abstract class CameraPlatform extends PlatformInterface {
   }
 
   /// Gets a list of video stabilization modes that are supported for the selected camera.
-  ///
-  /// Will return the list of supported video stabilization modes
-  /// on Android (when using camera_android_camerax package) and
-  /// on iOS. Will return an empty list on all other platforms.
   Future<Iterable<VideoStabilizationMode>> getVideoStabilizationSupportedModes(
       int cameraId) async {
     throw UnimplementedError(
@@ -284,10 +280,6 @@ abstract class CameraPlatform extends PlatformInterface {
   }
 
   /// Sets the video stabilization mode for the selected camera.
-  ///
-  /// On Android (when using camera_android_camerax) and on iOS
-  /// the supplied [mode] value should be a mode in the list returned
-  /// by [getVideoStabilizationSupportedModes].
   ///
   /// Throws a [CameraException] when a not supported video stabilization
   /// mode is supplied.
