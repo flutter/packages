@@ -115,7 +115,8 @@ void main() {
     final VerificationResult verification = verify(api.moveCamera(captureAny));
     final PlatformCameraUpdate passedUpdate =
         verification.captured[0] as PlatformCameraUpdate;
-    final PlatformCameraUpdateScrollBy scroll = passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
+    final PlatformCameraUpdateScrollBy scroll =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
     update as CameraUpdateScrollBy;
     expect(scroll.dx, update.dx);
     expect(scroll.dy, update.dy);
@@ -133,7 +134,8 @@ void main() {
         verify(api.animateCamera(captureAny));
     final PlatformCameraUpdate passedUpdate =
         verification.captured[0] as PlatformCameraUpdate;
-    final PlatformCameraUpdateScrollBy scroll = passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
+    final PlatformCameraUpdateScrollBy scroll =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
     update as CameraUpdateScrollBy;
     expect(scroll.dx, update.dx);
     expect(scroll.dy, update.dy);

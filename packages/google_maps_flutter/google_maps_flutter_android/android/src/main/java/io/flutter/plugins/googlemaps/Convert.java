@@ -343,39 +343,46 @@ class Convert {
   static CameraUpdate cameraUpdateFromPigeon(Messages.PlatformCameraUpdate update, float density) {
     Object cameraUpdate = update.getCameraUpdate();
     if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewCameraPosition) {
-      Messages.PlatformCameraUpdateNewCameraPosition newCameraPosition = (Messages.PlatformCameraUpdateNewCameraPosition) cameraUpdate;
+      Messages.PlatformCameraUpdateNewCameraPosition newCameraPosition =
+          (Messages.PlatformCameraUpdateNewCameraPosition) cameraUpdate;
       return CameraUpdateFactory.newCameraPosition(
           cameraPositionFromPigeon(newCameraPosition.getCameraPosition()));
     }
     if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLng) {
-      Messages.PlatformCameraUpdateNewLatLng newLatLng = (Messages.PlatformCameraUpdateNewLatLng) cameraUpdate;
+      Messages.PlatformCameraUpdateNewLatLng newLatLng =
+          (Messages.PlatformCameraUpdateNewLatLng) cameraUpdate;
       return CameraUpdateFactory.newLatLng(latLngFromPigeon(newLatLng.getLatLng()));
     }
     if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLngZoom) {
-      Messages.PlatformCameraUpdateNewLatLngZoom newLatLngZoom = (Messages.PlatformCameraUpdateNewLatLngZoom) cameraUpdate;
+      Messages.PlatformCameraUpdateNewLatLngZoom newLatLngZoom =
+          (Messages.PlatformCameraUpdateNewLatLngZoom) cameraUpdate;
       return CameraUpdateFactory.newLatLngZoom(
           latLngFromPigeon(newLatLngZoom.getLatLng()), newLatLngZoom.getZoom().floatValue());
     }
     if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLngBounds) {
-      Messages.PlatformCameraUpdateNewLatLngBounds newLatLngBounds = (Messages.PlatformCameraUpdateNewLatLngBounds) cameraUpdate;
+      Messages.PlatformCameraUpdateNewLatLngBounds newLatLngBounds =
+          (Messages.PlatformCameraUpdateNewLatLngBounds) cameraUpdate;
       return CameraUpdateFactory.newLatLngBounds(
           latLngBoundsFromPigeon(newLatLngBounds.getBounds()),
           (int) (newLatLngBounds.getPadding() * density));
     }
     if (cameraUpdate instanceof Messages.PlatformCameraUpdateScrollBy) {
-      Messages.PlatformCameraUpdateScrollBy scrollBy = (Messages.PlatformCameraUpdateScrollBy) cameraUpdate;
+      Messages.PlatformCameraUpdateScrollBy scrollBy =
+          (Messages.PlatformCameraUpdateScrollBy) cameraUpdate;
       return CameraUpdateFactory.scrollBy(
           scrollBy.getDx().floatValue() * density, scrollBy.getDy().floatValue() * density);
     }
     if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoomBy) {
-      Messages.PlatformCameraUpdateZoomBy zoomBy = (Messages.PlatformCameraUpdateZoomBy) cameraUpdate;
+      Messages.PlatformCameraUpdateZoomBy zoomBy =
+          (Messages.PlatformCameraUpdateZoomBy) cameraUpdate;
       final Point focus = pointFromPigeon(zoomBy.getFocus(), density);
       return (focus != null)
           ? CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue(), focus)
           : CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue());
     }
     if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoomTo) {
-      Messages.PlatformCameraUpdateZoomTo zoomTo = (Messages.PlatformCameraUpdateZoomTo) cameraUpdate;
+      Messages.PlatformCameraUpdateZoomTo zoomTo =
+          (Messages.PlatformCameraUpdateZoomTo) cameraUpdate;
       return CameraUpdateFactory.zoomTo(zoomTo.getZoom().floatValue());
     }
     if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoom) {
