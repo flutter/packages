@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
               },
               child: const Text('Detail page'),
             ),
-            const SizedBox(height: kMaterialGutterValue),
+            const SizedBox(height: kMaterialMediumAndUpMargin),
             ElevatedButton(
               onPressed: () => <void>{
                 context.goNamed(DetailModalPage.name),

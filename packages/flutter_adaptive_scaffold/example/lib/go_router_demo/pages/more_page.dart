@@ -27,7 +27,7 @@ class MorePage extends StatelessWidget {
               onPressed: () => context.goNamed(ProfilePage.name),
               child: const Text('Profile'),
             ),
-            const SizedBox(height: kMaterialGutterValue),
+            const SizedBox(height: kMaterialMediumAndUpMargin),
             ElevatedButton(
               onPressed: () => context.goNamed(SettingsPage.name),
               child: const Text('Settings'),
