@@ -296,10 +296,9 @@ class Breakpoint {
         ? width >= lowerBoundWidth
         : width >= lowerBoundWidth && width < upperBoundWidth;
 
-    final bool isHeightActive =
-        isPortrait || !isPortrait && isWidthActive || andUp
-            ? isWidthActive || height >= lowerBoundHeight
-            : height >= lowerBoundHeight && height < upperBoundHeight;
+    final bool isHeightActive = isPortrait || isWidthActive || andUp
+        ? isWidthActive || height >= lowerBoundHeight
+        : height >= lowerBoundHeight && height < upperBoundHeight;
 
     return isWidthActive && isHeightActive && isRightPlatform;
   }
