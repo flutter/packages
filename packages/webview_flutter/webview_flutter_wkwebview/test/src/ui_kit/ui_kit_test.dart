@@ -42,13 +42,13 @@ void main() {
 
       setUp(() {
         mockPlatformHostApi = MockTestUIScrollViewHostApi();
-        TestUIScrollViewHostApi.setup(mockPlatformHostApi);
+        TestUIScrollViewHostApi.setUp(mockPlatformHostApi);
 
-        TestWKWebViewConfigurationHostApi.setup(
+        TestWKWebViewConfigurationHostApi.setUp(
           MockTestWKWebViewConfigurationHostApi(),
         );
-        TestWKWebViewHostApi.setup(MockTestWKWebViewHostApi());
-        final WKWebView webView = WKWebView(
+        TestWKWebViewHostApi.setUp(MockTestWKWebViewHostApi());
+        final WKWebView webView = WKWebViewIOS(
           WKWebViewConfiguration(instanceManager: instanceManager),
           instanceManager: instanceManager,
         );
@@ -61,9 +61,9 @@ void main() {
       });
 
       tearDown(() {
-        TestUIScrollViewHostApi.setup(null);
-        TestWKWebViewConfigurationHostApi.setup(null);
-        TestWKWebViewHostApi.setup(null);
+        TestUIScrollViewHostApi.setUp(null);
+        TestWKWebViewConfigurationHostApi.setUp(null);
+        TestWKWebViewHostApi.setUp(null);
       });
 
       test('getContentOffset', () async {
@@ -105,12 +105,12 @@ void main() {
 
     group('UIScrollViewDelegate', () {
       // Ensure the test host api is removed after each test run.
-      tearDown(() => TestUIScrollViewDelegateHostApi.setup(null));
+      tearDown(() => TestUIScrollViewDelegateHostApi.setUp(null));
 
       test('Host API create', () {
         final MockTestUIScrollViewDelegateHostApi mockApi =
             MockTestUIScrollViewDelegateHostApi();
-        TestUIScrollViewDelegateHostApi.setup(mockApi);
+        TestUIScrollViewDelegateHostApi.setUp(mockApi);
 
         UIScrollViewDelegate(instanceManager: instanceManager);
         verify(mockApi.create(0));
@@ -150,14 +150,14 @@ void main() {
 
       setUp(() {
         mockPlatformHostApi = MockTestUIViewHostApi();
-        TestUIViewHostApi.setup(mockPlatformHostApi);
+        TestUIViewHostApi.setUp(mockPlatformHostApi);
 
-        view = UIView.detached(instanceManager: instanceManager);
+        view = UIViewBase.detached(instanceManager: instanceManager);
         viewInstanceId = instanceManager.addDartCreatedInstance(view);
       });
 
       tearDown(() {
-        TestUIViewHostApi.setup(null);
+        TestUIViewHostApi.setUp(null);
       });
 
       test('setBackgroundColor', () async {

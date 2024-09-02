@@ -94,7 +94,7 @@ void main() {
             await testCaptureImageResolution(controller, preset.key);
         // Ensures that if a lower resolution was used for previous (lower)
         // resolution preset, then the current (higher) preset also is adjusted,
-        // as it demands a hgher resolution.
+        // as it demands a higher resolution.
         expect(
             previousPresetExactlySupported || !presetExactlySupported, isTrue,
             reason:

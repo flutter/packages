@@ -270,6 +270,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           container._stopAdProgressTracking();
+          container._videoView.setVideoUri(null);
           container._clearMediaPlayer();
           container._loadedAdMediaInfo = null;
           container._adDuration = null;

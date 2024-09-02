@@ -113,7 +113,7 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 129:
-      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
         return Code(rawValue: enumResultAsInt)
       }
@@ -191,8 +191,8 @@ class ExampleHostApiSetup {
     if let api = api {
       addChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
-        let bArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)
+        let aArg = args[0] as! Int64
+        let bArg = args[1] as! Int64
         do {
           let result = try api.add(aArg, to: bArg)
           reply(wrapResult(result))
