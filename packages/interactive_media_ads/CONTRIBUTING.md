@@ -112,8 +112,8 @@ platform classes that are returned by this.
 #### SDK Wrappers
 
 The platform implementations use Dart wrappers of their native SDKs. The SDKs are wrapped using
-using the `pigeon` package. However, the code that handles generating the wrappers are still in the
-process of review, so this plugin must use a git dependency in the pubspec.
+using the `pigeon` package. However, the code that handles generating the wrappers for iOS is still
+in the process of review, so this plugin must use a git dependency in the pubspec.
 
 The wrappers for the SDK of each platform can be updated and modified by changing the pigeon files:
 
@@ -135,16 +135,12 @@ To update a wrapper for a platform, follow the steps:
 * Android: Run `flutter build apk --debug` in `example/`.
 * iOS: Run `flutter build ios --simulator` in `example/`
 
-##### 2. Add the correct `pigeon` package to `dev_dependencies` in the `pubspec.yaml` and run `pub upgrade`
+##### 2. Ensure the correct `pigeon` package is added to `dev_dependencies` in the `pubspec.yaml` and run `pub upgrade`
 
 Android:
 
 ```yaml
-pigeon:
-    git:
-      url: git@github.com:bparrishMines/packages.git
-      ref: pigeon_kotlin_split
-      path: packages/pigeon
+pigeon: ^22.2.0
 ```
 
 iOS:
