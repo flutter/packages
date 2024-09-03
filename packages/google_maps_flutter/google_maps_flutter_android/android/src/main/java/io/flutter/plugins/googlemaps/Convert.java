@@ -712,7 +712,6 @@ class Convert {
       case ROUND:
         return 2;
     }
-    // These integer values come from a different package. This fallback ensures some value is returned in case a new enum value is added.
     return 0;
   }
 

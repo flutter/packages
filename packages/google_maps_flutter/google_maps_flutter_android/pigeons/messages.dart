@@ -210,7 +210,7 @@ class PlatformPolyline {
   final int color;
   final bool geodesic;
 
-  /// The joint type. The integer indices of this enum must match those used by the native SDK.
+  /// The joint type.
   final PlatformJointType jointType;
 
   /// The pattern data, as JSON. Each element in this list should be set only from PatternItem.toJson, and the native code must interpret it according to the internal implementation details of that method.
