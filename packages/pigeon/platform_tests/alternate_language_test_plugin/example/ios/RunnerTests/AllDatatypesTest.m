@@ -100,4 +100,8 @@
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 
+- (void)unusedClassesExist {
+  XCTAssert([[FLTUnusedClass alloc] init] != nil);
+}
+
 @end
