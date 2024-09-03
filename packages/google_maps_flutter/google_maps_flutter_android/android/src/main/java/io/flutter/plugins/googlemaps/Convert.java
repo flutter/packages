@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.CustomCap;
 import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PatternItem;
@@ -706,13 +707,13 @@ class Convert {
   static int jointTypeFromPigeon(Messages.PlatformJointType jointType) {
     switch (jointType) {
       case MITERED:
-        return 0;
+        return JointType.DEFAULT;
       case BEVEL:
-        return 1;
+        return JointType.BEVEL;
       case ROUND:
-        return 2;
+        return JointType.ROUND;
     }
-    return 0;
+    return JointType.DEFAULT;
   }
 
   static String interpretPolylineOptions(
