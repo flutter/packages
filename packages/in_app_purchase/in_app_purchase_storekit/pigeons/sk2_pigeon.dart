@@ -128,6 +128,35 @@ class SK2PriceLocaleMessage {
   final String currencySymbol;
 }
 
+class SK2ProductPurchaseOptionsMessage {
+  SK2ProductPurchaseOptionsMessage({
+    this.appAccountToken,
+    this.quantity = 1,
+  });
+  final String? appAccountToken;
+  final int? quantity;
+}
+
+class SK2TransactionMessage {
+  SK2TransactionMessage(
+      {required this.id,
+        required this.originalId,
+        required this.productId,
+        required this.purchaseDate,
+        this.purchasedQuantity = 1,
+        this.appAccountToken,
+        this.restoring = false});
+  final int id;
+  final int originalId;
+  final String productId;
+  final String purchaseDate;
+  final int purchasedQuantity;
+  final String? appAccountToken;
+  final bool restoring;
+}
+
+enum SK2ProductPurchaseResultMessage { success, userCancelled, pending }
+
 @HostApi(dartHostTestHandler: 'TestInAppPurchase2Api')
 abstract class InAppPurchase2API {
   // https://developer.apple.com/documentation/storekit/appstore/3822277-canmakepayments
@@ -138,4 +167,11 @@ abstract class InAppPurchase2API {
   // SK1 startProductRequest
   @async
   List<SK2ProductMessage> products(List<String> identifiers);
+
+  // https://developer.apple.com/documentation/storekit/product/3791971-purchase
+  // SK1 addPayment
+  // needs id to reference product, and also purchaseOptions
+  @async
+  SK2ProductPurchaseResultMessage purchase(String id,
+      {SK2ProductPurchaseOptionsMessage? options});
 }

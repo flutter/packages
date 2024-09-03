@@ -18,8 +18,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -32,13 +31,10 @@ List<Object?> wrapResponse(
 enum SK2ProductTypeMessage {
   /// A consumable in-app purchase.
   consumable,
-
   /// A non-consumable in-app purchase.
   nonConsumable,
-
   /// A non-renewing subscription.
   nonRenewable,
-
   /// An auto-renewable subscription.
   autoRenewable,
 }
@@ -59,6 +55,12 @@ enum SK2SubscriptionPeriodUnitMessage {
   week,
   month,
   year,
+}
+
+enum SK2ProductPurchaseResultMessage {
+  success,
+  userCancelled,
+  pending,
 }
 
 class SK2SubscriptionOfferMessage {
@@ -164,8 +166,7 @@ class SK2SubscriptionInfoMessage {
   static SK2SubscriptionInfoMessage decode(Object result) {
     result as List<Object?>;
     return SK2SubscriptionInfoMessage(
-      promotionalOffers:
-          (result[0] as List<Object?>?)!.cast<SK2SubscriptionOfferMessage?>(),
+      promotionalOffers: (result[0] as List<Object?>?)!.cast<SK2SubscriptionOfferMessage?>(),
       subscriptionGroupID: result[1]! as String,
       subscriptionPeriod: result[2]! as SK2SubscriptionPeriodMessage,
     );
@@ -264,6 +265,33 @@ class SK2PriceLocaleMessage {
   }
 }
 
+class SK2ProductPurchaseOptionsMessage {
+  SK2ProductPurchaseOptionsMessage({
+    this.appAccountToken,
+    this.quantity = 1,
+  });
+
+  String? appAccountToken;
+
+  int? quantity;
+
+  Object encode() {
+    return <Object?>[
+      appAccountToken,
+      quantity,
+    ];
+  }
+
+  static SK2ProductPurchaseOptionsMessage decode(Object result) {
+    result as List<Object?>;
+    return SK2ProductPurchaseOptionsMessage(
+      appAccountToken: result[0] as String?,
+      quantity: result[1] as int?,
+    );
+  }
+}
+
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -271,32 +299,38 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is SK2ProductTypeMessage) {
+    }    else if (value is SK2ProductTypeMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is SK2SubscriptionOfferTypeMessage) {
+    }    else if (value is SK2SubscriptionOfferTypeMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is SK2SubscriptionOfferPaymentModeMessage) {
+    }    else if (value is SK2SubscriptionOfferPaymentModeMessage) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    } else if (value is SK2SubscriptionPeriodUnitMessage) {
+    }    else if (value is SK2SubscriptionPeriodUnitMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    } else if (value is SK2SubscriptionOfferMessage) {
+    }    else if (value is SK2ProductPurchaseResultMessage) {
       buffer.putUint8(133);
-      writeValue(buffer, value.encode());
-    } else if (value is SK2SubscriptionPeriodMessage) {
+      writeValue(buffer, value.index);
+    }    else if (value is SK2SubscriptionOfferMessage) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is SK2SubscriptionInfoMessage) {
+    }    else if (value is SK2SubscriptionPeriodMessage) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is SK2ProductMessage) {
+    }    else if (value is SK2SubscriptionInfoMessage) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is SK2PriceLocaleMessage) {
+    }    else if (value is SK2ProductMessage) {
       buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    }    else if (value is SK2PriceLocaleMessage) {
+      buffer.putUint8(138);
+      writeValue(buffer, value.encode());
+    }    else if (value is SK2ProductPurchaseOptionsMessage) {
+      buffer.putUint8(139);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -306,34 +340,33 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129:
+      case 129: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : SK2ProductTypeMessage.values[value];
-      case 130:
+      case 130: 
         final int? value = readValue(buffer) as int?;
-        return value == null
-            ? null
-            : SK2SubscriptionOfferTypeMessage.values[value];
-      case 131:
+        return value == null ? null : SK2SubscriptionOfferTypeMessage.values[value];
+      case 131: 
         final int? value = readValue(buffer) as int?;
-        return value == null
-            ? null
-            : SK2SubscriptionOfferPaymentModeMessage.values[value];
-      case 132:
+        return value == null ? null : SK2SubscriptionOfferPaymentModeMessage.values[value];
+      case 132: 
         final int? value = readValue(buffer) as int?;
-        return value == null
-            ? null
-            : SK2SubscriptionPeriodUnitMessage.values[value];
-      case 133:
+        return value == null ? null : SK2SubscriptionPeriodUnitMessage.values[value];
+      case 133: 
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : SK2ProductPurchaseResultMessage.values[value];
+      case 134: 
         return SK2SubscriptionOfferMessage.decode(readValue(buffer)!);
-      case 134:
+      case 135: 
         return SK2SubscriptionPeriodMessage.decode(readValue(buffer)!);
-      case 135:
+      case 136: 
         return SK2SubscriptionInfoMessage.decode(readValue(buffer)!);
-      case 136:
+      case 137: 
         return SK2ProductMessage.decode(readValue(buffer)!);
-      case 137:
+      case 138: 
         return SK2PriceLocaleMessage.decode(readValue(buffer)!);
+      case 139: 
+        return SK2ProductPurchaseOptionsMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -344,11 +377,9 @@ class InAppPurchase2API {
   /// Constructor for [InAppPurchase2API].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  InAppPurchase2API(
-      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  InAppPurchase2API({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -356,10 +387,8 @@ class InAppPurchase2API {
   final String pigeonVar_messageChannelSuffix;
 
   Future<bool> canMakePayments() async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -385,10 +414,8 @@ class InAppPurchase2API {
   }
 
   Future<List<SK2ProductMessage?>> products(List<String?> identifiers) async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -409,8 +436,34 @@ class InAppPurchase2API {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!
-          .cast<SK2ProductMessage?>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<SK2ProductMessage?>();
+    }
+  }
+
+  Future<SK2ProductPurchaseResultMessage> purchase(String id, {SK2ProductPurchaseOptionsMessage? options}) async {
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.purchase$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[id, options]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as SK2ProductPurchaseResultMessage?)!;
     }
   }
 }

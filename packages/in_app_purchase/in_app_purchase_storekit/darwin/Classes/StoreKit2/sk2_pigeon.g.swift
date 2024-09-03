@@ -29,7 +29,7 @@ final class PigeonError: Error {
   var localizedDescription: String {
     return
       "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
-  }
+      }
 }
 
 private func wrapResult(_ result: Any?) -> [Any?] {
@@ -96,6 +96,12 @@ enum SK2SubscriptionPeriodUnitMessage: Int {
   case year = 3
 }
 
+enum SK2ProductPurchaseResultMessage: Int {
+  case success = 0
+  case userCancelled = 1
+  case pending = 2
+}
+
 /// Generated class from Pigeon that represents data sent in messages.
 struct SK2SubscriptionOfferMessage {
   var id: String? = nil
@@ -105,14 +111,15 @@ struct SK2SubscriptionOfferMessage {
   var periodCount: Int64
   var paymentMode: SK2SubscriptionOfferPaymentModeMessage
 
+
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SK2SubscriptionOfferMessage? {
     let id: String? = nilOrValue(pigeonVar_list[0])
     let price = pigeonVar_list[1] as! Double
     let type = pigeonVar_list[2] as! SK2SubscriptionOfferTypeMessage
     let period = pigeonVar_list[3] as! SK2SubscriptionPeriodMessage
-    let periodCount =
-      pigeonVar_list[4] is Int64 ? pigeonVar_list[4] as! Int64 : Int64(pigeonVar_list[4] as! Int32)
+    let periodCount = pigeonVar_list[4] is Int64 ? pigeonVar_list[4] as! Int64 : Int64(pigeonVar_list[4] as! Int32)
     let paymentMode = pigeonVar_list[5] as! SK2SubscriptionOfferPaymentModeMessage
 
     return SK2SubscriptionOfferMessage(
@@ -143,10 +150,11 @@ struct SK2SubscriptionPeriodMessage {
   /// The unit of time that this period represents.
   var unit: SK2SubscriptionPeriodUnitMessage
 
+
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SK2SubscriptionPeriodMessage? {
-    let value =
-      pigeonVar_list[0] is Int64 ? pigeonVar_list[0] as! Int64 : Int64(pigeonVar_list[0] as! Int32)
+    let value = pigeonVar_list[0] is Int64 ? pigeonVar_list[0] as! Int64 : Int64(pigeonVar_list[0] as! Int32)
     let unit = pigeonVar_list[1] as! SK2SubscriptionPeriodUnitMessage
 
     return SK2SubscriptionPeriodMessage(
@@ -172,6 +180,8 @@ struct SK2SubscriptionInfoMessage {
   var subscriptionGroupID: String
   /// The duration that this subscription lasts before auto-renewing.
   var subscriptionPeriod: SK2SubscriptionPeriodMessage
+
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SK2SubscriptionInfoMessage? {
@@ -216,6 +226,8 @@ struct SK2ProductMessage {
   /// The currency and locale information for this product
   var priceLocale: SK2PriceLocaleMessage
 
+
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SK2ProductMessage? {
     let id = pigeonVar_list[0] as! String
@@ -257,6 +269,8 @@ struct SK2PriceLocaleMessage {
   var currencyCode: String
   var currencySymbol: String
 
+
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SK2PriceLocaleMessage? {
     let currencyCode = pigeonVar_list[0] as! String
@@ -271,6 +285,31 @@ struct SK2PriceLocaleMessage {
     return [
       currencyCode,
       currencySymbol,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct SK2ProductPurchaseOptionsMessage {
+  var appAccountToken: String? = nil
+  var quantity: Int64? = nil
+
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> SK2ProductPurchaseOptionsMessage? {
+    let appAccountToken: String? = nilOrValue(pigeonVar_list[0])
+    let quantity: Int64? = isNullish(pigeonVar_list[1]) ? nil : (pigeonVar_list[1] is Int64? ? pigeonVar_list[1] as! Int64? : Int64(pigeonVar_list[1] as! Int32))
+
+    return SK2ProductPurchaseOptionsMessage(
+      appAccountToken: appAccountToken,
+      quantity: quantity
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      appAccountToken,
+      quantity,
     ]
   }
 }
@@ -303,15 +342,23 @@ private class sk2_pigeonPigeonCodecReader: FlutterStandardReader {
       }
       return nil
     case 133:
-      return SK2SubscriptionOfferMessage.fromList(self.readValue() as! [Any?])
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        return SK2ProductPurchaseResultMessage(rawValue: enumResultAsInt)
+      }
+      return nil
     case 134:
-      return SK2SubscriptionPeriodMessage.fromList(self.readValue() as! [Any?])
+      return SK2SubscriptionOfferMessage.fromList(self.readValue() as! [Any?])
     case 135:
-      return SK2SubscriptionInfoMessage.fromList(self.readValue() as! [Any?])
+      return SK2SubscriptionPeriodMessage.fromList(self.readValue() as! [Any?])
     case 136:
-      return SK2ProductMessage.fromList(self.readValue() as! [Any?])
+      return SK2SubscriptionInfoMessage.fromList(self.readValue() as! [Any?])
     case 137:
+      return SK2ProductMessage.fromList(self.readValue() as! [Any?])
+    case 138:
       return SK2PriceLocaleMessage.fromList(self.readValue() as! [Any?])
+    case 139:
+      return SK2ProductPurchaseOptionsMessage.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -332,20 +379,26 @@ private class sk2_pigeonPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? SK2SubscriptionPeriodUnitMessage {
       super.writeByte(132)
       super.writeValue(value.rawValue)
-    } else if let value = value as? SK2SubscriptionOfferMessage {
+    } else if let value = value as? SK2ProductPurchaseResultMessage {
       super.writeByte(133)
-      super.writeValue(value.toList())
-    } else if let value = value as? SK2SubscriptionPeriodMessage {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? SK2SubscriptionOfferMessage {
       super.writeByte(134)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2SubscriptionInfoMessage {
+    } else if let value = value as? SK2SubscriptionPeriodMessage {
       super.writeByte(135)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2ProductMessage {
+    } else if let value = value as? SK2SubscriptionInfoMessage {
       super.writeByte(136)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2PriceLocaleMessage {
+    } else if let value = value as? SK2ProductMessage {
       super.writeByte(137)
+      super.writeValue(value.toList())
+    } else if let value = value as? SK2PriceLocaleMessage {
+      super.writeByte(138)
+      super.writeValue(value.toList())
+    } else if let value = value as? SK2ProductPurchaseOptionsMessage {
+      super.writeByte(139)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -367,26 +420,21 @@ class sk2_pigeonPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = sk2_pigeonPigeonCodec(readerWriter: sk2_pigeonPigeonCodecReaderWriter())
 }
 
+
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol InAppPurchase2API {
   func canMakePayments() throws -> Bool
-  func products(
-    identifiers: [String], completion: @escaping (Result<[SK2ProductMessage], Error>) -> Void)
+  func products(identifiers: [String], completion: @escaping (Result<[SK2ProductMessage], Error>) -> Void)
+  func purchase(id: String, options: SK2ProductPurchaseOptionsMessage?, completion: @escaping (Result<SK2ProductPurchaseResultMessage, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class InAppPurchase2APISetup {
   static var codec: FlutterStandardMessageCodec { sk2_pigeonPigeonCodec.shared }
   /// Sets up an instance of `InAppPurchase2API` to handle messages through the `binaryMessenger`.
-  static func setUp(
-    binaryMessenger: FlutterBinaryMessenger, api: InAppPurchase2API?,
-    messageChannelSuffix: String = ""
-  ) {
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: InAppPurchase2API?, messageChannelSuffix: String = "") {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    let canMakePaymentsChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let canMakePaymentsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       canMakePaymentsChannel.setMessageHandler { _, reply in
         do {
@@ -399,10 +447,7 @@ class InAppPurchase2APISetup {
     } else {
       canMakePaymentsChannel.setMessageHandler(nil)
     }
-    let productsChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let productsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       productsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -418,6 +463,24 @@ class InAppPurchase2APISetup {
       }
     } else {
       productsChannel.setMessageHandler(nil)
+    }
+    let purchaseChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.purchase\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      purchaseChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let idArg = args[0] as! String
+        let optionsArg: SK2ProductPurchaseOptionsMessage? = nilOrValue(args[1])
+        api.purchase(id: idArg, options: optionsArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      purchaseChannel.setMessageHandler(nil)
     }
   }
 }

@@ -327,4 +327,10 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
 
     return Future<List<SK2ProductMessage?>>.value(result);
   }
+
+  @override
+  Future<SK2ProductPurchaseResultMessage> purchase(String id, {SK2ProductPurchaseOptionsMessage? options}) {
+    // TODO: implement purchase
+    throw UnimplementedError();
+  }
 }

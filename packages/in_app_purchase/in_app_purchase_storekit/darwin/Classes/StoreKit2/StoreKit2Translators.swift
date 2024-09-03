@@ -167,3 +167,5 @@ extension SK2PriceLocaleMessage: Equatable {
     return lhs.currencyCode == rhs.currencyCode && lhs.currencySymbol == rhs.currencySymbol
   }
 }
+
+
