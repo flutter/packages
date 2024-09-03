@@ -31,7 +31,7 @@ class AppRouter {
       return const MaterialPage<void>(child: NavigationErrorPage());
     },
     redirect: (BuildContext context, GoRouterState state) {
-      if (state.matchedLocation == '/') {
+      if (state.uri.path == '/') {
         return HomePage.path;
       }
       return null;
