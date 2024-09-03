@@ -1,3 +1,7 @@
+## 0.3.1
+
+* Use improved MediaQuery methods.
+
 ## 0.3.0
 
 * Adds `inDuration`, `outDuration`, `inCurve`, and `outCurve` parameters for 
