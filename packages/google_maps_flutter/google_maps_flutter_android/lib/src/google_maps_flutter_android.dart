@@ -1157,6 +1157,9 @@ PlatformJointType platformJointTypeFromJointType(JointType jointType) {
     case JointType.round:
       return PlatformJointType.round;
   }
+  // The JointType enum is defined in the platform interface package. A fallback return value here ensures the android package will not break if a new enum value is added.
+  // ignore: dead_code
+  return PlatformJointType.mitered;
 }
 
 /// Update specification for a set of [TileOverlay]s.
