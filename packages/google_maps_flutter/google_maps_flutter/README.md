@@ -12,10 +12,6 @@ A Flutter plugin that provides a [Google Maps](https://developers.google.com/map
 
 [web-support]: https://docs.flutter.dev/reference/supported-platforms
 
-## Usage
-
-To use this plugin, add `google_maps_flutter` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/platform-integration/platform-channels).
-
 ## Getting Started
 
 * Get an API key at <https://cloud.google.com/maps-platform/>.
@@ -58,7 +54,7 @@ This means that app will only be available for users that run Android SDK 20 or 
 #### Display Mode
 
 The Android implementation supports multiple
-[platform view display modes](https://flutter.dev/docs/development/platform-integration/platform-views).
+[platform view display modes](https://docs.flutter.dev/platform-integration/android/platform-views).
 For details, see [the Android README](https://pub.dev/packages/google_maps_flutter_android#display-mode).
 
 #### Cloud-based map styling

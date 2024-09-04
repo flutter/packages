@@ -2,10 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:graphs/graphs.dart';
+
 import 'ast.dart';
 import 'functional.dart';
 import 'generator.dart';
 import 'generator_tools.dart';
+import 'kotlin/templates.dart';
 import 'pigeon_lib.dart' show TaskQueueType;
 
 /// Documentation open symbol.
@@ -25,6 +28,10 @@ const DocumentCommentSpecification _docCommentSpec =
   blockContinuationToken: _docCommentContinuation,
 );
 
+String _codecName = 'PigeonCodec';
+
+const String _overflowClassName = '${classNamePrefix}CodecOverflow';
+
 /// Options that control how Kotlin code will be generated.
 class KotlinOptions {
   /// Creates a [KotlinOptions] object
@@ -33,6 +40,7 @@ class KotlinOptions {
     this.copyrightHeader,
     this.errorClassName,
     this.includeErrorClass = true,
+    this.fileSpecificClassNameComponent,
   });
 
   /// The package where the generated class will live.
@@ -50,6 +58,9 @@ class KotlinOptions {
   /// Kotlin file in the same directory.
   final bool includeErrorClass;
 
+  /// A String to augment class names to avoid cross file collisions.
+  final String? fileSpecificClassNameComponent;
+
   /// Creates a [KotlinOptions] from a Map representation where:
   /// `x = KotlinOptions.fromMap(x.toMap())`.
   static KotlinOptions fromMap(Map<String, Object> map) {
@@ -58,6 +69,8 @@ class KotlinOptions {
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
       errorClassName: map['errorClassName'] as String?,
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
+      fileSpecificClassNameComponent:
+          map['fileSpecificClassNameComponent'] as String?,
     );
   }
 
@@ -69,6 +82,8 @@ class KotlinOptions {
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (errorClassName != null) 'errorClassName': errorClassName!,
       'includeErrorClass': includeErrorClass,
+      if (fileSpecificClassNameComponent != null)
+        'fileSpecificClassNameComponent': fileSpecificClassNameComponent!,
     };
     return result;
   }
@@ -78,6 +93,23 @@ class KotlinOptions {
   KotlinOptions merge(KotlinOptions options) {
     return KotlinOptions.fromMap(mergeMaps(toMap(), options.toMap()));
   }
+}
+
+/// Options that control how Kotlin code will be generated for a specific
+/// ProxyApi.
+class KotlinProxyApiOptions {
+  /// Construct a [KotlinProxyApiOptions].
+  const KotlinProxyApiOptions({this.fullClassName, this.minAndroidApi});
+
+  /// The name of the full runtime Kotlin class name (including the package).
+  final String? fullClassName;
+
+  /// The minimum Android api version.
+  ///
+  /// This adds the [RequiresApi](https://developer.android.com/reference/androidx/annotation/RequiresApi)
+  /// annotations on top of any constructor, field, or method that references
+  /// this element.
+  final int? minAndroidApi;
 }
 
 /// Class that manages all Kotlin code generation.
@@ -137,10 +169,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       enumerate(anEnum.members, (int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
-        final String nameScreamingSnakeCase = member.name
-            .replaceAllMapped(
-                RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => '_${m.group(0)}')
-            .toUpperCase();
+        final String nameScreamingSnakeCase = toScreamingSnakeCase(member.name);
         indent.write('$nameScreamingSnakeCase($index)');
         if (index != anEnum.members.length - 1) {
           indent.addln(',');
@@ -175,20 +204,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     addDocumentationComments(
         indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
-    indent.write('data class ${classDefinition.name} ');
-    indent.addScoped('(', '', () {
-      for (final NamedType element
-          in getFieldsInSerializationOrder(classDefinition)) {
-        _writeClassField(indent, element);
-        if (getFieldsInSerializationOrder(classDefinition).last != element) {
-          indent.addln(',');
-        } else {
-          indent.newln();
-        }
-      }
-    });
-
-    indent.addScoped(') {', '}', () {
+    _writeDataClassSignature(indent, classDefinition);
+    indent.addScoped(' {', '}', () {
       writeClassDecode(
         generatorOptions,
         root,
@@ -206,6 +223,26 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     });
   }
 
+  void _writeDataClassSignature(
+    Indent indent,
+    Class classDefinition, {
+    bool private = false,
+  }) {
+    indent.write(
+        '${private ? 'private ' : ''}data class ${classDefinition.name} ');
+    indent.addScoped('(', ')', () {
+      for (final NamedType element
+          in getFieldsInSerializationOrder(classDefinition)) {
+        _writeClassField(indent, element);
+        if (getFieldsInSerializationOrder(classDefinition).last != element) {
+          indent.addln(',');
+        } else {
+          indent.newln();
+        }
+      }
+    });
+  }
+
   @override
   void writeClassEncode(
     KotlinOptions generatorOptions,
@@ -216,19 +253,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }) {
     indent.write('fun toList(): List<Any?> ');
     indent.addScoped('{', '}', () {
-      indent.write('return listOf<Any?>');
+      indent.write('return listOf');
       indent.addScoped('(', ')', () {
         for (final NamedType field
             in getFieldsInSerializationOrder(classDefinition)) {
-          String toWriteValue = '';
           final String fieldName = field.name;
-          final String safeCall = field.type.isNullable ? '?' : '';
-          if (field.type.isEnum) {
-            toWriteValue = '$fieldName$safeCall.raw';
-          } else {
-            toWriteValue = fieldName;
-          }
-          indent.writeln('$toWriteValue,');
+          indent.writeln('$fieldName,');
         }
       });
     });
@@ -246,7 +276,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
     indent.write('companion object ');
     indent.addScoped('{', '}', () {
-      indent.writeln('@Suppress("LocalVariableName")');
       indent
           .write('fun fromList(${varNamePrefix}list: List<Any?>): $className ');
 
@@ -254,28 +283,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         enumerate(getFieldsInSerializationOrder(classDefinition),
             (int index, final NamedType field) {
           final String listValue = '${varNamePrefix}list[$index]';
-          final String fieldType = _kotlinTypeForDartType(field.type);
-
-          if (field.type.isNullable) {
-            if (field.type.isEnum) {
-              indent.write('val ${field.name}: $fieldType? = ');
-              indent.add('($listValue as Int?)?.let ');
-              indent.addScoped('{ num ->', '}', () {
-                indent.writeln('$fieldType.ofRaw(num)');
-              });
-            } else {
-              indent.writeln(
-                  'val ${field.name} = ${_cast(indent, listValue, type: field.type)}');
-            }
-          } else {
-            if (field.type.isEnum) {
-              indent.writeln(
-                  'val ${field.name} = $fieldType.ofRaw($listValue as Int)!!');
-            } else {
-              indent.writeln(
-                  'val ${field.name} = ${_cast(indent, listValue, type: field.type)}');
-            }
-          }
+          indent.writeln(
+              'val ${field.name} = ${_cast(indent, listValue, type: field.type)}');
         });
 
         indent.write('return $className(');
@@ -317,6 +326,177 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         dartPackageName: dartPackageName);
   }
 
+  @override
+  void writeGeneralCodec(
+    KotlinOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    final List<EnumeratedType> enumeratedTypes =
+        getEnumeratedTypes(root).toList();
+
+    void writeEncodeLogic(EnumeratedType customType) {
+      final String encodeString =
+          customType.type == CustomTypes.customClass ? 'toList()' : 'raw';
+      final String valueString = customType.enumeration < maximumCodecFieldKey
+          ? 'value.$encodeString'
+          : 'wrap.toList()';
+      final int enumeration = customType.enumeration < maximumCodecFieldKey
+          ? customType.enumeration
+          : maximumCodecFieldKey;
+      indent.writeScoped('is ${customType.name} -> {', '}', () {
+        if (customType.enumeration >= maximumCodecFieldKey) {
+          indent.writeln(
+              'val wrap = ${generatorOptions.fileSpecificClassNameComponent}$_overflowClassName(type = ${customType.enumeration - maximumCodecFieldKey}, wrapped = value.$encodeString)');
+        }
+        indent.writeln('stream.write($enumeration)');
+        indent.writeln('writeValue(stream, $valueString)');
+      });
+    }
+
+    void writeDecodeLogic(EnumeratedType customType) {
+      indent.write('${customType.enumeration}.toByte() -> ');
+      indent.addScoped('{', '}', () {
+        if (customType.type == CustomTypes.customClass) {
+          indent.write('return (readValue(buffer) as? List<Any?>)?.let ');
+          indent.addScoped('{', '}', () {
+            indent.writeln('${customType.name}.fromList(it)');
+          });
+        } else if (customType.type == CustomTypes.customEnum) {
+          indent.write('return (readValue(buffer) as Long?)?.let ');
+          indent.addScoped('{', '}', () {
+            indent.writeln('${customType.name}.ofRaw(it.toInt())');
+          });
+        }
+      });
+    }
+
+    final EnumeratedType overflowClass = EnumeratedType(
+        '${generatorOptions.fileSpecificClassNameComponent}$_overflowClassName',
+        maximumCodecFieldKey,
+        CustomTypes.customClass);
+
+    if (root.requiresOverflowClass) {
+      _writeCodecOverflowUtilities(
+        generatorOptions,
+        root,
+        indent,
+        enumeratedTypes,
+        dartPackageName: dartPackageName,
+      );
+    }
+
+    indent.write(
+        'private open class ${generatorOptions.fileSpecificClassNameComponent}$_codecName : StandardMessageCodec() ');
+    indent.addScoped('{', '}', () {
+      indent.write(
+          'override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? ');
+      indent.addScoped('{', '}', () {
+        indent.write('return ');
+        if (root.classes.isNotEmpty || root.enums.isNotEmpty) {
+          indent.add('when (type) ');
+          indent.addScoped('{', '}', () {
+            for (final EnumeratedType customType in enumeratedTypes) {
+              if (customType.enumeration < maximumCodecFieldKey) {
+                writeDecodeLogic(customType);
+              }
+            }
+            if (root.requiresOverflowClass) {
+              writeDecodeLogic(overflowClass);
+            }
+            indent.writeln('else -> super.readValueOfType(type, buffer)');
+          });
+        } else {
+          indent.writeln('super.readValueOfType(type, buffer)');
+        }
+      });
+
+      indent.write(
+          'override fun writeValue(stream: ByteArrayOutputStream, value: Any?) ');
+      indent.writeScoped('{', '}', () {
+        if (root.classes.isNotEmpty || root.enums.isNotEmpty) {
+          indent.write('when (value) ');
+          indent.addScoped('{', '}', () {
+            enumeratedTypes.forEach(writeEncodeLogic);
+            indent.writeln('else -> super.writeValue(stream, value)');
+          });
+        } else {
+          indent.writeln('super.writeValue(stream, value)');
+        }
+      });
+    });
+    indent.newln();
+  }
+
+  void _writeCodecOverflowUtilities(
+    KotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+    List<EnumeratedType> types, {
+    required String dartPackageName,
+  }) {
+    final NamedType overflowInt = NamedType(
+        name: 'type',
+        type: const TypeDeclaration(baseName: 'int', isNullable: false));
+    final NamedType overflowObject = NamedType(
+        name: 'wrapped',
+        type: const TypeDeclaration(baseName: 'Object', isNullable: true));
+    final List<NamedType> overflowFields = <NamedType>[
+      overflowInt,
+      overflowObject,
+    ];
+    final Class overflowClass = Class(
+        name:
+            '${generatorOptions.fileSpecificClassNameComponent}$_overflowClassName',
+        fields: overflowFields);
+
+    _writeDataClassSignature(indent, overflowClass, private: true);
+    indent.addScoped(' {', '}', () {
+      writeClassEncode(
+        generatorOptions,
+        root,
+        indent,
+        overflowClass,
+        dartPackageName: dartPackageName,
+      );
+
+      indent.format('''
+companion object {
+  fun fromList(${varNamePrefix}list: List<Any?>): Any? {
+    val wrapper = ${generatorOptions.fileSpecificClassNameComponent}$_overflowClassName(
+      type = ${varNamePrefix}list[0] as Long,
+      wrapped = ${varNamePrefix}list[1],
+    );
+    return wrapper.unwrap()
+  }
+}
+''');
+
+      indent.writeScoped('fun unwrap(): Any? {', '}', () {
+        indent.format('''
+if (wrapped == null) {
+  return null
+}
+    ''');
+        indent.writeScoped('when (type.toInt()) {', '}', () {
+          for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
+            indent.writeScoped('${i - totalCustomCodecKeysAllowed} ->', '', () {
+              if (types[i].type == CustomTypes.customClass) {
+                indent.writeln(
+                    'return ${types[i].name}.fromList(wrapped as List<Any?>)');
+              } else if (types[i].type == CustomTypes.customEnum) {
+                indent.writeln(
+                    'return ${types[i].name}.ofRaw((wrapped as Long).toInt())');
+              }
+            });
+          }
+        });
+        indent.writeln('return null');
+      });
+    });
+  }
+
   /// Writes the code for a flutter [Api], [api].
   /// Example:
   /// class Foo(private val binaryMessenger: BinaryMessenger) {
@@ -330,11 +510,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
-    if (isCustomCodec) {
-      _writeCodec(indent, api, root);
-    }
-
     const List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.'
     ];
@@ -350,11 +525,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.writeln('/** The codec used by $apiName. */');
         indent.write('val codec: MessageCodec<Any?> by lazy ');
         indent.addScoped('{', '}', () {
-          if (isCustomCodec) {
-            indent.writeln(_getCodecName(api));
-          } else {
-            indent.writeln('StandardMessageCodec()');
-          }
+          indent.writeln(
+              '${generatorOptions.fileSpecificClassNameComponent}$_codecName()');
         });
       });
 
@@ -368,6 +540,24 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           channelName: makeChannelName(api, method, dartPackageName),
           documentationComments: method.documentationComments,
           dartPackageName: dartPackageName,
+          onWriteBody: (
+            Indent indent, {
+            required List<Parameter> parameters,
+            required TypeDeclaration returnType,
+            required String channelName,
+            required String errorClassName,
+          }) {
+            indent.writeln(
+              r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""',
+            );
+            _writeFlutterMethodMessageCall(
+              indent,
+              parameters: parameters,
+              returnType: returnType,
+              channelName: '$channelName\$separatedMessageChannelSuffix',
+              errorClassName: errorClassName,
+            );
+          },
         );
       }
     });
@@ -391,11 +581,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     required String dartPackageName,
   }) {
     final String apiName = api.name;
-
-    final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
-    if (isCustomCodec) {
-      _writeCodec(indent, api, root);
-    }
 
     const List<String> generatedMessages = <String>[
       ' Generated interface from Pigeon that represents a handler of messages from Flutter.'
@@ -422,14 +607,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.writeln('/** The codec used by $apiName. */');
         indent.write('val codec: MessageCodec<Any?> by lazy ');
         indent.addScoped('{', '}', () {
-          if (isCustomCodec) {
-            indent.writeln(_getCodecName(api));
-          } else {
-            indent.writeln('StandardMessageCodec()');
-          }
+          indent.writeln(
+              '${generatorOptions.fileSpecificClassNameComponent}$_codecName()');
         });
         indent.writeln(
             '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */');
+        indent.writeln('@JvmOverloads');
         indent.write(
             'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ');
         indent.addScoped('{', '}', () {
@@ -438,9 +621,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           for (final Method method in api.methods) {
             _writeHostMethodMessageHandler(
               indent,
-              api: api,
               name: method.name,
-              channelName: makeChannelName(api, method, dartPackageName),
+              channelName:
+                  '${makeChannelName(api, method, dartPackageName)}\$separatedMessageChannelSuffix',
               taskQueueType: method.taskQueueType,
               parameters: method.parameters,
               returnType: method.returnType,
@@ -452,50 +635,353 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     });
   }
 
-  /// Writes the codec class that will be used by [api].
-  /// Example:
-  /// private static class FooCodec extends StandardMessageCodec {...}
-  void _writeCodec(Indent indent, Api api, Root root) {
-    assert(getCodecClasses(api, root).isNotEmpty);
-    final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
-    final String codecName = _getCodecName(api);
-    indent.write('private object $codecName : StandardMessageCodec() ');
-    indent.addScoped('{', '}', () {
-      indent.write(
-          'override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? ');
-      indent.addScoped('{', '}', () {
-        indent.write('return when (type) ');
-        indent.addScoped('{', '}', () {
-          for (final EnumeratedClass customClass in codecClasses) {
-            indent.write('${customClass.enumeration}.toByte() -> ');
-            indent.addScoped('{', '}', () {
-              indent.write('return (readValue(buffer) as? List<Any?>)?.let ');
-              indent.addScoped('{', '}', () {
-                indent.writeln('${customClass.name}.fromList(it)');
-              });
-            });
-          }
-          indent.writeln('else -> super.readValueOfType(type, buffer)');
-        });
-      });
-
-      indent.write(
-          'override fun writeValue(stream: ByteArrayOutputStream, value: Any?) ');
-      indent.writeScoped('{', '}', () {
-        indent.write('when (value) ');
-        indent.addScoped('{', '}', () {
-          for (final EnumeratedClass customClass in codecClasses) {
-            indent.write('is ${customClass.name} -> ');
-            indent.addScoped('{', '}', () {
-              indent.writeln('stream.write(${customClass.enumeration})');
-              indent.writeln('writeValue(stream, value.toList())');
-            });
-          }
-          indent.writeln('else -> super.writeValue(stream, value)');
-        });
-      });
-    });
+  @override
+  void writeInstanceManager(
+    KotlinOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    indent.format(instanceManagerTemplate(generatorOptions));
     indent.newln();
+  }
+
+  @override
+  void writeInstanceManagerApi(
+    KotlinOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    final String instanceManagerApiName =
+        '${kotlinInstanceManagerClassName(generatorOptions)}Api';
+
+    addDocumentationComments(
+      indent,
+      <String>[
+        ' Generated API for managing the Dart and native `InstanceManager`s.',
+      ],
+      _docCommentSpec,
+    );
+    indent.writeScoped(
+      'private class $instanceManagerApiName(val binaryMessenger: BinaryMessenger) {',
+      '}',
+      () {
+        indent.writeScoped('companion object {', '}', () {
+          addDocumentationComments(
+            indent,
+            <String>[' The codec used by $instanceManagerApiName.'],
+            _docCommentSpec,
+          );
+          indent.writeScoped(
+            'val codec: MessageCodec<Any?> by lazy {',
+            '}',
+            () {
+              indent.writeln(
+                '${generatorOptions.fileSpecificClassNameComponent}$_codecName()',
+              );
+            },
+          );
+          indent.newln();
+
+          addDocumentationComments(
+            indent,
+            <String>[
+              ' Sets up an instance of `$instanceManagerApiName` to handle messages from the',
+              ' `binaryMessenger`.',
+            ],
+            _docCommentSpec,
+          );
+          indent.writeScoped(
+            'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, instanceManager: ${kotlinInstanceManagerClassName(generatorOptions)}?) {',
+            '}',
+            () {
+              const String setHandlerCondition = 'instanceManager != null';
+              _writeHostMethodMessageHandler(
+                indent,
+                name: 'removeStrongReference',
+                channelName:
+                    makeRemoveStrongReferenceChannelName(dartPackageName),
+                taskQueueType: TaskQueueType.serial,
+                parameters: <Parameter>[
+                  Parameter(
+                    name: 'identifier',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: false,
+                    ),
+                  ),
+                ],
+                returnType: const TypeDeclaration.voidDeclaration(),
+                setHandlerCondition: setHandlerCondition,
+                onCreateCall: (
+                  List<String> safeArgNames, {
+                  required String apiVarName,
+                }) {
+                  return 'instanceManager.remove<Any?>(${safeArgNames.single})';
+                },
+              );
+              _writeHostMethodMessageHandler(
+                indent,
+                name: 'clear',
+                channelName: makeClearChannelName(dartPackageName),
+                taskQueueType: TaskQueueType.serial,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration.voidDeclaration(),
+                setHandlerCondition: setHandlerCondition,
+                onCreateCall: (
+                  List<String> safeArgNames, {
+                  required String apiVarName,
+                }) {
+                  return 'instanceManager.clear()';
+                },
+              );
+            },
+          );
+        });
+        indent.newln();
+
+        _writeFlutterMethod(
+          indent,
+          generatorOptions: generatorOptions,
+          name: 'removeStrongReference',
+          parameters: <Parameter>[
+            Parameter(
+              name: 'identifier',
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+            )
+          ],
+          returnType: const TypeDeclaration.voidDeclaration(),
+          channelName: makeRemoveStrongReferenceChannelName(dartPackageName),
+          dartPackageName: dartPackageName,
+        );
+      },
+    );
+  }
+
+  @override
+  void writeProxyApiBaseCodec(
+    KotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+  ) {
+    final Iterable<AstProxyApi> allProxyApis =
+        root.apis.whereType<AstProxyApi>();
+
+    _writeProxyApiRegistrar(
+      indent,
+      generatorOptions: generatorOptions,
+      allProxyApis: allProxyApis,
+    );
+
+    // Sort APIs where edges are an API's super class and interfaces.
+    //
+    // This sorts the APIs to have child classes be listed before their parent
+    // classes. This prevents the scenario where a method might return the super
+    // class of the actual class, so the incorrect Dart class gets created
+    // because the 'value is <SuperClass>' was checked first in the codec. For
+    // example:
+    //
+    // class Shape {}
+    // class Circle extends Shape {}
+    //
+    // class SomeClass {
+    //   Shape giveMeAShape() => Circle();
+    // }
+    final List<AstProxyApi> sortedApis = topologicalSort(
+      allProxyApis,
+      (AstProxyApi api) {
+        return <AstProxyApi>[
+          if (api.superClass?.associatedProxyApi != null)
+            api.superClass!.associatedProxyApi!,
+          ...api.interfaces.map(
+            (TypeDeclaration interface) => interface.associatedProxyApi!,
+          ),
+        ];
+      },
+    );
+
+    indent.writeScoped(
+      'private class ${proxyApiCodecName(generatorOptions)}(val registrar: ${proxyApiRegistrarName(generatorOptions)}) : '
+          '${generatorOptions.fileSpecificClassNameComponent}$_codecName() {',
+      '}',
+      () {
+        indent.format(
+          '''
+          override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+            return when (type) {
+              $proxyApiCodecInstanceManagerKey.toByte() -> {
+                return registrar.instanceManager.getInstance(readValue(buffer) as Long)
+              }
+              else -> super.readValueOfType(type, buffer)
+            }
+          }''',
+        );
+        indent.newln();
+
+        indent.writeScoped(
+          'override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {',
+          '}',
+          () {
+            final List<String> nonProxyApiTypes = <String>[
+              'Boolean',
+              'ByteArray',
+              'Double',
+              'DoubleArray',
+              'FloatArray',
+              'Int',
+              'IntArray',
+              'List<*>',
+              'Long',
+              'LongArray',
+              'Map<*, *>',
+              'String',
+              ...root.enums.map((Enum anEnum) => anEnum.name),
+            ];
+            final String isSupportedExpression = nonProxyApiTypes
+                .map((String kotlinType) => 'value is $kotlinType')
+                .followedBy(<String>['value == null']).join(' || ');
+            // Non ProxyApi types are checked first to handle the scenario
+            // where a client wraps the `Object` class which all the
+            // classes above extend.
+            indent.writeScoped('if ($isSupportedExpression) {', '}', () {
+              indent.writeln('super.writeValue(stream, value)');
+              indent.writeln('return');
+            });
+            indent.newln();
+
+            enumerate(
+              sortedApis,
+              (int index, AstProxyApi api) {
+                final String className =
+                    api.kotlinOptions?.fullClassName ?? api.name;
+
+                final int? minApi = api.kotlinOptions?.minAndroidApi;
+                final String versionCheck = minApi != null
+                    ? 'android.os.Build.VERSION.SDK_INT >= $minApi && '
+                    : '';
+
+                indent.format(
+                  '''
+                  ${index > 0 ? ' else ' : ''}if (${versionCheck}value is $className) {
+                    registrar.get$hostProxyApiPrefix${api.name}().${classMemberNamePrefix}newInstance(value) { }
+                  }''',
+                );
+              },
+            );
+            indent.newln();
+
+            indent.format(
+              '''
+              when {
+                registrar.instanceManager.containsInstance(value) -> {
+                  stream.write($proxyApiCodecInstanceManagerKey)
+                  writeValue(stream, registrar.instanceManager.getIdentifierForStrongReference(value))
+                }
+                else -> throw IllegalArgumentException("Unsupported value: '\$value' of type '\${value.javaClass.name}'")
+              }''',
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  void writeProxyApi(
+    KotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstProxyApi api, {
+    required String dartPackageName,
+  }) {
+    final String kotlinApiName = '$hostProxyApiPrefix${api.name}';
+
+    addDocumentationComments(
+      indent,
+      api.documentationComments,
+      _docCommentSpec,
+    );
+    indent.writeln('@Suppress("UNCHECKED_CAST")');
+    // The API only needs to be abstract if there are methods to override.
+    final String classModifier =
+        api.hasMethodsRequiringImplementation() ? 'abstract' : 'open';
+    indent.writeScoped(
+      '$classModifier class $kotlinApiName(open val pigeonRegistrar: ${proxyApiRegistrarName(generatorOptions)}) {',
+      '}',
+      () {
+        final String fullKotlinClassName =
+            api.kotlinOptions?.fullClassName ?? api.name;
+
+        final TypeDeclaration apiAsTypeDeclaration = TypeDeclaration(
+          baseName: api.name,
+          isNullable: false,
+          associatedProxyApi: api,
+        );
+
+        _writeProxyApiConstructorAbstractMethods(
+          indent,
+          api,
+          apiAsTypeDeclaration: apiAsTypeDeclaration,
+        );
+
+        _writeProxyApiAttachedFieldAbstractMethods(
+          indent,
+          api,
+          apiAsTypeDeclaration: apiAsTypeDeclaration,
+        );
+
+        if (api.hasCallbackConstructor()) {
+          _writeProxyApiUnattachedFieldAbstractMethods(
+            indent,
+            api,
+            apiAsTypeDeclaration: apiAsTypeDeclaration,
+          );
+        }
+
+        _writeProxyApiHostMethodAbstractMethods(
+          indent,
+          api,
+          apiAsTypeDeclaration: apiAsTypeDeclaration,
+        );
+
+        if (api.constructors.isNotEmpty ||
+            api.attachedFields.isNotEmpty ||
+            api.hostMethods.isNotEmpty) {
+          indent.writeScoped('companion object {', '}', () {
+            _writeProxyApiMessageHandlerMethod(
+              indent,
+              api,
+              apiAsTypeDeclaration: apiAsTypeDeclaration,
+              kotlinApiName: kotlinApiName,
+              dartPackageName: dartPackageName,
+              fullKotlinClassName: fullKotlinClassName,
+              generatorOptions: generatorOptions,
+            );
+          });
+          indent.newln();
+        }
+
+        _writeProxyApiNewInstanceMethod(
+          indent,
+          api,
+          generatorOptions: generatorOptions,
+          apiAsTypeDeclaration: apiAsTypeDeclaration,
+          newInstanceMethodName: '${classMemberNamePrefix}newInstance',
+          dartPackageName: dartPackageName,
+        );
+
+        _writeProxyApiFlutterMethods(
+          indent,
+          api,
+          generatorOptions: generatorOptions,
+          apiAsTypeDeclaration: apiAsTypeDeclaration,
+          dartPackageName: dartPackageName,
+        );
+
+        _writeProxyApiInheritedApiMethods(indent, api);
+      },
+    );
   }
 
   void _writeWrapResult(Indent indent) {
@@ -574,12 +1060,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     final bool hasFlutterApi = root.apis
         .whereType<AstFlutterApi>()
         .any((Api api) => api.methods.isNotEmpty);
+    final bool hasProxyApi = root.apis.any((Api api) => api is AstProxyApi);
 
-    if (hasHostApi) {
+    if (hasHostApi || hasProxyApi) {
       _writeWrapResult(indent);
       _writeWrapError(generatorOptions, indent);
     }
-    if (hasFlutterApi) {
+    if (hasFlutterApi || hasProxyApi) {
       _writeCreateConnectionError(generatorOptions, indent);
     }
     if (generatorOptions.includeErrorClass) {
@@ -595,6 +1082,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     List<String> documentationComments = const <String>[],
     int? minApiRequirement,
     bool isAsynchronous = false,
+    bool isOpen = false,
     bool isAbstract = false,
     String Function(int index, NamedType type) getArgumentName =
         _getArgumentName,
@@ -627,28 +1115,33 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       );
     }
 
+    final String openKeyword = isOpen ? 'open ' : '';
     final String abstractKeyword = isAbstract ? 'abstract ' : '';
 
     if (isAsynchronous) {
       argSignature.add('callback: (Result<$resultType>) -> Unit');
-      indent.writeln('${abstractKeyword}fun $name(${argSignature.join(', ')})');
+      indent.writeln(
+        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})',
+      );
     } else if (returnType.isVoid) {
-      indent.writeln('${abstractKeyword}fun $name(${argSignature.join(', ')})');
+      indent.writeln(
+        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})',
+      );
     } else {
       indent.writeln(
-        '${abstractKeyword}fun $name(${argSignature.join(', ')}): $returnTypeString',
+        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')}): $returnTypeString',
       );
     }
   }
 
   void _writeHostMethodMessageHandler(
     Indent indent, {
-    required Api api,
     required String name,
     required String channelName,
     required TaskQueueType taskQueueType,
     required List<Parameter> parameters,
     required TypeDeclaration returnType,
+    String setHandlerCondition = 'api != null',
     bool isAsynchronous = false,
     String Function(List<String> safeArgNames, {required String apiVarName})?
         onCreateCall,
@@ -661,8 +1154,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.writeln(
             'val $taskQueue = binaryMessenger.makeBackgroundTaskQueue()');
       }
+
       indent.write(
-          'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName\$separatedMessageChannelSuffix", codec');
+        'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec',
+      );
 
       if (taskQueue != null) {
         indent.addln(', $taskQueue)');
@@ -670,7 +1165,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.addln(')');
       }
 
-      indent.write('if (api != null) ');
+      indent.write('if ($setHandlerCondition) ');
       indent.addScoped('{', '}', () {
         final String messageVarName = parameters.isNotEmpty ? 'message' : '_';
 
@@ -692,25 +1187,21 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               : 'api.$name(${methodArguments.join(', ')})';
 
           if (isAsynchronous) {
-            indent.write('$call ');
             final String resultType = returnType.isVoid
                 ? 'Unit'
                 : _nullSafeKotlinTypeForDartType(returnType);
+            indent.write(methodArguments.isNotEmpty ? '$call ' : 'api.$name');
             indent.addScoped('{ result: Result<$resultType> ->', '}', () {
               indent.writeln('val error = result.exceptionOrNull()');
               indent.writeScoped('if (error != null) {', '}', () {
                 indent.writeln('reply.reply(wrapError(error))');
               }, addTrailingNewline: false);
               indent.addScoped(' else {', '}', () {
-                final String enumTagNullablePrefix =
-                    returnType.isNullable ? '?' : '!!';
-                final String enumTag =
-                    returnType.isEnum ? '$enumTagNullablePrefix.raw' : '';
                 if (returnType.isVoid) {
                   indent.writeln('reply.reply(wrapResult(null))');
                 } else {
                   indent.writeln('val data = result.getOrNull()');
-                  indent.writeln('reply.reply(wrapResult(data$enumTag))');
+                  indent.writeln('reply.reply(wrapResult(data))');
                 }
               });
             });
@@ -718,14 +1209,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             indent.writeScoped('val wrapped: List<Any?> = try {', '}', () {
               if (returnType.isVoid) {
                 indent.writeln(call);
-                indent.writeln('listOf<Any?>(null)');
+                indent.writeln('listOf(null)');
               } else {
-                String enumTag = '';
-                if (returnType.isEnum) {
-                  final String safeUnwrap = returnType.isNullable ? '?' : '';
-                  enumTag = '$safeUnwrap.raw';
-                }
-                indent.writeln('listOf<Any?>($call$enumTag)');
+                indent.writeln('listOf($call)');
               }
             }, addTrailingNewline: false);
             indent.add(' catch (exception: Throwable) ');
@@ -752,6 +1238,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     required String dartPackageName,
     List<String> documentationComments = const <String>[],
     int? minApiRequirement,
+    void Function(
+      Indent indent, {
+      required List<Parameter> parameters,
+      required TypeDeclaration returnType,
+      required String channelName,
+      required String errorClassName,
+    }) onWriteBody = _writeFlutterMethodMessageCall,
   }) {
     _writeMethodDeclaration(
       indent,
@@ -766,7 +1259,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
     final String errorClassName = _getErrorClassName(generatorOptions);
     indent.addScoped('{', '}', () {
-      _writeFlutterMethodMessageCall(
+      onWriteBody(
         indent,
         parameters: parameters,
         returnType: returnType,
@@ -796,10 +1289,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     }
 
     const String channel = 'channel';
-    indent.writeln(
-        r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""');
-    indent.writeln(
-        'val channelName = "$channelName\$separatedMessageChannelSuffix"');
+    indent.writeln('val channelName = "$channelName"');
     indent.writeln(
         'val $channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)');
     indent.writeScoped('$channel.send($sendArgument) {', '}', () {
@@ -818,18 +1308,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           if (returnType.isVoid) {
             indent.writeln('callback(Result.success(Unit))');
           } else {
-            const String output = 'output';
-            // Nullable enums require special handling.
-            if (returnType.isEnum && returnType.isNullable) {
-              indent.writeScoped(
-                  'val $output = (it[0] as Int?)?.let { num ->', '}', () {
-                indent.writeln('${returnType.baseName}.ofRaw(num)');
-              });
-            } else {
-              indent.writeln(
-                  'val $output = ${_cast(indent, 'it[0]', type: returnType)}');
-            }
-            indent.writeln('callback(Result.success($output))');
+            indent.writeln(
+                'val output = ${_cast(indent, 'it[0]', type: returnType)}');
+
+            indent.writeln('callback(Result.success(output))');
           }
         });
       }, addTrailingNewline: false);
@@ -839,10 +1321,665 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       });
     });
   }
+
+  void _writeProxyApiRegistrar(
+    Indent indent, {
+    required KotlinOptions generatorOptions,
+    required Iterable<AstProxyApi> allProxyApis,
+  }) {
+    final String registrarName = proxyApiRegistrarName(generatorOptions);
+    final String instanceManagerName = kotlinInstanceManagerClassName(
+      generatorOptions,
+    );
+    final String instanceManagerApiName = '${instanceManagerName}Api';
+
+    addDocumentationComments(
+      indent,
+      <String>[
+        ' Provides implementations for each ProxyApi implementation and provides access to resources',
+        ' needed by any implementation.',
+      ],
+      _docCommentSpec,
+    );
+    indent.writeScoped(
+      'abstract class $registrarName(val binaryMessenger: BinaryMessenger) {',
+      '}',
+      () {
+        addDocumentationComments(
+          indent,
+          <String>[' Whether APIs should ignore calling to Dart.'],
+          _docCommentSpec,
+        );
+        indent.writeln('public var ignoreCallsToDart = false');
+        indent.format(
+          '''
+          val instanceManager: $instanceManagerName
+          private var _codec: MessageCodec<Any?>? = null
+          val codec: MessageCodec<Any?>
+            get() {
+              if (_codec == null) {
+                _codec = ${proxyApiCodecName(generatorOptions)}(this)
+              }
+              return _codec!!
+            }
+
+          init {
+            val api = $instanceManagerApiName(binaryMessenger)
+            instanceManager = $instanceManagerName.create(
+              object : $instanceManagerName.PigeonFinalizationListener {
+                override fun onFinalize(identifier: Long) {
+                  api.removeStrongReference(identifier) {
+                    if (it.isFailure) {
+                      Log.e(
+                        "${proxyApiClassNamePrefix}ProxyApiRegistrar",
+                        "Failed to remove Dart strong reference with identifier: \$identifier"
+                      )
+                    }
+                  }
+                }
+              }
+            )
+          }''',
+        );
+        for (final AstProxyApi api in allProxyApis) {
+          _writeMethodDeclaration(
+            indent,
+            name: 'get$hostProxyApiPrefix${api.name}',
+            isAbstract:
+                api.hasAnyHostMessageCalls() || api.unattachedFields.isNotEmpty,
+            isOpen:
+                !api.hasAnyHostMessageCalls() && api.unattachedFields.isEmpty,
+            documentationComments: <String>[
+              ' An implementation of [$hostProxyApiPrefix${api.name}] used to add a new Dart instance of',
+              ' `${api.name}` to the Dart `InstanceManager`.'
+            ],
+            returnType: TypeDeclaration(
+              baseName: '$hostProxyApiPrefix${api.name}',
+              isNullable: false,
+            ),
+            parameters: <Parameter>[],
+          );
+
+          // Use the default API implementation if this API does not have any
+          // methods to implement.
+          if (!api.hasMethodsRequiringImplementation()) {
+            indent.writeScoped('{', '}', () {
+              indent.writeln('return $hostProxyApiPrefix${api.name}(this)');
+            });
+          }
+          indent.newln();
+        }
+
+        indent.writeScoped('fun setUp() {', '}', () {
+          indent.writeln(
+            '$instanceManagerApiName.setUpMessageHandlers(binaryMessenger, instanceManager)',
+          );
+          for (final AstProxyApi api in allProxyApis) {
+            final bool hasHostMessageCalls = api.constructors.isNotEmpty ||
+                api.attachedFields.isNotEmpty ||
+                api.hostMethods.isNotEmpty;
+            if (hasHostMessageCalls) {
+              indent.writeln(
+                '$hostProxyApiPrefix${api.name}.setUpMessageHandlers(binaryMessenger, get$hostProxyApiPrefix${api.name}())',
+              );
+            }
+          }
+        });
+
+        indent.writeScoped('fun tearDown() {', '}', () {
+          indent.writeln(
+            '$instanceManagerApiName.setUpMessageHandlers(binaryMessenger, null)',
+          );
+          for (final AstProxyApi api in allProxyApis) {
+            if (api.hasAnyHostMessageCalls()) {
+              indent.writeln(
+                '$hostProxyApiPrefix${api.name}.setUpMessageHandlers(binaryMessenger, null)',
+              );
+            }
+          }
+        });
+      },
+    );
+  }
+
+  // Writes the abstract method that instantiates a new instance of the Kotlin
+  // class.
+  void _writeProxyApiConstructorAbstractMethods(
+    Indent indent,
+    AstProxyApi api, {
+    required TypeDeclaration apiAsTypeDeclaration,
+  }) {
+    for (final Constructor constructor in api.constructors) {
+      _writeMethodDeclaration(
+        indent,
+        name: constructor.name.isNotEmpty
+            ? constructor.name
+            : '${classMemberNamePrefix}defaultConstructor',
+        returnType: apiAsTypeDeclaration,
+        documentationComments: constructor.documentationComments,
+        minApiRequirement: _findAndroidHighestApiRequirement(<TypeDeclaration>[
+          apiAsTypeDeclaration,
+          ...constructor.parameters.map(
+            (Parameter parameter) => parameter.type,
+          ),
+        ])?.version,
+        isAbstract: true,
+        parameters: <Parameter>[
+          ...api.unattachedFields.map((ApiField field) {
+            return Parameter(name: field.name, type: field.type);
+          }),
+          ...constructor.parameters
+        ],
+      );
+      indent.newln();
+    }
+  }
+
+  // Writes the abstract method that handles instantiating an attached field.
+  void _writeProxyApiAttachedFieldAbstractMethods(
+    Indent indent,
+    AstProxyApi api, {
+    required TypeDeclaration apiAsTypeDeclaration,
+  }) {
+    for (final ApiField field in api.attachedFields) {
+      _writeMethodDeclaration(
+        indent,
+        name: field.name,
+        documentationComments: field.documentationComments,
+        returnType: field.type,
+        isAbstract: true,
+        minApiRequirement: _findAndroidHighestApiRequirement(<TypeDeclaration>[
+          apiAsTypeDeclaration,
+          field.type,
+        ])?.version,
+        parameters: <Parameter>[
+          if (!field.isStatic)
+            Parameter(
+              name: '${classMemberNamePrefix}instance',
+              type: apiAsTypeDeclaration,
+            ),
+        ],
+      );
+      indent.newln();
+    }
+  }
+
+  // Writes the abstract method that handles accessing an unattached field.
+  void _writeProxyApiUnattachedFieldAbstractMethods(
+    Indent indent,
+    AstProxyApi api, {
+    required TypeDeclaration apiAsTypeDeclaration,
+  }) {
+    for (final ApiField field in api.unattachedFields) {
+      _writeMethodDeclaration(
+        indent,
+        name: field.name,
+        documentationComments: field.documentationComments,
+        returnType: field.type,
+        isAbstract: true,
+        minApiRequirement: _findAndroidHighestApiRequirement(<TypeDeclaration>[
+          apiAsTypeDeclaration,
+          field.type,
+        ])?.version,
+        parameters: <Parameter>[
+          Parameter(
+            name: '${classMemberNamePrefix}instance',
+            type: apiAsTypeDeclaration,
+          ),
+        ],
+      );
+      indent.newln();
+    }
+  }
+
+  // Writes the abstract method that handles making a call from for a host
+  // method.
+  void _writeProxyApiHostMethodAbstractMethods(
+    Indent indent,
+    AstProxyApi api, {
+    required TypeDeclaration apiAsTypeDeclaration,
+  }) {
+    for (final Method method in api.hostMethods) {
+      _writeMethodDeclaration(
+        indent,
+        name: method.name,
+        returnType: method.returnType,
+        documentationComments: method.documentationComments,
+        isAsynchronous: method.isAsynchronous,
+        isAbstract: true,
+        minApiRequirement: _findAndroidHighestApiRequirement(
+          <TypeDeclaration>[
+            if (!method.isStatic) apiAsTypeDeclaration,
+            method.returnType,
+            ...method.parameters.map((Parameter p) => p.type),
+          ],
+        )?.version,
+        parameters: <Parameter>[
+          if (!method.isStatic)
+            Parameter(
+              name: '${classMemberNamePrefix}instance',
+              type: apiAsTypeDeclaration,
+            ),
+          ...method.parameters,
+        ],
+      );
+      indent.newln();
+    }
+  }
+
+  // Writes the `..setUpMessageHandler` method to ensure incoming messages are
+  // handled by the correct abstract host methods.
+  void _writeProxyApiMessageHandlerMethod(
+    Indent indent,
+    AstProxyApi api, {
+    required TypeDeclaration apiAsTypeDeclaration,
+    required String kotlinApiName,
+    required String dartPackageName,
+    required String fullKotlinClassName,
+    required KotlinOptions generatorOptions,
+  }) {
+    indent.writeln('@Suppress("LocalVariableName")');
+    indent.writeScoped(
+      'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: $kotlinApiName?) {',
+      '}',
+      () {
+        indent.writeln(
+          'val codec = api?.pigeonRegistrar?.codec ?: ${generatorOptions.fileSpecificClassNameComponent}$_codecName()',
+        );
+        void writeWithApiCheckIfNecessary(
+          List<TypeDeclaration> types, {
+          required String channelName,
+          required void Function() onWrite,
+        }) {
+          final ({TypeDeclaration type, int version})? typeWithRequirement =
+              _findAndroidHighestApiRequirement(types);
+          if (typeWithRequirement != null) {
+            final int apiRequirement = typeWithRequirement.version;
+            indent.writeScoped(
+              'if (android.os.Build.VERSION.SDK_INT >= $apiRequirement) {',
+              '}',
+              onWrite,
+              addTrailingNewline: false,
+            );
+            indent.writeScoped(' else {', '}', () {
+              final String className = typeWithRequirement
+                      .type.associatedProxyApi!.kotlinOptions?.fullClassName ??
+                  typeWithRequirement.type.baseName;
+              indent.format(
+                '''
+                val channel = BasicMessageChannel<Any?>(
+                  binaryMessenger,
+                  "$channelName",
+                  codec
+                )
+                if (api != null) {
+                  channel.setMessageHandler { _, reply ->
+                    reply.reply(wrapError(UnsupportedOperationException(
+                      "Call references class `$className`, which requires api version $apiRequirement."
+                    )))
+                  }
+                } else {
+                  channel.setMessageHandler(null)
+                }''',
+              );
+            });
+          } else {
+            onWrite();
+          }
+        }
+
+        for (final Constructor constructor in api.constructors) {
+          final String name = constructor.name.isNotEmpty
+              ? constructor.name
+              : '${classMemberNamePrefix}defaultConstructor';
+          final String channelName = makeChannelNameWithStrings(
+            apiName: api.name,
+            methodName: name,
+            dartPackageName: dartPackageName,
+          );
+          writeWithApiCheckIfNecessary(
+            <TypeDeclaration>[
+              apiAsTypeDeclaration,
+              ...api.unattachedFields.map((ApiField f) => f.type),
+              ...constructor.parameters.map((Parameter p) => p.type),
+            ],
+            channelName: channelName,
+            onWrite: () {
+              _writeHostMethodMessageHandler(
+                indent,
+                name: name,
+                channelName: channelName,
+                taskQueueType: TaskQueueType.serial,
+                returnType: const TypeDeclaration.voidDeclaration(),
+                onCreateCall: (
+                  List<String> methodParameters, {
+                  required String apiVarName,
+                }) {
+                  return '$apiVarName.pigeonRegistrar.instanceManager.addDartCreatedInstance('
+                      '$apiVarName.$name(${methodParameters.skip(1).join(',')}), ${methodParameters.first})';
+                },
+                parameters: <Parameter>[
+                  Parameter(
+                    name: '${classMemberNamePrefix}identifier',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: false,
+                    ),
+                  ),
+                  ...api.unattachedFields.map((ApiField field) {
+                    return Parameter(
+                      name: field.name,
+                      type: field.type,
+                    );
+                  }),
+                  ...constructor.parameters,
+                ],
+              );
+            },
+          );
+        }
+
+        for (final ApiField field in api.attachedFields) {
+          final String channelName = makeChannelNameWithStrings(
+            apiName: api.name,
+            methodName: field.name,
+            dartPackageName: dartPackageName,
+          );
+          writeWithApiCheckIfNecessary(
+            <TypeDeclaration>[apiAsTypeDeclaration, field.type],
+            channelName: channelName,
+            onWrite: () {
+              _writeHostMethodMessageHandler(
+                indent,
+                name: field.name,
+                channelName: channelName,
+                taskQueueType: TaskQueueType.serial,
+                returnType: const TypeDeclaration.voidDeclaration(),
+                onCreateCall: (
+                  List<String> methodParameters, {
+                  required String apiVarName,
+                }) {
+                  final String param =
+                      methodParameters.length > 1 ? methodParameters.first : '';
+                  return '$apiVarName.pigeonRegistrar.instanceManager.addDartCreatedInstance('
+                      '$apiVarName.${field.name}($param), ${methodParameters.last})';
+                },
+                parameters: <Parameter>[
+                  if (!field.isStatic)
+                    Parameter(
+                      name: '${classMemberNamePrefix}instance',
+                      type: apiAsTypeDeclaration,
+                    ),
+                  Parameter(
+                    name: '${classMemberNamePrefix}identifier',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: false,
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+
+        for (final Method method in api.hostMethods) {
+          final String channelName =
+              makeChannelName(api, method, dartPackageName);
+          writeWithApiCheckIfNecessary(
+            <TypeDeclaration>[
+              if (!method.isStatic) apiAsTypeDeclaration,
+              method.returnType,
+              ...method.parameters.map((Parameter p) => p.type),
+            ],
+            channelName: channelName,
+            onWrite: () {
+              _writeHostMethodMessageHandler(
+                indent,
+                name: method.name,
+                channelName: makeChannelName(api, method, dartPackageName),
+                taskQueueType: method.taskQueueType,
+                returnType: method.returnType,
+                isAsynchronous: method.isAsynchronous,
+                parameters: <Parameter>[
+                  if (!method.isStatic)
+                    Parameter(
+                      name: '${classMemberNamePrefix}instance',
+                      type: TypeDeclaration(
+                        baseName: fullKotlinClassName,
+                        isNullable: false,
+                        associatedProxyApi: api,
+                      ),
+                    ),
+                  ...method.parameters,
+                ],
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+  // Writes the method that calls to Dart to instantiate a new Dart instance.
+  void _writeProxyApiNewInstanceMethod(
+    Indent indent,
+    AstProxyApi api, {
+    required KotlinOptions generatorOptions,
+    required TypeDeclaration apiAsTypeDeclaration,
+    required String newInstanceMethodName,
+    required String dartPackageName,
+  }) {
+    indent.writeln('@Suppress("LocalVariableName", "FunctionName")');
+    _writeFlutterMethod(
+      indent,
+      generatorOptions: generatorOptions,
+      name: newInstanceMethodName,
+      returnType: const TypeDeclaration.voidDeclaration(),
+      documentationComments: <String>[
+        ' Creates a Dart instance of ${api.name} and attaches it to [${classMemberNamePrefix}instanceArg].',
+      ],
+      channelName: makeChannelNameWithStrings(
+        apiName: api.name,
+        methodName: newInstanceMethodName,
+        dartPackageName: dartPackageName,
+      ),
+      minApiRequirement: _findAndroidHighestApiRequirement(<TypeDeclaration>[
+        apiAsTypeDeclaration,
+        ...api.unattachedFields.map((ApiField field) => field.type),
+      ])?.version,
+      dartPackageName: dartPackageName,
+      parameters: <Parameter>[
+        Parameter(
+          name: '${classMemberNamePrefix}instance',
+          type: TypeDeclaration(
+            baseName: api.name,
+            isNullable: false,
+            associatedProxyApi: api,
+          ),
+        ),
+      ],
+      onWriteBody: (
+        Indent indent, {
+        required List<Parameter> parameters,
+        required TypeDeclaration returnType,
+        required String channelName,
+        required String errorClassName,
+      }) {
+        indent.writeScoped(
+          'if (pigeonRegistrar.ignoreCallsToDart) {',
+          '}',
+          () {
+            indent.format(
+              '''
+              callback(
+                  Result.failure(
+                      $errorClassName("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+              return''',
+            );
+          },
+        );
+        indent.writeScoped(
+          'if (pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
+          '}',
+          () {
+            indent.writeln('Result.success(Unit)');
+            indent.writeln('return');
+          },
+        );
+        if (api.hasCallbackConstructor()) {
+          indent.writeln(
+            'val ${classMemberNamePrefix}identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
+          );
+          enumerate(api.unattachedFields, (int index, ApiField field) {
+            final String argName = _getSafeArgumentName(index, field);
+            indent.writeln(
+              'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
+            );
+          });
+
+          indent
+              .writeln('val binaryMessenger = pigeonRegistrar.binaryMessenger');
+          indent.writeln('val codec = pigeonRegistrar.codec');
+          _writeFlutterMethodMessageCall(
+            indent,
+            returnType: returnType,
+            channelName: channelName,
+            errorClassName: errorClassName,
+            parameters: <Parameter>[
+              Parameter(
+                name: '${classMemberNamePrefix}identifier',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                ),
+              ),
+              ...api.unattachedFields.map(
+                (ApiField field) {
+                  return Parameter(name: field.name, type: field.type);
+                },
+              ),
+            ],
+          );
+        } else {
+          indent.writeln(
+            'throw IllegalStateException("Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.")',
+          );
+        }
+      },
+    );
+    indent.newln();
+  }
+
+  // Writes the Flutter methods that call back to Dart.
+  void _writeProxyApiFlutterMethods(
+    Indent indent,
+    AstProxyApi api, {
+    required KotlinOptions generatorOptions,
+    required TypeDeclaration apiAsTypeDeclaration,
+    required String dartPackageName,
+  }) {
+    for (final Method method in api.flutterMethods) {
+      _writeFlutterMethod(
+        indent,
+        generatorOptions: generatorOptions,
+        name: method.name,
+        returnType: method.returnType,
+        channelName: makeChannelName(api, method, dartPackageName),
+        dartPackageName: dartPackageName,
+        documentationComments: method.documentationComments,
+        minApiRequirement: _findAndroidHighestApiRequirement(<TypeDeclaration>[
+          apiAsTypeDeclaration,
+          method.returnType,
+          ...method.parameters.map((Parameter parameter) => parameter.type),
+        ])?.version,
+        parameters: <Parameter>[
+          Parameter(
+            name: '${classMemberNamePrefix}instance',
+            type: TypeDeclaration(
+              baseName: api.name,
+              isNullable: false,
+              associatedProxyApi: api,
+            ),
+          ),
+          ...method.parameters,
+        ],
+        onWriteBody: (
+          Indent indent, {
+          required List<Parameter> parameters,
+          required TypeDeclaration returnType,
+          required String channelName,
+          required String errorClassName,
+        }) {
+          indent.writeScoped(
+            'if (pigeonRegistrar.ignoreCallsToDart) {',
+            '}',
+            () {
+              indent.format(
+                '''
+                callback(
+                    Result.failure(
+                        $errorClassName("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+                return''',
+              );
+            },
+          );
+          indent
+              .writeln('val binaryMessenger = pigeonRegistrar.binaryMessenger');
+          indent.writeln('val codec = pigeonRegistrar.codec');
+          _writeFlutterMethodMessageCall(
+            indent,
+            returnType: returnType,
+            channelName: channelName,
+            errorClassName: errorClassName,
+            parameters: parameters,
+          );
+        },
+      );
+      indent.newln();
+    }
+  }
+
+  // Writes the getters for accessing the implementation of other ProxyApis.
+  //
+  // These are used for inherited Flutter methods.
+  void _writeProxyApiInheritedApiMethods(Indent indent, AstProxyApi api) {
+    final Set<String> inheritedApiNames = <String>{
+      if (api.superClass != null) api.superClass!.baseName,
+      ...api.interfaces.map((TypeDeclaration type) => type.baseName),
+    };
+    for (final String name in inheritedApiNames) {
+      indent.writeln('@Suppress("FunctionName")');
+      final String apiName = '$hostProxyApiPrefix$name';
+      _writeMethodDeclaration(
+        indent,
+        name: '${classMemberNamePrefix}get$apiName',
+        documentationComments: <String>[
+          ' An implementation of [$apiName] used to access callback methods',
+        ],
+        returnType: TypeDeclaration(baseName: apiName, isNullable: false),
+        parameters: <Parameter>[],
+      );
+
+      indent.writeScoped('{', '}', () {
+        indent.writeln('return pigeonRegistrar.get$apiName()');
+      });
+      indent.newln();
+    }
+  }
 }
 
-/// Calculates the name of the codec that will be generated for [api].
-String _getCodecName(Api api) => '${api.name}Codec';
+({TypeDeclaration type, int version})? _findAndroidHighestApiRequirement(
+  Iterable<TypeDeclaration> types,
+) {
+  return findHighestApiRequirement(
+    types,
+    onGetApiRequirement: (TypeDeclaration type) {
+      return type.associatedProxyApi?.kotlinOptions?.minAndroidApi;
+    },
+    onCompare: (int first, int second) => first.compareTo(second),
+  );
+}
 
 String _getErrorClassName(KotlinOptions generatorOptions) =>
     generatorOptions.errorClassName ?? 'FlutterError';
@@ -853,11 +1990,6 @@ String _getArgumentName(int count, NamedType argument) =>
 /// Returns an argument name that can be used in a context where it is possible to collide
 /// and append `.index` to enums.
 String _getEnumSafeArgumentExpression(int count, NamedType argument) {
-  if (argument.type.isEnum) {
-    return argument.type.isNullable
-        ? '${_getArgumentName(count, argument)}Arg?.raw'
-        : '${_getArgumentName(count, argument)}Arg.raw';
-  }
   return '${_getArgumentName(count, argument)}Arg';
 }
 
@@ -866,14 +1998,7 @@ String _getSafeArgumentName(int count, NamedType argument) =>
     '${_getArgumentName(count, argument)}Arg';
 
 String _castForceUnwrap(String value, TypeDeclaration type, Indent indent) {
-  if (type.isEnum) {
-    final String forceUnwrap = type.isNullable ? '' : '!!';
-    final String nullableConditionPrefix =
-        type.isNullable ? 'if ($value == null) null else ' : '';
-    return '$nullableConditionPrefix${_kotlinTypeForDartType(type)}.ofRaw($value as Int)$forceUnwrap';
-  } else {
-    return _cast(indent, value, type: type);
-  }
+  return _cast(indent, value, type: type);
 }
 
 /// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
@@ -927,8 +2052,19 @@ String? _kotlinTypeForBuiltinDartType(TypeDeclaration type) {
   }
 }
 
+String? _kotlinTypeForProxyApiType(TypeDeclaration type) {
+  if (type.isProxyApi) {
+    return type.associatedProxyApi!.kotlinOptions?.fullClassName ??
+        type.associatedProxyApi!.name;
+  }
+
+  return null;
+}
+
 String _kotlinTypeForDartType(TypeDeclaration type) {
-  return _kotlinTypeForBuiltinDartType(type) ?? type.baseName;
+  return _kotlinTypeForBuiltinDartType(type) ??
+      _kotlinTypeForProxyApiType(type) ??
+      type.baseName;
 }
 
 String _nullSafeKotlinTypeForDartType(TypeDeclaration type) {
@@ -943,21 +2079,5 @@ String _cast(Indent indent, String variable, {required TypeDeclaration type}) {
   if (type.isNullable && typeString == 'Any') {
     return variable;
   }
-  if (typeString == 'Int' || typeString == 'Long') {
-    return '$variable${_castInt(type.isNullable)}';
-  }
-  if (type.isEnum) {
-    if (type.isNullable) {
-      return '($variable as Int?)?.let { num ->\n'
-          '${indent.str}  $typeString.ofRaw(num)\n'
-          '${indent.str}}';
-    }
-    return '${type.baseName}.ofRaw($variable as Int)!!';
-  }
   return '$variable as ${_nullSafeKotlinTypeForDartType(type)}';
-}
-
-String _castInt(bool isNullable) {
-  final String nullability = isNullable ? '?' : '';
-  return '.let { num -> if (num is Int) num.toLong() else num as Long$nullability }';
 }

@@ -7,11 +7,15 @@
 /// This object holds metadata that is used to determine how the benchmark app
 /// should be built.
 class CompilationOptions {
-  /// Creates a [CompilationOptions] object.
-  const CompilationOptions({
+  /// Creates a [CompilationOptions] object that compiles to JavaScript.
+  const CompilationOptions.js({
     this.renderer = WebRenderer.canvaskit,
-    this.useWasm = false,
-  });
+  }) : useWasm = false;
+
+  /// Creates a [CompilationOptions] object that compiles to WebAssembly.
+  const CompilationOptions.wasm()
+      : useWasm = true,
+        renderer = WebRenderer.skwasm;
 
   /// The renderer to use for the build.
   final WebRenderer renderer;

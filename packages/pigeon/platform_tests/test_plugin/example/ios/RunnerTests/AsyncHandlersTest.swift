@@ -22,7 +22,7 @@ class AsyncHandlersTest: XCTestCase {
 
   func testAsyncHost2Flutter() throws {
     let value = "Test"
-    let binaryMessenger = MockBinaryMessenger<String>(codec: FlutterIntegrationCoreApiCodec.shared)
+    let binaryMessenger = MockBinaryMessenger<String>(codec: CoreTestsPigeonCodec.shared)
     binaryMessenger.result = value
     let flutterApi = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 

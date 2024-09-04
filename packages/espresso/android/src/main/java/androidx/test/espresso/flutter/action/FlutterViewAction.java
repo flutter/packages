@@ -13,7 +13,6 @@ import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 
 import android.os.Looper;
 import android.view.View;
-import androidx.test.annotation.ExperimentalTestApi;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
 import androidx.test.espresso.UiController;
@@ -38,6 +37,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import javax.annotation.Nonnull;
 import okhttp3.OkHttpClient;
 import org.hamcrest.Matcher;
 
@@ -95,16 +95,20 @@ public final class FlutterViewAction<T> implements ViewAction {
         "Perform a %s action on the Flutter widget matched %s.", widgetAction, widgetMatcher);
   }
 
-  @ExperimentalTestApi
   @Override
-  public void perform(UiController uiController, View flutterView) {
+  public void perform(UiController uiController, View view) {
+    checkNotNull(view, "The Flutter View instance cannot be null.");
+    if (!(view instanceof FlutterView)) {
+      throw new FlutterProtocolException(
+          String.format("This is not a Flutter View instance [id: %d].", view.getId()));
+    }
+    FlutterView flutterView = (FlutterView) view;
     // There could be a gap between when the Flutter view is available in the view hierarchy and the
     // engine & Dart isolates are actually up and running. Check whether the first frame has been
     // rendered before proceeding in an unblocking way.
     loopUntilFlutterViewRendered(flutterView, uiController);
     // The url {@code FlutterNativeView} returns is the http url that the Dart VM Observatory http
     // server serves at. Need to convert to the one that the WebSocket uses.
-
     URI dartVmServiceProtocolUrl =
         DartVmServiceUtil.getServiceProtocolUri(FlutterJNI.getVMServiceUri());
     String isolateId = DartVmServiceUtil.getDartIsolateId(flutterView);
@@ -137,7 +141,6 @@ public final class FlutterViewAction<T> implements ViewAction {
     }
   }
 
-  @ExperimentalTestApi
   @VisibleForTesting
   void perform(
       View flutterView, FlutterTestingProtocol flutterTestingProtocol, UiController uiController) {
@@ -171,7 +174,8 @@ public final class FlutterViewAction<T> implements ViewAction {
     return resultFuture.get(timeout, unit);
   }
 
-  private static void loopUntilFlutterViewRendered(View flutterView, UiController uiController) {
+  private static void loopUntilFlutterViewRendered(
+      @Nonnull FlutterView flutterView, UiController uiController) {
     FlutterViewRenderedIdlingResource idlingResource =
         new FlutterViewRenderedIdlingResource(flutterView);
     try {
@@ -188,12 +192,12 @@ public final class FlutterViewAction<T> implements ViewAction {
    */
   static final class FlutterViewRenderedIdlingResource implements IdlingResource {
 
-    private final View flutterView;
+    private final FlutterView flutterView;
     // Written from main thread, read from any thread.
     private volatile ResourceCallback resourceCallback;
 
-    FlutterViewRenderedIdlingResource(View flutterView) {
-      this.flutterView = checkNotNull(flutterView);
+    FlutterViewRenderedIdlingResource(@Nonnull FlutterView flutterView) {
+      this.flutterView = flutterView;
     }
 
     @Override
@@ -201,18 +205,9 @@ public final class FlutterViewAction<T> implements ViewAction {
       return FlutterViewRenderedIdlingResource.class.getSimpleName();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public boolean isIdleNow() {
-      boolean isIdle = false;
-      if (flutterView instanceof FlutterView) {
-        isIdle = ((FlutterView) flutterView).hasRenderedFirstFrame();
-      } else if (flutterView instanceof io.flutter.view.FlutterView) {
-        isIdle = ((io.flutter.view.FlutterView) flutterView).hasRenderedFirstFrame();
-      } else {
-        throw new FlutterProtocolException(
-            String.format("This is not a Flutter View instance [id: %d].", flutterView.getId()));
-      }
+      boolean isIdle = flutterView.hasRenderedFirstFrame();
       if (isIdle) {
         resourceCallback.onTransitionToIdle();
       }

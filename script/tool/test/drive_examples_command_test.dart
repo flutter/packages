@@ -38,6 +38,9 @@ void main() {
       runner = CommandRunner<void>(
           'drive_examples_command', 'Test for drive_example_command');
       runner.addCommand(command);
+
+      // TODO(dit): Clean this up, https://github.com/flutter/flutter/issues/151869
+      mockPlatform.environment['CHANNEL'] = 'master';
     });
 
     void setMockFlutterDevicesOutput({
@@ -82,6 +85,24 @@ void main() {
         output,
         containsAllInOrder(<Matcher>[
           contains('Exactly one of'),
+        ]),
+      );
+    });
+
+    test('fails if wasm flag is present but not web platform', () async {
+      setMockFlutterDevicesOutput();
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['drive-examples', '--android', '--wasm'],
+          errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('--wasm is only supported on the web platform'),
         ]),
       );
     });
@@ -678,6 +699,111 @@ void main() {
                   'web-server',
                   '--web-port=7357',
                   '--browser-name=chrome',
+                  '--web-renderer=canvaskit',
+                  '--driver',
+                  'test_driver/integration_test.dart',
+                  '--target',
+                  'integration_test/plugin_test.dart',
+                ],
+                pluginExampleDirectory.path),
+          ]));
+    });
+
+    test('drives a web plugin compiled to WASM', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>[
+          'example/integration_test/plugin_test.dart',
+          'example/test_driver/integration_test.dart',
+          'example/web/index.html',
+        ],
+        platformSupport: <String, PlatformDetails>{
+          platformWeb: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'drive-examples',
+        '--web',
+        '--wasm',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          contains('No issues found!'),
+        ]),
+      );
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+                getFlutterCommand(mockPlatform),
+                const <String>[
+                  'drive',
+                  '-d',
+                  'web-server',
+                  '--web-port=7357',
+                  '--browser-name=chrome',
+                  '--wasm',
+                  '--driver',
+                  'test_driver/integration_test.dart',
+                  '--target',
+                  'integration_test/plugin_test.dart',
+                ],
+                pluginExampleDirectory.path),
+          ]));
+    });
+
+    // TODO(dit): Clean this up, https://github.com/flutter/flutter/issues/151869
+    test('drives a web plugin (html renderer in stable)', () async {
+      // Override the platform to simulate CHANNEL: stable
+      mockPlatform.environment['CHANNEL'] = 'stable';
+
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>[
+          'example/integration_test/plugin_test.dart',
+          'example/test_driver/integration_test.dart',
+          'example/web/index.html',
+        ],
+        platformSupport: <String, PlatformDetails>{
+          platformWeb: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'drive-examples',
+        '--web',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          contains('No issues found!'),
+        ]),
+      );
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+                getFlutterCommand(mockPlatform),
+                const <String>[
+                  'drive',
+                  '-d',
+                  'web-server',
+                  '--web-port=7357',
+                  '--browser-name=chrome',
                   '--web-renderer=html',
                   '--driver',
                   'test_driver/integration_test.dart',
@@ -727,7 +853,7 @@ void main() {
                   'web-server',
                   '--web-port=7357',
                   '--browser-name=chrome',
-                  '--web-renderer=html',
+                  '--web-renderer=canvaskit',
                   '--driver',
                   'test_driver/integration_test.dart',
                   '--target',
@@ -779,7 +905,7 @@ void main() {
                   'web-server',
                   '--web-port=7357',
                   '--browser-name=chrome',
-                  '--web-renderer=html',
+                  '--web-renderer=canvaskit',
                   '--chrome-binary=/path/to/chrome',
                   '--driver',
                   'test_driver/integration_test.dart',
@@ -1226,7 +1352,7 @@ void main() {
                   'web-server',
                   '--web-port=7357',
                   '--browser-name=chrome',
-                  '--web-renderer=html',
+                  '--web-renderer=canvaskit',
                   '--driver',
                   'test_driver/integration_test.dart',
                   '--target',
@@ -1241,7 +1367,7 @@ void main() {
                   'web-server',
                   '--web-port=7357',
                   '--browser-name=chrome',
-                  '--web-renderer=html',
+                  '--web-renderer=canvaskit',
                   '--driver',
                   'test_driver/integration_test.dart',
                   '--target',
@@ -1339,7 +1465,7 @@ void main() {
                     'web-server',
                     '--web-port=7357',
                     '--browser-name=chrome',
-                    '--web-renderer=html',
+                    '--web-renderer=canvaskit',
                     '--driver',
                     'test_driver/integration_test.dart',
                     '--target',
@@ -1419,7 +1545,7 @@ void main() {
                     'web-server',
                     '--web-port=7357',
                     '--browser-name=chrome',
-                    '--web-renderer=html',
+                    '--web-renderer=canvaskit',
                     '--driver',
                     'test_driver/integration_test.dart',
                     '--target',

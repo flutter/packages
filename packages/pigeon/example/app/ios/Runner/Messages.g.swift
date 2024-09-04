@@ -86,11 +86,11 @@ struct MessageData {
   var data: [String?: String?]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ __pigeon_list: [Any?]) -> MessageData? {
-    let name: String? = nilOrValue(__pigeon_list[0])
-    let description: String? = nilOrValue(__pigeon_list[1])
-    let code = Code(rawValue: __pigeon_list[2] as! Int)!
-    let data = __pigeon_list[3] as! [String?: String?]
+  static func fromList(_ pigeonVar_list: [Any?]) -> MessageData? {
+    let name: String? = nilOrValue(pigeonVar_list[0])
+    let description: String? = nilOrValue(pigeonVar_list[1])
+    let code = pigeonVar_list[2] as! Code
+    let data = pigeonVar_list[3] as! [String?: String?]
 
     return MessageData(
       name: name,
@@ -103,16 +103,22 @@ struct MessageData {
     return [
       name,
       description,
-      code.rawValue,
+      code,
       data,
     ]
   }
 }
 
-private class ExampleHostApiCodecReader: FlutterStandardReader {
+private class MessagesPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
-    case 128:
+    case 129:
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return Code(rawValue: enumResultAsInt)
+      }
+      return nil
+    case 130:
       return MessageData.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -120,10 +126,13 @@ private class ExampleHostApiCodecReader: FlutterStandardReader {
   }
 }
 
-private class ExampleHostApiCodecWriter: FlutterStandardWriter {
+private class MessagesPigeonCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? MessageData {
-      super.writeByte(128)
+    if let value = value as? Code {
+      super.writeByte(129)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? MessageData {
+      super.writeByte(130)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -131,18 +140,18 @@ private class ExampleHostApiCodecWriter: FlutterStandardWriter {
   }
 }
 
-private class ExampleHostApiCodecReaderWriter: FlutterStandardReaderWriter {
+private class MessagesPigeonCodecReaderWriter: FlutterStandardReaderWriter {
   override func reader(with data: Data) -> FlutterStandardReader {
-    return ExampleHostApiCodecReader(data: data)
+    return MessagesPigeonCodecReader(data: data)
   }
 
   override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return ExampleHostApiCodecWriter(data: data)
+    return MessagesPigeonCodecWriter(data: data)
   }
 }
 
-class ExampleHostApiCodec: FlutterStandardMessageCodec {
-  static let shared = ExampleHostApiCodec(readerWriter: ExampleHostApiCodecReaderWriter())
+class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
+  static let shared = MessagesPigeonCodec(readerWriter: MessagesPigeonCodecReaderWriter())
 }
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
@@ -154,8 +163,7 @@ protocol ExampleHostApi {
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class ExampleHostApiSetup {
-  /// The codec used by ExampleHostApi.
-  static var codec: FlutterStandardMessageCodec { ExampleHostApiCodec.shared }
+  static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`.
   static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: ExampleHostApi?, messageChannelSuffix: String = ""
@@ -183,8 +191,8 @@ class ExampleHostApiSetup {
     if let api = api {
       addChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
-        let bArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)
+        let aArg = args[0] as! Int64
+        let bArg = args[1] as! Int64
         do {
           let result = try api.add(aArg, to: bArg)
           reply(wrapResult(result))
@@ -228,12 +236,16 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
     self.binaryMessenger = binaryMessenger
     self.messageChannelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
   }
+  var codec: MessagesPigeonCodec {
+    return MessagesPigeonCodec.shared
+  }
   func flutterMethod(
     aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod\(messageChannelSuffix)"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger)
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))

@@ -19,7 +19,7 @@
 - (void)testAllNull {
   FLTAllNullableTypes *everything = [[FLTAllNullableTypes alloc] init];
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:FLTFlutterIntegrationCoreApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:FLTGetCoreTestsCodec()];
   FLTFlutterIntegrationCoreApi *api =
       [[FLTFlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
@@ -33,8 +33,12 @@
                    XCTAssertNil(result.aNullable4ByteArray);
                    XCTAssertNil(result.aNullable8ByteArray);
                    XCTAssertNil(result.aNullableFloatArray);
-                   XCTAssertNil(result.aNullableList);
-                   XCTAssertNil(result.aNullableMap);
+                   XCTAssertNil(result.list);
+                   XCTAssertNil(result.boolList);
+                   XCTAssertNil(result.intList);
+                   XCTAssertNil(result.doubleList);
+                   XCTAssertNil(result.stringList);
+                   XCTAssertNil(result.map);
                    [expectation fulfill];
                  }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
@@ -54,11 +58,17 @@
       typedDataWithInt64:[@"12345678" dataUsingEncoding:NSUTF8StringEncoding]];
   everything.aNullableFloatArray = [FlutterStandardTypedData
       typedDataWithFloat64:[@"12345678" dataUsingEncoding:NSUTF8StringEncoding]];
-  everything.aNullableList = @[ @(1), @(2) ];
-  everything.aNullableMap = @{@"hello" : @(1234)};
-  everything.nullableMapWithObject = @{@"hello" : @(1234), @"goodbye" : @"world"};
+  everything.list = @[ @"string", @1 ];
+  everything.boolList = @[ @YES, @NO ];
+  everything.intList = @[ @1, @2 ];
+  everything.doubleList = @[ @1.1, @2.2 ];
+  everything.stringList = @[ @"string", @"another one" ];
+  everything.listList = @[ @[ @"string" ], @[ @"another one" ] ];
+  everything.map = @{@"hello" : @(1234), @"goodbye" : @"world"};
+  everything.stringMap = @{@"hello" : @"you", @"goodbye" : @"world"};
+  everything.intMap = @{@(1) : @(0), @(2) : @(-2)};
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:FLTFlutterIntegrationCoreApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:FLTGetCoreTestsCodec()];
   FLTFlutterIntegrationCoreApi *api =
       [[FLTFlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
@@ -76,13 +86,22 @@
                                          everything.aNullable8ByteArray.data);
                    XCTAssertEqualObjects(result.aNullableFloatArray.data,
                                          everything.aNullableFloatArray.data);
-                   XCTAssertEqualObjects(result.aNullableList, everything.aNullableList);
-                   XCTAssertEqualObjects(result.aNullableMap, everything.aNullableMap);
-                   XCTAssertEqualObjects(result.nullableMapWithObject,
-                                         everything.nullableMapWithObject);
+                   XCTAssertEqualObjects(result.list, everything.list);
+                   XCTAssertEqualObjects(result.boolList, everything.boolList);
+                   XCTAssertEqualObjects(result.intList, everything.intList);
+                   XCTAssertEqualObjects(result.doubleList, everything.doubleList);
+                   XCTAssertEqualObjects(result.stringList, everything.stringList);
+                   XCTAssertEqualObjects(result.listList, everything.listList);
+                   XCTAssertEqualObjects(result.map, everything.map);
+                   XCTAssertEqualObjects(result.stringMap, everything.stringMap);
+                   XCTAssertEqualObjects(result.intMap, everything.intMap);
                    [expectation fulfill];
                  }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
+}
+
+- (void)unusedClassesExist {
+  XCTAssert([[FLTUnusedClass alloc] init] != nil);
 }
 
 @end

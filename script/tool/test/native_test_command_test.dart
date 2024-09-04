@@ -139,6 +139,7 @@ void main() {
           'xcrun',
           <String>[
             'xcodebuild',
+            'clean',
             'test',
             '-workspace',
             '$platform/Runner.xcworkspace',
@@ -220,7 +221,7 @@ void main() {
         getMockXcodebuildListProcess(<String>['RunnerTests', 'RunnerUITests']),
         // Exit code 66 from testing indicates no tests.
         FakeProcessInfo(
-            MockProcess(exitCode: 66), <String>['xcodebuild', 'test']),
+            MockProcess(exitCode: 66), <String>['xcodebuild', 'clean', 'test']),
       ];
       final List<String> output = await runCapturingPrint(
           runner, <String>['native-test', '--macos', '--no-unit']);
@@ -1469,11 +1470,11 @@ public class FlutterActivityTest {
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']), // iOS list
           FakeProcessInfo(
-              MockProcess(), <String>['xcodebuild', 'test']), // iOS run
+              MockProcess(), <String>['xcodebuild', 'clean', 'test']), // iOS run
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']), // macOS list
           FakeProcessInfo(
-              MockProcess(), <String>['xcodebuild', 'test']), // macOS run
+              MockProcess(), <String>['xcodebuild', 'clean', 'test']), // macOS run
         ];
 
         final List<String> output = await runCapturingPrint(runner, <String>[

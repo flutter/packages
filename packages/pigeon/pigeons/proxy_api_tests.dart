@@ -455,7 +455,11 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
 }
 
 /// ProxyApi to serve as a super class to the core ProxyApi class.
-@ProxyApi()
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.example.test_plugin.ProxyApiSuperClass',
+  ),
+)
 abstract class ProxyApiSuperClass {
   ProxyApiSuperClass();
 
@@ -466,4 +470,13 @@ abstract class ProxyApiSuperClass {
 @ProxyApi()
 abstract class ProxyApiInterface {
   late void Function()? anInterfaceMethod;
+}
+
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(minAndroidApi: 25),
+)
+abstract class ClassWithApiRequirement {
+  ClassWithApiRequirement();
+
+  void aMethod();
 }

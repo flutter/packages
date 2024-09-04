@@ -1,6 +1,23 @@
-## NEXT
+## 2.3.2
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Bumps `com.android.tools.build:gradle` from 7.2.2 to 8.5.1.
+
+## 2.3.1
+
+* Fixes `getStringList` returning immutable list.
+
+## 2.3.0
+
+* Adds new `SharedPreferencesAsyncAndroid` API.
+
+## 2.2.4
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 2.2.3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
 
 ## 2.2.2
 

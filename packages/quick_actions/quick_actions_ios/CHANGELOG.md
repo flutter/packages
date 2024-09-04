@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 1.1.1
+
+* Updates to a newer version of Pigeon.
+
 ## 1.1.0
 
 * Adds Swift Package Manager compatibility.

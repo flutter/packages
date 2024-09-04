@@ -5,7 +5,6 @@
 package androidx.test.espresso.flutter.action;
 
 import android.view.View;
-import androidx.test.annotation.ExperimentalTestApi;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.flutter.api.FlutterTestingProtocol;
 import androidx.test.espresso.flutter.api.SyntheticAction;
@@ -23,7 +22,6 @@ import javax.annotation.Nullable;
  */
 public final class SyntheticClickAction implements WidgetAction {
 
-  @ExperimentalTestApi
   @Override
   public Future<Void> perform(
       @Nullable WidgetMatcher targetWidget,

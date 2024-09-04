@@ -85,4 +85,16 @@ void main() {
       verify(mockApi.getTempFilePath(testPrefix, testSuffix));
     });
   });
+
+  test('isPreviewPreTransformed returns expected answer', () async {
+    final MockTestSystemServicesHostApi mockApi =
+        MockTestSystemServicesHostApi();
+    TestSystemServicesHostApi.setup(mockApi);
+    const bool isPreviewPreTransformed = true;
+
+    when(mockApi.isPreviewPreTransformed()).thenReturn(isPreviewPreTransformed);
+
+    expect(await SystemServices.isPreviewPreTransformed(), isTrue);
+    verify(mockApi.isPreviewPreTransformed());
+  });
 }

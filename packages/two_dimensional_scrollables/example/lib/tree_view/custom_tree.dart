@@ -105,7 +105,7 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
 
   Widget _treeNodeBuilder(
     BuildContext context,
-    TreeViewNode<Object?> node,
+    TreeViewNode<String> node,
     AnimationStyle toggleAnimationStyle,
   ) {
     final bool isParentNode = node.children.isNotEmpty;
@@ -144,7 +144,7 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
         // Spacer
         const SizedBox(width: 8.0),
         // Content
-        Text(node.content.toString()),
+        Text(node.content),
       ],
     );
   }
@@ -188,14 +188,14 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
               controller: _horizontalController,
             ),
             tree: _tree,
-            onNodeToggle: (TreeViewNode<Object?> node) {
+            onNodeToggle: (TreeViewNode<String> node) {
               setState(() {
-                _selectedNode = node as TreeViewNode<String>;
+                _selectedNode = node;
               });
             },
             treeNodeBuilder: _treeNodeBuilder,
-            treeRowBuilder: (TreeViewNode<Object?> node) {
-              if (_selectedNode == (node as TreeViewNode<String>)) {
+            treeRowBuilder: (TreeViewNode<String> node) {
+              if (_selectedNode == node) {
                 return TreeRow(
                   extent: FixedTreeRowExtent(
                     node.children.isNotEmpty ? 60.0 : 50.0,

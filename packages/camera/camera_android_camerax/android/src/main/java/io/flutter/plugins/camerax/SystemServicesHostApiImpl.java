@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -102,5 +103,19 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
           "SystemServicesHostApiImpl.getTempFilePath encountered an exception: " + e.toString(),
           null);
     }
+  }
+
+  /**
+   * Returns whether or not a {@code SurfaceTexture} backs the {@code Surface} provided to CameraX
+   * to build the camera preview. If it is backed by a {@code Surface}, then the transformation
+   * needed to correctly rotate the preview has already been applied.
+   *
+   * <p>This is determined by the engine, who uses {@code SurfaceTexture}s on Android SDKs 29 and
+   * below.
+   */
+  @Override
+  @NonNull
+  public Boolean isPreviewPreTransformed() {
+    return Build.VERSION.SDK_INT <= 29;
   }
 }

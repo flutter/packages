@@ -134,7 +134,7 @@ void main() {
       'error',
       <int>[1, 2, 3],
       request,
-      NullFieldsSearchReplyType.success.index,
+      NullFieldsSearchReplyType.success,
     ]);
   });
 

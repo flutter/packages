@@ -30,6 +30,7 @@ import 'cpp_generator.dart';
 import 'dart_generator.dart';
 import 'generator_tools.dart';
 import 'generator_tools.dart' as generator_tools;
+import 'gobject_generator.dart';
 import 'java_generator.dart';
 import 'kotlin_generator.dart';
 import 'objc_generator.dart';
@@ -65,7 +66,7 @@ const Object async = _Asynchronous();
 ///
 /// ```dart
 /// class MyProxyApi {
-///   final MyOtherProxyApi myField = __pigeon_myField().
+///   final MyOtherProxyApi myField = pigeon_myField().
 /// }
 /// ```
 ///
@@ -138,7 +139,7 @@ class FlutterApi {
 /// methods.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
-  const ProxyApi({this.superClass});
+  const ProxyApi({this.superClass, this.kotlinOptions});
 
   /// The proxy api that is a super class to this one.
   ///
@@ -148,6 +149,10 @@ class ProxyApi {
   /// Note that using this instead of `extends` can cause unexpected conflicts
   /// with inherited method names.
   final Type? superClass;
+
+  /// Options that control how Kotlin code will be generated for a specific
+  /// ProxyApi.
+  final KotlinProxyApiOptions? kotlinOptions;
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -253,6 +258,9 @@ class PigeonOptions {
     this.cppHeaderOut,
     this.cppSourceOut,
     this.cppOptions,
+    this.gobjectHeaderOut,
+    this.gobjectSourceOut,
+    this.gobjectOptions,
     this.dartOptions,
     this.copyrightHeader,
     this.oneLanguage,
@@ -307,6 +315,15 @@ class PigeonOptions {
   /// Options that control how C++ will be generated.
   final CppOptions? cppOptions;
 
+  /// Path to the ".h" GObject file that will be generated.
+  final String? gobjectHeaderOut;
+
+  /// Path to the ".cc" GObject file that will be generated.
+  final String? gobjectSourceOut;
+
+  /// Options that control how GObject source will be generated.
+  final GObjectOptions? gobjectOptions;
+
   /// Options that control how Dart will be generated.
   final DartOptions? dartOptions;
 
@@ -357,6 +374,12 @@ class PigeonOptions {
       cppOptions: map.containsKey('cppOptions')
           ? CppOptions.fromMap(map['cppOptions']! as Map<String, Object>)
           : null,
+      gobjectHeaderOut: map['gobjectHeaderOut'] as String?,
+      gobjectSourceOut: map['gobjectSourceOut'] as String?,
+      gobjectOptions: map.containsKey('gobjectOptions')
+          ? GObjectOptions.fromMap(
+              map['gobjectOptions']! as Map<String, Object>)
+          : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap(map['dartOptions']! as Map<String, Object>)
           : null,
@@ -388,6 +411,9 @@ class PigeonOptions {
       if (cppHeaderOut != null) 'cppHeaderOut': cppHeaderOut!,
       if (cppSourceOut != null) 'cppSourceOut': cppSourceOut!,
       if (cppOptions != null) 'cppOptions': cppOptions!.toMap(),
+      if (gobjectHeaderOut != null) 'gobjectHeaderOut': gobjectHeaderOut!,
+      if (gobjectSourceOut != null) 'gobjectSourceOut': gobjectSourceOut!,
+      if (gobjectOptions != null) 'gobjectOptions': gobjectOptions!.toMap(),
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (astOut != null) 'astOut': astOut!,
@@ -621,6 +647,12 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
     final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
+      fileSpecificClassNameComponent: options.objcSourceOut
+              ?.split('/')
+              .lastOrNull
+              ?.split('.')
+              .firstOrNull ??
+          '',
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -701,6 +733,8 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     SwiftOptions swiftOptions = options.swiftOptions ?? const SwiftOptions();
     swiftOptions = swiftOptions.merge(SwiftOptions(
+      fileSpecificClassNameComponent:
+          options.swiftOut?.split('/').lastOrNull?.split('.').firstOrNull ?? '',
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -768,6 +802,64 @@ class CppGeneratorAdapter implements GeneratorAdapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
+/// A [GeneratorAdapter] that generates GObject source code.
+class GObjectGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [GObjectGeneratorAdapter].
+  GObjectGeneratorAdapter(
+      {this.fileTypeList = const <FileType>[FileType.header, FileType.source]});
+
+  @override
+  List<FileType> fileTypeList;
+
+  @override
+  void generate(
+      StringSink sink, PigeonOptions options, Root root, FileType fileType) {
+    final GObjectOptions gobjectOptions =
+        options.gobjectOptions ?? const GObjectOptions();
+    final GObjectOptions gobjectOptionsWithHeader =
+        gobjectOptions.merge(GObjectOptions(
+      copyrightHeader: options.copyrightHeader != null
+          ? _lineReader(
+              path.posix.join(options.basePath ?? '', options.copyrightHeader))
+          : null,
+    ));
+    final OutputFileOptions<GObjectOptions> outputFileOptions =
+        OutputFileOptions<GObjectOptions>(
+            fileType: fileType, languageOptions: gobjectOptionsWithHeader);
+    const GObjectGenerator generator = GObjectGenerator();
+    generator.generate(
+      outputFileOptions,
+      root,
+      sink,
+      dartPackageName: options.getPackageName(),
+    );
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options, FileType fileType) {
+    if (fileType == FileType.source) {
+      return _openSink(options.gobjectSourceOut,
+          basePath: options.basePath ?? '');
+    } else {
+      return _openSink(options.gobjectHeaderOut,
+          basePath: options.basePath ?? '');
+    }
+  }
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) {
+    final List<Error> errors = <Error>[];
+    // TODO(tarrinneal): Remove once overflow class is added to gobject generator.
+    // https://github.com/flutter/flutter/issues/152916
+    if (root.classes.length + root.enums.length > totalCustomCodecKeysAllowed) {
+      errors.add(Error(
+          message:
+              'GObject generator does not yet support more than $totalCustomCodecKeysAllowed custom types.'));
+    }
+    return errors;
+  }
+}
+
 /// A [GeneratorAdapter] that generates Kotlin source code.
 class KotlinGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [KotlinGeneratorAdapter].
@@ -784,6 +876,9 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
     kotlinOptions = kotlinOptions.merge(KotlinOptions(
       errorClassName: kotlinOptions.errorClassName ?? 'FlutterError',
       includeErrorClass: kotlinOptions.includeErrorClass,
+      fileSpecificClassNameComponent:
+          options.kotlinOut?.split('/').lastOrNull?.split('.').firstOrNull ??
+              '',
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -828,21 +923,59 @@ List<Error> _validateAst(Root root, String source) {
   final List<String> customClasses =
       root.classes.map((Class x) => x.name).toList();
   final Iterable<String> customEnums = root.enums.map((Enum x) => x.name);
+  for (final Enum enumDefinition in root.enums) {
+    final String? matchingPrefix = _findMatchingPrefixOrNull(
+      enumDefinition.name,
+      prefixes: disallowedPrefixes,
+    );
+    if (matchingPrefix != null) {
+      result.add(Error(
+        message:
+            'Enum name must not begin with "$matchingPrefix" in enum "${enumDefinition.name}"',
+      ));
+    }
+    for (final EnumMember enumMember in enumDefinition.members) {
+      final String? matchingPrefix = _findMatchingPrefixOrNull(
+        enumMember.name,
+        prefixes: disallowedPrefixes,
+      );
+      if (matchingPrefix != null) {
+        result.add(Error(
+          message:
+              'Enum member name must not begin with "$matchingPrefix" in enum member "${enumMember.name}" of enum "${enumDefinition.name}"',
+        ));
+      }
+    }
+  }
   for (final Class classDefinition in root.classes) {
+    final String? matchingPrefix = _findMatchingPrefixOrNull(
+      classDefinition.name,
+      prefixes: disallowedPrefixes,
+    );
+    if (matchingPrefix != null) {
+      result.add(Error(
+        message:
+            'Class name must not begin with "$matchingPrefix" in class "${classDefinition.name}"',
+      ));
+    }
     for (final NamedType field
         in getFieldsInSerializationOrder(classDefinition)) {
+      final String? matchingPrefix = _findMatchingPrefixOrNull(
+        field.name,
+        prefixes: disallowedPrefixes,
+      );
+      if (matchingPrefix != null) {
+        result.add(Error(
+          message:
+              'Class field name must not begin with "$matchingPrefix" in field "${field.name}" of class "${classDefinition.name}"',
+          lineNumber: _calculateLineNumberNullable(source, field.offset),
+        ));
+      }
       for (final TypeDeclaration typeArgument in field.type.typeArguments) {
         if (!typeArgument.isNullable) {
           result.add(Error(
             message:
                 'Generic type parameters must be nullable in field "${field.name}" in class "${classDefinition.name}".',
-            lineNumber: _calculateLineNumberNullable(source, field.offset),
-          ));
-        }
-        if (customEnums.contains(typeArgument.baseName)) {
-          result.add(Error(
-            message:
-                'Enum types aren\'t supported in type arguments in "${field.name}" in class "${classDefinition.name}".',
             lineNumber: _calculateLineNumberNullable(source, field.offset),
           ));
         }
@@ -860,6 +993,16 @@ List<Error> _validateAst(Root root, String source) {
   }
 
   for (final Api api in root.apis) {
+    final String? matchingPrefix = _findMatchingPrefixOrNull(
+      api.name,
+      prefixes: disallowedPrefixes,
+    );
+    if (matchingPrefix != null) {
+      result.add(Error(
+        message:
+            'API name must not begin with "$matchingPrefix" in API "${api.name}"',
+      ));
+    }
     if (api is AstProxyApi) {
       result.addAll(_validateProxyApi(
         api,
@@ -869,6 +1012,17 @@ List<Error> _validateAst(Root root, String source) {
       ));
     }
     for (final Method method in api.methods) {
+      final String? matchingPrefix = _findMatchingPrefixOrNull(
+        method.name,
+        prefixes: disallowedPrefixes,
+      );
+      if (matchingPrefix != null) {
+        result.add(Error(
+          message:
+              'Method name must not begin with "$matchingPrefix" in method "${method.name}" in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
       for (final Parameter param in method.parameters) {
         if (param.type.baseName.isEmpty) {
           result.add(Error(
@@ -878,13 +1032,13 @@ List<Error> _validateAst(Root root, String source) {
           ));
         } else {
           final String? matchingPrefix = _findMatchingPrefixOrNull(
-            method.name,
-            prefixes: <String>['__pigeon_', 'pigeonChannelCodec'],
+            param.name,
+            prefixes: disallowedPrefixes,
           );
           if (matchingPrefix != null) {
             result.add(Error(
               message:
-                  'Parameter name must not begin with "$matchingPrefix" in method "${method.name} in API: "${api.name}"',
+                  'Parameter name must not begin with "$matchingPrefix" in method "${method.name}" in API: "${api.name}"',
               lineNumber: _calculateLineNumberNullable(source, param.offset),
             ));
           }
@@ -1082,12 +1236,7 @@ List<Error> _validateProxyApi(
       } else {
         final String? matchingPrefix = _findMatchingPrefixOrNull(
           parameter.name,
-          prefixes: <String>[
-            '__pigeon_',
-            'pigeonChannelCodec',
-            classNamePrefix,
-            classMemberNamePrefix,
-          ],
+          prefixes: disallowedPrefixes,
         );
         if (matchingPrefix != null) {
           result.add(Error(
@@ -1122,7 +1271,7 @@ List<Error> _validateProxyApi(
         parameter.name,
         prefixes: <String>[
           classNamePrefix,
-          classMemberNamePrefix,
+          varNamePrefix,
         ],
       );
       if (matchingPrefix != null) {
@@ -1174,23 +1323,6 @@ List<Error> _validateProxyApi(
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
-    }
-
-    final String? matchingPrefix = _findMatchingPrefixOrNull(
-      field.name,
-      prefixes: <String>[
-        '__pigeon_',
-        'pigeonChannelCodec',
-        classNamePrefix,
-        classMemberNamePrefix,
-      ],
-    );
-    if (matchingPrefix != null) {
-      result.add(Error(
-        message:
-            'Field name must not begin with "$matchingPrefix" in API: "${api.name}"',
-        lineNumber: _calculateLineNumberNullable(source, field.offset),
-      ));
     }
   }
 
@@ -1258,13 +1390,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         getReferencedTypes(_apis, _classes);
     final Set<String> referencedTypeNames =
         referencedTypes.keys.map((TypeDeclaration e) => e.baseName).toSet();
-    final List<Class> referencedClasses = List<Class>.from(_classes);
-    referencedClasses
-        .removeWhere((Class x) => !referencedTypeNames.contains(x.name));
+    final List<Class> nonReferencedClasses = List<Class>.from(_classes);
+    nonReferencedClasses
+        .removeWhere((Class x) => referencedTypeNames.contains(x.name));
+    for (final Class x in nonReferencedClasses) {
+      x.isReferenced = false;
+    }
 
     final List<Enum> referencedEnums = List<Enum>.from(_enums);
     final Root completeRoot =
-        Root(apis: _apis, classes: referencedClasses, enums: referencedEnums);
+        Root(apis: _apis, classes: _classes, enums: referencedEnums);
 
     final List<Error> validateErrors = _validateAst(completeRoot, source);
     final List<Error> totalErrors = List<Error>.from(_errors);
@@ -1272,9 +1407,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
     for (final MapEntry<TypeDeclaration, List<int>> element
         in referencedTypes.entries) {
-      if (!referencedClasses
-              .map((Class e) => e.name)
-              .contains(element.key.baseName) &&
+      if (!_classes.map((Class e) => e.name).contains(element.key.baseName) &&
           !referencedEnums
               .map((Enum e) => e.name)
               .contains(element.key.baseName) &&
@@ -1295,7 +1428,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             lineNumber: lineNumber));
       }
     }
-    for (final Class classDefinition in referencedClasses) {
+    for (final Class classDefinition in _classes) {
       classDefinition.fields = _attachAssociatedDefinitions(
         classDefinition.fields,
       );
@@ -1346,12 +1479,20 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               (Api apiDefinition) => apiDefinition.name == type.baseName,
             );
     if (assocClass != null) {
-      return type.copyWithClass(assocClass);
+      type = type.copyWithClass(assocClass);
     } else if (assocEnum != null) {
-      return type.copyWithEnum(assocEnum);
+      type = type.copyWithEnum(assocEnum);
     } else if (assocProxyApi != null) {
-      return type.copyWithProxyApi(assocProxyApi);
+      type = type.copyWithProxyApi(assocProxyApi);
     }
+    if (type.typeArguments.isNotEmpty) {
+      final List<TypeDeclaration> newTypes = <TypeDeclaration>[];
+      for (final TypeDeclaration type in type.typeArguments) {
+        newTypes.add(_attachAssociatedDefinition(type));
+      }
+      type = type.copyWithTypeArguments(newTypes);
+    }
+
     return type;
   }
 
@@ -1542,6 +1683,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           }
         }
 
+        KotlinProxyApiOptions? kotlinOptions;
+        final Map<String, Object?>? kotlinOptionsMap =
+            annotationMap['kotlinOptions'] as Map<String, Object?>?;
+        if (kotlinOptionsMap != null) {
+          kotlinOptions = KotlinProxyApiOptions(
+            fullClassName: kotlinOptionsMap['fullClassName'] as String?,
+            minAndroidApi: kotlinOptionsMap['minAndroidApi'] as int?,
+          );
+        }
+
         _currentApi = AstProxyApi(
           name: node.name.lexeme,
           methods: <Method>[],
@@ -1549,6 +1700,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           fields: <ApiField>[],
           superClass: superClass,
           interfaces: interfaces,
+          kotlinOptions: kotlinOptions,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
@@ -1981,7 +2133,7 @@ class Pigeon {
   }
 
   /// Reads the file located at [path] and generates [ParseResults] by parsing
-  /// it.  [types] optionally filters out what datatypes are actually parsed.
+  /// it. [types] optionally filters out what datatypes are actually parsed.
   /// [sdkPath] for specifying the Dart SDK path for
   /// [AnalysisContextCollection].
   ParseResults parseFile(String inputPath, {String? sdkPath}) {
@@ -2081,6 +2233,18 @@ ${_argParser.usage}''';
     )
     ..addOption('cpp_namespace',
         help: 'The namespace that generated C++ code will be in.')
+    ..addOption(
+      'gobject_header_out',
+      help: 'Path to generated GObject header file (.h).',
+      aliases: const <String>['experimental_gobject_header_out'],
+    )
+    ..addOption(
+      'gobject_source_out',
+      help: 'Path to generated GObject classes file (.cc).',
+      aliases: const <String>['experimental_gobject_source_out'],
+    )
+    ..addOption('gobject_module',
+        help: 'The module that generated GObject code will be in.')
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -2135,6 +2299,11 @@ ${_argParser.usage}''';
       cppOptions: CppOptions(
         namespace: results['cpp_namespace'] as String?,
       ),
+      gobjectHeaderOut: results['gobject_header_out'] as String?,
+      gobjectSourceOut: results['gobject_source_out'] as String?,
+      gobjectOptions: GObjectOptions(
+        module: results['gobject_module'] as String?,
+      ),
       copyrightHeader: results['copyright_header'] as String?,
       oneLanguage: results['one_language'] as bool?,
       astOut: results['ast_out'] as String?,
@@ -2178,8 +2347,12 @@ ${_argParser.usage}''';
   /// used when running the code generator.  The optional parameter [adapters] allows you to
   /// customize the generators that pigeon will use. The optional parameter
   /// [sdkPath] allows you to specify the Dart SDK path.
-  static Future<int> runWithOptions(PigeonOptions options,
-      {List<GeneratorAdapter>? adapters, String? sdkPath}) async {
+  static Future<int> runWithOptions(
+    PigeonOptions options, {
+    List<GeneratorAdapter>? adapters,
+    String? sdkPath,
+    bool injectOverflowTypes = false,
+  }) async {
     final Pigeon pigeon = Pigeon.setup();
     if (options.debugGenerators ?? false) {
       generator_tools.debugGenerators = true;
@@ -2191,6 +2364,7 @@ ${_argParser.usage}''';
           SwiftGeneratorAdapter(),
           KotlinGeneratorAdapter(),
           CppGeneratorAdapter(),
+          GObjectGeneratorAdapter(),
           DartTestGeneratorAdapter(),
           ObjcGeneratorAdapter(),
           AstGeneratorAdapter(),
@@ -2205,6 +2379,19 @@ ${_argParser.usage}''';
     final ParseResults parseResults =
         pigeon.parseFile(options.input!, sdkPath: sdkPath);
 
+    if (injectOverflowTypes) {
+      final List<Enum> addedEnums = List<Enum>.generate(
+        totalCustomCodecKeysAllowed - 1,
+        (final int tag) {
+          return Enum(
+              name: 'FillerEnum$tag',
+              members: <EnumMember>[EnumMember(name: 'FillerMember$tag')]);
+        },
+      );
+      addedEnums.addAll(parseResults.root.enums);
+      parseResults.root.enums = addedEnums;
+    }
+
     final List<Error> errors = <Error>[];
     errors.addAll(parseResults.errors);
 
@@ -2216,6 +2403,9 @@ ${_argParser.usage}''';
     }
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
+      if (injectOverflowTypes && adapter is GObjectGeneratorAdapter) {
+        continue;
+      }
       final IOSink? sink = adapter.shouldGenerate(options, FileType.source);
       if (sink != null) {
         final List<Error> adapterErrors =
@@ -2249,14 +2439,24 @@ ${_argParser.usage}''';
       options = options.merge(PigeonOptions(
           objcOptions: (options.objcOptions ?? const ObjcOptions()).merge(
               ObjcOptions(
-                  headerIncludePath: path.basename(options.objcHeaderOut!)))));
+                  headerIncludePath: options.objcOptions?.headerIncludePath ??
+                      path.basename(options.objcHeaderOut!)))));
     }
 
     if (options.cppHeaderOut != null) {
       options = options.merge(PigeonOptions(
           cppOptions: (options.cppOptions ?? const CppOptions()).merge(
               CppOptions(
-                  headerIncludePath: path.basename(options.cppHeaderOut!)))));
+                  headerIncludePath: options.cppOptions?.headerIncludePath ??
+                      path.basename(options.cppHeaderOut!)))));
+    }
+
+    if (options.gobjectHeaderOut != null) {
+      options = options.merge(PigeonOptions(
+          gobjectOptions: (options.gobjectOptions ?? const GObjectOptions())
+              .merge(GObjectOptions(
+                  headerIncludePath:
+                      path.basename(options.gobjectHeaderOut!)))));
     }
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {

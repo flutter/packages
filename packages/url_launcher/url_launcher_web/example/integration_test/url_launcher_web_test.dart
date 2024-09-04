@@ -120,6 +120,15 @@ void main() {
           (WidgetTester _) async {
         expect(plugin.launch('javascript:alert("1")'), completion(isFalse));
       });
+
+      testWidgets('launching a unknown sceheme returns true',
+          (WidgetTester _) async {
+        expect(
+            plugin.launch(
+              'foo:bar',
+            ),
+            completion(isTrue));
+      });
     });
 
     group('openNewWindow', () {

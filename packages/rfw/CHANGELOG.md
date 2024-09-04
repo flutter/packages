@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 1.0.29
+
+* Adds support for the `Slider` Material widget.
+
+## 1.0.28
+
+* Updates documentation to WidgetStateProperty and ButtonBar.
+
 ## 1.0.27
 * Adds support for `DecorationImage.filterQuality`.
 

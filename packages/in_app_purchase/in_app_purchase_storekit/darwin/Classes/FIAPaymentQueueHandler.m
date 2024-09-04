@@ -10,34 +10,34 @@
 
 /// The SKPaymentQueue instance connected to the App Store and responsible for processing
 /// transactions.
-@property(strong, nonatomic) SKPaymentQueue *queue;
+@property(nonatomic, strong) SKPaymentQueue *queue;
 
 /// Callback method that is called each time the App Store indicates transactions are updated.
-@property(nullable, copy, nonatomic) TransactionsUpdated transactionsUpdated;
+@property(nonatomic, nullable, copy) TransactionsUpdated transactionsUpdated;
 
 /// Callback method that is called each time the App Store indicates transactions are removed.
-@property(nullable, copy, nonatomic) TransactionsRemoved transactionsRemoved;
+@property(nonatomic, nullable, copy) TransactionsRemoved transactionsRemoved;
 
 /// Callback method that is called each time the App Store indicates transactions failed to restore.
-@property(nullable, copy, nonatomic) RestoreTransactionFailed restoreTransactionFailed;
+@property(nonatomic, nullable, copy) RestoreTransactionFailed restoreTransactionFailed;
 
 /// Callback method that is called each time the App Store indicates restoring of transactions has
 /// finished.
-@property(nullable, copy, nonatomic)
+@property(nonatomic, nullable, copy)
     RestoreCompletedTransactionsFinished paymentQueueRestoreCompletedTransactionsFinished;
 
 /// Callback method that is called each time an in-app purchase has been initiated from the App
 /// Store.
-@property(nullable, copy, nonatomic) ShouldAddStorePayment shouldAddStorePayment;
+@property(nonatomic, nullable, copy) ShouldAddStorePayment shouldAddStorePayment;
 
 /// Callback method that is called each time the App Store indicates downloads are updated.
-@property(nullable, copy, nonatomic) UpdatedDownloads updatedDownloads;
+@property(nonatomic, nullable, copy) UpdatedDownloads updatedDownloads;
 
 /// The transaction cache responsible for caching transactions.
 ///
 /// Keeps track of transactions that arrive when the Flutter client is not
 /// actively observing for transactions.
-@property(strong, nonatomic, nonnull) FIATransactionCache *transactionCache;
+@property(nonatomic, strong, nonnull) FIATransactionCache *transactionCache;
 
 /// Indicates if the Flutter client is observing transactions.
 ///
@@ -51,7 +51,9 @@
 
 @implementation FIAPaymentQueueHandler
 
-- (instancetype)initWithQueue:(nonnull SKPaymentQueue *)queue
+@synthesize delegate;
+
+- (instancetype)initWithQueue:(nonnull id<FLTPaymentQueueProtocol>)queue
                      transactionsUpdated:(nullable TransactionsUpdated)transactionsUpdated
                       transactionRemoved:(nullable TransactionsRemoved)transactionsRemoved
                 restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed
@@ -66,10 +68,10 @@
                   restoreCompletedTransactionsFinished:restoreCompletedTransactionsFinished
                                  shouldAddStorePayment:shouldAddStorePayment
                                       updatedDownloads:updatedDownloads
-                                      transactionCache:[[FIATransactionCache alloc] init]];
+                                      transactionCache:[[DefaultTransactionCache alloc] init]];
 }
 
-- (instancetype)initWithQueue:(nonnull SKPaymentQueue *)queue
+- (instancetype)initWithQueue:(nonnull id<FLTPaymentQueueProtocol>)queue
                      transactionsUpdated:(nullable TransactionsUpdated)transactionsUpdated
                       transactionRemoved:(nullable TransactionsRemoved)transactionsRemoved
                 restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed
@@ -77,7 +79,7 @@
         (nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
                         updatedDownloads:(nullable UpdatedDownloads)updatedDownloads
-                        transactionCache:(nonnull FIATransactionCache *)transactionCache {
+                        transactionCache:(nonnull id<FLTTransactionCacheProtocol>)transactionCache {
   self = [super init];
   if (self) {
     _queue = queue;
@@ -170,7 +172,7 @@
 #endif
 
 #if TARGET_OS_IOS
-- (void)showPriceConsentIfNeeded {
+- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4)) {
   [self.queue showPriceConsentIfNeeded];
 }
 #endif
@@ -233,7 +235,7 @@
   return self.queue.transactions;
 }
 
-- (SKStorefront *)storefront {
+- (SKStorefront *)storefront API_AVAILABLE(ios(13.0)) {
   return self.queue.storefront;
 }
 

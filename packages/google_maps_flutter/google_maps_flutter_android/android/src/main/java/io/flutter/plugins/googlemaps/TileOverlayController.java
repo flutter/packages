@@ -6,8 +6,6 @@ package io.flutter.plugins.googlemaps;
 
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileProvider;
-import java.util.HashMap;
-import java.util.Map;
 
 class TileOverlayController implements TileOverlaySink {
 
@@ -25,14 +23,8 @@ class TileOverlayController implements TileOverlaySink {
     tileOverlay.clearTileCache();
   }
 
-  Map<String, Object> getTileOverlayInfo() {
-    Map<String, Object> tileOverlayInfo = new HashMap<>();
-    tileOverlayInfo.put("fadeIn", tileOverlay.getFadeIn());
-    tileOverlayInfo.put("transparency", tileOverlay.getTransparency());
-    tileOverlayInfo.put("id", tileOverlay.getId());
-    tileOverlayInfo.put("zIndex", tileOverlay.getZIndex());
-    tileOverlayInfo.put("visible", tileOverlay.isVisible());
-    return tileOverlayInfo;
+  TileOverlay getTileOverlay() {
+    return tileOverlay;
   }
 
   @Override

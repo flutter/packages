@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.inapppurchase;
 
-import android.app.Application;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -25,16 +24,6 @@ public class InAppPurchasePlugin implements FlutterPlugin, ActivityAware {
   static final String PROXY_VALUE = "io.flutter.plugins.inapppurchase";
 
   private MethodCallHandlerImpl methodCallHandler;
-
-  /** Plugin registration. */
-  @SuppressWarnings("deprecation")
-  public static void registerWith(
-      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    InAppPurchasePlugin plugin = new InAppPurchasePlugin();
-    registrar.activity().getIntent().putExtra(PROXY_PACKAGE_KEY, PROXY_VALUE);
-    ((Application) registrar.context().getApplicationContext())
-        .registerActivityLifecycleCallbacks(plugin.methodCallHandler);
-  }
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {

@@ -4,32 +4,22 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:html';
-import 'dart:ui_web' as ui_web;
+import 'dart:js_interop';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:web/web.dart' as web;
 // ignore: implementation_imports
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
+
 import 'http_request_factory.dart';
 
 /// Builds an iframe based WebView.
 ///
 /// This is used as the default implementation for [WebView.platform] on web.
 class WebWebViewPlatform implements WebViewPlatform {
-  /// Constructs a new instance of [WebWebViewPlatform].
-  WebWebViewPlatform() {
-    ui_web.platformViewRegistry.registerViewFactory(
-        'webview-iframe',
-        (int viewId) => IFrameElement()
-          ..id = 'webview-$viewId'
-          ..width = '100%'
-          ..height = '100%'
-          ..style.border = 'none');
-  }
-
   @override
   Widget build({
     required BuildContext context,
@@ -39,21 +29,21 @@ class WebWebViewPlatform implements WebViewPlatform {
     WebViewPlatformCreatedCallback? onWebViewPlatformCreated,
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
   }) {
-    return HtmlElementView(
-      viewType: 'webview-iframe',
-      onPlatformViewCreated: (int viewId) {
-        if (onWebViewPlatformCreated == null) {
-          return;
-        }
-        final IFrameElement element =
-            document.getElementById('webview-$viewId')! as IFrameElement;
-        if (creationParams.initialUrl != null) {
+    return HtmlElementView.fromTagName(
+      tagName: 'iframe',
+      onElementCreated: (Object iFrame) {
+        iFrame as web.HTMLIFrameElement;
+        iFrame.style.border = 'none';
+        final String? initialUrl = creationParams.initialUrl;
+        if (initialUrl != null) {
           // ignore: unsafe_html
-          element.src = creationParams.initialUrl;
+          iFrame.src = initialUrl;
         }
-        onWebViewPlatformCreated(WebWebViewPlatformController(
-          element,
-        ));
+        if (onWebViewPlatformCreated != null) {
+          onWebViewPlatformCreated(
+            WebWebViewPlatformController(iFrame),
+          );
+        }
       },
     );
   }
@@ -70,7 +60,7 @@ class WebWebViewPlatformController implements WebViewPlatformController {
   /// Constructs a [WebWebViewPlatformController].
   WebWebViewPlatformController(this._element);
 
-  final IFrameElement _element;
+  final web.HTMLIFrameElement _element;
   HttpRequestFactory _httpRequestFactory = const HttpRequestFactory();
 
   /// Setter for setting the HttpRequestFactory, for testing purposes.
@@ -199,16 +189,17 @@ class WebWebViewPlatformController implements WebViewPlatformController {
     if (!request.uri.hasScheme) {
       throw ArgumentError('WebViewRequest#uri is required to have a scheme.');
     }
-    final HttpRequest httpReq = await _httpRequestFactory.request(
+    final web.Response response = await _httpRequestFactory.request(
         request.uri.toString(),
         method: request.method.serialize(),
         requestHeaders: request.headers,
-        sendData: request.body);
+        sendData: request.body) as web.Response;
+
     final String contentType =
-        httpReq.getResponseHeader('content-type') ?? 'text/html';
-    // ignore: unsafe_html
+        response.headers.get('content-type') ?? 'text/html';
+
     _element.src = Uri.dataFromString(
-      httpReq.responseText ?? '',
+      (await response.text().toDart).toDart,
       mimeType: contentType,
       encoding: utf8,
     ).toString();

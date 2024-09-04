@@ -13,7 +13,6 @@
 # cautious about adding to this list.
 - build_verify
 - google_maps
-- win32
 
 ## Allowed by default
 
@@ -33,6 +32,7 @@
 - fake_async
 - ffi
 - gcloud
+- graphs
 - html
 - http
 - intl
@@ -45,6 +45,7 @@
 - meta
 - mime
 - path
+- platform
 - shelf
 - shelf_static
 - source_gen

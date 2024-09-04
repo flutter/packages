@@ -185,6 +185,39 @@ void main() {
       expect(find.byKey(key), findsNothing);
     });
 
+    testWidgets(
+        'GoRouterState look up should be resilient when there is a nested navigator.',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) {
+            return Scaffold(
+              appBar: AppBar(),
+              body: Navigator(
+                pages: <Page<void>>[
+                  MaterialPage<void>(
+                    child: Builder(
+                      builder: (BuildContext context) {
+                        return Center(
+                          child: Text(GoRouterState.of(context).uri.toString()),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+                onPopPage: (Route<Object?> route, Object? result) {
+                  throw UnimplementedError();
+                },
+              ),
+            );
+          },
+        )
+      ];
+      await createRouter(routes, tester);
+      expect(find.text('/'), findsOneWidget);
+    });
+
     testWidgets('GoRouterState topRoute accessible from StatefulShellRoute',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =

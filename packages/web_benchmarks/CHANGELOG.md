@@ -1,6 +1,21 @@
-## NEXT
+## 2.0.2
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Updates benchmark server to serve the app as `crossOriginIsolated`. This
+allows us access to high precision timers and allows wasm benchmarks to run
+properly as well.
+
+## 2.0.1
+
+* Adds support for `web: ^1.0.0`.
+
+## 2.0.0
 
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Adds support for running benchmarks with the wasm compilation target.
+* **Breaking change** `CompilationOptions` unnamed constructor has been replaced with
+two named constructors, `CompilationOptions.js` and `CompilationOptions.wasm` for
+JavaScript and WebAssembly compilation respectively.
 
 ## 1.2.2
 

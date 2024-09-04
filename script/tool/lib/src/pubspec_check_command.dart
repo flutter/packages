@@ -473,7 +473,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     Version? minMinFlutterVersion,
   }) {
     String unknownDartVersionError(Version flutterVersion) {
-      return 'Dart SDK version for Fluter SDK version '
+      return 'Dart SDK version for Flutter SDK version '
           '$flutterVersion is unknown. '
           'Please update the map for getDartSdkForFlutterSdk with the '
           'corresponding Dart version.';

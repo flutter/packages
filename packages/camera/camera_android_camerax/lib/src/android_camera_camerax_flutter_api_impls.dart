@@ -182,7 +182,7 @@ class AndroidCameraXCameraFlutterApis {
   late final FocusMeteringResultFlutterApiImpl
       focusMeteringResultFlutterApiImpl;
 
-  /// Fluter Api implementation for [Camera2CameraInfo].
+  /// Flutter Api implementation for [Camera2CameraInfo].
   late final Camera2CameraInfoFlutterApiImpl camera2CameraInfoFlutterApiImpl;
 
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
