@@ -1,3 +1,7 @@
+## 0.2.6
+
+* Add new sample for using AdaptiveScaffold with GoRouter.
+
 ## 0.2.5
 
 * Fix breakpoint not being active in certain cases like foldables.
