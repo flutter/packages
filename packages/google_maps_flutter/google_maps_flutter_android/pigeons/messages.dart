@@ -42,6 +42,11 @@ class PlatformCameraPosition {
 class PlatformCameraUpdate {
   PlatformCameraUpdate({required this.cameraUpdate});
 
+  /// This Object shall be any of the below classes prefixed with
+  /// PlatformCameraUpdate. Each such class represents a different type of
+  /// camera update, and each holds a different set of data, preventing the
+  /// use of a single unified class. Pigeon does not support inheritance, which
+  /// prevents a more strict type bound.
   final Object cameraUpdate;
 }
 
