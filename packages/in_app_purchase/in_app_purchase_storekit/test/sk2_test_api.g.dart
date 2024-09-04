@@ -54,6 +54,9 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is SK2ProductPurchaseOptionsMessage) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
+    }    else if (value is SK2TransactionMessage) {
+      buffer.putUint8(140);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -89,6 +92,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return SK2PriceLocaleMessage.decode(readValue(buffer)!);
       case 139: 
         return SK2ProductPurchaseOptionsMessage.decode(readValue(buffer)!);
+      case 140: 
+        return SK2TransactionMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -104,6 +109,14 @@ abstract class TestInAppPurchase2Api {
   Future<List<SK2ProductMessage?>> products(List<String?> identifiers);
 
   Future<SK2ProductPurchaseResultMessage> purchase(String id, {SK2ProductPurchaseOptionsMessage? options});
+
+  Future<List<SK2TransactionMessage?>> transactions();
+
+  Future<void> finish(int id);
+
+  void startListeningToTransactions();
+
+  void stopListeningToTransactions();
 
   static void setUp(TestInAppPurchase2Api? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
@@ -169,6 +182,88 @@ abstract class TestInAppPurchase2Api {
           try {
             final SK2ProductPurchaseResultMessage output = await api.purchase(arg_id!, options: arg_options);
             return <Object?>[output];
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.transactions$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (Object? message) async {
+          try {
+            final List<SK2TransactionMessage?> output = await api.transactions();
+            return <Object?>[output];
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_id = (args[0] as int?);
+          assert(arg_id != null,
+              'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish was null, expected non-null int.');
+          try {
+            await api.finish(arg_id!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.startListeningToTransactions$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (Object? message) async {
+          try {
+            api.startListeningToTransactions();
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.stopListeningToTransactions$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (Object? message) async {
+          try {
+            api.stopListeningToTransactions();
+            return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           }          catch (e) {

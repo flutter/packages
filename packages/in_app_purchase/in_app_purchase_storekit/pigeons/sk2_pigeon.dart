@@ -174,4 +174,20 @@ abstract class InAppPurchase2API {
   @async
   SK2ProductPurchaseResultMessage purchase(String id,
       {SK2ProductPurchaseOptionsMessage? options});
+
+  // Note that the sk1 version of this only returns unfinished transactions.
+  @async
+  List<SK2TransactionMessage> transactions();
+
+  @async
+  void finish(int id);
+
+  void startListeningToTransactions();
+
+  void stopListeningToTransactions();
+}
+
+@FlutterApi()
+abstract class InAppPurchase2CallbackAPI {
+  void onTransactionsUpdated(SK2TransactionMessage newTransaction);
 }

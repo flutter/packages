@@ -77,3 +77,16 @@ class AppStorePurchaseDetails extends PurchaseDetails {
   @override
   bool get pendingCompletePurchase => _pendingCompletePurchase;
 }
+
+class SK2PurchaseDetails extends PurchaseDetails {
+  SK2PurchaseDetails(
+      {required super.productID,
+        required super.purchaseID,
+        required super.verificationData,
+        required super.transactionDate,
+        required super.status});
+
+  @override
+  // but not restored
+  bool get pendingCompletePurchase => status == PurchaseStatus.purchased;
+}

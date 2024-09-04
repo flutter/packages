@@ -333,4 +333,26 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
     // TODO: implement purchase
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> finish(int id) {
+    // TODO: implement finish
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<SK2TransactionMessage?>> transactions() {
+    // TODO: implement transactions
+    throw UnimplementedError();
+  }
+
+  @override
+  void startListeningToTransactions() {
+    // TODO: implement startListeningToTransactions
+  }
+
+  @override
+  void stopListeningToTransactions() {
+    // TODO: implement stopListeningToTransactions
+  }
 }

@@ -26,6 +26,8 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   public var registrar: FlutterPluginRegistrar?
   // This property is optional, as it requires self to exist to be initialized.
   public var paymentQueueHandler: FLTPaymentQueueHandlerProtocol?
+  var updateListenerTask: Any?
+  var transactionListenerAPI: TransactionCallbacks? = nil
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
@@ -93,6 +95,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       let messenger = registrar.messenger
     #endif
     setupTransactionObserverChannelIfNeeded(withMessenger: messenger)
+    self.transactionListenerAPI = TransactionCallbacks.init(binaryMessenger: messenger)
   }
 
   // MARK: - Pigeon Functions
