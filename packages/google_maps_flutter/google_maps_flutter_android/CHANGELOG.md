@@ -1,3 +1,7 @@
+## 2.14.6
+
+* Updates example app to target SDK 34.
+
 ## 2.14.5
 
 * Converts `JointType` to enum.
