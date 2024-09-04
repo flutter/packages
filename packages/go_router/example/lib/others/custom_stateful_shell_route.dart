@@ -96,11 +96,26 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
             // parameter.
             // defaultLocation: '/b1',
             routes: <RouteBase>[
-              StatefulShellRoute.indexedStack(
+              StatefulShellRoute(
                 builder: (BuildContext context, GoRouterState state,
                     StatefulNavigationShell navigationShell) {
-                  return TabbedRootScreen(navigationShell: navigationShell);
+                  // Just like with the top level StatefulShellRoute, no
+                  // customization is done in the builder function.
+                  return navigationShell;
                 },
+                navigatorContainerBuilder: (BuildContext context,
+                    StatefulNavigationShell navigationShell,
+                    List<Widget> children) {
+                  // Returning a customized container for the branch
+                  // Navigators (i.e. the `List<Widget> children` argument).
+                  //
+                  // See TabbedRootScreen for more details on how the children
+                  // are managed (in a TabBarView).
+                  return TabbedRootScreen(
+                      navigationShell: navigationShell, children: children);
+                },
+                // This bottom tab uses a nested shell, wrapping sub routes in a
+                // top TabBar.
                 branches: <StatefulShellBranch>[
                   StatefulShellBranch(
                       navigatorKey: _tabB1NavigatorKey,
@@ -380,10 +395,14 @@ class DetailsScreenState extends State<DetailsScreen> {
 /// Builds a nested shell using a [TabBar] and [TabBarView].
 class TabbedRootScreen extends StatefulWidget {
   /// Constructs a TabbedRootScreen
-  const TabbedRootScreen({required this.navigationShell, super.key});
+  const TabbedRootScreen(
+      {required this.navigationShell, required this.children, super.key});
 
   /// The current state of the parent StatefulShellRoute.
   final StatefulNavigationShell navigationShell;
+
+  /// The children (branch Navigators) to display in the [TabBarView].
+  final List<Widget> children;
 
   @override
   State<StatefulWidget> createState() => _TabbedRootScreenState();
@@ -391,9 +410,8 @@ class TabbedRootScreen extends StatefulWidget {
 
 class _TabbedRootScreenState extends State<TabbedRootScreen>
     with SingleTickerProviderStateMixin {
-  late final int branchCount = widget.navigationShell.route.branches.length;
   late final TabController _tabController = TabController(
-      length: branchCount,
+      length: widget.children.length,
       vsync: this,
       initialIndex: widget.navigationShell.currentIndex);
 
@@ -405,9 +423,9 @@ class _TabbedRootScreenState extends State<TabbedRootScreen>
 
   @override
   Widget build(BuildContext context) {
-    final List<Tab> tabs =
-        List<Tab>.generate(branchCount, (int i) => Tab(text: 'Tab ${i + 1}'))
-            .toList();
+    final List<Tab> tabs = widget.children
+        .mapIndexed((int i, _) => Tab(text: 'Tab ${i + 1}'))
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -417,7 +435,10 @@ class _TabbedRootScreenState extends State<TabbedRootScreen>
             tabs: tabs,
             onTap: (int tappedIndex) => _onTabTap(context, tappedIndex),
           )),
-      body: widget.navigationShell,
+      body: TabBarView(
+        controller: _tabController,
+        children: widget.children,
+      ),
     );
   }
 
