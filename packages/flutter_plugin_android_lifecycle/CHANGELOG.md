@@ -1,3 +1,7 @@
+## 2.0.23
+
+* Updates example app to target SDK 34.
+
 ## 2.0.22
 
 * Bumps `com.android.tools.build:gradle` from 7.2.1 to 8.5.1.
