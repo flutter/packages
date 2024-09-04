@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -78,13 +80,13 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
             ],
           ),
 
-          // The route branch for the third tab of the bottom navigation bar.
+          // The route branch for the second tab of the bottom navigation bar.
           StatefulShellBranch(
             // StatefulShellBranch will automatically use the first descendant
             // GoRoute as the initial location of the branch. If another route
             // is desired, specify the location of it using the defaultLocation
             // parameter.
-            // defaultLocation: '/c2',
+            // defaultLocation: '/b2',
             routes: <RouteBase>[
               StatefulShellRoute(
                 builder: (BuildContext context, GoRouterState state,
@@ -271,7 +273,7 @@ class RootScreenA extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Root of section A'),
+        title: const Text('Section A root'),
       ),
       body: Center(
         child: Column(
@@ -387,6 +389,10 @@ class TabbedRootScreen extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _TabbedRootScreenState();
+
+  /// To use an alternative implementation using a PageView, replace the line
+  /// above with the one below:
+  //State<StatefulWidget> createState() => _TabbedRootScreenStatePageView();
 }
 
 class _TabbedRootScreenState extends State<TabbedRootScreen>
@@ -395,6 +401,25 @@ class _TabbedRootScreenState extends State<TabbedRootScreen>
       length: widget.children.length,
       vsync: this,
       initialIndex: widget.navigationShell.currentIndex);
+
+  void _switchedTab() {
+    if (_tabController.index != widget.navigationShell.currentIndex) {
+      widget.navigationShell.goBranch(_tabController.index);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController.addListener(_switchedTab);
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_switchedTab);
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   void didUpdateWidget(covariant TabbedRootScreen oldWidget) {
@@ -410,7 +435,8 @@ class _TabbedRootScreenState extends State<TabbedRootScreen>
 
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Root of Section B (nested TabBar shell)'),
+          title: Text(
+              'Section B root (tab: ${widget.navigationShell.currentIndex + 1})'),
           bottom: TabBar(
             controller: _tabController,
             tabs: tabs,
@@ -425,6 +451,90 @@ class _TabbedRootScreenState extends State<TabbedRootScreen>
 
   void _onTabTap(BuildContext context, int index) {
     widget.navigationShell.goBranch(index);
+  }
+}
+
+/// Alternative implementation _TabbedRootScreenState, demonstrating the use of
+/// a PageView.
+// ignore: unused_element
+class _TabbedRootScreenStatePageView extends State<TabbedRootScreen>
+    with SingleTickerProviderStateMixin {
+  late final PageController _pageController = PageController(
+    initialPage: widget.navigationShell.currentIndex,
+  );
+  Timer? _throttle;
+
+  void _scrolledPageView() {
+    // Simple throttling implementation to handle scroll events.
+    int nextPage() => (_pageController.page ?? 0).round();
+    if (nextPage() != widget.navigationShell.currentIndex) {
+      _throttle?.cancel();
+      _throttle = Timer(const Duration(milliseconds: 100), () {
+        widget.navigationShell.goBranch(nextPage());
+        _throttle = null;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(_scrolledPageView);
+  }
+
+  @override
+  void dispose() {
+    _pageController.removeListener(_scrolledPageView);
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant TabbedRootScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _pageController.jumpToPage(widget.navigationShell.currentIndex);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+            'Section B root (tab ${widget.navigationShell.currentIndex + 1})'),
+      ),
+      body: Column(
+        children: <Widget>[
+          Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: () => _onTabTap(0),
+                  child: const Text('Tab 1'),
+                ),
+                ElevatedButton(
+                  onPressed: () => _onTabTap(1),
+                  child: const Text('Tab 2'),
+                ),
+              ]),
+          Expanded(
+            child: PageView(
+              controller: _pageController,
+              children: widget.children,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onTabTap(int index) {
+    if (_pageController.hasClients) {
+      _pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.bounceOut,
+      );
+    }
   }
 }
 
