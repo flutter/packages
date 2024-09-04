@@ -140,12 +140,12 @@ class SK2ProductPurchaseOptionsMessage {
 class SK2TransactionMessage {
   SK2TransactionMessage(
       {required this.id,
-        required this.originalId,
-        required this.productId,
-        required this.purchaseDate,
-        this.purchasedQuantity = 1,
-        this.appAccountToken,
-        this.restoring = false});
+      required this.originalId,
+      required this.productId,
+      required this.purchaseDate,
+      this.purchasedQuantity = 1,
+      this.appAccountToken,
+      this.restoring = false});
   final int id;
   final int originalId;
   final String productId;

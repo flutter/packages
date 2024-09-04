@@ -36,87 +36,87 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   }
 
   // Gets the appropriate product, then calls purchase on it.
-    // https://developer.apple.com/documentation/storekit/product/3791971-purchase
-    func purchase(
-      id: String, options: SK2ProductPurchaseOptionsMessage?,
-      completion: @escaping (Result<SK2ProductPurchaseResultMessage, any Error>) -> Void
-    ) {
-      Task {
-        do {
-          let product = try await Product.products(for: [id]).first
-          guard let product = product else {
-            throw PigeonError(
-              code: "storekit2_failed_to_fetch_product", message: "failed to make purchase",
-              details: "")
-          }
-          print("native purchase")
-          let result = try await product.purchase()
-
-          switch result {
-          case .success(let verification):
-            switch verification {
-            case .verified(let transaction):
-              TransactionCache.shared.add(transaction: transaction)
-              print("purchase \(transaction)")
-              self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
-              completion(.success(result.convertToPigeon()))
-            case .unverified(_, let error):
-              completion(.failure(error))
-            }
-          case .pending:
-            completion(
-              .failure(
-                PigeonError(
-                  code: "storekit2_purchase_pending", message: "this transaction is still pending",
-                  details: "")))
-          case .userCancelled:
-            completion(
-              .failure(
-                PigeonError(
-                  code: "storekit2_purchase_cancelled",
-                  message: "this transaction has been cancelled", details: "")))
-          @unknown default:
-            fatalError()
-          }
-        } catch {
-          completion(.failure(error))
+  // https://developer.apple.com/documentation/storekit/product/3791971-purchase
+  func purchase(
+    id: String, options: SK2ProductPurchaseOptionsMessage?,
+    completion: @escaping (Result<SK2ProductPurchaseResultMessage, any Error>) -> Void
+  ) {
+    Task {
+      do {
+        let product = try await Product.products(for: [id]).first
+        guard let product = product else {
+          throw PigeonError(
+            code: "storekit2_failed_to_fetch_product", message: "failed to make purchase",
+            details: "")
         }
+        print("native purchase")
+        let result = try await product.purchase()
 
+        switch result {
+        case .success(let verification):
+          switch verification {
+          case .verified(let transaction):
+            TransactionCache.shared.add(transaction: transaction)
+            print("purchase \(transaction)")
+            self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
+            completion(.success(result.convertToPigeon()))
+          case .unverified(_, let error):
+            completion(.failure(error))
+          }
+        case .pending:
+          completion(
+            .failure(
+              PigeonError(
+                code: "storekit2_purchase_pending", message: "this transaction is still pending",
+                details: "")))
+        case .userCancelled:
+          completion(
+            .failure(
+              PigeonError(
+                code: "storekit2_purchase_cancelled",
+                message: "this transaction has been cancelled", details: "")))
+        @unknown default:
+          fatalError()
+        }
+      } catch {
+        completion(.failure(error))
       }
+
     }
+  }
 
   func transactions(
-      completion: @escaping (Result<[SK2TransactionMessage], any Error>) -> Void
-    ) {
-      Task {
-        do {
-          let transactionsMsgs = await rawTransactions().map {
-            $0.convertToPigeon()
-          }
-          completion(.success(transactionsMsgs))
+    completion: @escaping (Result<[SK2TransactionMessage], any Error>) -> Void
+  ) {
+    Task {
+      do {
+        let transactionsMsgs = await rawTransactions().map {
+          $0.convertToPigeon()
         }
+        completion(.success(transactionsMsgs))
       }
     }
+  }
 
-    func finish(id: Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
-      Task {
-        print("native finish")
-        let transaction = TransactionCache.shared.get(id: Int(id))
-        if let transaction = transaction {
-          await transaction.finish()
-          TransactionCache.shared.remove(id: Int(id))
-        }
-
+  func finish(id: Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
+    Task {
+      print("native finish")
+      let transaction = TransactionCache.shared.get(id: Int(id))
+      if let transaction = transaction {
+        await transaction.finish()
+        TransactionCache.shared.remove(id: Int(id))
       }
-    }
 
-    func startListeningToTransactions() throws {
-      self.updateListenerTask = self.listenForTransactions()
     }
+  }
 
-    func stopListeningToTransactions() throws {
-      self.updateListenerTask = nil
-    }
+  func startListeningToTransactions() throws {
+    self.updateListenerTask = self.listenForTransactions()
+  }
+
+  func stopListeningToTransactions() throws {
+    self.updateListenerTask = nil
+  }
 
   func listenForTransactions() -> Task<Void, Error> {
     return Task.detached {

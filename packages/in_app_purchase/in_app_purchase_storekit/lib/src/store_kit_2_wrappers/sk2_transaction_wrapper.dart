@@ -19,14 +19,14 @@ InAppPurchase2API _hostapi = InAppPurchase2API();
 class SK2Transaction {
   SK2Transaction(
       {required this.id,
-        required this.originalId,
-        required this.productId,
-        required this.purchaseDate,
-        this.quantity = 1,
-        required this.appAccountToken,
-        this.subscriptionGroupID,
-        this.price,
-        this.error});
+      required this.originalId,
+      required this.productId,
+      required this.purchaseDate,
+      this.quantity = 1,
+      required this.appAccountToken,
+      this.subscriptionGroupID,
+      this.price,
+      this.error});
 
   // SKTransaction
   final String id;

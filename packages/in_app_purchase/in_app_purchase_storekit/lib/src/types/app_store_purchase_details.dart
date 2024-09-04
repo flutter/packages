@@ -81,10 +81,10 @@ class AppStorePurchaseDetails extends PurchaseDetails {
 class SK2PurchaseDetails extends PurchaseDetails {
   SK2PurchaseDetails(
       {required super.productID,
-        required super.purchaseID,
-        required super.verificationData,
-        required super.transactionDate,
-        required super.status});
+      required super.purchaseID,
+      required super.verificationData,
+      required super.transactionDate,
+      required super.status});
 
   @override
   // but not restored

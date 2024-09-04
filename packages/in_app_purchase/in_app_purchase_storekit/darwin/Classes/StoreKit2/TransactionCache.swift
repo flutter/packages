@@ -14,13 +14,13 @@ class TransactionCache {
   }
 
   func remove(id: Int) -> Bool {
-    if cache.contains(where: {transaction in transaction.id == id}) {
+    if cache.contains(where: { transaction in transaction.id == id }) {
       cache.removeAll { transaction in
         transaction.id == id
       }
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 
   func get(id: Int) -> Transaction? {
