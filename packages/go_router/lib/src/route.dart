@@ -1317,7 +1317,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
         // returned by _effectiveInitialBranchLocation (the initial location
         // should already have been validated by RouteConfiguration).
         final RouteMatchList matchList = _router.configuration
-            .findMatch(widget._effectiveInitialBranchLocation(i));
+            .findMatch(Uri.parse(widget._effectiveInitialBranchLocation(i)));
         ShellRouteMatch? match;
         matchList.visitRouteMatches((RouteMatchBase e) {
           match = e is ShellRouteMatch && e.route == route ? e : match;
@@ -1416,7 +1416,6 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 class _StatefulShellBranchState {
   _StatefulShellBranchState({
     required this.location,
-    this.navigator,
   });
 
   Widget? navigator;
