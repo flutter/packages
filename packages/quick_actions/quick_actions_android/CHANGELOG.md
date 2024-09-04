@@ -1,3 +1,7 @@
+## 1.0.16
+
+* Updates example app to target SDK 34.
+
 ## 1.0.15
 
 * Updates lint checks to ignore NewerVersionAvailable.
