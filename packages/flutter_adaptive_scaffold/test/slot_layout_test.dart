@@ -15,12 +15,12 @@ void main() {
             textDirection: TextDirection.ltr,
             child: SlotLayout(
               config: <Breakpoint, SlotLayoutConfig>{
-                TestBreakpoint0(): SlotLayout.from(
+                Breakpoints.smallAndUp: SlotLayout.from(
                     key: const Key('0'), builder: (_) => const Text('Small')),
-                TestBreakpoint400(): SlotLayout.from(
+                Breakpoints.mediumAndUp: SlotLayout.from(
                     key: const Key('400'),
                     builder: (_) => const Text('Medium')),
-                TestBreakpoint800(): SlotLayout.from(
+                Breakpoints.largeAndUp: SlotLayout.from(
                     key: const Key('800'), builder: (_) => const Text('Large')),
               },
             ),
@@ -33,63 +33,15 @@ void main() {
       expect(find.text('Medium'), findsNothing);
       expect(find.text('Large'), findsNothing);
 
-      await tester.pumpWidget(slot(500));
+      await tester.pumpWidget(slot(600));
       expect(find.text('Small'), findsNothing);
       expect(find.text('Medium'), findsOneWidget);
       expect(find.text('Large'), findsNothing);
 
-      await tester.pumpWidget(slot(1000));
+      await tester.pumpWidget(slot(1200));
       expect(find.text('Small'), findsNothing);
       expect(find.text('Medium'), findsNothing);
       expect(find.text('Large'), findsOneWidget);
-    },
-  );
-
-  testWidgets(
-    'SlotLayout applies custom animations and durations correctly',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MediaQuery(
-          data: const MediaQueryData(size: Size(500, 2000)),
-          child: Directionality(
-            textDirection: TextDirection.ltr,
-            child: SlotLayout(
-              config: <Breakpoint, SlotLayoutConfig>{
-                TestBreakpoint0(): SlotLayout.from(
-                  key: const Key('0'),
-                  builder: (_) => const SizedBox(width: 100, height: 100),
-                  inAnimation: (Widget widget, Animation<double> animation) =>
-                      ScaleTransition(
-                    scale: animation,
-                    child: widget,
-                  ),
-                  outAnimation: (Widget widget, Animation<double> animation) =>
-                      FadeTransition(
-                    opacity: animation,
-                    child: widget,
-                  ),
-                  inDuration: const Duration(seconds: 1),
-                  outDuration: const Duration(seconds: 2),
-                  inCurve: Curves.easeIn,
-                  outCurve: Curves.easeOut,
-                ),
-              },
-            ),
-          ),
-        ),
-      );
-
-      expect(find.byType(SizedBox), findsOneWidget);
-      // Verify that the animations are applied
-      final ScaleTransition scaleTransition =
-          tester.widget(find.byType(ScaleTransition));
-
-      // TODO: Fix this test
-      // final FadeTransition fadeTransition =
-      //    tester.widget(find.byType(FadeTransition));
-
-      expect(scaleTransition.scale.value, equals(1.0));
-      //expect(fadeTransition.opacity.value, equals(1.0));
     },
   );
 
@@ -104,12 +56,12 @@ void main() {
             textDirection: TextDirection.ltr,
             child: SlotLayout(
               config: <Breakpoint, SlotLayoutConfig?>{
-                TestBreakpoint0(): SlotLayout.from(
+                Breakpoints.smallAndUp: SlotLayout.from(
                   key: const Key('0'),
                   builder: (BuildContext context) => Container(),
                 ),
-                TestBreakpoint400(): null,
-                TestBreakpoint800(): SlotLayout.from(
+                Breakpoints.mediumAndUp: null,
+                Breakpoints.largeAndUp: SlotLayout.from(
                   key: const Key('800'),
                   builder: (BuildContext context) => Container(),
                 ),
@@ -130,12 +82,12 @@ void main() {
     (WidgetTester tester) async {
       await tester.pumpWidget(
         MediaQuery(
-          data: const MediaQueryData(size: Size(500, 2000)),
+          data: const MediaQueryData(size: Size(600, 2000)),
           child: Directionality(
             textDirection: TextDirection.ltr,
             child: SlotLayout(
               config: <Breakpoint, SlotLayoutConfig>{
-                TestBreakpoint0(): SlotLayout.from(
+                Breakpoints.mediumAndUp: SlotLayout.from(
                     key: const Key('0'),
                     builder: (_) => const Text('Builder Test')),
               },
@@ -147,25 +99,83 @@ void main() {
       expect(find.text('Builder Test'), findsOneWidget);
     },
   );
-}
 
-class TestBreakpoint0 extends Breakpoint {
-  @override
-  bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 0;
-  }
-}
+  testWidgets(
+    'SlotLayout applies inAnimation and outAnimation correctly when changing breakpoints',
+    (WidgetTester tester) async {
+      // Define a SlotLayout with custom animations
+      Widget buildSlotLayout(double width) {
+        return MediaQuery(
+          data: MediaQueryData(size: Size(width, 2000)),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: SlotLayout(
+              config: <Breakpoint, SlotLayoutConfig>{
+                Breakpoints.smallAndUp: SlotLayout.from(
+                  key: const Key('small'),
+                  builder: (_) => const SizedBox(
+                      key: Key('smallBox'), width: 100, height: 100),
+                  inAnimation: (Widget widget, Animation<double> animation) =>
+                      ScaleTransition(
+                    scale: animation,
+                    child: widget,
+                  ),
+                  outAnimation: (Widget widget, Animation<double> animation) =>
+                      FadeTransition(
+                    opacity: animation,
+                    child: widget,
+                  ),
+                  inDuration: const Duration(seconds: 1),
+                  outDuration: const Duration(seconds: 2),
+                  inCurve: Curves.easeIn,
+                  outCurve: Curves.easeOut,
+                ),
+                Breakpoints.mediumAndUp: SlotLayout.from(
+                  key: const Key('medium'),
+                  builder: (_) => const SizedBox(
+                      key: Key('mediumBox'), width: 200, height: 200),
+                  inAnimation: (Widget widget, Animation<double> animation) =>
+                      ScaleTransition(
+                    scale: animation,
+                    child: widget,
+                  ),
+                  outAnimation: (Widget widget, Animation<double> animation) =>
+                      FadeTransition(
+                    opacity: animation,
+                    child: widget,
+                  ),
+                  inDuration: const Duration(seconds: 1),
+                  outDuration: const Duration(seconds: 2),
+                  inCurve: Curves.easeIn,
+                  outCurve: Curves.easeOut,
+                ),
+              },
+            ),
+          ),
+        );
+      }
 
-class TestBreakpoint400 extends Breakpoint {
-  @override
-  bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width > 400;
-  }
-}
+      // Pump the widget with the SlotLayout at small breakpoint.
+      await tester.pumpWidget(buildSlotLayout(300));
+      expect(find.byKey(const Key('smallBox')), findsOneWidget);
+      expect(find.byKey(const Key('mediumBox')), findsNothing);
 
-class TestBreakpoint800 extends Breakpoint {
-  @override
-  bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width > 800;
-  }
+      // Change to medium breakpoint to trigger outAnimation for small and inAnimation for medium.
+      await tester.pumpWidget(buildSlotLayout(600));
+      await tester.pump(); // Start the animation
+      await tester.pump(const Duration(
+          milliseconds: 1000)); // Halfway through the outDuration.
+
+      // Verify that the outAnimation is in progress for smallBox.
+      final FadeTransition fadeTransitionMid =
+          tester.widget(find.byType(FadeTransition));
+      expect(fadeTransitionMid.opacity.value, lessThan(1.0));
+      expect(fadeTransitionMid.opacity.value, greaterThan(0.0));
+
+      // Complete the animation.
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('smallBox')), findsNothing);
+      expect(find.byKey(const Key('mediumBox')), findsOneWidget);
+    },
+  );
 }
