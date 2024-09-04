@@ -3,8 +3,8 @@ description: Testbed for the shared_preferences_foundation implementation.
 publish_to: none
 
 environment:
-  sdk: ^3.2.3
-  flutter: ">=3.16.6"
+  sdk: ^3.3.0
+  flutter: ">=3.19.0"
 
 dependencies:
   flutter:
@@ -16,7 +16,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  shared_preferences_platform_interface: ^2.3.0
+  shared_preferences_platform_interface: ^2.4.0
 
 dev_dependencies:
   flutter_test:

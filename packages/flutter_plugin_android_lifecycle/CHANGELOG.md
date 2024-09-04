@@ -1,3 +1,7 @@
+## 2.0.22
+
+* Bumps `com.android.tools.build:gradle` from 7.2.1 to 8.5.1.
+
 ## 2.0.21
 
 * Updates lint checks to ignore NewerVersionAvailable.

@@ -180,20 +180,6 @@
   return self;
 }
 
-- (void)addJSONTileOverlays:(NSArray<NSDictionary<NSString *, id> *> *)tileOverlaysToAdd {
-  for (NSDictionary<NSString *, id> *tileOverlay in tileOverlaysToAdd) {
-    NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay];
-    FLTTileProviderController *tileProvider =
-        [[FLTTileProviderController alloc] initWithTileOverlayIdentifier:identifier
-                                                         callbackHandler:self.callbackHandler];
-    FLTGoogleMapTileOverlayController *controller =
-        [[FLTGoogleMapTileOverlayController alloc] initWithTileLayer:tileProvider
-                                                             mapView:self.mapView
-                                                             options:tileOverlay];
-    self.tileOverlayIdentifierToController[identifier] = controller;
-  }
-}
-
 - (void)addTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToAdd {
   for (FGMPlatformTileOverlay *tileOverlay in tileOverlaysToAdd) {
     NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay.json];

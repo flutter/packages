@@ -82,7 +82,7 @@ final class InAppPurchasePluginTests: XCTestCase {
       }
 
       XCTAssertEqual(unwrappedProducts.count, 1)
-      XCTAssertEqual(response.invalidProductIdentifiers, nil)
+      XCTAssertEqual(response.invalidProductIdentifiers, [])
       XCTAssertEqual(unwrappedProducts[0].productIdentifier, "123")
       expectation.fulfill()
     }

@@ -2,8 +2,8 @@ name: image_picker_for_web_integration_tests
 publish_to: none
 
 environment:
-  sdk: ^3.3.0
-  flutter: ">=3.19.0"
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
 
 dependencies:
   flutter:
@@ -11,7 +11,7 @@ dependencies:
   image_picker_for_web:
     path: ../
   image_picker_platform_interface: ^2.8.0
-  web: ^0.5.1
+  web: ^1.0.0
 
 dev_dependencies:
   flutter_test:

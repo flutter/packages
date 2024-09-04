@@ -1,3 +1,11 @@
+## 2.2.10
+
+* Updates annotations lib to 1.8.2.
+
+## 2.2.9
+
+* Updates annotations lib to 1.8.1.
+
 ## 2.2.8
 
 * Updates lint checks to ignore NewerVersionAvailable.

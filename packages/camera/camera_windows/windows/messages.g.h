@@ -186,6 +186,14 @@ class CameraApi {
   virtual void StopVideoRecording(
       int64_t camera_id,
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
+  // Starts the image stream for the given camera.
+  virtual void StartImageStream(
+      int64_t camera_id,
+      std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  // Stops the image stream for the given camera.
+  virtual void StopImageStream(
+      int64_t camera_id,
+      std::function<void(std::optional<FlutterError> reply)> result) = 0;
   // Starts the preview stream for the given camera.
   virtual void PausePreview(
       int64_t camera_id,
