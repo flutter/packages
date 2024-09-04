@@ -50,6 +50,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
             details: "")
         }
         print("native purchase")
+        print(id)
         let result = try await product.purchase()
 
         switch result {
@@ -101,10 +102,9 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   func finish(id: Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
     Task {
       print("native finish")
-      let transaction = TransactionCache.shared.get(id: Int(id))
+      let transaction = try await fetchTransaction(by: UInt64(id));
       if let transaction = transaction {
         await transaction.finish()
-        TransactionCache.shared.remove(id: Int(id))
       }
 
     }
@@ -148,5 +148,19 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       }
     }
     return transactions
+  }
+
+  func fetchTransaction(by id: UInt64) async throws -> Transaction? {
+      for await result in Transaction.all {
+          switch result {
+          case .verified(let transaction):
+              if transaction.id == id {
+                  return transaction
+              }
+          case .unverified(_, _):
+              continue
+          }
+      }
+      return nil
   }
 }
