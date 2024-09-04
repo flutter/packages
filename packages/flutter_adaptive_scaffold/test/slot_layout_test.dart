@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_adaptive_scaffold/src/breakpoints.dart';
@@ -103,7 +107,7 @@ void main() {
   testWidgets(
     'SlotLayout applies inAnimation and outAnimation correctly when changing breakpoints',
     (WidgetTester tester) async {
-      // Define a SlotLayout with custom animations
+      // Define a SlotLayout with custom animations.
       Widget buildSlotLayout(double width) {
         return MediaQuery(
           data: MediaQueryData(size: Size(width, 2000)),
@@ -162,7 +166,7 @@ void main() {
 
       // Change to medium breakpoint to trigger outAnimation for small and inAnimation for medium.
       await tester.pumpWidget(buildSlotLayout(600));
-      await tester.pump(); // Start the animation
+      await tester.pump(); // Start the animation.
       await tester.pump(const Duration(
           milliseconds: 1000)); // Halfway through the outDuration.
 
