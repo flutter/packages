@@ -31,14 +31,17 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   InAppPurchaseStoreKitPlatform();
 
   /// Experimental flag for StoreKit2.
-  static bool _useStoreKit2 = false;
+  static bool _useStoreKit2 = true;
 
   static late SKPaymentQueueWrapper _skPaymentQueueWrapper;
   static late _TransactionObserver _observer;
 
+  static late SK2TransactionObserver _sk2transactionObserver;
+
   @override
-  Stream<List<PurchaseDetails>> get purchaseStream =>
-      _observer.purchaseUpdatedController.stream;
+  Stream<List<PurchaseDetails>> get purchaseStream => _useStoreKit2
+      ? _sk2transactionObserver.purchaseUpdatedController.stream
+      : _observer.purchaseUpdatedController.stream;
 
   /// Callback handler for transaction status changes.
   @visibleForTesting
@@ -57,15 +60,26 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
     _skPaymentQueueWrapper = SKPaymentQueueWrapper();
 
-    // Create a purchaseUpdatedController and notify the native side when to
-    // start of stop sending updates.
-    final StreamController<List<PurchaseDetails>> updateController =
-        StreamController<List<PurchaseDetails>>.broadcast(
-      onListen: () => _skPaymentQueueWrapper.startObservingTransactionQueue(),
-      onCancel: () => _skPaymentQueueWrapper.stopObservingTransactionQueue(),
-    );
-    _observer = _TransactionObserver(updateController);
-    _skPaymentQueueWrapper.setTransactionObserver(observer);
+    if (_useStoreKit2) {
+      final StreamController<List<PurchaseDetails>> updateController2 =
+          StreamController<List<PurchaseDetails>>.broadcast(
+        onListen: () => SK2Transaction.startListeningToTransactions(),
+        onCancel: () => SK2Transaction.stopListeningToTransactions(),
+      );
+      _sk2transactionObserver =
+          SK2TransactionObserver(purchaseUpdatedController: updateController2);
+      InAppPurchase2CallbackAPI.setUp(_sk2transactionObserver);
+    } else {
+      // Create a purchaseUpdatedController and notify the native side when to
+      // start of stop sending updates.
+      final StreamController<List<PurchaseDetails>> updateController =
+          StreamController<List<PurchaseDetails>>.broadcast(
+        onListen: () => _skPaymentQueueWrapper.startObservingTransactionQueue(),
+        onCancel: () => _skPaymentQueueWrapper.stopObservingTransactionQueue(),
+      );
+      _observer = _TransactionObserver(updateController);
+      _skPaymentQueueWrapper.setTransactionObserver(observer);
+    }
   }
 
   @override
@@ -78,6 +92,10 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   @override
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {
+    if (_useStoreKit2) {
+      await SK2Product.purchase(purchaseParam.productDetails.id);
+      return true;
+    }
     await _skPaymentQueueWrapper.addPayment(SKPaymentWrapper(
         productIdentifier: purchaseParam.productDetails.id,
         quantity:
@@ -102,9 +120,13 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @override
   Future<void> completePurchase(PurchaseDetails purchase) {
     assert(
-      purchase is AppStorePurchaseDetails,
+      purchase is AppStorePurchaseDetails || purchase is SK2PurchaseDetails,
       'On iOS, the `purchase` should always be of type `AppStorePurchaseDetails`.',
     );
+
+    if (_useStoreKit2) {
+      return SK2Transaction.finish(int.parse(purchase.purchaseID!));
+    }
 
     return _skPaymentQueueWrapper.finishTransaction(
       (purchase as AppStorePurchaseDetails).skPaymentTransaction,

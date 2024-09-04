@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
+import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import '../../store_kit_2_wrappers.dart';
 
 InAppPurchase2API _hostApi = InAppPurchase2API();
@@ -264,6 +265,44 @@ extension on SK2PriceLocaleMessage {
   }
 }
 
+enum SK2ProductPurchaseResult { success, userCancelled, pending }
+
+class SK2ProductPurchaseOptions {
+  SK2ProductPurchaseOptions({this.appAccountToken, this.quantity});
+  // this.appAccountToken
+
+  final String? appAccountToken;
+  final int? quantity;
+
+  SK2ProductPurchaseOptionsMessage convertToPigeon() {
+    return SK2ProductPurchaseOptionsMessage();
+  }
+}
+
+extension on SK2ProductPurchaseResultMessage {
+  SK2ProductPurchaseResult convertFromPigeon() {
+    switch (this) {
+      case SK2ProductPurchaseResultMessage.success:
+        return SK2ProductPurchaseResult.success;
+      case SK2ProductPurchaseResultMessage.userCancelled:
+        return SK2ProductPurchaseResult.userCancelled;
+      case SK2ProductPurchaseResultMessage.pending:
+        return SK2ProductPurchaseResult.pending;
+    }
+  }
+
+  PurchaseStatus convertToPurchaseStatus() {
+    switch (this) {
+      case SK2ProductPurchaseResultMessage.success:
+        return PurchaseStatus.purchased;
+      case SK2ProductPurchaseResultMessage.userCancelled:
+        return PurchaseStatus.canceled;
+      case SK2ProductPurchaseResultMessage.pending:
+        return PurchaseStatus.pending;
+    }
+  }
+}
+
 /// A wrapper around StoreKit2's [Product](https://developer.apple.com/documentation/storekit/product).
 /// The Product type represents the in-app purchases that you configure in
 /// App Store Connect and make available for purchase within your app.
@@ -322,6 +361,17 @@ class SK2Product {
         .whereType<SK2ProductMessage>()
         .map((SK2ProductMessage product) => product.convertFromPigeon())
         .toList();
+  }
+
+  static Future<SK2ProductPurchaseResult> purchase(String id,
+      {SK2ProductPurchaseOptions? options}) async {
+    SK2ProductPurchaseResultMessage result;
+    if (options != null) {
+      result = await _hostApi.purchase(id, options: options.convertToPigeon());
+    } else {
+      result = await _hostApi.purchase(id);
+    }
+    return result.convertFromPigeon();
   }
 
   /// Converts this instance of [SK2Product] to it's pigeon representation [SK2ProductMessage]

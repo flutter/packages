@@ -96,4 +96,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
     // Reset test session
     try await session.setSimulatedError(nil, forAPI: .loadProducts)
   }
+
+  func testSuccessfulPurchase() async throws {
+    //    plugin.purchase(id: "subscription_silver")
+  }
 }
