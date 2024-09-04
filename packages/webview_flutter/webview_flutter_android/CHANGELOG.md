@@ -1,3 +1,7 @@
+## 3.16.7
+
+* Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.
+
 ## 3.16.6
 
 * Bumps androidx.annotation:annotation from 1.7.1 to 1.8.1.

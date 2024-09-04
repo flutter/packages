@@ -21,7 +21,7 @@ class PrimitiveTest {
     val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)
     val api = mockk<PrimitiveHostApi>(relaxed = true)
 
-    val input = 1
+    val input = 1L
 
     val channelName = "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt"
     val handlerSlot = slot<BinaryMessenger.BinaryMessageHandler>()
@@ -38,7 +38,7 @@ class PrimitiveTest {
       it?.rewind()
       @Suppress("UNCHECKED_CAST") val wrapped = codec.decodeMessage(it) as List<Any>?
       assertNotNull(wrapped)
-      wrapped?.let { assertEquals(input.toLong(), wrapped[0]) }
+      wrapped?.let { assertEquals(input, wrapped[0]) }
     }
 
     verify { binaryMessenger.setMessageHandler(channelName, handlerSlot.captured) }

@@ -301,6 +301,7 @@ class PlatformMarker {
 
   bool flat;
 
+  /// The icon as JSON data.
   Object icon;
 
   PlatformInfoWindow infoWindow;
@@ -358,24 +359,66 @@ class PlatformMarker {
 /// Pigeon equivalent of the Polygon class.
 class PlatformPolygon {
   PlatformPolygon({
-    required this.json,
+    required this.polygonId,
+    required this.consumesTapEvents,
+    required this.fillColor,
+    required this.geodesic,
+    required this.points,
+    required this.holes,
+    required this.visible,
+    required this.strokeColor,
+    required this.strokeWidth,
+    required this.zIndex,
   });
 
-  /// The polygon data, as JSON. This should only be set from
-  /// Polygon.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  Map<String?, Object?> json;
+  String polygonId;
+
+  bool consumesTapEvents;
+
+  int fillColor;
+
+  bool geodesic;
+
+  List<PlatformLatLng?> points;
+
+  List<List<PlatformLatLng?>?> holes;
+
+  bool visible;
+
+  int strokeColor;
+
+  int strokeWidth;
+
+  int zIndex;
 
   Object encode() {
     return <Object?>[
-      json,
+      polygonId,
+      consumesTapEvents,
+      fillColor,
+      geodesic,
+      points,
+      holes,
+      visible,
+      strokeColor,
+      strokeWidth,
+      zIndex,
     ];
   }
 
   static PlatformPolygon decode(Object result) {
     result as List<Object?>;
     return PlatformPolygon(
-      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
+      polygonId: result[0]! as String,
+      consumesTapEvents: result[1]! as bool,
+      fillColor: result[2]! as int,
+      geodesic: result[3]! as bool,
+      points: (result[4] as List<Object?>?)!.cast<PlatformLatLng?>(),
+      holes: (result[5] as List<Object?>?)!.cast<List<PlatformLatLng?>?>(),
+      visible: result[6]! as bool,
+      strokeColor: result[7]! as int,
+      strokeWidth: result[8]! as int,
+      zIndex: result[9]! as int,
     );
   }
 }
@@ -383,24 +426,76 @@ class PlatformPolygon {
 /// Pigeon equivalent of the Polyline class.
 class PlatformPolyline {
   PlatformPolyline({
-    required this.json,
+    required this.polylineId,
+    required this.consumesTapEvents,
+    required this.color,
+    required this.geodesic,
+    required this.jointType,
+    required this.patterns,
+    required this.points,
+    required this.startCap,
+    required this.endCap,
+    required this.visible,
+    required this.width,
+    required this.zIndex,
   });
 
-  /// The polyline data, as JSON. This should only be set from
-  /// Polyline.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  Map<String?, Object?> json;
+  String polylineId;
+
+  bool consumesTapEvents;
+
+  int color;
+
+  bool geodesic;
+
+  int jointType;
+
+  List<Object?> patterns;
+
+  List<PlatformLatLng?> points;
+
+  Object startCap;
+
+  Object endCap;
+
+  bool visible;
+
+  int width;
+
+  int zIndex;
 
   Object encode() {
     return <Object?>[
-      json,
+      polylineId,
+      consumesTapEvents,
+      color,
+      geodesic,
+      jointType,
+      patterns,
+      points,
+      startCap,
+      endCap,
+      visible,
+      width,
+      zIndex,
     ];
   }
 
   static PlatformPolyline decode(Object result) {
     result as List<Object?>;
     return PlatformPolyline(
-      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
+      polylineId: result[0]! as String,
+      consumesTapEvents: result[1]! as bool,
+      color: result[2]! as int,
+      geodesic: result[3]! as bool,
+      jointType: result[4]! as int,
+      patterns: (result[5] as List<Object?>?)!.cast<Object?>(),
+      points: (result[6] as List<Object?>?)!.cast<PlatformLatLng?>(),
+      startCap: result[7]!,
+      endCap: result[8]!,
+      visible: result[9]! as bool,
+      width: result[10]! as int,
+      zIndex: result[11]! as int,
     );
   }
 }
@@ -440,24 +535,46 @@ class PlatformTile {
 /// Pigeon equivalent of the TileOverlay class.
 class PlatformTileOverlay {
   PlatformTileOverlay({
-    required this.json,
+    required this.tileOverlayId,
+    required this.fadeIn,
+    required this.transparency,
+    required this.zIndex,
+    required this.visible,
+    required this.tileSize,
   });
 
-  /// The tile overlay data, as JSON. This should only be set from
-  /// TileOverlay.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  Map<String?, Object?> json;
+  String tileOverlayId;
+
+  bool fadeIn;
+
+  double transparency;
+
+  int zIndex;
+
+  bool visible;
+
+  int tileSize;
 
   Object encode() {
     return <Object?>[
-      json,
+      tileOverlayId,
+      fadeIn,
+      transparency,
+      zIndex,
+      visible,
+      tileSize,
     ];
   }
 
   static PlatformTileOverlay decode(Object result) {
     result as List<Object?>;
     return PlatformTileOverlay(
-      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
+      tileOverlayId: result[0]! as String,
+      fadeIn: result[1]! as bool,
+      transparency: result[2]! as double,
+      zIndex: result[3]! as int,
+      visible: result[4]! as bool,
+      tileSize: result[5]! as int,
     );
   }
 }

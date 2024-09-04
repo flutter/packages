@@ -867,9 +867,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     // Returns the expression to convert the given EncodableValue to a field
     // value.
     String getValueExpression(NamedType field, String encodable) {
-      if (field.type.baseName == 'int') {
-        return '$encodable.LongValue()';
-      } else if (field.type.baseName == 'Object') {
+      if (field.type.baseName == 'Object') {
         return encodable;
       } else {
         final HostDatatype hostDatatype =
@@ -1636,17 +1634,7 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
     if (hostType.isNullable) {
       // Nullable arguments are always pointers, with nullptr corresponding to
       // null.
-      if (hostType.datatype == 'int64_t') {
-        // The EncodableValue will either be an int32_t or an int64_t depending
-        // on the value, but the generated API requires an int64_t so that it can
-        // handle any case. Create a local variable for the 64-bit value...
-        final String valueVarName = '${argName}_value';
-        indent.writeln(
-            'const int64_t $valueVarName = $encodableArgName.IsNull() ? 0 : $encodableArgName.LongValue();');
-        // ... then declare the arg as a reference to that local.
-        indent.writeln(
-            'const auto* $argName = $encodableArgName.IsNull() ? nullptr : &$valueVarName;');
-      } else if (hostType.datatype == 'EncodableValue') {
+      if (hostType.datatype == 'EncodableValue') {
         // Generic objects just pass the EncodableValue through directly.
         indent.writeln('const auto* $argName = &$encodableArgName;');
       } else if (hostType.isBuiltin) {

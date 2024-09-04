@@ -30,9 +30,6 @@ const String _codecName = 'PigeonCodec';
 
 const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
-// Used to create classes with type Int rather than long.
-const String _forceInt = '${varNamePrefix}forceInt';
-
 /// Options that control how Java code will be generated.
 class JavaOptions {
   /// Creates a [JavaOptions] object
@@ -253,18 +250,11 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }
 
   void _writeClassField(
-    JavaOptions generatorOptions,
-    Indent indent,
-    NamedType field, {
-    bool isPrimitive = false,
-  }) {
+      JavaOptions generatorOptions, Indent indent, NamedType field) {
     final HostDatatype hostDatatype = getFieldHostDatatype(
         field, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
-    final String nullability = isPrimitive
-        ? ''
-        : field.type.isNullable
-            ? '@Nullable '
-            : '@NonNull ';
+    final String nullability =
+        field.type.isNullable ? '@Nullable ' : '@NonNull ';
     addDocumentationComments(
         indent, field.documentationComments, _docCommentSpec);
 
@@ -280,7 +270,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.writeScoped(
         'public void ${_makeSetter(field)}($nullability${hostDatatype.datatype} setterArg) {',
         '}', () {
-      if (!field.type.isNullable && !isPrimitive) {
+      if (!field.type.isNullable) {
         indent.writeScoped('if (setterArg == null) {', '}', () {
           indent.writeln(
               'throw new IllegalStateException("Nonnull field \\"${field.name}\\" is null.");');
@@ -306,7 +296,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           generatorOptions,
           indent,
           field,
-          isPrimitive: field.type.baseName == _forceInt,
         );
         indent.newln();
       }
@@ -490,7 +479,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           indent
               .writeln('$_overflowClassName wrap = new $_overflowClassName();');
           indent.writeln(
-              'wrap.setType(${customType.enumeration - maximumCodecFieldKey});');
+              'wrap.setType(${customType.enumeration - maximumCodecFieldKey}L);');
           indent.writeln(
               'wrap.setWrapped($nullCheck((${customType.name}) value).$encodeString);');
         }
@@ -580,7 +569,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }) {
     final NamedType overflowInteration = NamedType(
         name: 'type',
-        type: const TypeDeclaration(baseName: _forceInt, isNullable: false));
+        type: const TypeDeclaration(baseName: 'int', isNullable: false));
     final NamedType overflowObject = NamedType(
         name: 'wrapped',
         type: const TypeDeclaration(baseName: 'Object', isNullable: true));
@@ -607,7 +596,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.format('''
 static @Nullable Object fromList(@NonNull ArrayList<Object> ${varNamePrefix}list) {
   $_overflowClassName wrapper = new $_overflowClassName();
-  wrapper.setType((int) ${varNamePrefix}list.get(0));
+  wrapper.setType((Long) ${varNamePrefix}list.get(0));
   wrapper.setWrapped(${varNamePrefix}list.get(1));
   return wrapper.unwrap();
 }
@@ -619,7 +608,7 @@ if (wrapped == null) {
   return null;
 }
     ''');
-          indent.writeScoped('switch (type) {', '}', () {
+          indent.writeScoped('switch (type.intValue()) {', '}', () {
             for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
               indent.writeln('case ${i - totalCustomCodecKeysAllowed}:');
               indent.nest(1, () {
@@ -628,7 +617,7 @@ if (wrapped == null) {
                       'return ${types[i].name}.fromList((ArrayList<Object>) wrapped);');
                 } else if (types[i].type == CustomTypes.customEnum) {
                   indent.writeln(
-                      'return ${types[i].name}.values()[(int) wrapped];');
+                      'return ${_intToEnum('wrapped', types[i].name, false)};');
                 }
               });
             }
@@ -766,13 +755,8 @@ if (wrapped == null) {
                     const String output = 'output';
                     final String outputExpression;
                     indent.writeln('@SuppressWarnings("ConstantConditions")');
-                    if (func.returnType.baseName == 'int') {
-                      outputExpression =
-                          'listReply.get(0) == null ? null : ((Number) listReply.get(0)).longValue();';
-                    } else {
-                      outputExpression =
-                          '${_cast('listReply.get(0)', javaType: returnType)};';
-                    }
+                    outputExpression =
+                        '${_cast('listReply.get(0)', javaType: returnType)};';
                     indent.writeln('$returnType $output = $outputExpression');
                     indent.writeln('result.success($output);');
                   }
@@ -951,16 +935,9 @@ if (wrapped == null) {
               indent.writeln(
                   'ArrayList<Object> args = (ArrayList<Object>) message;');
               enumerate(method.parameters, (int index, NamedType arg) {
-                // The StandardMessageCodec can give us [Integer, Long] for
-                // a Dart 'int'.  To keep things simple we just use 64bit
-                // longs in Pigeon with Java.
-                final bool isInt = arg.type.baseName == 'int';
-                final String argType =
-                    isInt ? 'Number' : _javaTypeForDartType(arg.type);
+                final String argType = _javaTypeForDartType(arg.type);
                 final String argName = _getSafeArgumentName(index, arg);
-                final String argExpression = isInt
-                    ? '($argName == null) ? null : $argName.longValue()'
-                    : argName;
+                final String argExpression = argName;
                 String accessor = 'args.get($index)';
                 if (argType != 'Object') {
                   accessor = _cast(accessor, javaType: argType);
@@ -1176,9 +1153,10 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 
 /// Converts an expression that evaluates to an nullable int to an expression
 /// that evaluates to a nullable enum.
-String _intToEnum(String expression, String enumName, bool nullable) => nullable
-    ? '$expression == null ? null : $enumName.values()[(int) $expression]'
-    : '$enumName.values()[(int) $expression]';
+String _intToEnum(String expression, String enumName, bool nullable) {
+  final String toEnum = '$enumName.values()[((Long) $expression).intValue()]';
+  return nullable ? '$expression == null ? null : $toEnum' : toEnum;
+}
 
 String _getArgumentName(int count, NamedType argument) =>
     argument.name.isEmpty ? 'arg$count' : argument.name;
@@ -1231,8 +1209,6 @@ String? _javaTypeForBuiltinDartType(TypeDeclaration type) {
     'Int64List': 'long[]',
     'Float64List': 'double[]',
     'Object': 'Object',
-    // This is used to allow the creation of true `int`s for the codec overflow class.
-    _forceInt: 'int',
   };
   if (javaTypeForDartTypeMap.containsKey(type.baseName)) {
     return javaTypeForDartTypeMap[type.baseName];
@@ -1271,11 +1247,7 @@ String _cast(String variable, {required String javaType}) {
 String _castObject(NamedType field, String varName) {
   final HostDatatype hostDatatype = getFieldHostDatatype(
       field, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
-  if (field.type.baseName == 'int') {
-    return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer) $varName : (${hostDatatype.datatype}) $varName)';
-  } else {
-    return _cast(varName, javaType: hostDatatype.datatype);
-  }
+  return _cast(varName, javaType: hostDatatype.datatype);
 }
 
 /// Returns string of Result class type for method based on [TypeDeclaration].

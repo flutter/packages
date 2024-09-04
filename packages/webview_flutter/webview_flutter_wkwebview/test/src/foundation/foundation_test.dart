@@ -37,14 +37,14 @@ void main() {
 
       setUp(() {
         mockPlatformHostApi = MockTestNSObjectHostApi();
-        TestNSObjectHostApi.setup(mockPlatformHostApi);
+        TestNSObjectHostApi.setUp(mockPlatformHostApi);
 
         object = NSObject.detached(instanceManager: instanceManager);
         instanceManager.addDartCreatedInstance(object);
       });
 
       tearDown(() {
-        TestNSObjectHostApi.setup(null);
+        TestNSObjectHostApi.setUp(null);
       });
 
       test('addObserver', () async {
@@ -222,11 +222,11 @@ void main() {
 
     group('NSUrl', () {
       // Ensure the test host api is removed after each test run.
-      tearDown(() => TestNSUrlHostApi.setup(null));
+      tearDown(() => TestNSUrlHostApi.setUp(null));
 
       test('getAbsoluteString', () async {
         final MockTestNSUrlHostApi mockApi = MockTestNSUrlHostApi();
-        TestNSUrlHostApi.setup(mockApi);
+        TestNSUrlHostApi.setUp(mockApi);
 
         final NSUrl url = NSUrl.detached(instanceManager: instanceManager);
         instanceManager.addHostCreatedInstance(url, 0);
@@ -249,13 +249,13 @@ void main() {
 
     group('NSUrlCredential', () {
       tearDown(() {
-        TestNSUrlCredentialHostApi.setup(null);
+        TestNSUrlCredentialHostApi.setUp(null);
       });
 
       test('HostApi createWithUser', () {
         final MockTestNSUrlCredentialHostApi mockApi =
             MockTestNSUrlCredentialHostApi();
-        TestNSUrlCredentialHostApi.setup(mockApi);
+        TestNSUrlCredentialHostApi.setUp(mockApi);
 
         final InstanceManager instanceManager = InstanceManager(
           onWeakReferenceRemoved: (_) {},
