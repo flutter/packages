@@ -8,8 +8,8 @@ import 'package:go_router_examples/others/custom_stateful_shell_route.dart';
 
 void main() {
   testWidgets(
-      'Changing active tab in TabController (in TabbedRootScreen, '
-      'Section B) correctly navigates to appropriate screen',
+      'Changing active tab in TabController of TabbedRootScreen (root screen '
+      'of branch/section B) correctly navigates to appropriate screen',
       (WidgetTester tester) async {
     await tester.pumpWidget(NestedTabNavigationExampleApp());
     expect(find.text('Screen A'), findsOneWidget);
@@ -19,10 +19,12 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Screen B1'), findsOneWidget);
 
+    // Get TabController from TabbedRootScreen (root screen of branch/section B)
     final TabController? tabController =
         tabbedRootScreenKey.currentState?.tabController;
     expect(tabController, isNotNull);
 
+    // Simulate swiping TabView to change active tab in TabController
     tabbedRootScreenKey.currentState?.tabController.index = 1;
     await tester.pumpAndSettle();
     expect(find.text('Screen B2'), findsOneWidget);
