@@ -226,7 +226,8 @@ NSString *const errorMethod = @"error";
         return nil;
       }
 
-      selectBestFormatForRequestedFrameRate(_captureDevice, _mediaSettings, videoDimensionsForFormat);
+      selectBestFormatForRequestedFrameRate(_captureDevice, _mediaSettings,
+                                            _videoDimensionsForFormat);
 
       // Set frame rate with 1/10 precision allowing not integral values.
       int fpsNominator = floor([_mediaSettings.framesPerSecond doubleValue] * 10.0);
@@ -253,9 +254,9 @@ NSString *const errorMethod = @"error";
   return self;
 }
 
-static void selectBestFormatForRequestedFrameRate(AVCaptureDevice *captureDevice,
-                                                  FCPPlatformMediaSettings *mediaSettings,
-                                                  VideoDimensionsForFormat videoDimensionsForFormat)
+static void selectBestFormatForRequestedFrameRate(
+    AVCaptureDevice *captureDevice, FCPPlatformMediaSettings *mediaSettings,
+    VideoDimensionsForFormat videoDimensionsForFormat)
 {
   // Find the format which frame rate ranges are closest to the wanted frame rate.
   CMVideoDimensions targetResolution = videoDimensionsForFormat(captureDevice.activeFormat);
@@ -268,14 +269,15 @@ static void selectBestFormatForRequestedFrameRate(AVCaptureDevice *captureDevice
   FourCharCode bestSubType = preferredSubType;
   for (AVCaptureDeviceFormat *format in captureDevice.formats) {
     CMVideoDimensions resolution = videoDimensionsForFormat(format);
-    if (resolution.width != targetResolution.width || resolution.height != targetResolution.height) {
+    if (resolution.width != targetResolution.width ||
+        resolution.height != targetResolution.height) {
       continue;
     }
     double frameRate = bestFrameRateForFormat(format, targetFrameRate);
     double distance = fabs(frameRate - targetFrameRate);
     FourCharCode subType = CMFormatDescriptionGetMediaSubType(format.formatDescription);
-    if (distance < minDistance ||
-        (distance == minDistance && subType == preferredSubType && bestSubType != preferredSubType)) {
+    if (distance < minDistance || (distance == minDistance && subType == preferredSubType &&
+                                   bestSubType != preferredSubType)) {
       bestFormat = format;
       bestFrameRate = frameRate;
       minDistance = distance;
@@ -594,8 +596,8 @@ static double bestFrameRateForFormat(AVCaptureDeviceFormat *format, double targe
     NSUInteger width = res.width;
     NSUInteger pixelCount = height * width;
     FourCharCode subType = CMFormatDescriptionGetMediaSubType(format.formatDescription);
-    if (pixelCount > maxPixelCount ||
-        (pixelCount == maxPixelCount && subType == preferredSubType && bestSubType != preferredSubType)) {
+    if (pixelCount > maxPixelCount || (pixelCount == maxPixelCount && subType == preferredSubType &&
+                                       bestSubType != preferredSubType)) {
       bestFormat = format;
       maxPixelCount = pixelCount;
       bestSubType = subType;
