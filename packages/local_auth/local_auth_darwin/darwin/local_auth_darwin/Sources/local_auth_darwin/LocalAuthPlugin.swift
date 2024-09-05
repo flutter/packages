@@ -1,9 +1,10 @@
-import Foundation
-import LocalAuthentication
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+import Foundation
+import LocalAuthentication
+
 #if canImport(FlutterMacOS)
   import FlutterMacOS
 #elseif canImport(Flutter)
@@ -137,6 +138,19 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     }
   }
 
+   func handleSucceeded(
+    succeeded: Bool, completion: @escaping (Result<AuthResultDetails, Error>) -> Void
+  ) {
+    let result: AuthResult = succeeded ? .success : .failure
+
+    let resultDetails = AuthResultDetails(
+      result: result,
+      errorMessage: nil,
+      errorDetails: nil)
+
+    completion(.success(resultDetails))
+  }
+
   func handleError(
     authError: NSError,
     options: AuthOptions,
@@ -239,19 +253,6 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
         rootViewController.present(alert, animated: true, completion: nil)
       }
     #endif
-  }
-
-  func handleSucceeded(
-    succeeded: Bool, completion: @escaping (Result<AuthResultDetails, Error>) -> Void
-  ) {
-    let result: AuthResult = succeeded ? .success : .failure
-
-    let resultDetails = AuthResultDetails(
-      result: result,
-      errorMessage: nil,
-      errorDetails: nil)
-
-    completion(.success(resultDetails))
   }
 }
 
