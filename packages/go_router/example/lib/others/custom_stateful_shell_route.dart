@@ -12,6 +12,10 @@ final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 final GlobalKey<NavigatorState> _tabANavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'tabANav');
+@visibleForTesting
+// ignore: public_member_api_docs
+final GlobalKey<TabbedRootScreenState> tabbedRootScreenKey =
+    GlobalKey<TabbedRootScreenState>(debugLabel: 'TabbedRootScreen');
 
 // This example demonstrates how to setup nested navigation using a
 // BottomNavigationBar, where each bar item uses its own persistent navigator,
@@ -104,7 +108,10 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                   // See TabbedRootScreen for more details on how the children
                   // are managed (in a TabBarView).
                   return TabbedRootScreen(
-                      navigationShell: navigationShell, children: children);
+                    navigationShell: navigationShell,
+                    key: tabbedRootScreenKey,
+                    children: children,
+                  );
                 },
                 // This bottom tab uses a nested shell, wrapping sub routes in a
                 // top TabBar.
@@ -388,43 +395,47 @@ class TabbedRootScreen extends StatefulWidget {
   final List<Widget> children;
 
   @override
-  State<StatefulWidget> createState() => _TabbedRootScreenState();
+  State<StatefulWidget> createState() => TabbedRootScreenState();
 
   /// To use an alternative implementation using a PageView, replace the line
   /// above with the one below:
   //State<StatefulWidget> createState() => _TabbedRootScreenStatePageView();
 }
 
-class _TabbedRootScreenState extends State<TabbedRootScreen>
+@visibleForTesting
+// ignore: public_member_api_docs
+class TabbedRootScreenState extends State<TabbedRootScreen>
     with SingleTickerProviderStateMixin {
-  late final TabController _tabController = TabController(
+  @visibleForTesting
+  // ignore: public_member_api_docs
+  late final TabController tabController = TabController(
       length: widget.children.length,
       vsync: this,
       initialIndex: widget.navigationShell.currentIndex);
 
   void _switchedTab() {
-    if (_tabController.index != widget.navigationShell.currentIndex) {
-      widget.navigationShell.goBranch(_tabController.index);
+    if (tabController.index != widget.navigationShell.currentIndex) {
+      widget.navigationShell.goBranch(tabController.index);
     }
   }
 
   @override
   void initState() {
     super.initState();
-    _tabController.addListener(_switchedTab);
+    tabController.addListener(_switchedTab);
   }
 
   @override
   void dispose() {
-    _tabController.removeListener(_switchedTab);
-    _tabController.dispose();
+    tabController.removeListener(_switchedTab);
+    tabController.dispose();
     super.dispose();
   }
 
   @override
   void didUpdateWidget(covariant TabbedRootScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _tabController.index = widget.navigationShell.currentIndex;
+    tabController.index = widget.navigationShell.currentIndex;
   }
 
   @override
@@ -438,12 +449,12 @@ class _TabbedRootScreenState extends State<TabbedRootScreen>
           title: Text(
               'Section B root (tab: ${widget.navigationShell.currentIndex + 1})'),
           bottom: TabBar(
-            controller: _tabController,
+            controller: tabController,
             tabs: tabs,
             onTap: (int tappedIndex) => _onTabTap(context, tappedIndex),
           )),
       body: TabBarView(
-        controller: _tabController,
+        controller: tabController,
         children: widget.children,
       ),
     );
