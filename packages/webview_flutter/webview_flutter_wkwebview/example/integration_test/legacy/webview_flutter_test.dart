@@ -591,10 +591,10 @@ Future<void> main() async {
       final String fullScreen =
           await controller.runJavascriptReturningResult('isFullScreen();');
       expect(fullScreen, _webviewBool(true));
-    });
+    }, skip: Platform.isIOS && skipOnIosFor154676);
   },
       // allowsInlineMediaPlayback has no effect on macOS.
-      skip: Platform.isMacOS || skipOnIosFor154676);
+      skip: Platform.isMacOS);
 
   group('Audio playback policy', () {
     late String audioTestBase64;
