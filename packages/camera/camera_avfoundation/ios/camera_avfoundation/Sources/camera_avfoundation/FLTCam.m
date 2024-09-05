@@ -256,8 +256,7 @@ NSString *const errorMethod = @"error";
 
 static void selectBestFormatForRequestedFrameRate(
     AVCaptureDevice *captureDevice, FCPPlatformMediaSettings *mediaSettings,
-    VideoDimensionsForFormat videoDimensionsForFormat)
-{
+    VideoDimensionsForFormat videoDimensionsForFormat) {
   // Find the format which frame rate ranges are closest to the wanted frame rate.
   CMVideoDimensions targetResolution = videoDimensionsForFormat(captureDevice.activeFormat);
   double targetFrameRate = mediaSettings.framesPerSecond.doubleValue;
