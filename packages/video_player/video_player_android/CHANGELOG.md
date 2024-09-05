@@ -1,3 +1,7 @@
+## 2.7.4
+
+* Updates example app to target SDK 34.
+
 ## 2.7.3
 
 * Updates Media3-ExoPlayer to 1.4.1.
