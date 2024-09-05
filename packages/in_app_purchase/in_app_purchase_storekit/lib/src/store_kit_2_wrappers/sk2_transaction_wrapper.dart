@@ -10,13 +10,13 @@ import '../../in_app_purchase_storekit.dart';
 import '../../store_kit_wrappers.dart';
 import '../sk2_pigeon.g.dart';
 
-InAppPurchase2API _hostapi = InAppPurchase2API();
+InAppPurchase2API _hostApi = InAppPurchase2API();
 
+/// Dart wrapper around StoreKit2's [Transaction](https://developer.apple.com/documentation/storekit/transaction)
 /// Note that in StoreKit2, a Transaction encompasses the data contained by
 /// SKPayment and SKTransaction in StoreKit1
-/// Dart wrapper around StoreKit2's [Transaction](https://developer.apple.com/documentation/storekit/transaction)
-///
 class SK2Transaction {
+  /// Creates a new instance of [SK2Transaction]
   SK2Transaction(
       {required this.id,
       required this.originalId,
@@ -28,42 +28,65 @@ class SK2Transaction {
       this.price,
       this.error});
 
-  // SKTransaction
+  /// The unique identifier for the transaction.
   final String id;
 
-// The original transaction identifier, originalID, is identical to id except
-// when the user restores a purchase or renews a transaction.
+  /// The original transaction identifier of a purchase.
+  /// The original transaction identifier, originalID, is identical to id except
+  /// when the user restores a purchase or renews a transaction.
   final String originalId;
 
-// SKPayment
+  /// The product identifier of the in-app purchase.
   final String productId;
+
+  /// The date that the App Store charged the user’s account for a purchased or
+  /// restored product, or for a subscription purchase or renewal after a lapse.
   final String purchaseDate;
+
+  /// The number of consumable products purchased.
   final int quantity;
+
+  /// A UUID that associates the transaction with a user on your own service.
   final String? appAccountToken;
+
+  /// The identifier of the subscription group that the subscription belongs to.
   final String? subscriptionGroupID;
+
+  /// The price of the in-app purchase that the system records in the transaction.
   final double? price;
 
+  /// Any error returned from StoreKit
   final SKError? error;
 
+  /// Wrapper around [Transaction.finish]
+  /// https://developer.apple.com/documentation/storekit/transaction/3749694-finish
+  /// Indicates to the App Store that the app delivered the purchased content
+  /// or enabled the service to finish the transaction.
   static Future<void> finish(int id) async {
-    await _hostapi.finish(id);
+    await _hostApi.finish(id);
   }
 
+  /// A wrapper around [Transaction.all]
+  /// https://developer.apple.com/documentation/storekit/transaction/3851203-all
+  /// A sequence that emits all the customer’s transactions for your app.
   static Future<List<SK2Transaction>> transactions() async {
-    List<SK2TransactionMessage?> msgs = await _hostapi.transactions();
-    List<SK2Transaction> transactions = msgs
+    final List<SK2TransactionMessage?> msgs = await _hostApi.transactions();
+    final List<SK2Transaction> transactions = msgs
         .map((SK2TransactionMessage? e) => e?.convertFromPigeon())
         .cast<SK2Transaction>()
         .toList();
     return transactions;
   }
 
+  /// Start listening to transactions.
+  /// Call this as soon as you can your app to avoid missing transactions.
   static void startListeningToTransactions() {
-    _hostapi.startListeningToTransactions();
+    _hostApi.startListeningToTransactions();
   }
 
+  /// Stop listening to transactions.
   static void stopListeningToTransactions() {
-    _hostapi.stopListeningToTransactions();
+    _hostApi.stopListeningToTransactions();
   }
 }
 
@@ -78,12 +101,11 @@ extension on SK2TransactionMessage {
   }
 
   PurchaseDetails convertToDetails() {
-    print("converting to details");
     return SK2PurchaseDetails(
       productID: productId,
       verificationData: PurchaseVerificationData(
-          localVerificationData: "", serverVerificationData: "", source: ""),
-      transactionDate: "",
+          localVerificationData: '', serverVerificationData: '', source: ''),
+      transactionDate: '',
       // Note that with sk2, any transactions that *can* be returned will require to be finished, and are already purchased.
       // So set this
       // as purchased for all transactions initially.
@@ -93,6 +115,7 @@ extension on SK2TransactionMessage {
   }
 }
 
+/// An observer that listens to all transactions used
 class SK2TransactionObserver implements InAppPurchase2CallbackAPI {
   SK2TransactionObserver({required this.purchaseUpdatedController});
 

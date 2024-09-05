@@ -98,6 +98,6 @@ final class InAppPurchase2PluginTests: XCTestCase {
   }
 
   func testSuccessfulPurchase() async throws {
-    //    plugin.purchase(id: "subscription_silver")
+    plugin.purchase(id: <#T##String#>, options: nil, completion: <#T##(Result<SK2ProductPurchaseResultMessage, any Error>) -> Void#>)
   }
 }

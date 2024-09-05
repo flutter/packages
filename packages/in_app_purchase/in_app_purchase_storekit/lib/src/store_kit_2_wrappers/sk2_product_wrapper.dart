@@ -265,12 +265,19 @@ extension on SK2PriceLocaleMessage {
   }
 }
 
-enum SK2ProductPurchaseResult { success, userCancelled, pending }
+/// Wrapper around [PurchaseResult]
+/// https://developer.apple.com/documentation/storekit/product/purchaseresult
+enum SK2ProductPurchaseResult {
+  /// The purchase succeeded and results in a transaction.
+  success,
+  /// The user canceled the purchase.
+  userCancelled,
+  /// The purchase is pending, and requires action from the customer.
+  pending
+}
 
 class SK2ProductPurchaseOptions {
   SK2ProductPurchaseOptions({this.appAccountToken, this.quantity});
-  // this.appAccountToken
-
   final String? appAccountToken;
   final int? quantity;
 

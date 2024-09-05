@@ -160,22 +160,17 @@ enum SK2ProductPurchaseResultMessage { success, userCancelled, pending }
 @HostApi(dartHostTestHandler: 'TestInAppPurchase2Api')
 abstract class InAppPurchase2API {
   // https://developer.apple.com/documentation/storekit/appstore/3822277-canmakepayments
-  // SK1 canMakePayments
   bool canMakePayments();
 
   // https://developer.apple.com/documentation/storekit/product/3851116-products
-  // SK1 startProductRequest
   @async
   List<SK2ProductMessage> products(List<String> identifiers);
 
   // https://developer.apple.com/documentation/storekit/product/3791971-purchase
-  // SK1 addPayment
-  // needs id to reference product, and also purchaseOptions
   @async
   SK2ProductPurchaseResultMessage purchase(String id,
       {SK2ProductPurchaseOptionsMessage? options});
 
-  // Note that the sk1 version of this only returns unfinished transactions.
   @async
   List<SK2TransactionMessage> transactions();
 
