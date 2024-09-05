@@ -783,7 +783,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       width: polyline.width,
       zIndex: polyline.zIndex,
       points: points,
-      jointType: polyline.jointType.value,
+      jointType: platformJointTypeFromJointType(polyline.jointType),
       patterns: pattern,
     );
   }
@@ -1144,6 +1144,26 @@ PlatformZoomRange? _platformZoomRangeFromMinMaxZoomPreferenceJson(
   final List<double?> minMaxZoom =
       (zoomPrefsJson as List<Object?>).cast<double?>();
   return PlatformZoomRange(min: minMaxZoom[0], max: minMaxZoom[1]);
+}
+
+/// Converts platform interface's JointType to Pigeon's PlatformJointType.
+@visibleForTesting
+PlatformJointType platformJointTypeFromJointType(JointType jointType) {
+  switch (jointType) {
+    case JointType.mitered:
+      return PlatformJointType.mitered;
+    case JointType.bevel:
+      return PlatformJointType.bevel;
+    case JointType.round:
+      return PlatformJointType.round;
+  }
+  // The enum comes from a different package, which could get a new value at
+  // any time, so provide a fallback that ensures this won't break when used
+  // with a version that contains new values. This is deliberately outside
+  // the switch rather than a `default` so that the linter will flag the
+  // switch as needing an update.
+  // ignore: dead_code
+  return PlatformJointType.mitered;
 }
 
 /// Update specification for a set of [TileOverlay]s.

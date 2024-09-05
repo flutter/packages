@@ -181,6 +181,13 @@ class PlatformPolygon {
   final int zIndex;
 }
 
+/// Join types for polyline joints.
+enum PlatformJointType {
+  mitered,
+  bevel,
+  round,
+}
+
 /// Pigeon equivalent of the Polyline class.
 class PlatformPolyline {
   PlatformPolyline({
@@ -203,10 +210,8 @@ class PlatformPolyline {
   final int color;
   final bool geodesic;
 
-  /// The joint type as an integer. This must be a value corresponding to one of the values defined in the platform interface package's JointType enum. The integer values specified in this enum must match those used by the native SDK.
-  // TODO(schectman): Convert field to enum.
-  // https://github.com/flutter/flutter/issues/153718
-  final int jointType;
+  /// The joint type.
+  final PlatformJointType jointType;
 
   /// The pattern data, as JSON. Each element in this list should be set only from PatternItem.toJson, and the native code must interpret it according to the internal implementation details of that method.
   // TODO(schectman): Convert field to structured data.

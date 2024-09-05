@@ -517,6 +517,23 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('Breakpoints.smallMobile')), findsOneWidget);
       expect(find.byKey(const Key('Breakpoints.mediumMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.smallDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.medium')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.mediumLargeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLargeDesktop')),
+          findsNothing);
+      expect(find.byKey(const Key('Breakpoints.large')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.extraLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeMobile')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeDesktop')), findsNothing);
     });
 
     testWidgets(
@@ -526,7 +543,24 @@ void main() {
           SimulatedLayout.smallLandscapeMediumPortrait.slot(tester));
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('Breakpoints.smallMobile')), findsNothing);
-      expect(find.byKey(const Key('Breakpoints.mediumMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumMobile')), findsOneWidget);
+      expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.smallDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.medium')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.mediumLargeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLargeDesktop')),
+          findsNothing);
+      expect(find.byKey(const Key('Breakpoints.large')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.extraLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeMobile')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeDesktop')), findsNothing);
     });
 
     testWidgets(
@@ -537,6 +571,22 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('Breakpoints.smallMobile')), findsOneWidget);
       expect(find.byKey(const Key('Breakpoints.largeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.smallDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.medium')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.mediumLargeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLargeDesktop')),
+          findsNothing);
+      expect(find.byKey(const Key('Breakpoints.large')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.extraLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeMobile')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeDesktop')), findsNothing);
     });
 
     testWidgets(
@@ -547,6 +597,48 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('Breakpoints.smallMobile')), findsNothing);
       expect(find.byKey(const Key('Breakpoints.largeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.smallDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.medium')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLarge')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLargeMobile')),
+          findsOneWidget);
+      expect(find.byKey(const Key('Breakpoints.mediumLargeDesktop')),
+          findsNothing);
+      expect(find.byKey(const Key('Breakpoints.large')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.extraLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeMobile')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeDesktop')), findsNothing);
+    });
+
+    testWidgets(
+        'Layout for mediumLargeLandscapeMediumPortrait shows correct slot configuration',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+          SimulatedLayout.mediumLargeLandscapeMediumPortrait.slot(tester));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('Breakpoints.smallMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.smallDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.medium')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLarge')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLargeMobile')),
+          findsOneWidget);
+      expect(find.byKey(const Key('Breakpoints.mediumLargeDesktop')),
+          findsNothing);
+      expect(find.byKey(const Key('Breakpoints.large')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.extraLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeMobile')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeDesktop')), findsNothing);
     });
   });
 
@@ -669,6 +761,17 @@ void main() {
       // smallLandscapeMediumLargePortrait layout should show the small slot.
       await tester.pumpWidget(
           SimulatedLayout.smallLandscapeMediumLargePortrait.slotAndUp(tester));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumAndUp')), findsOneWidget);
+    });
+
+    testWidgets(
+        'slotAndUp shows correct slot for mediumLargeLandscapeMediumPortrait layout',
+        (WidgetTester tester) async {
+      // mediumLargeLandscapeMediumPortrait layout should show the mediumAndUp slot.
+      await tester.pumpWidget(
+          SimulatedLayout.mediumLargeLandscapeMediumPortrait.slotAndUp(tester));
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
       expect(find.byKey(const Key('Breakpoints.mediumAndUp')), findsOneWidget);

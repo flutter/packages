@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.CustomCap;
 import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PatternItem;
@@ -703,6 +704,18 @@ class Convert {
     return polygon.getPolygonId();
   }
 
+  static int jointTypeFromPigeon(Messages.PlatformJointType jointType) {
+    switch (jointType) {
+      case MITERED:
+        return JointType.DEFAULT;
+      case BEVEL:
+        return JointType.BEVEL;
+      case ROUND:
+        return JointType.ROUND;
+    }
+    return JointType.DEFAULT;
+  }
+
   static String interpretPolylineOptions(
       Messages.PlatformPolyline polyline,
       PolylineOptionsSink sink,
@@ -713,7 +726,7 @@ class Convert {
     sink.setEndCap(toCap(polyline.getEndCap(), assetManager, density));
     sink.setStartCap(toCap(polyline.getStartCap(), assetManager, density));
     sink.setGeodesic(polyline.getGeodesic());
-    sink.setJointType(polyline.getJointType().intValue());
+    sink.setJointType(jointTypeFromPigeon(polyline.getJointType()));
     sink.setVisible(polyline.getVisible());
     sink.setWidth(polyline.getWidth());
     sink.setZIndex(polyline.getZIndex());

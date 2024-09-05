@@ -1,3 +1,7 @@
+## 2.7.3
+
+* Updates Media3-ExoPlayer to 1.4.1.
+
 ## 2.7.2
 
 * Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
