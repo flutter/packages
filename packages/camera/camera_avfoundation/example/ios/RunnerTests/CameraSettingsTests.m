@@ -148,9 +148,9 @@ static const BOOL gTestEnableAudio = YES;
 
   // Expect FPS configuration is passed to camera device.
   [self waitForExpectations:@[
-    injectedWrapper.beginConfigurationExpectation, injectedWrapper.lockExpectation,
+    injectedWrapper.lockExpectation, injectedWrapper.beginConfigurationExpectation,
     injectedWrapper.minFrameDurationExpectation, injectedWrapper.maxFrameDurationExpectation,
-    injectedWrapper.unlockExpectation, injectedWrapper.commitConfigurationExpectation
+    injectedWrapper.commitConfigurationExpectation, injectedWrapper.unlockExpectation
   ]
                     timeout:1
                enforceOrder:YES];

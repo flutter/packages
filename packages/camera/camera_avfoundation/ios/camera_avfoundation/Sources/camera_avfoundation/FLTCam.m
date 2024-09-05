@@ -211,20 +211,21 @@ NSString *const errorMethod = @"error";
   [_motionManager startAccelerometerUpdates];
 
   if (_mediaSettings.framesPerSecond) {
-    [_mediaSettingsAVWrapper beginConfigurationForSession:_videoCaptureSession];
-
-    // Possible values for presets are hard-coded in FLT interface having
-    // corresponding AVCaptureSessionPreset counterparts.
-    // If _resolutionPreset is not supported by camera there is
-    // fallback to lower resolution presets.
-    // If none can be selected there is error condition.
-    if (![self setCaptureSessionPreset:_mediaSettings.resolutionPreset withError:error]) {
-      [_videoCaptureSession commitConfiguration];
-      return nil;
-    }
-
     // The frame rate can be changed only on a locked for configuration device.
     if ([mediaSettingsAVWrapper lockDevice:_captureDevice error:error]) {
+      [_mediaSettingsAVWrapper beginConfigurationForSession:_videoCaptureSession];
+
+      // Possible values for presets are hard-coded in FLT interface having
+      // corresponding AVCaptureSessionPreset counterparts.
+      // If _resolutionPreset is not supported by camera there is
+      // fallback to lower resolution presets.
+      // If none can be selected there is error condition.
+      if (![self setCaptureSessionPreset:_mediaSettings.resolutionPreset withError:error]) {
+        [_videoCaptureSession commitConfiguration];
+        [_captureDevice unlockForConfiguration];
+        return nil;
+      }
+
       selectBestFormatForRequestedFrameRate(_captureDevice, _mediaSettings, videoDimensionsForFormat);
 
       // Set frame rate with 1/10 precision allowing not integral values.
@@ -234,10 +235,9 @@ NSString *const errorMethod = @"error";
       [mediaSettingsAVWrapper setMinFrameDuration:duration onDevice:_captureDevice];
       [mediaSettingsAVWrapper setMaxFrameDuration:duration onDevice:_captureDevice];
 
+      [_mediaSettingsAVWrapper commitConfigurationForSession:_videoCaptureSession];
       [_mediaSettingsAVWrapper unlockDevice:_captureDevice];
-      [_mediaSettingsAVWrapper commitConfigurationForSession:_videoCaptureSession];
     } else {
-      [_mediaSettingsAVWrapper commitConfigurationForSession:_videoCaptureSession];
       return nil;
     }
   } else {
