@@ -13,7 +13,7 @@ flutter:
     implements: local_auth
     platforms:
       ios:
-        pluginClass: FLALocalAuthPlugin
+        pluginClass: LocalAuthPlugin
         dartPluginClass: LocalAuthDarwin
         sharedDarwinSource: true
       macos:
