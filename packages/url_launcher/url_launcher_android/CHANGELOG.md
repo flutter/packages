@@ -1,3 +1,7 @@
+## 6.3.11
+
+* Updates example app to target SDK 34.
+
 ## 6.3.10
 
 * Removes dependency on org.jetbrains.kotlin:kotlin-bom.
