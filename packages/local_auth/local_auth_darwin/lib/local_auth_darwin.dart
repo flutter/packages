@@ -140,6 +140,7 @@ class LocalAuthDarwin extends LocalAuthPlatform {
     return AuthStrings(
       reason: localizedReason,
       lockOut: messages?.lockOut ?? macOSLockOut,
+      goToSettingsButton: '',
       goToSettingsDescription:
           messages?.goToSettingsDescription ?? macOSGoToSettingsDescription,
       cancelButton: messages?.cancelButton ?? macOSCancelButton,
