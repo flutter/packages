@@ -106,7 +106,7 @@
       "localizations" : [
 
       ],
-      "name" : "Example Subscriptions",
+      "name" : "Silver Subscriptions",
       "subscriptions" : [
         {
           "adHocOffers" : [
@@ -135,7 +135,16 @@
           "winbackOffers" : [
 
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id" : "5D664105",
+      "localizations" : [
+
+      ],
+      "name" : "Gold Subscription",
+      "subscriptions" : [
         {
           "adHocOffers" : [
 
@@ -145,8 +154,8 @@
           ],
           "displayPrice" : "5.99",
           "familyShareable" : false,
-          "groupNumber" : 2,
-          "internalID" : "0BC7FF5E",
+          "groupNumber" : 1,
+          "internalID" : "12B805AE",
           "introductoryOffer" : null,
           "localizations" : [
             {
@@ -158,7 +167,7 @@
           "productID" : "subscription_gold",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "subscription_gold",
-          "subscriptionGroupID" : "D0FEE8D8",
+          "subscriptionGroupID" : "5D664105",
           "type" : "RecurringSubscription",
           "winbackOffers" : [
 
