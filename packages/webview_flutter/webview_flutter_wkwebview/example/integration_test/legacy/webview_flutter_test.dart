@@ -541,7 +541,7 @@ Future<void> main() async {
       final String fullScreen =
           await controller.runJavascriptReturningResult('isFullScreen();');
       expect(fullScreen, _webviewBool(false));
-    }, skip: Platform.isIOS && skipOnIosFor154676);
+    }, skip: Platform.isMacOS || skipOnIosFor154676);
 
     testWidgets(
         'Video plays full screen when allowsInlineMediaPlayback is false',
@@ -591,7 +591,7 @@ Future<void> main() async {
       final String fullScreen =
           await controller.runJavascriptReturningResult('isFullScreen();');
       expect(fullScreen, _webviewBool(true));
-    }, skip: Platform.isIOS && skipOnIosFor154676);
+    }, skip: Platform.isMacOS || skipOnIosFor154676);
   },
       // allowsInlineMediaPlayback has no effect on macOS.
       skip: Platform.isMacOS);
