@@ -17,7 +17,7 @@ flutter:
         dartPluginClass: LocalAuthDarwin
         sharedDarwinSource: true
       macos:
-        pluginClass: FLALocalAuthPlugin
+        pluginClass: LocalAuthPlugin
         dartPluginClass: LocalAuthDarwin
         sharedDarwinSource: true
 

@@ -1,16 +1,20 @@
+import Cocoa
+import Foundation
+import LocalAuthentication
+
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
-import Flutter
-import Foundation
-import LocalAuthentication
+#if canImport(FlutterMacOS)
+  import FlutterMacOS
+#elseif canImport(Flutter)
+  import Flutter
+#endif
 
 public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = LocalAuthPlugin()
-    let messenger = registrar.messenger()
-    LocalAuthApiSetup.setUp(binaryMessenger: messenger, api: instance)
+    LocalAuthApiSetup.setUp(binaryMessenger: registrar.messenger, api: instance)
   }
 
   private var lastCallState: StickyAuthState?
@@ -181,18 +185,28 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
         alert.addButton(withTitle: openSettingsButtonTitle)
       }
 
-      let window = viewProvider.view.window
-      let response = alert.runModal()
+      // Obtain the key window for displaying the alert
+      let window = NSApplication.shared.keyWindow
 
-      if response == .alertFirstButtonReturn {
-        handleSucceeded(success: false, completion: completion)
-      } else if response == .alertSecondButtonReturn {
-        if let url = URL(
-          string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Biometric")
-        {
-          NSWorkspace.shared.open(url)
+      if let window = window {
+        alert.beginSheetModal(for: window) { response in
+          switch response {
+          case .alertFirstButtonReturn:
+            self.handleSucceeded(succeeded: false, completion: completion)
+          case .alertSecondButtonReturn:
+            if let url = URL(
+              string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Biometric")
+            {
+              NSWorkspace.shared.open(url)
+            }
+            self.handleSucceeded(succeeded: false, completion: completion)
+          default:
+            break
+          }
         }
-        handleSucceeded(success: false, completion: completion)
+      } else {
+        // Handle the case where no key window is available
+        self.handleSucceeded(succeeded: false, completion: completion)
       }
     #elseif os(iOS)
       let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
