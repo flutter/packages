@@ -102,7 +102,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   func finish(id: Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
     Task {
       print("native finish")
-      let transaction = try await fetchTransaction(by: UInt64(id));
+      let transaction = try await fetchTransaction(by: UInt64(id))
       if let transaction = transaction {
         await transaction.finish()
       }
@@ -151,16 +151,16 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   }
 
   func fetchTransaction(by id: UInt64) async throws -> Transaction? {
-      for await result in Transaction.all {
-          switch result {
-          case .verified(let transaction):
-              if transaction.id == id {
-                  return transaction
-              }
-          case .unverified(_, _):
-              continue
-          }
+    for await result in Transaction.all {
+      switch result {
+      case .verified(let transaction):
+        if transaction.id == id {
+          return transaction
+        }
+      case .unverified(_, _):
+        continue
       }
-      return nil
+    }
+    return nil
   }
 }

@@ -106,23 +106,26 @@ extension on SK2TransactionMessage {
       verificationData: PurchaseVerificationData(
           localVerificationData: '', serverVerificationData: '', source: ''),
       transactionDate: '',
-      // Note that with sk2, any transactions that *can* be returned will require to be finished, and are already purchased.
-      // So set this
-      // as purchased for all transactions initially.
+      // Note that with sk2, any transactions that *can* be returned will
+      // require to be finished, and are already purchased.
+      // So set this as purchased for all transactions initially.
       status: restoring ? PurchaseStatus.restored : PurchaseStatus.purchased,
       purchaseID: id.toString(),
     );
   }
 }
 
-/// An observer that listens to all transactions used
+/// An observer that listens to all transactions created
 class SK2TransactionObserver implements InAppPurchase2CallbackAPI {
-  SK2TransactionObserver({required this.purchaseUpdatedController});
+  /// Creates a new instance of [SK2TransactionObserver]
+  SK2TransactionObserver({required this.transactionsCreatedController});
 
-  final StreamController<List<PurchaseDetails>> purchaseUpdatedController;
+  /// The transactions stream to listen to
+  final StreamController<List<PurchaseDetails>> transactionsCreatedController;
 
   @override
   void onTransactionsUpdated(SK2TransactionMessage newTransaction) {
-    purchaseUpdatedController.add([newTransaction.convertToDetails()]);
+    transactionsCreatedController
+        .add(<PurchaseDetails>[newTransaction.convertToDetails()]);
   }
 }

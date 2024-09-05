@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
-import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import '../../store_kit_2_wrappers.dart';
 
 InAppPurchase2API _hostApi = InAppPurchase2API();
@@ -270,19 +269,30 @@ extension on SK2PriceLocaleMessage {
 enum SK2ProductPurchaseResult {
   /// The purchase succeeded and results in a transaction.
   success,
+
   /// The user canceled the purchase.
   userCancelled,
+
   /// The purchase is pending, and requires action from the customer.
   pending
 }
 
+/// Wrapper around [PurchaseOption]
+/// https://developer.apple.com/documentation/storekit/product/purchaseoption
 class SK2ProductPurchaseOptions {
+  /// Creates a new instance of [SK2ProductPurchaseOptions]
   SK2ProductPurchaseOptions({this.appAccountToken, this.quantity});
+
+  /// Sets a UUID to associate the purchase with an account in your system.
   final String? appAccountToken;
+
+  /// Indicates the quantity of items the customer is purchasing.
   final int? quantity;
 
+  /// Convert to pigeon representation [SK2ProductPurchaseOptionsMessage]
   SK2ProductPurchaseOptionsMessage convertToPigeon() {
-    return SK2ProductPurchaseOptionsMessage();
+    return SK2ProductPurchaseOptionsMessage(
+        appAccountToken: appAccountToken, quantity: quantity);
   }
 }
 
@@ -295,17 +305,6 @@ extension on SK2ProductPurchaseResultMessage {
         return SK2ProductPurchaseResult.userCancelled;
       case SK2ProductPurchaseResultMessage.pending:
         return SK2ProductPurchaseResult.pending;
-    }
-  }
-
-  PurchaseStatus convertToPurchaseStatus() {
-    switch (this) {
-      case SK2ProductPurchaseResultMessage.success:
-        return PurchaseStatus.purchased;
-      case SK2ProductPurchaseResultMessage.userCancelled:
-        return PurchaseStatus.canceled;
-      case SK2ProductPurchaseResultMessage.pending:
-        return PurchaseStatus.pending;
     }
   }
 }
@@ -370,6 +369,9 @@ class SK2Product {
         .toList();
   }
 
+  /// Wrapper for StoreKit's [Product.purchase]
+  /// https://developer.apple.com/documentation/storekit/product/3791971-purchase
+  /// Initiates a purchase for the product with the App Store and displays the confirmation sheet.
   static Future<SK2ProductPurchaseResult> purchase(String id,
       {SK2ProductPurchaseOptions? options}) async {
     SK2ProductPurchaseResultMessage result;

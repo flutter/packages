@@ -40,7 +40,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   @override
   Stream<List<PurchaseDetails>> get purchaseStream => _useStoreKit2
-      ? _sk2transactionObserver.purchaseUpdatedController.stream
+      ? _sk2transactionObserver.transactionsCreatedController.stream
       : _observer.purchaseUpdatedController.stream;
 
   /// Callback handler for transaction status changes.
@@ -66,8 +66,8 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
         onListen: () => SK2Transaction.startListeningToTransactions(),
         onCancel: () => SK2Transaction.stopListeningToTransactions(),
       );
-      _sk2transactionObserver =
-          SK2TransactionObserver(purchaseUpdatedController: updateController2);
+      _sk2transactionObserver = SK2TransactionObserver(
+          transactionsCreatedController: updateController2);
       InAppPurchase2CallbackAPI.setUp(_sk2transactionObserver);
     } else {
       // Create a purchaseUpdatedController and notify the native side when to

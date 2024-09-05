@@ -78,6 +78,8 @@ class AppStorePurchaseDetails extends PurchaseDetails {
   bool get pendingCompletePurchase => _pendingCompletePurchase;
 }
 
+/// The class represents the information of a purchase made with the Apple
+/// AppStore, when using Storekit2
 class SK2PurchaseDetails extends PurchaseDetails {
   SK2PurchaseDetails(
       {required super.productID,
@@ -87,6 +89,5 @@ class SK2PurchaseDetails extends PurchaseDetails {
       required super.status});
 
   @override
-  // but not restored
   bool get pendingCompletePurchase => status == PurchaseStatus.purchased;
 }
