@@ -389,7 +389,7 @@ class Convert {
       Messages.PlatformCameraUpdateZoom zoom = (Messages.PlatformCameraUpdateZoom) cameraUpdate;
       return (zoom.getOut()) ? CameraUpdateFactory.zoomOut() : CameraUpdateFactory.zoomIn();
     }
-    throw new IllegalArgumentException("PlatformCameraUpdate must have one non-null member.");
+    throw new IllegalArgumentException("PlatformCameraUpdate's cameraUpdate field must be one of the PlatformCameraUpdate... case classes.");
   }
 
   private static double toDouble(Object o) {
