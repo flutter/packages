@@ -42,9 +42,9 @@ abstract class PigeonInternalProxyApiBaseClass {
   /// Construct a [PigeonInternalProxyApiBaseClass].
   PigeonInternalProxyApiBaseClass({
     this.pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) : pigeon_instanceManager =
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance;
+            pigeon_instanceManager ?? PigeonInstanceManager.instance;
 
   /// Sends and receives binary data across the Flutter platform barrier.
   ///
@@ -55,12 +55,12 @@ abstract class PigeonInternalProxyApiBaseClass {
 
   /// Maintains instances stored to communicate with native language objects.
   @protected
-  final PigeonInternalInstanceManager pigeon_instanceManager;
+  final PigeonInstanceManager pigeon_instanceManager;
 
   /// Instantiates and returns a functionally identical object to oneself.
   ///
   /// Outside of tests, this method should only ever be called by
-  /// [PigeonInternalInstanceManager].
+  /// [PigeonInstanceManager].
   ///
   /// Subclasses should always override their parent's implementation of this
   /// method.
@@ -83,10 +83,9 @@ abstract class PigeonInternalProxyApiBaseClass {
 /// is added as a weak reference with the same identifier. This prevents a
 /// scenario where the weak referenced instance was released and then later
 /// returned by the host platform.
-class PigeonInternalInstanceManager {
-  /// Constructs a [PigeonInternalInstanceManager].
-  PigeonInternalInstanceManager(
-      {required void Function(int) onWeakReferenceRemoved}) {
+class PigeonInstanceManager {
+  /// Constructs a [PigeonInstanceManager].
+  PigeonInstanceManager({required void Function(int) onWeakReferenceRemoved}) {
     this.onWeakReferenceRemoved = (int identifier) {
       _weakInstances.remove(identifier);
       onWeakReferenceRemoved(identifier);
@@ -100,12 +99,12 @@ class PigeonInternalInstanceManager {
   // 0 <= n < 2^16.
   static const int _maxDartCreatedIdentifier = 65536;
 
-  /// The default [PigeonInternalInstanceManager] used by ProxyApis.
+  /// The default [PigeonInstanceManager] used by ProxyApis.
   ///
   /// On creation, this manager makes a call to clear the native
   /// InstanceManager. This is to prevent identifier conflicts after a host
   /// restart.
-  static final PigeonInternalInstanceManager instance = _initInstance();
+  static final PigeonInstanceManager instance = _initInstance();
 
   // Expando is used because it doesn't prevent its keys from becoming
   // inaccessible. This allows the manager to efficiently retrieve an identifier
@@ -127,14 +126,13 @@ class PigeonInternalInstanceManager {
   /// or becomes inaccessible.
   late final void Function(int) onWeakReferenceRemoved;
 
-  static PigeonInternalInstanceManager _initInstance() {
+  static PigeonInstanceManager _initInstance() {
     WidgetsFlutterBinding.ensureInitialized();
     final _PigeonInternalInstanceManagerApi api =
         _PigeonInternalInstanceManagerApi();
-    // Clears the native `PigeonInternalInstanceManager` on the initial use of the Dart one.
+    // Clears the native `PigeonInstanceManager` on the initial use of the Dart one.
     api.clear();
-    final PigeonInternalInstanceManager instanceManager =
-        PigeonInternalInstanceManager(
+    final PigeonInstanceManager instanceManager = PigeonInstanceManager(
       onWeakReferenceRemoved: (int identifier) {
         api.removeStrongReference(identifier);
       },
@@ -146,6 +144,8 @@ class PigeonInternalInstanceManager {
     ProxyApiSuperClass.pigeon_setUpMessageHandlers(
         pigeon_instanceManager: instanceManager);
     ProxyApiInterface.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
+    ClassWithApiRequirement.pigeon_setUpMessageHandlers(
         pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
@@ -284,7 +284,7 @@ class PigeonInternalInstanceManager {
   }
 }
 
-/// Generated API for managing the Dart and native `PigeonInternalInstanceManager`s.
+/// Generated API for managing the Dart and native `PigeonInstanceManager`s.
 class _PigeonInternalInstanceManagerApi {
   /// Constructor for [_PigeonInternalInstanceManagerApi].
   _PigeonInternalInstanceManagerApi({BinaryMessenger? binaryMessenger})
@@ -292,19 +292,18 @@ class _PigeonInternalInstanceManagerApi {
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      StandardMessageCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   static void setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? binaryMessenger,
-    PigeonInternalInstanceManager? instanceManager,
+    PigeonInstanceManager? instanceManager,
   }) {
     {
       final BasicMessageChannel<
           Object?> pigeonVar_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManagerApi.removeStrongReference',
+          'dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
@@ -312,13 +311,13 @@ class _PigeonInternalInstanceManagerApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManagerApi.removeStrongReference was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManagerApi.removeStrongReference was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference was null, expected non-null int.');
           try {
-            (instanceManager ?? PigeonInternalInstanceManager.instance)
+            (instanceManager ?? PigeonInstanceManager.instance)
                 .remove(arg_identifier!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
@@ -334,7 +333,7 @@ class _PigeonInternalInstanceManagerApi {
 
   Future<void> removeStrongReference(int identifier) async {
     const String pigeonVar_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManagerApi.removeStrongReference';
+        'dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,
@@ -356,12 +355,12 @@ class _PigeonInternalInstanceManagerApi {
     }
   }
 
-  /// Clear the native `PigeonInternalInstanceManager`.
+  /// Clear the native `PigeonInstanceManager`.
   ///
   /// This is typically called after a hot restart.
   Future<void> clear() async {
     const String pigeonVar_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManagerApi.clear';
+        'dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.clear';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,
@@ -386,7 +385,7 @@ class _PigeonInternalInstanceManagerApi {
 
 class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
   const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
-  final PigeonInternalInstanceManager instanceManager;
+  final PigeonInstanceManager instanceManager;
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is PigeonInternalProxyApiBaseClass) {
@@ -583,7 +582,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// Constructs [ProxyApiTestClass] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   ProxyApiTestClass.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -692,7 +691,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(ProxyApiTestClass pigeon_instance)? flutterNoop;
 
@@ -713,7 +712,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Object? Function(ProxyApiTestClass pigeon_instance)? flutterThrowError;
 
@@ -734,7 +733,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(ProxyApiTestClass pigeon_instance)?
       flutterThrowErrorFromVoid;
@@ -756,7 +755,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final bool Function(
     ProxyApiTestClass pigeon_instance,
@@ -780,7 +779,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final int Function(
     ProxyApiTestClass pigeon_instance,
@@ -804,7 +803,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final double Function(
     ProxyApiTestClass pigeon_instance,
@@ -828,7 +827,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final String Function(
     ProxyApiTestClass pigeon_instance,
@@ -852,7 +851,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Uint8List Function(
     ProxyApiTestClass pigeon_instance,
@@ -876,7 +875,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final List<Object?> Function(
     ProxyApiTestClass pigeon_instance,
@@ -901,7 +900,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final List<ProxyApiTestClass?> Function(
     ProxyApiTestClass pigeon_instance,
@@ -925,7 +924,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Map<String?, Object?> Function(
     ProxyApiTestClass pigeon_instance,
@@ -950,7 +949,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Map<String?, ProxyApiTestClass?> Function(
     ProxyApiTestClass pigeon_instance,
@@ -974,7 +973,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final ProxyApiTestEnum Function(
     ProxyApiTestClass pigeon_instance,
@@ -998,7 +997,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final ProxyApiSuperClass Function(
     ProxyApiTestClass pigeon_instance,
@@ -1022,7 +1021,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final bool? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1046,7 +1045,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final int? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1070,7 +1069,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final double? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1094,7 +1093,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final String? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1118,7 +1117,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Uint8List? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1142,7 +1141,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final List<Object?>? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1166,7 +1165,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Map<String?, Object?>? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1190,7 +1189,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final ProxyApiTestEnum? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1214,7 +1213,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final ProxyApiSuperClass? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1239,7 +1238,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Future<void> Function(ProxyApiTestClass pigeon_instance)?
       flutterNoopAsync;
@@ -1261,7 +1260,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Future<String> Function(
     ProxyApiTestClass pigeon_instance,
@@ -1279,7 +1278,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     ProxyApiTestClass Function(
       bool aBool,
       int anInt,
@@ -1391,7 +1390,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -1454,7 +1453,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           final ProxyApiSuperClass? arg_aNullableProxyApi =
               (args[18] as ProxyApiSuperClass?);
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call(
                       arg_aBool!,
@@ -2431,12 +2430,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final ProxyApiSuperClass pigeonVar_instance =
         ProxyApiSuperClass.pigeon_detached();
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _PigeonInternalProxyApiBaseCodec(
-            PigeonInternalInstanceManager.instance);
+        _PigeonInternalProxyApiBaseCodec(PigeonInstanceManager.instance);
     final BinaryMessenger pigeonVar_binaryMessenger =
         ServicesBinding.instance.defaultBinaryMessenger;
-    final int pigeonVar_instanceIdentifier = PigeonInternalInstanceManager
-        .instance
+    final int pigeonVar_instanceIdentifier = PigeonInstanceManager.instance
         .addDartCreatedInstance(pigeonVar_instance);
     () async {
       const String pigeonVar_channelName =
@@ -3932,11 +3929,11 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   static Future<void> staticNoop({
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.staticNoop';
@@ -3964,11 +3961,11 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   static Future<String> echoStaticString(
     String aString, {
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoStaticString';
@@ -4000,11 +3997,11 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   static Future<void> staticAsyncNoop({
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.staticAsyncNoop';
@@ -4869,7 +4866,7 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
   /// Constructs [ProxyApiSuperClass] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   ProxyApiSuperClass.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -4883,12 +4880,12 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     ProxyApiSuperClass Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -4908,7 +4905,7 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   ProxyApiSuperClass.pigeon_detached(
@@ -4970,7 +4967,7 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
   /// Constructs [ProxyApiInterface] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInternalInstanceManager].
+  /// create copies for an [PigeonInstanceManager].
   @protected
   ProxyApiInterface.pigeon_detached({
     super.pigeon_binaryMessenger,
@@ -4995,20 +4992,20 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
   /// );
   /// ```
   ///
-  /// Alternatively, [PigeonInternalInstanceManager.removeWeakReference] can be used to
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(ProxyApiInterface pigeon_instance)? anInterfaceMethod;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInternalInstanceManager? pigeon_instanceManager,
+    PigeonInstanceManager? pigeon_instanceManager,
     ProxyApiInterface Function()? pigeon_newInstance,
     void Function(ProxyApiInterface pigeon_instance)? anInterfaceMethod,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInternalInstanceManager.instance);
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final BasicMessageChannel<
@@ -5028,7 +5025,7 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance was null, expected non-null int.');
           try {
-            (pigeon_instanceManager ?? PigeonInternalInstanceManager.instance)
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   ProxyApiInterface.pigeon_detached(
@@ -5087,6 +5084,140 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       anInterfaceMethod: anInterfaceMethod,
+    );
+  }
+}
+
+class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
+  ClassWithApiRequirement({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  }) {
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecClassWithApiRequirement;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String pigeonVar_channelName =
+          'dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> pigeonVar_channel =
+          BasicMessageChannel<Object?>(
+        pigeonVar_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: pigeonVar_binaryMessenger,
+      );
+      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+          .send(<Object?>[pigeonVar_instanceIdentifier]) as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
+  /// Constructs [ClassWithApiRequirement] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  ClassWithApiRequirement.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
+
+  late final _PigeonInternalProxyApiBaseCodec
+      _pigeonVar_codecClassWithApiRequirement =
+      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    ClassWithApiRequirement Function()? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance was null, expected non-null int.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  ClassWithApiRequirement.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  Future<void> aMethod() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecClassWithApiRequirement;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.aMethod';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  @override
+  ClassWithApiRequirement pigeon_copy() {
+    return ClassWithApiRequirement.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
     );
   }
 }
