@@ -10,7 +10,7 @@
 		0CCCD07A2CE24E13C9C1EEA4 /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D274A3F79473B1549B2BBD5 /* libPods-Runner.a */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		31932E412BE5594300847E24 /* FLALocalAuthPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31932E402BE5594300847E24 /* FLALocalAuthPluginTests.swift */; };
-		3398D2E426164AD8005A052F /* FLALocalAuthPluginTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3398D2E326164AD8005A052F /* FLALocalAuthPluginTests.m */; };
+		3398D2E426164AD8005A052F /* (null) in Sources */ = {isa = PBXBuildFile; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		691CB38B382734AF80FBCA4C /* libPods-RunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBFA21B380E07A3A585383D /* libPods-RunnerTests.a */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
@@ -94,7 +94,6 @@
 		33BF11D226680B2E002967F3 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				338A5F9C2BFBA45B00DF0C4E /* FLALocalAuthPluginTests.swift */,
 				3398D2D126163948005A052F /* Info.plist */,
 				31932E402BE5594300847E24 /* FLALocalAuthPluginTests.swift */,
 			);
@@ -381,7 +380,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				31932E412BE5594300847E24 /* FLALocalAuthPluginTests.swift in Sources */,
-				3398D2E426164AD8005A052F /* FLALocalAuthPluginTests.m in Sources */,
+				3398D2E426164AD8005A052F /* (null) in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -596,6 +595,7 @@
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -620,6 +620,7 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

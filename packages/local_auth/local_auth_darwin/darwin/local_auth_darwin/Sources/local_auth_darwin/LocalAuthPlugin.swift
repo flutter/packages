@@ -1,4 +1,3 @@
-import Cocoa
 import Foundation
 import LocalAuthentication
 
@@ -14,7 +13,15 @@ import LocalAuthentication
 public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = LocalAuthPlugin()
-    LocalAuthApiSetup.setUp(binaryMessenger: registrar.messenger, api: instance)
+    #if os(iOS)
+      // iOS-specific implementation
+      let messenger = registrar.messenger()
+      LocalAuthApiSetup.setUp(binaryMessenger: messenger, api: instance)
+    #elseif os(macOS)
+      // macOS-specific implementation
+      let messenger = registrar.messenger
+      LocalAuthApiSetup.setUp(binaryMessenger: messenger, api: instance)
+    #endif
   }
 
   private var lastCallState: StickyAuthState?
@@ -80,8 +87,9 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
         }
       }
     } else {
+      let error = authError ?? NSError(domain: "", code: 0, userInfo: nil)
       self.handleError(
-        authError: authError!, options: options, strings: strings, completion: completion)
+        authError: error, options: options, strings: strings, completion: completion)
     }
   }
 
