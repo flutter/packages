@@ -25,7 +25,7 @@ void main() {
     late XFile file;
 
     setUp(() async {
-      file = await XFileFactory.fromObjectUrl(textFileUrl);
+      file = XFileFactory.fromObjectUrl(textFileUrl);
     });
 
     test('Can be read as a string', () async {
@@ -84,18 +84,16 @@ void main() {
 
     test('Data may be purged from the blob!', () async {
       expect(() async {
-        final XFile fileBeforeRevoke =
-            await XFileFactory.fromObjectUrl(objectUrl);
+        final XFile fileBeforeRevoke = XFileFactory.fromObjectUrl(objectUrl);
         await fileBeforeRevoke.readAsBytes();
       }, returnsNormally);
 
       html.URL.revokeObjectURL(objectUrl);
 
       expect(() async {
-        final XFile fileAfterRevoke =
-            await XFileFactory.fromObjectUrl(objectUrl);
+        final XFile fileAfterRevoke = XFileFactory.fromObjectUrl(objectUrl);
         await fileAfterRevoke.readAsBytes();
-      }, throwsStateError);
+      }, throwsException);
     });
   });
 

@@ -23,18 +23,6 @@ final File textFile = File(path);
 final String textFilePath = textFile.path;
 
 void main() {
-  group('Former constructors', () {
-    test('should throw', () {
-      expect(() {
-        XFile('potato');
-      }, throwsUnimplementedError);
-
-      expect(() {
-        XFile.fromData(Uint8List.fromList(<int>[]));
-      }, throwsUnimplementedError);
-    });
-  });
-
   group('Create with a path', () {
     test('Can be read as a string', () async {
       final XFile file = XFileFactory.fromPath(textFilePath);
