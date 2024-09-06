@@ -1,3 +1,7 @@
+## 22.4.0
+
+* Adds support for nullable types in collections.
+
 ## 22.3.0
 
 * Adds support for enums and classes in collections.

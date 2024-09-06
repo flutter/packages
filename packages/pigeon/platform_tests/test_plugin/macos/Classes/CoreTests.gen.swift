@@ -122,16 +122,18 @@ struct AllTypes {
   var aString: String
   var anObject: Any
   var list: [Any?]
-  var stringList: [String?]
-  var intList: [Int64?]
-  var doubleList: [Double?]
-  var boolList: [Bool?]
-  var enumList: [AnEnum?]
-  var listList: [[Any?]?]
+  var stringList: [String]
+  var intList: [Int64]
+  var doubleList: [Double]
+  var boolList: [Bool]
+  var enumList: [AnEnum]
+  var objectList: [Any]
+  var listList: [[Any?]]
   var map: [AnyHashable?: Any?]
-  var stringMap: [String?: String?]
-  var intMap: [Int64?: Int64?]
-  var enumMap: [AnEnum?: AnEnum?]
+  var stringMap: [String: String]
+  var intMap: [Int64: Int64]
+  var enumMap: [AnEnum: AnEnum]
+  var objectMap: [AnyHashable: Any]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> AllTypes? {
@@ -148,16 +150,18 @@ struct AllTypes {
     let aString = pigeonVar_list[10] as! String
     let anObject = pigeonVar_list[11]!
     let list = pigeonVar_list[12] as! [Any?]
-    let stringList = pigeonVar_list[13] as! [String?]
-    let intList = pigeonVar_list[14] as! [Int64?]
-    let doubleList = pigeonVar_list[15] as! [Double?]
-    let boolList = pigeonVar_list[16] as! [Bool?]
-    let enumList = pigeonVar_list[17] as! [AnEnum?]
-    let listList = pigeonVar_list[18] as! [[Any?]?]
-    let map = pigeonVar_list[19] as! [AnyHashable?: Any?]
-    let stringMap = pigeonVar_list[20] as! [String?: String?]
-    let intMap = pigeonVar_list[21] as! [Int64?: Int64?]
-    let enumMap = pigeonVar_list[22] as? [AnEnum?: AnEnum?]
+    let stringList = pigeonVar_list[13] as! [String]
+    let intList = pigeonVar_list[14] as! [Int64]
+    let doubleList = pigeonVar_list[15] as! [Double]
+    let boolList = pigeonVar_list[16] as! [Bool]
+    let enumList = pigeonVar_list[17] as! [AnEnum]
+    let objectList = pigeonVar_list[18] as! [Any]
+    let listList = pigeonVar_list[19] as! [[Any?]]
+    let map = pigeonVar_list[20] as! [AnyHashable?: Any?]
+    let stringMap = pigeonVar_list[21] as! [String: String]
+    let intMap = pigeonVar_list[22] as! [Int64: Int64]
+    let enumMap = pigeonVar_list[23] as? [AnEnum: AnEnum]
+    let objectMap = pigeonVar_list[24] as! [AnyHashable: Any]
 
     return AllTypes(
       aBool: aBool,
@@ -178,11 +182,13 @@ struct AllTypes {
       doubleList: doubleList,
       boolList: boolList,
       enumList: enumList,
+      objectList: objectList,
       listList: listList,
       map: map,
       stringMap: stringMap,
       intMap: intMap,
-      enumMap: enumMap!
+      enumMap: enumMap!,
+      objectMap: objectMap
     )
   }
   func toList() -> [Any?] {
@@ -205,11 +211,13 @@ struct AllTypes {
       doubleList,
       boolList,
       enumList,
+      objectList,
       listList,
       map,
       stringMap,
       intMap,
       enumMap,
+      objectMap,
     ]
   }
 }
@@ -238,12 +246,14 @@ class AllNullableTypes {
     doubleList: [Double?]? = nil,
     boolList: [Bool?]? = nil,
     enumList: [AnEnum?]? = nil,
+    objectList: [Any?]? = nil,
     listList: [[Any?]?]? = nil,
     recursiveClassList: [AllNullableTypes?]? = nil,
     map: [AnyHashable?: Any?]? = nil,
     stringMap: [String?: String?]? = nil,
     intMap: [Int64?: Int64?]? = nil,
     enumMap: [AnEnum?: AnEnum?]? = nil,
+    objectMap: [AnyHashable?: Any?]? = nil,
     recursiveClassMap: [Int64?: AllNullableTypes?]? = nil
   ) {
     self.aNullableBool = aNullableBool
@@ -265,12 +275,14 @@ class AllNullableTypes {
     self.doubleList = doubleList
     self.boolList = boolList
     self.enumList = enumList
+    self.objectList = objectList
     self.listList = listList
     self.recursiveClassList = recursiveClassList
     self.map = map
     self.stringMap = stringMap
     self.intMap = intMap
     self.enumMap = enumMap
+    self.objectMap = objectMap
     self.recursiveClassMap = recursiveClassMap
   }
   var aNullableBool: Bool?
@@ -292,12 +304,14 @@ class AllNullableTypes {
   var doubleList: [Double?]?
   var boolList: [Bool?]?
   var enumList: [AnEnum?]?
+  var objectList: [Any?]?
   var listList: [[Any?]?]?
   var recursiveClassList: [AllNullableTypes?]?
   var map: [AnyHashable?: Any?]?
   var stringMap: [String?: String?]?
   var intMap: [Int64?: Int64?]?
   var enumMap: [AnEnum?: AnEnum?]?
+  var objectMap: [AnyHashable?: Any?]?
   var recursiveClassMap: [Int64?: AllNullableTypes?]?
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -321,13 +335,15 @@ class AllNullableTypes {
     let doubleList: [Double?]? = nilOrValue(pigeonVar_list[16])
     let boolList: [Bool?]? = nilOrValue(pigeonVar_list[17])
     let enumList: [AnEnum?]? = nilOrValue(pigeonVar_list[18])
-    let listList: [[Any?]?]? = nilOrValue(pigeonVar_list[19])
-    let recursiveClassList: [AllNullableTypes?]? = nilOrValue(pigeonVar_list[20])
-    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[21])
-    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[22])
-    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[23])
-    let enumMap: [AnEnum?: AnEnum?]? = pigeonVar_list[24] as? [AnEnum?: AnEnum?]
-    let recursiveClassMap: [Int64?: AllNullableTypes?]? = nilOrValue(pigeonVar_list[25])
+    let objectList: [Any?]? = nilOrValue(pigeonVar_list[19])
+    let listList: [[Any?]?]? = nilOrValue(pigeonVar_list[20])
+    let recursiveClassList: [AllNullableTypes?]? = nilOrValue(pigeonVar_list[21])
+    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[22])
+    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[23])
+    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[24])
+    let enumMap: [AnEnum?: AnEnum?]? = pigeonVar_list[25] as? [AnEnum?: AnEnum?]
+    let objectMap: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[26])
+    let recursiveClassMap: [Int64?: AllNullableTypes?]? = nilOrValue(pigeonVar_list[27])
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -349,12 +365,14 @@ class AllNullableTypes {
       doubleList: doubleList,
       boolList: boolList,
       enumList: enumList,
+      objectList: objectList,
       listList: listList,
       recursiveClassList: recursiveClassList,
       map: map,
       stringMap: stringMap,
       intMap: intMap,
       enumMap: enumMap,
+      objectMap: objectMap,
       recursiveClassMap: recursiveClassMap
     )
   }
@@ -379,12 +397,14 @@ class AllNullableTypes {
       doubleList,
       boolList,
       enumList,
+      objectList,
       listList,
       recursiveClassList,
       map,
       stringMap,
       intMap,
       enumMap,
+      objectMap,
       recursiveClassMap,
     ]
   }
@@ -414,11 +434,13 @@ struct AllNullableTypesWithoutRecursion {
   var doubleList: [Double?]? = nil
   var boolList: [Bool?]? = nil
   var enumList: [AnEnum?]? = nil
+  var objectList: [Any?]? = nil
   var listList: [[Any?]?]? = nil
   var map: [AnyHashable?: Any?]? = nil
   var stringMap: [String?: String?]? = nil
   var intMap: [Int64?: Int64?]? = nil
   var enumMap: [AnEnum?: AnEnum?]? = nil
+  var objectMap: [AnyHashable?: Any?]? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> AllNullableTypesWithoutRecursion? {
@@ -440,11 +462,13 @@ struct AllNullableTypesWithoutRecursion {
     let doubleList: [Double?]? = nilOrValue(pigeonVar_list[15])
     let boolList: [Bool?]? = nilOrValue(pigeonVar_list[16])
     let enumList: [AnEnum?]? = nilOrValue(pigeonVar_list[17])
-    let listList: [[Any?]?]? = nilOrValue(pigeonVar_list[18])
-    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[19])
-    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[20])
-    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[21])
-    let enumMap: [AnEnum?: AnEnum?]? = pigeonVar_list[22] as? [AnEnum?: AnEnum?]
+    let objectList: [Any?]? = nilOrValue(pigeonVar_list[18])
+    let listList: [[Any?]?]? = nilOrValue(pigeonVar_list[19])
+    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[20])
+    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[21])
+    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[22])
+    let enumMap: [AnEnum?: AnEnum?]? = pigeonVar_list[23] as? [AnEnum?: AnEnum?]
+    let objectMap: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[24])
 
     return AllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
@@ -465,11 +489,13 @@ struct AllNullableTypesWithoutRecursion {
       doubleList: doubleList,
       boolList: boolList,
       enumList: enumList,
+      objectList: objectList,
       listList: listList,
       map: map,
       stringMap: stringMap,
       intMap: intMap,
-      enumMap: enumMap
+      enumMap: enumMap,
+      objectMap: objectMap
     )
   }
   func toList() -> [Any?] {
@@ -492,11 +518,13 @@ struct AllNullableTypesWithoutRecursion {
       doubleList,
       boolList,
       enumList,
+      objectList,
       listList,
       map,
       stringMap,
       intMap,
       enumMap,
+      objectMap,
     ]
   }
 }
@@ -686,6 +714,10 @@ protocol HostIntegrationCoreApi {
   func echo(enumList: [AnEnum?]) throws -> [AnEnum?]
   /// Returns the passed list, to test serialization and deserialization.
   func echo(classList: [AllNullableTypes?]) throws -> [AllNullableTypes?]
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNonNull(enumList: [AnEnum]) throws -> [AnEnum]
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNonNull(classList: [AllNullableTypes]) throws -> [AllNullableTypes]
   /// Returns the passed map, to test serialization and deserialization.
   func echo(_ map: [AnyHashable?: Any?]) throws -> [AnyHashable?: Any?]
   /// Returns the passed map, to test serialization and deserialization.
@@ -696,6 +728,14 @@ protocol HostIntegrationCoreApi {
   func echo(enumMap: [AnEnum?: AnEnum?]) throws -> [AnEnum?: AnEnum?]
   /// Returns the passed map, to test serialization and deserialization.
   func echo(classMap: [Int64?: AllNullableTypes?]) throws -> [Int64?: AllNullableTypes?]
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNonNull(stringMap: [String: String]) throws -> [String: String]
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNonNull(intMap: [Int64: Int64]) throws -> [Int64: Int64]
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNonNull(enumMap: [AnEnum: AnEnum]) throws -> [AnEnum: AnEnum]
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNonNull(classMap: [Int64: AllNullableTypes]) throws -> [Int64: AllNullableTypes]
   /// Returns the passed class to test nested class serialization and deserialization.
   func echo(_ wrapper: AllClassesWrapper) throws -> AllClassesWrapper
   /// Returns the passed enum to test serialization and deserialization.
@@ -745,6 +785,10 @@ protocol HostIntegrationCoreApi {
   func echoNullable(enumList: [AnEnum?]?) throws -> [AnEnum?]?
   /// Returns the passed list, to test serialization and deserialization.
   func echoNullable(classList: [AllNullableTypes?]?) throws -> [AllNullableTypes?]?
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNullableNonNull(enumList: [AnEnum]?) throws -> [AnEnum]?
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNullableNonNull(classList: [AllNullableTypes]?) throws -> [AllNullableTypes]?
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullable(_ map: [AnyHashable?: Any?]?) throws -> [AnyHashable?: Any?]?
   /// Returns the passed map, to test serialization and deserialization.
@@ -755,6 +799,15 @@ protocol HostIntegrationCoreApi {
   func echoNullable(enumMap: [AnEnum?: AnEnum?]?) throws -> [AnEnum?: AnEnum?]?
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullable(classMap: [Int64?: AllNullableTypes?]?) throws -> [Int64?: AllNullableTypes?]?
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableNonNull(stringMap: [String: String]?) throws -> [String: String]?
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableNonNull(intMap: [Int64: Int64]?) throws -> [Int64: Int64]?
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableNonNull(enumMap: [AnEnum: AnEnum]?) throws -> [AnEnum: AnEnum]?
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableNonNull(classMap: [Int64: AllNullableTypes]?) throws -> [Int64:
+    AllNullableTypes]?
   func echoNullable(_ anEnum: AnEnum?) throws -> AnEnum?
   func echoNullable(_ anotherEnum: AnotherEnum?) throws -> AnotherEnum?
   /// Returns passed in int.
@@ -902,6 +955,11 @@ protocol HostIntegrationCoreApi {
   func callFlutterEcho(
     classList: [AllNullableTypes?],
     completion: @escaping (Result<[AllNullableTypes?], Error>) -> Void)
+  func callFlutterEchoNonNull(
+    enumList: [AnEnum], completion: @escaping (Result<[AnEnum], Error>) -> Void)
+  func callFlutterEchoNonNull(
+    classList: [AllNullableTypes], completion: @escaping (Result<[AllNullableTypes], Error>) -> Void
+  )
   func callFlutterEcho(
     _ map: [AnyHashable?: Any?], completion: @escaping (Result<[AnyHashable?: Any?], Error>) -> Void
   )
@@ -915,6 +973,15 @@ protocol HostIntegrationCoreApi {
   func callFlutterEcho(
     classMap: [Int64?: AllNullableTypes?],
     completion: @escaping (Result<[Int64?: AllNullableTypes?], Error>) -> Void)
+  func callFlutterEchoNonNull(
+    stringMap: [String: String], completion: @escaping (Result<[String: String], Error>) -> Void)
+  func callFlutterEchoNonNull(
+    intMap: [Int64: Int64], completion: @escaping (Result<[Int64: Int64], Error>) -> Void)
+  func callFlutterEchoNonNull(
+    enumMap: [AnEnum: AnEnum], completion: @escaping (Result<[AnEnum: AnEnum], Error>) -> Void)
+  func callFlutterEchoNonNull(
+    classMap: [Int64: AllNullableTypes],
+    completion: @escaping (Result<[Int64: AllNullableTypes], Error>) -> Void)
   func callFlutterEcho(_ anEnum: AnEnum, completion: @escaping (Result<AnEnum, Error>) -> Void)
   func callFlutterEcho(
     _ anotherEnum: AnotherEnum, completion: @escaping (Result<AnotherEnum, Error>) -> Void)
@@ -935,6 +1002,11 @@ protocol HostIntegrationCoreApi {
   func callFlutterEchoNullable(
     classList: [AllNullableTypes?]?,
     completion: @escaping (Result<[AllNullableTypes?]?, Error>) -> Void)
+  func callFlutterEchoNullableNonNull(
+    enumList: [AnEnum]?, completion: @escaping (Result<[AnEnum]?, Error>) -> Void)
+  func callFlutterEchoNullableNonNull(
+    classList: [AllNullableTypes]?,
+    completion: @escaping (Result<[AllNullableTypes]?, Error>) -> Void)
   func callFlutterEchoNullable(
     _ map: [AnyHashable?: Any?]?,
     completion: @escaping (Result<[AnyHashable?: Any?]?, Error>) -> Void)
@@ -949,6 +1021,15 @@ protocol HostIntegrationCoreApi {
   func callFlutterEchoNullable(
     classMap: [Int64?: AllNullableTypes?]?,
     completion: @escaping (Result<[Int64?: AllNullableTypes?]?, Error>) -> Void)
+  func callFlutterEchoNullableNonNull(
+    stringMap: [String: String]?, completion: @escaping (Result<[String: String]?, Error>) -> Void)
+  func callFlutterEchoNullableNonNull(
+    intMap: [Int64: Int64]?, completion: @escaping (Result<[Int64: Int64]?, Error>) -> Void)
+  func callFlutterEchoNullableNonNull(
+    enumMap: [AnEnum: AnEnum]?, completion: @escaping (Result<[AnEnum: AnEnum]?, Error>) -> Void)
+  func callFlutterEchoNullableNonNull(
+    classMap: [Int64: AllNullableTypes]?,
+    completion: @escaping (Result<[Int64: AllNullableTypes]?, Error>) -> Void)
   func callFlutterEchoNullable(
     _ anEnum: AnEnum?, completion: @escaping (Result<AnEnum?, Error>) -> Void)
   func callFlutterEchoNullable(
@@ -1225,6 +1306,44 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoClassListChannel.setMessageHandler(nil)
     }
+    /// Returns the passed list, to test serialization and deserialization.
+    let echoNonNullEnumListChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullEnumList\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNonNullEnumListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enumListArg = args[0] as! [AnEnum]
+        do {
+          let result = try api.echoNonNull(enumList: enumListArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNonNullEnumListChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed list, to test serialization and deserialization.
+    let echoNonNullClassListChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullClassList\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNonNullClassListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let classListArg = args[0] as! [AllNullableTypes]
+        do {
+          let result = try api.echoNonNull(classList: classListArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNonNullClassListChannel.setMessageHandler(nil)
+    }
     /// Returns the passed map, to test serialization and deserialization.
     let echoMapChannel = FlutterBasicMessageChannel(
       name:
@@ -1319,6 +1438,82 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoClassMapChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed map, to test serialization and deserialization.
+    let echoNonNullStringMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullStringMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNonNullStringMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let stringMapArg = args[0] as! [String: String]
+        do {
+          let result = try api.echoNonNull(stringMap: stringMapArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNonNullStringMapChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed map, to test serialization and deserialization.
+    let echoNonNullIntMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullIntMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNonNullIntMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let intMapArg = args[0] as! [Int64: Int64]
+        do {
+          let result = try api.echoNonNull(intMap: intMapArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNonNullIntMapChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed map, to test serialization and deserialization.
+    let echoNonNullEnumMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullEnumMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNonNullEnumMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enumMapArg = args[0] as? [AnEnum: AnEnum]
+        do {
+          let result = try api.echoNonNull(enumMap: enumMapArg!)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNonNullEnumMapChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed map, to test serialization and deserialization.
+    let echoNonNullClassMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullClassMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNonNullClassMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let classMapArg = args[0] as! [Int64: AllNullableTypes]
+        do {
+          let result = try api.echoNonNull(classMap: classMapArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNonNullClassMapChannel.setMessageHandler(nil)
     }
     /// Returns the passed class to test nested class serialization and deserialization.
     let echoClassWrapperChannel = FlutterBasicMessageChannel(
@@ -1727,6 +1922,44 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoNullableClassListChannel.setMessageHandler(nil)
     }
+    /// Returns the passed list, to test serialization and deserialization.
+    let echoNullableNonNullEnumListChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullEnumList\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNullableNonNullEnumListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enumListArg: [AnEnum]? = nilOrValue(args[0])
+        do {
+          let result = try api.echoNullableNonNull(enumList: enumListArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNullableNonNullEnumListChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed list, to test serialization and deserialization.
+    let echoNullableNonNullClassListChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullClassList\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNullableNonNullClassListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let classListArg: [AllNullableTypes]? = nilOrValue(args[0])
+        do {
+          let result = try api.echoNullableNonNull(classList: classListArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNullableNonNullClassListChannel.setMessageHandler(nil)
+    }
     /// Returns the passed map, to test serialization and deserialization.
     let echoNullableMapChannel = FlutterBasicMessageChannel(
       name:
@@ -1821,6 +2054,82 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoNullableClassMapChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed map, to test serialization and deserialization.
+    let echoNullableNonNullStringMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullStringMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNullableNonNullStringMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let stringMapArg: [String: String]? = nilOrValue(args[0])
+        do {
+          let result = try api.echoNullableNonNull(stringMap: stringMapArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNullableNonNullStringMapChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed map, to test serialization and deserialization.
+    let echoNullableNonNullIntMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullIntMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNullableNonNullIntMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let intMapArg: [Int64: Int64]? = nilOrValue(args[0])
+        do {
+          let result = try api.echoNullableNonNull(intMap: intMapArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNullableNonNullIntMapChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed map, to test serialization and deserialization.
+    let echoNullableNonNullEnumMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullEnumMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNullableNonNullEnumMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enumMapArg: [AnEnum: AnEnum]? = args[0] as? [AnEnum: AnEnum]
+        do {
+          let result = try api.echoNullableNonNull(enumMap: enumMapArg!)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNullableNonNullEnumMapChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed map, to test serialization and deserialization.
+    let echoNullableNonNullClassMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullClassMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNullableNonNullClassMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let classMapArg: [Int64: AllNullableTypes]? = nilOrValue(args[0])
+        do {
+          let result = try api.echoNullableNonNull(classMap: classMapArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNullableNonNullClassMapChannel.setMessageHandler(nil)
     }
     let echoNullableEnumChannel = FlutterBasicMessageChannel(
       name:
@@ -3031,6 +3340,46 @@ class HostIntegrationCoreApiSetup {
     } else {
       callFlutterEchoClassListChannel.setMessageHandler(nil)
     }
+    let callFlutterEchoNonNullEnumListChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullEnumList\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoNonNullEnumListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enumListArg = args[0] as! [AnEnum]
+        api.callFlutterEchoNonNull(enumList: enumListArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoNonNullEnumListChannel.setMessageHandler(nil)
+    }
+    let callFlutterEchoNonNullClassListChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullClassList\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoNonNullClassListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let classListArg = args[0] as! [AllNullableTypes]
+        api.callFlutterEchoNonNull(classList: classListArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoNonNullClassListChannel.setMessageHandler(nil)
+    }
     let callFlutterEchoMapChannel = FlutterBasicMessageChannel(
       name:
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap\(channelSuffix)",
@@ -3130,6 +3479,86 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       callFlutterEchoClassMapChannel.setMessageHandler(nil)
+    }
+    let callFlutterEchoNonNullStringMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullStringMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoNonNullStringMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let stringMapArg = args[0] as! [String: String]
+        api.callFlutterEchoNonNull(stringMap: stringMapArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoNonNullStringMapChannel.setMessageHandler(nil)
+    }
+    let callFlutterEchoNonNullIntMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullIntMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoNonNullIntMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let intMapArg = args[0] as! [Int64: Int64]
+        api.callFlutterEchoNonNull(intMap: intMapArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoNonNullIntMapChannel.setMessageHandler(nil)
+    }
+    let callFlutterEchoNonNullEnumMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullEnumMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoNonNullEnumMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enumMapArg = args[0] as? [AnEnum: AnEnum]
+        api.callFlutterEchoNonNull(enumMap: enumMapArg!) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoNonNullEnumMapChannel.setMessageHandler(nil)
+    }
+    let callFlutterEchoNonNullClassMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullClassMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoNonNullClassMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let classMapArg = args[0] as! [Int64: AllNullableTypes]
+        api.callFlutterEchoNonNull(classMap: classMapArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoNonNullClassMapChannel.setMessageHandler(nil)
     }
     let callFlutterEchoEnumChannel = FlutterBasicMessageChannel(
       name:
@@ -3331,6 +3760,46 @@ class HostIntegrationCoreApiSetup {
     } else {
       callFlutterEchoNullableClassListChannel.setMessageHandler(nil)
     }
+    let callFlutterEchoNullableNonNullEnumListChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullEnumList\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoNullableNonNullEnumListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enumListArg: [AnEnum]? = nilOrValue(args[0])
+        api.callFlutterEchoNullableNonNull(enumList: enumListArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoNullableNonNullEnumListChannel.setMessageHandler(nil)
+    }
+    let callFlutterEchoNullableNonNullClassListChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullClassList\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoNullableNonNullClassListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let classListArg: [AllNullableTypes]? = nilOrValue(args[0])
+        api.callFlutterEchoNullableNonNull(classList: classListArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoNullableNonNullClassListChannel.setMessageHandler(nil)
+    }
     let callFlutterEchoNullableMapChannel = FlutterBasicMessageChannel(
       name:
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap\(channelSuffix)",
@@ -3430,6 +3899,86 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       callFlutterEchoNullableClassMapChannel.setMessageHandler(nil)
+    }
+    let callFlutterEchoNullableNonNullStringMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullStringMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoNullableNonNullStringMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let stringMapArg: [String: String]? = nilOrValue(args[0])
+        api.callFlutterEchoNullableNonNull(stringMap: stringMapArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoNullableNonNullStringMapChannel.setMessageHandler(nil)
+    }
+    let callFlutterEchoNullableNonNullIntMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullIntMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoNullableNonNullIntMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let intMapArg: [Int64: Int64]? = nilOrValue(args[0])
+        api.callFlutterEchoNullableNonNull(intMap: intMapArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoNullableNonNullIntMapChannel.setMessageHandler(nil)
+    }
+    let callFlutterEchoNullableNonNullEnumMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullEnumMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoNullableNonNullEnumMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enumMapArg: [AnEnum: AnEnum]? = args[0] as? [AnEnum: AnEnum]
+        api.callFlutterEchoNullableNonNull(enumMap: enumMapArg!) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoNullableNonNullEnumMapChannel.setMessageHandler(nil)
+    }
+    let callFlutterEchoNullableNonNullClassMapChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullClassMap\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoNullableNonNullClassMapChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let classMapArg: [Int64: AllNullableTypes]? = nilOrValue(args[0])
+        api.callFlutterEchoNullableNonNull(classMap: classMapArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoNullableNonNullClassMapChannel.setMessageHandler(nil)
     }
     let callFlutterEchoNullableEnumChannel = FlutterBasicMessageChannel(
       name:
@@ -3551,6 +4100,13 @@ protocol FlutterIntegrationCoreApiProtocol {
   func echo(
     classList classListArg: [AllNullableTypes?],
     completion: @escaping (Result<[AllNullableTypes?], PigeonError>) -> Void)
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNonNull(
+    enumList enumListArg: [AnEnum], completion: @escaping (Result<[AnEnum], PigeonError>) -> Void)
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNonNull(
+    classList classListArg: [AllNullableTypes],
+    completion: @escaping (Result<[AllNullableTypes], PigeonError>) -> Void)
   /// Returns the passed map, to test serialization and deserialization.
   func echo(
     _ mapArg: [AnyHashable?: Any?],
@@ -3571,6 +4127,22 @@ protocol FlutterIntegrationCoreApiProtocol {
   func echo(
     classMap classMapArg: [Int64?: AllNullableTypes?],
     completion: @escaping (Result<[Int64?: AllNullableTypes?], PigeonError>) -> Void)
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNonNull(
+    stringMap stringMapArg: [String: String],
+    completion: @escaping (Result<[String: String], PigeonError>) -> Void)
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNonNull(
+    intMap intMapArg: [Int64: Int64],
+    completion: @escaping (Result<[Int64: Int64], PigeonError>) -> Void)
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNonNull(
+    enumMap enumMapArg: [AnEnum: AnEnum],
+    completion: @escaping (Result<[AnEnum: AnEnum], PigeonError>) -> Void)
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNonNull(
+    classMap classMapArg: [Int64: AllNullableTypes],
+    completion: @escaping (Result<[Int64: AllNullableTypes], PigeonError>) -> Void)
   /// Returns the passed enum to test serialization and deserialization.
   func echo(_ anEnumArg: AnEnum, completion: @escaping (Result<AnEnum, PigeonError>) -> Void)
   /// Returns the passed enum to test serialization and deserialization.
@@ -3601,6 +4173,13 @@ protocol FlutterIntegrationCoreApiProtocol {
   func echoNullable(
     classList classListArg: [AllNullableTypes?]?,
     completion: @escaping (Result<[AllNullableTypes?]?, PigeonError>) -> Void)
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNullableNonNull(
+    enumList enumListArg: [AnEnum]?, completion: @escaping (Result<[AnEnum]?, PigeonError>) -> Void)
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNullableNonNull(
+    classList classListArg: [AllNullableTypes]?,
+    completion: @escaping (Result<[AllNullableTypes]?, PigeonError>) -> Void)
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullable(
     _ mapArg: [AnyHashable?: Any?]?,
@@ -3621,6 +4200,22 @@ protocol FlutterIntegrationCoreApiProtocol {
   func echoNullable(
     classMap classMapArg: [Int64?: AllNullableTypes?]?,
     completion: @escaping (Result<[Int64?: AllNullableTypes?]?, PigeonError>) -> Void)
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableNonNull(
+    stringMap stringMapArg: [String: String]?,
+    completion: @escaping (Result<[String: String]?, PigeonError>) -> Void)
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableNonNull(
+    intMap intMapArg: [Int64: Int64]?,
+    completion: @escaping (Result<[Int64: Int64]?, PigeonError>) -> Void)
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableNonNull(
+    enumMap enumMapArg: [AnEnum: AnEnum]?,
+    completion: @escaping (Result<[AnEnum: AnEnum]?, PigeonError>) -> Void)
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableNonNull(
+    classMap classMapArg: [Int64: AllNullableTypes]?,
+    completion: @escaping (Result<[Int64: AllNullableTypes]?, PigeonError>) -> Void)
   /// Returns the passed enum to test serialization and deserialization.
   func echoNullable(
     _ anEnumArg: AnEnum?, completion: @escaping (Result<AnEnum?, PigeonError>) -> Void)
@@ -4091,6 +4686,67 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       }
     }
   }
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNonNull(
+    enumList enumListArg: [AnEnum], completion: @escaping (Result<[AnEnum], PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumList\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([enumListArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil {
+        completion(
+          .failure(
+            PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! [AnEnum]
+        completion(.success(result))
+      }
+    }
+  }
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNonNull(
+    classList classListArg: [AllNullableTypes],
+    completion: @escaping (Result<[AllNullableTypes], PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullClassList\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([classListArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil {
+        completion(
+          .failure(
+            PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! [AllNullableTypes]
+        completion(.success(result))
+      }
+    }
+  }
   /// Returns the passed map, to test serialization and deserialization.
   func echo(
     _ mapArg: [AnyHashable?: Any?],
@@ -4242,6 +4898,130 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
         let result = listResponse[0] as! [Int64?: AllNullableTypes?]
+        completion(.success(result))
+      }
+    }
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNonNull(
+    stringMap stringMapArg: [String: String],
+    completion: @escaping (Result<[String: String], PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullStringMap\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([stringMapArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil {
+        completion(
+          .failure(
+            PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! [String: String]
+        completion(.success(result))
+      }
+    }
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNonNull(
+    intMap intMapArg: [Int64: Int64],
+    completion: @escaping (Result<[Int64: Int64], PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullIntMap\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([intMapArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil {
+        completion(
+          .failure(
+            PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! [Int64: Int64]
+        completion(.success(result))
+      }
+    }
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNonNull(
+    enumMap enumMapArg: [AnEnum: AnEnum],
+    completion: @escaping (Result<[AnEnum: AnEnum], PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumMap\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([enumMapArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil {
+        completion(
+          .failure(
+            PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as? [AnEnum: AnEnum]
+        completion(.success(result!))
+      }
+    }
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNonNull(
+    classMap classMapArg: [Int64: AllNullableTypes],
+    completion: @escaping (Result<[Int64: AllNullableTypes], PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullClassMap\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([classMapArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil {
+        completion(
+          .failure(
+            PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! [Int64: AllNullableTypes]
         completion(.success(result))
       }
     }
@@ -4496,6 +5276,55 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       }
     }
   }
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNullableNonNull(
+    enumList enumListArg: [AnEnum]?, completion: @escaping (Result<[AnEnum]?, PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullEnumList\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([enumListArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        let result: [AnEnum]? = nilOrValue(listResponse[0])
+        completion(.success(result))
+      }
+    }
+  }
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNullableNonNull(
+    classList classListArg: [AllNullableTypes]?,
+    completion: @escaping (Result<[AllNullableTypes]?, PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullClassList\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([classListArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        let result: [AllNullableTypes]? = nilOrValue(listResponse[0])
+        completion(.success(result))
+      }
+    }
+  }
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullable(
     _ mapArg: [AnyHashable?: Any?]?,
@@ -4617,6 +5446,106 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         let result: [Int64?: AllNullableTypes?]? = nilOrValue(listResponse[0])
+        completion(.success(result))
+      }
+    }
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableNonNull(
+    stringMap stringMapArg: [String: String]?,
+    completion: @escaping (Result<[String: String]?, PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullStringMap\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([stringMapArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        let result: [String: String]? = nilOrValue(listResponse[0])
+        completion(.success(result))
+      }
+    }
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableNonNull(
+    intMap intMapArg: [Int64: Int64]?,
+    completion: @escaping (Result<[Int64: Int64]?, PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullIntMap\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([intMapArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        let result: [Int64: Int64]? = nilOrValue(listResponse[0])
+        completion(.success(result))
+      }
+    }
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableNonNull(
+    enumMap enumMapArg: [AnEnum: AnEnum]?,
+    completion: @escaping (Result<[AnEnum: AnEnum]?, PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullEnumMap\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([enumMapArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        let result: [AnEnum: AnEnum]? = listResponse[0] as? [AnEnum: AnEnum]
+        completion(.success(result!))
+      }
+    }
+  }
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullableNonNull(
+    classMap classMapArg: [Int64: AllNullableTypes]?,
+    completion: @escaping (Result<[Int64: AllNullableTypes]?, PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullClassMap\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([classMapArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        let result: [Int64: AllNullableTypes]? = nilOrValue(listResponse[0])
         completion(.success(result))
       }
     }

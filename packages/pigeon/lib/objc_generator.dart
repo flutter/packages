@@ -1444,7 +1444,8 @@ String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
       return _enumName(e.baseName,
           prefix: classPrefix, box: true, suffix: ' *');
     }
-    return _objcTypeForDartType(classPrefix, e).toString();
+    return _objcTypeForDartType(classPrefix, e, forceNullability: true)
+        .toString();
   }).join(', ');
   return result;
 }
