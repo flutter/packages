@@ -24,9 +24,41 @@ void main() {
   test('CameraUpdate.newCameraPosition', () {
     const CameraPosition cameraPosition = CameraPosition(
         target: LatLng(10.0, 15.0), bearing: 0.5, tilt: 30.0, zoom: 1.5);
-    final CameraUpdate newCameraPosition = CameraUpdate.newCameraPosition(cameraPosition);
-    expect(newCameraPosition.runtimeType, CameraUpdateNewCameraPosition);
-    newCameraPosition as CameraUpdateNewCameraPosition;
-    expect(newCameraPosition.cameraPosition, cameraPosition);
+    final CameraUpdate cameraUpdate = CameraUpdate.newCameraPosition(cameraPosition);
+    expect(cameraUpdate.runtimeType, CameraUpdateNewCameraPosition);
+    expect(cameraUpdate.updateType, CameraUpdateType.newCameraPosition);
+    cameraUpdate as CameraUpdateNewCameraPosition;
+    expect(cameraUpdate.cameraPosition, cameraPosition);
+  });
+
+  test('CameraUpdate.newLatLng', () {
+    const LatLng latLng = LatLng(1.0, 2.0);
+    final CameraUpdate cameraUpdate = CameraUpdate.newLatLng(latLng);
+    expect(cameraUpdate.runtimeType, CameraUpdateNewLatLng);
+    expect(cameraUpdate.updateType, CameraUpdateType.newLatLng);
+    cameraUpdate as CameraUpdateNewLatLng;
+    expect(cameraUpdate.latLng, latLng);
+  });
+
+  test('CameraUpdate.newLatLngBounds', () {
+    final LatLngBounds latLngBounds = LatLngBounds(northeast: const LatLng(1.0, 2.0), southwest: const LatLng(-2.0, -3.0));
+    const double padding = 1.0;
+    final CameraUpdate cameraUpdate = CameraUpdate.newLatLngBounds(latLngBounds, padding);
+    expect(cameraUpdate.runtimeType, CameraUpdateNewLatLngBounds);
+    expect(cameraUpdate.updateType, CameraUpdateType.newLatLngBounds);
+    cameraUpdate as CameraUpdateNewLatLngBounds;
+    expect(cameraUpdate.bounds, latLngBounds);
+    expect(cameraUpdate.padding, padding);
+  });
+
+  test('CameraUpdate.newLatLngZoom', () {
+    const LatLng latLng = LatLng(1.0, 2.0);
+    const double zoom = 2.0;
+    final CameraUpdate cameraUpdate = CameraUpdate.newLatLngZoom(latLng, zoom);
+    expect(cameraUpdate.runtimeType, CameraUpdateNewLatLngZoom);
+    expect(cameraUpdate.updateType, CameraUpdateType.newLatLngZoom);
+    cameraUpdate as CameraUpdateNewLatLngZoom;
+    expect(cameraUpdate.latLng, latLng);
+    expect(cameraUpdate.zoom, zoom);
   });
 }
