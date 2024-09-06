@@ -1322,32 +1322,28 @@ NSString *const errorMethod = @"error";
 // which depend on this global state, only change category or options if there is
 // change to prevent unnecessary lags and silence
 // https://github.com/flutter/flutter/issues/131553
-static void upgradeAudioSessionCategory(AVAudioSessionCategory category,
-                                        AVAudioSessionCategoryOptions options,
-                                        AVAudioSessionCategoryOptions clearOptions) {
-  if (category == nil) {
-    category = AVAudioSession.sharedInstance.category;
-  }
+static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory,
+                                        AVAudioSessionCategoryOptions options) {
   NSSet *playCategories = [NSSet
       setWithObjects:AVAudioSessionCategoryPlayback, AVAudioSessionCategoryPlayAndRecord, nil];
   NSSet *recordCategories =
       [NSSet setWithObjects:AVAudioSessionCategoryRecord, AVAudioSessionCategoryPlayAndRecord, nil];
-  NSSet *categories = [NSSet setWithObjects:category, AVAudioSession.sharedInstance.category, nil];
-  BOOL needPlay = [categories intersectsSet:playCategories];
-  BOOL needRecord = [categories intersectsSet:recordCategories];
+  NSSet *requiredCategories = [NSSet setWithObjects:requestedCategory, AVAudioSession.sharedInstance.category, nil];
+  BOOL needPlay = [requiredCategories intersectsSet:playCategories];
+  BOOL needRecord = [requiredCategories intersectsSet:recordCategories];
   if (needPlay && needRecord) {
-    category = AVAudioSessionCategoryPlayAndRecord;
+    requestedCategory = AVAudioSessionCategoryPlayAndRecord;
   } else if (needPlay) {
-    category = AVAudioSessionCategoryPlayback;
+    requestedCategory = AVAudioSessionCategoryPlayback;
   } else if (needRecord) {
-    category = AVAudioSessionCategoryRecord;
+    requestedCategory = AVAudioSessionCategoryRecord;
   }
-  options = (AVAudioSession.sharedInstance.categoryOptions & ~clearOptions) | options;
-  if ([category isEqualToString:AVAudioSession.sharedInstance.category] &&
+  options = AVAudioSession.sharedInstance.categoryOptions | options;
+  if ([requestedCategory isEqualToString:AVAudioSession.sharedInstance.category] &&
       options == AVAudioSession.sharedInstance.categoryOptions) {
     return;
   }
-  [AVAudioSession.sharedInstance setCategory:category withOptions:options error:nil];
+  [AVAudioSession.sharedInstance setCategory:requestedCategory withOptions:options error:nil];
 }
 
 - (void)setUpCaptureSessionForAudioIfNeeded {
@@ -1369,11 +1365,11 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory category,
   _audioOutput = [[AVCaptureAudioDataOutput alloc] init];
 
   dispatch_block_t block = ^{
+    // Setup options implicit to AVAudioSessionCategoryPlayback to not disturb video_player.
     upgradeAudioSessionCategory(AVAudioSessionCategoryPlayAndRecord,
                                 AVAudioSessionCategoryOptionDefaultToSpeaker |
                                     AVAudioSessionCategoryOptionAllowBluetoothA2DP |
-                                    AVAudioSessionCategoryOptionAllowAirPlay,
-                                0);
+                                    AVAudioSessionCategoryOptionAllowAirPlay);
   };
   if (!NSThread.isMainThread) {
     dispatch_sync(dispatch_get_main_queue(), block);

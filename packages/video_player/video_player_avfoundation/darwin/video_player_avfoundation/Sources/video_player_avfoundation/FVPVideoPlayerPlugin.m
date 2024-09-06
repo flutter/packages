@@ -822,32 +822,29 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 // change to prevent unnecessary lags and silence
 // https://github.com/flutter/flutter/issues/131553
 #if TARGET_OS_IOS
-static void upgradeAudioSessionCategory(AVAudioSessionCategory category,
+static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory,
                                         AVAudioSessionCategoryOptions options,
                                         AVAudioSessionCategoryOptions clearOptions) {
-  if (category == nil) {
-    category = AVAudioSession.sharedInstance.category;
-  }
   NSSet *playCategories = [NSSet
       setWithObjects:AVAudioSessionCategoryPlayback, AVAudioSessionCategoryPlayAndRecord, nil];
   NSSet *recordCategories =
       [NSSet setWithObjects:AVAudioSessionCategoryRecord, AVAudioSessionCategoryPlayAndRecord, nil];
-  NSSet *categories = [NSSet setWithObjects:category, AVAudioSession.sharedInstance.category, nil];
-  BOOL needPlay = [categories intersectsSet:playCategories];
-  BOOL needRecord = [categories intersectsSet:recordCategories];
+  NSSet *requiredCategories = [NSSet setWithObjects:requestedCategory, AVAudioSession.sharedInstance.category, nil];
+  BOOL needPlay = [requiredCategories intersectsSet:playCategories];
+  BOOL needRecord = [requiredCategories intersectsSet:recordCategories];
   if (needPlay && needRecord) {
-    category = AVAudioSessionCategoryPlayAndRecord;
+    requestedCategory = AVAudioSessionCategoryPlayAndRecord;
   } else if (needPlay) {
-    category = AVAudioSessionCategoryPlayback;
+    requestedCategory = AVAudioSessionCategoryPlayback;
   } else if (needRecord) {
-    category = AVAudioSessionCategoryRecord;
+    requestedCategory = AVAudioSessionCategoryRecord;
   }
   options = (AVAudioSession.sharedInstance.categoryOptions & ~clearOptions) | options;
-  if ([category isEqualToString:AVAudioSession.sharedInstance.category] &&
+  if ([requestedCategory isEqualToString:AVAudioSession.sharedInstance.category] &&
       options == AVAudioSession.sharedInstance.categoryOptions) {
     return;
   }
-  [AVAudioSession.sharedInstance setCategory:category withOptions:options error:nil];
+  [AVAudioSession.sharedInstance setCategory:requestedCategory withOptions:options error:nil];
 }
 #endif
 
@@ -857,9 +854,9 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory category,
   // AVAudioSession doesn't exist on macOS, and audio always mixes, so just no-op.
 #else
   if (mixWithOthers) {
-    upgradeAudioSessionCategory(nil, AVAudioSessionCategoryOptionMixWithOthers, 0);
+    upgradeAudioSessionCategory(AVAudioSession.sharedInstance.category, AVAudioSessionCategoryOptionMixWithOthers, 0);
   } else {
-    upgradeAudioSessionCategory(nil, 0, AVAudioSessionCategoryOptionMixWithOthers);
+    upgradeAudioSessionCategory(AVAudioSession.sharedInstance.category, 0, AVAudioSessionCategoryOptionMixWithOthers);
   }
 #endif
 }
