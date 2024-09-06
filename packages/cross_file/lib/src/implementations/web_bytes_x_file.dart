@@ -22,6 +22,9 @@ class BytesXFile extends BaseBytesXFile {
   @override
   Future<void> saveTo(String path) async {
     // Convert [bytes] into a JS Blob, and save it in [path].
-    await downloadBlob(bytesToBlob(bytes, mimeType), name ?? '');
+    await downloadBlob(
+      bytesToBlob(bytes, mimeType),
+      name.isEmpty ? null : name,
+    );
   }
 }

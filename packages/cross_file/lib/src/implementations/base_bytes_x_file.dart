@@ -37,10 +37,10 @@ abstract class BaseBytesXFile implements XFile {
   String? get mimeType => _mimeType;
 
   @override
-  String? get path => null;
+  String get path => '';
 
   @override
-  String? get name => _displayName;
+  String get name => _displayName ?? '';
 
   @override
   Future<int> length() async {
