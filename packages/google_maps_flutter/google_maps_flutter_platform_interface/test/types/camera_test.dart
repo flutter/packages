@@ -61,4 +61,38 @@ void main() {
     expect(cameraUpdate.latLng, latLng);
     expect(cameraUpdate.zoom, zoom);
   });
+
+  test('CameraUpdate.scrollBy', () {
+    const double dx = 2.0;
+    const double dy = 5.0;
+    final CameraUpdate cameraUpdate = CameraUpdate.scrollBy(dx, dy);
+    expect(cameraUpdate.runtimeType, CameraUpdateScrollBy);
+    expect(cameraUpdate.updateType, CameraUpdateType.scrollBy);
+    cameraUpdate as CameraUpdateScrollBy;
+    expect(cameraUpdate.dx, dx);
+    expect(cameraUpdate.dy, dy);
+  });
+
+  test('CameraUpdate.zoomBy', () {
+    const double amount = 1.5;
+    const Offset focus = Offset(-1.0, -2.0);
+    final CameraUpdate cameraUpdate = CameraUpdate.zoomBy(amount, focus);
+    expect(cameraUpdate.runtimeType, CameraUpdateZoomBy);
+    expect(cameraUpdate.updateType, CameraUpdateType.zoomBy);
+    cameraUpdate as CameraUpdateZoomBy;
+    expect(cameraUpdate.amount, amount);
+    expect(cameraUpdate.focus, focus);
+  });
+
+  test('CameraUpdate.zoomIn', () {
+    final CameraUpdate cameraUpdate = CameraUpdate.zoomIn();
+    expect(cameraUpdate.runtimeType, CameraUpdateZoomIn);
+    expect(cameraUpdate.updateType, CameraUpdateType.zoomIn);
+  });
+
+  test('CameraUpdate.zoomOut', () {
+    final CameraUpdate cameraUpdate = CameraUpdate.zoomOut();
+    expect(cameraUpdate.runtimeType, CameraUpdateZoomOut);
+    expect(cameraUpdate.updateType, CameraUpdateType.zoomOut);
+  });
 }
