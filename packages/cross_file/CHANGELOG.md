@@ -1,8 +1,8 @@
-## 0.4.0-dev
+## 0.3.5
 
 * `XFile` is now a read-only `interface`.
-* **Breaking Change**: `XFile` instances must be created with the `XFileFactory`
-  methods for `native` or `web`.
+* Added `XFileFactory` classes for `native` and `web` to create `XFile` instances.
+* Deprecated the former `XFile` constructors (`XFile` and `XFile.fromData`)
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.3.4+2
