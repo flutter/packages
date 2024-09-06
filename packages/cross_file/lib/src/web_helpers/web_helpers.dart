@@ -34,28 +34,38 @@ Element ensureInitialized(String id) {
   return target;
 }
 
-/// Prompts a "Save as..." dialog in the browser for the contents of [blob].
+/// Attempts to download an object (a [Blob]) from its [objectUrl], suggesting [name] as the filename.
 ///
-/// Uses [name] as a *suggestion* for the saved filename, but users can rename
-/// the file to whatever they want before actually saving it.
+/// [name] is a mere *suggestion* for the saved filename; users usually can rename
+/// the file to whatever they want before it's actually saved.
 ///
 /// Maybe some day: https://developer.mozilla.org/en-US/docs/Web/API/Window/showSaveFilePicker
-Future<void> downloadBlob(Blob blob, String? name) async {
+void downloadObjectUrl(String objectUrl, String? name) {
   // Create a DOM container where the anchor can be injected.
   final Element target = ensureInitialized('__x_file_dom_element');
-  final String objectURL = URL.createObjectURL(blob);
   // Create an <a> tag with the appropriate download attributes and click it
-  final HTMLAnchorElement element = createAnchorElement(objectURL, name);
-  // TODO(dit): Is there a better way to revoke the URL that we're creating?
-  Future<void>.delayed(const Duration(minutes: 5), () {
-    // Is this the industry standard?
-    // See: https://github.com/eligrey/FileSaver.js/blob/cea522bc41bfadc364837293d0c4dc585a65ac46/src/FileSaver.js#L163
-    URL.revokeObjectURL(objectURL);
-  });
+  final HTMLAnchorElement element = createAnchorElement(objectUrl, name);
   // Clear the children in target.
   target.replaceChildren(JSArray<JSAny?>());
   // Add the new `element` and click.
   addElementToContainerAndClick(target, element);
+}
+
+/// Attempts to download a [blob], suggesting [name] as the filename.
+///
+/// This method creates (and attempts to cleanup) an `objectUrl` for the given
+/// [blob]. Since there's no way to know when the cleanup needs to happen, the
+/// `blob` will seem to "leak" for about 5 minutes, until the `objectUrl` created
+/// by this method is actually cleared.
+Future<void> downloadBlob(Blob blob, String? name) async {
+  final String objectUrl = URL.createObjectURL(blob);
+  // TODO(dit): Is there a better way to revoke the URL that we're creating?
+  Future<void>.delayed(const Duration(minutes: 5), () {
+    // Is this the industry standard?
+    // See: https://github.com/eligrey/FileSaver.js/blob/cea522bc41bfadc364837293d0c4dc585a65ac46/src/FileSaver.js#L163
+    URL.revokeObjectURL(objectUrl);
+  });
+  downloadObjectUrl(objectUrl, name);
 }
 
 /// Converts a [Blob] to [Uint8List] through a [FileReader].
@@ -67,7 +77,7 @@ Future<Uint8List> blobToBytes(Blob blob) async {
   final Uint8List? result =
       (reader.result as JSArrayBuffer?)?.toDart.asUint8List();
   if (result == null) {
-    throw StateError('Cannot read bytes from Blob. Is it still available?');
+    throw Exception('Cannot read bytes from Blob. Is it still available?');
   }
 
   return result;
@@ -87,6 +97,6 @@ Future<Blob> fetchBlob(String objectUrl) async {
     final Response response = await window.fetch(objectUrl.toJS).toDart;
     return response.blob().toDart;
   } catch (e) {
-    throw StateError('Could not fetch Blob by URL: $objectUrl');
+    throw Exception('Could not fetch Blob by URL: $objectUrl');
   }
 }
