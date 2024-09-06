@@ -114,20 +114,28 @@ class CameraPosition {
 enum CameraUpdateType {
   /// New position for camera
   newCameraPosition,
+
   /// New coordinates for camera
   newLatLng,
+
   /// New coordinates bounding box
   newLatLngBounds,
+
   /// New coordinate with zoom level
   newLatLngZoom,
+
   /// Move by a scroll delta
   scrollBy,
+
   /// Zoom by a relative change
   zoomBy,
+
   /// Zoom to an absolute level
   zoomTo,
+
   /// Zoom in
   zoomIn,
+
   /// Zoom out
   zoomOut,
 }
@@ -210,7 +218,9 @@ abstract class CameraUpdate {
 /// Defines a camera move to a new position.
 class CameraUpdateNewCameraPosition extends CameraUpdate {
   /// Creates a camera move.
-  const CameraUpdateNewCameraPosition(this.cameraPosition) : super._(CameraUpdateType.newCameraPosition);
+  const CameraUpdateNewCameraPosition(this.cameraPosition)
+      : super._(CameraUpdateType.newCameraPosition);
+
   /// The new camera position.
   final CameraPosition cameraPosition;
   @override
@@ -220,7 +230,9 @@ class CameraUpdateNewCameraPosition extends CameraUpdate {
 /// Defines a camera move to a latitude and longitude.
 class CameraUpdateNewLatLng extends CameraUpdate {
   /// Creates a camera move to latitude and longitude.
-  const CameraUpdateNewLatLng(this.latLng) : super._(CameraUpdateType.newLatLng);
+  const CameraUpdateNewLatLng(this.latLng)
+      : super._(CameraUpdateType.newLatLng);
+
   /// New latitude and longitude of the camera..
   final LatLng latLng;
   @override
@@ -230,9 +242,12 @@ class CameraUpdateNewLatLng extends CameraUpdate {
 /// Defines a camera move to a new bounding latitude and longitude range.
 class CameraUpdateNewLatLngBounds extends CameraUpdate {
   /// Creates a camera move to a bounding range.
-  const CameraUpdateNewLatLngBounds(this.bounds, this.padding) : super._(CameraUpdateType.newLatLngBounds);
+  const CameraUpdateNewLatLngBounds(this.bounds, this.padding)
+      : super._(CameraUpdateType.newLatLngBounds);
+
   /// The northeast and southwest bounding coordinates.
   final LatLngBounds bounds;
+
   /// The amount of padding by which the view is inset.
   final double padding;
   @override
@@ -242,9 +257,12 @@ class CameraUpdateNewLatLngBounds extends CameraUpdate {
 /// Defines a camera move to new coordinates with a zoom level.
 class CameraUpdateNewLatLngZoom extends CameraUpdate {
   /// Creates a camera move with coordinates and zoom level.
-  const CameraUpdateNewLatLngZoom(this.latLng, this.zoom) : super._(CameraUpdateType.newLatLngZoom);
+  const CameraUpdateNewLatLngZoom(this.latLng, this.zoom)
+      : super._(CameraUpdateType.newLatLngZoom);
+
   /// New coordinates of the camera.
   final LatLng latLng;
+
   /// New zoom level of the camera.
   final double zoom;
   @override
@@ -254,9 +272,12 @@ class CameraUpdateNewLatLngZoom extends CameraUpdate {
 /// Defines a camera scroll by a certain delta.
 class CameraUpdateScrollBy extends CameraUpdate {
   /// Creates a camera scroll.
-  const CameraUpdateScrollBy(this.dx, this.dy) : super._(CameraUpdateType.scrollBy);
+  const CameraUpdateScrollBy(this.dx, this.dy)
+      : super._(CameraUpdateType.scrollBy);
+
   /// Scroll delta x.
   final double dx;
+
   /// Scroll delta y.
   final double dy;
   @override
@@ -266,13 +287,22 @@ class CameraUpdateScrollBy extends CameraUpdate {
 /// Defines a relative camera zoom.
 class CameraUpdateZoomBy extends CameraUpdate {
   /// Creates a relative camera zoom.
-  const CameraUpdateZoomBy(this.amount, [this.focus]) : super._(CameraUpdateType.zoomBy);
+  const CameraUpdateZoomBy(this.amount, [this.focus])
+      : super._(CameraUpdateType.zoomBy);
+
   /// Change in camera zoom amount.
   final double amount;
+
   /// Optional point around which the zoom is focused.
   final Offset? focus;
   @override
-  Object toJson() => (focus == null) ? <Object>['zoomBy', amount] : <Object>['zoomBy', amount, <double>[focus!.dx, focus!.dy]];
+  Object toJson() => (focus == null)
+      ? <Object>['zoomBy', amount]
+      : <Object>[
+          'zoomBy',
+          amount,
+          <double>[focus!.dx, focus!.dy]
+        ];
 }
 
 /// Defines a camera zoom in.
@@ -295,6 +325,7 @@ class CameraUpdateZoomOut extends CameraUpdate {
 class CameraUpdateZoomTo extends CameraUpdate {
   /// Creates a zoom to an absolute zoom level.
   const CameraUpdateZoomTo(this.zoom) : super._(CameraUpdateType.zoomTo);
+
   /// New zoom level of the camera.
   final double zoom;
   @override

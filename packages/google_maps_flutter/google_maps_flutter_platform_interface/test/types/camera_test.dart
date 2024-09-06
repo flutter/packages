@@ -24,7 +24,8 @@ void main() {
   test('CameraUpdate.newCameraPosition', () {
     const CameraPosition cameraPosition = CameraPosition(
         target: LatLng(10.0, 15.0), bearing: 0.5, tilt: 30.0, zoom: 1.5);
-    final CameraUpdate cameraUpdate = CameraUpdate.newCameraPosition(cameraPosition);
+    final CameraUpdate cameraUpdate =
+        CameraUpdate.newCameraPosition(cameraPosition);
     expect(cameraUpdate.runtimeType, CameraUpdateNewCameraPosition);
     expect(cameraUpdate.updateType, CameraUpdateType.newCameraPosition);
     cameraUpdate as CameraUpdateNewCameraPosition;
@@ -41,9 +42,11 @@ void main() {
   });
 
   test('CameraUpdate.newLatLngBounds', () {
-    final LatLngBounds latLngBounds = LatLngBounds(northeast: const LatLng(1.0, 2.0), southwest: const LatLng(-2.0, -3.0));
+    final LatLngBounds latLngBounds = LatLngBounds(
+        northeast: const LatLng(1.0, 2.0), southwest: const LatLng(-2.0, -3.0));
     const double padding = 1.0;
-    final CameraUpdate cameraUpdate = CameraUpdate.newLatLngBounds(latLngBounds, padding);
+    final CameraUpdate cameraUpdate =
+        CameraUpdate.newLatLngBounds(latLngBounds, padding);
     expect(cameraUpdate.runtimeType, CameraUpdateNewLatLngBounds);
     expect(cameraUpdate.updateType, CameraUpdateType.newLatLngBounds);
     cameraUpdate as CameraUpdateNewLatLngBounds;
