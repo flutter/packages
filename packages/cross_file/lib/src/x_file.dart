@@ -7,6 +7,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'legacy/legacy_factory.dart';
+
 /// The interface for a cross-platform "file", [XFile].
 ///
 /// An `XFile` is a container that wraps a bunch of [bytes] with
@@ -32,7 +34,24 @@ abstract interface class XFile {
     Uint8List? bytes,
     DateTime? lastModified,
   }) {
-    throw UnimplementedError('Use XFileFactory.fromPath.');
+    if (bytes != null) {
+      return XFileLegacyFactory.fromBytes(
+        bytes,
+        mimeType: mimeType,
+        name: name,
+        length: length,
+        lastModified: lastModified,
+        path: path,
+      );
+    }
+    return XFileLegacyFactory.fromPath(
+      path,
+      mimeType: mimeType,
+      name: name,
+      length: length,
+      bytes: bytes,
+      lastModified: lastModified,
+    );
   }
 
   @Deprecated('Use XFileFactory.fromBytes from native (or web)/factory.dart.')
@@ -44,7 +63,14 @@ abstract interface class XFile {
     DateTime? lastModified,
     String? path,
   }) {
-    throw UnimplementedError('Use XFileFactory.fromBytes.');
+    return XFileLegacyFactory.fromBytes(
+      bytes,
+      mimeType: mimeType,
+      name: name,
+      length: length,
+      lastModified: lastModified,
+      path: path,
+    );
   }
 
   /// Get the path of the picked file.
@@ -58,7 +84,7 @@ abstract interface class XFile {
   /// Accessing the data contained in the picked file by its path
   /// is platform-dependant (and won't work on web), so use the
   /// byte getters in the CrossFile instance instead.
-  String? get path;
+  String get path;
 
   /// The name of the file.
   ///
@@ -70,7 +96,7 @@ abstract interface class XFile {
   /// property.
   ///
   /// Use only for cosmetic reasons, do not use this as a path.
-  String? get name;
+  String get name;
 
   /// The MIME-type of the file.
   ///
