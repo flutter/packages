@@ -20,4 +20,13 @@ void main() {
 
     expect(cameraPosition, cameraPositionFromJson);
   });
+
+  test('CameraUpdate.newCameraPosition', () {
+    const CameraPosition cameraPosition = CameraPosition(
+        target: LatLng(10.0, 15.0), bearing: 0.5, tilt: 30.0, zoom: 1.5);
+    final CameraUpdate newCameraPosition = CameraUpdate.newCameraPosition(cameraPosition);
+    expect(newCameraPosition.runtimeType, CameraUpdateNewCameraPosition);
+    newCameraPosition as CameraUpdateNewCameraPosition;
+    expect(newCameraPosition.cameraPosition, cameraPosition);
+  });
 }
