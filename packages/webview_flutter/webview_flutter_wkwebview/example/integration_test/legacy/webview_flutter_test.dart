@@ -22,6 +22,10 @@ import 'package:webview_flutter_wkwebview_example/legacy/navigation_decision.dar
 import 'package:webview_flutter_wkwebview_example/legacy/navigation_request.dart';
 import 'package:webview_flutter_wkwebview_example/legacy/web_view.dart';
 
+// TODO(bparrishMines): Remove once https://github.com/flutter/flutter/issues/154676
+// is fixed.
+const bool skipOnIosFor154676 = true;
+
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -537,7 +541,7 @@ Future<void> main() async {
       final String fullScreen =
           await controller.runJavascriptReturningResult('isFullScreen();');
       expect(fullScreen, _webviewBool(false));
-    });
+    }, skip: Platform.isMacOS || skipOnIosFor154676);
 
     testWidgets(
         'Video plays full screen when allowsInlineMediaPlayback is false',
@@ -587,7 +591,7 @@ Future<void> main() async {
       final String fullScreen =
           await controller.runJavascriptReturningResult('isFullScreen();');
       expect(fullScreen, _webviewBool(true));
-    });
+    }, skip: Platform.isMacOS || skipOnIosFor154676);
   },
       // allowsInlineMediaPlayback has no effect on macOS.
       skip: Platform.isMacOS);
