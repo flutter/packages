@@ -61,17 +61,19 @@ abstract interface class XFileFactory {
   /// The Object URL must have been created in the same JS `document` that the
   /// is attempting to read the URL, and not revoked.
   ///
+  /// The Object URL is retrieved lazily, when it's first accessed.
+  ///
   /// Allows passing the [mimeType], [displayName] and [lastModified] attributes
   /// of the file, if needed.
   ///
   /// See: https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static
-  static Future<XFile> fromObjectUrl(
+  static XFile fromObjectUrl(
     String objectUrl, {
     String? mimeType,
     String? displayName,
     DateTime? lastModified,
   }) {
-    return BlobXFile.fromObjectURL(
+    return ObjectUrlBlobXFile(
       objectUrl,
       mimeType: mimeType,
       displayName: displayName,
