@@ -829,7 +829,8 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
       setWithObjects:AVAudioSessionCategoryPlayback, AVAudioSessionCategoryPlayAndRecord, nil];
   NSSet *recordCategories =
       [NSSet setWithObjects:AVAudioSessionCategoryRecord, AVAudioSessionCategoryPlayAndRecord, nil];
-  NSSet *requiredCategories = [NSSet setWithObjects:requestedCategory, AVAudioSession.sharedInstance.category, nil];
+  NSSet *requiredCategories =
+      [NSSet setWithObjects:requestedCategory, AVAudioSession.sharedInstance.category, nil];
   BOOL needPlay = [requiredCategories intersectsSet:playCategories];
   BOOL needRecord = [requiredCategories intersectsSet:recordCategories];
   if (needPlay && needRecord) {
@@ -854,9 +855,11 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   // AVAudioSession doesn't exist on macOS, and audio always mixes, so just no-op.
 #else
   if (mixWithOthers) {
-    upgradeAudioSessionCategory(AVAudioSession.sharedInstance.category, AVAudioSessionCategoryOptionMixWithOthers, 0);
+    upgradeAudioSessionCategory(AVAudioSession.sharedInstance.category,
+                                AVAudioSessionCategoryOptionMixWithOthers, 0);
   } else {
-    upgradeAudioSessionCategory(AVAudioSession.sharedInstance.category, 0, AVAudioSessionCategoryOptionMixWithOthers);
+    upgradeAudioSessionCategory(AVAudioSession.sharedInstance.category, 0,
+                                AVAudioSessionCategoryOptionMixWithOthers);
   }
 #endif
 }

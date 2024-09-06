@@ -1328,7 +1328,8 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
       setWithObjects:AVAudioSessionCategoryPlayback, AVAudioSessionCategoryPlayAndRecord, nil];
   NSSet *recordCategories =
       [NSSet setWithObjects:AVAudioSessionCategoryRecord, AVAudioSessionCategoryPlayAndRecord, nil];
-  NSSet *requiredCategories = [NSSet setWithObjects:requestedCategory, AVAudioSession.sharedInstance.category, nil];
+  NSSet *requiredCategories =
+      [NSSet setWithObjects:requestedCategory, AVAudioSession.sharedInstance.category, nil];
   BOOL needPlay = [requiredCategories intersectsSet:playCategories];
   BOOL needRecord = [requiredCategories intersectsSet:recordCategories];
   if (needPlay && needRecord) {
