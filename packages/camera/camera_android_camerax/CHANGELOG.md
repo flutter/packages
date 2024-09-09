@@ -1,4 +1,4 @@
-## 0.6.7+4
+## 0.6.8+4
 
 * Disables image resolution test: https://github.com/flutter/flutter/issues/154682
 
