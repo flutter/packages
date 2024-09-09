@@ -6,7 +6,8 @@ import 'dart:async';
 
 import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
 
-FutureOr<void> testExecutable(FutureOr<void> Function() testMain) {
+Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   LeakTesting.enable();
-  return testMain();
+  LeakTracking.warnForUnsupportedPlatforms = false;
+  await testMain();
 }
