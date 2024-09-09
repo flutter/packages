@@ -316,10 +316,6 @@ class Convert {
     return bitmapDescriptorFactory.fromAsset(assetKey);
   }
 
-  private static boolean toBoolean(Object o) {
-    return (Boolean) o;
-  }
-
   static @NonNull CameraPosition cameraPositionFromPigeon(
       @NonNull Messages.PlatformCameraPosition position) {
     final CameraPosition.Builder builder = CameraPosition.builder();
@@ -327,16 +323,6 @@ class Convert {
     builder.target(latLngFromPigeon(position.getTarget()));
     builder.tilt(position.getTilt().floatValue());
     builder.zoom(position.getZoom().floatValue());
-    return builder.build();
-  }
-
-  static CameraPosition toCameraPosition(Object o) {
-    final Map<?, ?> data = toMap(o);
-    final CameraPosition.Builder builder = CameraPosition.builder();
-    builder.bearing(toFloat(data.get("bearing")));
-    builder.target(toLatLng(data.get("target")));
-    builder.tilt(toFloat(data.get("tilt")));
-    builder.zoom(toFloat(data.get("zoom")));
     return builder.build();
   }
 
@@ -525,40 +511,12 @@ class Convert {
     return new Messages.PlatformPoint.Builder().setX((long) point.x).setY((long) point.y).build();
   }
 
-  private static LatLngBounds toLatLngBounds(Object o) {
-    if (o == null) {
-      return null;
-    }
-    final List<?> data = toList(o);
-    return new LatLngBounds(toLatLng(data.get(0)), toLatLng(data.get(1)));
-  }
-
   private static List<?> toList(Object o) {
     return (List<?>) o;
   }
 
   private static Map<?, ?> toMap(Object o) {
     return (Map<?, ?>) o;
-  }
-
-  private static Map<String, Object> toObjectMap(Object o) {
-    Map<String, Object> hashMap = new HashMap<>();
-    Map<?, ?> map = (Map<?, ?>) o;
-    for (Object key : map.keySet()) {
-      Object object = map.get(key);
-      if (object != null) {
-        hashMap.put((String) key, object);
-      }
-    }
-    return hashMap;
-  }
-
-  private static float toFractionalPixels(Object o, float density) {
-    return toFloat(o) * density;
-  }
-
-  private static int toPixels(Object o, float density) {
-    return (int) toFractionalPixels(o, density);
   }
 
   private static Bitmap toBitmap(Object o) {
@@ -588,11 +546,6 @@ class Convert {
       return Bitmap.createScaledBitmap(bitmap, width, height, true);
     }
     return bitmap;
-  }
-
-  private static Point toPoint(Object o, float density) {
-    final List<?> data = toList(o);
-    return new Point(toPixels(data.get(0), density), toPixels(data.get(1), density));
   }
 
   private static String toString(Object o) {
