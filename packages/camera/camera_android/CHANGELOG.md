@@ -1,3 +1,7 @@
+## 0.10.9+12
+
+* Disables image resolution test: https://github.com/flutter/flutter/issues/154682.
+
 ## 0.10.9+11
 
 * Updates annotations lib to 1.8.2.

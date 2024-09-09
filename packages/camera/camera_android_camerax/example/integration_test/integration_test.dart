@@ -74,6 +74,7 @@ void main() {
     }
   });
 
+  // See https://github.com/flutter/flutter/issues/154682
   testWidgets('Capture specific image resolutions',
       (WidgetTester tester) async {
     final List<CameraDescription> cameras =
@@ -103,7 +104,7 @@ void main() {
         await controller.dispose();
       }
     }
-  });
+  }, skip: true);
 
   testWidgets('Preview takes expected resolution from preset',
       (WidgetTester tester) async {

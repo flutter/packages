@@ -1,3 +1,7 @@
+## 0.6.7+4
+
+* Disables image resolution test: https://github.com/flutter/flutter/issues/154682
+
 ## 0.6.8+3
 
 * Removes dependency on org.jetbrains.kotlin:kotlin-bom.

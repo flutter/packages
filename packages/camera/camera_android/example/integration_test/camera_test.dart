@@ -70,6 +70,7 @@ void main() {
         expectedSize, Size(image.height.toDouble(), image.width.toDouble()));
   }
 
+  // See https://github.com/flutter/flutter/issues/154682
   testWidgets('Capture specific image resolutions',
       (WidgetTester tester) async {
     final List<CameraDescription> cameras =
@@ -92,7 +93,7 @@ void main() {
         await controller.dispose();
       }
     }
-  });
+  }, skip: true);
 
   // This tests that the capture is no bigger than the preset, since we have
   // automatic code to fall back to smaller sizes when we need to. Returns
