@@ -2,7 +2,8 @@
 
 * Adds `inDuration`, `outDuration`, `inCurve`, and `outCurve` parameters for 
 configuring additional `SlotLayoutConfig` animation behavior.
-* Removes `duration` parameter from `SlotLayoutConfig`.
+* **BREAKING CHANGES**:
+  * Removes `duration` parameter from `SlotLayoutConfig`.
 
 ## 0.2.6
 
