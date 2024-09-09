@@ -104,7 +104,7 @@ void main() {
     expect(bounds, expectedBounds);
   });
 
-  test('moveCamera calls through', () async {
+  test('moveCamera calls through scrollBy', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -122,7 +122,7 @@ void main() {
     expect(scroll.dy, update.dy);
   });
 
-  test('animateCamera calls through', () async {
+  test('animateCamera calls through scrollBy', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -781,6 +781,156 @@ void main() {
       expect(widget, isA<AndroidView>());
     },
   );
+
+  test('moveCamera calls through newCameraPosition', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const LatLng latLng = LatLng(10.0, 20.0);
+    const CameraPosition position = CameraPosition(target: latLng);
+    final CameraUpdate update = CameraUpdate.newCameraPosition(position);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateNewCameraPosition typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateNewCameraPosition;
+    update as CameraUpdateNewCameraPosition;
+    expect(typedUpdate.cameraPosition.target.latitude, update.cameraPosition.target.latitude);
+    expect(typedUpdate.cameraPosition.target.longitude, update.cameraPosition.target.longitude);
+  });
+
+  test('moveCamera calls through newLatLng', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const LatLng latLng = LatLng(10.0, 20.0);
+    final CameraUpdate update = CameraUpdate.newLatLng(latLng);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateNewLatLng typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLng;
+    update as CameraUpdateNewLatLng;
+    expect(typedUpdate.latLng.latitude, update.latLng.latitude);
+    expect(typedUpdate.latLng.longitude, update.latLng.longitude);
+  });
+
+  test('moveCamera calls through newLatLngBounds', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final LatLngBounds latLng = LatLngBounds(northeast: const LatLng(10.0, 20.0), southwest: const LatLng(9.0, 21.0));
+    final CameraUpdate update = CameraUpdate.newLatLngBounds(latLng, 1.0);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateNewLatLngBounds typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLngBounds;
+    update as CameraUpdateNewLatLngBounds;
+    expect(typedUpdate.bounds.northeast.latitude, update.bounds.northeast.latitude);
+    expect(typedUpdate.bounds.northeast.longitude, update.bounds.northeast.longitude);
+    expect(typedUpdate.bounds.southwest.latitude, update.bounds.southwest.latitude);
+    expect(typedUpdate.bounds.southwest.longitude, update.bounds.southwest.longitude);
+    expect(typedUpdate.padding, update.padding);
+  });
+
+  test('moveCamera calls through newLatLngZoom', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const LatLng latLng = LatLng(10.0, 20.0);
+    final CameraUpdate update = CameraUpdate.newLatLngZoom(latLng, 2.0);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateNewLatLngZoom typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLngZoom;
+    update as CameraUpdateNewLatLngZoom;
+    expect(typedUpdate.latLng.latitude, update.latLng.latitude);
+    expect(typedUpdate.latLng.longitude, update.latLng.longitude);
+    expect(typedUpdate.zoom, update.zoom);
+  });
+
+  test('moveCamera calls through zoomBy', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const Offset focus = Offset(10.0, 20.0);
+    final CameraUpdate update = CameraUpdate.zoomBy(2.0, focus);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateZoomBy typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateZoomBy;
+    update as CameraUpdateZoomBy;
+    expect(typedUpdate.focus?.dx, update.focus?.dx);
+    expect(typedUpdate.focus?.dy, update.focus?.dy);
+    expect(typedUpdate.amount, update.amount);
+  });
+
+  test('moveCamera calls through zoomTo', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final CameraUpdate update = CameraUpdate.zoomTo(2.0);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateZoomTo typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateZoomTo;
+    update as CameraUpdateZoomTo;
+    expect(typedUpdate.zoom, update.zoom);
+  });
+
+  test('moveCamera calls through zoomIn', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final CameraUpdate update = CameraUpdate.zoomIn();
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateZoom typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateZoom;
+    expect(typedUpdate.out, false);
+  });
+
+  test('moveCamera calls through zoomOut', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final CameraUpdate update = CameraUpdate.zoomOut();
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateZoom typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateZoom;
+    expect(typedUpdate.out, true);
+  });
 
   testWidgets('Use PlatformViewLink when using surface view',
       (WidgetTester tester) async {
