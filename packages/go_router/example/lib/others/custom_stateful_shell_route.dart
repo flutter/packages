@@ -5,6 +5,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -58,6 +59,9 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
           // are managed (using AnimatedBranchContainer).
           return ScaffoldWithNavBar(
               navigationShell: navigationShell, children: children);
+          // To use a Cupertino version of ScaffoldWithNavBar, use this instead:
+          // return CupertinoScaffoldWithNavBar(
+          //     navigationShell: navigationShell, children: children);
         },
         branches: <StatefulShellBranch>[
           // The route branch for the first tab of the bottom navigation bar.
@@ -231,6 +235,70 @@ class ScaffoldWithNavBar extends StatelessWidget {
   }
 }
 
+/// Alternative version of [ScaffoldWithNavBar], using a [CupertinoTabScaffold].
+// ignore: unused_element, unreachable_from_main
+class CupertinoScaffoldWithNavBar extends StatefulWidget {
+  /// Constructs an [ScaffoldWithNavBar].
+  // ignore: unreachable_from_main
+  const CupertinoScaffoldWithNavBar({
+    required this.navigationShell,
+    required this.children,
+    Key? key,
+  }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
+
+  /// The navigation shell and container for the branch Navigators.
+  // ignore: unreachable_from_main
+  final StatefulNavigationShell navigationShell;
+
+  /// The children (branch Navigators) to display in a custom container
+  /// ([AnimatedBranchContainer]).
+  // ignore: unreachable_from_main
+  final List<Widget> children;
+
+  @override
+  State<StatefulWidget> createState() => _CupertinoScaffoldWithNavBarState();
+}
+
+class _CupertinoScaffoldWithNavBarState
+    extends State<CupertinoScaffoldWithNavBar> {
+  late final CupertinoTabController tabController =
+      CupertinoTabController(initialIndex: widget.navigationShell.currentIndex);
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoTabScaffold(
+      controller: tabController,
+      tabBar: CupertinoTabBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Section A'),
+          BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Section B'),
+        ],
+        currentIndex: widget.navigationShell.currentIndex,
+        onTap: (int index) => _onTap(context, index),
+      ),
+      // Note: It is common to use CupertinoTabView for the tabBuilder when
+      // using CupertinoTabScaffold and CupertinoTabBar. This would however be
+      // redundant when using StatefulShellRoute, since a separate Navigator is
+      // already created for each branch, meaning we can simply use the branch
+      // Navigator Widgets (i.e. widget.children) directly.
+      tabBuilder: (BuildContext context, int index) => widget.children[index],
+    );
+  }
+
+  void _onTap(BuildContext context, int index) {
+    widget.navigationShell.goBranch(
+      index,
+      initialLocation: index == widget.navigationShell.currentIndex,
+    );
+  }
+}
+
 /// Custom branch Navigator container that provides animated transitions
 /// when switching branches.
 class AnimatedBranchContainer extends StatelessWidget {
@@ -399,7 +467,7 @@ class TabbedRootScreen extends StatefulWidget {
 
   /// To use an alternative implementation using a PageView, replace the line
   /// above with the one below:
-  //State<StatefulWidget> createState() => _TabbedRootScreenStatePageView();
+  //State<StatefulWidget> createState() => _PageViewTabbedRootScreenState();
 }
 
 @visibleForTesting
@@ -468,7 +536,7 @@ class TabbedRootScreenState extends State<TabbedRootScreen>
 /// Alternative implementation _TabbedRootScreenState, demonstrating the use of
 /// a PageView.
 // ignore: unused_element
-class _TabbedRootScreenStatePageView extends State<TabbedRootScreen>
+class _PageViewTabbedRootScreenState extends State<TabbedRootScreen>
     with SingleTickerProviderStateMixin {
   late final PageController _pageController = PageController(
     initialPage: widget.navigationShell.currentIndex,
