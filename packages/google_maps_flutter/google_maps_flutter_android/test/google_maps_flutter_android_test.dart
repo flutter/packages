@@ -798,8 +798,10 @@ void main() {
     final PlatformCameraUpdateNewCameraPosition typedUpdate =
         passedUpdate.cameraUpdate as PlatformCameraUpdateNewCameraPosition;
     update as CameraUpdateNewCameraPosition;
-    expect(typedUpdate.cameraPosition.target.latitude, update.cameraPosition.target.latitude);
-    expect(typedUpdate.cameraPosition.target.longitude, update.cameraPosition.target.longitude);
+    expect(typedUpdate.cameraPosition.target.latitude,
+        update.cameraPosition.target.latitude);
+    expect(typedUpdate.cameraPosition.target.longitude,
+        update.cameraPosition.target.longitude);
   });
 
   test('moveCamera calls through newLatLng', () async {
@@ -826,7 +828,9 @@ void main() {
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
 
-    final LatLngBounds latLng = LatLngBounds(northeast: const LatLng(10.0, 20.0), southwest: const LatLng(9.0, 21.0));
+    final LatLngBounds latLng = LatLngBounds(
+        northeast: const LatLng(10.0, 20.0),
+        southwest: const LatLng(9.0, 21.0));
     final CameraUpdate update = CameraUpdate.newLatLngBounds(latLng, 1.0);
     await maps.moveCamera(update, mapId: mapId);
 
@@ -836,10 +840,14 @@ void main() {
     final PlatformCameraUpdateNewLatLngBounds typedUpdate =
         passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLngBounds;
     update as CameraUpdateNewLatLngBounds;
-    expect(typedUpdate.bounds.northeast.latitude, update.bounds.northeast.latitude);
-    expect(typedUpdate.bounds.northeast.longitude, update.bounds.northeast.longitude);
-    expect(typedUpdate.bounds.southwest.latitude, update.bounds.southwest.latitude);
-    expect(typedUpdate.bounds.southwest.longitude, update.bounds.southwest.longitude);
+    expect(typedUpdate.bounds.northeast.latitude,
+        update.bounds.northeast.latitude);
+    expect(typedUpdate.bounds.northeast.longitude,
+        update.bounds.northeast.longitude);
+    expect(typedUpdate.bounds.southwest.latitude,
+        update.bounds.southwest.latitude);
+    expect(typedUpdate.bounds.southwest.longitude,
+        update.bounds.southwest.longitude);
     expect(typedUpdate.padding, update.padding);
   });
 
