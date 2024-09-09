@@ -526,7 +526,7 @@ final AllNullableTypesWithoutRecursion genericAllNullableTypesWithoutRecursion =
   enumList: enumList,
   objectList: list,
   listList: listList,
-  // mapList: mapList,
+  mapList: mapList,
   map: map,
   stringMap: stringMap,
   intMap: intMap,
@@ -534,8 +534,8 @@ final AllNullableTypesWithoutRecursion genericAllNullableTypesWithoutRecursion =
   // boolMap: boolMap,
   enumMap: enumMap,
   objectMap: map,
-  // listMap: listMap,
-  // mapMap: mapMap,
+  listMap: listMap,
+  mapMap: mapMap,
 );
 
 final List<AllNullableTypesWithoutRecursion?>
@@ -574,7 +574,7 @@ final AllTypes genericAllTypes = AllTypes(
   enumList: nonNullEnumList,
   objectList: nonNullList,
   listList: nonNullListList,
-  // mapList: nonNullMapList,
+  mapList: nonNullMapList,
   map: nonNullMap,
   stringMap: nonNullStringMap,
   intMap: nonNullIntMap,
@@ -582,8 +582,8 @@ final AllTypes genericAllTypes = AllTypes(
   // boolMap: nonNullBoolMap,
   enumMap: nonNullEnumMap,
   objectMap: nonNullMap,
-  // listMap: nonNullListMap,
-  // mapMap: nonNullMapMap,
+  listMap: nonNullListMap,
+  mapMap: nonNullMapMap,
 );
 
 final List<AllTypes?> allTypesClassList = <AllTypes?>[
@@ -616,7 +616,7 @@ final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
   enumList: enumList,
   objectList: list,
   listList: listList,
-  // mapList: mapList,
+  mapList: mapList,
   map: map,
   stringMap: stringMap,
   intMap: intMap,
@@ -624,8 +624,8 @@ final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
   // boolMap: boolMap,
   enumMap: enumMap,
   objectMap: map,
-  // listMap: listMap,
-  // mapMap: mapMap,
+  listMap: listMap,
+  mapMap: mapMap,
 );
 
 final List<AllNullableTypes> nonNullAllNullableTypesList = <AllNullableTypes>[
