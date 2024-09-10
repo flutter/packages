@@ -27,27 +27,27 @@ void main() {
   });
 
   test('requestAds', () async {
+    final PlatformAdsRequest platformRequest = PlatformAdsRequest(
+      adTagUrl: 'adTagUrl',
+      contentProgressProvider: TestContentProgressProvider(
+        const PlatformContentProgressProviderCreationParams(),
+      ),
+    );
+
     final TestPlatformAdsLoader adsLoader = TestPlatformAdsLoader(
       PlatformAdsLoaderCreationParams(
         container: createTestAdDisplayContainer(),
         onAdsLoaded: (PlatformOnAdsLoadedData data) {},
         onAdsLoadError: (AdsLoadErrorData data) {},
       ),
-      onRequestAds: expectAsync1((PlatformAdsRequest request) async {}),
+      onRequestAds: expectAsync1((PlatformAdsRequest request) async {
+        expect(request, platformRequest);
+      }),
       onContentComplete: () async {},
     );
 
     final AdsLoader loader = AdsLoader.fromPlatform(adsLoader);
-    await loader.requestAds(
-      AdsRequest.fromPlatform(
-        PlatformAdsRequest(
-          adTagUrl: 'adTagUrl',
-          contentProgressProvider: TestContentProgressProvider(
-            const PlatformContentProgressProviderCreationParams(),
-          ),
-        ),
-      ),
-    );
+    await loader.requestAds(AdsRequest.fromPlatform(platformRequest));
   });
 }
 
