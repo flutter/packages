@@ -6,7 +6,7 @@
 // https://github.com/flutter/packages/pull/6371 lands. This file uses the
 // Kotlin ProxyApi feature from pigeon.
 // ignore_for_file: avoid_unused_constructor_parameters
-/*
+
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
@@ -355,6 +355,20 @@ abstract class AdsManager extends BaseManager {
 
   /// Starts playing the ads.
   void start();
+
+  /// List of content time offsets in seconds at which ad breaks are scheduled.
+  ///
+  /// The list will be empty if no ad breaks are scheduled.
+  List<double> getAdCuePoints();
+
+  /// Resumes the current ad.
+  void resume();
+
+  /// Skips the current ad.
+  ///
+  /// `AdsManager.skip()` only skips ads if IMA does not render the 'Skip ad'
+  /// button.
+  void skip();
 }
 
 /// Base interface for managing ads..
@@ -556,7 +570,7 @@ abstract class VideoView extends View {
   late final void Function(MediaPlayer player, int what, int extra) onError;
 
   /// Sets the URI of the video.
-  void setVideoUri(String uri);
+  void setVideoUri(String? uri);
 
   /// The current position of the playing video.
   ///
@@ -732,4 +746,3 @@ abstract class AdEventListener {
   /// Respond to an occurrence of an AdEvent.
   late final void Function(AdEvent event) onAdEvent;
 }
-*/

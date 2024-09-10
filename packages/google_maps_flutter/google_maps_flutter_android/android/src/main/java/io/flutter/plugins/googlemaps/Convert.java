@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.CustomCap;
 import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PatternItem;
@@ -690,103 +691,48 @@ class Convert {
         infoWindowAnchor.getDx().floatValue(), infoWindowAnchor.getDy().floatValue());
   }
 
-  static String interpretPolygonOptions(Map<String, ?> data, PolygonOptionsSink sink) {
-    final Object consumeTapEvents = data.get("consumeTapEvents");
-    if (consumeTapEvents != null) {
-      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
+  static String interpretPolygonOptions(Messages.PlatformPolygon polygon, PolygonOptionsSink sink) {
+    sink.setConsumeTapEvents(polygon.getConsumesTapEvents());
+    sink.setGeodesic(polygon.getGeodesic());
+    sink.setVisible(polygon.getVisible());
+    sink.setFillColor(polygon.getFillColor().intValue());
+    sink.setStrokeColor(polygon.getStrokeColor().intValue());
+    sink.setStrokeWidth(polygon.getStrokeWidth());
+    sink.setZIndex(polygon.getZIndex());
+    sink.setPoints(pointsFromPigeon(polygon.getPoints()));
+    sink.setHoles(toHoles(polygon.getHoles()));
+    return polygon.getPolygonId();
+  }
+
+  static int jointTypeFromPigeon(Messages.PlatformJointType jointType) {
+    switch (jointType) {
+      case MITERED:
+        return JointType.DEFAULT;
+      case BEVEL:
+        return JointType.BEVEL;
+      case ROUND:
+        return JointType.ROUND;
     }
-    final Object geodesic = data.get("geodesic");
-    if (geodesic != null) {
-      sink.setGeodesic(toBoolean(geodesic));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final Object fillColor = data.get("fillColor");
-    if (fillColor != null) {
-      sink.setFillColor(toInt(fillColor));
-    }
-    final Object strokeColor = data.get("strokeColor");
-    if (strokeColor != null) {
-      sink.setStrokeColor(toInt(strokeColor));
-    }
-    final Object strokeWidth = data.get("strokeWidth");
-    if (strokeWidth != null) {
-      sink.setStrokeWidth(toInt(strokeWidth));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
-    final Object points = data.get("points");
-    if (points != null) {
-      sink.setPoints(toPoints(points));
-    }
-    final Object holes = data.get("holes");
-    if (holes != null) {
-      sink.setHoles(toHoles(holes));
-    }
-    final String polygonId = (String) data.get("polygonId");
-    if (polygonId == null) {
-      throw new IllegalArgumentException("polygonId was null");
-    } else {
-      return polygonId;
-    }
+    return JointType.DEFAULT;
   }
 
   static String interpretPolylineOptions(
-      Map<String, ?> data, PolylineOptionsSink sink, AssetManager assetManager, float density) {
-    final Object consumeTapEvents = data.get("consumeTapEvents");
-    if (consumeTapEvents != null) {
-      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
-    }
-    final Object color = data.get("color");
-    if (color != null) {
-      sink.setColor(toInt(color));
-    }
-    final Object endCap = data.get("endCap");
-    if (endCap != null) {
-      sink.setEndCap(toCap(endCap, assetManager, density));
-    }
-    final Object geodesic = data.get("geodesic");
-    if (geodesic != null) {
-      sink.setGeodesic(toBoolean(geodesic));
-    }
-    final Object jointType = data.get("jointType");
-    if (jointType != null) {
-      sink.setJointType(toInt(jointType));
-    }
-    final Object startCap = data.get("startCap");
-    if (startCap != null) {
-      sink.setStartCap(toCap(startCap, assetManager, density));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final Object width = data.get("width");
-    if (width != null) {
-      sink.setWidth(toInt(width));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
-    final Object points = data.get("points");
-    if (points != null) {
-      sink.setPoints(toPoints(points));
-    }
-    final Object pattern = data.get("pattern");
-    if (pattern != null) {
-      sink.setPattern(toPattern(pattern));
-    }
-    final String polylineId = (String) data.get("polylineId");
-    if (polylineId == null) {
-      throw new IllegalArgumentException("polylineId was null");
-    } else {
-      return polylineId;
-    }
+      Messages.PlatformPolyline polyline,
+      PolylineOptionsSink sink,
+      AssetManager assetManager,
+      float density) {
+    sink.setConsumeTapEvents(polyline.getConsumesTapEvents());
+    sink.setColor(polyline.getColor().intValue());
+    sink.setEndCap(toCap(polyline.getEndCap(), assetManager, density));
+    sink.setStartCap(toCap(polyline.getStartCap(), assetManager, density));
+    sink.setGeodesic(polyline.getGeodesic());
+    sink.setJointType(jointTypeFromPigeon(polyline.getJointType()));
+    sink.setVisible(polyline.getVisible());
+    sink.setWidth(polyline.getWidth());
+    sink.setZIndex(polyline.getZIndex());
+    sink.setPoints(pointsFromPigeon(polyline.getPoints()));
+    sink.setPattern(toPattern(polyline.getPatterns()));
+    return polyline.getPolylineId();
   }
 
   static String interpretCircleOptions(Messages.PlatformCircle circle, CircleOptionsSink sink) {
@@ -850,14 +796,11 @@ class Convert {
     }
   }
 
-  @VisibleForTesting
-  static List<LatLng> toPoints(Object o) {
-    final List<?> data = toList(o);
+  static List<LatLng> pointsFromPigeon(List<Messages.PlatformLatLng> data) {
     final List<LatLng> points = new ArrayList<>(data.size());
 
-    for (Object rawPoint : data) {
-      final List<?> point = toList(rawPoint);
-      points.add(new LatLng(toDouble(point.get(0)), toDouble(point.get(1))));
+    for (Messages.PlatformLatLng rawPoint : data) {
+      points.add(new LatLng(rawPoint.getLatitude(), rawPoint.getLongitude()));
     }
     return points;
   }
@@ -918,12 +861,11 @@ class Convert {
     return new Gradient(colors, startPoints, colorMapSize);
   }
 
-  private static List<List<LatLng>> toHoles(Object o) {
-    final List<?> data = toList(o);
+  private static List<List<LatLng>> toHoles(List<List<Messages.PlatformLatLng>> data) {
     final List<List<LatLng>> holes = new ArrayList<>(data.size());
 
-    for (Object rawHole : data) {
-      holes.add(toPoints(rawHole));
+    for (List<Messages.PlatformLatLng> hole : data) {
+      holes.add(pointsFromPigeon(hole));
     }
     return holes;
   }
@@ -978,29 +920,13 @@ class Convert {
     }
   }
 
-  static String interpretTileOverlayOptions(Map<String, ?> data, TileOverlaySink sink) {
-    final Object fadeIn = data.get("fadeIn");
-    if (fadeIn != null) {
-      sink.setFadeIn(toBoolean(fadeIn));
-    }
-    final Object transparency = data.get("transparency");
-    if (transparency != null) {
-      sink.setTransparency(toFloat(transparency));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final String tileOverlayId = (String) data.get("tileOverlayId");
-    if (tileOverlayId == null) {
-      throw new IllegalArgumentException("tileOverlayId was null");
-    } else {
-      return tileOverlayId;
-    }
+  static String interpretTileOverlayOptions(
+      Messages.PlatformTileOverlay tileOverlay, TileOverlaySink sink) {
+    sink.setFadeIn(tileOverlay.getFadeIn());
+    sink.setTransparency(tileOverlay.getTransparency().floatValue());
+    sink.setZIndex(tileOverlay.getZIndex());
+    sink.setVisible(tileOverlay.getVisible());
+    return tileOverlay.getTileOverlayId();
   }
 
   static Tile tileFromPigeon(Messages.PlatformTile tile) {

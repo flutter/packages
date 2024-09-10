@@ -11,7 +11,6 @@ import java.nio.ByteBuffer
 import java.util.ArrayList
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -58,7 +57,6 @@ internal class AllDatatypesTest {
     assertTrue(firstTypes.aNullable4ByteArray.contentEquals(secondTypes.aNullable4ByteArray))
     assertTrue(firstTypes.aNullable8ByteArray.contentEquals(secondTypes.aNullable8ByteArray))
     assertTrue(firstTypes.aNullableFloatArray.contentEquals(secondTypes.aNullableFloatArray))
-    assertEquals(firstTypes.nullableMapWithObject, secondTypes.nullableMapWithObject)
     assertEquals(firstTypes.aNullableObject, secondTypes.aNullableObject)
     assertEquals(firstTypes.aNullableEnum, secondTypes.aNullableEnum)
     assertEquals(firstTypes.anotherNullableEnum, secondTypes.anotherNullableEnum)
@@ -67,7 +65,10 @@ internal class AllDatatypesTest {
     assertEquals(firstTypes.doubleList, secondTypes.doubleList)
     assertEquals(firstTypes.intList, secondTypes.intList)
     assertEquals(firstTypes.stringList, secondTypes.stringList)
+    assertEquals(firstTypes.listList, secondTypes.listList)
     assertEquals(firstTypes.map, secondTypes.map)
+    assertEquals(firstTypes.stringMap, secondTypes.stringMap)
+    assertEquals(firstTypes.intMap, secondTypes.intMap)
   }
 
   @Test
@@ -100,6 +101,7 @@ internal class AllDatatypesTest {
 
   @Test
   fun testHasValues() {
+    val stringList = listOf("string", "another one")
     val everything =
         AllNullableTypes(
             aNullableBool = false,
@@ -110,14 +112,16 @@ internal class AllDatatypesTest {
             aNullable4ByteArray = intArrayOf(1, 2, 3, 4),
             aNullable8ByteArray = longArrayOf(1, 2, 3, 4),
             aNullableFloatArray = doubleArrayOf(0.5, 0.25, 1.5, 1.25),
-            nullableMapWithObject = mapOf("hello" to 1234),
             aNullableObject = 0,
             list = listOf(1, 2, 3),
-            stringList = listOf("string", "another one"),
+            stringList = stringList,
             boolList = listOf(true, false),
             intList = listOf(1, 2),
             doubleList = listOf(1.1, 2.2),
-            map = mapOf("hello" to 1234))
+            listList = listOf(stringList, stringList.toList()),
+            map = mapOf("hello" to 1234),
+            stringMap = mapOf("hello" to "you"),
+            intMap = mapOf(1L to 0L))
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = FlutterIntegrationCoreApi(binaryMessenger)
 
@@ -140,44 +144,5 @@ internal class AllDatatypesTest {
     }
 
     assertTrue(didCall)
-  }
-
-  @Test
-  fun testIntegerToLong() {
-    val everything = AllNullableTypes(aNullableInt = 123L)
-    val list = everything.toList()
-    assertNotNull(list)
-    assertNull(list.first())
-    assertNotNull(list[1])
-    assertTrue(list[1] == 123L)
-
-    val list2 =
-        listOf(
-            null,
-            123,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null)
-    val everything2 = AllNullableTypes.fromList(list2)
-
-    assertEquals(everything.aNullableInt, everything2.aNullableInt)
   }
 }

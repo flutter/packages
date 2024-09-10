@@ -26,7 +26,6 @@ class _WebViewExampleState extends State<WebViewExample> {
     // #docregion webview_controller
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {

@@ -232,7 +232,7 @@ public class Messages {
         case (byte) 129:
           {
             Object value = readValue(buffer);
-            return value == null ? null : Code.values()[(int) value];
+            return value == null ? null : Code.values()[((Long) value).intValue()];
           }
         case (byte) 130:
           return MessageData.fromList((ArrayList<Object>) readValue(buffer));
@@ -339,13 +339,10 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Number aArg = (Number) args.get(0);
-                Number bArg = (Number) args.get(1);
+                Long aArg = (Long) args.get(0);
+                Long bArg = (Long) args.get(1);
                 try {
-                  Long output =
-                      api.add(
-                          (aArg == null) ? null : aArg.longValue(),
-                          (bArg == null) ? null : bArg.longValue());
+                  Long output = api.add(aArg, bArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);

@@ -24,7 +24,6 @@ import io.flutter.plugins.videoplayer.Messages.VolumeMessage;
 import io.flutter.view.TextureRegistry;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 
 /** Android platform implementation of the VideoPlayerPlugin. */
@@ -94,8 +93,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   public @NonNull TextureMessage create(@NonNull CreateMessage arg) {
-    TextureRegistry.SurfaceTextureEntry handle =
-        flutterState.textureRegistry.createSurfaceTexture();
+    TextureRegistry.SurfaceProducer handle = flutterState.textureRegistry.createSurfaceProducer();
     EventChannel eventChannel =
         new EventChannel(
             flutterState.binaryMessenger, "flutter.io/videoPlayer/videoEvents" + handle.id());
@@ -113,7 +111,6 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     } else if (arg.getUri().startsWith("rtsp://")) {
       videoAsset = VideoAsset.fromRtspUrl(arg.getUri());
     } else {
-      Map<String, String> httpHeaders = arg.getHttpHeaders();
       VideoAsset.StreamingFormat streamingFormat = VideoAsset.StreamingFormat.UNKNOWN;
       String formatHint = arg.getFormatHint();
       if (formatHint != null) {

@@ -1,3 +1,8 @@
+## 0.3.6+8
+
+* Removes dependency on org.jetbrains.kotlin:kotlin-bom.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 0.3.6+7
 
 * Sets `android.buildFeatures.buildConfig` to true for compatibility with AGP 8.0+.

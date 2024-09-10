@@ -1440,7 +1440,6 @@ String? _nsnumberExtractionMethod(
 /// Example: ('FOO', ['Foo', 'Bar']) -> 'FOOFoo *, FOOBar *').
 String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
   final String result = args.map<String>((TypeDeclaration e) {
-    // print(e);
     if (e.isEnum) {
       return _enumName(e.baseName,
           prefix: classPrefix, box: true, suffix: ' *');

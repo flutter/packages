@@ -15,9 +15,9 @@ a separate video player positioned on top of the app's content video player.
 
 **NOTE:**
 * The initial release for this package supports linear pre-roll video ads on iOS and Android
-* platforms.
+  platforms.
 * Companion ads, Background Audio ads and Google Dynamic Ad Insertion methods are currently not
-* supported.
+  supported.
 
 ## IMA client-side overview
 
@@ -79,7 +79,8 @@ class AdExampleWidget extends StatefulWidget {
   State<AdExampleWidget> createState() => _AdExampleWidgetState();
 }
 
-class _AdExampleWidgetState extends State<AdExampleWidget> {
+class _AdExampleWidgetState extends State<AdExampleWidget>
+    with WidgetsBindingObserver {
   // IMA sample tag for a single skippable inline video ad. See more IMA sample
   // tags at https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags
   static const String _adTagUrl =
@@ -91,6 +92,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
   // AdsManager exposes methods to control ad playback and listen to ad events.
   AdsManager? _adsManager;
 
+  // ···
   // Whether the widget should be displaying the content video. The content
   // player is hidden while Ads are playing.
   bool _shouldShowContentVideo = true;
@@ -124,6 +126,7 @@ late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
 @override
 void initState() {
   super.initState();
+  // ···
   _contentVideoController = VideoPlayerController.networkUrl(
     Uri.parse(
       'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
@@ -132,8 +135,8 @@ void initState() {
     ..addListener(() {
       if (_contentVideoController.value.isCompleted) {
         _adsLoader.contentComplete();
-        setState(() {});
       }
+      setState(() {});
     })
     ..initialize().then((_) {
       // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
@@ -257,7 +260,7 @@ Future<void> _pauseContent() {
 
 ### 7. Dispose Resources
 
-Dispose the content player and the destroy the [AdsManager][6].
+Dispose the content player and destroy the [AdsManager][6].
 
 <?code-excerpt "example/lib/main.dart (dispose)"?>
 ```dart
@@ -266,11 +269,16 @@ void dispose() {
   super.dispose();
   _contentVideoController.dispose();
   _adsManager?.destroy();
+  // ···
 }
 ```
 
 That's it! You're now requesting and displaying ads with the IMA SDK. To learn about additional SDK
 features, see the [API reference](https://pub.dev/documentation/interactive_media_ads/latest/).
+
+## Contributing
+
+For information on contributing to this plugin, see [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 [1]: https://developers.google.com/interactive-media-ads
 [2]: https://www.iab.com/guidelines/vast/
