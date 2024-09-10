@@ -59,9 +59,8 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
           // are managed (using AnimatedBranchContainer).
           return ScaffoldWithNavBar(
               navigationShell: navigationShell, children: children);
-          // To use a Cupertino version of ScaffoldWithNavBar, use this instead:
-          // return CupertinoScaffoldWithNavBar(
-          //     navigationShell: navigationShell, children: children);
+          // NOTE: To use a Cupertino version of ScaffoldWithNavBar, replace
+          // ScaffoldWithNavBar above with CupertinoScaffoldWithNavBar.
         },
         branches: <StatefulShellBranch>[
           // The route branch for the first tab of the bottom navigation bar.
@@ -116,6 +115,8 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                     key: tabbedRootScreenKey,
                     children: children,
                   );
+                  // NOTE: To use a PageView version of TabbedRootScreen,
+                  // replace TabbedRootScreen above with PagedRootScreen.
                 },
                 // This bottom tab uses a nested shell, wrapping sub routes in a
                 // top TabBar.
@@ -464,10 +465,6 @@ class TabbedRootScreen extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => TabbedRootScreenState();
-
-  /// To use an alternative implementation using a PageView, replace the line
-  /// above with the one below:
-  //State<StatefulWidget> createState() => _PageViewTabbedRootScreenState();
 }
 
 @visibleForTesting
@@ -533,45 +530,38 @@ class TabbedRootScreenState extends State<TabbedRootScreen>
   }
 }
 
+/// Alternative implementation of TabbedRootScreen, demonstrating the use of
+/// a [PageView].
+// ignore: unreachable_from_main
+class PagedRootScreen extends StatefulWidget {
+  /// Constructs a PagedRootScreen
+  // ignore: unreachable_from_main
+  const PagedRootScreen(
+      {required this.navigationShell, required this.children, super.key});
+
+  /// The current state of the parent StatefulShellRoute.
+  // ignore: unreachable_from_main
+  final StatefulNavigationShell navigationShell;
+
+  /// The children (branch Navigators) to display in the [TabBarView].
+  // ignore: unreachable_from_main
+  final List<Widget> children;
+
+  @override
+  State<StatefulWidget> createState() => _PagedRootScreenState();
+}
+
 /// Alternative implementation _TabbedRootScreenState, demonstrating the use of
 /// a PageView.
-// ignore: unused_element
-class _PageViewTabbedRootScreenState extends State<TabbedRootScreen>
-    with SingleTickerProviderStateMixin {
+class _PagedRootScreenState extends State<PagedRootScreen> {
   late final PageController _pageController = PageController(
     initialPage: widget.navigationShell.currentIndex,
   );
-  Timer? _throttle;
-
-  void _scrolledPageView() {
-    // Simple throttling implementation to handle scroll events.
-    int nextPage() => (_pageController.page ?? 0).round();
-    if (nextPage() != widget.navigationShell.currentIndex) {
-      _throttle?.cancel();
-      _throttle = Timer(const Duration(milliseconds: 100), () {
-        widget.navigationShell.goBranch(nextPage());
-        _throttle = null;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController.addListener(_scrolledPageView);
-  }
 
   @override
   void dispose() {
-    _pageController.removeListener(_scrolledPageView);
     _pageController.dispose();
     super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(covariant TabbedRootScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _pageController.jumpToPage(widget.navigationShell.currentIndex);
   }
 
   @override
@@ -587,16 +577,17 @@ class _PageViewTabbedRootScreenState extends State<TabbedRootScreen>
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 ElevatedButton(
-                  onPressed: () => _onTabTap(0),
+                  onPressed: () => _animateToPage(0),
                   child: const Text('Tab 1'),
                 ),
                 ElevatedButton(
-                  onPressed: () => _onTabTap(1),
+                  onPressed: () => _animateToPage(1),
                   child: const Text('Tab 2'),
                 ),
               ]),
           Expanded(
             child: PageView(
+              onPageChanged: (int i) => widget.navigationShell.goBranch(i),
               controller: _pageController,
               children: widget.children,
             ),
@@ -606,7 +597,7 @@ class _PageViewTabbedRootScreenState extends State<TabbedRootScreen>
     );
   }
 
-  void _onTabTap(int index) {
+  void _animateToPage(int index) {
     if (_pageController.hasClients) {
       _pageController.animateToPage(
         index,
