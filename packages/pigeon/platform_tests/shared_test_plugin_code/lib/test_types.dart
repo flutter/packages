@@ -54,18 +54,24 @@ void compareAllNullableTypesWithoutRecursion(
       true);
   expect(listEquals(allNullableTypesOne.enumList, allNullableTypesTwo.enumList),
       true);
-  // expect(
-  //     listEquals(
-  //         allNullableTypesOne.objectList, allNullableTypesTwo.objectList),
-  //     true);
+  expect(
+      listEquals(
+          allNullableTypesOne.objectList, allNullableTypesTwo.objectList),
+      true);
   // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
   // https://github.com/flutter/flutter/issues/116117
-  //for (int i = 0; i < allNullableTypesOne.listList!.length; i++) {
-  //  expect(listEquals(allNullableTypesOne.listList![i], allNullableTypesTwo.listList![i]),
-  //      true);
-  //}
-  // expect(listEquals(allNullableTypesOne.mapList, allNullableTypesTwo.mapList),
-  //     true);
+  for (int i = 0; i < (allNullableTypesOne.listList?.length ?? 0); i++) {
+    expect(
+        listEquals(
+            allNullableTypesOne.listList?[i], allNullableTypesTwo.listList?[i]),
+        true);
+  }
+  for (int i = 0; i < (allNullableTypesOne.mapList?.length ?? 0); i++) {
+    expect(
+        mapEquals(
+            allNullableTypesOne.mapList?[i], allNullableTypesTwo.mapList?[i]),
+        true);
+  }
   expect(mapEquals(allNullableTypesOne.map, allNullableTypesTwo.map), true);
   expect(
       mapEquals(allNullableTypesOne.stringMap, allNullableTypesTwo.stringMap),
@@ -77,11 +83,12 @@ void compareAllNullableTypesWithoutRecursion(
   //     true);
   // expect(mapEquals(allNullableTypesOne.boolMap, allNullableTypesTwo.boolMap),
   //     true);
-  // expect(mapEquals(allNullableTypesOne.enumMap, allNullableTypesTwo.enumMap),
-  //     true);
-  // expect(
-  //     mapEquals(allNullableTypesOne.objectMap, allNullableTypesTwo.objectMap),
-  // true);
+  expect(mapEquals(allNullableTypesOne.enumMap, allNullableTypesTwo.enumMap),
+      true);
+  expect(
+      mapEquals(allNullableTypesOne.objectMap, allNullableTypesTwo.objectMap),
+      true);
+
   // listMap: check each key and value, and compare each lists values
   //
   // mapMap: check each key and value, and compare each map in the same way
@@ -109,21 +116,22 @@ void compareAllTypes(AllTypes? allTypesOne, AllTypes? allTypesTwo) {
   expect(listEquals(allTypesOne.doubleList, allTypesTwo.doubleList), true);
   expect(listEquals(allTypesOne.boolList, allTypesTwo.boolList), true);
   expect(listEquals(allTypesOne.enumList, allTypesTwo.enumList), true);
-  // expect(listEquals(allTypesOne.objectList, allTypesTwo.objectList), true);
+  expect(listEquals(allTypesOne.objectList, allTypesTwo.objectList), true);
   // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
   // https://github.com/flutter/flutter/issues/116117
-  //for (int i = 0; i < allTypesOne.listList!.length; i++) {
-  //  expect(listEquals(allTypesOne.listList![i], allTypesTwo.listList![i]),
-  //      true);
-  //}
-  // expect(listEquals(allTypesOne.mapList, allTypesTwo.mapList), true);
+  for (int i = 0; i < allTypesOne.listList.length; i++) {
+    expect(listEquals(allTypesOne.listList[i], allTypesTwo.listList[i]), true);
+  }
+  for (int i = 0; i < allTypesOne.mapList.length; i++) {
+    expect(mapEquals(allTypesOne.mapList[i], allTypesTwo.mapList[i]), true);
+  }
   expect(mapEquals(allTypesOne.map, allTypesTwo.map), true);
   expect(mapEquals(allTypesOne.stringMap, allTypesTwo.stringMap), true);
   expect(mapEquals(allTypesOne.intMap, allTypesTwo.intMap), true);
   // expect(mapEquals(allTypesOne.doubleMap, allTypesTwo.doubleMap), true);
   // expect(mapEquals(allTypesOne.boolMap, allTypesTwo.boolMap), true);
   expect(mapEquals(allTypesOne.enumMap, allTypesTwo.enumMap), true);
-  // expect(mapEquals(allTypesOne.objectMap, allTypesTwo.objectMap), true);
+  expect(mapEquals(allTypesOne.objectMap, allTypesTwo.objectMap), true);
   // listMap: check each key and value, and compare each lists values
   //
   // mapMap: check each key and value, and compare each map in the same way
@@ -171,30 +179,36 @@ void compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
       true);
   expect(listEquals(allNullableTypesOne.enumList, allNullableTypesTwo.enumList),
       true);
-  // expect(
-  //     listEquals(
-  //         allNullableTypesOne.objectList, allNullableTypesTwo.objectList),
-  // true);
+  expect(
+      listEquals(
+          allNullableTypesOne.objectList, allNullableTypesTwo.objectList),
+      true);
   // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
   // https://github.com/flutter/flutter/issues/116117
-  //for (int i = 0; i < allNullableTypesOne.listList!.length; i++) {
-  //  expect(listEquals(allNullableTypesOne.listList![i], allNullableTypesTwo.listList![i]),
-  //      true);
-  //}
-  // expect(listEquals(allNullableTypesOne.mapList, allNullableTypesTwo.mapList),
-  //     true);
-  // for (int i = 0; i < (allNullableTypesOne.classList?.length ?? 0); i++) {
-  //   compareAllNullableTypesWithoutRecursion(
-  //       allNullableTypesOne.classList?[i], allNullableTypesTwo.classList?[i]);
-  // }
+  for (int i = 0; i < (allNullableTypesOne.listList?.length ?? 0); i++) {
+    expect(
+        listEquals(
+            allNullableTypesOne.listList![i], allNullableTypesTwo.listList![i]),
+        true);
+  }
+  for (int i = 0; i < (allNullableTypesOne.mapList?.length ?? 0); i++) {
+    expect(
+        mapEquals(
+            allNullableTypesOne.mapList?[i], allNullableTypesTwo.mapList?[i]),
+        true);
+  }
   for (int i = 0;
       i < (allNullableTypesOne.recursiveClassList?.length ?? 0);
       i++) {
     compareAllNullableTypes(allNullableTypesOne.recursiveClassList?[i],
         allNullableTypesTwo.recursiveClassList?[i]);
   }
-  // expect(listEquals(allNullableTypesOne.mapList, allNullableTypesTwo.mapList),
-  //     true);
+  for (int i = 0;
+      i < (allNullableTypesOne.recursiveClassList?.length ?? 0);
+      i++) {
+    compareAllNullableTypes(allNullableTypesOne.recursiveClassList?[i],
+        allNullableTypesTwo.recursiveClassList?[i]);
+  }
   expect(mapEquals(allNullableTypesOne.map, allNullableTypesTwo.map), true);
   expect(
       mapEquals(allNullableTypesOne.stringMap, allNullableTypesTwo.stringMap),
@@ -206,11 +220,11 @@ void compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
   //     true);
   // expect(mapEquals(allNullableTypesOne.boolMap, allNullableTypesTwo.boolMap),
   //     true);
-  // expect(mapEquals(allNullableTypesOne.enumMap, allNullableTypesTwo.enumMap),
-  //     true);
-  // expect(
-  //     mapEquals(allNullableTypesOne.objectMap, allNullableTypesTwo.objectMap),
-  //     true);
+  expect(mapEquals(allNullableTypesOne.enumMap, allNullableTypesTwo.enumMap),
+      true);
+  expect(
+      mapEquals(allNullableTypesOne.objectMap, allNullableTypesTwo.objectMap),
+      true);
   // listMap: check each key and value, and compare each lists values
   //
   // mapMap: check each key and value, and compare each map in the same way
@@ -233,17 +247,14 @@ void compareAllClassesWrapper(
   );
   compareAllTypes(wrapperOne.allTypes, wrapperTwo.allTypes);
 
-  // for (int i = 0; i < (allTypesOne.classList.length); i++) {
-  //   compareAllTypes(
-  //       allTypesOne.classList[i], allTypesTwo.classList[i]);
-  // }
-  //
-  // classMap: check each key and value, call each compare method for every class
-  //
-  // for (int i = 0; i < (allTypesOne.nullableClassList.length); i++) {
-  //   compareAllNullableTypesWithoutRecursion(
-  //       allTypesOne.nullableClassList[i], allTypesTwo.nullableClassList[i]);
-  // }
+  for (int i = 0; i < (wrapperOne.classList.length); i++) {
+    compareAllTypes(wrapperOne.classList[i], wrapperTwo.classList[i]);
+  }
+
+  for (int i = 0; i < (wrapperOne.nullableClassList?.length ?? 0); i++) {
+    compareAllNullableTypesWithoutRecursion(
+        wrapperOne.nullableClassList![i], wrapperTwo.nullableClassList![i]);
+  }
   //
   // ClassMap: check each key and value, call each compare method for every class
 }
@@ -673,7 +684,7 @@ final AllNullableTypes recursiveAllNullableTypes = AllNullableTypes(
   enumList: enumList,
   objectList: list,
   listList: listList,
-  // mapList: mapList,
+  mapList: mapList,
   recursiveClassList: allNullableTypesList,
   map: map,
   stringMap: stringMap,
@@ -682,8 +693,8 @@ final AllNullableTypes recursiveAllNullableTypes = AllNullableTypes(
   // boolMap: boolMap,
   enumMap: enumMap,
   objectMap: map,
-  // listMap: listMap,
-  // mapMap: mapMap,
+  listMap: listMap,
+  mapMap: mapMap,
   recursiveClassMap: allNullableTypesMap,
 );
 
