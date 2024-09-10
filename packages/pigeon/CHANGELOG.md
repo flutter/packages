@@ -1,3 +1,7 @@
+## 22.5.0
+
+* Adds support for nested collections.
+
 ## 22.4.0
 
 * Adds support for nullable types in collections.
