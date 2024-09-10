@@ -47,6 +47,7 @@ class PlatformCameraUpdate {
   /// camera update, and each holds a different set of data, preventing the
   /// use of a single unified class. Pigeon does not support inheritance, which
   /// prevents a more strict type bound.
+  /// See https://github.com/flutter/flutter/issues/117819.
   final Object cameraUpdate;
 }
 

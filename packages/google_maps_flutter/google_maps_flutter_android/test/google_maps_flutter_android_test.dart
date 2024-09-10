@@ -104,7 +104,7 @@ void main() {
     expect(bounds, expectedBounds);
   });
 
-  test('moveCamera calls through scrollBy', () async {
+  test('moveCamera calls through with expected scrollBy', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -122,7 +122,7 @@ void main() {
     expect(scroll.dy, update.dy);
   });
 
-  test('animateCamera calls through scrollBy', () async {
+  test('animateCamera calls through with expected scrollBy', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -782,7 +782,7 @@ void main() {
     },
   );
 
-  test('moveCamera calls through newCameraPosition', () async {
+  test('moveCamera calls through with expected newCameraPosition', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -804,7 +804,7 @@ void main() {
         update.cameraPosition.target.longitude);
   });
 
-  test('moveCamera calls through newLatLng', () async {
+  test('moveCamera calls through with expected newLatLng', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -823,7 +823,7 @@ void main() {
     expect(typedUpdate.latLng.longitude, update.latLng.longitude);
   });
 
-  test('moveCamera calls through newLatLngBounds', () async {
+  test('moveCamera calls through with expected newLatLngBounds', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -851,7 +851,7 @@ void main() {
     expect(typedUpdate.padding, update.padding);
   });
 
-  test('moveCamera calls through newLatLngZoom', () async {
+  test('moveCamera calls through with expected newLatLngZoom', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -871,7 +871,7 @@ void main() {
     expect(typedUpdate.zoom, update.zoom);
   });
 
-  test('moveCamera calls through zoomBy', () async {
+  test('moveCamera calls through with expected zoomBy', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -891,7 +891,7 @@ void main() {
     expect(typedUpdate.amount, update.amount);
   });
 
-  test('moveCamera calls through zoomTo', () async {
+  test('moveCamera calls through with expected zoomTo', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -908,7 +908,7 @@ void main() {
     expect(typedUpdate.zoom, update.zoom);
   });
 
-  test('moveCamera calls through zoomIn', () async {
+  test('moveCamera calls through with expected zoomIn', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -924,7 +924,7 @@ void main() {
     expect(typedUpdate.out, false);
   });
 
-  test('moveCamera calls through zoomOut', () async {
+  test('moveCamera calls through with expected zoomOut', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
