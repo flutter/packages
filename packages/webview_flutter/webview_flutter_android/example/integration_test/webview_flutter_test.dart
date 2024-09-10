@@ -813,6 +813,41 @@ Future<void> main() async {
       return controller;
     }
 
+    testWidgets('getScrollPosition', (WidgetTester tester) async {
+      final PlatformWebViewController controller =
+          await pumpScrollTestPage(tester);
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+
+      const Offset testScrollPosition = Offset(123, 321);
+
+      // Ensure the start scroll position is not equal to the test position.
+      expect(await controller.getScrollPosition(), isNot(testScrollPosition));
+
+      ScrollPositionChange lastPositionChange =
+          const ScrollPositionChange(-1, -1);
+      final Completer<void> testScrollPositionCompleter = Completer<void>();
+      await controller.setOnScrollPositionChange(
+        expectAsyncUntil1(
+          (ScrollPositionChange contentOffsetChange) {
+            lastPositionChange = contentOffsetChange;
+          },
+          () {
+            if (Offset(lastPositionChange.x, lastPositionChange.y) ==
+                testScrollPosition) {
+              testScrollPositionCompleter.complete();
+              return true;
+            }
+            return false;
+          },
+        ),
+      );
+
+      await controller.runJavaScript(
+        'window.scrollTo(${testScrollPosition.dx.toInt()}, ${testScrollPosition.dy.toInt()});',
+      );
+      expect(await controller.getScrollPosition(), testScrollPosition);
+    });
+
     testWidgets('scrollTo', (WidgetTester tester) async {
       final PlatformWebViewController controller =
           await pumpScrollTestPage(tester);
@@ -840,7 +875,6 @@ Future<void> main() async {
         testScrollPosition.dx.toInt(),
         testScrollPosition.dy.toInt(),
       );
-      expect(await controller.getScrollPosition(), testScrollPosition);
     });
 
     testWidgets('scrollBy', (WidgetTester tester) async {
@@ -871,7 +905,6 @@ Future<void> main() async {
         testScrollPosition.dx.toInt(),
         testScrollPosition.dy.toInt(),
       );
-      expect(await controller.getScrollPosition(), testScrollPosition);
     });
   });
 
