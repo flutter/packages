@@ -780,23 +780,14 @@ Future<void> main() async {
       // Ensure the start scroll position is not equal to the test position.
       expect(await controller.getScrollPosition(), isNot(testScrollPosition));
 
-      ScrollPositionChange lastPositionChange =
-          const ScrollPositionChange(-1, -1);
       final Completer<void> testScrollPositionCompleter = Completer<void>();
       await controller.setOnScrollPositionChange(
-        expectAsyncUntil1(
-          (ScrollPositionChange contentOffsetChange) {
-            lastPositionChange = contentOffsetChange;
-          },
-          () {
-            if (Offset(lastPositionChange.x, lastPositionChange.y) ==
-                testScrollPosition) {
-              testScrollPositionCompleter.complete();
-              return true;
-            }
-            return false;
-          },
-        ),
+        (ScrollPositionChange contentOffsetChange) {
+          if (Offset(contentOffsetChange.x, contentOffsetChange.y) ==
+              testScrollPosition) {
+            testScrollPositionCompleter.complete();
+          }
+        },
       );
 
       await controller.runJavaScript(
