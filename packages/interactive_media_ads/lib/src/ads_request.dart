@@ -10,12 +10,10 @@ class AdsRequest {
   /// Creates an [AdsRequest].
   AdsRequest({
     required String adTagUrl,
-    Duration? contentDuration,
     ContentProgressProvider? contentProgressProvider,
   }) : this.fromPlatform(
           PlatformAdsRequest(
             adTagUrl: adTagUrl,
-            contentDuration: contentDuration,
             contentProgressProvider: contentProgressProvider?.platform,
           ),
         );
@@ -28,9 +26,6 @@ class AdsRequest {
 
   /// The URL from which ads will be requested.
   String get adTagUrl => platform.adTagUrl;
-
-  /// The duration of the content video to be shown.
-  Duration? get contentDuration => platform.contentDuration;
 
   /// A [ContentProgressProvider] instance to allow scheduling of ad breaks
   /// based on content progress (cue points).

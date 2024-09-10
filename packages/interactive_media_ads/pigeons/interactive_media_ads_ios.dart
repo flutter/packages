@@ -6,6 +6,7 @@
 // https://github.com/flutter/packages/pull/6602 lands. This file uses the
 // Swift ProxyApi feature from pigeon.
 // ignore_for_file: avoid_unused_constructor_parameters
+
 /*
 import 'package:pigeon/pigeon.dart';
 

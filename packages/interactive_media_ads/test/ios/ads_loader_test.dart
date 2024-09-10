@@ -103,7 +103,6 @@ void main() {
 
       await loader.requestAds(PlatformAdsRequest(
         adTagUrl: adTag,
-        contentDuration: const Duration(seconds: 10),
         contentProgressProvider: provider,
       ));
 

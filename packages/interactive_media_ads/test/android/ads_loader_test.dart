@@ -115,14 +115,12 @@ void main() {
       await adsLoader.requestAds(
         PlatformAdsRequest(
           adTagUrl: 'url',
-          contentDuration: const Duration(seconds: 1),
           contentProgressProvider: progressProvider,
         ),
       );
 
       verifyInOrder(<Future<void>>[
         mockAdsRequest.setAdTagUrl('url'),
-        mockAdsRequest.setContentDuration(1.0),
         mockAdsRequest.setContentProgressProvider(
           progressProvider.progressProvider,
         ),

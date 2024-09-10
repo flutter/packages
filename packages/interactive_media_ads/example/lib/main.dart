@@ -67,8 +67,12 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
     },
   );
 
+  // Periodically updates the SDK of the current playback progress of the
+  // content video.
   Timer? _contentProgressTimer;
 
+  // Provides the SDK with the current playback progress of the content video.
+  // This is required to support mid-roll ads.
   final ContentProgressProvider _contentProgressProvider =
       ContentProgressProvider();
 

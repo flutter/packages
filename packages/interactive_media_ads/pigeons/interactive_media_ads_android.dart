@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Uncomment this file once
-// https://github.com/flutter/packages/pull/6371 lands. This file uses the
-// Kotlin ProxyApi feature from pigeon.
 // ignore_for_file: avoid_unused_constructor_parameters
 
 import 'package:pigeon/pigeon.dart';
