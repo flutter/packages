@@ -32,8 +32,9 @@ class AdExampleWidget extends StatefulWidget {
   State<AdExampleWidget> createState() => _AdExampleWidgetState();
 }
 
-class _AdExampleWidgetState extends State<AdExampleWidget> {
-  // IMA sample tag for a single Pre-, Mid-, and Post-roll video ad. See more IMA sample
+class _AdExampleWidgetState extends State<AdExampleWidget>
+    with WidgetsBindingObserver {
+  // IMA sample tag for a single skippable inline video ad. See more IMA sample
   // tags at https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags
   static const String _adTagUrl =
       'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/vmap_ad_samples&sz=640x480&cust_params=sample_ar%3Dpremidpost&ciu_szs=300x250&gdfp_req=1&ad_rule=1&output=vmap&unviewed_position_start=1&env=vp&impl=s&cmsid=496&vid=short_onecue&correlator=';
@@ -44,6 +45,11 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
   // AdsManager exposes methods to control ad playback and listen to ad events.
   AdsManager? _adsManager;
 
+  // #enddocregion example_widget
+  // Last state received in `didChangeAppLifecycleState`.
+  AppLifecycleState _lastLifecycleState = AppLifecycleState.resumed;
+
+  // #docregion example_widget
   // Whether the widget should be displaying the content video. The content
   // player is hidden while Ads are playing.
   bool _shouldShowContentVideo = true;
@@ -69,6 +75,11 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
   @override
   void initState() {
     super.initState();
+    // #enddocregion ad_and_content_players
+    // Adds this instance as an observer for `AppLifecycleState` changes.
+    WidgetsBinding.instance.addObserver(this);
+
+    // #docregion ad_and_content_players
     _contentVideoController = VideoPlayerController.networkUrl(
       Uri.parse(
         'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
@@ -77,8 +88,8 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
       ..addListener(() {
         if (_contentVideoController.value.isCompleted) {
           _adsLoader.contentComplete();
-          setState(() {});
         }
+        setState(() {});
       })
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
@@ -86,6 +97,29 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
       });
   }
   // #enddocregion ad_and_content_players
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (!_shouldShowContentVideo) {
+          _adsManager?.resume();
+        }
+      case AppLifecycleState.inactive:
+        // Pausing the Ad video player on Android can only be done in this state
+        // because it corresponds to `Activity.onPause`. This state is also
+        // triggered before resume, so this will only pause the Ad if the app is
+        // in the process of being sent to the background.
+        if (!_shouldShowContentVideo &&
+            _lastLifecycleState == AppLifecycleState.resumed) {
+          _adsManager?.pause();
+        }
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+    }
+    _lastLifecycleState = state;
+  }
 
   // #docregion request_ads
   Future<void> _requestAds(AdDisplayContainer container) {
@@ -97,7 +131,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
 
         manager.setAdsManagerDelegate(AdsManagerDelegate(
           onAdEvent: (AdEvent event) {
-            debugPrint('OnAdEvent: ${event.type}');
+            debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
             switch (event.type) {
               case AdEventType.loaded:
                 manager.start();
@@ -110,6 +144,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
                 _adsManager = null;
               case AdEventType.clicked:
               case AdEventType.complete:
+              case _:
             }
           },
           onAdErrorEvent: (AdErrorEvent event) {
@@ -177,6 +212,9 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
     _contentProgressTimer?.cancel();
     _contentVideoController.dispose();
     _adsManager?.destroy();
+    // #enddocregion dispose
+    WidgetsBinding.instance.removeObserver(this);
+    // #docregion dispose
   }
   // #enddocregion dispose
 

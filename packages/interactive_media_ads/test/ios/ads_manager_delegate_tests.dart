@@ -55,6 +55,7 @@ void main() {
         IOSAdsManagerDelegateCreationParams(
           onAdEvent: expectAsync1((AdEvent event) {
             expect(event.type, AdEventType.allAdsCompleted);
+            expect(event.adData, <String, String>{'hello': 'world'});
           }),
           proxy: imaProxy,
         ),
@@ -72,6 +73,7 @@ void main() {
         ima.IMAAdEvent.pigeon_detached(
           type: ima.AdEventType.allAdsCompleted,
           typeString: 'typeString',
+          adData: const <String, String>{'hello': 'world'},
           pigeon_instanceManager: instanceManager,
         ),
       );

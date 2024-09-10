@@ -1,3 +1,9 @@
+## 2.4.1
+
+* Fixes `getStringList` returning immutable list.
+* Fixes `getStringList` cast error.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
 ## 2.4.0
 
 * Adds `SharedPreferencesAsyncWindows` API.

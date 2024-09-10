@@ -22,6 +22,10 @@ import 'package:webview_flutter_wkwebview_example/legacy/navigation_decision.dar
 import 'package:webview_flutter_wkwebview_example/legacy/navigation_request.dart';
 import 'package:webview_flutter_wkwebview_example/legacy/web_view.dart';
 
+// TODO(bparrishMines): Remove once https://github.com/flutter/flutter/issues/154676
+// is fixed.
+const bool skipOnIosFor154676 = true;
+
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -537,7 +541,7 @@ Future<void> main() async {
       final String fullScreen =
           await controller.runJavascriptReturningResult('isFullScreen();');
       expect(fullScreen, _webviewBool(false));
-    });
+    }, skip: Platform.isMacOS || skipOnIosFor154676);
 
     testWidgets(
         'Video plays full screen when allowsInlineMediaPlayback is false',
@@ -587,8 +591,10 @@ Future<void> main() async {
       final String fullScreen =
           await controller.runJavascriptReturningResult('isFullScreen();');
       expect(fullScreen, _webviewBool(true));
-    });
-  });
+    }, skip: Platform.isMacOS || skipOnIosFor154676);
+  },
+      // allowsInlineMediaPlayback has no effect on macOS.
+      skip: Platform.isMacOS);
 
   group('Audio playback policy', () {
     late String audioTestBase64;
@@ -755,7 +761,10 @@ Future<void> main() async {
       isPaused = await controller.runJavascriptReturningResult('isPaused();');
       expect(isPaused, _webviewBool(false));
     });
-  });
+  },
+      // OGG playback is not supported on macOS, so the test data would need
+      // to be changed to support macOS.
+      skip: Platform.isMacOS);
 
   testWidgets('getTitle', (WidgetTester tester) async {
     const String getTitleTest = '''
@@ -882,7 +891,10 @@ Future<void> main() async {
       expect(scrollPosX, X_SCROLL * 2);
       expect(scrollPosY, Y_SCROLL * 2);
     });
-  });
+  },
+      // Scroll position is currently not implemented for macOS.
+      // Flakes on iOS: https://github.com/flutter/flutter/issues/154826
+      skip: Platform.isMacOS || Platform.isIOS);
 
   group('NavigationDelegate', () {
     const String blankPage = '<!DOCTYPE html><head></head><body></body></html>';

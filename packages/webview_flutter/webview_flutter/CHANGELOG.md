@@ -1,3 +1,8 @@
+## 4.9.0
+
+* Adds endorsed macOS support.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 4.8.0
 
 * Adds `onHttpError` callback to `NavigationDelegate` to catch HTTP error status codes.

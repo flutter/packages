@@ -2,7 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+@import GoogleMapsUtils;
+
 #import "GoogleMapController.h"
+
+#import "FGMMarkerUserData.h"
+#import "FLTGoogleMapHeatmapController.h"
 #import "FLTGoogleMapJSONConversions.h"
 #import "FLTGoogleMapTileOverlayController.h"
 #import "messages.g.h"
@@ -29,7 +34,7 @@
 }
 
 - (NSObject<FlutterMessageCodec> *)createArgsCodec {
-  return [FlutterStandardMessageCodec sharedInstance];
+  return FGMGetMessagesCodec();
 }
 
 - (NSObject<FlutterPlatformView> *)createWithFrame:(CGRect)frame
@@ -41,7 +46,7 @@
 
   return [[FLTGoogleMapController alloc] initWithFrame:frame
                                         viewIdentifier:viewId
-                                             arguments:args
+                                    creationParameters:args
                                              registrar:self.registrar];
 }
 
@@ -115,10 +120,14 @@
 @property(nonatomic, strong) FGMMapsCallbackApi *dartCallbackHandler;
 @property(nonatomic, assign) BOOL trackCameraPosition;
 @property(nonatomic, weak) NSObject<FlutterPluginRegistrar> *registrar;
+@property(nonatomic, strong) FGMClusterManagersController *clusterManagersController;
 @property(nonatomic, strong) FLTMarkersController *markersController;
 @property(nonatomic, strong) FLTPolygonsController *polygonsController;
 @property(nonatomic, strong) FLTPolylinesController *polylinesController;
 @property(nonatomic, strong) FLTCirclesController *circlesController;
+
+// The controller that handles heatmaps
+@property(nonatomic, strong) FLTHeatmapsController *heatmapsController;
 @property(nonatomic, strong) FLTTileOverlaysController *tileOverlaysController;
 // The resulting error message, if any, from the last attempt to set the map style.
 // This is used to provide access to errors after the fact, since the map style is generally set at
@@ -136,27 +145,30 @@
 
 - (instancetype)initWithFrame:(CGRect)frame
                viewIdentifier:(int64_t)viewId
-                    arguments:(id _Nullable)args
+           creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   GMSCameraPosition *camera =
-      [FLTGoogleMapJSONConversions cameraPostionFromDictionary:args[@"initialCameraPosition"]];
+      FGMGetCameraPositionForPigeonCameraPosition(creationParameters.initialCameraPosition);
 
   GMSMapViewOptions *options = [[GMSMapViewOptions alloc] init];
   options.frame = frame;
   options.camera = camera;
-  NSString *cloudMapId = args[@"options"][@"cloudMapId"];
+  NSString *cloudMapId = creationParameters.mapConfiguration.cloudMapId;
   if (cloudMapId) {
     options.mapID = [GMSMapID mapIDWithIdentifier:cloudMapId];
   }
 
   GMSMapView *mapView = [[GMSMapView alloc] initWithOptions:options];
 
-  return [self initWithMapView:mapView viewIdentifier:viewId arguments:args registrar:registrar];
+  return [self initWithMapView:mapView
+                viewIdentifier:viewId
+            creationParameters:creationParameters
+                     registrar:registrar];
 }
 
 - (instancetype)initWithMapView:(GMSMapView *_Nonnull)mapView
                  viewIdentifier:(int64_t)viewId
-                      arguments:(id _Nullable)args
+             creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
                       registrar:(NSObject<FlutterPluginRegistrar> *_Nonnull)registrar {
   if (self = [super init]) {
     _mapView = mapView;
@@ -164,15 +176,19 @@
     _mapView.accessibilityElementsHidden = NO;
     // TODO(cyanglaz): avoid sending message to self in the middle of the init method.
     // https://github.com/flutter/flutter/issues/104121
-    [self interpretMapOptions:args[@"options"]];
+    [self interpretMapConfiguration:creationParameters.mapConfiguration];
     NSString *pigeonSuffix = [NSString stringWithFormat:@"%lld", viewId];
     _dartCallbackHandler = [[FGMMapsCallbackApi alloc] initWithBinaryMessenger:registrar.messenger
                                                           messageChannelSuffix:pigeonSuffix];
     _mapView.delegate = self;
     _mapView.paddingAdjustmentBehavior = kGMSMapViewPaddingAdjustmentBehaviorNever;
     _registrar = registrar;
+    _clusterManagersController =
+        [[FGMClusterManagersController alloc] initWithMapView:_mapView
+                                              callbackHandler:_dartCallbackHandler];
     _markersController = [[FLTMarkersController alloc] initWithMapView:_mapView
                                                        callbackHandler:_dartCallbackHandler
+                                             clusterManagersController:_clusterManagersController
                                                              registrar:registrar];
     _polygonsController = [[FLTPolygonsController alloc] initWithMapView:_mapView
                                                          callbackHandler:_dartCallbackHandler
@@ -183,30 +199,21 @@
     _circlesController = [[FLTCirclesController alloc] initWithMapView:_mapView
                                                        callbackHandler:_dartCallbackHandler
                                                              registrar:registrar];
+    _heatmapsController = [[FLTHeatmapsController alloc] initWithMapView:_mapView];
     _tileOverlaysController =
         [[FLTTileOverlaysController alloc] initWithMapView:_mapView
                                            callbackHandler:_dartCallbackHandler
                                                  registrar:registrar];
-    id markersToAdd = args[@"markersToAdd"];
-    if ([markersToAdd isKindOfClass:[NSArray class]]) {
-      [_markersController addJSONMarkers:markersToAdd];
-    }
-    id polygonsToAdd = args[@"polygonsToAdd"];
-    if ([polygonsToAdd isKindOfClass:[NSArray class]]) {
-      [_polygonsController addJSONPolygons:polygonsToAdd];
-    }
-    id polylinesToAdd = args[@"polylinesToAdd"];
-    if ([polylinesToAdd isKindOfClass:[NSArray class]]) {
-      [_polylinesController addJSONPolylines:polylinesToAdd];
-    }
-    id circlesToAdd = args[@"circlesToAdd"];
-    if ([circlesToAdd isKindOfClass:[NSArray class]]) {
-      [_circlesController addJSONCircles:circlesToAdd];
-    }
-    id tileOverlaysToAdd = args[@"tileOverlaysToAdd"];
-    if ([tileOverlaysToAdd isKindOfClass:[NSArray class]]) {
-      [_tileOverlaysController addJSONTileOverlays:tileOverlaysToAdd];
-    }
+    [_clusterManagersController addClusterManagers:creationParameters.initialClusterManagers];
+    [_markersController addMarkers:creationParameters.initialMarkers];
+    [_polygonsController addPolygons:creationParameters.initialPolygons];
+    [_polylinesController addPolylines:creationParameters.initialPolylines];
+    [_circlesController addCircles:creationParameters.initialCircles];
+    [_heatmapsController addHeatmaps:creationParameters.initialHeatmaps];
+    [_tileOverlaysController addTileOverlays:creationParameters.initialTileOverlays];
+
+    // Invoke clustering after markers are added.
+    [_clusterManagersController invokeClusteringForEachClusterManager];
 
     [_mapView addObserver:self forKeyPath:@"frame" options:0 context:nil];
 
@@ -377,28 +384,36 @@
 }
 
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  return [self.markersController didTapMarkerWithIdentifier:markerId];
+  if ([marker.userData isKindOfClass:[GMUStaticCluster class]]) {
+    GMUStaticCluster *cluster = marker.userData;
+    [self.clusterManagersController didTapCluster:cluster];
+    // When NO is returned, the map will focus on the cluster.
+    return NO;
+  }
+  return
+      [self.markersController didTapMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)];
 }
 
 - (void)mapView:(GMSMapView *)mapView didEndDraggingMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  [self.markersController didEndDraggingMarkerWithIdentifier:markerId location:marker.position];
+  [self.markersController
+      didEndDraggingMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)
+                                location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didBeginDraggingMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  [self.markersController didStartDraggingMarkerWithIdentifier:markerId location:marker.position];
+  [self.markersController
+      didStartDraggingMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)
+                                  location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didDragMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  [self.markersController didDragMarkerWithIdentifier:markerId location:marker.position];
+  [self.markersController didDragMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)
+                                             location:marker.position];
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapInfoWindowOfMarker:(GMSMarker *)marker {
-  NSString *markerId = marker.userData[0];
-  [self.markersController didTapInfoWindowOfMarkerWithIdentifier:markerId];
+  [self.markersController
+      didTapInfoWindowOfMarkerWithIdentifier:FGMGetMarkerIdentifierFromMarker(marker)];
 }
 - (void)mapView:(GMSMapView *)mapView didTapOverlay:(GMSOverlay *)overlay {
   NSString *overlayId = overlay.userData[0];
@@ -423,79 +438,74 @@
                                         }];
 }
 
-- (void)interpretMapOptions:(NSDictionary *)data {
-  NSArray *cameraTargetBounds = FGMGetValueOrNilFromDict(data, @"cameraTargetBounds");
+- (void)interpretMapConfiguration:(FGMPlatformMapConfiguration *)config {
+  FGMPlatformCameraTargetBounds *cameraTargetBounds = config.cameraTargetBounds;
   if (cameraTargetBounds) {
-    [self
-        setCameraTargetBounds:cameraTargetBounds.count > 0 && cameraTargetBounds[0] != [NSNull null]
-                                  ? [FLTGoogleMapJSONConversions
-                                        coordinateBoundsFromLatLongs:cameraTargetBounds.firstObject]
-                                  : nil];
+    [self setCameraTargetBounds:cameraTargetBounds.bounds
+                                    ? FGMGetCoordinateBoundsForPigeonLatLngBounds(
+                                          cameraTargetBounds.bounds)
+                                    : nil];
   }
-  NSNumber *compassEnabled = FGMGetValueOrNilFromDict(data, @"compassEnabled");
+  NSNumber *compassEnabled = config.compassEnabled;
   if (compassEnabled) {
-    [self setCompassEnabled:[compassEnabled boolValue]];
+    [self setCompassEnabled:compassEnabled.boolValue];
   }
-  id indoorEnabled = FGMGetValueOrNilFromDict(data, @"indoorEnabled");
+  NSNumber *indoorEnabled = config.indoorViewEnabled;
   if (indoorEnabled) {
-    [self setIndoorEnabled:[indoorEnabled boolValue]];
+    [self setIndoorEnabled:indoorEnabled.boolValue];
   }
-  id trafficEnabled = FGMGetValueOrNilFromDict(data, @"trafficEnabled");
+  NSNumber *trafficEnabled = config.trafficEnabled;
   if (trafficEnabled) {
-    [self setTrafficEnabled:[trafficEnabled boolValue]];
+    [self setTrafficEnabled:trafficEnabled.boolValue];
   }
-  id buildingsEnabled = FGMGetValueOrNilFromDict(data, @"buildingsEnabled");
+  NSNumber *buildingsEnabled = config.buildingsEnabled;
   if (buildingsEnabled) {
-    [self setBuildingsEnabled:[buildingsEnabled boolValue]];
+    [self setBuildingsEnabled:buildingsEnabled.boolValue];
   }
-  id mapType = FGMGetValueOrNilFromDict(data, @"mapType");
+  FGMPlatformMapTypeBox *mapType = config.mapType;
   if (mapType) {
-    [self setMapType:[FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:mapType]];
+    [self setMapType:FGMGetMapViewTypeForPigeonMapType(mapType.value)];
   }
-  NSArray *zoomData = FGMGetValueOrNilFromDict(data, @"minMaxZoomPreference");
+  FGMPlatformZoomRange *zoomData = config.minMaxZoomPreference;
   if (zoomData) {
-    float minZoom = (zoomData[0] == [NSNull null]) ? kGMSMinZoomLevel : [zoomData[0] floatValue];
-    float maxZoom = (zoomData[1] == [NSNull null]) ? kGMSMaxZoomLevel : [zoomData[1] floatValue];
+    float minZoom = zoomData.min ? zoomData.min.floatValue : kGMSMinZoomLevel;
+    float maxZoom = zoomData.max ? zoomData.max.floatValue : kGMSMaxZoomLevel;
     [self setMinZoom:minZoom maxZoom:maxZoom];
   }
-  NSArray *paddingData = FGMGetValueOrNilFromDict(data, @"padding");
-  if (paddingData) {
-    float top = (paddingData[0] == [NSNull null]) ? 0 : [paddingData[0] floatValue];
-    float left = (paddingData[1] == [NSNull null]) ? 0 : [paddingData[1] floatValue];
-    float bottom = (paddingData[2] == [NSNull null]) ? 0 : [paddingData[2] floatValue];
-    float right = (paddingData[3] == [NSNull null]) ? 0 : [paddingData[3] floatValue];
-    [self setPaddingTop:top left:left bottom:bottom right:right];
+  FGMPlatformEdgeInsets *padding = config.padding;
+  if (padding) {
+    [self setPaddingTop:padding.top left:padding.left bottom:padding.bottom right:padding.right];
   }
 
-  NSNumber *rotateGesturesEnabled = FGMGetValueOrNilFromDict(data, @"rotateGesturesEnabled");
+  NSNumber *rotateGesturesEnabled = config.rotateGesturesEnabled;
   if (rotateGesturesEnabled) {
-    [self setRotateGesturesEnabled:[rotateGesturesEnabled boolValue]];
+    [self setRotateGesturesEnabled:rotateGesturesEnabled.boolValue];
   }
-  NSNumber *scrollGesturesEnabled = FGMGetValueOrNilFromDict(data, @"scrollGesturesEnabled");
+  NSNumber *scrollGesturesEnabled = config.scrollGesturesEnabled;
   if (scrollGesturesEnabled) {
-    [self setScrollGesturesEnabled:[scrollGesturesEnabled boolValue]];
+    [self setScrollGesturesEnabled:scrollGesturesEnabled.boolValue];
   }
-  NSNumber *tiltGesturesEnabled = FGMGetValueOrNilFromDict(data, @"tiltGesturesEnabled");
+  NSNumber *tiltGesturesEnabled = config.tiltGesturesEnabled;
   if (tiltGesturesEnabled) {
-    [self setTiltGesturesEnabled:[tiltGesturesEnabled boolValue]];
+    [self setTiltGesturesEnabled:tiltGesturesEnabled.boolValue];
   }
-  NSNumber *trackCameraPosition = FGMGetValueOrNilFromDict(data, @"trackCameraPosition");
+  NSNumber *trackCameraPosition = config.trackCameraPosition;
   if (trackCameraPosition) {
-    [self setTrackCameraPosition:[trackCameraPosition boolValue]];
+    [self setTrackCameraPosition:trackCameraPosition.boolValue];
   }
-  NSNumber *zoomGesturesEnabled = FGMGetValueOrNilFromDict(data, @"zoomGesturesEnabled");
+  NSNumber *zoomGesturesEnabled = config.zoomGesturesEnabled;
   if (zoomGesturesEnabled) {
-    [self setZoomGesturesEnabled:[zoomGesturesEnabled boolValue]];
+    [self setZoomGesturesEnabled:zoomGesturesEnabled.boolValue];
   }
-  NSNumber *myLocationEnabled = FGMGetValueOrNilFromDict(data, @"myLocationEnabled");
+  NSNumber *myLocationEnabled = config.myLocationEnabled;
   if (myLocationEnabled) {
-    [self setMyLocationEnabled:[myLocationEnabled boolValue]];
+    [self setMyLocationEnabled:myLocationEnabled.boolValue];
   }
-  NSNumber *myLocationButtonEnabled = FGMGetValueOrNilFromDict(data, @"myLocationButtonEnabled");
+  NSNumber *myLocationButtonEnabled = config.myLocationButtonEnabled;
   if (myLocationButtonEnabled) {
-    [self setMyLocationButtonEnabled:[myLocationButtonEnabled boolValue]];
+    [self setMyLocationButtonEnabled:myLocationButtonEnabled.boolValue];
   }
-  NSString *style = FGMGetValueOrNilFromDict(data, @"style");
+  NSString *style = config.style;
   if (style) {
     [self setMapStyle:style];
   }
@@ -532,9 +542,18 @@
   [self.controller.circlesController removeCirclesWithIdentifiers:idsToRemove];
 }
 
+- (void)updateHeatmapsByAdding:(nonnull NSArray<FGMPlatformHeatmap *> *)toAdd
+                      changing:(nonnull NSArray<FGMPlatformHeatmap *> *)toChange
+                      removing:(nonnull NSArray<NSString *> *)idsToRemove
+                         error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [self.controller.heatmapsController addHeatmaps:toAdd];
+  [self.controller.heatmapsController changeHeatmaps:toChange];
+  [self.controller.heatmapsController removeHeatmapsWithIdentifiers:idsToRemove];
+}
+
 - (void)updateWithMapConfiguration:(nonnull FGMPlatformMapConfiguration *)configuration
                              error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  [self.controller interpretMapOptions:configuration.json];
+  [self.controller interpretMapConfiguration:configuration];
 }
 
 - (void)updateMarkersByAdding:(nonnull NSArray<FGMPlatformMarker *> *)toAdd
@@ -544,6 +563,16 @@
   [self.controller.markersController addMarkers:toAdd];
   [self.controller.markersController changeMarkers:toChange];
   [self.controller.markersController removeMarkersWithIdentifiers:idsToRemove];
+
+  // Invoke clustering after markers are added.
+  [self.controller.clusterManagersController invokeClusteringForEachClusterManager];
+}
+
+- (void)updateClusterManagersByAdding:(nonnull NSArray<FGMPlatformClusterManager *> *)toAdd
+                             removing:(nonnull NSArray<NSString *> *)idsToRemove
+                                error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [self.controller.clusterManagersController addClusterManagers:toAdd];
+  [self.controller.clusterManagersController removeClusterManagersWithIdentifiers:idsToRemove];
 }
 
 - (void)updatePolygonsByAdding:(nonnull NSArray<FGMPlatformPolygon *> *)toAdd
@@ -741,8 +770,8 @@
 }
 
 - (nullable FGMPlatformTileLayer *)
-    getInfoForTileOverlayWithIdentifier:(nonnull NSString *)tileOverlayId
-                                  error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+    tileOverlayWithIdentifier:(nonnull NSString *)tileOverlayId
+                        error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   GMSTileLayer *layer =
       [self.controller.tileOverlaysController tileOverlayWithIdentifier:tileOverlayId].layer;
   if (!layer) {
@@ -752,6 +781,24 @@
                                         fadeIn:layer.fadeIn
                                        opacity:layer.opacity
                                         zIndex:layer.zIndex];
+}
+
+- (nullable FGMPlatformHeatmap *)
+    heatmapWithIdentifier:(nonnull NSString *)heatmapId
+                    error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  NSDictionary<NSString *, id> *heatmapInfo =
+      [self.controller.heatmapsController heatmapInfoWithIdentifier:heatmapId];
+  if (!heatmapInfo) {
+    return nil;
+  }
+  return [FGMPlatformHeatmap makeWithJson:heatmapInfo];
+}
+
+- (nullable NSArray<FGMPlatformCluster *> *)
+    clustersWithIdentifier:(NSString *)clusterManagerId
+                     error:(FlutterError *_Nullable *_Nonnull)error {
+  return [self.controller.clusterManagersController clustersWithIdentifier:clusterManagerId
+                                                                     error:error];
 }
 
 - (nullable NSNumber *)isCompassEnabledWithError:
@@ -771,8 +818,8 @@
 
 - (nullable FGMPlatformZoomRange *)zoomRange:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return [FGMPlatformZoomRange makeWithMin:self.controller.mapView.minZoom
-                                       max:self.controller.mapView.maxZoom];
+  return [FGMPlatformZoomRange makeWithMin:@(self.controller.mapView.minZoom)
+                                       max:@(self.controller.mapView.maxZoom)];
 }
 
 @end

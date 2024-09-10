@@ -48,6 +48,38 @@ void main() {
       verify(mockAdsManager.start());
     });
 
+    test('discardAdBreak', () {
+      final MockAdsManager mockAdsManager = MockAdsManager();
+      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
+      adsManager.discardAdBreak();
+
+      verify(mockAdsManager.discardAdBreak());
+    });
+
+    test('pause', () {
+      final MockAdsManager mockAdsManager = MockAdsManager();
+      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
+      adsManager.pause();
+
+      verify(mockAdsManager.pause());
+    });
+
+    test('skip', () {
+      final MockAdsManager mockAdsManager = MockAdsManager();
+      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
+      adsManager.skip();
+
+      verify(mockAdsManager.skip());
+    });
+
+    test('resume', () {
+      final MockAdsManager mockAdsManager = MockAdsManager();
+      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
+      adsManager.resume();
+
+      verify(mockAdsManager.resume());
+    });
+
     test('onAdEvent', () async {
       final MockAdsManager mockAdsManager = MockAdsManager();
 
@@ -78,13 +110,17 @@ void main() {
       await adsManager.setAdsManagerDelegate(
         AndroidAdsManagerDelegate(
           PlatformAdsManagerDelegateCreationParams(
-            onAdEvent: expectAsync1((_) {}),
+            onAdEvent: expectAsync1((AdEvent event) {
+              expect(event.type, AdEventType.allAdsCompleted);
+              expect(event.adData, <String, String>{'hello': 'world'});
+            }),
           ),
         ),
       );
 
       final MockAdEvent mockAdEvent = MockAdEvent();
       when(mockAdEvent.type).thenReturn(ima.AdEventType.allAdsCompleted);
+      when(mockAdEvent.adData).thenReturn(<String, String>{'hello': 'world'});
       onAdEventCallback(MockAdEventListener(), mockAdEvent);
     });
 

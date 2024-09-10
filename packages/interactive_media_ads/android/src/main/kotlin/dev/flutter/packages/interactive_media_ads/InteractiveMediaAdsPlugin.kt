@@ -31,6 +31,7 @@ class InteractiveMediaAdsPlugin : FlutterPlugin, ActivityAware {
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+    registrar.ignoreCallsToDart = true
     registrar.tearDown()
     registrar.instanceManager.clear()
   }

@@ -108,6 +108,11 @@
     - any-glob-to-any-file:
       - packages/in_app_purchase/**/*
 
+'p: interactive_media_ads':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/interactive_media_ads/**/*
+
 'p: ios_platform_images':
   - changed-files:
     - any-glob-to-any-file:

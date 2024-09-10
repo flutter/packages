@@ -125,21 +125,6 @@
   return self;
 }
 
-- (void)addJSONCircles:(NSArray<NSDictionary<NSString *, id> *> *)circlesToAdd {
-  for (NSDictionary<NSString *, id> *circle in circlesToAdd) {
-    CLLocationCoordinate2D position = [FLTCirclesController getPosition:circle];
-    CLLocationDistance radius = [FLTCirclesController getRadius:circle];
-    NSString *circleId = [FLTCirclesController getCircleId:circle];
-    FLTGoogleMapCircleController *controller =
-        [[FLTGoogleMapCircleController alloc] initCircleWithPosition:position
-                                                              radius:radius
-                                                            circleId:circleId
-                                                             mapView:self.mapView
-                                                             options:circle];
-    self.circleIdToController[circleId] = controller;
-  }
-}
-
 - (void)addCircles:(NSArray<FGMPlatformCircle *> *)circlesToAdd {
   for (FGMPlatformCircle *circle in circlesToAdd) {
     CLLocationCoordinate2D position = [FLTCirclesController getPosition:circle.json];

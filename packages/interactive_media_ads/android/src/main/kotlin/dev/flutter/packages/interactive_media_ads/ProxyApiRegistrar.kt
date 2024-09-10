@@ -13,7 +13,7 @@ import io.flutter.plugin.common.BinaryMessenger
  * Implementation of [InteractiveMediaAdsLibraryPigeonProxyApiRegistrar] that provides each ProxyApi
  * implementation and any additional resources needed by an implementation.
  */
-public open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Context) :
+open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Context) :
     InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(binaryMessenger) {
 
   // Added to be overriden for tests. The test implementation calls `callback` immediately, instead

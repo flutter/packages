@@ -105,6 +105,10 @@ class TestAdsManager extends PlatformAdsManager {
     this.onSetAdsManagerDelegate,
     this.onStart,
     this.onDestroy,
+    this.onDiscardAdBreak,
+    this.onPause,
+    this.onResume,
+    this.onSkip,
   });
 
   Future<void> Function(AdsManagerInitParams params)? onInit;
@@ -113,6 +117,14 @@ class TestAdsManager extends PlatformAdsManager {
       onSetAdsManagerDelegate;
 
   Future<void> Function(AdsManagerStartParams params)? onStart;
+
+  Future<void> Function()? onDiscardAdBreak;
+
+  Future<void> Function()? onPause;
+
+  Future<void> Function()? onResume;
+
+  Future<void> Function()? onSkip;
 
   Future<void> Function()? onDestroy;
 
@@ -136,6 +148,26 @@ class TestAdsManager extends PlatformAdsManager {
   @override
   Future<void> destroy() async {
     return onDestroy?.call();
+  }
+
+  @override
+  Future<void> discardAdBreak() async {
+    return onDiscardAdBreak?.call();
+  }
+
+  @override
+  Future<void> pause() async {
+    return onPause?.call();
+  }
+
+  @override
+  Future<void> resume() async {
+    return onResume?.call();
+  }
+
+  @override
+  Future<void> skip() async {
+    return onSkip?.call();
   }
 }
 

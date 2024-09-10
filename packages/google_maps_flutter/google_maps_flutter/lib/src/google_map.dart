@@ -120,6 +120,8 @@ class GoogleMap extends StatefulWidget {
     this.polygons = const <Polygon>{},
     this.polylines = const <Polyline>{},
     this.circles = const <Circle>{},
+    this.clusterManagers = const <ClusterManager>{},
+    this.heatmaps = const <Heatmap>{},
     this.onCameraMoveStarted,
     this.tileOverlays = const <TileOverlay>{},
     this.onCameraMove,
@@ -214,8 +216,14 @@ class GoogleMap extends StatefulWidget {
   /// Circles to be placed on the map.
   final Set<Circle> circles;
 
+  /// Heatmaps to show on the map.
+  final Set<Heatmap> heatmaps;
+
   /// Tile overlays to be placed on the map.
   final Set<TileOverlay> tileOverlays;
+
+  /// Cluster Managers to be initialized for the map.
+  final Set<ClusterManager> clusterManagers;
 
   /// Called when the camera starts moving.
   ///
@@ -328,6 +336,9 @@ class _GoogleMapState extends State<GoogleMap> {
   Map<PolygonId, Polygon> _polygons = <PolygonId, Polygon>{};
   Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
   Map<CircleId, Circle> _circles = <CircleId, Circle>{};
+  Map<ClusterManagerId, ClusterManager> _clusterManagers =
+      <ClusterManagerId, ClusterManager>{};
+  Map<HeatmapId, Heatmap> _heatmaps = <HeatmapId, Heatmap>{};
   late MapConfiguration _mapConfiguration;
 
   @override
@@ -347,6 +358,8 @@ class _GoogleMapState extends State<GoogleMap> {
         polygons: widget.polygons,
         polylines: widget.polylines,
         circles: widget.circles,
+        clusterManagers: widget.clusterManagers,
+        heatmaps: widget.heatmaps,
       ),
       mapConfiguration: _mapConfiguration,
     );
@@ -356,10 +369,12 @@ class _GoogleMapState extends State<GoogleMap> {
   void initState() {
     super.initState();
     _mapConfiguration = _configurationFromMapWidget(widget);
+    _clusterManagers = keyByClusterManagerId(widget.clusterManagers);
     _markers = keyByMarkerId(widget.markers);
     _polygons = keyByPolygonId(widget.polygons);
     _polylines = keyByPolylineId(widget.polylines);
     _circles = keyByCircleId(widget.circles);
+    _heatmaps = keyByHeatmapId(widget.heatmaps);
   }
 
   @override
@@ -377,10 +392,12 @@ class _GoogleMapState extends State<GoogleMap> {
   void didUpdateWidget(GoogleMap oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateOptions();
+    _updateClusterManagers();
     _updateMarkers();
     _updatePolygons();
     _updatePolylines();
     _updateCircles();
+    _updateHeatmaps();
     _updateTileOverlays();
   }
 
@@ -402,6 +419,13 @@ class _GoogleMapState extends State<GoogleMap> {
     _markers = keyByMarkerId(widget.markers);
   }
 
+  Future<void> _updateClusterManagers() async {
+    final GoogleMapController controller = await _controller.future;
+    unawaited(controller._updateClusterManagers(ClusterManagerUpdates.from(
+        _clusterManagers.values.toSet(), widget.clusterManagers)));
+    _clusterManagers = keyByClusterManagerId(widget.clusterManagers);
+  }
+
   Future<void> _updatePolygons() async {
     final GoogleMapController controller = await _controller.future;
     unawaited(controller._updatePolygons(
@@ -421,6 +445,16 @@ class _GoogleMapState extends State<GoogleMap> {
     unawaited(controller._updateCircles(
         CircleUpdates.from(_circles.values.toSet(), widget.circles)));
     _circles = keyByCircleId(widget.circles);
+  }
+
+  Future<void> _updateHeatmaps() async {
+    final GoogleMapController controller = await _controller.future;
+    unawaited(
+      controller._updateHeatmaps(
+        HeatmapUpdates.from(_heatmaps.values.toSet(), widget.heatmaps),
+      ),
+    );
+    _heatmaps = keyByHeatmapId(widget.heatmaps);
   }
 
   Future<void> _updateTileOverlays() async {
@@ -541,6 +575,19 @@ class _GoogleMapState extends State<GoogleMap> {
     final ArgumentCallback<LatLng>? onLongPress = widget.onLongPress;
     if (onLongPress != null) {
       onLongPress(position);
+    }
+  }
+
+  void onClusterTap(Cluster cluster) {
+    final ClusterManager? clusterManager =
+        _clusterManagers[cluster.clusterManagerId];
+    if (clusterManager == null) {
+      throw UnknownMapObjectIdError(
+          'clusterManager', cluster.clusterManagerId, 'onClusterTap');
+    }
+    final ArgumentCallback<Cluster>? onClusterTap = clusterManager.onClusterTap;
+    if (onClusterTap != null) {
+      onClusterTap(cluster);
     }
   }
 }
