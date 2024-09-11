@@ -30,6 +30,8 @@ void main() {
     expect(cameraUpdate.updateType, CameraUpdateType.newCameraPosition);
     cameraUpdate as CameraUpdateNewCameraPosition;
     expect(cameraUpdate.cameraPosition, cameraPosition);
+    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    expect(jsonList[0], 'newCameraPosition');
   });
 
   test('CameraUpdate.newLatLng', () {
@@ -39,6 +41,8 @@ void main() {
     expect(cameraUpdate.updateType, CameraUpdateType.newLatLng);
     cameraUpdate as CameraUpdateNewLatLng;
     expect(cameraUpdate.latLng, latLng);
+    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    expect(jsonList[0], 'newLatLng');
   });
 
   test('CameraUpdate.newLatLngBounds', () {
@@ -52,6 +56,8 @@ void main() {
     cameraUpdate as CameraUpdateNewLatLngBounds;
     expect(cameraUpdate.bounds, latLngBounds);
     expect(cameraUpdate.padding, padding);
+    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    expect(jsonList[0], 'newLatLngBounds');
   });
 
   test('CameraUpdate.newLatLngZoom', () {
@@ -63,6 +69,8 @@ void main() {
     cameraUpdate as CameraUpdateNewLatLngZoom;
     expect(cameraUpdate.latLng, latLng);
     expect(cameraUpdate.zoom, zoom);
+    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    expect(jsonList[0], 'newLatLngZoom');
   });
 
   test('CameraUpdate.scrollBy', () {
@@ -74,6 +82,8 @@ void main() {
     cameraUpdate as CameraUpdateScrollBy;
     expect(cameraUpdate.dx, dx);
     expect(cameraUpdate.dy, dy);
+    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    expect(jsonList[0], 'scrollBy');
   });
 
   test('CameraUpdate.zoomBy', () {
@@ -85,17 +95,23 @@ void main() {
     cameraUpdate as CameraUpdateZoomBy;
     expect(cameraUpdate.amount, amount);
     expect(cameraUpdate.focus, focus);
+    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    expect(jsonList[0], 'zoomBy');
   });
 
   test('CameraUpdate.zoomIn', () {
     final CameraUpdate cameraUpdate = CameraUpdate.zoomIn();
     expect(cameraUpdate.runtimeType, CameraUpdateZoomIn);
     expect(cameraUpdate.updateType, CameraUpdateType.zoomIn);
+    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    expect(jsonList[0], 'zoomIn');
   });
 
   test('CameraUpdate.zoomOut', () {
     final CameraUpdate cameraUpdate = CameraUpdate.zoomOut();
     expect(cameraUpdate.runtimeType, CameraUpdateZoomOut);
     expect(cameraUpdate.updateType, CameraUpdateType.zoomOut);
+    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    expect(jsonList[0], 'zoomOut');
   });
 }
