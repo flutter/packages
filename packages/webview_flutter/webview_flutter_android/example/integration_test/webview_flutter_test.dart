@@ -855,8 +855,6 @@ Future<void> main() async {
       await controller.setOnScrollPositionChange(
         expectAsyncUntil1(
           (ScrollPositionChange contentOffsetChange) {
-            print(contentOffsetChange.x);
-            print(contentOffsetChange.y);
             lastPositionChange = contentOffsetChange;
           },
           () {
