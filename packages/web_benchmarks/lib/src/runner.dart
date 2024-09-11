@@ -57,6 +57,7 @@ class BenchmarkServer {
     required this.treeShakeIcons,
     this.compilationOptions = const CompilationOptions.js(),
     this.initialPage = defaultInitialPage,
+    this.queryParameters,
   });
 
   final ProcessManager _processManager = const LocalProcessManager();
@@ -97,8 +98,17 @@ class BenchmarkServer {
   /// The default value is [defaultInitialPage].
   final String initialPage;
 
-  String get _benchmarkAppUrl =>
-      'http://localhost:$benchmarkServerPort/$initialPage';
+  /// The query parameters to include in the URL upon opening the benchmark app
+  /// in Chrome.
+  final Map<String, Object?>? queryParameters;
+
+  String get _benchmarkAppUrl => Uri(
+        scheme: 'http',
+        host: 'localhost',
+        port: benchmarkServerPort,
+        path: initialPage,
+        queryParameters: queryParameters,
+      ).toString();
 
   /// Builds and serves the benchmark app, and collects benchmark results.
   Future<BenchmarkResults> run() async {

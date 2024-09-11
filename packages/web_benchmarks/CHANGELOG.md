@@ -1,3 +1,9 @@
+## 2.1.0
+
+* Adds an optional parameter `queryParameters` to the `serveWebBenchmark` method.
+* Adds an optional parameter `queryParameters` to the `runBenchmarks` method
+for benchmark clients.
+
 ## 2.0.2
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
