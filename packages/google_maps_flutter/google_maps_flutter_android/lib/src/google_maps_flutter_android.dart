@@ -1185,7 +1185,6 @@ PlatformPatternItem platformPatternItemFromPatternItem(PatternItem item) {
     default:
       throw ArgumentError('Invalid tag "$tag for PatternItem type.', 'item');
   }
-  ;
   return PlatformPatternItem(type: type, length: length);
 }
 
