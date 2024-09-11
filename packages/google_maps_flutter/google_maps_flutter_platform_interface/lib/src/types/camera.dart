@@ -251,7 +251,7 @@ class CameraUpdateNewLatLngBounds extends CameraUpdate {
   /// The amount of padding by which the view is inset.
   final double padding;
   @override
-  Object toJson() => <Object>['newLatLngZoom', bounds.toJson(), padding];
+  Object toJson() => <Object>['newLatLngBounds', bounds.toJson(), padding];
 }
 
 /// Defines a camera move to new coordinates with a zoom level.
