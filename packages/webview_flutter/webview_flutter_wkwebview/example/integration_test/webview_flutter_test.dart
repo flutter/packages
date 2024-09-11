@@ -790,8 +790,9 @@ Future<void> main() async {
         },
       );
 
-      await controller.runJavaScript(
-        'window.scrollTo(${testScrollPosition.dx.toInt()}, ${testScrollPosition.dy.toInt()});',
+      await controller.scrollTo(
+        testScrollPosition.dx.toInt(),
+        testScrollPosition.dy.toInt(),
       );
       await testScrollPositionCompleter.future;
 
