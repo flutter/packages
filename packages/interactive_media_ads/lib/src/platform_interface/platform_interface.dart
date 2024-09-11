@@ -10,3 +10,4 @@ export 'platform_ads_loader.dart';
 export 'platform_ads_manager.dart';
 export 'platform_ads_manager_delegate.dart';
 export 'platform_ads_request.dart';
+export 'platform_content_progress_provider.dart';

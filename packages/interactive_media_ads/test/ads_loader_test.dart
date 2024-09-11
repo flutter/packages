@@ -5,7 +5,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/interactive_media_ads.dart';
-import 'package:interactive_media_ads/src/platform_interface/platform_content_progress_provider.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 
 import 'test_stubs.dart';

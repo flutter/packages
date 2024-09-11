@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'content_progress_provider.dart';
-import 'platform_interface/platform_ads_request.dart';
+import 'platform_interface/platform_interface.dart';
 
 /// An object containing the data used to request ads from the server.
 class AdsRequest {

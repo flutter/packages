@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'platform_interface/platform_content_progress_provider.dart';
+import 'platform_interface/platform_interface.dart';
 
 /// Allow the SDK to track progress of the content video.
 ///

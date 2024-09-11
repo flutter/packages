@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:interactive_media_ads/src/platform_interface/platform_content_progress_provider.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 
 final class TestInteractiveMediaAdsPlatform
