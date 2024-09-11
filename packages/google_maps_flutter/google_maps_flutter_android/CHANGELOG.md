@@ -1,3 +1,7 @@
+## 2.14.6
+
+* Adds `PlatformPatternItem` pigeon class to convert `PlatformPolyline.pattern`.
+
 ## 2.14.5
 
 * Converts `JointType` to enum.
