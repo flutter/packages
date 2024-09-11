@@ -34,7 +34,7 @@ class AdExampleWidget extends StatefulWidget {
 
 class _AdExampleWidgetState extends State<AdExampleWidget>
     with WidgetsBindingObserver {
-  // IMA sample tag for a single skippable inline video ad. See more IMA sample
+  // IMA sample tag for skippable a pre-, mid-, and post-roll, single inline video ad. See more IMA sample
   // tags at https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags
   static const String _adTagUrl =
       'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/vmap_ad_samples&sz=640x480&cust_params=sample_ar%3Dpremidpost&ciu_szs=300x250&gdfp_req=1&ad_rule=1&output=vmap&unviewed_position_start=1&env=vp&impl=s&cmsid=496&vid=short_onecue&correlator=';

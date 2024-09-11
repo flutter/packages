@@ -1,3 +1,7 @@
+## 0.2.2
+
+* Adds support for mid-roll ads. See `AdsRequest.contentProgressProvider`.
+
 ## 0.2.1
 
 * Adds internal wrapper for Android native `ContentProgressProvider`.
