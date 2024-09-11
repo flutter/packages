@@ -1,3 +1,7 @@
+## 2.9.2
+
+* Corrects JSON tag for `CameraUpdateNewLatLngBounds`.
+
 ## 2.9.1
 
 * Splits CameraUpdate into dervied classes for different update cases.
