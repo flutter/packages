@@ -30,7 +30,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     routes: <RouteBase>[
       // #docregion configuration-builder
       StatefulShellRoute.indexedStack(
-        shellRoutePath: '/shell',
+        path: '/shell',
         builder: (BuildContext context, GoRouterState state,
             StatefulNavigationShell navigationShell) {
           // Return the widget that implements the custom shell (in this case

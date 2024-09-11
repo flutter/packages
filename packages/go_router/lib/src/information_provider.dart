@@ -34,7 +34,7 @@ enum NavigatingType {
   /// [RouteInformationState.baseRouteMatchList].
   // TODO(tolo): Remove this in next major release.
   @Deprecated(
-      'Configure shellRoutePath on StatefulShellRoute and use GoRouter.go instead.')
+      'Configure path on StatefulShellRoute and use GoRouter.go instead.')
   restore,
 }
 
@@ -178,7 +178,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
   /// Restores the current route matches with the `matchList`.
   // TODO(tolo): Remove this in next major release.
   @Deprecated(
-      'Configure shellRoutePath on StatefulShellRoute and use GoRouter.go instead.')
+      'Configure path on StatefulShellRoute and use GoRouter.go instead.')
   void restore(String location, {required RouteMatchList matchList}) {
     _setValue(
       matchList.uri.toString(),

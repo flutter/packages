@@ -828,7 +828,7 @@ class StatefulShellRoute extends ShellRouteBase {
   /// implementing the container for the branch Navigators is provided by
   /// [navigatorContainerBuilder].
   StatefulShellRoute({
-    String? shellRoutePath,
+    String? path,
     int initialBranchIndex = 0,
     required List<StatefulShellBranch> branches,
     GoRouterRedirect? redirect,
@@ -839,7 +839,7 @@ class StatefulShellRoute extends ShellRouteBase {
     String? restorationScopeId,
     GlobalKey<StatefulNavigationShellState>? key,
   }) : this._(
-          shellRoutePath: shellRoutePath,
+          path: path,
           initialBranchIndex: initialBranchIndex,
           branches: branches,
           redirect: redirect,
@@ -862,7 +862,7 @@ class StatefulShellRoute extends ShellRouteBase {
   /// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stacked_shell_route.dart)
   /// for a complete runnable example using StatefulShellRoute.indexedStack.
   StatefulShellRoute.indexedStack({
-    String? shellRoutePath,
+    String? path,
     int initialBranchIndex = 0,
     required List<StatefulShellBranch> branches,
     GoRouterRedirect? redirect,
@@ -872,7 +872,7 @@ class StatefulShellRoute extends ShellRouteBase {
     String? restorationScopeId,
     GlobalKey<StatefulNavigationShellState>? key,
   }) : this._(
-          shellRoutePath: shellRoutePath,
+          path: path,
           initialBranchIndex: initialBranchIndex,
           branches: branches,
           redirect: redirect,
@@ -885,7 +885,7 @@ class StatefulShellRoute extends ShellRouteBase {
         );
 
   StatefulShellRoute._({
-    this.shellRoutePath,
+    this.path,
     this.initialBranchIndex = 0,
     required this.branches,
     super.redirect,
@@ -895,17 +895,17 @@ class StatefulShellRoute extends ShellRouteBase {
     super.parentNavigatorKey,
     this.restorationScopeId,
     required this.key,
-  })  : assert(_debugValidateShellRoutePath(shellRoutePath)),
+  })  : assert(_debugValidateShellRoutePath(path)),
         assert(branches.isNotEmpty),
         assert(_debugUniqueNavigatorKeys(branches).length == branches.length,
             'Navigator keys must be unique'),
         assert(_debugValidateParentNavigatorKeys(branches)),
         assert(_debugValidateRestorationScopeIds(restorationScopeId, branches)),
         builder = builder ?? (pageBuilder == null ? _defaultBuilder : null),
-        super._(routes: _routes(shellRoutePath, key, branches));
+        super._(routes: _routes(path, key, branches));
 
   // TODO(tolo): Make this non-optional and required in next major release.
-  final String? shellRoutePath;
+  final String? path;
 
   final int initialBranchIndex;
 
@@ -1033,10 +1033,10 @@ class StatefulShellRoute extends ShellRouteBase {
     return branchRoutes;
   }
 
-  static bool _debugValidateShellRoutePath(String? shellRoutePath) {
-    if (shellRoutePath != null) {
+  static bool _debugValidateShellRoutePath(String? path) {
+    if (path != null) {
       final List<String> parameters = <String>[];
-      patternToRegExp(shellRoutePath, parameters);
+      patternToRegExp(path, parameters);
       assert(parameters.isEmpty);
     }
     return true;
@@ -1219,7 +1219,8 @@ class StatefulNavigationShell extends StatefulWidget {
   // TODO(chunhtai): figure out a way to avoid putting navigation API in widget
   // class.
   // TODO(tolo): Remove this in next major release.
-  @Deprecated('Configure shellRoutePath and use GoRouter.go instead.')
+  @Deprecated(
+      'Configure path on StatefulShellRoute and use GoRouter.go instead.')
   void goBranch(int index, {bool initialLocation = false}) {
     final StatefulShellRoute route =
         shellRouteContext.route as StatefulShellRoute;
@@ -1237,7 +1238,8 @@ class StatefulNavigationShell extends StatefulWidget {
 
   /// Gets the state for the nearest stateful shell route in the Widget tree.
   // TODO(tolo): Remove this in next major release.
-  @Deprecated('Configure shellRoutePath and use GoRouter.go instead.')
+  @Deprecated(
+      'Configure path on StatefulShellRoute and use GoRouter.go instead.')
   static StatefulNavigationShellState of(BuildContext context) {
     final StatefulNavigationShellState? shellState =
         context.findAncestorStateOfType<StatefulNavigationShellState>();
@@ -1249,7 +1251,8 @@ class StatefulNavigationShell extends StatefulWidget {
   ///
   /// Returns null if no stateful shell route is found.
   // TODO(tolo): Remove this in next major release.
-  @Deprecated('Configure shellRoutePath and use GoRouter.go instead.')
+  @Deprecated(
+      'Configure path on StatefulShellRoute and use GoRouter.go instead.')
   static StatefulNavigationShellState? maybeOf(BuildContext context) {
     final StatefulNavigationShellState? shellState =
         context.findAncestorStateOfType<StatefulNavigationShellState>();
@@ -1268,7 +1271,7 @@ class StatefulNavigationShell extends StatefulWidget {
 /// State for StatefulNavigationShell.
 // TODO(tolo): Make this class private in next major release..
 @Deprecated(
-    'Configure shellRoutePath and use GoRouter.go instead of using this class.')
+    'Configure path on StatefulShellRoute and use GoRouter.go instead of using this class.')
 class StatefulNavigationShellState extends State<StatefulNavigationShell>
     with RestorationMixin {
   final Map<Key, Widget> _branchNavigators = <Key, Widget>{};

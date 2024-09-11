@@ -343,7 +343,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// Restore the RouteMatchList
   // TODO(tolo): Remove this in next major release.
   @Deprecated(
-      'Configure shellRoutePath on StatefulShellRoute and use GoRouter.go instead.')
+      'Configure path on StatefulShellRoute and use GoRouter.go instead.')
   void restore(RouteMatchList matchList) {
     log('restoring ${matchList.uri}');
     routeInformationProvider.restore(
