@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'dart:async';
+import 'dart:io';
 
 import 'package:async/async.dart';
 import 'package:flutter/services.dart';
@@ -559,8 +560,10 @@ void main() {
         expect(point?.longitude, actual.points[i]?.longitude);
       }
       expect(actual.patterns.length, expected.patterns.length);
-      for (final (int i, Object? pattern) in actual.patterns.indexed) {
-        expect(pattern, expected.patterns[i].toJson());
+      for (final (int i, PlatformPatternItem? pattern)
+          in actual.patterns.indexed) {
+        expect(pattern?.encode(),
+            platformPatternItemFromPatternItem(expected.patterns[i]).encode());
       }
     }
 
