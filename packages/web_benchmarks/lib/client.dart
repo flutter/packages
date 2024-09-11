@@ -44,6 +44,7 @@ extension on HTMLElement {
 Future<void> runBenchmarks(
   Map<String, RecorderFactory> benchmarks, {
   String initialPage = defaultInitialPage,
+  Map<String, Object?>? queryParameters,
 }) async {
   // Set local benchmarks.
   _benchmarks = benchmarks;
@@ -60,13 +61,15 @@ Future<void> runBenchmarks(
   await _runBenchmark(nextBenchmark);
 
   final Uri currentUri = Uri.parse(window.location.href);
-  // Create a new URI with the current 'page' value set to [initialPage] to
-  // ensure the benchmark app is reloaded at the proper location.
+  // Create a new URI with the current 'page' value set to [initialPage] and the
+  // query parameters set to [queryParameters] to ensure the benchmark app is
+  // loaded with the proper configuration.
   final String newUri = Uri(
     scheme: currentUri.scheme,
     host: currentUri.host,
     port: currentUri.port,
     path: initialPage,
+    queryParameters: queryParameters,
   ).toString();
 
   // Reloading the window will trigger the next benchmark to run.
