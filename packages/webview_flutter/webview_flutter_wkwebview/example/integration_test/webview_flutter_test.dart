@@ -808,8 +808,7 @@ Future<void> main() async {
       // Ensure the start scroll position is not equal to the test position
       expect(await controller.getScrollPosition(), isNot(testScrollPosition));
 
-      ScrollPositionChange lastPositionChange =
-          const ScrollPositionChange(-1, -1);
+      late ScrollPositionChange lastPositionChange;
       await controller.setOnScrollPositionChange(
         expectAsyncUntil1(
           (ScrollPositionChange contentOffsetChange) {
@@ -837,8 +836,7 @@ Future<void> main() async {
       // Ensure the start scroll position is not equal to the test position
       expect(await controller.getScrollPosition(), isNot(testScrollPosition));
 
-      ScrollPositionChange lastPositionChange =
-          const ScrollPositionChange(-1, -1);
+      late ScrollPositionChange lastPositionChange;
       await controller.setOnScrollPositionChange(
         expectAsyncUntil1(
           (ScrollPositionChange contentOffsetChange) {
