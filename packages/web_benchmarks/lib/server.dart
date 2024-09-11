@@ -40,18 +40,18 @@ const int defaultChromeDebugPort = 10000;
 ///
 /// If [headless] is true, runs Chrome without UI. In particular, this is
 /// useful in environments (e.g. CI) that doesn't have a display.
-/// 
+///
 /// If [treeShakeIcons] is false, '--no-tree-shake-icons' will be passed as a
 /// build argument when building the benchmark app.
-/// 
+///
 /// [initialPage] specifies the 'path' of the URL to load upon opening the
 /// benchmark app in Chrome.
-/// 
+///
 /// [queryParameters] specifies the 'queryParameters' of the URL to load upon
 /// opening the benchmark app in Chrome.
-/// 
+///
 /// [compilationOptions] specify the compiler and renderer to use for the
-/// benchmark app. This can either use dart2wasm & skwasm or 
+/// benchmark app. This can either use dart2wasm & skwasm or
 /// dart2js & canvaskit.
 Future<BenchmarkResults> serveWebBenchmark({
   required io.Directory benchmarkAppDirectory,
