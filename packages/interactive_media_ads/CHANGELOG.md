@@ -1,3 +1,7 @@
+## 0.2.1
+
+* Adds internal wrapper for Android native `ContentProgressProvider`.
+
 ## 0.2.0
 
 * Adds support for pausing and resuming Ad playback. See `AdsManager.pause` and `AdsManager.resume`.

@@ -327,7 +327,15 @@ abstract class AdsRequest {
         'com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider',
   ),
 )
-abstract class ContentProgressProvider {}
+abstract class ContentProgressProvider {
+  ContentProgressProvider();
+
+  /// Sets an update on the progress of the video.
+  ///
+  /// This is a custom method added to the native class because the native
+  /// method `getContentProgress` requires a synchronous return value.
+  void setContentProgress(VideoProgressUpdate update);
+}
 
 /// An object which handles playing ads after they've been received from the
 /// server.
