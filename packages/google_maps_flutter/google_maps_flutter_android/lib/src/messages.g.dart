@@ -43,6 +43,12 @@ enum PlatformRendererType {
   latest,
 }
 
+enum PlatformJointType {
+  mitered,
+  bevel,
+  round,
+}
+
 /// Pigeon representatation of a CameraPosition.
 class PlatformCameraPosition {
   PlatformCameraPosition({
@@ -448,12 +454,15 @@ class PlatformPolyline {
 
   bool geodesic;
 
-  int jointType;
+  /// The joint type as an integer. This must be a value corresponding to one of the values defined in the platform interface package's JointType enum. The integer values specified in this enum must match those used by the native SDK.
+  PlatformJointType jointType;
 
+  /// The pattern data, as JSON. Each element in this list should be set only from PatternItem.toJson, and the native code must interpret it according to the internal implementation details of that method.
   List<Object?> patterns;
 
   List<PlatformLatLng?> points;
 
+  /// The start and end cap data, as JSON. These should be set only from Cap.toJson, and the native code must interpret it according to the internal implementation details of that method.
   Object startCap;
 
   Object endCap;
@@ -488,7 +497,7 @@ class PlatformPolyline {
       consumesTapEvents: result[1]! as bool,
       color: result[2]! as int,
       geodesic: result[3]! as bool,
-      jointType: result[4]! as int,
+      jointType: result[4]! as PlatformJointType,
       patterns: (result[5] as List<Object?>?)!.cast<Object?>(),
       points: (result[6] as List<Object?>?)!.cast<PlatformLatLng?>(),
       startCap: result[7]!,
@@ -1081,6 +1090,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformRendererType) {
       buffer.putUint8(152);
       writeValue(buffer, value.index);
+    } else if (value is PlatformJointType) {
+      buffer.putUint8(153);
+      writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
     }
@@ -1139,6 +1151,9 @@ class _PigeonCodec extends StandardMessageCodec {
       case 152:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformRendererType.values[value];
+      case 153:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PlatformJointType.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }

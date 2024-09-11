@@ -1,3 +1,15 @@
+## 0.2.6
+
+* Add new sample for using AdaptiveScaffold with GoRouter.
+
+## 0.2.5
+
+* Fix breakpoint not being active in certain cases like foldables.
+
+## 0.2.4
+
+* Compare breakpoints to each other using operators.
+
 ## 0.2.3
 
 * Update the spacing and margins to the latest material m3 specs.

@@ -131,6 +131,7 @@ class Breakpoints {
 ///  * [SlotLayout.config], which uses breakpoints to dictate the layout of the
 ///    screen.
 class Breakpoint {
+  // #docregion Breakpoints
   /// Returns a const [Breakpoint] with the given constraints.
   const Breakpoint({
     this.beginWidth,
@@ -219,6 +220,7 @@ class Breakpoint {
         padding = kMaterialPadding * 5,
         recommendedPanes = 2,
         maxPanes = 3;
+  // #enddocregion Breakpoints
 
   /// A set of [TargetPlatform]s that the [Breakpoint] will be active on desktop.
   static const Set<TargetPlatform> desktop = <TargetPlatform>{
@@ -278,11 +280,11 @@ class Breakpoint {
   bool isActive(BuildContext context) {
     final TargetPlatform host = Theme.of(context).platform;
     final bool isRightPlatform = platform?.contains(host) ?? true;
-    final bool isDesktop = Breakpoint.desktop.contains(host);
 
     final double width = MediaQuery.sizeOf(context).width;
     final double height = MediaQuery.sizeOf(context).height;
     final Orientation orientation = MediaQuery.orientationOf(context);
+    final bool isPortrait = orientation == Orientation.portrait;
 
     final double lowerBoundWidth = beginWidth ?? double.negativeInfinity;
     final double upperBoundWidth = endWidth ?? double.infinity;
@@ -294,11 +296,9 @@ class Breakpoint {
         ? width >= lowerBoundWidth
         : width >= lowerBoundWidth && width < upperBoundWidth;
 
-    final bool isHeightActive = isDesktop ||
-        orientation == Orientation.portrait ||
-        (orientation == Orientation.landscape && andUp
-            ? isWidthActive || height >= lowerBoundHeight
-            : height >= lowerBoundHeight && height < upperBoundHeight);
+    final bool isHeightActive = isPortrait || isWidthActive || andUp
+        ? isWidthActive || height >= lowerBoundHeight
+        : height >= lowerBoundHeight && height < upperBoundHeight;
 
     return isWidthActive && isHeightActive && isRightPlatform;
   }
@@ -343,5 +343,85 @@ class Breakpoint {
       }
     }
     return currentBreakpoint;
+  }
+
+  /// Returns true if the current platform is Desktop.
+  static bool isDesktop(BuildContext context) {
+    return Breakpoint.desktop.contains(Theme.of(context).platform);
+  }
+
+  /// Returns true if the current platform is Mobile.
+  static bool isMobile(BuildContext context) {
+    return Breakpoint.mobile.contains(Theme.of(context).platform);
+  }
+
+  // #docregion Breakpoint operators
+  /// Returns true if this [Breakpoint] is greater than the given [Breakpoint].
+  bool operator >(Breakpoint breakpoint)
+  // #enddocregion Breakpoint operators
+  {
+    return (beginWidth ?? double.negativeInfinity) >
+            (breakpoint.beginWidth ?? double.negativeInfinity) &&
+        (endWidth ?? double.infinity) >
+            (breakpoint.endWidth ?? double.infinity) &&
+        (beginHeight ?? double.negativeInfinity) >
+            (breakpoint.beginHeight ?? double.negativeInfinity) &&
+        (endHeight ?? double.infinity) >
+            (breakpoint.endHeight ?? double.infinity);
+  }
+
+  // #docregion Breakpoint operators
+  /// Returns true if this [Breakpoint] is less than the given [Breakpoint].
+  bool operator <(Breakpoint breakpoint)
+  // #enddocregion Breakpoint operators
+  {
+    return (endWidth ?? double.infinity) <
+            (breakpoint.endWidth ?? double.infinity) &&
+        (beginWidth ?? double.negativeInfinity) <
+            (breakpoint.beginWidth ?? double.negativeInfinity) &&
+        (endHeight ?? double.infinity) <
+            (breakpoint.endHeight ?? double.infinity) &&
+        (beginHeight ?? double.negativeInfinity) <
+            (breakpoint.beginHeight ?? double.negativeInfinity);
+  }
+
+  // #docregion Breakpoint operators
+  /// Returns true if this [Breakpoint] is greater than or equal to the
+  /// given [Breakpoint].
+  bool operator >=(Breakpoint breakpoint)
+  // #enddocregion Breakpoint operators
+  {
+    return (beginWidth ?? double.negativeInfinity) >=
+            (breakpoint.beginWidth ?? double.negativeInfinity) &&
+        (endWidth ?? double.infinity) >=
+            (breakpoint.endWidth ?? double.infinity) &&
+        (beginHeight ?? double.negativeInfinity) >=
+            (breakpoint.beginHeight ?? double.negativeInfinity) &&
+        (endHeight ?? double.infinity) >=
+            (breakpoint.endHeight ?? double.infinity);
+  }
+
+  // #docregion Breakpoint operators
+  /// Returns true if this [Breakpoint] is less than or equal to the
+  /// given [Breakpoint].
+  bool operator <=(Breakpoint breakpoint)
+  // #enddocregion Breakpoint operators
+  {
+    return (endWidth ?? double.infinity) <=
+            (breakpoint.endWidth ?? double.infinity) &&
+        (beginWidth ?? double.negativeInfinity) <=
+            (breakpoint.beginWidth ?? double.negativeInfinity) &&
+        (endHeight ?? double.infinity) <=
+            (breakpoint.endHeight ?? double.infinity) &&
+        (beginHeight ?? double.negativeInfinity) <=
+            (breakpoint.beginHeight ?? double.negativeInfinity);
+  }
+
+  // #docregion Breakpoint operators
+  /// Returns true if this [Breakpoint] is between the given [Breakpoint]s.
+  bool between(Breakpoint lower, Breakpoint upper)
+  // #enddocregion Breakpoint operators
+  {
+    return this >= lower && this < upper;
   }
 }

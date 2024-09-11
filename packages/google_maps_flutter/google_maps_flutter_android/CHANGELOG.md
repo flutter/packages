@@ -1,3 +1,7 @@
+## 2.14.5
+
+* Converts `JointType` to enum.
+
 ## 2.14.4
 
 * Converts 'PlatformTileOverlay' to pigeon.
