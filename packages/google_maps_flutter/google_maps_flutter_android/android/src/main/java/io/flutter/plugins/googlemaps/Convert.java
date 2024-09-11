@@ -731,7 +731,7 @@ class Convert {
     sink.setWidth(polyline.getWidth());
     sink.setZIndex(polyline.getZIndex());
     sink.setPoints(pointsFromPigeon(polyline.getPoints()));
-    sink.setPattern(toPattern(polyline.getPatterns()));
+    sink.setPattern(patternFromPigeon(polyline.getPatterns()));
     return polyline.getPolylineId();
   }
 
@@ -868,6 +868,30 @@ class Convert {
       holes.add(pointsFromPigeon(hole));
     }
     return holes;
+  }
+
+  private static List<PatternItem> patternFromPigeon(
+      List<Messages.PlatformPatternItem> patternItems) {
+    if (patternItems.isEmpty()) {
+      return null;
+    }
+    final List<PatternItem> pattern = new ArrayList<>();
+    for (Messages.PlatformPatternItem patternItem : patternItems) {
+      switch (patternItem.getType()) {
+        case DOT:
+          pattern.add(new Dot());
+          break;
+        case DASH:
+          assert patternItem.getLength() != null;
+          pattern.add(new Dash(patternItem.getLength().floatValue()));
+          break;
+        case GAP:
+          assert patternItem.getLength() != null;
+          pattern.add(new Gap(patternItem.getLength().floatValue()));
+          break;
+      }
+    }
+    return pattern;
   }
 
   private static List<PatternItem> toPattern(Object o) {
