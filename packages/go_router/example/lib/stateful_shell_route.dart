@@ -30,6 +30,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     routes: <RouteBase>[
       // #docregion configuration-builder
       StatefulShellRoute.indexedStack(
+        shellRoutePath: '/shell',
         builder: (BuildContext context, GoRouterState state,
             StatefulNavigationShell navigationShell) {
           // Return the widget that implements the custom shell (in this case
@@ -169,7 +170,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
         currentIndex: navigationShell.currentIndex,
         // Navigate to the current location of the branch at the provided index
         // when tapping an item in the BottomNavigationBar.
-        onTap: (int index) => navigationShell.goBranch(index),
+        onTap: (int index) => GoRouter.of(context).go('/shell/$index'),
       ),
     );
   }
@@ -177,20 +178,18 @@ class ScaffoldWithNavBar extends StatelessWidget {
 
   /// NOTE: For a slightly more sophisticated branch switching, change the onTap
   /// handler on the BottomNavigationBar above to the following:
-  /// `onTap: (int index) => _onTap(context, index),`
+  /// `onTap: _onTap,`
   // ignore: unused_element
   void _onTap(BuildContext context, int index) {
-    // When navigating to a new branch, it's recommended to use the goBranch
-    // method, as doing so makes sure the last navigation state of the
-    // Navigator for the branch is restored.
-    navigationShell.goBranch(
-      index,
-      // A common pattern when using bottom navigation bars is to support
-      // navigating to the initial location when tapping the item that is
-      // already active. This example demonstrates how to support this behavior,
-      // using the initialLocation parameter of goBranch.
-      initialLocation: index == navigationShell.currentIndex,
-    );
+    // A common pattern when using bottom navigation bars is to support
+    // navigating to the initial location when tapping the item that is
+    // already active. This example demonstrates how to support this behavior,
+    // using the '/initial' shell route redirect.
+    if (index == navigationShell.currentIndex) {
+      GoRouter.of(context).go('/shell/$index/initial');
+    } else {
+      GoRouter.of(context).go('/shell/$index');
+    }
   }
 }
 

@@ -393,14 +393,47 @@ class RouteConfiguration {
         }
 
         final List<RouteMatchBase> routeMatches = <RouteMatchBase>[];
+        ShellRouteMatch? statefulShellMatch;
         prevMatchList.visitRouteMatches((RouteMatchBase match) {
+          statefulShellMatch =
+              match is ShellRouteMatch && match.route is StatefulShellRoute
+                  ? match
+                  : statefulShellMatch;
           if (match.route.redirect != null) {
             routeMatches.add(match);
           }
           return true;
         });
-        final FutureOr<String?> routeLevelRedirectResult =
-            _getRouteLevelRedirect(context, prevMatchList, routeMatches, 0);
+
+        final FutureOr<String?> routeLevelRedirectResult;
+        final RouteMatchBase? firstMatch = routeMatches.firstOrNull;
+        if (firstMatch != null &&
+            statefulShellMatch != null &&
+            statefulShellMatch!.matches.contains(firstMatch) &&
+            firstMatch.route is StatefulShellRestoreStateRedirect) {
+          final StatefulShellRestoreStateRedirect shellRedirect =
+              firstMatch.route as StatefulShellRestoreStateRedirect;
+          final int? branchIndex = shellRedirect
+              .branchIndexFromPathParameters(prevMatchList.pathParameters);
+          final RouteMatchList? restoredMatchList =
+              shellRedirect.restoreState(branchIndex);
+          if (restoredMatchList != null) {
+            return redirect(
+              context,
+              restoredMatchList,
+              redirectHistory: redirectHistory,
+            );
+          }
+
+          // If there is no restored state, redirect to the initial location
+          final StatefulShellRoute shellRoute =
+              statefulShellMatch!.route as StatefulShellRoute;
+          routeLevelRedirectResult = initialLocationForStatefulShellBranch(
+              shellRoute, branchIndex ?? shellRoute.initialBranchIndex);
+        } else {
+          routeLevelRedirectResult =
+              _getRouteLevelRedirect(context, prevMatchList, routeMatches, 0);
+        }
 
         if (routeLevelRedirectResult is String?) {
           return processRouteLevelRedirect(routeLevelRedirectResult);
@@ -509,6 +542,32 @@ class RouteConfiguration {
   /// route and all its ancestors.
   String? locationForRoute(RouteBase route) =>
       fullPathForRoute(route, '', _routingConfig.value.routes);
+
+  /// Gets the effective initial location for the branch at the provided index
+  /// in the provided [StatefulShellRoute].
+  ///
+  /// The effective initial location is either the
+  /// [StatefulShellBranch.initialLocation], if specified, or the location of the
+  /// [StatefulShellBranch.defaultRoute].
+  String initialLocationForStatefulShellBranch(
+      StatefulShellRoute route, int index) {
+    final StatefulShellBranch branch = route.branches[index];
+    final String? initialLocation = branch.initialLocation;
+    if (initialLocation != null) {
+      return initialLocation;
+    } else {
+      /// Recursively traverses the routes of the provided StatefulShellRoute to
+      /// find the first GoRoute, from which a full path will be derived.
+      final GoRoute route = branch.defaultRoute!;
+      final List<String> parameters = <String>[];
+      patternToRegExp(route.path, parameters);
+      assert(parameters.isEmpty);
+      return locationForRoute(route)!;
+      // TODO(tolo): Unsure what the original purpose of below was, but it seems odd to involve the current routerState.pathParameters when determining the initial location.
+      // return patternToPath(
+      //     fullPath, shellRouteContext.routerState.pathParameters);
+    }
+  }
 
   @override
   String toString() {
