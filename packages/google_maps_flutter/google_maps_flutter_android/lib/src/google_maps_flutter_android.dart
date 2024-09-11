@@ -1165,6 +1165,8 @@ PlatformJointType platformJointTypeFromJointType(JointType jointType) {
   return PlatformJointType.mitered;
 }
 
+/// Converts a PatternItem to Pigeon's PlatformPatternItem for PlatformPolyline
+/// pattern member.
 @visibleForTesting
 PlatformPatternItem platformPatternItemFromPatternItem(PatternItem item) {
   final List<Object> json = item.toJson() as List<Object>;
