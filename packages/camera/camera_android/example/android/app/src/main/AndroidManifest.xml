@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="io.flutter.plugins.cameraexample">
 
   <application
     android:icon="@mipmap/ic_launcher"
@@ -9,8 +10,7 @@
       android:launchMode="singleTop"
       android:name="io.flutter.embedding.android.FlutterActivity"
       android:theme="@style/LaunchTheme"
-      android:windowSoftInputMode="adjustResize"
-      android:exported="true">
+      android:windowSoftInputMode="adjustResize">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>

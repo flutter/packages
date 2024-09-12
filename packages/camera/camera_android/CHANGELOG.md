@@ -1,7 +1,3 @@
-## 0.10.9+12
-
-* Updates example app to target SDK 34.
-
 ## 0.10.9+11
 
 * Updates annotations lib to 1.8.2.
