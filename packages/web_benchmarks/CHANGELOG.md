@@ -1,4 +1,4 @@
-## 3.0.0-wip
+## 2.1.0-wip
 
 * Restructure the `testing/test_app` to make the example benchmarks easier to follow.
 
