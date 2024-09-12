@@ -1169,6 +1169,8 @@ PlatformJointType platformJointTypeFromJointType(JointType jointType) {
 /// Converts platform interface's Cap to Pigeon's PlatformCap.
 @visibleForTesting
 PlatformCap platformCapFromCap(Cap cap) {
+  // TODO(schectman): Convert Cap to structured data.
+  // https://github.com/flutter/flutter/issues/155121
   final List<Object> json = cap.toJson() as List<Object>;
   final String tag = json[0] as String;
   switch (tag) {
