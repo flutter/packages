@@ -121,7 +121,7 @@ public class Messages {
 
     final int index;
 
-    private PlatformPatternItemType(final int index) {
+    PlatformPatternItemType(final int index) {
       this.index = index;
     }
   }
@@ -2453,11 +2453,7 @@ public class Messages {
       this.jointType = setterArg;
     }
 
-    /**
-     * The pattern data, as JSON. Each element in this list should be set only from
-     * PatternItem.toJson, and the native code must interpret it according to the internal
-     * implementation details of that method.
-     */
+    /** The pattern data, as a list of pattern items. */
     private @NonNull List<PlatformPatternItem> patterns;
 
     public @NonNull List<PlatformPatternItem> getPatterns() {
@@ -2742,9 +2738,9 @@ public class Messages {
       pigeonResult.setGeodesic((Boolean) geodesic);
       Object jointType = pigeonVar_list.get(4);
       pigeonResult.setJointType((PlatformJointType) jointType);
-      Object patterns = __pigeon_list.get(5);
+      Object patterns = pigeonVar_list.get(5);
       pigeonResult.setPatterns((List<PlatformPatternItem>) patterns);
-      Object points = __pigeon_list.get(6);
+      Object points = pigeonVar_list.get(6);
       pigeonResult.setPoints((List<PlatformLatLng>) points);
       Object startCap = pigeonVar_list.get(7);
       pigeonResult.setStartCap(startCap);
@@ -2837,17 +2833,17 @@ public class Messages {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      ArrayList<Object> toListResult = new ArrayList<>(2);
       toListResult.add(type);
       toListResult.add(length);
       return toListResult;
     }
 
-    static @NonNull PlatformPatternItem fromList(@NonNull ArrayList<Object> __pigeon_list) {
+    static @NonNull PlatformPatternItem fromList(@NonNull ArrayList<Object> pigeonVar_list) {
       PlatformPatternItem pigeonResult = new PlatformPatternItem();
-      Object type = __pigeon_list.get(0);
+      Object type = pigeonVar_list.get(0);
       pigeonResult.setType((PlatformPatternItemType) type);
-      Object length = __pigeon_list.get(1);
+      Object length = pigeonVar_list.get(1);
       pigeonResult.setLength((Double) length);
       return pigeonResult;
     }
@@ -4903,67 +4899,76 @@ public class Messages {
             return value == null ? null : PlatformJointType.values()[((Long) value).intValue()];
           }
         case (byte) 132:
-          return PlatformCameraPosition.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null
+                ? null
+                : PlatformPatternItemType.values()[((Long) value).intValue()];
+          }
         case (byte) 133:
-          return PlatformCameraUpdate.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraPosition.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
+          return PlatformCameraUpdate.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 135:
           return PlatformCameraUpdateNewCameraPosition.fromList(
               (ArrayList<Object>) readValue(buffer));
-        case (byte) 135:
-          return PlatformCameraUpdateNewLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
+          return PlatformCameraUpdateNewLatLng.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 137:
           return PlatformCameraUpdateNewLatLngBounds.fromList(
               (ArrayList<Object>) readValue(buffer));
-        case (byte) 137:
-          return PlatformCameraUpdateNewLatLngZoom.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 138:
-          return PlatformCameraUpdateScrollBy.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateNewLatLngZoom.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 139:
-          return PlatformPatternItem.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateScrollBy.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 140:
-          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateZoomBy.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 141:
-          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateZoom.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 142:
-          return PlatformEdgeInsets.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateZoomTo.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 143:
-          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCircle.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 144:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformHeatmap.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 145:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformClusterManager.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 146:
-          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformOffset.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 147:
-          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformInfoWindow.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 148:
-          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 149:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 150:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 151:
-          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPatternItem.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 152:
-          {
-            Object value = readValue(buffer);
-            return value == null ? null : PlatformMapType.values()[(int) value];
-          }
+          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 153:
-          {
-            Object value = readValue(buffer);
-            return value == null ? null : PlatformRendererType.values()[(int) value];
-          }
+          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 154:
-          {
-            Object value = readValue(buffer);
-            return value == null ? null : PlatformJointType.values()[(int) value];
-          }
+          return PlatformEdgeInsets.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 155:
-          {
-            Object value = readValue(buffer);
-            return value == null ? null : PlatformPatternItemType.values()[(int) value];
-          }
+          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 156:
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 157:
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 158:
+          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 159:
+          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 160:
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 161:
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 162:
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 163:
+          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -4980,111 +4985,102 @@ public class Messages {
       } else if (value instanceof PlatformJointType) {
         stream.write(131);
         writeValue(stream, value == null ? null : ((PlatformJointType) value).index);
-      } else if (value instanceof PlatformCameraPosition) {
+      } else if (value instanceof PlatformPatternItemType) {
         stream.write(132);
+        writeValue(stream, value == null ? null : ((PlatformPatternItemType) value).index);
+      } else if (value instanceof PlatformCameraPosition) {
+        stream.write(133);
         writeValue(stream, ((PlatformCameraPosition) value).toList());
       } else if (value instanceof PlatformCameraUpdate) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, ((PlatformCameraUpdate) value).toList());
       } else if (value instanceof PlatformCameraUpdateNewCameraPosition) {
-        stream.write(134);
+        stream.write(135);
         writeValue(stream, ((PlatformCameraUpdateNewCameraPosition) value).toList());
       } else if (value instanceof PlatformCameraUpdateNewLatLng) {
-        stream.write(135);
+        stream.write(136);
         writeValue(stream, ((PlatformCameraUpdateNewLatLng) value).toList());
       } else if (value instanceof PlatformCameraUpdateNewLatLngBounds) {
-        stream.write(136);
+        stream.write(137);
         writeValue(stream, ((PlatformCameraUpdateNewLatLngBounds) value).toList());
       } else if (value instanceof PlatformCameraUpdateNewLatLngZoom) {
-        stream.write(137);
+        stream.write(138);
         writeValue(stream, ((PlatformCameraUpdateNewLatLngZoom) value).toList());
       } else if (value instanceof PlatformCameraUpdateScrollBy) {
-        stream.write(138);
+        stream.write(139);
         writeValue(stream, ((PlatformCameraUpdateScrollBy) value).toList());
       } else if (value instanceof PlatformCameraUpdateZoomBy) {
-        stream.write(139);
+        stream.write(140);
         writeValue(stream, ((PlatformCameraUpdateZoomBy) value).toList());
       } else if (value instanceof PlatformCameraUpdateZoom) {
-        stream.write(140);
+        stream.write(141);
         writeValue(stream, ((PlatformCameraUpdateZoom) value).toList());
       } else if (value instanceof PlatformCameraUpdateZoomTo) {
-        stream.write(141);
+        stream.write(142);
         writeValue(stream, ((PlatformCameraUpdateZoomTo) value).toList());
       } else if (value instanceof PlatformCircle) {
-        stream.write(142);
+        stream.write(143);
         writeValue(stream, ((PlatformCircle) value).toList());
       } else if (value instanceof PlatformHeatmap) {
-        stream.write(143);
+        stream.write(144);
         writeValue(stream, ((PlatformHeatmap) value).toList());
       } else if (value instanceof PlatformClusterManager) {
-        stream.write(144);
+        stream.write(145);
         writeValue(stream, ((PlatformClusterManager) value).toList());
       } else if (value instanceof PlatformOffset) {
-        stream.write(145);
+        stream.write(146);
         writeValue(stream, ((PlatformOffset) value).toList());
       } else if (value instanceof PlatformInfoWindow) {
-        stream.write(146);
+        stream.write(147);
         writeValue(stream, ((PlatformInfoWindow) value).toList());
       } else if (value instanceof PlatformMarker) {
-        stream.write(147);
+        stream.write(148);
         writeValue(stream, ((PlatformMarker) value).toList());
       } else if (value instanceof PlatformPolygon) {
-        stream.write(148);
+        stream.write(149);
         writeValue(stream, ((PlatformPolygon) value).toList());
       } else if (value instanceof PlatformPolyline) {
-        stream.write(149);
+        stream.write(150);
         writeValue(stream, ((PlatformPolyline) value).toList());
       } else if (value instanceof PlatformPatternItem) {
-        stream.write(139);
+        stream.write(151);
         writeValue(stream, ((PlatformPatternItem) value).toList());
       } else if (value instanceof PlatformTile) {
-        stream.write(140);
+        stream.write(152);
         writeValue(stream, ((PlatformTile) value).toList());
       } else if (value instanceof PlatformTileOverlay) {
-        stream.write(141);
+        stream.write(153);
         writeValue(stream, ((PlatformTileOverlay) value).toList());
       } else if (value instanceof PlatformEdgeInsets) {
-        stream.write(142);
+        stream.write(154);
         writeValue(stream, ((PlatformEdgeInsets) value).toList());
       } else if (value instanceof PlatformLatLng) {
-        stream.write(143);
+        stream.write(155);
         writeValue(stream, ((PlatformLatLng) value).toList());
       } else if (value instanceof PlatformLatLngBounds) {
-        stream.write(144);
+        stream.write(156);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(145);
+        stream.write(157);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformCameraTargetBounds) {
-        stream.write(146);
+        stream.write(158);
         writeValue(stream, ((PlatformCameraTargetBounds) value).toList());
       } else if (value instanceof PlatformMapViewCreationParams) {
-        stream.write(147);
+        stream.write(159);
         writeValue(stream, ((PlatformMapViewCreationParams) value).toList());
       } else if (value instanceof PlatformMapConfiguration) {
-        stream.write(148);
+        stream.write(160);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(149);
+        stream.write(161);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(150);
+        stream.write(162);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(151);
+        stream.write(163);
         writeValue(stream, ((PlatformZoomRange) value).toList());
-      } else if (value instanceof PlatformMapType) {
-        stream.write(152);
-        writeValue(stream, value == null ? null : ((PlatformMapType) value).index);
-      } else if (value instanceof PlatformRendererType) {
-        stream.write(153);
-        writeValue(stream, value == null ? null : ((PlatformRendererType) value).index);
-      } else if (value instanceof PlatformJointType) {
-        stream.write(154);
-        writeValue(stream, value == null ? null : ((PlatformJointType) value).index);
-      } else if (value instanceof PlatformPatternItemType) {
-        stream.write(155);
-        writeValue(stream, value == null ? null : ((PlatformPatternItemType) value).index);
       } else {
         super.writeValue(stream, value);
       }
