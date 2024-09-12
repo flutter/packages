@@ -1166,6 +1166,7 @@ PlatformJointType platformJointTypeFromJointType(JointType jointType) {
   return PlatformJointType.mitered;
 }
 
+/// Converts platform interface's Cap to Pigeon's PlatformCap.
 @visibleForTesting
 PlatformCap platformCapFromCap(Cap cap) {
   final List<Object> json = cap.toJson() as List<Object>;
@@ -1184,9 +1185,14 @@ PlatformCap platformCapFromCap(Cap cap) {
           type: PlatformCapType.customCap,
           bitmapDescriptor: bitmapDescriptor,
           refWidth: refWidth);
-    default:
-      throw ArgumentError('Unrecognized Cap type "$tag".', 'cap');
   }
+  // The string tags used to identify the type of cap comes from a different
+  // package, which could get a new value at
+  // any time, so provide a fallback that ensures this won't break when used
+  // with a version that contains new values. This is deliberately outside
+  // the switch rather than a `default` so that the linter will flag the
+  // switch as needing an update.
+  return PlatformCap(type: PlatformCapType.buttCap);
 }
 
 /// Update specification for a set of [TileOverlay]s.
