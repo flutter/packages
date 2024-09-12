@@ -3,13 +3,11 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'about_page.dart';
 import 'home_page.dart';
 
 void main() {
-  usePathUrlStrategy();
   runApp(const MyApp());
 }
 
