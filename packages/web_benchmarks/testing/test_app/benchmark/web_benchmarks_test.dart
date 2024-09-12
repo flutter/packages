@@ -29,6 +29,27 @@ Future<void> main() async {
   );
 
   test(
+    'Can run a web benchmark with an alternate initial page',
+    () async {
+      final BenchmarkResults results = await _runBenchmarks(
+        benchmarkNames: <String>['simple'],
+        entryPoint: 'lib/benchmarks/runner_simple.dart',
+        initialPage: 'index.html#about',
+      );
+
+      // The simple runner just puts an `isWasm` metric in there so we can make
+      // sure that we're running in the right environment.
+      final List<BenchmarkScore>? scores = results.scores['simple'];
+      expect(scores, isNotNull);
+
+      final BenchmarkScore isWasmScore = scores!
+          .firstWhere((BenchmarkScore score) => score.metric == 'isWasm');
+      expect(isWasmScore.value, 0);
+    },
+    timeout: Timeout.none,
+  );
+
+  test(
     'Can run a web benchmark with wasm',
     () async {
       final BenchmarkResults results = await _runBenchmarks(
@@ -55,14 +76,14 @@ Future<void> main() async {
 Future<BenchmarkResults> _runBenchmarks({
   required List<String> benchmarkNames,
   required String entryPoint,
-  String benchmarkPath = defaultInitialPath,
+  String initialPage = defaultInitialPage,
   CompilationOptions compilationOptions = const CompilationOptions.js(),
 }) async {
   final BenchmarkResults taskResult = await serveWebBenchmark(
     benchmarkAppDirectory: Directory('testing/test_app'),
     entryPoint: entryPoint,
     treeShakeIcons: false,
-    benchmarkPath: benchmarkPath,
+    initialPage: initialPage,
     compilationOptions: compilationOptions,
   );
 
