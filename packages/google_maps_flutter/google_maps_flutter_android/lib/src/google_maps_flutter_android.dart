@@ -1173,6 +1173,7 @@ PlatformPatternItem platformPatternItemFromPatternItem(PatternItem item) {
   final String tag = json[0] as String;
   PlatformPatternItemType type;
   double? length;
+
   /// These string values identify the type of pattern. They are defined and
   /// used in the PatternItem class's factory methods in
   /// lib/src/types/pattern_item.dart, in the
