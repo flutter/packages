@@ -1,6 +1,6 @@
 ## 22.4.0
 
-* Adds support for nullable types in collections.
+* Adds support for non-nullable types in collections.
 
 ## 22.3.0
 
