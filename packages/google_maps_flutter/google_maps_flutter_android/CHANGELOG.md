@@ -1,3 +1,7 @@
+## 2.14.6
+
+* Adds `PlatformCap` for `PlatformPolyline.startCap` and `endCap`.
+
 ## 2.14.5
 
 * Converts `JointType` to enum.
