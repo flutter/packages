@@ -1180,7 +1180,10 @@ PlatformCap platformCapFromCap(Cap cap) {
     case 'customCap':
       final Object bitmapDescriptor = json[1];
       final double refWidth = json[2] as double;
-      return PlatformCap(type: PlatformCapType.customCap, bitmapDescriptor: bitmapDescriptor, refWidth: refWidth);
+      return PlatformCap(
+          type: PlatformCapType.customCap,
+          bitmapDescriptor: bitmapDescriptor,
+          refWidth: refWidth);
     default:
       throw ArgumentError('Unrecognized Cap type "$tag".', 'cap');
   }
