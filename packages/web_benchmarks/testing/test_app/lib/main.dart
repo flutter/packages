@@ -28,7 +28,6 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         'home': (_) => const HomePage(title: 'Flutter Demo Home Page'),
         'about': (_) => const AboutPage(),
-        'icon_generator': (_) => const IconGeneratorPage(),
       },
     );
   }
