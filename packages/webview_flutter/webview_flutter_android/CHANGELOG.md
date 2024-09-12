@@ -1,7 +1,3 @@
-## 3.16.8
-
-* Updates example app to target SDK 34.
-
 ## 3.16.7
 
 * Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.

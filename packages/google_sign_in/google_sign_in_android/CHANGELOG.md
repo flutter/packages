@@ -1,7 +1,3 @@
-## 6.1.31
-
-* Updates example app to target SDK 34.
-
 ## 6.1.30
 
 * Temporarily downgrades Guava from version 33.3.0 to 32.0.1 to fix an R8 related error.
