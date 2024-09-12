@@ -59,8 +59,8 @@ class Automator {
         await _handleAppTap();
       case BenchmarkName.simpleCompilationCheck:
         _handleSimpleCompilationCheck();
-      case BenchmarkName.simpleInitialPageCheck:
-        _handleSimpleInitialPageCheck();
+      case BenchmarkName.simpleBenchmarkPathCheck:
+        _handleSimpleBenchmarkPathCheck();
     }
 
     // At the end of the test, mark as finished.
@@ -117,12 +117,12 @@ class Automator {
     profile.extraData['isWasm'] = kIsWasm ? 1 : 0;
   }
 
-  void _handleSimpleInitialPageCheck() {
-    // Record whether the URL contains the expected initial page so we can
-    // verify the behavior of setting the `initialPage` on the benchmark server.
-    final bool containsExpectedPage =
-        window.location.toString().contains(testBenchmarkInitialPage);
-    profile.extraData['expectedUrl'] = containsExpectedPage ? 1 : 0;
+  void _handleSimpleBenchmarkPathCheck() {
+    // Record whether the URL contains the expected path so we can verify the
+    // behavior of setting the `benchmarkPath` on the benchmark server.
+    final bool containsExpectedPath =
+        window.location.toString().contains(testBenchmarkPath);
+    profile.extraData['expectedUrl'] = containsExpectedPath ? 1 : 0;
   }
 }
 

@@ -53,6 +53,9 @@ class BenchmarkServer {
   /// [compilationOptions] specify the compiler and renderer to use for the
   /// benchmark app. This can either use dart2wasm & skwasm or
   /// dart2js & canvaskit.
+  /// 
+  /// [benchmarkPath] spcifies the path for the URL that will be loaded upon
+  /// opening the benchmark app in Chrome.
   BenchmarkServer({
     required this.benchmarkAppDirectory,
     required this.entryPoint,
@@ -61,7 +64,7 @@ class BenchmarkServer {
     required this.headless,
     required this.treeShakeIcons,
     this.compilationOptions = const CompilationOptions.js(),
-    this.initialPage = defaultInitialPage,
+    this.benchmarkPath = defaultInitialPath,
   });
 
   final ProcessManager _processManager = const LocalProcessManager();
@@ -97,13 +100,25 @@ class BenchmarkServer {
   /// When false, '--no-tree-shake-icons' will be passed as a build argument.
   final bool treeShakeIcons;
 
-  /// The initial page to load upon opening the benchmark app in Chrome.
+  /// The initial path for the URL that will be loaded upon opening the
+  /// benchmark app in Chrome.
   ///
-  /// The default value is [defaultInitialPage].
-  final String initialPage;
+  /// This path should contain the path segments, fragment, and/or query
+  /// parameters that are required for the benchmark. This value will be parsed
+  /// by `Uri.parse` and combined with the benchmark URI scheme ('http'), host
+  /// ('localhost'), and port [benchmarkServerPort] to create the URL for
+  /// loading in Chrome. See [_benchmarkAppUrl].
+  ///
+  /// The default value is [defaultInitialPath].
+  final String benchmarkPath;
 
-  String get _benchmarkAppUrl =>
-      'http://localhost:$benchmarkServerPort/$initialPage';
+  String get _benchmarkAppUrl => Uri.parse(benchmarkPath)
+      .replace(
+        scheme: 'http',
+        host: 'localhost',
+        port: benchmarkServerPort,
+      )
+      .toString();
 
   /// Builds and serves the benchmark app, and collects benchmark results.
   Future<BenchmarkResults> run() async {

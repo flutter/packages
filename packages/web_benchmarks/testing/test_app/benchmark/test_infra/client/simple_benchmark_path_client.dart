@@ -10,8 +10,8 @@ import '../recorder.dart';
 Future<void> main() async {
   await runBenchmarks(
     <String, RecorderFactory>{
-      BenchmarkName.simpleInitialPageCheck.name: () => TestAppRecorder(
-            benchmark: BenchmarkName.simpleInitialPageCheck,
+      BenchmarkName.simpleBenchmarkPathCheck.name: () => TestAppRecorder(
+            benchmark: BenchmarkName.simpleBenchmarkPathCheck,
           ),
     },
   );
