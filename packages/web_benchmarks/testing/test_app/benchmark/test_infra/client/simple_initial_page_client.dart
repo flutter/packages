@@ -14,6 +14,5 @@ Future<void> main() async {
             benchmark: BenchmarkName.simpleInitialPageCheck,
           ),
     },
-    initialPage: testBenchmarkInitialPage,
   );
 }
