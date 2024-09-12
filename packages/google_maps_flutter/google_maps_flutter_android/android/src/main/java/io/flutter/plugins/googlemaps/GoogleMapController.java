@@ -933,7 +933,7 @@ class GoogleMapController
       throw new FlutterError(
           "GoogleMap uninitialized", "moveCamera called prior to map initialization", null);
     }
-    googleMap.moveCamera(Convert.toCameraUpdate(cameraUpdate.getJson(), density));
+    googleMap.moveCamera(Convert.cameraUpdateFromPigeon(cameraUpdate, density));
   }
 
   @Override
@@ -942,7 +942,7 @@ class GoogleMapController
       throw new FlutterError(
           "GoogleMap uninitialized", "animateCamera called prior to map initialization", null);
     }
-    googleMap.animateCamera(Convert.toCameraUpdate(cameraUpdate.getJson(), density));
+    googleMap.animateCamera(Convert.cameraUpdateFromPigeon(cameraUpdate, density));
   }
 
   @Override

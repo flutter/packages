@@ -1,3 +1,7 @@
+## 2.14.6
+
+* Converts 'PlatformCameraUpdate' to pigeon.
+
 ## 2.14.5
 
 * Converts `JointType` to enum.
