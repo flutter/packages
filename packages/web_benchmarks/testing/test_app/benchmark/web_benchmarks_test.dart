@@ -10,43 +10,38 @@ import 'package:test/test.dart';
 import 'package:web_benchmarks/server.dart';
 import 'package:web_benchmarks/src/common.dart';
 
+import 'test_infra/common.dart';
+
 Future<void> main() async {
-  test('Can run a web benchmark', () async {
-    await _runBenchmarks(
-      benchmarkNames: <String>['scroll', 'page', 'tap'],
-      entryPoint: 'lib/benchmarks/runner.dart',
-    );
-  }, timeout: Timeout.none);
-
-  test('Can run a web benchmark with an alternate initial page', () async {
-    final BenchmarkResults results = await _runBenchmarks(
-      benchmarkNames: <String>['simple'],
-      entryPoint: 'lib/benchmarks/runner_simple.dart',
-      initialPage: 'index.html#about',
-    );
-
-    // The simple runner just puts an `isWasm` metric in there so we can make
-    // sure that we're running in the right environment.
-    final List<BenchmarkScore>? scores = results.scores['simple'];
-    expect(scores, isNotNull);
-
-    final BenchmarkScore isWasmScore =
-        scores!.firstWhere((BenchmarkScore score) => score.metric == 'isWasm');
-    expect(isWasmScore.value, 0);
-  }, timeout: Timeout.none);
+  test(
+    'Can run a web benchmark',
+    () async {
+      await _runBenchmarks(
+        benchmarkNames: <String>[
+          BenchmarkName.appNavigate.name,
+          BenchmarkName.appScroll.name,
+          BenchmarkName.appTap.name,
+        ],
+        entryPoint: 'benchmark/test_infra/client/app_client.dart',
+      );
+    },
+    timeout: Timeout.none,
+  );
 
   test(
     'Can run a web benchmark with wasm',
     () async {
       final BenchmarkResults results = await _runBenchmarks(
-        benchmarkNames: <String>['simple'],
-        entryPoint: 'lib/benchmarks/runner_simple.dart',
+        benchmarkNames: <String>[BenchmarkName.simpleCompilationCheck.name],
+        entryPoint:
+            'benchmark/test_infra/client/simple_compilation_client.dart',
         compilationOptions: const CompilationOptions.wasm(),
       );
 
       // The simple runner just puts an `isWasm` metric in there so we can make
       // sure that we're running in the right environment.
-      final List<BenchmarkScore>? scores = results.scores['simple'];
+      final List<BenchmarkScore>? scores =
+          results.scores[BenchmarkName.simpleCompilationCheck.name];
       expect(scores, isNotNull);
 
       final BenchmarkScore isWasmScore = scores!
@@ -60,14 +55,14 @@ Future<void> main() async {
 Future<BenchmarkResults> _runBenchmarks({
   required List<String> benchmarkNames,
   required String entryPoint,
-  String initialPage = defaultInitialPage,
+  String benchmarkPath = defaultInitialPath,
   CompilationOptions compilationOptions = const CompilationOptions.js(),
 }) async {
   final BenchmarkResults taskResult = await serveWebBenchmark(
     benchmarkAppDirectory: Directory('testing/test_app'),
     entryPoint: entryPoint,
     treeShakeIcons: false,
-    initialPage: initialPage,
+    benchmarkPath: benchmarkPath,
     compilationOptions: compilationOptions,
   );
 
