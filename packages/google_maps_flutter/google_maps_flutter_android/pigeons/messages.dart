@@ -213,8 +213,7 @@ class PlatformPolyline {
   /// The joint type.
   final PlatformJointType jointType;
 
-  /// The pattern data, as JSON. Each element in this list should be set only from PatternItem.toJson, and the native code must interpret it according to the internal implementation details of that method.
-  // TODO(schectman): Convert field to structured data.
+  /// The pattern data, as a list of pattern items.
   final List<PlatformPatternItem?> patterns;
   final List<PlatformLatLng?> points;
 
