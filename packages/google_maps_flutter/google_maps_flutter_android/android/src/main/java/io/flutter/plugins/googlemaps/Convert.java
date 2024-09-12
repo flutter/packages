@@ -316,10 +316,6 @@ class Convert {
     return bitmapDescriptorFactory.fromAsset(assetKey);
   }
 
-  private static boolean toBoolean(Object o) {
-    return (Boolean) o;
-  }
-
   static @NonNull CameraPosition cameraPositionFromPigeon(
       @NonNull Messages.PlatformCameraPosition position) {
     final CameraPosition.Builder builder = CameraPosition.builder();
@@ -512,18 +508,6 @@ class Convert {
 
   private static Map<?, ?> toMap(Object o) {
     return (Map<?, ?>) o;
-  }
-
-  private static Map<String, Object> toObjectMap(Object o) {
-    Map<String, Object> hashMap = new HashMap<>();
-    Map<?, ?> map = (Map<?, ?>) o;
-    for (Object key : map.keySet()) {
-      Object object = map.get(key);
-      if (object != null) {
-        hashMap.put((String) key, object);
-      }
-    }
-    return hashMap;
   }
 
   private static float toFractionalPixels(Object o, float density) {
@@ -891,35 +875,6 @@ class Convert {
           break;
       }
     }
-    return pattern;
-  }
-
-  private static List<PatternItem> toPattern(Object o) {
-    final List<?> data = toList(o);
-
-    if (data.isEmpty()) {
-      return null;
-    }
-
-    final List<PatternItem> pattern = new ArrayList<>(data.size());
-
-    for (Object ob : data) {
-      final List<?> patternItem = toList(ob);
-      switch (toString(patternItem.get(0))) {
-        case "dot":
-          pattern.add(new Dot());
-          break;
-        case "dash":
-          pattern.add(new Dash(toFloat(patternItem.get(1))));
-          break;
-        case "gap":
-          pattern.add(new Gap(toFloat(patternItem.get(1))));
-          break;
-        default:
-          throw new IllegalArgumentException("Cannot interpret " + pattern + " as PatternItem");
-      }
-    }
-
     return pattern;
   }
 
