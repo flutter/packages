@@ -776,8 +776,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       polylineId: polyline.polylineId.value,
       consumesTapEvents: polyline.consumeTapEvents,
       color: polyline.color.value,
-      startCap: polyline.startCap.toJson(),
-      endCap: polyline.endCap.toJson(),
+      startCap: platformCapFromCap(polyline.startCap),
+      endCap: platformCapFromCap(polyline.endCap),
       geodesic: polyline.geodesic,
       visible: polyline.visible,
       width: polyline.width,
@@ -1164,6 +1164,26 @@ PlatformJointType platformJointTypeFromJointType(JointType jointType) {
   // switch as needing an update.
   // ignore: dead_code
   return PlatformJointType.mitered;
+}
+
+@visibleForTesting
+PlatformCap platformCapFromCap(Cap cap) {
+  final List<Object> json = cap.toJson() as List<Object>;
+  final String tag = json[0] as String;
+  switch (tag) {
+    case 'buttCap':
+      return PlatformCap(type: PlatformCapType.buttCap);
+    case 'roundCap':
+      return PlatformCap(type: PlatformCapType.roundCap);
+    case 'squareCap':
+      return PlatformCap(type: PlatformCapType.squareCap);
+    case 'customCap':
+      final Object bitmapDescriptor = json[1];
+      final double refWidth = json[2] as double;
+      return PlatformCap(type: PlatformCapType.customCap, bitmapDescriptor: bitmapDescriptor, refWidth: refWidth);
+    default:
+      throw ArgumentError('Unrecognized Cap type "$tag".', 'cap');
+  }
 }
 
 /// Update specification for a set of [TileOverlay]s.
