@@ -86,8 +86,8 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
   public void onSurfaceCreated() {
-    exoPlayer = createVideoPlayer();
     if (savedStateDuring != null) {
+      exoPlayer = createVideoPlayer();
       savedStateDuring.restore(exoPlayer);
       savedStateDuring = null;
     }
