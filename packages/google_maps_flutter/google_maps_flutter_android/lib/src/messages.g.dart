@@ -528,6 +528,7 @@ class PlatformCap {
 
   PlatformCapType type;
 
+  /// The JSON data returned by BitmapDescriptor.toJson.
   Object? bitmapDescriptor;
 
   double? refWidth;

@@ -2129,6 +2129,7 @@ public class Messages {
       this.type = setterArg;
     }
 
+    /** The JSON data returned by BitmapDescriptor.toJson. */
     private @Nullable Object bitmapDescriptor;
 
     public @Nullable Object getBitmapDescriptor() {
