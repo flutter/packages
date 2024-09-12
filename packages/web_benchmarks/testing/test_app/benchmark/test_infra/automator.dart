@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:test_app/home_page.dart' show aboutPageKey, textKey;
 import 'package:test_app/main.dart';
-import 'package:web/web.dart';
 import 'package:web_benchmarks/client.dart';
 
 import 'common.dart';
