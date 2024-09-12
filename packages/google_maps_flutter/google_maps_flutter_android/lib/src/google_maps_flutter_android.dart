@@ -1178,6 +1178,8 @@ PlatformPatternItem platformPatternItemFromPatternItem(PatternItem item) {
   /// used in the PatternItem class's factory methods in
   /// lib/src/types/pattern_item.dart, in the
   /// google_maps_flutter_platform_interface package.
+  // TODO(schectman): Convert PatternItem to structured data.
+  // https://github.com/flutter/flutter/issues/155121
   switch (tag) {
     case 'dot':
       type = PlatformPatternItemType.dot;
