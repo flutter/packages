@@ -59,8 +59,6 @@ class Automater {
         await _handleAppTap();
       case BenchmarkName.simpleCompilationCheck:
         _handleSimpleCompilationCheck();
-      case BenchmarkName.simpleBenchmarkPathCheck:
-        _handleSimpleBenchmarkPathCheck();
     }
 
     // At the end of the test, mark as finished.
@@ -115,14 +113,6 @@ class Automater {
     // pass information about the environment back to the server for the
     // purposes of our own tests.
     profile.extraData['isWasm'] = kIsWasm ? 1 : 0;
-  }
-
-  void _handleSimpleBenchmarkPathCheck() {
-    // Record whether the URL contains the expected path so we can verify the
-    // behavior of setting the `benchmarkPath` on the benchmark server.
-    final bool containsExpectedPath =
-        window.location.toString().contains(testBenchmarkPath);
-    profile.extraData['expectedUrl'] = containsExpectedPath ? 1 : 0;
   }
 }
 
