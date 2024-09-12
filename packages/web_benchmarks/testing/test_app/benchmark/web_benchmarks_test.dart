@@ -32,19 +32,22 @@ Future<void> main() async {
     'Can run a web benchmark with an alternate initial page',
     () async {
       final BenchmarkResults results = await _runBenchmarks(
-        benchmarkNames: <String>['simple'],
-        entryPoint: 'lib/benchmarks/runner_simple.dart',
-        initialPage: 'index.html#about',
+        benchmarkNames: <String>[BenchmarkName.simpleInitialPageCheck.name],
+        entryPoint:
+            'benchmark/test_infra/client/simple_initial_page_client.dart',
+        initialPage: testBenchmarkInitialPage,
       );
 
-      // The simple runner just puts an `isWasm` metric in there so we can make
-      // sure that we're running in the right environment.
-      final List<BenchmarkScore>? scores = results.scores['simple'];
+      // The runner puts an `expectedUrl` metric in the results so that we can
+      // verify the initial page value that should be passed on initial load
+      // and on reloads.
+      final List<BenchmarkScore>? scores =
+          results.scores[BenchmarkName.simpleInitialPageCheck.name];
       expect(scores, isNotNull);
 
       final BenchmarkScore isWasmScore = scores!
-          .firstWhere((BenchmarkScore score) => score.metric == 'isWasm');
-      expect(isWasmScore.value, 0);
+          .firstWhere((BenchmarkScore score) => score.metric == 'expectedUrl');
+      expect(isWasmScore.value, 1);
     },
     timeout: Timeout.none,
   );
@@ -59,8 +62,8 @@ Future<void> main() async {
         compilationOptions: const CompilationOptions.wasm(),
       );
 
-      // The simple runner just puts an `isWasm` metric in there so we can make
-      // sure that we're running in the right environment.
+      // The runner puts an `isWasm` metric in the results so that we can verify
+      // we are running with the correct compiler and renderer.
       final List<BenchmarkScore>? scores =
           results.scores[BenchmarkName.simpleCompilationCheck.name];
       expect(scores, isNotNull);

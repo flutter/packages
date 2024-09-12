@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:test_app/home_page.dart' show aboutPageKey, textKey;
 import 'package:test_app/main.dart';
+import 'package:web/web.dart';
 import 'package:web_benchmarks/client.dart';
 
 import 'common.dart';
@@ -58,6 +59,8 @@ class Automater {
         await _handleAppTap();
       case BenchmarkName.simpleCompilationCheck:
         _handleSimpleCompilationCheck();
+      case BenchmarkName.simpleInitialPageCheck:
+        _handleSimpleInitialPageCheck();
     }
 
     // At the end of the test, mark as finished.
@@ -112,6 +115,14 @@ class Automater {
     // pass information about the environment back to the server for the
     // purposes of our own tests.
     profile.extraData['isWasm'] = kIsWasm ? 1 : 0;
+  }
+
+  void _handleSimpleInitialPageCheck() {
+    // Record whether the URL contains the expected initial page so we can
+    // verify the behavior of setting the `initialPage` on the benchmark server.
+    final bool containsExpectedPage =
+        window.location.toString().contains(testBenchmarkInitialPage);
+    profile.extraData['expectedUrl'] = containsExpectedPage ? 1 : 0;
   }
 }
 
