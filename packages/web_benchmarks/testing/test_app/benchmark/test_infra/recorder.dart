@@ -18,17 +18,17 @@ class TestAppRecorder extends WidgetRecorder {
   /// See `common.dart` for the list of the names of all benchmarks.
   final BenchmarkName benchmark;
 
-  Automater? _automator;
+  Automator? _automator;
   bool get _finished => _automator?.finished ?? false;
 
   /// Whether we should continue recording.
   @override
   bool shouldContinue() => !_finished || profile.shouldContinue();
 
-  /// Creates the [Automater] widget.
+  /// Creates the [Automator] widget.
   @override
   Widget createWidget() {
-    _automator = Automater(
+    _automator = Automator(
       benchmark: benchmark,
       stopWarmingUpCallback: profile.stopWarmingUp,
       profile: profile,

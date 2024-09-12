@@ -17,8 +17,8 @@ import 'package:web_benchmarks/client.dart';
 import 'common.dart';
 
 /// A class that automates the test web app.
-class Automater {
-  Automater({
+class Automator {
+  Automator({
     required this.benchmark,
     required this.stopWarmingUpCallback,
     required this.profile,
