@@ -1,3 +1,5 @@
+## NEXT
+
 ## 0.3.2
 
 * Fixes a bug where the TreeView would not update correctly when the animation duration is zero.
