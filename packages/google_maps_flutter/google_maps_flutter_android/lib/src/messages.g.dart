@@ -50,7 +50,9 @@ enum PlatformJointType {
   round,
 }
 
-/// Enumeration of possible types of Cap.
+/// Enumeration of possible types of PlatformCap, corresponding to the
+/// subclasses of Cap in the Google Maps Android SDK.
+/// See https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
 enum PlatformCapType {
   buttCap,
   roundCap,
@@ -471,7 +473,8 @@ class PlatformPolyline {
 
   List<PlatformLatLng?> points;
 
-  /// The start and end cap data.
+  /// The cap at the start and end vertex of a polyline.
+  /// See https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
   PlatformCap startCap;
 
   PlatformCap endCap;
@@ -518,7 +521,8 @@ class PlatformPolyline {
   }
 }
 
-/// Pigeon equivalent of the Cap class.
+/// Pigeon equivalent of Cap from the platform interface.
+/// https://github.com/flutter/packages/blob/main/packages/google_maps_flutter/google_maps_flutter_platform_interface/lib/src/types/cap.dart
 class PlatformCap {
   PlatformCap({
     required this.type,
