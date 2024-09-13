@@ -198,6 +198,23 @@ public final class VideoPlayerTest {
   }
 
   @Test
+  public void onSurfaceCreatedWithoutDestroyDoesNotRecreate() {
+    // Initially create the video player, which creates the initial surface.
+    VideoPlayer videoPlayer = createVideoPlayer();
+    verify(mockProducer).getSurface();
+
+    // Capture the lifecycle events so we can simulate onSurfaceCreated/Destroyed.
+    verify(mockProducer).setCallback(callbackCaptor.capture());
+    TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
+
+    // Calling onSurfaceCreated does not do anything, since the surface was never destroyed.
+    producerLifecycle.onSurfaceCreated();
+    verifyNoMoreInteractions(mockProducer);
+
+    videoPlayer.dispose();
+  }
+
+  @Test
   public void disposeReleasesTextureAndPlayer() {
     VideoPlayer videoPlayer = createVideoPlayer();
     videoPlayer.dispose();

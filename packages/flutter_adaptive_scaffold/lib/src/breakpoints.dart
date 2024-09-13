@@ -131,6 +131,7 @@ class Breakpoints {
 ///  * [SlotLayout.config], which uses breakpoints to dictate the layout of the
 ///    screen.
 class Breakpoint {
+  // #docregion Breakpoints
   /// Returns a const [Breakpoint] with the given constraints.
   const Breakpoint({
     this.beginWidth,
@@ -139,6 +140,11 @@ class Breakpoint {
     this.endHeight,
     this.andUp = false,
     this.platform,
+    this.spacing = kMaterialMediumAndUpSpacing,
+    this.margin = kMaterialMediumAndUpMargin,
+    this.padding = kMaterialPadding,
+    this.recommendedPanes = 1,
+    this.maxPanes = 1,
   });
 
   /// Returns a [Breakpoint] that can be used as a fallthrough in the
@@ -148,6 +154,11 @@ class Breakpoint {
         endWidth = null,
         beginHeight = null,
         endHeight = null,
+        spacing = kMaterialMediumAndUpSpacing,
+        margin = kMaterialMediumAndUpMargin,
+        padding = kMaterialPadding,
+        recommendedPanes = 1,
+        maxPanes = 1,
         andUp = true;
 
   /// Returns a [Breakpoint] with the given constraints for a small screen.
@@ -155,35 +166,61 @@ class Breakpoint {
       : beginWidth = 0,
         endWidth = 600,
         beginHeight = null,
-        endHeight = 480;
+        endHeight = 480,
+        spacing = kMaterialCompactSpacing,
+        margin = kMaterialCompactMargin,
+        padding = kMaterialPadding,
+        recommendedPanes = 1,
+        maxPanes = 1;
 
   /// Returns a [Breakpoint] with the given constraints for a medium screen.
   const Breakpoint.medium({this.andUp = false, this.platform})
       : beginWidth = 600,
         endWidth = 840,
         beginHeight = 480,
-        endHeight = 900;
+        endHeight = 900,
+        spacing = kMaterialMediumAndUpSpacing,
+        margin = kMaterialMediumAndUpMargin,
+        padding = kMaterialPadding * 2,
+        recommendedPanes = 1,
+        maxPanes = 2;
 
   /// Returns a [Breakpoint] with the given constraints for a mediumLarge screen.
   const Breakpoint.mediumLarge({this.andUp = false, this.platform})
       : beginWidth = 840,
         endWidth = 1200,
         beginHeight = 900,
-        endHeight = null;
+        endHeight = null,
+        spacing = kMaterialMediumAndUpSpacing,
+        margin = kMaterialMediumAndUpMargin,
+        padding = kMaterialPadding * 3,
+        recommendedPanes = 2,
+        maxPanes = 2;
 
   /// Returns a [Breakpoint] with the given constraints for a large screen.
   const Breakpoint.large({this.andUp = false, this.platform})
       : beginWidth = 1200,
         endWidth = 1600,
         beginHeight = 900,
-        endHeight = null;
+        endHeight = null,
+        spacing = kMaterialMediumAndUpSpacing,
+        margin = kMaterialMediumAndUpMargin,
+        padding = kMaterialPadding * 4,
+        recommendedPanes = 2,
+        maxPanes = 2;
 
   /// Returns a [Breakpoint] with the given constraints for an extraLarge screen.
   const Breakpoint.extraLarge({this.andUp = false, this.platform})
       : beginWidth = 1600,
         endWidth = null,
         beginHeight = 900,
-        endHeight = null;
+        endHeight = null,
+        spacing = kMaterialMediumAndUpSpacing,
+        margin = kMaterialMediumAndUpMargin,
+        padding = kMaterialPadding * 5,
+        recommendedPanes = 2,
+        maxPanes = 3;
+  // #enddocregion Breakpoints
 
   /// A set of [TargetPlatform]s that the [Breakpoint] will be active on desktop.
   static const Set<TargetPlatform> desktop = <TargetPlatform>{
@@ -222,17 +259,32 @@ class Breakpoint {
   /// left null then it will be active on all platforms.
   final Set<TargetPlatform>? platform;
 
+  /// The default material spacing for the [Breakpoint].
+  final double spacing;
+
+  /// The default material margin for the [Breakpoint].
+  final double margin;
+
+  /// The default material padding for the [Breakpoint].
+  final double padding;
+
+  /// The material recommended number of panes for the [Breakpoint].
+  final int recommendedPanes;
+
+  /// The material maximum number of panes that can be displayed on the [Breakpoint].
+  final int maxPanes;
+
   /// A method that returns true based on conditions related to the context of
   /// the screen such as MediaQuery.sizeOf(context).width, MediaQuery.sizeOf(context).height
   /// and MediaQuery.orientationOf(context).
   bool isActive(BuildContext context) {
     final TargetPlatform host = Theme.of(context).platform;
     final bool isRightPlatform = platform?.contains(host) ?? true;
-    final bool isDesktop = Breakpoint.desktop.contains(host);
 
     final double width = MediaQuery.sizeOf(context).width;
     final double height = MediaQuery.sizeOf(context).height;
     final Orientation orientation = MediaQuery.orientationOf(context);
+    final bool isPortrait = orientation == Orientation.portrait;
 
     final double lowerBoundWidth = beginWidth ?? double.negativeInfinity;
     final double upperBoundWidth = endWidth ?? double.infinity;
@@ -244,11 +296,9 @@ class Breakpoint {
         ? width >= lowerBoundWidth
         : width >= lowerBoundWidth && width < upperBoundWidth;
 
-    final bool isHeightActive = isDesktop ||
-        orientation == Orientation.portrait ||
-        (orientation == Orientation.landscape && andUp
-            ? isWidthActive || height >= lowerBoundHeight
-            : height >= lowerBoundHeight && height < upperBoundHeight);
+    final bool isHeightActive = isPortrait || isWidthActive || andUp
+        ? isWidthActive || height >= lowerBoundHeight
+        : height >= lowerBoundHeight && height < upperBoundHeight;
 
     return isWidthActive && isHeightActive && isRightPlatform;
   }
@@ -293,5 +343,85 @@ class Breakpoint {
       }
     }
     return currentBreakpoint;
+  }
+
+  /// Returns true if the current platform is Desktop.
+  static bool isDesktop(BuildContext context) {
+    return Breakpoint.desktop.contains(Theme.of(context).platform);
+  }
+
+  /// Returns true if the current platform is Mobile.
+  static bool isMobile(BuildContext context) {
+    return Breakpoint.mobile.contains(Theme.of(context).platform);
+  }
+
+  // #docregion Breakpoint operators
+  /// Returns true if this [Breakpoint] is greater than the given [Breakpoint].
+  bool operator >(Breakpoint breakpoint)
+  // #enddocregion Breakpoint operators
+  {
+    return (beginWidth ?? double.negativeInfinity) >
+            (breakpoint.beginWidth ?? double.negativeInfinity) &&
+        (endWidth ?? double.infinity) >
+            (breakpoint.endWidth ?? double.infinity) &&
+        (beginHeight ?? double.negativeInfinity) >
+            (breakpoint.beginHeight ?? double.negativeInfinity) &&
+        (endHeight ?? double.infinity) >
+            (breakpoint.endHeight ?? double.infinity);
+  }
+
+  // #docregion Breakpoint operators
+  /// Returns true if this [Breakpoint] is less than the given [Breakpoint].
+  bool operator <(Breakpoint breakpoint)
+  // #enddocregion Breakpoint operators
+  {
+    return (endWidth ?? double.infinity) <
+            (breakpoint.endWidth ?? double.infinity) &&
+        (beginWidth ?? double.negativeInfinity) <
+            (breakpoint.beginWidth ?? double.negativeInfinity) &&
+        (endHeight ?? double.infinity) <
+            (breakpoint.endHeight ?? double.infinity) &&
+        (beginHeight ?? double.negativeInfinity) <
+            (breakpoint.beginHeight ?? double.negativeInfinity);
+  }
+
+  // #docregion Breakpoint operators
+  /// Returns true if this [Breakpoint] is greater than or equal to the
+  /// given [Breakpoint].
+  bool operator >=(Breakpoint breakpoint)
+  // #enddocregion Breakpoint operators
+  {
+    return (beginWidth ?? double.negativeInfinity) >=
+            (breakpoint.beginWidth ?? double.negativeInfinity) &&
+        (endWidth ?? double.infinity) >=
+            (breakpoint.endWidth ?? double.infinity) &&
+        (beginHeight ?? double.negativeInfinity) >=
+            (breakpoint.beginHeight ?? double.negativeInfinity) &&
+        (endHeight ?? double.infinity) >=
+            (breakpoint.endHeight ?? double.infinity);
+  }
+
+  // #docregion Breakpoint operators
+  /// Returns true if this [Breakpoint] is less than or equal to the
+  /// given [Breakpoint].
+  bool operator <=(Breakpoint breakpoint)
+  // #enddocregion Breakpoint operators
+  {
+    return (endWidth ?? double.infinity) <=
+            (breakpoint.endWidth ?? double.infinity) &&
+        (beginWidth ?? double.negativeInfinity) <=
+            (breakpoint.beginWidth ?? double.negativeInfinity) &&
+        (endHeight ?? double.infinity) <=
+            (breakpoint.endHeight ?? double.infinity) &&
+        (beginHeight ?? double.negativeInfinity) <=
+            (breakpoint.beginHeight ?? double.negativeInfinity);
+  }
+
+  // #docregion Breakpoint operators
+  /// Returns true if this [Breakpoint] is between the given [Breakpoint]s.
+  bool between(Breakpoint lower, Breakpoint upper)
+  // #enddocregion Breakpoint operators
+  {
+    return this >= lower && this < upper;
   }
 }

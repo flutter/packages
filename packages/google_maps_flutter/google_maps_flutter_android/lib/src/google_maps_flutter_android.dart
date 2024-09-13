@@ -362,7 +362,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     required int mapId,
   }) {
     return _hostApi(mapId)
-        .animateCamera(PlatformCameraUpdate(json: cameraUpdate.toJson()));
+        .animateCamera(_platformCameraUpdateFromCameraUpdate(cameraUpdate));
   }
 
   @override
@@ -371,7 +371,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     required int mapId,
   }) {
     return _hostApi(mapId)
-        .moveCamera(PlatformCameraUpdate(json: cameraUpdate.toJson()));
+        .moveCamera(_platformCameraUpdateFromCameraUpdate(cameraUpdate));
   }
 
   @override
@@ -783,7 +783,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       width: polyline.width,
       zIndex: polyline.zIndex,
       points: points,
-      jointType: polyline.jointType.value,
+      jointType: platformJointTypeFromJointType(polyline.jointType),
       patterns: pattern,
     );
   }
@@ -798,6 +798,60 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       visible: tileOverlay.visible,
       tileSize: tileOverlay.tileSize,
     );
+  }
+
+  static PlatformCameraUpdate _platformCameraUpdateFromCameraUpdate(
+      CameraUpdate update) {
+    switch (update.updateType) {
+      case CameraUpdateType.newCameraPosition:
+        update as CameraUpdateNewCameraPosition;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateNewCameraPosition(
+                cameraPosition: _platformCameraPositionFromCameraPosition(
+                    update.cameraPosition)));
+      case CameraUpdateType.newLatLng:
+        update as CameraUpdateNewLatLng;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateNewLatLng(
+                latLng: _platformLatLngFromLatLng(update.latLng)));
+      case CameraUpdateType.newLatLngZoom:
+        update as CameraUpdateNewLatLngZoom;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateNewLatLngZoom(
+                latLng: _platformLatLngFromLatLng(update.latLng),
+                zoom: update.zoom));
+      case CameraUpdateType.newLatLngBounds:
+        update as CameraUpdateNewLatLngBounds;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateNewLatLngBounds(
+                bounds: _platformLatLngBoundsFromLatLngBounds(update.bounds)!,
+                padding: update.padding));
+      case CameraUpdateType.zoomTo:
+        update as CameraUpdateZoomTo;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateZoomTo(zoom: update.zoom));
+      case CameraUpdateType.zoomBy:
+        update as CameraUpdateZoomBy;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateZoomBy(
+                amount: update.amount,
+                focus: update.focus == null
+                    ? null
+                    : _platformOffsetFromOffset(update.focus!)));
+      case CameraUpdateType.zoomIn:
+        update as CameraUpdateZoomIn;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateZoom(out: false));
+      case CameraUpdateType.zoomOut:
+        update as CameraUpdateZoomOut;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateZoom(out: true));
+      case CameraUpdateType.scrollBy:
+        update as CameraUpdateScrollBy;
+        return PlatformCameraUpdate(
+            cameraUpdate:
+                PlatformCameraUpdateScrollBy(dx: update.dx, dy: update.dy));
+    }
   }
 }
 
@@ -1144,6 +1198,26 @@ PlatformZoomRange? _platformZoomRangeFromMinMaxZoomPreferenceJson(
   final List<double?> minMaxZoom =
       (zoomPrefsJson as List<Object?>).cast<double?>();
   return PlatformZoomRange(min: minMaxZoom[0], max: minMaxZoom[1]);
+}
+
+/// Converts platform interface's JointType to Pigeon's PlatformJointType.
+@visibleForTesting
+PlatformJointType platformJointTypeFromJointType(JointType jointType) {
+  switch (jointType) {
+    case JointType.mitered:
+      return PlatformJointType.mitered;
+    case JointType.bevel:
+      return PlatformJointType.bevel;
+    case JointType.round:
+      return PlatformJointType.round;
+  }
+  // The enum comes from a different package, which could get a new value at
+  // any time, so provide a fallback that ensures this won't break when used
+  // with a version that contains new values. This is deliberately outside
+  // the switch rather than a `default` so that the linter will flag the
+  // switch as needing an update.
+  // ignore: dead_code
+  return PlatformJointType.mitered;
 }
 
 /// Update specification for a set of [TileOverlay]s.

@@ -12,6 +12,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   private var flutterApi: FlutterIntegrationCoreApi? = null
   private var flutterSmallApiOne: FlutterSmallApi? = null
   private var flutterSmallApiTwo: FlutterSmallApi? = null
+  private var proxyApiRegistrar: ProxyApiRegistrar? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -22,9 +23,14 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
     flutterSmallApiTwo = FlutterSmallApi(binding.binaryMessenger, "suffixTwo")
+
+    proxyApiRegistrar = ProxyApiRegistrar(binding.binaryMessenger)
+    proxyApiRegistrar!!.setUp()
   }
 
-  override fun onDetachedFromEngine(binding: FlutterPluginBinding) {}
+  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+    proxyApiRegistrar?.tearDown()
+  }
 
   // HostIntegrationCoreApi
 
@@ -84,6 +90,22 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return list
   }
 
+  override fun echoEnumList(enumList: List<AnEnum?>): List<AnEnum?> {
+    return enumList
+  }
+
+  override fun echoClassList(classList: List<AllNullableTypes?>): List<AllNullableTypes?> {
+    return classList
+  }
+
+  override fun echoNonNullEnumList(enumList: List<AnEnum>): List<AnEnum> {
+    return enumList
+  }
+
+  override fun echoNonNullClassList(classList: List<AllNullableTypes>): List<AllNullableTypes> {
+    return classList
+  }
+
   override fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
     return map
   }
@@ -94,6 +116,34 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
     return intMap
+  }
+
+  override fun echoEnumMap(enumMap: Map<AnEnum?, AnEnum?>): Map<AnEnum?, AnEnum?> {
+    return enumMap
+  }
+
+  override fun echoClassMap(
+      classMap: Map<Long?, AllNullableTypes?>
+  ): Map<Long?, AllNullableTypes?> {
+    return classMap
+  }
+
+  override fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String> {
+    return stringMap
+  }
+
+  override fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
+    return intMap
+  }
+
+  override fun echoNonNullEnumMap(enumMap: Map<AnEnum, AnEnum>): Map<AnEnum, AnEnum> {
+    return enumMap
+  }
+
+  override fun echoNonNullClassMap(
+      classMap: Map<Long, AllNullableTypes>
+  ): Map<Long, AllNullableTypes> {
+    return classMap
   }
 
   override fun echoClassWrapper(wrapper: AllClassesWrapper): AllClassesWrapper {
@@ -125,7 +175,10 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun createNestedNullableString(nullableString: String?): AllClassesWrapper {
-    return AllClassesWrapper(AllNullableTypes(aNullableString = nullableString))
+    return AllClassesWrapper(
+        AllNullableTypes(aNullableString = nullableString),
+        classList = arrayOf<AllTypes>().toList(),
+        classMap = HashMap())
   }
 
   override fun sendMultipleNullableTypes(
@@ -178,6 +231,26 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return aNullableList
   }
 
+  override fun echoNullableEnumList(enumList: List<AnEnum?>?): List<AnEnum?>? {
+    return enumList
+  }
+
+  override fun echoNullableClassList(
+      classList: List<AllNullableTypes?>?
+  ): List<AllNullableTypes?>? {
+    return classList
+  }
+
+  override fun echoNullableNonNullEnumList(enumList: List<AnEnum>?): List<AnEnum>? {
+    return enumList
+  }
+
+  override fun echoNullableNonNullClassList(
+      classList: List<AllNullableTypes>?
+  ): List<AllNullableTypes>? {
+    return classList
+  }
+
   override fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
     return map
   }
@@ -188,6 +261,34 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
     return intMap
+  }
+
+  override fun echoNullableEnumMap(enumMap: Map<AnEnum?, AnEnum?>?): Map<AnEnum?, AnEnum?>? {
+    return enumMap
+  }
+
+  override fun echoNullableClassMap(
+      classMap: Map<Long?, AllNullableTypes?>?
+  ): Map<Long?, AllNullableTypes?>? {
+    return classMap
+  }
+
+  override fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>? {
+    return stringMap
+  }
+
+  override fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
+    return intMap
+  }
+
+  override fun echoNullableNonNullEnumMap(enumMap: Map<AnEnum, AnEnum>?): Map<AnEnum, AnEnum>? {
+    return enumMap
+  }
+
+  override fun echoNullableNonNullClassMap(
+      classMap: Map<Long, AllNullableTypes>?
+  ): Map<Long, AllNullableTypes>? {
+    return classMap
   }
 
   override fun echoNullableEnum(anEnum: AnEnum?): AnEnum? {
@@ -268,6 +369,20 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(list))
   }
 
+  override fun echoAsyncEnumList(
+      enumList: List<AnEnum?>,
+      callback: (Result<List<AnEnum?>>) -> Unit
+  ) {
+    callback(Result.success(enumList))
+  }
+
+  override fun echoAsyncClassList(
+      classList: List<AllNullableTypes?>,
+      callback: (Result<List<AllNullableTypes?>>) -> Unit
+  ) {
+    callback(Result.success(classList))
+  }
+
   override fun echoAsyncMap(map: Map<Any?, Any?>, callback: (Result<Map<Any?, Any?>>) -> Unit) {
     callback(Result.success(map))
   }
@@ -284,6 +399,20 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
       callback: (Result<Map<Long?, Long?>>) -> Unit
   ) {
     callback(Result.success(intMap))
+  }
+
+  override fun echoAsyncEnumMap(
+      enumMap: Map<AnEnum?, AnEnum?>,
+      callback: (Result<Map<AnEnum?, AnEnum?>>) -> Unit
+  ) {
+    callback(Result.success(enumMap))
+  }
+
+  override fun echoAsyncClassMap(
+      classMap: Map<Long?, AllNullableTypes?>,
+      callback: (Result<Map<Long?, AllNullableTypes?>>) -> Unit
+  ) {
+    callback(Result.success(classMap))
   }
 
   override fun echoAsyncEnum(anEnum: AnEnum, callback: (Result<AnEnum>) -> Unit) {
@@ -328,6 +457,20 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(list))
   }
 
+  override fun echoAsyncNullableEnumList(
+      enumList: List<AnEnum?>?,
+      callback: (Result<List<AnEnum?>?>) -> Unit
+  ) {
+    callback(Result.success(enumList))
+  }
+
+  override fun echoAsyncNullableClassList(
+      classList: List<AllNullableTypes?>?,
+      callback: (Result<List<AllNullableTypes?>?>) -> Unit
+  ) {
+    callback(Result.success(classList))
+  }
+
   override fun echoAsyncNullableMap(
       map: Map<Any?, Any?>?,
       callback: (Result<Map<Any?, Any?>?>) -> Unit
@@ -347,6 +490,20 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
       callback: (Result<Map<Long?, Long?>?>) -> Unit
   ) {
     callback(Result.success(intMap))
+  }
+
+  override fun echoAsyncNullableEnumMap(
+      enumMap: Map<AnEnum?, AnEnum?>?,
+      callback: (Result<Map<AnEnum?, AnEnum?>?>) -> Unit
+  ) {
+    callback(Result.success(enumMap))
+  }
+
+  override fun echoAsyncNullableClassMap(
+      classMap: Map<Long?, AllNullableTypes?>?,
+      callback: (Result<Map<Long?, AllNullableTypes?>?>) -> Unit
+  ) {
+    callback(Result.success(classMap))
   }
 
   override fun echoAsyncNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit) {
@@ -430,6 +587,34 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     flutterApi!!.echoList(list) { echo -> callback(echo) }
   }
 
+  override fun callFlutterEchoEnumList(
+      enumList: List<AnEnum?>,
+      callback: (Result<List<AnEnum?>>) -> Unit
+  ) {
+    flutterApi!!.echoEnumList(enumList) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoClassList(
+      classList: List<AllNullableTypes?>,
+      callback: (Result<List<AllNullableTypes?>>) -> Unit
+  ) {
+    flutterApi!!.echoClassList(classList) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNonNullEnumList(
+      enumList: List<AnEnum>,
+      callback: (Result<List<AnEnum>>) -> Unit
+  ) {
+    flutterApi!!.echoNonNullEnumList(enumList) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNonNullClassList(
+      classList: List<AllNullableTypes>,
+      callback: (Result<List<AllNullableTypes>>) -> Unit
+  ) {
+    flutterApi!!.echoNonNullClassList(classList) { echo -> callback(echo) }
+  }
+
   override fun callFlutterEchoMap(
       map: Map<Any?, Any?>,
       callback: (Result<Map<Any?, Any?>>) -> Unit
@@ -449,6 +634,48 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
       callback: (Result<Map<Long?, Long?>>) -> Unit
   ) {
     flutterApi!!.echoIntMap(intMap) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoEnumMap(
+      enumMap: Map<AnEnum?, AnEnum?>,
+      callback: (Result<Map<AnEnum?, AnEnum?>>) -> Unit
+  ) {
+    flutterApi!!.echoEnumMap(enumMap) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoClassMap(
+      classMap: Map<Long?, AllNullableTypes?>,
+      callback: (Result<Map<Long?, AllNullableTypes?>>) -> Unit
+  ) {
+    flutterApi!!.echoClassMap(classMap) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNonNullStringMap(
+      stringMap: Map<String, String>,
+      callback: (Result<Map<String, String>>) -> Unit
+  ) {
+    flutterApi!!.echoNonNullStringMap(stringMap) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNonNullIntMap(
+      intMap: Map<Long, Long>,
+      callback: (Result<Map<Long, Long>>) -> Unit
+  ) {
+    flutterApi!!.echoNonNullIntMap(intMap) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNonNullEnumMap(
+      enumMap: Map<AnEnum, AnEnum>,
+      callback: (Result<Map<AnEnum, AnEnum>>) -> Unit
+  ) {
+    flutterApi!!.echoNonNullEnumMap(enumMap) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNonNullClassMap(
+      classMap: Map<Long, AllNullableTypes>,
+      callback: (Result<Map<Long, AllNullableTypes>>) -> Unit
+  ) {
+    flutterApi!!.echoNonNullClassMap(classMap) { echo -> callback(echo) }
   }
 
   override fun callFlutterEchoEnum(anEnum: AnEnum, callback: (Result<AnEnum>) -> Unit) {
@@ -505,6 +732,34 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     flutterApi!!.echoNullableList(list) { echo -> callback(echo) }
   }
 
+  override fun callFlutterEchoNullableEnumList(
+      enumList: List<AnEnum?>?,
+      callback: (Result<List<AnEnum?>?>) -> Unit
+  ) {
+    flutterApi!!.echoNullableEnumList(enumList) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNullableClassList(
+      classList: List<AllNullableTypes?>?,
+      callback: (Result<List<AllNullableTypes?>?>) -> Unit
+  ) {
+    flutterApi!!.echoNullableClassList(classList) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNullableNonNullEnumList(
+      enumList: List<AnEnum>?,
+      callback: (Result<List<AnEnum>?>) -> Unit
+  ) {
+    flutterApi!!.echoNullableNonNullEnumList(enumList) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNullableNonNullClassList(
+      classList: List<AllNullableTypes>?,
+      callback: (Result<List<AllNullableTypes>?>) -> Unit
+  ) {
+    flutterApi!!.echoNullableNonNullClassList(classList) { echo -> callback(echo) }
+  }
+
   override fun callFlutterEchoNullableMap(
       map: Map<Any?, Any?>?,
       callback: (Result<Map<Any?, Any?>?>) -> Unit
@@ -524,6 +779,48 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
       callback: (Result<Map<Long?, Long?>?>) -> Unit
   ) {
     flutterApi!!.echoNullableIntMap(intMap) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNullableEnumMap(
+      enumMap: Map<AnEnum?, AnEnum?>?,
+      callback: (Result<Map<AnEnum?, AnEnum?>?>) -> Unit
+  ) {
+    flutterApi!!.echoNullableEnumMap(enumMap) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNullableClassMap(
+      classMap: Map<Long?, AllNullableTypes?>?,
+      callback: (Result<Map<Long?, AllNullableTypes?>?>) -> Unit
+  ) {
+    flutterApi!!.echoNullableClassMap(classMap) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNullableNonNullStringMap(
+      stringMap: Map<String, String>?,
+      callback: (Result<Map<String, String>?>) -> Unit
+  ) {
+    flutterApi!!.echoNullableNonNullStringMap(stringMap) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNullableNonNullIntMap(
+      intMap: Map<Long, Long>?,
+      callback: (Result<Map<Long, Long>?>) -> Unit
+  ) {
+    flutterApi!!.echoNullableNonNullIntMap(intMap) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNullableNonNullEnumMap(
+      enumMap: Map<AnEnum, AnEnum>?,
+      callback: (Result<Map<AnEnum, AnEnum>?>) -> Unit
+  ) {
+    flutterApi!!.echoNullableNonNullEnumMap(enumMap) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterEchoNullableNonNullClassMap(
+      classMap: Map<Long, AllNullableTypes>?,
+      callback: (Result<Map<Long, AllNullableTypes>?>) -> Unit
+  ) {
+    flutterApi!!.echoNullableNonNullClassMap(classMap) { echo -> callback(echo) }
   }
 
   override fun callFlutterEchoNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit) {
@@ -549,6 +846,10 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
         }
       }
     }
+  }
+
+  fun testUnusedClassesGenerate(): UnusedClass {
+    return UnusedClass()
   }
 }
 
