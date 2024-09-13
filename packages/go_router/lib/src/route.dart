@@ -742,8 +742,9 @@ final class StatefulShellRestoreStateRedirect extends GoRoute {
 
   final GlobalKey<StatefulNavigationShellState> _shellStateKey;
 
-  int? branchIndexFromPathParameters(Map<String, String> pathParameters) =>
-      int.tryParse(pathParameters[_branchParam] ?? '');
+  String? branchReferenceFromPathParameters(
+          Map<String, String> pathParameters) =>
+      pathParameters[_branchParam];
 
   RouteMatchList? restoreState(int? branchIndex) => _initialLocation
       ? null
@@ -1022,13 +1023,18 @@ class StatefulShellRoute extends ShellRouteBase {
     final List<RouteBase> branchRoutes =
         branches.expand((StatefulShellBranch e) => e.routes).toList();
     if (shellRoutePath != null) {
-      // Add last to avoid being the `defaultRoute`
-      branchRoutes.add(StatefulShellRestoreStateRedirect._(
-          path: shellRoutePath, shellStateKey: shellStateKey));
-      branchRoutes.add(StatefulShellRestoreStateRedirect._param(
-          path: shellRoutePath, shellStateKey: shellStateKey));
-      branchRoutes.add(StatefulShellRestoreStateRedirect._paramInitial(
-          path: shellRoutePath, shellStateKey: shellStateKey));
+      branchRoutes.insert(
+          0,
+          StatefulShellRestoreStateRedirect._(
+              path: shellRoutePath, shellStateKey: shellStateKey));
+      branchRoutes.insert(
+          0,
+          StatefulShellRestoreStateRedirect._param(
+              path: shellRoutePath, shellStateKey: shellStateKey));
+      branchRoutes.insert(
+          0,
+          StatefulShellRestoreStateRedirect._paramInitial(
+              path: shellRoutePath, shellStateKey: shellStateKey));
     }
     return branchRoutes;
   }
@@ -1102,6 +1108,7 @@ class StatefulShellRoute extends ShellRouteBase {
 class StatefulShellBranch {
   /// Constructs a [StatefulShellBranch].
   StatefulShellBranch({
+    this.name,
     required this.routes,
     GlobalKey<NavigatorState>? navigatorKey,
     this.initialLocation,
@@ -1114,6 +1121,8 @@ class StatefulShellBranch {
       return true;
     }());
   }
+
+  final String? name;
 
   /// The [GlobalKey] to be used by the [Navigator] built for this branch.
   ///
@@ -1147,8 +1156,10 @@ class StatefulShellBranch {
   ///
   /// This route will be used when loading the branch for the first time, if
   /// an [initialLocation] has not been provided.
-  GoRoute? get defaultRoute =>
-      RouteBase.routesRecursively(routes).whereType<GoRoute>().firstOrNull;
+  GoRoute? get defaultRoute => RouteBase.routesRecursively(routes)
+      .whereNot((RouteBase r) => r is StatefulShellRestoreStateRedirect)
+      .whereType<GoRoute>()
+      .firstOrNull;
 }
 
 /// Builder for a custom container for the branch Navigators of a

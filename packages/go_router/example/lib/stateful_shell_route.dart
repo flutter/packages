@@ -44,6 +44,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
         branches: <StatefulShellBranch>[
           // The route branch for the first tab of the bottom navigation bar.
           StatefulShellBranch(
+            name: 'branchA',
             navigatorKey: _sectionANavigatorKey,
             routes: <RouteBase>[
               GoRoute(
@@ -69,6 +70,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
 
           // The route branch for the second tab of the bottom navigation bar.
           StatefulShellBranch(
+            name: 'branchB',
             // It's not necessary to provide a navigatorKey if it isn't also
             // needed elsewhere. If not provided, a default key will be used.
             routes: <RouteBase>[
@@ -98,6 +100,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
 
           // The route branch for the third tab of the bottom navigation bar.
           StatefulShellBranch(
+            name: 'branchC',
             routes: <RouteBase>[
               GoRoute(
                 // The screen to display as the root in the third tab of the
@@ -158,20 +161,28 @@ class ScaffoldWithNavBar extends StatelessWidget {
       // directly passed as the body of the Scaffold.
       body: navigationShell,
       bottomNavigationBar: BottomNavigationBar(
-        // Here, the items of BottomNavigationBar are hard coded. In a real
-        // world scenario, the items would most likely be generated from the
-        // branches of the shell route, which can be fetched using
-        // `navigationShell.route.branches`.
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Section A'),
-          BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Section B'),
-          BottomNavigationBarItem(icon: Icon(Icons.tab), label: 'Section C'),
-        ],
-        currentIndex: navigationShell.currentIndex,
-        // Navigate to the current location of the branch at the provided index
-        // when tapping an item in the BottomNavigationBar.
-        onTap: (int index) => GoRouter.of(context).go('/shell/$index'),
-      ),
+          // Here, the items of BottomNavigationBar are hard coded. In a real
+          // world scenario, the items would most likely be generated from the
+          // branches of the shell route, which can be fetched using
+          // `navigationShell.route.branches`.
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Section A'),
+            BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Section B'),
+            BottomNavigationBarItem(icon: Icon(Icons.tab), label: 'Section C'),
+          ],
+          currentIndex: navigationShell.currentIndex,
+          // Navigate to the current location of the branch at the provided index
+          // when tapping an item in the BottomNavigationBar.
+          onTap: (int index) {
+            return GoRouter.of(context).go('/shell/$index');
+            // Since names are configured for the branches, it is also possible to
+            // restore a branch by name, like this:
+            // return switch(index) {
+            //   1 => GoRouter.of(context).go('/shell/branchB'),
+            //   2 => GoRouter.of(context).go('/shell/branchC'),
+            //   _ => GoRouter.of(context).go('/shell/branchA'),
+            // };
+          }),
     );
   }
   // #enddocregion configuration-custom-shell

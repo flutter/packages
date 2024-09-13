@@ -411,13 +411,22 @@ class RouteConfiguration {
             statefulShellMatch != null &&
             statefulShellMatch!.matches.contains(firstMatch) &&
             firstMatch.route is StatefulShellRestoreStateRedirect) {
+          int? findBranchIndex(StatefulShellRoute route, String? branchRef) {
+            final int index = route.branches.indexWhere(
+                (StatefulShellBranch branch) => branch.name == branchRef);
+            return index >= 0 ? index : int.tryParse(branchRef ?? '');
+          }
+
+          final StatefulShellRoute shellRoute =
+              statefulShellMatch!.route as StatefulShellRoute;
           final StatefulShellRestoreStateRedirect shellRedirect =
               firstMatch.route as StatefulShellRestoreStateRedirect;
-          final int? branchIndex = shellRedirect
-              .branchIndexFromPathParameters(prevMatchList.pathParameters);
+          final String? branchRef = shellRedirect
+              .branchReferenceFromPathParameters(prevMatchList.pathParameters);
+          final int? branchIndex = findBranchIndex(shellRoute, branchRef);
           final RouteMatchList? restoredMatchList =
               shellRedirect.restoreState(branchIndex);
-          if (restoredMatchList != null) {
+          if (restoredMatchList != null && restoredMatchList.isNotEmpty) {
             return redirect(
               context,
               restoredMatchList,
@@ -426,8 +435,6 @@ class RouteConfiguration {
           }
 
           // If there is no restored state, redirect to the initial location
-          final StatefulShellRoute shellRoute =
-              statefulShellMatch!.route as StatefulShellRoute;
           routeLevelRedirectResult = initialLocationForStatefulShellBranch(
               shellRoute, branchIndex ?? shellRoute.initialBranchIndex);
         } else {
