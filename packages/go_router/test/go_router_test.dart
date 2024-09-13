@@ -5448,6 +5448,70 @@ void main() {
       ),
     );
   });
+
+  testWidgets('should allow route paths without leading /',
+      (WidgetTester tester) async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/', // root cannot be empty (existing assert)
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
+        routes: [
+          GoRoute(
+            path: 'child-route',
+            builder: (BuildContext context, GoRouterState state) =>
+                const Text('/child-route'),
+            routes: [
+              GoRoute(
+                path: 'grand-child-route',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('/grand-child-route'),
+              ),
+            ],
+          )
+        ],
+      ),
+    ];
+
+    final GoRouter router = await createRouter(routes, tester,
+        initialLocation: '/child-route/grand-child-route');
+    final RouteMatchList matches = router.routerDelegate.currentConfiguration;
+    expect(matches.matches, hasLength(3));
+    expect(matches.uri.toString(), '/child-route/grand-child-route');
+    expect(find.text('/grand-child-route'), findsOneWidget);
+  });
+
+  testWidgets('should allow route paths with leading /',
+      (WidgetTester tester) async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
+        routes: [
+          GoRoute(
+            path: '/child-route',
+            builder: (BuildContext context, GoRouterState state) =>
+                const Text('/child-route'),
+            routes: [
+              GoRoute(
+                path: '/grand-child-route',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('/grand-child-route'),
+              ),
+            ],
+          )
+        ],
+      ),
+    ];
+
+    final GoRouter router = await createRouter(routes, tester,
+        initialLocation: '/child-route/grand-child-route');
+    final RouteMatchList matches = router.routerDelegate.currentConfiguration;
+    expect(matches.matches, hasLength(3));
+    expect(matches.uri.toString(), '/child-route/grand-child-route');
+    expect(find.text('/grand-child-route'), findsOneWidget);
+  });
 }
 
 class TestInheritedNotifier extends InheritedNotifier<ValueNotifier<String>> {
