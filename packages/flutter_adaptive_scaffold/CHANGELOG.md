@@ -1,3 +1,10 @@
+## 0.3.0
+
+* Adds `inDuration`, `outDuration`, `inCurve`, and `outCurve` parameters for 
+configuring additional `SlotLayoutConfig` animation behavior.
+* **BREAKING CHANGES**:
+  * Removes `duration` parameter from `SlotLayoutConfig`.
+
 ## 0.2.6
 
 * Add new sample for using AdaptiveScaffold with GoRouter.
