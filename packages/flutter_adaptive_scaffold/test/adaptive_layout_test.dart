@@ -443,35 +443,35 @@ void main() {
 class TestBreakpoint0 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 0;
+    return MediaQuery.sizeOf(context).width >= 0;
   }
 }
 
 class TestBreakpoint400 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width > 400;
+    return MediaQuery.sizeOf(context).width > 400;
   }
 }
 
 class TestBreakpoint800 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width > 800;
+    return MediaQuery.sizeOf(context).width > 800;
   }
 }
 
 class TestBreakpoint1200 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width > 1200;
+    return MediaQuery.sizeOf(context).width > 1200;
   }
 }
 
 class TestBreakpoint1600 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width > 1600;
+    return MediaQuery.sizeOf(context).width > 1600;
   }
 }
 
