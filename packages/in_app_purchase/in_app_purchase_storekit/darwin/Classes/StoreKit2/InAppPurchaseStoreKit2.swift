@@ -46,19 +46,15 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         let product = try await Product.products(for: [id]).first
         guard let product = product else {
           throw PigeonError(
-            code: "storekit2_failed_to_fetch_product", message: "failed to make purchase",
-            details: "")
+            code: "storekit2_failed_to_fetch_product", message: "Storekit has failed to fetch this product.",
+            details: "Storekit has failed to fetch this product.")
         }
-        print("native purchase")
-        print(id)
         let result = try await product.purchase()
 
         switch result {
         case .success(let verification):
           switch verification {
           case .verified(let transaction):
-            TransactionCache.shared.add(transaction: transaction)
-            print("purchase \(transaction)")
             self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
             completion(.success(result.convertToPigeon()))
           case .unverified(_, let error):
@@ -66,16 +62,10 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           }
         case .pending:
           completion(
-            .failure(
-              PigeonError(
-                code: "storekit2_purchase_pending", message: "this transaction is still pending",
-                details: "")))
+            .success(.pending))
         case .userCancelled:
           completion(
-            .failure(
-              PigeonError(
-                code: "storekit2_purchase_cancelled",
-                message: "this transaction has been cancelled", details: "")))
+            .success(.userCancelled))
         @unknown default:
           fatalError()
         }
@@ -123,11 +113,8 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       for await verificationResult in Transaction.updates {
         switch verificationResult {
         case .verified(let transaction):
-          print("listened \(transaction.productID)")
-          TransactionCache.shared.add(transaction: transaction)
           self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
         case .unverified(let transaction, _):
-          print("unverified", transaction.id)
           break
         }
       }

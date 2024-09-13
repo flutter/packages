@@ -17,6 +17,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     self.session = try! SKTestSession(configurationFileNamed: "Configuration")
     self.session.clearTransactions()
+    session.disableDialogs = true
     let receiptManagerStub = FIAPReceiptManagerStub()
     plugin = InAppPurchasePluginStub(receiptManager: receiptManagerStub) { request in
       DefaultRequestHandler(requestHandler: FIAPRequestHandler(request: request))
@@ -29,6 +30,30 @@ final class InAppPurchase2PluginTests: XCTestCase {
   }
 
   func testGetProducts() async throws {
+    let expectation = self.expectation(description: "products successfully fetched")
+
+    var fetchedProductMsg: SK2ProductMessage?
+    plugin.products(identifiers: ["subscription_silver"]) { result in
+      switch result {
+      case .success(let productMessages):
+        fetchedProductMsg = productMessages.first
+        expectation.fulfill()
+      case .failure(let error):
+        // Handle the error
+        print("Failed to fetch products: \(error.localizedDescription)")
+      }
+    }
+    await fulfillment(of: [expectation], timeout: 5)
+
+    let testProduct = try await Product.products(for: ["subscription_silver"]).first
+
+    let testProductMsg = testProduct?.convertToPigeon
+
+    XCTAssertNotNil(fetchedProductMsg)
+    XCTAssertEqual(testProductMsg, fetchedProductMsg)
+  }
+
+  func testGetDiscountedProducts() async throws {
     let expectation = self.expectation(description: "products successfully fetched")
 
     var fetchedProductMsg: SK2ProductMessage?
@@ -98,8 +123,78 @@ final class InAppPurchase2PluginTests: XCTestCase {
   }
 
   func testSuccessfulPurchase() async throws {
+    let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(
-      id: <#T##String#>, options: nil,
-      completion: <#T##(Result<SK2ProductPurchaseResultMessage, any Error>) -> Void#>)
+      id: "consumable", options: nil
+    ) { result in
+      switch result {
+      case .success(let purchaseResult):
+        print("Purchase successful: \(purchaseResult)")
+        expectation.fulfill()
+
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      }
+    }
+    await fulfillment(of: [expectation], timeout: 5)
+  }
+
+  @available(iOS 17.0, *)
+  func testFailedNetworkErrorPurchase() async throws {
+    try await session.setSimulatedError(
+      .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
+    let expectation = self.expectation(description: "products request should fail")
+    plugin.purchase(
+      id: "consumable", options: nil
+    ) { result in
+      switch result {
+      case .success(_):
+        XCTFail("Purchase should NOT suceed.")
+      case .failure(let error):
+        XCTAssertEqual(error.localizedDescription, "The operation couldn’t be completed. (NSURLErrorDomain error -1009.)")
+        expectation.fulfill()
+      }
+    }
+    await fulfillment(of: [expectation], timeout: 5)
+    try await session.setSimulatedError(nil, forAPI: .loadProducts)
+  }
+
+  func testDiscountedSubscriptionSuccess() async throws {
+    let expectation = self.expectation(description: "Purchase request should succeed")
+    plugin.purchase(
+      id: "subscription_discounted", options: nil
+    ) { result in
+      switch result {
+      case .success(let purchaseResult):
+        print("Purchase successful: \(purchaseResult)")
+        expectation.fulfill()
+
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      }
+    }
+    await fulfillment(of: [expectation], timeout: 5)
+  }
+
+  @available(iOS 17.0, *)
+  func testFailedNetworkErrorPurchase2() async throws {
+//    try await session.setSimulatedError(.purchase(Product.PurchaseError.invalidOfferPrice)
+//                                        , forAPI: .purchase)
+    try await session.setSimulatedError(.purchase(.invalidOfferPrice)
+                                        , forAPI: .purchase)
+    let expectation = self.expectation(description: "products request should fail")
+    plugin.purchase(
+      id: "consumable", options: nil
+    ) { result in
+      switch result {
+      case .success(_):
+        XCTFail("Purchase should NOT suceed.")
+      case .failure(let error):
+        XCTAssertEqual(error.localizedDescription, "The operation couldn’t be completed. (NSURLErrorDomain error -1009.)")
+        expectation.fulfill()
+      }
+    }
+    await fulfillment(of: [expectation], timeout: 5)
+    try await session.setSimulatedError(nil, forAPI: .loadProducts)
   }
 }

@@ -105,7 +105,7 @@ extension on SK2TransactionMessage {
       productID: productId,
       verificationData: PurchaseVerificationData(
           localVerificationData: '', serverVerificationData: '', source: ''),
-      transactionDate: '',
+      transactionDate: purchaseDate,
       // Note that with sk2, any transactions that *can* be returned will
       // require to be finished, and are already purchased.
       // So set this as purchased for all transactions initially.

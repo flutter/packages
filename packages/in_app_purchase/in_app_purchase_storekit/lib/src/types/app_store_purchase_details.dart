@@ -81,6 +81,7 @@ class AppStorePurchaseDetails extends PurchaseDetails {
 /// The class represents the information of a purchase made with the Apple
 /// AppStore, when using Storekit2
 class SK2PurchaseDetails extends PurchaseDetails {
+  /// Creates new instance of [SK2PurchaseDetails]
   SK2PurchaseDetails(
       {required super.productID,
       required super.purchaseID,
