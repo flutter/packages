@@ -5506,7 +5506,7 @@ void main() {
   testWidgets(
       'should return the current GoRouterState when router.currentState is called',
       (WidgetTester tester) async {
-    final List<GoRoute> routes = <GoRoute>[
+    final List<RouteBase> routes = <RouteBase>[
       GoRoute(
           name: 'home',
           path: '/',
@@ -5522,6 +5522,18 @@ void main() {
           path: '/boats',
           builder: (BuildContext context, GoRouterState state) =>
               const Text('boats')),
+      ShellRoute(
+        builder: (BuildContext context, GoRouterState state, Widget child) =>
+            child,
+        routes: <RouteBase>[
+          GoRoute(
+            name: 'tulips',
+            path: '/tulips',
+            builder: (BuildContext context, GoRouterState state) =>
+                const Text('tulips'),
+          ),
+        ],
+      )
     ];
 
     final GoRouter router = await createRouter(routes, tester);
@@ -5530,24 +5542,30 @@ void main() {
     GoRouterState? state = router.currentState;
     expect(state?.name, 'home');
     expect(state?.fullPath, '/');
+
     router.go('/books');
     await tester.pumpAndSettle();
-
     state = router.currentState;
     expect(state?.name, 'books');
     expect(state?.fullPath, '/books');
+
     router.push('/boats');
     await tester.pumpAndSettle();
-
     state = router.currentState;
     expect(state?.name, 'boats');
     expect(state?.fullPath, '/boats');
+
     router.pop();
     await tester.pumpAndSettle();
-
     state = router.currentState;
     expect(state?.name, 'books');
     expect(state?.fullPath, '/books');
+
+    router.go('/tulips');
+    await tester.pumpAndSettle();
+    state = router.currentState;
+    expect(state?.name, 'tulips');
+    expect(state?.fullPath, '/tulips');
   });
 }
 
