@@ -433,9 +433,6 @@ class GoRoute extends RouteBase {
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.
   RegExpMatch? matchPatternAsPrefix(String loc) {
-    if (!loc.startsWith('/') && _pathRE.hasMatch('/$loc')) {
-      loc = '/$loc';
-    }
     return _pathRE.matchAsPrefix('/$loc') as RegExpMatch? ??
         _pathRE.matchAsPrefix(loc) as RegExpMatch?;
   }
