@@ -1,3 +1,7 @@
+## 14.2.8
+
+- Add current state getter on `GoRouter` that returns the current `GoRouterState`.
+
 ## 14.2.7
 
 - Fixes issue so that the parseRouteInformationWithContext can handle non-http Uris.
