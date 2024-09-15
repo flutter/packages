@@ -261,7 +261,7 @@ class GoRoute extends RouteBase {
   /// - [path] and [name] cannot be empty strings.
   /// - One of either [builder] or [pageBuilder] must be provided.
   GoRoute({
-    required this.path,
+    required String path,
     this.name,
     this.builder,
     this.pageBuilder,
@@ -275,6 +275,7 @@ class GoRoute extends RouteBase {
             'builder, pageBuilder, or redirect must be provided'),
         assert(onExit == null || pageBuilder != null || builder != null,
             'if onExit is provided, one of pageBuilder or builder must be provided'),
+        path = path,
         super._() {
     // cache the path regexp and parameters
     _pathRE = patternToRegExp(path, pathParameters);
@@ -432,8 +433,13 @@ class GoRoute extends RouteBase {
 
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.
-  RegExpMatch? matchPatternAsPrefix(String loc) =>
-      _pathRE.matchAsPrefix(loc) as RegExpMatch?;
+  RegExpMatch? matchPatternAsPrefix(String loc) {
+    if (!loc.startsWith('/') && _pathRE.hasMatch('/$loc')) {
+      loc = '/$loc';
+    }
+    return _pathRE.matchAsPrefix('/$loc') as RegExpMatch? ??
+        _pathRE.matchAsPrefix(loc) as RegExpMatch?;
+  }
 
   /// Extract the path parameters from a match.
   Map<String, String> extractPathParams(RegExpMatch match) =>
