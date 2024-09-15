@@ -90,6 +90,12 @@ void main() {
       expect(router.routerDelegate.currentConfiguration.uri.path, '/b');
     });
 
+    test('empty path', () {
+      expect(() {
+        GoRoute(path: '');
+      }, throwsA(isAssertionError));
+    });
+
     test('trailing / on sub-route', () {
       expect(() {
         GoRouter(
