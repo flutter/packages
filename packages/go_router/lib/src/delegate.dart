@@ -8,6 +8,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import '../go_router.dart';
 import 'builder.dart';
 import 'configuration.dart';
 import 'match.dart';
@@ -166,6 +167,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       return true;
     }());
   }
+
+  /// The current [GoRouterState]
+  GoRouterState? get currentState => currentConfiguration.last
+      .buildState(_configuration, currentConfiguration);
 
   /// For use by the Router architecture as part of the RouterDelegate.
   GlobalKey<NavigatorState> get navigatorKey => _configuration.navigatorKey;

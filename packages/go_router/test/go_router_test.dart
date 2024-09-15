@@ -5502,6 +5502,53 @@ void main() {
       ),
     );
   });
+
+  testWidgets(
+      'should return the current GoRouterState when router.currentState is called',
+      (WidgetTester tester) async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+          name: 'home',
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen()),
+      GoRoute(
+          name: 'books',
+          path: '/books',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Text('books')),
+      GoRoute(
+          name: 'boats',
+          path: '/boats',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Text('boats')),
+    ];
+
+    final GoRouter router = await createRouter(routes, tester);
+    await tester.pumpAndSettle();
+
+    GoRouterState? state = router.currentState;
+    expect(state?.name, 'home');
+    expect(state?.fullPath, '/');
+    router.go('/books');
+    await tester.pumpAndSettle();
+
+    state = router.currentState;
+    expect(state?.name, 'books');
+    expect(state?.fullPath, '/books');
+    router.push('/boats');
+    await tester.pumpAndSettle();
+
+    state = router.currentState;
+    expect(state?.name, 'boats');
+    expect(state?.fullPath, '/boats');
+    router.pop();
+    await tester.pumpAndSettle();
+
+    state = router.currentState;
+    expect(state?.name, 'books');
+    expect(state?.fullPath, '/books');
+  });
 }
 
 class TestInheritedNotifier extends InheritedNotifier<ValueNotifier<String>> {

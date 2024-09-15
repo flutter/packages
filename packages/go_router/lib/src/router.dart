@@ -254,6 +254,9 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     }());
   }
 
+  /// The current [GoRouterState].
+  GoRouterState? get currentState => routerDelegate.currentState;
+
   /// Whether the imperative API affects browser URL bar.
   ///
   /// The Imperative APIs refer to [push], [pushReplacement], or [replace].
