@@ -38,7 +38,7 @@ class RouteConfiguration {
       if (route is GoRoute) {
         if (route.path != '/') {
           assert(!route.path.endsWith('/'),
-              'route path may not end with "/" except for the top "/" root. Found: $route');
+              'route path may not end with "/" except for the top "/" route. Found: $route');
         }
         subRouteIsTopLevel = false;
       } else if (route is ShellRouteBase) {
