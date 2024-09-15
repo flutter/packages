@@ -5475,12 +5475,12 @@ void main() {
         path: '/', // root cannot be empty (existing assert)
         builder: (BuildContext context, GoRouterState state) =>
             const HomeScreen(),
-        routes: [
+        routes: <RouteBase>[
           GoRoute(
             path: 'child-route',
             builder: (BuildContext context, GoRouterState state) =>
                 const Text('/child-route'),
-            routes: [
+            routes: <RouteBase>[
               GoRoute(
                 path: 'grand-child-route',
                 builder: (BuildContext context, GoRouterState state) =>
@@ -5507,12 +5507,12 @@ void main() {
         path: '/',
         builder: (BuildContext context, GoRouterState state) =>
             const HomeScreen(),
-        routes: [
+        routes: <RouteBase>[
           GoRoute(
             path: '/child-route',
             builder: (BuildContext context, GoRouterState state) =>
                 const Text('/child-route'),
-            routes: [
+            routes: <RouteBase>[
               GoRoute(
                 path: '/grand-child-route',
                 builder: (BuildContext context, GoRouterState state) =>
