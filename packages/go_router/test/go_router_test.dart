@@ -90,6 +90,25 @@ void main() {
       expect(router.routerDelegate.currentConfiguration.uri.path, '/b');
     });
 
+    test('trailing / on sub-route', () {
+      expect(() {
+        GoRouter(
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/',
+              builder: dummy,
+              routes: <GoRoute>[
+                GoRoute(
+                  path: 'foo/',
+                  builder: dummy,
+                ),
+              ],
+            ),
+          ],
+        );
+      }, throwsA(isAssertionError));
+    });
+
     testWidgets('match no routes', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(path: '/', builder: dummy),

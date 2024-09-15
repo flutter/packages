@@ -261,7 +261,7 @@ class GoRoute extends RouteBase {
   /// - [path] and [name] cannot be empty strings.
   /// - One of either [builder] or [pageBuilder] must be provided.
   GoRoute({
-    required String path,
+    required this.path,
     this.name,
     this.builder,
     this.pageBuilder,
@@ -275,7 +275,6 @@ class GoRoute extends RouteBase {
             'builder, pageBuilder, or redirect must be provided'),
         assert(onExit == null || pageBuilder != null || builder != null,
             'if onExit is provided, one of pageBuilder or builder must be provided'),
-        path = path,
         super._() {
     // cache the path regexp and parameters
     _pathRE = patternToRegExp(path, pathParameters);
