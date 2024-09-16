@@ -5492,6 +5492,11 @@ void main() {
                 builder: (BuildContext context, GoRouterState state) =>
                     const Text('/grand-child-route'),
               ),
+              GoRoute(
+                path: 'redirected-grand-child-route',
+                redirect: (BuildContext context, GoRouterState state) =>
+                    '/child-route',
+              ),
             ],
           )
         ],
@@ -5500,10 +5505,17 @@ void main() {
 
     final GoRouter router = await createRouter(routes, tester,
         initialLocation: '/child-route/grand-child-route');
-    final RouteMatchList matches = router.routerDelegate.currentConfiguration;
+    RouteMatchList matches = router.routerDelegate.currentConfiguration;
     expect(matches.matches, hasLength(3));
     expect(matches.uri.toString(), '/child-route/grand-child-route');
     expect(find.text('/grand-child-route'), findsOneWidget);
+
+    router.go('/child-route/redirected-grand-child-route');
+    await tester.pumpAndSettle();
+    matches = router.routerDelegate.currentConfiguration;
+    expect(matches.matches, hasLength(2));
+    expect(matches.uri.toString(), '/child-route');
+    expect(find.text('/child-route'), findsOneWidget);
   });
 
   testWidgets('should allow route paths with leading /',
@@ -5524,6 +5536,11 @@ void main() {
                 builder: (BuildContext context, GoRouterState state) =>
                     const Text('/grand-child-route'),
               ),
+              GoRoute(
+                path: '/redirected-grand-child-route',
+                redirect: (BuildContext context, GoRouterState state) =>
+                    '/child-route',
+              ),
             ],
           )
         ],
@@ -5532,10 +5549,17 @@ void main() {
 
     final GoRouter router = await createRouter(routes, tester,
         initialLocation: '/child-route/grand-child-route');
-    final RouteMatchList matches = router.routerDelegate.currentConfiguration;
+    RouteMatchList matches = router.routerDelegate.currentConfiguration;
     expect(matches.matches, hasLength(3));
     expect(matches.uri.toString(), '/child-route/grand-child-route');
     expect(find.text('/grand-child-route'), findsOneWidget);
+
+    router.go('/child-route/redirected-grand-child-route');
+    await tester.pumpAndSettle();
+    matches = router.routerDelegate.currentConfiguration;
+    expect(matches.matches, hasLength(2));
+    expect(matches.uri.toString(), '/child-route');
+    expect(find.text('/child-route'), findsOneWidget);
   });
 }
 
