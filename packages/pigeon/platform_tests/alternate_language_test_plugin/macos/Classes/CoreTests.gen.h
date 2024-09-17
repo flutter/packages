@@ -72,11 +72,13 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                    doubleList:(NSArray<NSNumber *> *)doubleList
                      boolList:(NSArray<NSNumber *> *)boolList
                      enumList:(NSArray<FLTAnEnumBox *> *)enumList
+                   objectList:(NSArray<id> *)objectList
                      listList:(NSArray<NSArray<id> *> *)listList
                           map:(NSDictionary *)map
                     stringMap:(NSDictionary<NSString *, NSString *> *)stringMap
                        intMap:(NSDictionary<NSNumber *, NSNumber *> *)intMap
-                      enumMap:(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap;
+                      enumMap:(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                    objectMap:(NSDictionary<id, id> *)objectMap;
 @property(nonatomic, assign) BOOL aBool;
 @property(nonatomic, assign) NSInteger anInt;
 @property(nonatomic, assign) NSInteger anInt64;
@@ -95,11 +97,13 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy) NSArray<NSNumber *> *doubleList;
 @property(nonatomic, copy) NSArray<NSNumber *> *boolList;
 @property(nonatomic, copy) NSArray<FLTAnEnumBox *> *enumList;
+@property(nonatomic, copy) NSArray<id> *objectList;
 @property(nonatomic, copy) NSArray<NSArray<id> *> *listList;
 @property(nonatomic, copy) NSDictionary *map;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *stringMap;
 @property(nonatomic, copy) NSDictionary<NSNumber *, NSNumber *> *intMap;
 @property(nonatomic, copy) NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *enumMap;
+@property(nonatomic, copy) NSDictionary<id, id> *objectMap;
 @end
 
 /// A class containing all supported nullable types.
@@ -124,12 +128,14 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                doubleList:(nullable NSArray<NSNumber *> *)doubleList
                  boolList:(nullable NSArray<NSNumber *> *)boolList
                  enumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
+               objectList:(nullable NSArray<id> *)objectList
                  listList:(nullable NSArray<NSArray<id> *> *)listList
        recursiveClassList:(nullable NSArray<FLTAllNullableTypes *> *)recursiveClassList
                       map:(nullable NSDictionary *)map
                 stringMap:(nullable NSDictionary<NSString *, NSString *> *)stringMap
                    intMap:(nullable NSDictionary<NSNumber *, NSNumber *> *)intMap
                   enumMap:(nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                objectMap:(nullable NSDictionary<id, id> *)objectMap
         recursiveClassMap:
             (nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)recursiveClassMap;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
@@ -151,12 +157,14 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *doubleList;
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *boolList;
 @property(nonatomic, copy, nullable) NSArray<FLTAnEnumBox *> *enumList;
+@property(nonatomic, copy, nullable) NSArray<id> *objectList;
 @property(nonatomic, copy, nullable) NSArray<NSArray<id> *> *listList;
 @property(nonatomic, copy, nullable) NSArray<FLTAllNullableTypes *> *recursiveClassList;
 @property(nonatomic, copy, nullable) NSDictionary *map;
 @property(nonatomic, copy, nullable) NSDictionary<NSString *, NSString *> *stringMap;
 @property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSNumber *> *intMap;
 @property(nonatomic, copy, nullable) NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *enumMap;
+@property(nonatomic, copy, nullable) NSDictionary<id, id> *objectMap;
 @property(nonatomic, copy, nullable)
     NSDictionary<NSNumber *, FLTAllNullableTypes *> *recursiveClassMap;
 @end
@@ -183,12 +191,14 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                            doubleList:(nullable NSArray<NSNumber *> *)doubleList
                              boolList:(nullable NSArray<NSNumber *> *)boolList
                              enumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
+                           objectList:(nullable NSArray<id> *)objectList
                              listList:(nullable NSArray<NSArray<id> *> *)listList
                                   map:(nullable NSDictionary *)map
                             stringMap:(nullable NSDictionary<NSString *, NSString *> *)stringMap
                                intMap:(nullable NSDictionary<NSNumber *, NSNumber *> *)intMap
                               enumMap:
-                                  (nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap;
+                                  (nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                            objectMap:(nullable NSDictionary<id, id> *)objectMap;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt64;
@@ -207,11 +217,13 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *doubleList;
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *boolList;
 @property(nonatomic, copy, nullable) NSArray<FLTAnEnumBox *> *enumList;
+@property(nonatomic, copy, nullable) NSArray<id> *objectList;
 @property(nonatomic, copy, nullable) NSArray<NSArray<id> *> *listList;
 @property(nonatomic, copy, nullable) NSDictionary *map;
 @property(nonatomic, copy, nullable) NSDictionary<NSString *, NSString *> *stringMap;
 @property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSNumber *> *intMap;
 @property(nonatomic, copy, nullable) NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *enumMap;
+@property(nonatomic, copy, nullable) NSDictionary<id, id> *objectMap;
 @end
 
 /// A class for testing nested class handling.
@@ -314,6 +326,17 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 - (nullable NSArray<FLTAllNullableTypes *> *)echoClassList:
                                                  (NSArray<FLTAllNullableTypes *> *)classList
                                                      error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<FLTAnEnumBox *> *)echoNonNullEnumList:(NSArray<FLTAnEnumBox *> *)enumList
+                                                    error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<FLTAllNullableTypes *> *)
+    echoNonNullClassList:(NSArray<FLTAllNullableTypes *> *)classList
+                   error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed map, to test serialization and deserialization.
 ///
 /// @return `nil` only when `error != nil`.
@@ -343,6 +366,30 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 - (nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)
     echoClassMap:(NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
            error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed map, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSDictionary<NSString *, NSString *> *)
+    echoNonNullStringMap:(NSDictionary<NSString *, NSString *> *)stringMap
+                   error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed map, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSDictionary<NSNumber *, NSNumber *> *)
+    echoNonNullIntMap:(NSDictionary<NSNumber *, NSNumber *> *)intMap
+                error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed map, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)
+    echoNonNullEnumMap:(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                 error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed map, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)
+    echoNonNullClassMap:(NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
+                  error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed class to test nested class serialization and deserialization.
 ///
 /// @return `nil` only when `error != nil`.
@@ -437,6 +484,14 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 - (nullable NSArray<FLTAllNullableTypes *> *)
     echoNullableClassList:(nullable NSArray<FLTAllNullableTypes *> *)classList
                     error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+- (nullable NSArray<FLTAnEnumBox *> *)
+    echoNullableNonNullEnumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
+                          error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+- (nullable NSArray<FLTAllNullableTypes *> *)
+    echoNullableNonNullClassList:(nullable NSArray<FLTAllNullableTypes *> *)classList
+                           error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed map, to test serialization and deserialization.
 - (nullable NSDictionary<id, id> *)echoNullableMap:(nullable NSDictionary<id, id> *)map
                                              error:(FlutterError *_Nullable *_Nonnull)error;
@@ -456,6 +511,22 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 - (nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)
     echoNullableClassMap:(nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
                    error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed map, to test serialization and deserialization.
+- (nullable NSDictionary<NSString *, NSString *> *)
+    echoNullableNonNullStringMap:(nullable NSDictionary<NSString *, NSString *> *)stringMap
+                           error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed map, to test serialization and deserialization.
+- (nullable NSDictionary<NSNumber *, NSNumber *> *)
+    echoNullableNonNullIntMap:(nullable NSDictionary<NSNumber *, NSNumber *> *)intMap
+                        error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed map, to test serialization and deserialization.
+- (nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)
+    echoNullableNonNullEnumMap:(nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                         error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed map, to test serialization and deserialization.
+- (nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)
+    echoNullableNonNullClassMap:(nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
+                          error:(FlutterError *_Nullable *_Nonnull)error;
 - (FLTAnEnumBox *_Nullable)echoNullableEnum:(nullable FLTAnEnumBox *)anEnumBoxed
                                       error:(FlutterError *_Nullable *_Nonnull)error;
 - (FLTAnotherEnumBox *_Nullable)echoAnotherNullableEnum:
@@ -655,6 +726,12 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 - (void)callFlutterEchoClassList:(NSArray<FLTAllNullableTypes *> *)classList
                       completion:(void (^)(NSArray<FLTAllNullableTypes *> *_Nullable,
                                            FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNonNullEnumList:(NSArray<FLTAnEnumBox *> *)enumList
+                            completion:(void (^)(NSArray<FLTAnEnumBox *> *_Nullable,
+                                                 FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNonNullClassList:(NSArray<FLTAllNullableTypes *> *)classList
+                             completion:(void (^)(NSArray<FLTAllNullableTypes *> *_Nullable,
+                                                  FlutterError *_Nullable))completion;
 - (void)callFlutterEchoMap:(NSDictionary<id, id> *)map
                 completion:
                     (void (^)(NSDictionary<id, id> *_Nullable, FlutterError *_Nullable))completion;
@@ -671,6 +748,21 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
                      completion:
                          (void (^)(NSDictionary<NSNumber *, FLTAllNullableTypes *> *_Nullable,
                                    FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNonNullStringMap:(NSDictionary<NSString *, NSString *> *)stringMap
+                             completion:(void (^)(NSDictionary<NSString *, NSString *> *_Nullable,
+                                                  FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNonNullIntMap:(NSDictionary<NSNumber *, NSNumber *> *)intMap
+                          completion:(void (^)(NSDictionary<NSNumber *, NSNumber *> *_Nullable,
+                                               FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNonNullEnumMap:(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                           completion:
+                               (void (^)(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *_Nullable,
+                                         FlutterError *_Nullable))completion;
+- (void)
+    callFlutterEchoNonNullClassMap:(NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
+                        completion:
+                            (void (^)(NSDictionary<NSNumber *, FLTAllNullableTypes *> *_Nullable,
+                                      FlutterError *_Nullable))completion;
 - (void)callFlutterEchoEnum:(FLTAnEnum)anEnum
                  completion:(void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterEchoAnotherEnum:(FLTAnotherEnum)anotherEnum
@@ -700,6 +792,12 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 - (void)callFlutterEchoNullableClassList:(nullable NSArray<FLTAllNullableTypes *> *)classList
                               completion:(void (^)(NSArray<FLTAllNullableTypes *> *_Nullable,
                                                    FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableNonNullEnumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
+                                    completion:(void (^)(NSArray<FLTAnEnumBox *> *_Nullable,
+                                                         FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableNonNullClassList:(nullable NSArray<FLTAllNullableTypes *> *)classList
+                                     completion:(void (^)(NSArray<FLTAllNullableTypes *> *_Nullable,
+                                                          FlutterError *_Nullable))completion;
 - (void)callFlutterEchoNullableMap:(nullable NSDictionary<id, id> *)map
                         completion:(void (^)(NSDictionary<id, id> *_Nullable,
                                              FlutterError *_Nullable))completion;
@@ -720,6 +818,27 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
                          completion:
                              (void (^)(NSDictionary<NSNumber *, FLTAllNullableTypes *> *_Nullable,
                                        FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableNonNullStringMap:
+            (nullable NSDictionary<NSString *, NSString *> *)stringMap
+                                     completion:
+                                         (void (^)(NSDictionary<NSString *, NSString *> *_Nullable,
+                                                   FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableNonNullIntMap:(nullable NSDictionary<NSNumber *, NSNumber *> *)intMap
+                                  completion:
+                                      (void (^)(NSDictionary<NSNumber *, NSNumber *> *_Nullable,
+                                                FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableNonNullEnumMap:
+            (nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                                   completion:
+                                       (void (^)(
+                                           NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *_Nullable,
+                                           FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableNonNullClassMap:
+            (nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
+                                    completion:
+                                        (void (^)(NSDictionary<NSNumber *, FLTAllNullableTypes *>
+                                                      *_Nullable,
+                                                  FlutterError *_Nullable))completion;
 - (void)callFlutterEchoNullableEnum:(nullable FLTAnEnumBox *)anEnumBoxed
                          completion:
                              (void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion;
@@ -808,6 +927,14 @@ extern void SetUpFLTHostIntegrationCoreApiWithSuffix(
 - (void)echoClassList:(NSArray<FLTAllNullableTypes *> *)classList
            completion:(void (^)(NSArray<FLTAllNullableTypes *> *_Nullable,
                                 FlutterError *_Nullable))completion;
+/// Returns the passed list, to test serialization and deserialization.
+- (void)echoNonNullEnumList:(NSArray<FLTAnEnumBox *> *)enumList
+                 completion:(void (^)(NSArray<FLTAnEnumBox *> *_Nullable,
+                                      FlutterError *_Nullable))completion;
+/// Returns the passed list, to test serialization and deserialization.
+- (void)echoNonNullClassList:(NSArray<FLTAllNullableTypes *> *)classList
+                  completion:(void (^)(NSArray<FLTAllNullableTypes *> *_Nullable,
+                                       FlutterError *_Nullable))completion;
 /// Returns the passed map, to test serialization and deserialization.
 - (void)echoMap:(NSDictionary<id, id> *)map
      completion:(void (^)(NSDictionary<id, id> *_Nullable, FlutterError *_Nullable))completion;
@@ -827,6 +954,22 @@ extern void SetUpFLTHostIntegrationCoreApiWithSuffix(
 - (void)echoClassMap:(NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
           completion:(void (^)(NSDictionary<NSNumber *, FLTAllNullableTypes *> *_Nullable,
                                FlutterError *_Nullable))completion;
+/// Returns the passed map, to test serialization and deserialization.
+- (void)echoNonNullStringMap:(NSDictionary<NSString *, NSString *> *)stringMap
+                  completion:(void (^)(NSDictionary<NSString *, NSString *> *_Nullable,
+                                       FlutterError *_Nullable))completion;
+/// Returns the passed map, to test serialization and deserialization.
+- (void)echoNonNullIntMap:(NSDictionary<NSNumber *, NSNumber *> *)intMap
+               completion:(void (^)(NSDictionary<NSNumber *, NSNumber *> *_Nullable,
+                                    FlutterError *_Nullable))completion;
+/// Returns the passed map, to test serialization and deserialization.
+- (void)echoNonNullEnumMap:(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                completion:(void (^)(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *_Nullable,
+                                     FlutterError *_Nullable))completion;
+/// Returns the passed map, to test serialization and deserialization.
+- (void)echoNonNullClassMap:(NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
+                 completion:(void (^)(NSDictionary<NSNumber *, FLTAllNullableTypes *> *_Nullable,
+                                      FlutterError *_Nullable))completion;
 /// Returns the passed enum to test serialization and deserialization.
 - (void)echoEnum:(FLTAnEnum)anEnum
       completion:(void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion;
@@ -860,6 +1003,14 @@ extern void SetUpFLTHostIntegrationCoreApiWithSuffix(
 - (void)echoNullableClassList:(nullable NSArray<FLTAllNullableTypes *> *)classList
                    completion:(void (^)(NSArray<FLTAllNullableTypes *> *_Nullable,
                                         FlutterError *_Nullable))completion;
+/// Returns the passed list, to test serialization and deserialization.
+- (void)echoNullableNonNullEnumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
+                         completion:(void (^)(NSArray<FLTAnEnumBox *> *_Nullable,
+                                              FlutterError *_Nullable))completion;
+/// Returns the passed list, to test serialization and deserialization.
+- (void)echoNullableNonNullClassList:(nullable NSArray<FLTAllNullableTypes *> *)classList
+                          completion:(void (^)(NSArray<FLTAllNullableTypes *> *_Nullable,
+                                               FlutterError *_Nullable))completion;
 /// Returns the passed map, to test serialization and deserialization.
 - (void)echoNullableMap:(nullable NSDictionary<id, id> *)map
              completion:
@@ -879,6 +1030,25 @@ extern void SetUpFLTHostIntegrationCoreApiWithSuffix(
 /// Returns the passed map, to test serialization and deserialization.
 - (void)echoNullableClassMap:(nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
                   completion:(void (^)(NSDictionary<NSNumber *, FLTAllNullableTypes *> *_Nullable,
+                                       FlutterError *_Nullable))completion;
+/// Returns the passed map, to test serialization and deserialization.
+- (void)echoNullableNonNullStringMap:(nullable NSDictionary<NSString *, NSString *> *)stringMap
+                          completion:(void (^)(NSDictionary<NSString *, NSString *> *_Nullable,
+                                               FlutterError *_Nullable))completion;
+/// Returns the passed map, to test serialization and deserialization.
+- (void)echoNullableNonNullIntMap:(nullable NSDictionary<NSNumber *, NSNumber *> *)intMap
+                       completion:(void (^)(NSDictionary<NSNumber *, NSNumber *> *_Nullable,
+                                            FlutterError *_Nullable))completion;
+/// Returns the passed map, to test serialization and deserialization.
+- (void)echoNullableNonNullEnumMap:(nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                        completion:
+                            (void (^)(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *_Nullable,
+                                      FlutterError *_Nullable))completion;
+/// Returns the passed map, to test serialization and deserialization.
+- (void)echoNullableNonNullClassMap:
+            (nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)classMap
+                         completion:
+                             (void (^)(NSDictionary<NSNumber *, FLTAllNullableTypes *> *_Nullable,
                                        FlutterError *_Nullable))completion;
 /// Returns the passed enum to test serialization and deserialization.
 - (void)echoNullableEnum:(nullable FLTAnEnumBox *)anEnumBoxed
