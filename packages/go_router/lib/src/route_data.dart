@@ -242,6 +242,7 @@ abstract class StatefulShellRouteData extends RouteData {
   FutureOr<String?> redirect(BuildContext context, GoRouterState state) => null;
 
   /// [pageBuilder] is used to build the page
+  // TODO: This signature is needs to be updated
   Page<void> pageBuilder(
     BuildContext context,
     GoRouterState state,
@@ -250,6 +251,7 @@ abstract class StatefulShellRouteData extends RouteData {
       const NoOpPage();
 
   /// [builder] is used to build the widget
+  // TODO: This signature is needs to be updated
   Widget builder(
     BuildContext context,
     GoRouterState state,

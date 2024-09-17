@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
 import 'configuration.dart';
+import 'match.dart';
 import 'misc/errors.dart';
 import 'route.dart';
 
@@ -188,6 +189,42 @@ class GoRouterState {
         error,
         pageKey,
       );
+}
+
+/// The route state of a [ShellRouteBase] (i.e. [ShellRoute] or
+/// [StatefulShellRoute]).
+class ShellRouteState extends GoRouterState {
+  const ShellRouteState(
+    super._configuration, {
+    required super.uri,
+    required super.matchedLocation,
+    super.name,
+    super.path,
+    required super.fullPath,
+    required super.pathParameters,
+    super.extra,
+    super.error,
+    required super.pageKey,
+    super.topRoute,
+    required this.navigatorKey,
+    required this.shellRoute,
+    required this.routeMatchList,
+  });
+
+  final GlobalKey<NavigatorState> navigatorKey;
+  final ShellRouteBase shellRoute;
+  final RouteMatchList routeMatchList;
+
+  /// Gets the index of the [Navigator] or [StatefulShellBranch] in the
+  /// associated shell route.
+  int get navigatorIndex => shellRoute.indexOfNavigatorKey(navigatorKey);
+
+  /// Get the initial location for the navigator at the given index.
+  ///
+  /// For [StatefulShellRoute], this method is guaranteed to return a non-null
+  /// value.
+  String? initialLocation(int navigatorIndex) => _configuration
+      .initialLocationForShellNavigator(shellRoute, navigatorIndex);
 }
 
 /// An inherited widget to host a [GoRouterStateRegistry] for the subtree.

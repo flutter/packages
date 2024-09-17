@@ -435,7 +435,7 @@ class RouteConfiguration {
           }
 
           // If there is no restored state, redirect to the initial location
-          routeLevelRedirectResult = initialLocationForStatefulShellBranch(
+          routeLevelRedirectResult = initialLocationForShellNavigator(
               shellRoute, branchIndex ?? shellRoute.initialBranchIndex);
         } else {
           routeLevelRedirectResult =
@@ -550,30 +550,32 @@ class RouteConfiguration {
   String? locationForRoute(RouteBase route) =>
       fullPathForRoute(route, '', _routingConfig.value.routes);
 
-  /// Gets the effective initial location for the branch at the provided index
-  /// in the provided [StatefulShellRoute].
+  /// Gets the effective initial location for the nested navigator at the
+  /// provided index in the provided [ShellRouteBase].
   ///
-  /// The effective initial location is either the
+  /// For a [StatefulShellRoute], the effective initial location is either the
   /// [StatefulShellBranch.initialLocation], if specified, or the location of the
   /// [StatefulShellBranch.defaultRoute].
-  String initialLocationForStatefulShellBranch(
-      StatefulShellRoute route, int index) {
-    final StatefulShellBranch branch = route.branches[index];
-    final String? initialLocation = branch.initialLocation;
-    if (initialLocation != null) {
-      return initialLocation;
-    } else {
-      /// Recursively traverses the routes of the provided StatefulShellRoute to
-      /// find the first GoRoute, from which a full path will be derived.
-      final GoRoute route = branch.defaultRoute!;
-      final List<String> parameters = <String>[];
-      patternToRegExp(route.path, parameters);
-      assert(parameters.isEmpty);
-      return locationForRoute(route)!;
-      // TODO(tolo): Unsure what the original purpose of below was, but it seems odd to involve the current routerState.pathParameters when determining the initial location.
-      // return patternToPath(
-      //     fullPath, shellRouteContext.routerState.pathParameters);
+  String? initialLocationForShellNavigator(ShellRouteBase route, int index) {
+    if (route is StatefulShellRoute) {
+      final StatefulShellBranch branch = route.branches[index];
+      final String? initialLocation = branch.initialLocation;
+      if (initialLocation != null) {
+        return initialLocation;
+      } else {
+        /// Recursively traverses the routes of the provided StatefulShellRoute to
+        /// find the first GoRoute, from which a full path will be derived.
+        final GoRoute route = branch.defaultRoute!;
+        final List<String> parameters = <String>[];
+        patternToRegExp(route.path, parameters);
+        assert(parameters.isEmpty);
+        return locationForRoute(route)!;
+        // TODO(tolo): Unsure what the original purpose of below was, but it seems odd to involve the current routerState.pathParameters when determining the initial location.
+        // return patternToPath(
+        //     fullPath, shellRouteContext.routerState.pathParameters);
+      }
     }
+    return null;
   }
 
   @override

@@ -33,16 +33,10 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     initialLocation: '/a',
     routes: <RouteBase>[
       StatefulShellRoute(
-        builder: (BuildContext context, GoRouterState state,
-            StatefulNavigationShell navigationShell) {
-          // This nested StatefulShellRoute demonstrates the use of a
-          // custom container for the branch Navigators. In this implementation,
-          // no customization is done in the builder function (navigationShell
-          // itself is simply used as the Widget for the route). Instead, the
-          // navigatorContainerBuilder function below is provided to
-          // customize the container for the branch Navigators.
-          return navigationShell;
-        },
+        // This nested StatefulShellRoute demonstrates the use of a custom
+        // container for the branch Navigators, using the
+        // `navigatorContainerBuilder` parameter. When doing so, the `builder`
+        // should not be provided, and `pageBuilder` is optional.
         navigatorContainerBuilder: (BuildContext context,
             StatefulNavigationShell navigationShell, List<Widget> children) {
           // Returning a customized container for the branch
@@ -208,17 +202,15 @@ class ScaffoldWithNavBar extends StatelessWidget {
   /// Navigate to the current location of the branch at the provided index when
   /// tapping an item in the BottomNavigationBar.
   void _onTap(BuildContext context, int index) {
-    // When navigating to a new branch, it's recommended to use the goBranch
-    // method, as doing so makes sure the last navigation state of the
-    // Navigator for the branch is restored.
-    navigationShell.goBranch(
-      index,
-      // A common pattern when using bottom navigation bars is to support
-      // navigating to the initial location when tapping the item that is
-      // already active. This example demonstrates how to support this behavior,
-      // using the initialLocation parameter of goBranch.
-      initialLocation: index == navigationShell.currentIndex,
-    );
+    // A common pattern when using bottom navigation bars is to support
+    // navigating to the initial location when tapping the item that is
+    // already active. This example demonstrates how to support this behavior,
+    // using the '/initial' shell route redirect.
+    if (index == navigationShell.currentIndex) {
+      GoRouter.of(context).go('/shell/$index/initial');
+    } else {
+      GoRouter.of(context).go('/shell/$index');
+    }
   }
 }
 

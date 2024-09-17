@@ -29,15 +29,14 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     initialLocation: '/a',
     routes: <RouteBase>[
       // #docregion configuration-builder
-      StatefulShellRoute.indexedStack(
+      StatefulShellRoute.indexedStackContainer(
         path: '/shell',
-        builder: (BuildContext context, GoRouterState state,
-            StatefulNavigationShell navigationShell) {
+        builder: (BuildContext context, ShellRouteState state, Widget child) {
           // Return the widget that implements the custom shell (in this case
           // using a BottomNavigationBar). The StatefulNavigationShell is passed
           // to be able access the state of the shell and to navigate to other
           // branches in a stateful way.
-          return ScaffoldWithNavBar(navigationShell: navigationShell);
+          return ScaffoldWithNavBar(shellState: state, child: child);
         },
         // #enddocregion configuration-builder
         // #docregion configuration-branches
@@ -146,12 +145,19 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
 class ScaffoldWithNavBar extends StatelessWidget {
   /// Constructs an [ScaffoldWithNavBar].
   const ScaffoldWithNavBar({
-    required this.navigationShell,
+    required this.shellState,
+    required this.child,
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
+  /// The state of the shell route.
+  final ShellRouteState shellState;
+
   /// The navigation shell and container for the branch Navigators.
-  final StatefulNavigationShell navigationShell;
+  final Widget child;
+
+  StatefulShellRoute get _shellRoute =>
+      shellState.shellRoute as StatefulShellRoute;
 
   // #docregion configuration-custom-shell
   @override
@@ -159,7 +165,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
     return Scaffold(
       // The StatefulNavigationShell from the associated StatefulShellRoute is
       // directly passed as the body of the Scaffold.
-      body: navigationShell,
+      body: child,
       bottomNavigationBar: BottomNavigationBar(
           // Here, the items of BottomNavigationBar are hard coded. In a real
           // world scenario, the items would most likely be generated from the
@@ -170,18 +176,19 @@ class ScaffoldWithNavBar extends StatelessWidget {
             BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Section B'),
             BottomNavigationBarItem(icon: Icon(Icons.tab), label: 'Section C'),
           ],
-          currentIndex: navigationShell.currentIndex,
+          currentIndex: shellState.navigatorIndex,
           // Navigate to the current location of the branch at the provided index
           // when tapping an item in the BottomNavigationBar.
           onTap: (int index) {
-            return GoRouter.of(context).go('/shell/$index');
-            // Since names are configured for the branches, it is also possible to
-            // restore a branch by name, like this:
-            // return switch(index) {
-            //   1 => GoRouter.of(context).go('/shell/branchB'),
-            //   2 => GoRouter.of(context).go('/shell/branchC'),
-            //   _ => GoRouter.of(context).go('/shell/branchA'),
-            // };
+            // It's possible to simply do this to navigate between branches:
+            // return GoRouter.of(context).go('/shell/$index');
+            // But since names are configured for the branches, it is also
+            // possible to restore a branch by name, like this:
+            return switch (index) {
+              1 => GoRouter.of(context).go('/shell/branchB'),
+              2 => GoRouter.of(context).go('/shell/branchC'),
+              _ => GoRouter.of(context).go('/shell/branchA'),
+            };
           }),
     );
   }
@@ -196,10 +203,20 @@ class ScaffoldWithNavBar extends StatelessWidget {
     // navigating to the initial location when tapping the item that is
     // already active. This example demonstrates how to support this behavior,
     // using the '/initial' shell route redirect.
-    if (index == navigationShell.currentIndex) {
-      GoRouter.of(context).go('/shell/$index/initial');
+    if (index == shellState.navigatorIndex) {
+      final String initialLocation = shellState.initialLocation(index)!;
+      GoRouter.of(context).go(initialLocation);
+      // It is also possible to navigate to the initial location of the branch
+      // like this:
+      //GoRouter.of(context).go('/shell/$index/initial');
     } else {
-      GoRouter.of(context).go('/shell/$index');
+      return switch (index) {
+        1 => GoRouter.of(context).go('/shell/branchB'),
+        2 => GoRouter.of(context).go('/shell/branchC'),
+        _ => GoRouter.of(context).go('/shell/branchA'),
+      };
+      // It is also possible to navigate to the branch by index like this:
+      //GoRouter.of(context).go('/shell/$index');
     }
   }
 }

@@ -263,34 +263,29 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     BuildContext context,
     ShellRouteMatch match,
   ) {
-    final GoRouterState state =
-        match.buildState(widget.configuration, widget.matchList);
+    final ShellRouteState state = match.buildState(
+        widget.configuration, widget.matchList) as ShellRouteState;
     final GlobalKey<NavigatorState> navigatorKey = match.navigatorKey;
-    final ShellRouteContext shellRouteContext = ShellRouteContext(
-      route: match.route,
-      routerState: state,
-      navigatorKey: navigatorKey,
-      routeMatchList: widget.matchList,
-      navigatorBuilder:
-          (List<NavigatorObserver>? observers, String? restorationScopeId) {
-        return _CustomNavigator(
-          // The state needs to persist across rebuild.
-          key: GlobalObjectKey(navigatorKey.hashCode),
-          navigatorRestorationId: restorationScopeId,
-          navigatorKey: navigatorKey,
-          matches: match.matches,
-          matchList: widget.matchList,
-          configuration: widget.configuration,
-          observers: observers ?? const <NavigatorObserver>[],
-          onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
-          // This is used to recursively build pages under this shell route.
-          errorBuilder: widget.errorBuilder,
-          errorPageBuilder: widget.errorPageBuilder,
-        );
-      },
-    );
+    Widget navigatorBuilder(
+        List<NavigatorObserver>? observers, String? restorationScopeId) {
+      return _CustomNavigator(
+        // The state needs to persist across rebuild.
+        key: GlobalObjectKey(navigatorKey.hashCode),
+        navigatorRestorationId: restorationScopeId,
+        navigatorKey: navigatorKey,
+        matches: match.matches,
+        matchList: widget.matchList,
+        configuration: widget.configuration,
+        observers: observers ?? const <NavigatorObserver>[],
+        onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
+        // This is used to recursively build pages under this shell route.
+        errorBuilder: widget.errorBuilder,
+        errorPageBuilder: widget.errorPageBuilder,
+      );
+    }
+
     final Page<Object?>? page =
-        match.route.buildPage(context, state, shellRouteContext);
+        match.route.buildPage(context, state, navigatorBuilder);
     if (page != null && page is! NoOpPage) {
       return page;
     }
@@ -301,7 +296,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       state,
       Builder(
         builder: (BuildContext context) {
-          return match.route.buildWidget(context, state, shellRouteContext)!;
+          return match.route.buildWidget(context, state, navigatorBuilder)!;
         },
       ),
     );

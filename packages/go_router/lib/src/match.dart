@@ -375,7 +375,7 @@ class ShellRouteMatch extends RouteMatchBase {
     if (leafMatch is ImperativeRouteMatch) {
       matches = leafMatch.matches;
     }
-    return GoRouterState(
+    return ShellRouteState(
       configuration,
       uri: matches.uri,
       matchedLocation: matchedLocation,
@@ -384,6 +384,9 @@ class ShellRouteMatch extends RouteMatchBase {
       pageKey: pageKey,
       extra: matches.extra,
       topRoute: matches.lastOrNull?.route,
+      navigatorKey: navigatorKey,
+      shellRoute: route,
+      routeMatchList: matches,
     );
   }
 
