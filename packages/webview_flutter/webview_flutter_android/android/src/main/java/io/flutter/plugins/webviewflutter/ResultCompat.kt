@@ -13,7 +13,7 @@ package io.flutter.plugins.webviewflutter
  * to java.
  */
 @Suppress("UNCHECKED_CAST")
-class ResultCompat<T>(result: Result<T>) {
+class ResultCompat<T>(val result: Result<T>) {
   private val value: T? = result.getOrNull()
   private val exception = result.exceptionOrNull()
   val isSuccess = result.isSuccess
@@ -29,6 +29,11 @@ class ResultCompat<T>(result: Result<T>) {
     @JvmStatic
     fun <T> asCompatCallback(result: (ResultCompat<T>) -> Unit): (Result<T>) -> Unit {
       return { result(ResultCompat(it)) }
+    }
+
+    @JvmStatic
+    fun <T> withSuccessResult(value: T): ResultCompat<T> {
+      return ResultCompat(Result.success(value))
     }
   }
 

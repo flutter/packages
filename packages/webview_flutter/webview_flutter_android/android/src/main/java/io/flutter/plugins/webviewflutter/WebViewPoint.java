@@ -4,6 +4,8 @@
 
 package io.flutter.plugins.webviewflutter;
 
+import androidx.annotation.Nullable;
+
 /**
  * Represents a position on a web page.
  *

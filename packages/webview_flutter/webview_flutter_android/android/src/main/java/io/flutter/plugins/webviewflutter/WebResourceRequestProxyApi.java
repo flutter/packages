@@ -9,6 +9,8 @@ import android.webkit.WebResourceRequest;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
+import java.util.Collections;
 import java.util.Map;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -51,7 +53,11 @@ public class WebResourceRequestProxyApi extends PigeonApiWebResourceRequest {
   @Nullable
   @Override
   public Map<String, String> requestHeaders(@NonNull WebResourceRequest pigeon_instance) {
-    return pigeon_instance.getRequestHeaders();
+    if (pigeon_instance.getRequestHeaders() == null) {
+      return Collections.emptyMap();
+    } else {
+      return pigeon_instance.getRequestHeaders();
+    }
   }
 
   @NonNull

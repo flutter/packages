@@ -4,11 +4,13 @@
 
 package io.flutter.plugins.webviewflutter;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import io.flutter.plugins.webviewflutter.DownloadListenerProxyApi.DownloadListenerCreator;
 import io.flutter.plugins.webviewflutter.DownloadListenerProxyApi.DownloadListenerImpl;
 import org.junit.After;
 import org.junit.Before;
@@ -19,50 +21,26 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 public class DownloadListenerTest {
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiDownloadListener api = new TestProxyApiRegistrar().getPigeonApiDownloadListener();
 
-  @Mock public DownloadListenerFlutterApiImpl mockFlutterApi;
-
-  InstanceManager instanceManager;
-  DownloadListenerHostApiImpl hostApiImpl;
-  DownloadListenerImpl downloadListener;
-
-  @Before
-  public void setUp() {
-    instanceManager = InstanceManager.create(identifier -> {});
-
-    final DownloadListenerCreator downloadListenerCreator =
-        new DownloadListenerCreator() {
-          @Override
-          public DownloadListenerImpl createDownloadListener(
-              DownloadListenerFlutterApiImpl flutterApi) {
-            downloadListener = super.createDownloadListener(flutterApi);
-            return downloadListener;
-          }
-        };
-
-    hostApiImpl =
-        new DownloadListenerHostApiImpl(instanceManager, downloadListenerCreator, mockFlutterApi);
-    hostApiImpl.create(0L);
-  }
-
-  @After
-  public void tearDown() {
-    instanceManager.stopFinalizationListener();
+    assertTrue(api.pigeon_defaultConstructor() instanceof DownloadListenerProxyApi.DownloadListenerImpl);
   }
 
   @Test
-  public void postMessage() {
-    downloadListener.onDownloadStart(
-        "https://www.google.com", "userAgent", "contentDisposition", "mimetype", 54);
-    verify(mockFlutterApi)
-        .onDownloadStart(
-            eq(downloadListener),
-            eq("https://www.google.com"),
-            eq("userAgent"),
-            eq("contentDisposition"),
-            eq("mimetype"),
-            eq(54L),
-            any());
+  public void onDownloadStart() {
+    final DownloadListenerProxyApi mockApi = mock(DownloadListenerProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final DownloadListenerImpl instance = new DownloadListenerImpl(mockApi);
+    final String url = "myString";
+    final String userAgent = "myString";
+    final String contentDisposition = "myString";
+    final String mimetype = "myString";
+    final Long contentLength = 0L;
+    instance.onDownloadStart(url, userAgent, contentDisposition, mimetype, contentLength);
+
+    verify(mockApi).onDownloadStart(eq(instance), eq(url), eq(userAgent), eq(contentDisposition), eq(mimetype), eq(contentLength), any());
   }
 }
