@@ -82,6 +82,8 @@
 @property(nonatomic) CGAffineTransform preferredTransform;
 @property(nonatomic, readonly) BOOL disposed;
 @property(nonatomic, readonly) BOOL isPlaying;
+// Playback speed when video is playing.
+@property(nonatomic, readonly) NSNumber *playbackSpeed;
 @property(nonatomic) BOOL isLooping;
 @property(nonatomic, readonly) BOOL isInitialized;
 // The updater that drives callbacks to the engine to indicate that a new frame is ready.
@@ -397,13 +399,44 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     return;
   }
   if (_isPlaying) {
-    [_player play];
+    // Calling play is the same as setting the rate to 1.0 (or to defaultRate depending on ios
+    // version) so last set playback speed must be set here if any instead.
+    // https://github.com/flutter/flutter/issues/71264
+    // https://github.com/flutter/flutter/issues/73643
+    if (_playbackSpeed) {
+      [self updateRate];
+    } else {
+      [_player play];
+    }
   } else {
     [_player pause];
   }
   // If the texture is still waiting for an expected frame, the display link needs to keep
   // running until it arrives regardless of the play/pause state.
   _displayLink.running = _isPlaying || self.waitingForFrame;
+}
+
+- (void)updateRate {
+  // See https://developer.apple.com/library/archive/qa/qa1772/_index.html for an explanation of
+  // these checks.
+  // If status is not AVPlayerItemStatusReadyToPlay then both canPlayFastForward
+  // and canPlaySlowForward are always false and it is unknown whether video can
+  // be played at these speeds, updatePlayingState will be called again when
+  // status changes to AVPlayerItemStatusReadyToPlay.
+  float speed = _playbackSpeed.floatValue;
+  if (speed > 2.0 && !_player.currentItem.canPlayFastForward) {
+    if (_player.currentItem.status != AVPlayerItemStatusReadyToPlay) {
+      return;
+    }
+    speed = 2.0;
+  }
+  if (speed < 1.0 && !_player.currentItem.canPlaySlowForward) {
+    if (_player.currentItem.status != AVPlayerItemStatusReadyToPlay) {
+      return;
+    }
+    speed = 1.0;
+  }
+  _player.rate = speed;
 }
 
 - (void)setupEventSinkIfReadyToPlay {
@@ -519,27 +552,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)setPlaybackSpeed:(double)speed {
-  // See https://developer.apple.com/library/archive/qa/qa1772/_index.html for an explanation of
-  // these checks.
-  if (speed > 2.0 && !_player.currentItem.canPlayFastForward) {
-    if (_eventSink != nil) {
-      _eventSink([FlutterError errorWithCode:@"VideoError"
-                                     message:@"Video cannot be fast-forwarded beyond 2.0x"
-                                     details:nil]);
-    }
-    return;
-  }
-
-  if (speed < 1.0 && !_player.currentItem.canPlaySlowForward) {
-    if (_eventSink != nil) {
-      _eventSink([FlutterError errorWithCode:@"VideoError"
-                                     message:@"Video cannot be slow-forwarded"
-                                     details:nil]);
-    }
-    return;
-  }
-
-  _player.rate = speed;
+  _playbackSpeed = @(speed);
+  [self updatePlayingState];
 }
 
 - (CVPixelBufferRef)copyPixelBuffer {
