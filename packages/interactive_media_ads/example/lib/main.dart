@@ -178,7 +178,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
 
     if (_adsManager != null) {
       _contentProgressTimer = Timer.periodic(
-        const Duration(milliseconds: 500),
+        const Duration(milliseconds: 200),
         (Timer timer) async {
           if (_contentVideoController.value.isInitialized) {
             final Duration? progress = await _contentVideoController.position;

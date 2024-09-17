@@ -80,6 +80,9 @@ class ContentProgressProvider {
   final PlatformContentProgressProvider platform;
 
   /// Sends an update on the progress of the content video.
+  ///
+  /// When using a `Timer` to periodically send updates through this method, an
+  /// interval of 200ms is recommended.
   Future<void> setProgress({
     required Duration progress,
     required Duration duration,
