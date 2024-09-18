@@ -58,8 +58,6 @@ class AllTypes {
     required this.map,
     required this.stringMap,
     required this.intMap,
-    // required this.doubleMap,
-    // required this.boolMap,
     required this.enumMap,
     required this.objectMap,
     required this.listMap,
@@ -96,8 +94,6 @@ class AllTypes {
   Map map;
   Map<String, String> stringMap;
   Map<int, int> intMap;
-  // Map<double, double> doubleMap;
-  // Map<int, bool> boolMap;
   Map<AnEnum, AnEnum> enumMap;
   Map<Object, Object> objectMap;
   Map<int, List<Object?>> listMap;
@@ -140,8 +136,6 @@ class AllNullableTypes {
     this.map,
     this.stringMap,
     this.intMap,
-    // this.doubleMap,
-    // this.boolMap,
     this.enumMap,
     this.objectMap,
     this.listMap,
@@ -181,8 +175,6 @@ class AllNullableTypes {
   Map? map;
   Map<String?, String?>? stringMap;
   Map<int?, int?>? intMap;
-  // Map<double, double?>? doubleMap;
-  // Map<int, bool?>? boolMap;
   Map<AnEnum?, AnEnum?>? enumMap;
   Map<Object?, Object?>? objectMap;
   Map<int?, List<Object?>?>? listMap;
@@ -225,8 +217,6 @@ class AllNullableTypesWithoutRecursion {
     this.map,
     this.stringMap,
     this.intMap,
-    // this.doubleMap,
-    // this.boolMap,
     this.enumMap,
     this.objectMap,
     this.listMap,
@@ -263,8 +253,6 @@ class AllNullableTypesWithoutRecursion {
   Map? map;
   Map<String?, String?>? stringMap;
   Map<int?, int?>? intMap;
-  // Map<double, double?>? doubleMap;
-  // Map<int, bool?>? boolMap;
   Map<AnEnum?, AnEnum?>? enumMap;
   Map<Object?, Object?>? objectMap;
   Map<int?, List<Object?>?>? listMap;
