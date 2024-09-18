@@ -1,6 +1,6 @@
 ## 22.5.0
 
-* [kotlin] Adds implementation for `@ProxyApi`.
+* [swift] Adds implementation for `@ProxyApi`.
 
 ## 22.4.0
 
