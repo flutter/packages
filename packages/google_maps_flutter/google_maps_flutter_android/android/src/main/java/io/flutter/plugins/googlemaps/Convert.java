@@ -44,7 +44,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -316,10 +315,6 @@ class Convert {
     return bitmapDescriptorFactory.fromAsset(assetKey);
   }
 
-  private static boolean toBoolean(Object o) {
-    return (Boolean) o;
-  }
-
   static @NonNull CameraPosition cameraPositionFromPigeon(
       @NonNull Messages.PlatformCameraPosition position) {
     final CameraPosition.Builder builder = CameraPosition.builder();
@@ -330,47 +325,57 @@ class Convert {
     return builder.build();
   }
 
-  static CameraPosition toCameraPosition(Object o) {
-    final Map<?, ?> data = toMap(o);
-    final CameraPosition.Builder builder = CameraPosition.builder();
-    builder.bearing(toFloat(data.get("bearing")));
-    builder.target(toLatLng(data.get("target")));
-    builder.tilt(toFloat(data.get("tilt")));
-    builder.zoom(toFloat(data.get("zoom")));
-    return builder.build();
-  }
-
-  static CameraUpdate toCameraUpdate(Object o, float density) {
-    final List<?> data = toList(o);
-    switch (toString(data.get(0))) {
-      case "newCameraPosition":
-        return CameraUpdateFactory.newCameraPosition(toCameraPosition(data.get(1)));
-      case "newLatLng":
-        return CameraUpdateFactory.newLatLng(toLatLng(data.get(1)));
-      case "newLatLngBounds":
-        return CameraUpdateFactory.newLatLngBounds(
-            toLatLngBounds(data.get(1)), toPixels(data.get(2), density));
-      case "newLatLngZoom":
-        return CameraUpdateFactory.newLatLngZoom(toLatLng(data.get(1)), toFloat(data.get(2)));
-      case "scrollBy":
-        return CameraUpdateFactory.scrollBy( //
-            toFractionalPixels(data.get(1), density), //
-            toFractionalPixels(data.get(2), density));
-      case "zoomBy":
-        if (data.size() == 2) {
-          return CameraUpdateFactory.zoomBy(toFloat(data.get(1)));
-        } else {
-          return CameraUpdateFactory.zoomBy(toFloat(data.get(1)), toPoint(data.get(2), density));
-        }
-      case "zoomIn":
-        return CameraUpdateFactory.zoomIn();
-      case "zoomOut":
-        return CameraUpdateFactory.zoomOut();
-      case "zoomTo":
-        return CameraUpdateFactory.zoomTo(toFloat(data.get(1)));
-      default:
-        throw new IllegalArgumentException("Cannot interpret " + o + " as CameraUpdate");
+  static CameraUpdate cameraUpdateFromPigeon(Messages.PlatformCameraUpdate update, float density) {
+    Object cameraUpdate = update.getCameraUpdate();
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewCameraPosition) {
+      Messages.PlatformCameraUpdateNewCameraPosition newCameraPosition =
+          (Messages.PlatformCameraUpdateNewCameraPosition) cameraUpdate;
+      return CameraUpdateFactory.newCameraPosition(
+          cameraPositionFromPigeon(newCameraPosition.getCameraPosition()));
     }
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLng) {
+      Messages.PlatformCameraUpdateNewLatLng newLatLng =
+          (Messages.PlatformCameraUpdateNewLatLng) cameraUpdate;
+      return CameraUpdateFactory.newLatLng(latLngFromPigeon(newLatLng.getLatLng()));
+    }
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLngZoom) {
+      Messages.PlatformCameraUpdateNewLatLngZoom newLatLngZoom =
+          (Messages.PlatformCameraUpdateNewLatLngZoom) cameraUpdate;
+      return CameraUpdateFactory.newLatLngZoom(
+          latLngFromPigeon(newLatLngZoom.getLatLng()), newLatLngZoom.getZoom().floatValue());
+    }
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLngBounds) {
+      Messages.PlatformCameraUpdateNewLatLngBounds newLatLngBounds =
+          (Messages.PlatformCameraUpdateNewLatLngBounds) cameraUpdate;
+      return CameraUpdateFactory.newLatLngBounds(
+          latLngBoundsFromPigeon(newLatLngBounds.getBounds()),
+          (int) (newLatLngBounds.getPadding() * density));
+    }
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateScrollBy) {
+      Messages.PlatformCameraUpdateScrollBy scrollBy =
+          (Messages.PlatformCameraUpdateScrollBy) cameraUpdate;
+      return CameraUpdateFactory.scrollBy(
+          scrollBy.getDx().floatValue() * density, scrollBy.getDy().floatValue() * density);
+    }
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoomBy) {
+      Messages.PlatformCameraUpdateZoomBy zoomBy =
+          (Messages.PlatformCameraUpdateZoomBy) cameraUpdate;
+      final Point focus = pointFromPigeon(zoomBy.getFocus(), density);
+      return (focus != null)
+          ? CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue(), focus)
+          : CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue());
+    }
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoomTo) {
+      Messages.PlatformCameraUpdateZoomTo zoomTo =
+          (Messages.PlatformCameraUpdateZoomTo) cameraUpdate;
+      return CameraUpdateFactory.zoomTo(zoomTo.getZoom().floatValue());
+    }
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoom) {
+      Messages.PlatformCameraUpdateZoom zoom = (Messages.PlatformCameraUpdateZoom) cameraUpdate;
+      return (zoom.getOut()) ? CameraUpdateFactory.zoomOut() : CameraUpdateFactory.zoomIn();
+    }
+    throw new IllegalArgumentException(
+        "PlatformCameraUpdate's cameraUpdate field must be one of the PlatformCameraUpdate... case classes.");
   }
 
   private static double toDouble(Object o) {
@@ -494,16 +499,16 @@ class Convert {
     return new Point(point.getX().intValue(), point.getY().intValue());
   }
 
-  static Messages.PlatformPoint pointToPigeon(Point point) {
-    return new Messages.PlatformPoint.Builder().setX((long) point.x).setY((long) point.y).build();
-  }
-
-  private static LatLngBounds toLatLngBounds(Object o) {
-    if (o == null) {
+  @Nullable
+  static Point pointFromPigeon(@Nullable Messages.PlatformOffset point, float density) {
+    if (point == null) {
       return null;
     }
-    final List<?> data = toList(o);
-    return new LatLngBounds(toLatLng(data.get(0)), toLatLng(data.get(1)));
+    return new Point((int) (point.getDx() * density), (int) (point.getDy() * density));
+  }
+
+  static Messages.PlatformPoint pointToPigeon(Point point) {
+    return new Messages.PlatformPoint.Builder().setX((long) point.x).setY((long) point.y).build();
   }
 
   private static List<?> toList(Object o) {
@@ -512,26 +517,6 @@ class Convert {
 
   private static Map<?, ?> toMap(Object o) {
     return (Map<?, ?>) o;
-  }
-
-  private static Map<String, Object> toObjectMap(Object o) {
-    Map<String, Object> hashMap = new HashMap<>();
-    Map<?, ?> map = (Map<?, ?>) o;
-    for (Object key : map.keySet()) {
-      Object object = map.get(key);
-      if (object != null) {
-        hashMap.put((String) key, object);
-      }
-    }
-    return hashMap;
-  }
-
-  private static float toFractionalPixels(Object o, float density) {
-    return toFloat(o) * density;
-  }
-
-  private static int toPixels(Object o, float density) {
-    return (int) toFractionalPixels(o, density);
   }
 
   private static Bitmap toBitmap(Object o) {
@@ -561,11 +546,6 @@ class Convert {
       return Bitmap.createScaledBitmap(bitmap, width, height, true);
     }
     return bitmap;
-  }
-
-  private static Point toPoint(Object o, float density) {
-    final List<?> data = toList(o);
-    return new Point(toPixels(data.get(0), density), toPixels(data.get(1), density));
   }
 
   private static String toString(Object o) {

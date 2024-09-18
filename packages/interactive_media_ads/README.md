@@ -81,10 +81,10 @@ class AdExampleWidget extends StatefulWidget {
 
 class _AdExampleWidgetState extends State<AdExampleWidget>
     with WidgetsBindingObserver {
-  // IMA sample tag for a single skippable inline video ad. See more IMA sample
+  // IMA sample tag for a pre-, mid-, and post-roll, single inline video ad. See more IMA sample
   // tags at https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags
   static const String _adTagUrl =
-      'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_preroll_skippable&sz=640x480&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=';
+      'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/vmap_ad_samples&sz=640x480&cust_params=sample_ar%3Dpremidpost&ciu_szs=300x250&gdfp_req=1&ad_rule=1&output=vmap&unviewed_position_start=1&env=vp&impl=s&cmsid=496&vid=short_onecue&correlator=';
 
   // The AdsLoader instance exposes the request ads method.
   late final AdsLoader _adsLoader;
@@ -99,6 +99,15 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
 
   // Controls the content video player.
   late final VideoPlayerController _contentVideoController;
+
+  // Periodically updates the SDK of the current playback progress of the
+  // content video.
+  Timer? _contentProgressTimer;
+
+  // Provides the SDK with the current playback progress of the content video.
+  // This is required to support mid-roll ads.
+  final ContentProgressProvider _contentProgressProvider =
+      ContentProgressProvider();
   // ···
   @override
   Widget build(BuildContext context) {
@@ -240,20 +249,43 @@ Future<void> _requestAds(AdDisplayContainer container) {
     },
   );
 
-  return _adsLoader.requestAds(AdsRequest(adTagUrl: _adTagUrl));
+  return _adsLoader.requestAds(AdsRequest(
+    adTagUrl: _adTagUrl,
+    contentProgressProvider: _contentProgressProvider,
+  ));
 }
 
-Future<void> _resumeContent() {
+Future<void> _resumeContent() async {
   setState(() {
     _shouldShowContentVideo = true;
   });
-  return _contentVideoController.play();
+
+  if (_adsManager != null) {
+    _contentProgressTimer = Timer.periodic(
+      const Duration(milliseconds: 200),
+      (Timer timer) async {
+        if (_contentVideoController.value.isInitialized) {
+          final Duration? progress = await _contentVideoController.position;
+          if (progress != null) {
+            await _contentProgressProvider.setProgress(
+              progress: progress,
+              duration: _contentVideoController.value.duration,
+            );
+          }
+        }
+      },
+    );
+  }
+
+  await _contentVideoController.play();
 }
 
 Future<void> _pauseContent() {
   setState(() {
     _shouldShowContentVideo = false;
   });
+  _contentProgressTimer?.cancel();
+  _contentProgressTimer = null;
   return _contentVideoController.pause();
 }
 ```
@@ -267,6 +299,7 @@ Dispose the content player and destroy the [AdsManager][6].
 @override
 void dispose() {
   super.dispose();
+  _contentProgressTimer?.cancel();
   _contentVideoController.dispose();
   _adsManager?.destroy();
   // ···
