@@ -11,6 +11,7 @@ package com.example.test_plugin
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MessageCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
@@ -5095,4 +5096,10 @@ class FlutterSmallApi(
       }
     }
   }
+}
+abstract class EventChannelClassOne : EventChannel.StreamHandler {
+    val channelName: String = "com.example.test_plugin/events1"
+}
+abstract class EventChannelClassTwo : EventChannel.StreamHandler {
+    val channelName: String = "com.example.test_plugin/events2"
 }

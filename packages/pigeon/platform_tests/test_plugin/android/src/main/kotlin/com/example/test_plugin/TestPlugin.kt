@@ -4,8 +4,14 @@
 
 package com.example.test_plugin
 
+import android.annotation.SuppressLint
+import android.icu.text.SimpleDateFormat
+import android.os.Handler
+import android.os.Looper
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
+import io.flutter.plugin.common.EventChannel
+import java.util.Date
 
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
 class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
@@ -13,6 +19,63 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   private var flutterSmallApiOne: FlutterSmallApi? = null
   private var flutterSmallApiTwo: FlutterSmallApi? = null
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
+
+  object TimeHandler : EventChannelClassOne() {
+    // Handle event in main thread.
+    private var handler = Handler(Looper.getMainLooper())
+
+    // Declare our eventSink later it will be initialized
+    private var eventSink: EventChannel.EventSink? = null
+
+    override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
+      eventSink = sink
+      // every second send the time
+      val r: Runnable = object : Runnable {
+        @SuppressLint("NewApi")
+        override fun run() {
+          handler.post {
+            val time: String = Date().toString()
+            eventSink?.success(time)
+          }
+          handler.postDelayed(this, 1000)
+        }
+      }
+      handler.postDelayed(r, 1000)
+    }
+
+    override fun onCancel(p0: Any?) {
+      eventSink = null
+    }
+  }
+
+  object CounterHandler : EventChannelClassTwo() {
+    // Handle event in main thread.
+    private val handler = Handler(Looper.getMainLooper())
+
+    // Declare our eventSink later it will be initialized
+    private var eventSink: EventChannel.EventSink? = null
+
+    override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
+      eventSink = sink
+      var count: Long = 0
+      // every 5 second send the time
+      val r: Runnable = object : Runnable {
+        override fun run() {
+          handler.post {
+            count ++;
+            eventSink?.success(count)
+          }
+          handler.postDelayed(this, 1000)
+        }
+      }
+      handler.postDelayed(r, 1000)
+    }
+
+    override fun onCancel(p0: Any?) {
+      eventSink = null
+    }
+  }
+
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -26,6 +89,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
     proxyApiRegistrar = ProxyApiRegistrar(binding.binaryMessenger)
     proxyApiRegistrar!!.setUp()
+
+    EventChannel(binding.binaryMessenger, CounterHandler.channelName).setStreamHandler(
+      CounterHandler
+    )
+    EventChannel(binding.binaryMessenger, TimeHandler.channelName).setStreamHandler(
+      TimeHandler
+    )
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {

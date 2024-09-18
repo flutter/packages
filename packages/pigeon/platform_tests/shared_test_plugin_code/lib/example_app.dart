@@ -58,7 +58,39 @@ class _ExampleAppState extends State<ExampleApp> {
           title: const Text('Pigeon integration tests'),
         ),
         body: Center(
-          child: Text(status),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'Timer :',
+              ),
+              StreamBuilder<String>(
+                stream: streamTimeFromNative(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  if (snapshot.hasData) {
+                    return Text('${snapshot.data}');
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              ),
+              const SizedBox(height: 30),
+              const Text(
+                'Counter :',
+              ),
+              StreamBuilder<int>(
+                stream: streamCounterFromNative(),
+                builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                  if (snapshot.hasData) {
+                    return Text('${snapshot.data}');
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
