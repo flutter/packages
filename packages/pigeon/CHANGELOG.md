@@ -1,6 +1,6 @@
 ## 22.5.0
 
-* Adds support for nested collections.
+* Validates support for nested collections with generic types.
 
 ## 22.4.0
 
