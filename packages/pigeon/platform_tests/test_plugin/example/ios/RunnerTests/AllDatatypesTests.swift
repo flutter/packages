@@ -62,10 +62,12 @@ class AllDatatypesTests: XCTestCase {
       intList: [1, 2],
       doubleList: [1.1, 2.2],
       boolList: [true, false],
+      objectList: ["string", 2],
       listList: [[true], [false]],
       map: ["hello": 1234],
       stringMap: ["hello": "you"],
-      intMap: [1: 0]
+      intMap: [1: 0],
+      objectMap: ["hello": 1234]
     )
 
     let binaryMessenger = EchoBinaryMessenger(codec: CoreTestsPigeonCodec.shared)
@@ -90,6 +92,7 @@ class AllDatatypesTests: XCTestCase {
         XCTAssert(equalsList(res!.intList, everything.intList))
         XCTAssert(equalsList(res!.doubleList, everything.doubleList))
         XCTAssert(equalsList(res!.boolList, everything.boolList))
+        XCTAssert(equalsList(res!.objectList, everything.objectList))
         if res!.listList != nil {
           for (index, list) in res!.listList!.enumerated() {
             XCTAssert(equalsList(list, everything.listList![index]))
@@ -98,6 +101,7 @@ class AllDatatypesTests: XCTestCase {
         XCTAssert(equalsDictionary(res!.map, everything.map))
         XCTAssert(equalsDictionary(res!.stringMap, everything.stringMap))
         XCTAssert(equalsDictionary(res!.intMap, everything.intMap))
+        XCTAssert(equalsDictionary(res!.objectMap, everything.objectMap))
         expectation.fulfill()
         return
       case .failure(_):
