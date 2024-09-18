@@ -1,3 +1,9 @@
+## 2.7.4
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/154559) where
+  resuming (or using a plugin like `share_plus` that implicitly resumes the
+  activity where) a video player would cause a `DecoderInitializationException`.
+
 ## 2.7.3
 
 * Updates Media3-ExoPlayer to 1.4.1.

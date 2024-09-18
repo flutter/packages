@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Uncomment this file once
-// https://github.com/flutter/packages/pull/6371 lands. This file uses the
-// Kotlin ProxyApi feature from pigeon.
 // ignore_for_file: avoid_unused_constructor_parameters
 
 import 'package:pigeon/pigeon.dart';
@@ -207,6 +204,20 @@ enum AdEventType {
   thirdQuartile,
 
   /// The event type is not recognized by this wrapper.
+  unknown,
+}
+
+/// Describes an element of the ad UI, to be requested or rendered by the SDK.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/UiElement.html.
+enum UiElement {
+  /// The ad attribution UI element, for example, "Ad".
+  adAttribution,
+
+  /// Ad attribution is required for a countdown timer to be displayed.
+  countdown,
+
+  /// The element is not recognized by this wrapper.
   unknown,
 }
 
@@ -745,4 +756,81 @@ abstract class AdEventListener {
 
   /// Respond to an occurrence of an AdEvent.
   late final void Function(AdEvent event) onAdEvent;
+}
+
+/// Defines parameters that control the rendering of ads.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsRenderingSettings.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdsRenderingSettings',
+  ),
+)
+abstract class AdsRenderingSettings {
+  /// Maximum recommended bitrate.
+  int getBitrateKbps();
+
+  /// Returns whether the click-through URL will be opened using Custom Tabs
+  /// feature.
+  bool getEnableCustomTabs();
+
+  /// Whether the SDK will instruct the player to load the creative in response
+  /// to `BaseManager.init()`.
+  bool getEnablePreloading();
+
+  /// Whether to focus on the skip button when the skippable ad can be skipped
+  /// on Android TV.
+  ///
+  /// This is a no-op on non-Android TV devices.
+  bool getFocusSkipButtonWhenAvailable();
+
+  /// The SDK will prioritize the media with MIME type on the list.
+  List<String> getMimeTypes();
+
+  /// Maximum recommended bitrate.
+  ///
+  /// The value is in kbit/s. Default value, -1, means the bitrate will be
+  /// selected by the SDK.
+  void setBitrateKbps(int bitrate);
+
+  /// Notifies the SDK whether to launch the click-through URL using Custom Tabs
+  /// feature.
+  ///
+  /// Default is false.
+  void setEnableCustomTabs(bool enableCustomTabs);
+
+  /// If set, the SDK will instruct the player to load the creative in response
+  /// to `BaseManager.init()`.
+  ///
+  /// This allows the player to preload the ad at any point before calling
+  /// `AdsManager.start()`.
+  void setEnablePreloading(bool enablePreloading);
+
+  /// Set whether to focus on the skip button when the skippable ad can be
+  /// skipped on Android TV.
+  ///
+  /// This is a no-op on non-Android TV devices.
+  ///
+  /// Default is true.
+  void setFocusSkipButtonWhenAvailable(bool enableFocusSkipButton);
+
+  /// Specifies a non-default amount of time to wait for media to load before
+  /// timing out, in milliseconds.
+  ///
+  /// This only applies to the IMA client-side SDK.
+  ///
+  /// Default time is 8000 ms.
+  void setLoadVideoTimeout(int loadVideoTimeout);
+
+  /// If specified, the SDK will prioritize the media with MIME type on the
+  /// list.
+  void setMimeTypes(List<String> mimeTypes);
+
+  /// For VMAP and ad rules playlists, only play ad breaks scheduled after this
+  /// time (in seconds).
+  void setPlayAdsAfterTime(double time);
+
+  /// Sets the ad UI elements to be rendered by the IMA SDK.
+  void setUiElements(List<UiElement> uiElements);
 }

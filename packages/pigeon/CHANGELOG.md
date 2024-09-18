@@ -1,6 +1,10 @@
+## 22.5.0
+
+* [kotlin] Adds implementation for `@ProxyApi`.
+
 ## 22.4.0
 
-* [swift] Adds implementation for `@ProxyApi`.
+* Adds support for non-nullable types in collections.
 
 ## 22.3.0
 

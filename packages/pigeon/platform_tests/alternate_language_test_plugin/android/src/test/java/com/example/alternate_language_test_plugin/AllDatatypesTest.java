@@ -190,6 +190,7 @@ public class AllDatatypesTest {
             .setDoubleList(Arrays.asList(new Double[] {0.5, 0.25, 1.5, 1.25}))
             .setIntList(Arrays.asList(new Long[] {1l, 2l, 3l, 4l}))
             .setStringList(Arrays.asList(new String[] {"string", "another one"}))
+            .setObjectList(genericList)
             .setEnumList(
                 Arrays.asList(
                     new CoreTests.AnEnum[] {CoreTests.AnEnum.ONE, CoreTests.AnEnum.FORTY_TWO}))
@@ -197,6 +198,7 @@ public class AllDatatypesTest {
             .setMap(makeMap("hello", 1234))
             .setIntMap(makeMap(1L, 0L))
             .setStringMap(makeMap("hello", "you"))
+            .setObjectMap(makeMap("E", 4321))
             .setEnumMap(makeMap(CoreTests.AnEnum.ONE, CoreTests.AnEnum.FOUR_HUNDRED_TWENTY_TWO))
             .build();
 

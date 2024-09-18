@@ -38,7 +38,9 @@
                    XCTAssertNil(result.intList);
                    XCTAssertNil(result.doubleList);
                    XCTAssertNil(result.stringList);
+                   XCTAssertNil(result.objectList);
                    XCTAssertNil(result.map);
+                   XCTAssertNil(result.objectMap);
                    [expectation fulfill];
                  }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
@@ -63,10 +65,12 @@
   everything.intList = @[ @1, @2 ];
   everything.doubleList = @[ @1.1, @2.2 ];
   everything.stringList = @[ @"string", @"another one" ];
+  everything.objectList = @[ @"string", @1 ];
   everything.listList = @[ @[ @"string" ], @[ @"another one" ] ];
   everything.map = @{@"hello" : @(1234), @"goodbye" : @"world"};
   everything.stringMap = @{@"hello" : @"you", @"goodbye" : @"world"};
   everything.intMap = @{@(1) : @(0), @(2) : @(-2)};
+  everything.objectMap = @{@"hello" : @(1234), @"goodbye" : @"world"};
   EchoBinaryMessenger *binaryMessenger =
       [[EchoBinaryMessenger alloc] initWithCodec:FLTGetCoreTestsCodec()];
   FLTFlutterIntegrationCoreApi *api =
@@ -91,10 +95,12 @@
                    XCTAssertEqualObjects(result.intList, everything.intList);
                    XCTAssertEqualObjects(result.doubleList, everything.doubleList);
                    XCTAssertEqualObjects(result.stringList, everything.stringList);
+                   XCTAssertEqualObjects(result.objectList, everything.objectList);
                    XCTAssertEqualObjects(result.listList, everything.listList);
                    XCTAssertEqualObjects(result.map, everything.map);
                    XCTAssertEqualObjects(result.stringMap, everything.stringMap);
                    XCTAssertEqualObjects(result.intMap, everything.intMap);
+                   XCTAssertEqualObjects(result.objectMap, everything.objectMap);
                    [expectation fulfill];
                  }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];

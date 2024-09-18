@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: unused_local_variable, public_member_api_docs
+// ignore_for_file: public_member_api_docs
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -54,12 +54,6 @@ void compareAllNullableTypesWithoutRecursion(
       true);
   expect(listEquals(allNullableTypesOne.enumList, allNullableTypesTwo.enumList),
       true);
-  // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
-  // https://github.com/flutter/flutter/issues/116117
-  //for (int i = 0; i < allNullableTypesOne.listList!.length; i++) {
-  //  expect(listEquals(allNullableTypesOne.listList![i], allNullableTypesTwo.listList![i]),
-  //      true);
-  //}
   expect(mapEquals(allNullableTypesOne.map, allNullableTypesTwo.map), true);
   expect(
       mapEquals(allNullableTypesOne.stringMap, allNullableTypesTwo.stringMap),
@@ -92,12 +86,6 @@ void compareAllTypes(AllTypes? allTypesOne, AllTypes? allTypesTwo) {
   expect(listEquals(allTypesOne.doubleList, allTypesTwo.doubleList), true);
   expect(listEquals(allTypesOne.boolList, allTypesTwo.boolList), true);
   expect(listEquals(allTypesOne.enumList, allTypesTwo.enumList), true);
-  // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
-  // https://github.com/flutter/flutter/issues/116117
-  //for (int i = 0; i < allTypesOne.listList!.length; i++) {
-  //  expect(listEquals(allTypesOne.listList![i], allTypesTwo.listList![i]),
-  //      true);
-  //}
   expect(mapEquals(allTypesOne.map, allTypesTwo.map), true);
   expect(mapEquals(allTypesOne.stringMap, allTypesTwo.stringMap), true);
   expect(mapEquals(allTypesOne.intMap, allTypesTwo.intMap), true);
@@ -146,12 +134,6 @@ void compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
       true);
   expect(listEquals(allNullableTypesOne.enumList, allNullableTypesTwo.enumList),
       true);
-  // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
-  // https://github.com/flutter/flutter/issues/116117
-  //for (int i = 0; i < allNullableTypesOne.listList!.length; i++) {
-  //  expect(listEquals(allNullableTypesOne.listList![i], allNullableTypesTwo.listList![i]),
-  //      true);
-  //}
   for (int i = 0;
       i < (allNullableTypesOne.recursiveClassList?.length ?? 0);
       i++) {
@@ -216,6 +198,126 @@ void compareAllClassesWrapper(
         wrapperTwo.nullableClassMap != null);
   }
 }
+
+final List<Object> nonNullList = <Object>[
+  'Thing 1',
+  2,
+  true,
+  3.14,
+];
+
+final List<String> nonNullStringList = <String>[
+  'Thing 1',
+  '2',
+  'true',
+  '3.14',
+];
+
+final List<int> nonNullIntList = <int>[
+  1,
+  2,
+  3,
+  4,
+];
+
+final List<double> nonNullDoubleList = <double>[
+  1,
+  2.99999,
+  3,
+  3.14,
+];
+
+final List<bool> nonNullBoolList = <bool>[
+  true,
+  false,
+  true,
+  false,
+];
+
+final List<AnEnum> nonNullEnumList = <AnEnum>[
+  AnEnum.one,
+  AnEnum.two,
+  AnEnum.three,
+  AnEnum.fortyTwo,
+  AnEnum.fourHundredTwentyTwo,
+];
+
+final List<List<Object>> nonNullListList = <List<Object>>[
+  nonNullList,
+  nonNullStringList,
+  nonNullIntList,
+  nonNullDoubleList,
+  nonNullBoolList,
+  nonNullEnumList,
+];
+
+final Map<Object, Object> nonNullMap = <Object, Object>{
+  'a': 1,
+  'b': 2.0,
+  'c': 'three',
+  'd': false,
+};
+
+final Map<String, String> nonNullStringMap = <String, String>{
+  'a': '1',
+  'b': '2.0',
+  'c': 'three',
+  'd': 'false',
+};
+
+final Map<int, int> nonNullIntMap = <int, int>{
+  0: 0,
+  1: 1,
+  2: 3,
+  4: -1,
+};
+
+final Map<double, double> nonNullDoubleMap = <double, double>{
+  0.0: 0,
+  1.1: 2.0,
+  3: 0.3,
+  -.4: -0.2,
+};
+
+final Map<int, bool> nonNullBoolMap = <int, bool>{
+  0: true,
+  1: false,
+  2: true,
+};
+
+final Map<AnEnum, AnEnum> nonNullEnumMap = <AnEnum, AnEnum>{
+  AnEnum.one: AnEnum.one,
+  AnEnum.two: AnEnum.two,
+  AnEnum.three: AnEnum.three,
+  AnEnum.fortyTwo: AnEnum.fortyTwo,
+};
+
+final Map<int, List<Object>> nonNullListMap = <int, List<Object>>{
+  0: nonNullList,
+  1: nonNullStringList,
+  2: nonNullDoubleList,
+  4: nonNullIntList,
+  5: nonNullBoolList,
+  6: nonNullEnumList,
+};
+
+final Map<int, Map<Object, Object>> nonNullMapMap = <int, Map<Object, Object>>{
+  0: nonNullMap,
+  1: nonNullStringMap,
+  2: nonNullDoubleMap,
+  4: nonNullIntMap,
+  5: nonNullBoolMap,
+  6: nonNullEnumMap,
+};
+
+final List<Map<Object, Object>> nonNullMapList = <Map<Object, Object>>[
+  nonNullMap,
+  nonNullStringMap,
+  nonNullDoubleMap,
+  nonNullIntMap,
+  nonNullBoolMap,
+  nonNullEnumMap,
+];
 
 final List<Object?> list = <Object?>[
   'Thing 1',
@@ -352,7 +454,7 @@ final List<Map<Object?, Object?>?> mapList = <Map<Object?, Object?>?>[
   boolMap,
   enumMap,
   null
-]; // fill in.
+];
 
 final AllNullableTypesWithoutRecursion genericAllNullableTypesWithoutRecursion =
     AllNullableTypesWithoutRecursion(
@@ -373,18 +475,13 @@ final AllNullableTypesWithoutRecursion genericAllNullableTypesWithoutRecursion =
   doubleList: doubleList,
   boolList: boolList,
   enumList: enumList,
-  // objectList: list,
-  // listList: listList,
-  // mapList: mapList,
+  objectList: list,
+  listList: listList,
   map: map,
   stringMap: stringMap,
   intMap: intMap,
-  // doubleMap: doubleMap,
-  // boolMap: boolMap,
   enumMap: enumMap,
-  // objectMap: map,
-  // listMap: listMap,
-  // mapMap: mapMap,
+  objectMap: map,
 );
 
 final List<AllNullableTypesWithoutRecursion?>
@@ -416,24 +513,18 @@ final AllTypes genericAllTypes = AllTypes(
   anEnum: AnEnum.fortyTwo,
   anObject: 1,
   list: list,
-  stringList: stringList,
-  intList: intList,
-  doubleList: doubleList,
-  boolList: boolList,
-  // aClass: genericAllNullableTypesWithoutRecursion,
-  enumList: enumList,
-  // objectList: list,
-  listList: listList,
-  // mapList: mapList,
-  map: map,
-  stringMap: stringMap,
-  intMap: intMap,
-  // doubleMap: doubleMap,
-  // boolMap: boolMap,
-  enumMap: enumMap,
-  // objectMap: map,
-  // listMap: listMap,
-  // mapMap: mapMap,
+  stringList: nonNullStringList,
+  intList: nonNullIntList,
+  doubleList: nonNullDoubleList,
+  boolList: nonNullBoolList,
+  enumList: nonNullEnumList,
+  objectList: nonNullList,
+  listList: nonNullListList,
+  map: nonNullMap,
+  stringMap: nonNullStringMap,
+  intMap: nonNullIntMap,
+  enumMap: nonNullEnumMap,
+  objectMap: nonNullMap,
 );
 
 final List<AllTypes?> allTypesClassList = <AllTypes?>[
@@ -464,19 +555,25 @@ final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
   doubleList: doubleList,
   boolList: boolList,
   enumList: enumList,
-  // objectList: list,
-  // listList: listList,
-  // mapList: mapList,
+  objectList: list,
+  listList: listList,
   map: map,
-  // stringMap: stringMap,
+  stringMap: stringMap,
   intMap: intMap,
-  // doubleMap: doubleMap,
-  // boolMap: boolMap,
   enumMap: enumMap,
-  // objectMap: map,
-  // listMap: listMap,
-  // mapMap: mapMap,
+  objectMap: map,
 );
+
+final List<AllNullableTypes> nonNullAllNullableTypesList = <AllNullableTypes>[
+  genericAllNullableTypes,
+  AllNullableTypes(),
+];
+
+final Map<int, AllNullableTypes> nonNullAllNullableTypesMap =
+    <int, AllNullableTypes>{
+  0: genericAllNullableTypes,
+  1: AllNullableTypes(),
+};
 
 final List<AllNullableTypes?> allNullableTypesList = <AllNullableTypes?>[
   genericAllNullableTypes,
@@ -510,19 +607,14 @@ final AllNullableTypes recursiveAllNullableTypes = AllNullableTypes(
   doubleList: doubleList,
   boolList: boolList,
   enumList: enumList,
-  // objectList: list,
+  objectList: list,
   listList: listList,
-  // mapList: mapList,
   recursiveClassList: allNullableTypesList,
   map: map,
   stringMap: stringMap,
   intMap: intMap,
-  // doubleMap: doubleMap,
-  // boolMap: boolMap,
   enumMap: enumMap,
-  // objectMap: map,
-  // listMap: listMap,
-  // mapMap: mapMap,
+  objectMap: map,
   recursiveClassMap: allNullableTypesMap,
 );
 
