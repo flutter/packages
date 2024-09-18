@@ -1406,29 +1406,14 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
             fieldType: fieldType,
             type: returnType,
           );
-          indent.writeln('completion(.success(result))');
+          // There is a swift bug with unwrapping maps of nullable Enums;
+          final String enumMapForceUnwrap = returnType.baseName == 'Map' &&
+                  returnType.typeArguments
+                      .any((TypeDeclaration type) => type.isEnum)
+              ? '!'
+              : '';
+          indent.writeln('completion(.success(result$enumMapForceUnwrap))');
         }
-        indent.addScoped('else {', '}', () {
-          if (returnType.isVoid) {
-            indent.writeln('completion(.success(Void()))');
-          } else {
-            final String fieldType = _swiftTypeForDartType(returnType);
-            _writeGenericCasting(
-              indent: indent,
-              value: 'listResponse[0]',
-              variableName: 'result',
-              fieldType: fieldType,
-              type: returnType,
-            );
-            // There is a swift bug with unwrapping maps of nullable Enums;
-            final String enumMapForceUnwrap = returnType.baseName == 'Map' &&
-                    returnType.typeArguments
-                        .any((TypeDeclaration type) => type.isEnum)
-                ? '!'
-                : '';
-            indent.writeln('completion(.success(result$enumMapForceUnwrap))');
-          }
-        });
       });
     });
   }

@@ -314,7 +314,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
     if let instanceManager = instanceManager {
       removeStrongReferenceChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let identifierArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        let identifierArg = args[0] as! Int64
         do {
           let _: AnyObject? = try instanceManager.removeInstance(withIdentifier: identifierArg)
           reply(wrapResult(nil))
@@ -576,7 +576,7 @@ private class ProxyApiTestsPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 129:
-      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
         return ProxyApiTestEnum(rawValue: enumResultAsInt)
       }
@@ -1102,9 +1102,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeonIdentifierArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        let pigeonIdentifierArg = args[0] as! Int64
         let aBoolArg = args[1] as! Bool
-        let anIntArg = args[2] is Int64 ? args[2] as! Int64 : Int64(args[2] as! Int32)
+        let anIntArg = args[2] as! Int64
         let aDoubleArg = args[3] as! Double
         let aStringArg = args[4] as! String
         let aUint8ListArg = args[5] as! FlutterStandardTypedData
@@ -1113,9 +1113,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let anEnumArg = args[8] as! ProxyApiTestEnum
         let aProxyApiArg = args[9] as! ProxyApiSuperClass
         let aNullableBoolArg: Bool? = nilOrValue(args[10])
-        let aNullableIntArg: Int64? =
-          isNullish(args[11])
-          ? nil : (args[11] is Int64? ? args[11] as! Int64? : Int64(args[11] as! Int32))
+        let aNullableIntArg: Int64? = nilOrValue(args[11])
         let aNullableDoubleArg: Double? = nilOrValue(args[12])
         let aNullableStringArg: String? = nilOrValue(args[13])
         let aNullableUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[14])
@@ -1124,7 +1122,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let aNullableEnumArg: ProxyApiTestEnum? = nilOrValue(args[17])
         let aNullableProxyApiArg: ProxyApiSuperClass? = nilOrValue(args[18])
         let boolParamArg = args[19] as! Bool
-        let intParamArg = args[20] is Int64 ? args[20] as! Int64 : Int64(args[20] as! Int32)
+        let intParamArg = args[20] as! Int64
         let doubleParamArg = args[21] as! Double
         let stringParamArg = args[22] as! String
         let aUint8ListParamArg = args[23] as! FlutterStandardTypedData
@@ -1133,9 +1131,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let enumParamArg = args[26] as! ProxyApiTestEnum
         let proxyApiParamArg = args[27] as! ProxyApiSuperClass
         let nullableBoolParamArg: Bool? = nilOrValue(args[28])
-        let nullableIntParamArg: Int64? =
-          isNullish(args[29])
-          ? nil : (args[29] is Int64? ? args[29] as! Int64? : Int64(args[29] as! Int32))
+        let nullableIntParamArg: Int64? = nilOrValue(args[29])
         let nullableDoubleParamArg: Double? = nilOrValue(args[30])
         let nullableStringParamArg: String? = nilOrValue(args[31])
         let nullableUint8ListParamArg: FlutterStandardTypedData? = nilOrValue(args[32])
@@ -1179,7 +1175,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       attachedFieldChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let pigeonIdentifierArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)
+        let pigeonIdentifierArg = args[1] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
             try api.pigeonDelegate.attachedField(pigeonApi: api, pigeonInstance: pigeonInstanceArg),
@@ -1198,7 +1194,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     if let api = api {
       staticAttachedFieldChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeonIdentifierArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
             try api.pigeonDelegate.staticAttachedField(pigeonApi: api),
@@ -1289,7 +1285,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       echoIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let anIntArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)
+        let anIntArg = args[1] as! Int64
         do {
           let result = try api.pigeonDelegate.echoInt(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, anInt: anIntArg)
@@ -1517,9 +1513,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       echoNullableIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aNullableIntArg: Int64? =
-          isNullish(args[1])
-          ? nil : (args[1] is Int64? ? args[1] as! Int64? : Int64(args[1] as! Int32))
+        let aNullableIntArg: Int64? = nilOrValue(args[1])
         do {
           let result = try api.pigeonDelegate.echoNullableInt(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aNullableInt: aNullableIntArg)
@@ -1730,7 +1724,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       echoAsyncIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let anIntArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)
+        let anIntArg = args[1] as! Int64
         api.pigeonDelegate.echoAsyncInt(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, anInt: anIntArg
         ) { result in
@@ -1989,9 +1983,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       echoAsyncNullableIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let anIntArg: Int64? =
-          isNullish(args[1])
-          ? nil : (args[1] is Int64? ? args[1] as! Int64? : Int64(args[1] as! Int32))
+        let anIntArg: Int64? = nilOrValue(args[1])
         api.pigeonDelegate.echoAsyncNullableInt(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, anInt: anIntArg
         ) { result in
@@ -2323,7 +2315,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       callFlutterEchoIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let anIntArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)
+        let anIntArg = args[1] as! Int64
         api.pigeonDelegate.callFlutterEchoInt(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, anInt: anIntArg
         ) { result in
@@ -2570,9 +2562,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       callFlutterEchoNullableIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let anIntArg: Int64? =
-          isNullish(args[1])
-          ? nil : (args[1] is Int64? ? args[1] as! Int64? : Int64(args[1] as! Int32))
+        let anIntArg: Int64? = nilOrValue(args[1])
         api.pigeonDelegate.callFlutterEchoNullableInt(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, anInt: anIntArg
         ) { result in
@@ -3054,8 +3044,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
-        let result =
-          listResponse[0] is Int64 ? listResponse[0] as! Int64 : Int64(listResponse[0] as! Int32)
+        let result = listResponse[0] as! Int64
         completion(.success(result))
       }
     }
@@ -3508,11 +3497,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
-        let result: Int64? =
-          isNullish(listResponse[0])
-          ? nil
-          : (listResponse[0] is Int64?
-            ? listResponse[0] as! Int64? : Int64(listResponse[0] as! Int32))
+        let result: Int64? = nilOrValue(listResponse[0])
         completion(.success(result))
       }
     }
@@ -3885,7 +3870,7 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeonIdentifierArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
             try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
@@ -4091,7 +4076,7 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
       if let api = api {
         pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
           let args = message as! [Any?]
-          let pigeonIdentifierArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+          let pigeonIdentifierArg = args[0] as! Int64
           do {
             api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
               try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
