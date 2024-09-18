@@ -1,3 +1,7 @@
+## 0.2.2+2
+
+* Adds internal wrapper for Android native `AdsRenderingSettings`.
+
 ## 0.2.2+1
 
 * Bumps Android dependency `com.google.ads.interactivemedia.v3:interactivemedia` from `3.34.0` to
