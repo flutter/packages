@@ -275,6 +275,22 @@ enum KeyValueChangeKey {
   unknown,
 }
 
+/// A list of purposes for which an obstruction would be registered as friendly.
+///
+/// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Enums/IMAFriendlyObstructionPurpose.html.
+enum FriendlyObstructionPurpose {
+  mediaControls,
+
+  closeAd,
+
+  notVisible,
+
+  other,
+
+  /// The purpose type is not recognized by this wrapper.
+  unknown,
+}
+
 /// The `IMAAdDisplayContainer` is responsible for managing the ad container
 /// view and companion ad slots used for ad playback.
 ///
@@ -508,4 +524,27 @@ abstract class IMAAdsRenderingSettings extends NSObject {
 /// See https://developer.apple.com/documentation/objectivec/nsobject.
 @ProxyApi()
 abstract class NSObject {}
+
+/// An obstruction that is marked as “friendly” for viewability measurement
+/// purposes.
+///
+/// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Classes/IMAFriendlyObstruction.html.
+@ProxyApi()
+abstract class IMAFriendlyObstruction {
+  /// Initializes a friendly obstruction.
+  IMAFriendlyObstruction();
+
+  /// The view causing the obstruction.
+  late final UIView view;
+
+  /// The purpose for registering the obstruction as friendly.
+  late final FriendlyObstructionPurpose purpose;
+
+  /// Optional, detailed reasoning for registering this obstruction as friendly.
+  ///
+  /// If the detailedReason is not null, it must follow the IAB standard by
+  /// being 50 characters or less and only containing characters A-z, 0-9, or
+  /// spaces.
+  late final String? detailedReason;
+}
 */
