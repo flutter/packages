@@ -705,6 +705,42 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return textureId;
 }
 
+// this same function is also in camera_avfoundation
+// do not overwrite PlayAndRecord with Playback which causes inability to record
+// audio, do not overwrite all options, only change category if it is considered
+// as upgrade which means it can only enable ability to play in silent mode or
+// ability to record audio but never disables it, that could affect other plugins
+// which depend on this global state, only change category or options if there is
+// change to prevent unnecessary lags and silence
+// https://github.com/flutter/flutter/issues/131553
+#if TARGET_OS_IOS
+static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory,
+                                        AVAudioSessionCategoryOptions options,
+                                        AVAudioSessionCategoryOptions clearOptions) {
+  NSSet *playCategories = [NSSet
+      setWithObjects:AVAudioSessionCategoryPlayback, AVAudioSessionCategoryPlayAndRecord, nil];
+  NSSet *recordCategories =
+      [NSSet setWithObjects:AVAudioSessionCategoryRecord, AVAudioSessionCategoryPlayAndRecord, nil];
+  NSSet *requiredCategories =
+      [NSSet setWithObjects:requestedCategory, AVAudioSession.sharedInstance.category, nil];
+  BOOL needPlay = [requiredCategories intersectsSet:playCategories];
+  BOOL needRecord = [requiredCategories intersectsSet:recordCategories];
+  if (needPlay && needRecord) {
+    requestedCategory = AVAudioSessionCategoryPlayAndRecord;
+  } else if (needPlay) {
+    requestedCategory = AVAudioSessionCategoryPlayback;
+  } else if (needRecord) {
+    requestedCategory = AVAudioSessionCategoryRecord;
+  }
+  options = (AVAudioSession.sharedInstance.categoryOptions & ~clearOptions) | options;
+  if ([requestedCategory isEqualToString:AVAudioSession.sharedInstance.category] &&
+      options == AVAudioSession.sharedInstance.categoryOptions) {
+    return;
+  }
+  [AVAudioSession.sharedInstance setCategory:requestedCategory withOptions:options error:nil];
+}
+#endif
+
 - (void)initialize:(FlutterError *__autoreleasing *)error {
 #if TARGET_OS_IOS
   // Allow audio playback when the Ring/Silent switch is set to silent
@@ -812,42 +848,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
   [player pause];
 }
-
-// this same function is also in camera_avfoundation
-// do not overwrite PlayAndRecord with Playback which causes inability to record
-// audio, do not overwrite all options, only change category if it is considered
-// as upgrade which means it can only enable ability to play in silent mode or
-// ability to record audio but never disables it, that could affect other plugins
-// which depend on this global state, only change category or options if there is
-// change to prevent unnecessary lags and silence
-// https://github.com/flutter/flutter/issues/131553
-#if TARGET_OS_IOS
-static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory,
-                                        AVAudioSessionCategoryOptions options,
-                                        AVAudioSessionCategoryOptions clearOptions) {
-  NSSet *playCategories = [NSSet
-      setWithObjects:AVAudioSessionCategoryPlayback, AVAudioSessionCategoryPlayAndRecord, nil];
-  NSSet *recordCategories =
-      [NSSet setWithObjects:AVAudioSessionCategoryRecord, AVAudioSessionCategoryPlayAndRecord, nil];
-  NSSet *requiredCategories =
-      [NSSet setWithObjects:requestedCategory, AVAudioSession.sharedInstance.category, nil];
-  BOOL needPlay = [requiredCategories intersectsSet:playCategories];
-  BOOL needRecord = [requiredCategories intersectsSet:recordCategories];
-  if (needPlay && needRecord) {
-    requestedCategory = AVAudioSessionCategoryPlayAndRecord;
-  } else if (needPlay) {
-    requestedCategory = AVAudioSessionCategoryPlayback;
-  } else if (needRecord) {
-    requestedCategory = AVAudioSessionCategoryRecord;
-  }
-  options = (AVAudioSession.sharedInstance.categoryOptions & ~clearOptions) | options;
-  if ([requestedCategory isEqualToString:AVAudioSession.sharedInstance.category] &&
-      options == AVAudioSession.sharedInstance.categoryOptions) {
-    return;
-  }
-  [AVAudioSession.sharedInstance setCategory:requestedCategory withOptions:options error:nil];
-}
-#endif
 
 - (void)setMixWithOthers:(BOOL)mixWithOthers
                    error:(FlutterError *_Nullable __autoreleasing *)error {
