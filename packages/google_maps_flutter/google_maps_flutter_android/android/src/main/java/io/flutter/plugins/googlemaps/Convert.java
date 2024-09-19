@@ -519,14 +519,6 @@ class Convert {
     return (Map<?, ?>) o;
   }
 
-  private static float toFractionalPixels(Object o, float density) {
-    return toFloat(o) * density;
-  }
-
-  private static int toPixels(Object o, float density) {
-    return (int) toFractionalPixels(o, density);
-  }
-
   private static Bitmap toBitmap(Object o) {
     byte[] bmpData = (byte[]) o;
     Bitmap bitmap = BitmapFactory.decodeByteArray(bmpData, 0, bmpData.length);
