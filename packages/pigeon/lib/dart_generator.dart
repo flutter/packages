@@ -2159,8 +2159,8 @@ String _getMethodParameterSignature(Iterable<Parameter> parameters) {
 String _flattenTypeArguments(List<TypeDeclaration> args) {
   return args
       .map<String>((TypeDeclaration arg) => arg.typeArguments.isEmpty
-          ? '${arg.baseName}?'
-          : '${arg.baseName}<${_flattenTypeArguments(arg.typeArguments)}>?')
+          ? '${arg.baseName}${arg.isNullable ? '?' : ''}'
+          : '${arg.baseName}<${_flattenTypeArguments(arg.typeArguments)}>${arg.isNullable ? '?' : ''}')
       .join(', ');
 }
 

@@ -95,6 +95,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return classList
   }
 
+  func echoNonNull(enumList: [AnEnum]) throws -> [AnEnum] {
+    return enumList
+  }
+
+  func echoNonNull(classList: [AllNullableTypes]) throws -> [AllNullableTypes] {
+    return classList
+  }
+
   func echo(_ map: [AnyHashable?: Any?]) throws -> [AnyHashable?: Any?] {
     return map
   }
@@ -112,6 +120,22 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func echo(classMap: [Int64?: AllNullableTypes?]) throws -> [Int64?: AllNullableTypes?] {
+    return classMap
+  }
+
+  func echoNonNull(stringMap: [String: String]) throws -> [String: String] {
+    return stringMap
+  }
+
+  func echoNonNull(intMap: [Int64: Int64]) throws -> [Int64: Int64] {
+    return intMap
+  }
+
+  func echoNonNull(enumMap: [AnEnum: AnEnum]) throws -> [AnEnum: AnEnum] {
+    return enumMap
+  }
+
+  func echoNonNull(classMap: [Int64: AllNullableTypes]) throws -> [Int64: AllNullableTypes] {
     return classMap
   }
 
@@ -201,6 +225,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return classList
   }
 
+  func echoNullableNonNull(enumList: [AnEnum]?) throws -> [AnEnum]? {
+    return enumList
+  }
+
+  func echoNullableNonNull(classList: [AllNullableTypes]?) throws -> [AllNullableTypes]? {
+    return classList
+  }
+
   func echoNullable(_ map: [AnyHashable?: Any?]?) throws -> [AnyHashable?: Any?]? {
     return map
   }
@@ -218,6 +250,24 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func echoNullable(classMap: [Int64?: AllNullableTypes?]?) throws -> [Int64?: AllNullableTypes?]? {
+    return classMap
+  }
+
+  func echoNullableNonNull(stringMap: [String: String]?) throws -> [String: String]? {
+    return stringMap
+  }
+
+  func echoNullableNonNull(intMap: [Int64: Int64]?) throws -> [Int64: Int64]? {
+    return intMap
+  }
+
+  func echoNullableNonNull(enumMap: [AnEnum: AnEnum]?) throws -> [AnEnum: AnEnum]? {
+    return enumMap
+  }
+
+  func echoNullableNonNull(classMap: [Int64: AllNullableTypes]?) throws -> [Int64:
+    AllNullableTypes]?
+  {
     return classMap
   }
 
@@ -653,6 +703,32 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
+  func callFlutterEchoNonNull(
+    enumList: [AnEnum], completion: @escaping (Result<[AnEnum], Error>) -> Void
+  ) {
+    flutterAPI.echoNonNull(enumList: enumList) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
+  func callFlutterEchoNonNull(
+    classList: [AllNullableTypes], completion: @escaping (Result<[AllNullableTypes], Error>) -> Void
+  ) {
+    flutterAPI.echoNonNull(classList: classList) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
   func callFlutterEcho(
     _ map: [AnyHashable?: Any?], completion: @escaping (Result<[AnyHashable?: Any?], Error>) -> Void
   ) {
@@ -710,6 +786,59 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion: @escaping (Result<[Int64?: AllNullableTypes?], Error>) -> Void
   ) {
     flutterAPI.echo(classMap: classMap) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
+  func callFlutterEchoNonNull(
+    stringMap: [String: String], completion: @escaping (Result<[String: String], Error>) -> Void
+  ) {
+    flutterAPI.echoNonNull(stringMap: stringMap) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
+  func callFlutterEchoNonNull(
+    intMap: [Int64: Int64], completion: @escaping (Result<[Int64: Int64], Error>) -> Void
+  ) {
+    flutterAPI.echoNonNull(intMap: intMap) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
+  func callFlutterEchoNonNull(
+    enumMap: [AnEnum: AnEnum], completion: @escaping (Result<[AnEnum: AnEnum], Error>) -> Void
+  ) {
+    flutterAPI.echoNonNull(enumMap: enumMap) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
+  func callFlutterEchoNonNull(
+    classMap: [Int64: AllNullableTypes],
+    completion: @escaping (Result<[Int64: AllNullableTypes], Error>) -> Void
+  ) {
+    flutterAPI.echoNonNull(classMap: classMap) { response in
       switch response {
       case .success(let res):
         completion(.success(res))
@@ -850,6 +979,33 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
+  func callFlutterEchoNullableNonNull(
+    enumList: [AnEnum]?, completion: @escaping (Result<[AnEnum]?, Error>) -> Void
+  ) {
+    flutterAPI.echoNullableNonNull(enumList: enumList) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
+  func callFlutterEchoNullableNonNull(
+    classList: [AllNullableTypes]?,
+    completion: @escaping (Result<[AllNullableTypes]?, Error>) -> Void
+  ) {
+    flutterAPI.echoNullableNonNull(classList: classList) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
   func callFlutterEchoNullable(
     _ map: [AnyHashable?: Any?]?,
     completion: @escaping (Result<[AnyHashable?: Any?]?, Error>) -> Void
@@ -909,6 +1065,59 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion: @escaping (Result<[Int64?: AllNullableTypes?]?, Error>) -> Void
   ) {
     flutterAPI.echoNullable(classMap: classMap) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
+  func callFlutterEchoNullableNonNull(
+    stringMap: [String: String]?, completion: @escaping (Result<[String: String]?, Error>) -> Void
+  ) {
+    flutterAPI.echoNullableNonNull(stringMap: stringMap) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
+  func callFlutterEchoNullableNonNull(
+    intMap: [Int64: Int64]?, completion: @escaping (Result<[Int64: Int64]?, Error>) -> Void
+  ) {
+    flutterAPI.echoNullableNonNull(intMap: intMap) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
+  func callFlutterEchoNullableNonNull(
+    enumMap: [AnEnum: AnEnum]?, completion: @escaping (Result<[AnEnum: AnEnum]?, Error>) -> Void
+  ) {
+    flutterAPI.echoNullableNonNull(enumMap: enumMap) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
+  func callFlutterEchoNullableNonNull(
+    classMap: [Int64: AllNullableTypes]?,
+    completion: @escaping (Result<[Int64: AllNullableTypes]?, Error>) -> Void
+  ) {
+    flutterAPI.echoNullableNonNull(classMap: classMap) { response in
       switch response {
       case .success(let res):
         completion(.success(res))

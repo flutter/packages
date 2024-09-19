@@ -297,7 +297,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       final _ObjcType returnType = _objcTypeForDartType(
         generatorOptions.prefix, func.returnType,
         // Nullability is required since the return must be nil if NSError is set.
-        forceNullability: true,
+        forceBox: true,
       );
       final String callbackType =
           _callbackForType(func.returnType, returnType, generatorOptions);
@@ -336,7 +336,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
         func.returnType,
         // Nullability is required since the return must be nil if NSError is
         // set.
-        forceNullability: true,
+        forceBox: true,
       );
 
       String? lastArgName;
@@ -1072,7 +1072,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
       final _ObjcType returnType = _objcTypeForDartType(
         generatorOptions.prefix, func.returnType,
         // Nullability is required since the return must be nil if NSError is set.
-        forceNullability: true,
+        forceBox: true,
       );
       final Iterable<String> selectorComponents =
           _getSelectorComponents(func, lastSelectorComponent);
@@ -1187,7 +1187,7 @@ void _writeMethod(
     languageOptions.prefix,
     func.returnType,
     // Nullability is required since the return must be nil if NSError is set.
-    forceNullability: true,
+    forceBox: true,
   );
   final String callbackType =
       _callbackForType(func.returnType, returnType, languageOptions);
@@ -1444,23 +1444,23 @@ String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
       return _enumName(e.baseName,
           prefix: classPrefix, box: true, suffix: ' *');
     }
-    return _objcTypeForDartType(classPrefix, e).toString();
+    return _objcTypeForDartType(classPrefix, e, forceBox: true).toString();
   }).join(', ');
   return result;
 }
 
 _ObjcType? _objcTypeForPrimitiveDartType(TypeDeclaration type,
-    {bool forceNullability = false}) {
-  return forceNullability || type.isNullable
+    {bool forceBox = false}) {
+  return forceBox || type.isNullable
       ? _objcTypeForNullableDartTypeMap[type.baseName]
       : _objcTypeForNonNullableDartTypeMap[type.baseName];
 }
 
 String? _objcTypeStringForPrimitiveDartType(
     String? classPrefix, TypeDeclaration type,
-    {required bool beforeString, bool forceNullability = false}) {
+    {required bool beforeString, bool forceBox = false}) {
   final _ObjcType? objcType;
-  if (forceNullability || type.isNullable) {
+  if (forceBox || type.isNullable) {
     objcType = _objcTypeForNullableDartTypeMap.containsKey(type.baseName)
         ? _objcTypeForDartType(classPrefix, type)
         : null;
@@ -1475,14 +1475,14 @@ String? _objcTypeStringForPrimitiveDartType(
 /// Returns the Objective-C type for a Dart [field], prepending the
 /// [classPrefix] for generated classes.
 _ObjcType _objcTypeForDartType(String? classPrefix, TypeDeclaration field,
-    {bool forceNullability = false}) {
+    {bool forceBox = false}) {
   final _ObjcType? primitiveType =
-      _objcTypeForPrimitiveDartType(field, forceNullability: forceNullability);
+      _objcTypeForPrimitiveDartType(field, forceBox: forceBox);
   return primitiveType == null
       ? _ObjcType(
           baseName: _className(classPrefix, field.baseName),
           // Non-nullable enums are non-pointer types.
-          isPointer: !field.isEnum || (field.isNullable || forceNullability))
+          isPointer: !field.isEnum || (field.isNullable || forceBox))
       : field.typeArguments.isEmpty
           ? primitiveType
           : _ObjcType(

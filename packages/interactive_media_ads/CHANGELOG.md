@@ -1,3 +1,16 @@
+## 0.2.2+2
+
+* Adds internal wrapper for Android native `AdsRenderingSettings`.
+
+## 0.2.2+1
+
+* Bumps Android dependency `com.google.ads.interactivemedia.v3:interactivemedia` from `3.34.0` to
+  `3.35.0`.
+
+## 0.2.2
+
+* Adds support for mid-roll ads. See `AdsRequest.contentProgressProvider`.
+
 ## 0.2.1
 
 * Adds internal wrapper for Android native `ContentProgressProvider`.

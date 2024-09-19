@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
         actions: <Widget>[
           IconButton(
             key: aboutPageKey,
-            icon: const Icon(Icons.alternate_email),
+            icon: const Icon(Icons.help_outline),
             onPressed: () => Navigator.of(context).pushNamed('about'),
           ),
         ],

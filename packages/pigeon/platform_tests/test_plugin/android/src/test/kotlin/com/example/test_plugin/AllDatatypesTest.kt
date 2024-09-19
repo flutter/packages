@@ -118,10 +118,12 @@ internal class AllDatatypesTest {
             boolList = listOf(true, false),
             intList = listOf(1, 2),
             doubleList = listOf(1.1, 2.2),
+            objectList = listOf(1, 2, 3),
             listList = listOf(stringList, stringList.toList()),
             map = mapOf("hello" to 1234),
             stringMap = mapOf("hello" to "you"),
-            intMap = mapOf(1L to 0L))
+            intMap = mapOf(1L to 0L),
+            objectMap = mapOf("hello" to 1234))
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = FlutterIntegrationCoreApi(binaryMessenger)
 
