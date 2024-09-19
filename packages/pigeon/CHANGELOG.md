@@ -1,7 +1,3 @@
-## 22.5.0
-
-* Validates support for nested collections with generic types.
-
 ## 22.4.0
 
 * Adds support for non-nullable types in collections.
