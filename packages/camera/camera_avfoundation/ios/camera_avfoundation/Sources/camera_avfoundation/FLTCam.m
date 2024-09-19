@@ -153,6 +153,60 @@ NSString *const errorMethod = @"error";
       error:error];
 }
 
+// Returns frame rate supported by format closest to targetFrameRate.
+static double bestFrameRateForFormat(AVCaptureDeviceFormat *format, double targetFrameRate) {
+	double bestFrameRate = 0;
+	double minDistance = DBL_MAX;
+	for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
+		double frameRate = MIN(MAX(targetFrameRate, range.minFrameRate), range.maxFrameRate);
+		double distance = fabs(frameRate - targetFrameRate);
+		if (distance < minDistance) {
+			bestFrameRate = frameRate;
+			minDistance = distance;
+		}
+	}
+	return bestFrameRate;
+}
+
+// Finds format with same resolution as current activeFormat for which bestFrameRateForFormat
+// returned frame rate closest to mediaSettings.framesPerSecond. Preferred are formats with the
+// same subtype as current activeFormat. Sets this format as activeFormat and also updates
+// mediaSettings.framesPerSecond to value which bestFrameRateForFormat returned for that format.
+static void selectBestFormatForRequestedFrameRate(
+		AVCaptureDevice *captureDevice, FCPPlatformMediaSettings *mediaSettings,
+		VideoDimensionsForFormat videoDimensionsForFormat) {
+	CMVideoDimensions targetResolution = videoDimensionsForFormat(captureDevice.activeFormat);
+	double targetFrameRate = mediaSettings.framesPerSecond.doubleValue;
+	FourCharCode preferredSubType =
+			CMFormatDescriptionGetMediaSubType(captureDevice.activeFormat.formatDescription);
+	AVCaptureDeviceFormat *bestFormat = captureDevice.activeFormat;
+	double bestFrameRate = bestFrameRateForFormat(bestFormat, targetFrameRate);
+	double minDistance = fabs(bestFrameRate - targetFrameRate);
+	BOOL isBestSubTypePreferred = YES;
+	for (AVCaptureDeviceFormat *format in captureDevice.formats) {
+		CMVideoDimensions resolution = videoDimensionsForFormat(format);
+		if (resolution.width != targetResolution.width ||
+				resolution.height != targetResolution.height) {
+			continue;
+		}
+		double frameRate = bestFrameRateForFormat(format, targetFrameRate);
+		double distance = fabs(frameRate - targetFrameRate);
+		FourCharCode subType = CMFormatDescriptionGetMediaSubType(format.formatDescription);
+		BOOL isSubTypePreferred = subType == preferredSubType;
+		if (distance < minDistance || (distance == minDistance && isSubTypePreferred &&
+																	 !isBestSubTypePreferred)) {
+			bestFormat = format;
+			bestFrameRate = frameRate;
+			minDistance = distance;
+			isBestSubTypePreferred = isSubTypePreferred;
+		}
+	}
+	if (![bestFormat isEqual:captureDevice.activeFormat]) {
+		captureDevice.activeFormat = bestFormat;
+	}
+	mediaSettings.framesPerSecond = @(bestFrameRate);
+}
+
 - (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
                mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                           orientation:(UIDeviceOrientation)orientation
@@ -252,55 +306,6 @@ NSString *const errorMethod = @"error";
   [self updateOrientation];
 
   return self;
-}
-
-static void selectBestFormatForRequestedFrameRate(
-    AVCaptureDevice *captureDevice, FCPPlatformMediaSettings *mediaSettings,
-    VideoDimensionsForFormat videoDimensionsForFormat) {
-  // Find the format which frame rate ranges are closest to the wanted frame rate.
-  CMVideoDimensions targetResolution = videoDimensionsForFormat(captureDevice.activeFormat);
-  double targetFrameRate = mediaSettings.framesPerSecond.doubleValue;
-  FourCharCode preferredSubType =
-      CMFormatDescriptionGetMediaSubType(captureDevice.activeFormat.formatDescription);
-  AVCaptureDeviceFormat *bestFormat = captureDevice.activeFormat;
-  double bestFrameRate = bestFrameRateForFormat(bestFormat, targetFrameRate);
-  double minDistance = fabs(bestFrameRate - targetFrameRate);
-  FourCharCode bestSubType = preferredSubType;
-  for (AVCaptureDeviceFormat *format in captureDevice.formats) {
-    CMVideoDimensions resolution = videoDimensionsForFormat(format);
-    if (resolution.width != targetResolution.width ||
-        resolution.height != targetResolution.height) {
-      continue;
-    }
-    double frameRate = bestFrameRateForFormat(format, targetFrameRate);
-    double distance = fabs(frameRate - targetFrameRate);
-    FourCharCode subType = CMFormatDescriptionGetMediaSubType(format.formatDescription);
-    if (distance < minDistance || (distance == minDistance && subType == preferredSubType &&
-                                   bestSubType != preferredSubType)) {
-      bestFormat = format;
-      bestFrameRate = frameRate;
-      minDistance = distance;
-      bestSubType = subType;
-    }
-  }
-  if (![bestFormat isEqual:captureDevice.activeFormat]) {
-    captureDevice.activeFormat = bestFormat;
-  }
-  mediaSettings.framesPerSecond = @(bestFrameRate);
-}
-
-static double bestFrameRateForFormat(AVCaptureDeviceFormat *format, double targetFrameRate) {
-  double bestFrameRate = 0;
-  double minDistance = DBL_MAX;
-  for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
-    double frameRate = MIN(MAX(targetFrameRate, range.minFrameRate), range.maxFrameRate);
-    double distance = fabs(frameRate - targetFrameRate);
-    if (distance < minDistance) {
-      bestFrameRate = frameRate;
-      minDistance = distance;
-    }
-  }
-  return bestFrameRate;
 }
 
 - (AVCaptureConnection *)createConnection:(NSError **)error {
@@ -588,18 +593,19 @@ static double bestFrameRateForFormat(AVCaptureDeviceFormat *format, double targe
       CMFormatDescriptionGetMediaSubType(_captureDevice.activeFormat.formatDescription);
   AVCaptureDeviceFormat *bestFormat = nil;
   NSUInteger maxPixelCount = 0;
-  FourCharCode bestSubType = 0;
+  BOOL isBestSubTypePreferred = NO;
   for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
     CMVideoDimensions res = self.videoDimensionsForFormat(format);
     NSUInteger height = res.height;
     NSUInteger width = res.width;
     NSUInteger pixelCount = height * width;
     FourCharCode subType = CMFormatDescriptionGetMediaSubType(format.formatDescription);
-    if (pixelCount > maxPixelCount || (pixelCount == maxPixelCount && subType == preferredSubType &&
-                                       bestSubType != preferredSubType)) {
+    BOOL isSubTypePreferred = subType == preferredSubType;
+    if (pixelCount > maxPixelCount || (pixelCount == maxPixelCount && isSubTypePreferred &&
+                                       !isBestSubTypePreferred)) {
       bestFormat = format;
       maxPixelCount = pixelCount;
-      bestSubType = subType;
+      isBestSubTypePreferred = isSubTypePreferred;
     }
   }
   return bestFormat;
