@@ -1147,7 +1147,9 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
         ) completionHandler,
       ) {
         if (challenge.protectionSpace.authenticationMethod ==
-            NSUrlAuthenticationMethod.httpBasic) {
+                NSUrlAuthenticationMethod.httpBasic ||
+            challenge.protectionSpace.authenticationMethod ==
+                NSUrlAuthenticationMethod.httpNtlm) {
           final void Function(HttpAuthRequest)? callback =
               weakThis.target?._onHttpAuthRequest;
           final String? host = challenge.protectionSpace.host;
