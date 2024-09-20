@@ -21,7 +21,9 @@
 @property(nonatomic, weak, readonly) NSObject<FlutterTextureRegistry> *registry;
 // The output that this updater is managing.
 @property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
+// Latest copied pixel buffer ready to display.
 @property(nonatomic) CVPixelBufferRef latestPixelBuffer;
+// Synchronization queue for sending and receiving pixel buffers.
 @property(nonatomic) dispatch_queue_t pixelBufferSynchronizationQueue;
 @end
 
@@ -30,6 +32,9 @@
   NSAssert(self, @"super init cannot be nil");
   if (self == nil) return nil;
   _registry = registry;
+  dispatch_queue_attr_t attributes = dispatch_queue_attr_make_with_qos_class(NULL, QOS_CLASS_USER_INTERACTIVE, -1);
+  _pixelBufferSynchronizationQueue =
+      dispatch_queue_create("io.flutter.video_player.pixelBufferSynchronizationQueue", attributes);
   return self;
 }
 
@@ -37,21 +42,28 @@
   // Only report a new frame if one is actually available.
   CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
   if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
-    dispatch_async(self.pixelBufferSynchronizationQueue, ^{
-      if (self.latestPixelBuffer) {
-        CFRelease(self.latestPixelBuffer);
-      }
-      self.latestPixelBuffer = [self.videoOutput copyPixelBufferForItemTime:outputItemTime
-                                                         itemTimeForDisplay:NULL];
+    CVPixelBufferRef pixelBuffer = [self.videoOutput copyPixelBufferForItemTime:outputItemTime
+                                                             itemTimeForDisplay:NULL];
+    dispatch_sync(self.pixelBufferSynchronizationQueue, ^{
+      CVBufferRelease(self.latestPixelBuffer);
+      self.latestPixelBuffer = pixelBuffer;
     });
     [_registry textureFrameAvailable:_textureId];
   }
 }
 
+- (CVPixelBufferRef)acquirePixelBuffer
+{
+  __block CVPixelBufferRef pixelBuffer;
+  dispatch_sync(self.pixelBufferSynchronizationQueue, ^{
+    pixelBuffer = self.latestPixelBuffer;
+    self.latestPixelBuffer = NULL;
+  });
+  return pixelBuffer;
+}
+
 - (void)dealloc {
-  if (_latestPixelBuffer) {
-    CFRelease(_latestPixelBuffer);
-  }
+  CVBufferRelease(_latestPixelBuffer);
 }
 @end
 
@@ -103,7 +115,6 @@
 // (e.g., after a seek while paused). If YES, the display link should continue to run until the next
 // frame is successfully provided.
 @property(nonatomic, assign) BOOL waitingForFrame;
-@property(nonatomic) dispatch_queue_t pixelBufferSynchronizationQueue;
 
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FVPFrameUpdater *)frameUpdater
@@ -247,7 +258,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   videoComposition.renderSize = CGSizeMake(width, height);
 
   videoComposition.sourceTrackIDForFrameTiming = videoTrack.trackID;
-  videoComposition.frameDuration = videoTrack.minFrameDuration;
+  if (CMTIME_IS_VALID(videoTrack.minFrameDuration)) {
+    videoComposition.frameDuration = videoTrack.minFrameDuration;
+  } else {
+    NSLog(@"Warning: videoTrack.minFrameDuration for input video is invalid, please report this.");
+    videoComposition.frameDuration = CMTimeMake(1, 120);
+  }
 
   return videoComposition;
 }
@@ -294,7 +310,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                         error:nil] == AVKeyValueStatusLoaded) {
             // Rotate the video by using a videoComposition and the preferredTransform
             self->_preferredTransform = FVPGetStandardizedTransformForTrack(videoTrack);
-            // do not use video composition when it is not needed
+            // Do not use video composition when it is not needed.
             if (CGAffineTransformIsIdentity(self->_preferredTransform)) {
               return;
             }
@@ -334,10 +350,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   };
   _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
   frameUpdater.videoOutput = _videoOutput;
-
-  _pixelBufferSynchronizationQueue =
-      dispatch_queue_create("io.flutter.video_player.pixelBufferSynchronizationQueue", NULL);
-  frameUpdater.pixelBufferSynchronizationQueue = _pixelBufferSynchronizationQueue;
 
   [self addObserversForItem:item player:_player];
 
@@ -562,11 +574,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (CVPixelBufferRef)copyPixelBuffer {
-  __block CVPixelBufferRef buffer = NULL;
-  dispatch_sync(self.pixelBufferSynchronizationQueue, ^{
-    buffer = self.frameUpdater.latestPixelBuffer;
-    self.frameUpdater.latestPixelBuffer = NULL;
-  });
+  CVPixelBufferRef buffer = self.frameUpdater.acquirePixelBuffer;
 
   if (self.waitingForFrame && buffer) {
     self.waitingForFrame = NO;
