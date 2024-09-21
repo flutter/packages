@@ -7,7 +7,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences_async_with_cache.dart';
+import 'package:shared_preferences/shared_preferences_aync_with_cache.dart';
 
 void main() {
   runApp(const MyApp());

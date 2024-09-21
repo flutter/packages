@@ -1,3 +1,8 @@
+## 2.3.3
+
+* Moves `SharedPreferencesAsync` and `SharedPreferencesWithCache` APIs to a new file 
+  to use this API use this `import 'package:shared_preferences/shared_preferences_async_with_cache.dart';`
+  
 ## 2.3.2
 
 * Removes outdated testing information from README.
