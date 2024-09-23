@@ -26,7 +26,7 @@ same behavior of `quick_actions_android` with/without a launcher activity, set
 the launch mode of your launcher activity to `singleInstance` in
 `your_app/android/app/src/mainAndroidManifest.xml`:
 
-```
+```xml
 <activity
         ...
         android:launchMode="singleInstance">

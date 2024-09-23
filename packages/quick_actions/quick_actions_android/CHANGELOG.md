@@ -1,4 +1,4 @@
-## 1.0.15+1
+## 1.0.16
 
 * Updates README to include guidance on using the plugin with a launcher activity.
 
