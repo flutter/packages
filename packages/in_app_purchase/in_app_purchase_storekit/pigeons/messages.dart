@@ -131,9 +131,9 @@ class SKProductMessage {
   const SKProductMessage(
       {required this.productIdentifier,
       required this.localizedTitle,
-      required this.localizedDescription,
       required this.priceLocale,
       required this.price,
+      this.localizedDescription,
       this.subscriptionGroupIdentifier,
       this.subscriptionPeriod,
       this.introductoryPrice,
@@ -141,7 +141,10 @@ class SKProductMessage {
 
   final String productIdentifier;
   final String localizedTitle;
-  final String localizedDescription;
+  // This field should be nullable to handle occasional nulls in the StoreKit
+  // object despite the the StoreKit header showing that it is nonnullable
+  // https://github.com/flutter/flutter/issues/154047
+  final String? localizedDescription;
   final SKPriceLocaleMessage priceLocale;
   final String? subscriptionGroupIdentifier;
   final String price;

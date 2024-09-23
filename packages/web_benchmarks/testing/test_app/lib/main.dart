@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 
 import 'about_page.dart';
 import 'home_page.dart';
-import 'icon_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,11 +22,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      // This blocks the About page button.
+      debugShowCheckedModeBanner: false,
       initialRoute: 'home',
       routes: <String, WidgetBuilder>{
         'home': (_) => const HomePage(title: 'Flutter Demo Home Page'),
         'about': (_) => const AboutPage(),
-        'icon_generator': (_) => const IconGeneratorPage(),
       },
     );
   }

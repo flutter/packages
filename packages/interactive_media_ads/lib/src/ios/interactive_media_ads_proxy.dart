@@ -15,6 +15,7 @@ class InteractiveMediaAdsProxy {
   const InteractiveMediaAdsProxy({
     this.newIMAAdDisplayContainer = IMAAdDisplayContainer.new,
     this.newUIViewController = UIViewController.new,
+    this.newIMAContentPlayhead = IMAContentPlayhead.new,
     this.newIMAAdsLoader = IMAAdsLoader.new,
     this.newIMAAdsRequest = IMAAdsRequest.new,
     this.newIMAAdsLoaderDelegate = IMAAdsLoaderDelegate.new,
@@ -32,6 +33,9 @@ class InteractiveMediaAdsProxy {
   final UIViewController Function({
     void Function(UIViewController, bool)? viewDidAppear,
   }) newUIViewController;
+
+  /// Constructs [IMAContentPlayhead].
+  final IMAContentPlayhead Function() newIMAContentPlayhead;
 
   /// Constructs [IMAAdsLoader].
   final IMAAdsLoader Function({IMASettings? settings}) newIMAAdsLoader;
