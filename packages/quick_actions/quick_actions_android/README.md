@@ -20,9 +20,10 @@ to launch the main `FlutterActivity` in order to achieve the desired back press
 behavior and task management.
 
 If your launcher activity only launches the main `FlutterActivity` without any
-additional relevant logic, to have your app maintain the same behavior of
-`quick_actions_android` with/without a launcher activity, set the launch mode of
-your launcher activity to `singleInstance` in
+additional relevant logic (like the code sample provided in the description of
+https://github.com/flutter/flutter/issues/152883), to have your app maintain the
+same behavior of `quick_actions_android` with/without a launcher activity, set
+the launch mode of your launcher activity to `singleInstance` in
 `your_app/android/app/src/mainAndroidManifest.xml`:
 
 ```
