@@ -16,7 +16,10 @@ should add it to your `pubspec.yaml` as usual.
 If your app implements an activity that launches the main `FlutterActivity`
 (`MainActivity.java`/`MainActivity.kt` by default), then you may need to change
 the launch mode of your launcher activity to achieve the desired back press behavior
-and task management. To have your app maintain the same behavior of
+and task management.
+
+If your launcher activitiy only launches the main `FlutterActivity` without any
+additional relevant logic, to have your app maintain the same behavior of
 `quick_actions_android` with/without a launcher activity, set the launch mode of
 your launcher activity to `singleInstance` in
 `your_app/android/app/src/mainAndroidManifest.xml`:
