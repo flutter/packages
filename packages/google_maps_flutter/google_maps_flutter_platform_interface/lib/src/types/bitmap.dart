@@ -76,7 +76,9 @@ class BitmapDescriptor {
         if (jsonList.length == 3) {
           assert(jsonList[2] != null && jsonList[2] is String);
           assert((jsonList[2] as String).isNotEmpty);
+          return AssetBitmap(name: jsonList[1] as String, package: jsonList[2] as String);
         }
+        return AssetBitmap(name: jsonList[1] as String);
       case _fromAssetImage:
         assert(jsonList.length <= 4);
         assert(jsonList[1] != null && jsonList[1] is String);
@@ -329,6 +331,16 @@ class BytesBitmap extends BitmapDescriptor {
   Object toJson() {
     return <Object>[BitmapDescriptor._fromBytes, byteData, if (size != null && kIsWeb) <Object>[size!.width, size!.height]];
   }
+}
+
+class AssetBitmap extends BitmapDescriptor {
+  const AssetBitmap({required this.name, this.package}) : super._(const <Object>[]);
+
+  final String name;
+  final String? package;
+
+  @override
+  Object toJson() => <Object>[BitmapDescriptor._fromAsset, name, if (package != null) package!];
 }
 
 /// Represents a [BitmapDescriptor] base class for map bitmaps.
