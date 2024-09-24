@@ -335,6 +335,21 @@ class AstProxyApi extends Api {
   }
 }
 
+/// Represents a collection of [Method]s that are wrappers for Event
+class AstEventChannelApi extends Api {
+  /// Parametric constructor for [AstEventChannelApi].
+  AstEventChannelApi({
+    required super.name,
+    required super.methods,
+    super.documentationComments = const <String>[],
+  });
+
+  @override
+  String toString() {
+    return '(EventChannelApi name:$name methods:$methods documentationComments:$documentationComments)';
+  }
+}
+
 /// Represents a constructor for an API.
 class Constructor extends Method {
   /// Parametric constructor for [Constructor].

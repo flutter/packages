@@ -253,6 +253,11 @@ class AllClassesWrapper {
   Map<int?, AllNullableTypesWithoutRecursion?>? nullableClassMap;
 }
 
+@EventChannelApi()
+abstract class EventChannelCoreApi {
+  int streamInts();
+}
+
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 @HostApi()

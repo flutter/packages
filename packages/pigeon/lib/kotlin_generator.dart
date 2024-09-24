@@ -147,6 +147,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.writeln('import android.util.Log');
     indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
     indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
+    indent.writeln('import io.flutter.plugin.common.EventChannel');
     indent.writeln('import io.flutter.plugin.common.MessageCodec');
     indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
     indent.writeln('import java.io.ByteArrayOutputStream');
@@ -982,6 +983,38 @@ if (wrapped == null) {
         _writeProxyApiInheritedApiMethods(indent, api);
       },
     );
+  }
+
+  @override
+  void writeEventChannelApi(
+    KotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstEventChannelApi api, {
+    required String dartPackageName,
+  }) {
+    indent.newln();
+    addDocumentationComments(
+        indent, api.documentationComments, _docCommentSpec);
+    for (final Method func in api.methods) {
+      indent.format('''
+        public interface ${toUpperCamelCase(func.name)} : EventChannel.StreamHandler {
+          var eventSink: EventChannel.EventSink?
+
+          override fun onCancel(p0: Any?) {
+            eventSink = null
+          }
+
+          companion object {
+            private const val CHANNEL_NAME: String = "${makeChannelName(api, func, dartPackageName)}"
+          
+            fun register(messenger: BinaryMessenger, streamHandler: EventChannel.StreamHandler) {
+              EventChannel(messenger, CHANNEL_NAME).setStreamHandler(streamHandler)
+            }
+          }
+        }
+      ''');
+    }
   }
 
   void _writeWrapResult(Indent indent) {

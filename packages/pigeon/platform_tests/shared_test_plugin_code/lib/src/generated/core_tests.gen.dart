@@ -625,6 +625,14 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
+Stream<int> streamInts() {
+  const EventChannel streamIntsChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts');
+  return streamIntsChannel.receiveBroadcastStream().map((dynamic event) {
+    return event as int;
+  });
+}
+
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 class HostIntegrationCoreApi {
@@ -5643,20 +5651,4 @@ abstract class FlutterSmallApi {
       }
     }
   }
-}
-
-Stream<String> streamTimeFromNative() {
-  const EventChannel _timeChannel =
-      EventChannel('com.example.test_plugin/events1');
-  return _timeChannel
-      .receiveBroadcastStream()
-      .map((dynamic event) => event as String);
-}
-
-Stream<int> streamCounterFromNative() {
-  const EventChannel _counterChannel =
-      EventChannel('com.example.test_plugin/events2');
-  return _counterChannel.receiveBroadcastStream().map((dynamic event) {
-    return event as int;
-  });
 }

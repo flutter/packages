@@ -515,6 +515,33 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
   }
 
   @override
+  void writeEventChannelApi(
+    DartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstEventChannelApi api, {
+    required String dartPackageName,
+  }) {
+    indent.newln();
+    addDocumentationComments(
+        indent, api.documentationComments, _docCommentSpec);
+    // indent.write('class ${api.name} ');
+    // indent.addScoped('{', '}', () {
+    for (final Method func in api.methods) {
+      indent.format('''
+      Stream<${func.returnType.baseName}> ${func.name}(${_getMethodParameterSignature(func.parameters)}) {
+        const EventChannel ${func.name}Channel =
+            EventChannel('${makeChannelName(api, func, dartPackageName)}');
+        return ${func.name}Channel.receiveBroadcastStream().map((dynamic event) {
+          return event as ${func.returnType.baseName};
+        });
+      }
+    ''');
+    }
+    // });
+  }
+
+  @override
   void writeInstanceManager(
     DartOptions generatorOptions,
     Root root,

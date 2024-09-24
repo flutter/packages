@@ -155,6 +155,12 @@ class ProxyApi {
   final KotlinProxyApiOptions? kotlinOptions;
 }
 
+/// Metadata to annotate a pigeon API that contains Event Channels.
+class EventChannelApi {
+  /// Constructor.
+  const EventChannelApi();
+}
+
 /// Metadata to annotation methods to control the selector used for objc output.
 /// The number of components in the provided selector must match the number of
 /// arguments in the annotated method.
@@ -1704,6 +1710,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
+      } else if (_hasMetadata(node.metadata, 'EventChannelApi')) {
+        _currentApi = AstEventChannelApi(
+          name: node.name.lexeme,
+          methods: <Method>[],
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
+        );
       }
     } else {
       _currentClass = Class(
@@ -1857,6 +1870,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             AstHostApi() => ApiLocation.host,
             AstProxyApi() => ApiLocation.host,
             AstFlutterApi() => ApiLocation.flutter,
+            AstEventChannelApi() => ApiLocation.host,
           },
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,

@@ -566,6 +566,23 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
   }
 }
 
+public interface StreamInts : EventChannel.StreamHandler {
+  var eventSink: EventChannel.EventSink?
+
+  override fun onCancel(p0: Any?) {
+    eventSink = null
+  }
+
+  companion object {
+    private const val CHANNEL_NAME: String =
+        "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts"
+
+    fun register(messenger: BinaryMessenger, streamHandler: EventChannel.StreamHandler) {
+      EventChannel(messenger, CHANNEL_NAME).setStreamHandler(streamHandler)
+    }
+  }
+}
+
 /**
  * The core interface that each host language plugin must implement in platform_test integration
  * tests.
@@ -5096,10 +5113,4 @@ class FlutterSmallApi(
       }
     }
   }
-}
-abstract class EventChannelClassOne : EventChannel.StreamHandler {
-    val channelName: String = "com.example.test_plugin/events1"
-}
-abstract class EventChannelClassTwo : EventChannel.StreamHandler {
-    val channelName: String = "com.example.test_plugin/events2"
 }
