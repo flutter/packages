@@ -5539,31 +5539,38 @@ void main() {
     final GoRouter router = await createRouter(routes, tester);
     await tester.pumpAndSettle();
 
-    GoRouterState? state = router.currentState;
+    GoRouterState? state = router.state;
     expect(state?.name, 'home');
     expect(state?.fullPath, '/');
 
     router.go('/books');
     await tester.pumpAndSettle();
-    state = router.currentState;
+    state = router.state;
     expect(state?.name, 'books');
     expect(state?.fullPath, '/books');
 
     router.push('/boats');
     await tester.pumpAndSettle();
-    state = router.currentState;
+    state = router.state;
     expect(state?.name, 'boats');
     expect(state?.fullPath, '/boats');
 
     router.pop();
     await tester.pumpAndSettle();
-    state = router.currentState;
+    state = router.state;
     expect(state?.name, 'books');
     expect(state?.fullPath, '/books');
 
     router.go('/tulips');
     await tester.pumpAndSettle();
-    state = router.currentState;
+    state = router.state;
+    expect(state?.name, 'tulips');
+    expect(state?.fullPath, '/tulips');
+
+    router.go('/books');
+    router.push('/tulips');
+    await tester.pumpAndSettle();
+    state = router.state;
     expect(state?.name, 'tulips');
     expect(state?.fullPath, '/tulips');
   });

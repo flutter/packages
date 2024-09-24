@@ -168,8 +168,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     }());
   }
 
-  /// The current [GoRouterState]
-  GoRouterState? get currentState => currentConfiguration.last
+  /// This top [GoRouterState].
+  /// This returns the state of the route that was last used in
+  /// either [GoRouter.go] or [GoRouter.push].
+  GoRouterState? get state => currentConfiguration.last
       .buildState(_configuration, currentConfiguration);
 
   /// For use by the Router architecture as part of the RouterDelegate.
