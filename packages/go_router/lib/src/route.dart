@@ -1384,8 +1384,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   @override
   void dispose() {
     super.dispose();
-    _branchState.forEach(
-        (_, _StatefulShellBranchState branchState) => branchState.dispose());
+    for (final _StatefulShellBranchState branchState in _branchState.values) {
+      branchState.dispose();
+    }
   }
 
   @override
@@ -1405,8 +1406,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
         .map((StatefulShellBranch branch) => _BranchNavigatorProxy(
             key: ObjectKey(branch),
             branch: branch,
-            navigatorForBranch: (StatefulShellBranch b) =>
-                _branchState[b]?.navigator))
+            navigatorForBranch: (StatefulShellBranch branch) =>
+                _branchState[branch]?.navigator))
         .toList();
 
     return widget.containerBuilder(context, widget, children);
