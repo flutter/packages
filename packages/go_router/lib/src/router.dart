@@ -254,9 +254,8 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     }());
   }
 
-  /// This top [GoRouterState].
-  /// This returns the state of the route that was last used in
-  /// either [GoRouter.go] or [GoRouter.push].
+  /// The top [GoRouterState], the state of the route that was
+  /// last used in either [GoRouter.go] or [GoRouter.push].
   GoRouterState? get state => routerDelegate.state;
 
   /// Whether the imperative API affects browser URL bar.
