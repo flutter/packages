@@ -6,9 +6,11 @@ import '../platform_interface/interactive_media_ads_platform.dart';
 import '../platform_interface/platform_ad_display_container.dart';
 import '../platform_interface/platform_ads_loader.dart';
 import '../platform_interface/platform_ads_manager_delegate.dart';
+import '../platform_interface/platform_content_progress_provider.dart';
 import 'ios_ad_display_container.dart';
 import 'ios_ads_loader.dart';
 import 'ios_ads_manager_delegate.dart';
+import 'ios_content_progress_provider.dart';
 
 /// Implementation of [InteractiveMediaAdsPlatform] for iOS.
 final class IOSInteractiveMediaAds extends InteractiveMediaAdsPlatform {
@@ -34,5 +36,12 @@ final class IOSInteractiveMediaAds extends InteractiveMediaAdsPlatform {
     PlatformAdsManagerDelegateCreationParams params,
   ) {
     return IOSAdsManagerDelegate(params);
+  }
+
+  @override
+  IOSContentProgressProvider createPlatformContentProgressProvider(
+    PlatformContentProgressProviderCreationParams params,
+  ) {
+    return IOSContentProgressProvider(params);
   }
 }

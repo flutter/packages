@@ -5,6 +5,7 @@
 
   <application android:label="quick_actions_example" android:icon="@mipmap/ic_launcher">
       <activity android:name="io.flutter.embedding.android.FlutterActivity"
+          android:exported="true"
           android:theme="@style/LaunchTheme"
           android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection"
           android:hardwareAccelerated="true"

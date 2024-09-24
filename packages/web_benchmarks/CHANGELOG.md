@@ -1,3 +1,7 @@
+## 2.1.0-wip
+
+* Restructure the `testing/test_app` to make the example benchmarks easier to follow.
+
 ## 2.0.2
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
