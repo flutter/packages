@@ -8,7 +8,6 @@ import android.os.Handler
 import android.os.Looper
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
-import io.flutter.plugin.common.EventChannel
 
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
 class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
@@ -30,7 +29,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     proxyApiRegistrar = ProxyApiRegistrar(binding.binaryMessenger)
     proxyApiRegistrar!!.setUp()
 
-    StreamInts.register(binding.binaryMessenger, CounterHandler)
+    StreamInts.register(binding.binaryMessenger, sendInts)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -735,25 +734,19 @@ class TestPluginWithSuffix : HostSmallApi {
   }
 }
 
-object CounterHandler : StreamInts {
-  private val handler = Handler(Looper.getMainLooper())
-
-  override var eventSink: EventChannel.EventSink? = null
-
-  override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
-    eventSink = sink
-    var count: Long = 0
-    // every 5 second send the time
-    val r: Runnable =
-        object : Runnable {
-          override fun run() {
-            handler.post {
-              count++
-              eventSink?.success(count)
-            }
-            handler.postDelayed(this, 1000)
+val sendInts: (() -> Unit) = {
+  val handler = Handler(Looper.getMainLooper())
+  var count: Long = 0
+  // every 5 second send the time
+  val r: Runnable =
+      object : Runnable {
+        override fun run() {
+          handler.post {
+            count++
+            StreamInts.success(count)
           }
+          handler.postDelayed(this, 1000)
         }
-    handler.postDelayed(r, 1000)
-  }
+      }
+  handler.postDelayed(r, 1000)
 }

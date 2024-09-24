@@ -998,20 +998,34 @@ if (wrapped == null) {
         indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
       indent.format('''
-        public interface ${toUpperCamelCase(func.name)} : EventChannel.StreamHandler {
-          var eventSink: EventChannel.EventSink?
+        object ${toUpperCamelCase(func.name)} : EventChannel.StreamHandler {
+          private const val CHANNEL_NAME: String = "${makeChannelName(api, func, dartPackageName)}"
+        
+          private var eventSink: EventChannel.EventSink? = null
+          private var runAfterListen: () -> Unit = {}
+
+          fun register(messenger: BinaryMessenger, runOnListen: () -> Unit = {}) {
+          runAfterListen = runOnListen
+            EventChannel(messenger, CHANNEL_NAME).setStreamHandler(this)
+          }
+
+          fun success(value: ${_kotlinTypeForDartType(func.returnType)}) {
+            eventSink?.success(value)
+          }
+
+          fun error(errorCode: String, errorMessage: String? = null, errorDetails: Any? = null) {
+            eventSink?.error(errorCode, errorMessage, errorDetails)
+          }
+
+          override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
+            eventSink = sink
+            runAfterListen()
+          }
 
           override fun onCancel(p0: Any?) {
             eventSink = null
           }
 
-          companion object {
-            private const val CHANNEL_NAME: String = "${makeChannelName(api, func, dartPackageName)}"
-          
-            fun register(messenger: BinaryMessenger, streamHandler: EventChannel.StreamHandler) {
-              EventChannel(messenger, CHANNEL_NAME).setStreamHandler(streamHandler)
-            }
-          }
         }
       ''');
     }

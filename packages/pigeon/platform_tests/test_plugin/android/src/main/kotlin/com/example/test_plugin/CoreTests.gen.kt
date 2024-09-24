@@ -566,20 +566,33 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
   }
 }
 
-public interface StreamInts : EventChannel.StreamHandler {
-  var eventSink: EventChannel.EventSink?
+object StreamInts : EventChannel.StreamHandler {
+  private const val CHANNEL_NAME: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts"
+
+  private var eventSink: EventChannel.EventSink? = null
+  private var runAfterListen: () -> Unit = {}
+
+  fun register(messenger: BinaryMessenger, runOnListen: () -> Unit = {}) {
+    runAfterListen = runOnListen
+    EventChannel(messenger, CHANNEL_NAME).setStreamHandler(this)
+  }
+
+  fun success(value: Long) {
+    eventSink?.success(value)
+  }
+
+  fun error(errorCode: String, errorMessage: String? = null, errorDetails: Any? = null) {
+    eventSink?.error(errorCode, errorMessage, errorDetails)
+  }
+
+  override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
+    eventSink = sink
+    runAfterListen()
+  }
 
   override fun onCancel(p0: Any?) {
     eventSink = null
-  }
-
-  companion object {
-    private const val CHANNEL_NAME: String =
-        "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts"
-
-    fun register(messenger: BinaryMessenger, streamHandler: EventChannel.StreamHandler) {
-      EventChannel(messenger, CHANNEL_NAME).setStreamHandler(streamHandler)
-    }
   }
 }
 
