@@ -55,7 +55,9 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         case .success(let verification):
           switch verification {
           case .verified(let transaction):
-            self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
+            DispatchQueue.main.async {
+              self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
+            }
             completion(.success(result.convertToPigeon()))
           case .unverified(_, let error):
             completion(.failure(error))
