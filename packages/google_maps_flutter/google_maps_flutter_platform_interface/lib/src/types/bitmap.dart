@@ -45,13 +45,13 @@ const double _naturalPixelRatio = 1.0;
 /// Use the [BitmapDescriptor.defaultMarkerWithHue] to create a
 /// [BitmapDescriptor] for a default marker icon with a hue value.
 class BitmapDescriptor {
-  const BitmapDescriptor._(this._json);
+  const BitmapDescriptor._(this.json);
 
   /// The inverse of .toJson.
   // TODO(stuartmorgan): Remove this in the next breaking change.
   @Deprecated('No longer supported')
-  BitmapDescriptor.fromJson(Object json) : _json = json {
-    assert(_json is List<dynamic>);
+  static BitmapDescriptor fromJson(Object json) {
+    assert(json is List<dynamic>);
     final List<dynamic> jsonList = json as List<dynamic>;
     assert(_validTypes.contains(jsonList[0]));
     switch (jsonList[0]) {
@@ -61,7 +61,9 @@ class BitmapDescriptor {
           assert(jsonList[1] is num);
           final num secondElement = jsonList[1] as num;
           assert(0 <= secondElement && secondElement < 360);
+          return DefaultMarker(secondElement);
         }
+        return DefaultMarker();
       case _fromBytes:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is List<int>);
@@ -112,6 +114,7 @@ class BitmapDescriptor {
       default:
         break;
     }
+    return BitmapDescriptor._(json);
   }
 
   static const String _defaultMarker = 'defaultMarker';
@@ -161,14 +164,14 @@ class BitmapDescriptor {
 
   /// Creates a BitmapDescriptor that refers to the default marker image.
   static const BitmapDescriptor defaultMarker =
-      BitmapDescriptor._(<Object>[_defaultMarker]);
+      DefaultMarker();
 
   /// Creates a BitmapDescriptor that refers to a colorization of the default
   /// marker image. For convenience, there is a predefined set of hue values.
   /// See e.g. [hueYellow].
   static BitmapDescriptor defaultMarkerWithHue(double hue) {
     assert(0.0 <= hue && hue < 360.0);
-    return BitmapDescriptor._(<Object>[_defaultMarker, hue]);
+    return DefaultMarker(hue);
   }
 
   /// Creates a [BitmapDescriptor] from an asset image.
@@ -306,10 +309,21 @@ class BitmapDescriptor {
     );
   }
 
-  final Object _json;
+  final Object json;
 
   /// Convert the object to a Json format.
-  Object toJson() => _json;
+  Object toJson() => json;
+}
+
+class DefaultMarker extends BitmapDescriptor {
+  const DefaultMarker([this.hue]) : super._(const <Object>[]);
+
+  final num? hue;
+
+  @override
+  Object toJson() {
+    return (hue == null) ? const <Object>[BitmapDescriptor._defaultMarker] : <Object>[BitmapDescriptor._defaultMarker, hue!];
+  }
 }
 
 /// Represents a [BitmapDescriptor] base class for map bitmaps.

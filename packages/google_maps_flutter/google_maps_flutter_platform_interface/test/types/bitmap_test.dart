@@ -21,7 +21,8 @@ void main() {
           BitmapDescriptor.fromJson(json);
 
       expect(descriptorFromJson, isNot(descriptor)); // New instance
-      expect(identical(descriptorFromJson.toJson(), json), isTrue); // Same JSON
+      //expect(identical(descriptorFromJson.toJson(), json), isTrue); // Same JSON
+      expect(descriptorFromJson.toJson(), json);
     });
 
     group('fromBytes constructor', () {
