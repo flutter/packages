@@ -242,20 +242,18 @@ abstract class StatefulShellRouteData extends RouteData {
   FutureOr<String?> redirect(BuildContext context, GoRouterState state) => null;
 
   /// [pageBuilder] is used to build the page
-  // TODO: This signature is needs to be updated
   Page<void> pageBuilder(
     BuildContext context,
-    GoRouterState state,
-    StatefulNavigationShell navigationShell,
+    ShellRouteState state,
+    Widget navigationShell,
   ) =>
       const NoOpPage();
 
   /// [builder] is used to build the widget
-  // TODO: This signature is needs to be updated
   Widget builder(
     BuildContext context,
-    GoRouterState state,
-    StatefulNavigationShell navigationShell,
+    ShellRouteState state,
+    Widget navigationShell,
   ) =>
       throw UnimplementedError(
         'One of `builder` or `pageBuilder` must be implemented.',
@@ -277,8 +275,8 @@ abstract class StatefulShellRouteData extends RouteData {
 
     Widget builder(
       BuildContext context,
-      GoRouterState state,
-      StatefulNavigationShell navigationShell,
+      ShellRouteState state,
+      Widget navigationShell,
     ) =>
         factoryImpl(state).builder(
           context,
@@ -288,8 +286,8 @@ abstract class StatefulShellRouteData extends RouteData {
 
     Page<void> pageBuilder(
       BuildContext context,
-      GoRouterState state,
-      StatefulNavigationShell navigationShell,
+      ShellRouteState state,
+      Widget navigationShell,
     ) =>
         factoryImpl(state).pageBuilder(
           context,

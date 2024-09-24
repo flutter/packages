@@ -29,8 +29,8 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     initialLocation: '/a',
     routes: <RouteBase>[
       // #docregion configuration-builder
-      StatefulShellRoute.indexedStackContainer(
-        path: '/shell',
+      StatefulShellRoute.indexedStack(
+        shellRedirectPath: '/shell',
         builder: (BuildContext context, ShellRouteState state, Widget child) {
           // Return the widget that implements the custom shell (in this case
           // using a BottomNavigationBar). The StatefulNavigationShell is passed
@@ -185,9 +185,9 @@ class ScaffoldWithNavBar extends StatelessWidget {
             // But since names are configured for the branches, it is also
             // possible to restore a branch by name, like this:
             return switch (index) {
-              1 => GoRouter.of(context).go('/shell/branchB'),
-              2 => GoRouter.of(context).go('/shell/branchC'),
-              _ => GoRouter.of(context).go('/shell/branchA'),
+              1 => GoRouter.of(context).goNamed('branchB'),
+              2 => GoRouter.of(context).goNamed('branchC'),
+              _ => GoRouter.of(context).goNamed('branchA'),
             };
           }),
     );
@@ -211,9 +211,9 @@ class ScaffoldWithNavBar extends StatelessWidget {
       //GoRouter.of(context).go('/shell/$index/initial');
     } else {
       return switch (index) {
-        1 => GoRouter.of(context).go('/shell/branchB'),
-        2 => GoRouter.of(context).go('/shell/branchC'),
-        _ => GoRouter.of(context).go('/shell/branchA'),
+        1 => GoRouter.of(context).goNamed('branchB'),
+        2 => GoRouter.of(context).goNamed('branchC'),
+        _ => GoRouter.of(context).goNamed('branchA'),
       };
       // It is also possible to navigate to the branch by index like this:
       //GoRouter.of(context).go('/shell/$index');

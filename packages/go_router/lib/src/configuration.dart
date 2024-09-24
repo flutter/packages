@@ -421,8 +421,9 @@ class RouteConfiguration {
               statefulShellMatch!.route as StatefulShellRoute;
           final StatefulShellRestoreStateRedirect shellRedirect =
               firstMatch.route as StatefulShellRestoreStateRedirect;
-          final String? branchRef = shellRedirect
-              .branchReferenceFromPathParameters(prevMatchList.pathParameters);
+          final String? branchRef = shellRedirect.name ??
+              shellRedirect.branchReferenceFromPathParameters(
+                  prevMatchList.pathParameters);
           final int? branchIndex = findBranchIndex(shellRoute, branchRef);
           final RouteMatchList? restoredMatchList =
               shellRedirect.restoreState(branchIndex);
