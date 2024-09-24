@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:8.5.1'
     }
 }
 
@@ -35,7 +35,7 @@ android {
     lintOptions {
         checkAllWarnings true
         warningsAsErrors true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
+        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 
     dependencies {
@@ -44,7 +44,7 @@ android {
         implementation 'com.google.maps.android:android-maps-utils:3.6.0'
         androidTestImplementation 'androidx.test:runner:1.2.0'
         androidTestImplementation 'androidx.test:rules:1.4.0'
-        androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+        androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
         testImplementation 'junit:junit:4.13.2'
         testImplementation 'org.mockito:mockito-core:5.1.1'
         testImplementation 'androidx.test:core:1.2.0'

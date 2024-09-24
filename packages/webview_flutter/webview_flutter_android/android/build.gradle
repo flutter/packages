@@ -36,11 +36,11 @@ android {
     lintOptions {
         checkAllWarnings true
         warningsAsErrors true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
+        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 
     dependencies {
-        implementation 'androidx.annotation:annotation:1.7.1'
+        implementation 'androidx.annotation:annotation:1.8.2'
         implementation 'androidx.webkit:webkit:1.11.0'
         testImplementation 'junit:junit:4.13.2'
         testImplementation 'org.mockito:mockito-inline:5.1.0'

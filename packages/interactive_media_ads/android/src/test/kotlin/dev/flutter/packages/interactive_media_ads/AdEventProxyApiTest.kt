@@ -20,4 +20,14 @@ class AdEventProxyApiTest {
 
     assertEquals(AdEventType.PAUSED, api.type(instance))
   }
+
+  @Test
+  fun adData() {
+    val api = TestProxyApiRegistrar().getPigeonApiAdEvent()
+
+    val instance = Mockito.mock<AdEvent>()
+    whenever(instance.adData).thenReturn(mapOf("a" to "b", "c" to "d"))
+
+    assertEquals(mapOf("a" to "b", "c" to "d"), api.adData(instance))
+  }
 }

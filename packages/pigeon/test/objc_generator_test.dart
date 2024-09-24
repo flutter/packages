@@ -248,7 +248,7 @@ void main() {
           contains(
               'return enumAsNumber == nil ? nil : [[ACFooBox alloc] initWithValue:[enumAsNumber integerValue]];'));
 
-      expect(code, contains('ACFooBox * box = (ACFooBox *)value;'));
+      expect(code, contains('ACFooBox *box = (ACFooBox *)value;'));
     }
   });
 

@@ -1,3 +1,15 @@
+## 6.1.30
+
+* Temporarily downgrades Guava from version 33.3.0 to 32.0.1 to fix an R8 related error.
+
+## 6.1.29
+
+* Updates Guava to version 33.3.0.
+
+## 6.1.28
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 6.1.27
 
 * Updates AGP version to 8.5.0.

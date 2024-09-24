@@ -10,6 +10,7 @@ import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.camera2.interop.Camera2CameraControl;
 import androidx.camera.camera2.interop.CaptureRequestOptions;
+import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.CameraControl;
 import androidx.core.content.ContextCompat;
 import com.google.common.util.concurrent.FutureCallback;
@@ -134,6 +135,7 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
    * Retrieves the {@link Camera2CameraControl} instance associated with the specified {@code
    * identifier}.
    */
+  @OptIn(markerClass = ExperimentalCamera2Interop.class)
   private Camera2CameraControl getCamera2CameraControlInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }

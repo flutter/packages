@@ -9,7 +9,8 @@ import 'package:flutter/widgets.dart';
 import '../platform_interface/platform_interface.dart';
 import 'android_ad_display_container.dart';
 import 'android_ads_manager.dart';
-import 'enum_converter_extensions.dart';
+import 'android_content_progress_provider.dart';
+import 'enum_converter_utils.dart';
 import 'interactive_media_ads.g.dart' as ima;
 import 'interactive_media_ads_proxy.dart';
 
@@ -79,13 +80,18 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
   }
 
   @override
-  Future<void> requestAds(AdsRequest request) async {
+  Future<void> requestAds(PlatformAdsRequest request) async {
     final ima.AdsLoader adsLoader = await _adsLoaderFuture;
 
     final ima.AdsRequest androidRequest = await _sdkFactory.createAdsRequest();
 
     await Future.wait(<Future<void>>[
       androidRequest.setAdTagUrl(request.adTagUrl),
+      if (request.contentProgressProvider != null)
+        androidRequest.setContentProgressProvider(
+          (request.contentProgressProvider! as AndroidContentProgressProvider)
+              .progressProvider,
+        ),
       adsLoader.requestAds(androidRequest),
     ]);
   }
@@ -131,8 +137,8 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
           weakThis.target?.params.onAdsLoadError(
             AdsLoadErrorData(
               error: AdError(
-                type: event.error.errorType.asInterfaceErrorType(),
-                code: event.error.errorCode.asInterfaceErrorCode(),
+                type: toInterfaceErrorType(event.error.errorType),
+                code: toInterfaceErrorCode(event.error.errorCode),
                 message: event.error.message,
               ),
             ),

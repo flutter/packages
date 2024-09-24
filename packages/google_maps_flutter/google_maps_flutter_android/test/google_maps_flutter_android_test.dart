@@ -104,7 +104,7 @@ void main() {
     expect(bounds, expectedBounds);
   });
 
-  test('moveCamera calls through', () async {
+  test('moveCamera calls through with expected scrollBy', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -115,10 +115,14 @@ void main() {
     final VerificationResult verification = verify(api.moveCamera(captureAny));
     final PlatformCameraUpdate passedUpdate =
         verification.captured[0] as PlatformCameraUpdate;
-    expect(passedUpdate.json, update.toJson());
+    final PlatformCameraUpdateScrollBy scroll =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
+    update as CameraUpdateScrollBy;
+    expect(scroll.dx, update.dx);
+    expect(scroll.dy, update.dy);
   });
 
-  test('animateCamera calls through', () async {
+  test('animateCamera calls through with expected scrollBy', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -130,7 +134,11 @@ void main() {
         verify(api.animateCamera(captureAny));
     final PlatformCameraUpdate passedUpdate =
         verification.captured[0] as PlatformCameraUpdate;
-    expect(passedUpdate.json, update.toJson());
+    final PlatformCameraUpdateScrollBy scroll =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
+    update as CameraUpdateScrollBy;
+    expect(scroll.dx, update.dx);
+    expect(scroll.dy, update.dy);
   });
 
   test('getZoomLevel passes values correctly', () async {
@@ -209,10 +217,12 @@ void main() {
         setUpMockMap(mapId: mapId);
 
     // Set some arbitrary options.
-    const MapConfiguration config = MapConfiguration(
+    final CameraTargetBounds cameraBounds = CameraTargetBounds(LatLngBounds(
+        southwest: const LatLng(10, 20), northeast: const LatLng(30, 40)));
+    final MapConfiguration config = MapConfiguration(
       compassEnabled: true,
-      liteModeEnabled: false,
       mapType: MapType.terrain,
+      cameraTargetBounds: cameraBounds,
     );
     await maps.updateMapConfiguration(config, mapId: mapId);
 
@@ -220,16 +230,21 @@ void main() {
         verify(api.updateMapConfiguration(captureAny));
     final PlatformMapConfiguration passedConfig =
         verification.captured[0] as PlatformMapConfiguration;
-    final Map<String, Object?> passedConfigJson =
-        passedConfig.json as Map<String, Object?>;
     // Each set option should be present.
-    expect(passedConfigJson['compassEnabled'], true);
-    expect(passedConfigJson['liteModeEnabled'], false);
-    expect(passedConfigJson['mapType'], MapType.terrain.index);
+    expect(passedConfig.compassEnabled, true);
+    expect(passedConfig.mapType, PlatformMapType.terrain);
+    expect(passedConfig.cameraTargetBounds?.bounds?.northeast.latitude,
+        cameraBounds.bounds?.northeast.latitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.northeast.longitude,
+        cameraBounds.bounds?.northeast.longitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.southwest.latitude,
+        cameraBounds.bounds?.southwest.latitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.southwest.longitude,
+        cameraBounds.bounds?.southwest.longitude);
     // Spot-check that unset options are not be present.
-    expect(passedConfigJson['myLocationEnabled'], isNull);
-    expect(passedConfigJson['cameraTargetBounds'], isNull);
-    expect(passedConfigJson['padding'], isNull);
+    expect(passedConfig.myLocationEnabled, isNull);
+    expect(passedConfig.minMaxZoomPreference, isNull);
+    expect(passedConfig.padding, isNull);
   });
 
   test('updateMapOptions passes expected arguments', () async {
@@ -238,10 +253,12 @@ void main() {
         setUpMockMap(mapId: mapId);
 
     // Set some arbitrary options.
+    final CameraTargetBounds cameraBounds = CameraTargetBounds(LatLngBounds(
+        southwest: const LatLng(10, 20), northeast: const LatLng(30, 40)));
     final Map<String, Object?> config = <String, Object?>{
       'compassEnabled': true,
-      'liteModeEnabled': false,
       'mapType': MapType.terrain.index,
+      'cameraTargetBounds': cameraBounds.toJson(),
     };
     await maps.updateMapOptions(config, mapId: mapId);
 
@@ -249,16 +266,21 @@ void main() {
         verify(api.updateMapConfiguration(captureAny));
     final PlatformMapConfiguration passedConfig =
         verification.captured[0] as PlatformMapConfiguration;
-    final Map<String, Object?> passedConfigJson =
-        passedConfig.json as Map<String, Object?>;
     // Each set option should be present.
-    expect(passedConfigJson['compassEnabled'], true);
-    expect(passedConfigJson['liteModeEnabled'], false);
-    expect(passedConfigJson['mapType'], MapType.terrain.index);
+    expect(passedConfig.compassEnabled, true);
+    expect(passedConfig.mapType, PlatformMapType.terrain);
+    expect(passedConfig.cameraTargetBounds?.bounds?.northeast.latitude,
+        cameraBounds.bounds?.northeast.latitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.northeast.longitude,
+        cameraBounds.bounds?.northeast.longitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.southwest.latitude,
+        cameraBounds.bounds?.southwest.latitude);
+    expect(passedConfig.cameraTargetBounds?.bounds?.southwest.longitude,
+        cameraBounds.bounds?.southwest.longitude);
     // Spot-check that unset options are not be present.
-    expect(passedConfigJson['myLocationEnabled'], isNull);
-    expect(passedConfigJson['cameraTargetBounds'], isNull);
-    expect(passedConfigJson['padding'], isNull);
+    expect(passedConfig.myLocationEnabled, isNull);
+    expect(passedConfig.minMaxZoomPreference, isNull);
+    expect(passedConfig.padding, isNull);
   });
 
   test('updateCircles passes expected arguments', () async {
@@ -286,11 +308,46 @@ void main() {
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.circleId.value);
     // Object two should be changed.
-    expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    {
+      expect(toChange.length, 1);
+      final List<Object?>? encoded = toChange.first?.encode() as List<Object?>?;
+      expect(encoded?.getRange(0, 6), <Object?>[
+        object2new.consumeTapEvents,
+        object2new.fillColor.value,
+        object2new.strokeColor.value,
+        object2new.visible,
+        object2new.strokeWidth,
+        object2new.zIndex.toDouble(),
+      ]);
+      final PlatformLatLng? latLng = encoded?[6] as PlatformLatLng?;
+      expect(latLng?.latitude, object2new.center.latitude);
+      expect(latLng?.longitude, object2new.center.longitude);
+      expect(encoded?.getRange(7, 9), <Object?>[
+        object2new.radius,
+        object2new.circleId.value,
+      ]);
+    }
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    {
+      expect(toAdd.length, 1);
+      final List<Object?>? encoded = toAdd.first?.encode() as List<Object?>?;
+      expect(encoded?.getRange(0, 6), <Object?>[
+        object3.consumeTapEvents,
+        object3.fillColor.value,
+        object3.strokeColor.value,
+        object3.visible,
+        object3.strokeWidth,
+        object3.zIndex.toDouble(),
+      ]);
+      final PlatformLatLng? latLng = encoded?[6] as PlatformLatLng?;
+      expect(latLng?.latitude, object3.center.latitude);
+      expect(latLng?.longitude, object3.center.longitude);
+      expect(encoded?.getRange(7, 9), <Object?>[
+        object3.radius,
+        object3.circleId.value,
+      ]);
+    }
   });
 
   test('updateClusterManagers passes expected arguments', () async {
@@ -347,11 +404,65 @@ void main() {
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.markerId.value);
     // Object two should be changed.
-    expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    {
+      expect(toChange.length, 1);
+      final List<Object?>? encoded = toChange.first?.encode() as List<Object?>?;
+      expect(encoded?[0], object2new.alpha);
+      final PlatformOffset? offset = encoded?[1] as PlatformOffset?;
+      expect(offset?.dx, object2new.anchor.dx);
+      expect(offset?.dy, object2new.anchor.dy);
+      expect(encoded?.getRange(2, 6).toList(), <Object?>[
+        object2new.consumeTapEvents,
+        object2new.draggable,
+        object2new.flat,
+        object2new.icon.toJson(),
+      ]);
+      final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
+      expect(window?.title, object2new.infoWindow.title);
+      expect(window?.snippet, object2new.infoWindow.snippet);
+      expect(window?.anchor.dx, object2new.infoWindow.anchor.dx);
+      expect(window?.anchor.dy, object2new.infoWindow.anchor.dy);
+      final PlatformLatLng? latLng = encoded?[7] as PlatformLatLng?;
+      expect(latLng?.latitude, object2new.position.latitude);
+      expect(latLng?.longitude, object2new.position.longitude);
+      expect(encoded?.getRange(8, 13), <Object?>[
+        object2new.rotation,
+        object2new.visible,
+        object2new.zIndex,
+        object2new.markerId.value,
+        object2new.clusterManagerId?.value,
+      ]);
+    }
     // Object 3 should be added.
-    expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    {
+      expect(toAdd.length, 1);
+      final List<Object?>? encoded = toAdd.first?.encode() as List<Object?>?;
+      expect(encoded?[0], object3.alpha);
+      final PlatformOffset? offset = encoded?[1] as PlatformOffset?;
+      expect(offset?.dx, object3.anchor.dx);
+      expect(offset?.dy, object3.anchor.dy);
+      expect(encoded?.getRange(2, 6).toList(), <Object?>[
+        object3.consumeTapEvents,
+        object3.draggable,
+        object3.flat,
+        object3.icon.toJson(),
+      ]);
+      final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
+      expect(window?.title, object3.infoWindow.title);
+      expect(window?.snippet, object3.infoWindow.snippet);
+      expect(window?.anchor.dx, object3.infoWindow.anchor.dx);
+      expect(window?.anchor.dy, object3.infoWindow.anchor.dy);
+      final PlatformLatLng? latLng = encoded?[7] as PlatformLatLng?;
+      expect(latLng?.latitude, object3.position.latitude);
+      expect(latLng?.longitude, object3.position.longitude);
+      expect(encoded?.getRange(8, 13), <Object?>[
+        object3.rotation,
+        object3.visible,
+        object3.zIndex,
+        object3.markerId.value,
+        object3.clusterManagerId?.value,
+      ]);
+    }
   });
 
   test('updatePolygons passes expected arguments', () async {
@@ -378,12 +489,41 @@ void main() {
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.polygonId.value);
+    void expectPolygon(PlatformPolygon actual, Polygon expected) {
+      final List<Object?> encoded = actual.encode() as List<Object?>;
+      expect(encoded.sublist(0, 4), <Object>[
+        expected.polygonId.value,
+        expected.consumeTapEvents,
+        expected.fillColor.value,
+        expected.geodesic,
+      ]);
+      expect(actual.points.length, expected.points.length);
+      for (final (int i, PlatformLatLng? point) in actual.points.indexed) {
+        expect(point?.latitude, actual.points[i]?.latitude);
+        expect(point?.longitude, actual.points[i]?.longitude);
+      }
+      expect(actual.holes.length, expected.holes.length);
+      for (final (int i, List<PlatformLatLng?>? hole) in actual.holes.indexed) {
+        final List<LatLng> expectedHole = expected.holes[i];
+        for (final (int j, PlatformLatLng? point) in hole!.indexed) {
+          expect(point?.latitude, expectedHole[j].latitude);
+          expect(point?.longitude, expectedHole[j].longitude);
+        }
+      }
+      expect(encoded.sublist(6), <Object>[
+        expected.visible,
+        expected.strokeColor.value,
+        expected.strokeWidth,
+        expected.zIndex,
+      ]);
+    }
+
     // Object two should be changed.
     expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    expectPolygon(toChange.first!, object2new);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    expectPolygon(toAdd.first!, object3);
   });
 
   test('updatePolylines passes expected arguments', () async {
@@ -407,15 +547,42 @@ void main() {
     final List<PlatformPolyline?> toChange =
         verification.captured[1] as List<PlatformPolyline?>;
     final List<String?> toRemove = verification.captured[2] as List<String?>;
+    void expectPolyline(PlatformPolyline actual, Polyline expected) {
+      final List<Object?> encoded = actual.encode() as List<Object?>;
+      expect(encoded.sublist(0, 5), <Object?>[
+        expected.polylineId.value,
+        expected.consumeTapEvents,
+        expected.color.value,
+        expected.geodesic,
+        platformJointTypeFromJointType(expected.jointType),
+      ]);
+      expect(encoded.sublist(9), <Object?>[
+        expected.visible,
+        expected.width,
+        expected.zIndex,
+      ]);
+      expect(actual.points.length, expected.points.length);
+      for (final (int i, PlatformLatLng? point) in actual.points.indexed) {
+        expect(point?.latitude, actual.points[i]?.latitude);
+        expect(point?.longitude, actual.points[i]?.longitude);
+      }
+      expect(actual.patterns.length, expected.patterns.length);
+      for (final (int i, PlatformPatternItem? pattern)
+          in actual.patterns.indexed) {
+        expect(pattern?.encode(),
+            platformPatternItemFromPatternItem(expected.patterns[i]).encode());
+      }
+    }
+
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.polylineId.value);
     // Object two should be changed.
     expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    expectPolyline(toChange.first!, object2new);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    expectPolyline(toAdd.first!, object3);
   });
 
   test('updateTileOverlays passes expected arguments', () async {
@@ -444,15 +611,26 @@ void main() {
     final List<PlatformTileOverlay?> toChange =
         verification.captured[1] as List<PlatformTileOverlay?>;
     final List<String?> toRemove = verification.captured[2] as List<String?>;
+    void expectTileOverlay(PlatformTileOverlay? actual, TileOverlay expected) {
+      expect(actual?.encode(), <Object?>[
+        expected.tileOverlayId.value,
+        expected.fadeIn,
+        expected.transparency,
+        expected.zIndex,
+        expected.visible,
+        expected.tileSize,
+      ]);
+    }
+
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.tileOverlayId.value);
     // Object two should be changed.
     expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    expectTileOverlay(toChange.first, object2new);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    expectTileOverlay(toAdd.first, object3);
   });
 
   test('markers send drag event to correct streams', () async {
@@ -606,6 +784,164 @@ void main() {
     },
   );
 
+  test('moveCamera calls through with expected newCameraPosition', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const LatLng latLng = LatLng(10.0, 20.0);
+    const CameraPosition position = CameraPosition(target: latLng);
+    final CameraUpdate update = CameraUpdate.newCameraPosition(position);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateNewCameraPosition typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateNewCameraPosition;
+    update as CameraUpdateNewCameraPosition;
+    expect(typedUpdate.cameraPosition.target.latitude,
+        update.cameraPosition.target.latitude);
+    expect(typedUpdate.cameraPosition.target.longitude,
+        update.cameraPosition.target.longitude);
+  });
+
+  test('moveCamera calls through with expected newLatLng', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const LatLng latLng = LatLng(10.0, 20.0);
+    final CameraUpdate update = CameraUpdate.newLatLng(latLng);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateNewLatLng typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLng;
+    update as CameraUpdateNewLatLng;
+    expect(typedUpdate.latLng.latitude, update.latLng.latitude);
+    expect(typedUpdate.latLng.longitude, update.latLng.longitude);
+  });
+
+  test('moveCamera calls through with expected newLatLngBounds', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final LatLngBounds latLng = LatLngBounds(
+        northeast: const LatLng(10.0, 20.0),
+        southwest: const LatLng(9.0, 21.0));
+    final CameraUpdate update = CameraUpdate.newLatLngBounds(latLng, 1.0);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateNewLatLngBounds typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLngBounds;
+    update as CameraUpdateNewLatLngBounds;
+    expect(typedUpdate.bounds.northeast.latitude,
+        update.bounds.northeast.latitude);
+    expect(typedUpdate.bounds.northeast.longitude,
+        update.bounds.northeast.longitude);
+    expect(typedUpdate.bounds.southwest.latitude,
+        update.bounds.southwest.latitude);
+    expect(typedUpdate.bounds.southwest.longitude,
+        update.bounds.southwest.longitude);
+    expect(typedUpdate.padding, update.padding);
+  });
+
+  test('moveCamera calls through with expected newLatLngZoom', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const LatLng latLng = LatLng(10.0, 20.0);
+    final CameraUpdate update = CameraUpdate.newLatLngZoom(latLng, 2.0);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateNewLatLngZoom typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLngZoom;
+    update as CameraUpdateNewLatLngZoom;
+    expect(typedUpdate.latLng.latitude, update.latLng.latitude);
+    expect(typedUpdate.latLng.longitude, update.latLng.longitude);
+    expect(typedUpdate.zoom, update.zoom);
+  });
+
+  test('moveCamera calls through with expected zoomBy', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const Offset focus = Offset(10.0, 20.0);
+    final CameraUpdate update = CameraUpdate.zoomBy(2.0, focus);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateZoomBy typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateZoomBy;
+    update as CameraUpdateZoomBy;
+    expect(typedUpdate.focus?.dx, update.focus?.dx);
+    expect(typedUpdate.focus?.dy, update.focus?.dy);
+    expect(typedUpdate.amount, update.amount);
+  });
+
+  test('moveCamera calls through with expected zoomTo', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final CameraUpdate update = CameraUpdate.zoomTo(2.0);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateZoomTo typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateZoomTo;
+    update as CameraUpdateZoomTo;
+    expect(typedUpdate.zoom, update.zoom);
+  });
+
+  test('moveCamera calls through with expected zoomIn', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final CameraUpdate update = CameraUpdate.zoomIn();
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateZoom typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateZoom;
+    expect(typedUpdate.out, false);
+  });
+
+  test('moveCamera calls through with expected zoomOut', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final CameraUpdate update = CameraUpdate.zoomOut();
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateZoom typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateZoom;
+    expect(typedUpdate.out, true);
+  });
+
   testWidgets('Use PlatformViewLink when using surface view',
       (WidgetTester tester) async {
     final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
@@ -645,17 +981,15 @@ void main() {
               methodCall.arguments as Map<dynamic, dynamic>);
           if (args.containsKey('params')) {
             final Uint8List paramsUint8List = args['params'] as Uint8List;
-            const StandardMessageCodec codec = StandardMessageCodec();
             final ByteData byteData = ByteData.sublistView(paramsUint8List);
-            final Map<String, dynamic> creationParams =
-                Map<String, dynamic>.from(
-                    codec.decodeMessage(byteData) as Map<dynamic, dynamic>);
-            if (creationParams.containsKey('options')) {
-              final Map<String, dynamic> options = Map<String, dynamic>.from(
-                  creationParams['options'] as Map<dynamic, dynamic>);
-              if (options.containsKey('cloudMapId')) {
-                passedCloudMapIdCompleter
-                    .complete(options['cloudMapId'] as String);
+            final PlatformMapViewCreationParams? creationParams =
+                MapsApi.pigeonChannelCodec.decodeMessage(byteData)
+                    as PlatformMapViewCreationParams?;
+            if (creationParams != null) {
+              final String? passedMapId =
+                  creationParams.mapConfiguration.cloudMapId;
+              if (passedMapId != null) {
+                passedCloudMapIdCompleter.complete(passedMapId);
               }
             }
           }

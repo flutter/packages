@@ -85,7 +85,7 @@ void main() {
     expect(code, contains('    TWO_THREE_FOUR(1),'));
     expect(code, contains('    REMOTE_DB(2);'));
     expect(code, contains('final int index;'));
-    expect(code, contains('private Foobar(final int index) {'));
+    expect(code, contains('Foobar(final int index) {'));
     expect(code, contains('      this.index = index;'));
   });
 
@@ -118,7 +118,6 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('package com.google.foobar;'));
-    expect(code, contains('ArrayList<Object> toList()'));
   });
 
   test('gen one host api', () {
@@ -187,7 +186,6 @@ void main() {
         contains(RegExp(
             r'@NonNull\s*protected static ArrayList<Object> wrapError\(@NonNull Throwable exception\)')));
     expect(code, isNot(contains('ArrayList ')));
-    expect(code, isNot(contains('ArrayList<>')));
   });
 
   test('all the simple datatypes header', () {
@@ -736,7 +734,7 @@ void main() {
     expect(code, contains('    TWO_THREE_FOUR(1),'));
     expect(code, contains('    REMOTE_DB(2);'));
     expect(code, contains('final int index;'));
-    expect(code, contains('private Enum1(final int index) {'));
+    expect(code, contains('Enum1(final int index) {'));
     expect(code, contains('      this.index = index;'));
 
     expect(code, contains('toListResult.add(enum1);'));
@@ -778,8 +776,10 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('public enum Foo'));
-    expect(code,
-        contains('return value == null ? null : Foo.values()[(int) value];'));
+    expect(
+        code,
+        contains(
+            'return value == null ? null : Foo.values()[((Long) value).intValue()];'));
     expect(
         code,
         contains(
@@ -1042,10 +1042,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('public void doit(@NonNull Result<Long> result)'));
-    expect(
-        code,
-        contains(
-            'Long output = listReply.get(0) == null ? null : ((Number) listReply.get(0)).longValue();'));
+    expect(code, contains('Long output = (Long) listReply.get(0);'));
   });
 
   test('host multiple args', () {
@@ -1082,12 +1079,9 @@ void main() {
     expect(code, contains('Long add(@NonNull Long x, @NonNull Long y)'));
     expect(code,
         contains('ArrayList<Object> args = (ArrayList<Object>) message;'));
-    expect(code, contains('Number xArg = (Number) args.get(0)'));
-    expect(code, contains('Number yArg = (Number) args.get(1)'));
-    expect(
-        code,
-        contains(
-            'Long output = api.add((xArg == null) ? null : xArg.longValue(), (yArg == null) ? null : yArg.longValue())'));
+    expect(code, contains('Long xArg = (Long) args.get(0)'));
+    expect(code, contains('Long yArg = (Long) args.get(1)'));
+    expect(code, contains('Long output = api.add(xArg, yArg)'));
   });
 
   test('if host argType is Object not cast', () {
@@ -1159,7 +1153,7 @@ void main() {
     expect(
         code,
         contains(RegExp(
-            r'channel.send\(\s*new ArrayList<Object>\(Arrays.asList\(xArg, yArg\)\),\s*channelReply ->')));
+            r'channel.send\(\s*new ArrayList<>\(Arrays.asList\(xArg, yArg\)\),\s*channelReply ->')));
   });
 
   test('flutter single args', () {
@@ -1191,7 +1185,7 @@ void main() {
     expect(
         code,
         contains(RegExp(
-            r'channel.send\(\s*new ArrayList<Object>\(Collections.singletonList\(xArg\)\),\s*channelReply ->')));
+            r'channel.send\(\s*new ArrayList<>\(Collections.singletonList\(xArg\)\),\s*channelReply ->')));
   });
 
   test('return nullable host', () {

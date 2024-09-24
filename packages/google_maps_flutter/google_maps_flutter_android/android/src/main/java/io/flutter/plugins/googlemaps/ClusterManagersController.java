@@ -79,17 +79,6 @@ class ClusterManagersController
   }
 
   /** Adds new ClusterManagers to the controller. */
-  void addJsonClusterManagers(@NonNull List<Object> clusterManagersToAdd) {
-    for (Object clusterToAdd : clusterManagersToAdd) {
-      String clusterManagerId = getClusterManagerId(clusterToAdd);
-      if (clusterManagerId == null) {
-        throw new IllegalArgumentException("clusterManagerId was null");
-      }
-      addClusterManager(clusterManagerId);
-    }
-  }
-
-  /** Adds new ClusterManagers to the controller. */
   void addClusterManagers(@NonNull List<Messages.PlatformClusterManager> clusterManagersToAdd) {
     for (Messages.PlatformClusterManager clusterToAdd : clusterManagersToAdd) {
       addClusterManager(clusterToAdd.getIdentifier());

@@ -1,3 +1,11 @@
+## 1.0.16
+
+* Updates README to include guidance on using the plugin with a launcher activity.
+
+## 1.0.15
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 1.0.14
 
 * Updates AGP version to 8.4.1.

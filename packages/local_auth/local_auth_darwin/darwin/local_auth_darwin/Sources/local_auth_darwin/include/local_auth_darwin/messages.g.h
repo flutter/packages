@@ -58,14 +58,14 @@ typedef NS_ENUM(NSUInteger, FLADAuthBiometric) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithReason:(NSString *)reason
                        lockOut:(NSString *)lockOut
-            goToSettingsButton:(NSString *)goToSettingsButton
-       goToSettingsDescription:(NSString *)goToSettingsDescription
+            goToSettingsButton:(nullable NSString *)goToSettingsButton
+       goToSettingsDescription:(nullable NSString *)goToSettingsDescription
                   cancelButton:(NSString *)cancelButton
         localizedFallbackTitle:(nullable NSString *)localizedFallbackTitle;
 @property(nonatomic, copy) NSString *reason;
 @property(nonatomic, copy) NSString *lockOut;
-@property(nonatomic, copy) NSString *goToSettingsButton;
-@property(nonatomic, copy) NSString *goToSettingsDescription;
+@property(nonatomic, copy, nullable) NSString *goToSettingsButton;
+@property(nonatomic, copy, nullable) NSString *goToSettingsDescription;
 @property(nonatomic, copy) NSString *cancelButton;
 @property(nonatomic, copy, nullable) NSString *localizedFallbackTitle;
 @end
