@@ -104,9 +104,15 @@ void main() {
     verify('/', 'b', '/b');
 
     // Test with parameters
-    verify('/a?fid=f1', 'b/c', '/a/b/c');
+    verify('/a?fid=f1', 'b/c?', '/a/b/c');
     verify('/a', 'b/c?pid=p2', '/a/b/c?pid=p2');
     verify('/a?fid=f1', 'b/c?pid=p2', '/a/b/c?pid=p2');
+
+    // Test with fragment
+    verify('/a#f', 'b/c#f2', '/a/b/c#f2');
+
+    // Test with fragment and parameters
+    verify('/a?fid=f1#f', 'b/c?pid=p2#', '/a/b/c?pid=p2#');
   });
 
   test('canonicalUri', () {

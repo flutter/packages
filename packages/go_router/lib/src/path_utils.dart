@@ -123,9 +123,8 @@ String concatenatePaths(String parentPath, String childPath) {
 ///
 /// e.g: pathA = /a?fid=f1, pathB = c/d?pid=p2,  concatenatePaths(pathA, pathB) = /a/c/d?pid=2.
 Uri concatenateUris(Uri parentUri, Uri childUri) {
-  Uri newUri = parentUri.replace(
+  Uri newUri = childUri.replace(
     path: concatenatePaths(parentUri.path, childUri.path),
-    queryParameters: childUri.queryParameters,
   );
 
   // Parse the new normalized uri to remove unnecessary parts, like the trailing '?'.
