@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -75,26 +77,26 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final AllNullableTypes nullableListTypes =
+      final AllNullableTypes listTypes =
           AllNullableTypes(list: <String?>['String', null]);
 
       final AllNullableTypes? echoNullFilledClass =
-          await api.echoAllNullableTypes(nullableListTypes);
+          await api.echoAllNullableTypes(listTypes);
 
-      compareAllNullableTypes(nullableListTypes, echoNullFilledClass);
+      compareAllNullableTypes(listTypes, echoNullFilledClass);
     });
 
     testWidgets('Classes with map of null serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final AllNullableTypes nullableListTypes = AllNullableTypes(
+      final AllNullableTypes listTypes = AllNullableTypes(
           map: <String?, String?>{'String': 'string', 'null': null});
 
       final AllNullableTypes? echoNullFilledClass =
-          await api.echoAllNullableTypes(nullableListTypes);
+          await api.echoAllNullableTypes(listTypes);
 
-      compareAllNullableTypes(nullableListTypes, echoNullFilledClass);
+      compareAllNullableTypes(listTypes, echoNullFilledClass);
     });
 
     testWidgets(
@@ -129,16 +131,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final AllNullableTypesWithoutRecursion nullableListTypes =
+      final AllNullableTypesWithoutRecursion listTypes =
           AllNullableTypesWithoutRecursion(
         list: <String?>['String', null],
       );
 
       final AllNullableTypesWithoutRecursion? echoNullFilledClass =
-          await api.echoAllNullableTypesWithoutRecursion(nullableListTypes);
+          await api.echoAllNullableTypesWithoutRecursion(listTypes);
 
-      compareAllNullableTypesWithoutRecursion(
-          nullableListTypes, echoNullFilledClass);
+      compareAllNullableTypesWithoutRecursion(listTypes, echoNullFilledClass);
     });
 
     testWidgets(
@@ -146,16 +147,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final AllNullableTypesWithoutRecursion nullableListTypes =
+      final AllNullableTypesWithoutRecursion listTypes =
           AllNullableTypesWithoutRecursion(
         map: <String?, String?>{'String': 'string', 'null': null},
       );
 
       final AllNullableTypesWithoutRecursion? echoNullFilledClass =
-          await api.echoAllNullableTypesWithoutRecursion(nullableListTypes);
+          await api.echoAllNullableTypesWithoutRecursion(listTypes);
 
-      compareAllNullableTypesWithoutRecursion(
-          nullableListTypes, echoNullFilledClass);
+      compareAllNullableTypesWithoutRecursion(listTypes, echoNullFilledClass);
     });
 
     testWidgets('errors are returned correctly', (WidgetTester _) async {
@@ -388,6 +388,26 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       }
     });
 
+    testWidgets('NonNull enum lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final List<AnEnum> echoObject =
+          await api.echoNonNullEnumList(nonNullEnumList);
+      expect(listEquals(echoObject, nonNullEnumList), true);
+    });
+
+    testWidgets('NonNull class lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final List<AllNullableTypes> echoObject =
+          await api.echoNonNullClassList(nonNullAllNullableTypesList);
+      for (final (int index, AllNullableTypes value) in echoObject.indexed) {
+        compareAllNullableTypes(value, nonNullAllNullableTypesList[index]);
+      }
+    });
+
     testWidgets('maps serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -425,6 +445,41 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       for (final MapEntry<int?, AllNullableTypes?> entry
           in echoObject.entries) {
         compareAllNullableTypes(entry.value, allNullableTypesMap[entry.key]);
+      }
+    });
+
+    testWidgets('NonNull string maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<String, String> echoObject =
+          await api.echoNonNullStringMap(nonNullStringMap);
+      expect(mapEquals(echoObject, nonNullStringMap), true);
+    });
+
+    testWidgets('NonNull int maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<int, int> echoObject =
+          await api.echoNonNullIntMap(nonNullIntMap);
+      expect(mapEquals(echoObject, nonNullIntMap), true);
+    });
+
+    testWidgets('NonNull enum maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<AnEnum, AnEnum> echoObject =
+          await api.echoNonNullEnumMap(nonNullEnumMap);
+      expect(mapEquals(echoObject, nonNullEnumMap), true);
+    });
+
+    testWidgets('NonNull class maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<int, AllNullableTypes> echoObject =
+          await api.echoNonNullClassMap(nonNullAllNullableTypesMap);
+      for (final MapEntry<int, AllNullableTypes> entry in echoObject.entries) {
+        compareAllNullableTypes(
+            entry.value, nonNullAllNullableTypesMap[entry.key]);
       }
     });
 
@@ -655,6 +710,27 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       }
     });
 
+    testWidgets(
+        'nullable NonNull enum lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final List<AnEnum?>? echoObject =
+          await api.echoNullableNonNullEnumList(nonNullEnumList);
+      expect(listEquals(echoObject, nonNullEnumList), true);
+    });
+
+    testWidgets('nullable NonNull lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final List<AllNullableTypes?>? echoObject =
+          await api.echoNullableClassList(nonNullAllNullableTypesList);
+      for (final (int index, AllNullableTypes? value) in echoObject!.indexed) {
+        compareAllNullableTypes(value, nonNullAllNullableTypesList[index]);
+      }
+    });
+
     testWidgets('nullable maps serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -693,6 +769,45 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       for (final MapEntry<int?, AllNullableTypes?> entry
           in echoObject!.entries) {
         compareAllNullableTypes(entry.value, allNullableTypesMap[entry.key]);
+      }
+    });
+
+    testWidgets(
+        'nullable NonNull string maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<String?, String?>? echoObject =
+          await api.echoNullableNonNullStringMap(nonNullStringMap);
+      expect(mapEquals(echoObject, nonNullStringMap), true);
+    });
+
+    testWidgets('nullable NonNull int maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<int?, int?>? echoObject =
+          await api.echoNullableNonNullIntMap(nonNullIntMap);
+      expect(mapEquals(echoObject, nonNullIntMap), true);
+    });
+
+    testWidgets(
+        'nullable NonNull enum maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<AnEnum?, AnEnum?>? echoObject =
+          await api.echoNullableNonNullEnumMap(nonNullEnumMap);
+      expect(mapEquals(echoObject, nonNullEnumMap), true);
+    });
+
+    testWidgets(
+        'nullable NonNull class maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<int?, AllNullableTypes?>? echoObject =
+          await api.echoNullableNonNullClassMap(nonNullAllNullableTypesMap);
+      for (final MapEntry<int?, AllNullableTypes?> entry
+          in echoObject!.entries) {
+        compareAllNullableTypes(
+            entry.value, nonNullAllNullableTypesMap[entry.key]);
       }
     });
 
@@ -1597,6 +1712,26 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       }
     });
 
+    testWidgets('NonNull enum lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final List<AnEnum> echoObject =
+          await api.callFlutterEchoNonNullEnumList(nonNullEnumList);
+      expect(listEquals(echoObject, nonNullEnumList), true);
+    });
+
+    testWidgets('NonNull class lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final List<AllNullableTypes> echoObject = await api
+          .callFlutterEchoNonNullClassList(nonNullAllNullableTypesList);
+      for (final (int index, AllNullableTypes? value) in echoObject.indexed) {
+        compareAllNullableTypes(value, nonNullAllNullableTypesList[index]);
+      }
+    });
+
     testWidgets('maps serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -1637,6 +1772,41 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       for (final MapEntry<int?, AllNullableTypes?> entry
           in echoObject.entries) {
         compareAllNullableTypes(entry.value, allNullableTypesMap[entry.key]);
+      }
+    });
+
+    testWidgets('NonNull string maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<String, String> echoObject =
+          await api.callFlutterEchoNonNullStringMap(nonNullStringMap);
+      expect(mapEquals(echoObject, nonNullStringMap), true);
+    });
+
+    testWidgets('NonNull int maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<int, int> echoObject =
+          await api.callFlutterEchoNonNullIntMap(nonNullIntMap);
+      expect(mapEquals(echoObject, nonNullIntMap), true);
+    });
+
+    testWidgets('NonNull enum maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<AnEnum, AnEnum> echoObject =
+          await api.callFlutterEchoNonNullEnumMap(nonNullEnumMap);
+      expect(mapEquals(echoObject, nonNullEnumMap), true);
+    });
+
+    testWidgets('NonNull class maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<int, AllNullableTypes> echoObject =
+          await api.callFlutterEchoNonNullClassMap(nonNullAllNullableTypesMap);
+      for (final MapEntry<int, AllNullableTypes> entry in echoObject.entries) {
+        compareAllNullableTypes(
+            entry.value, nonNullAllNullableTypesMap[entry.key]);
       }
     });
 
@@ -1810,6 +1980,28 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       }
     });
 
+    testWidgets(
+        'nullable NonNull enum lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final List<AnEnum?>? echoObject =
+          await api.callFlutterEchoNullableNonNullEnumList(nonNullEnumList);
+      expect(listEquals(echoObject, nonNullEnumList), true);
+    });
+
+    testWidgets(
+        'nullable NonNull class lists serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final List<AllNullableTypes?>? echoObject = await api
+          .callFlutterEchoNullableNonNullClassList(nonNullAllNullableTypesList);
+      for (final (int index, AllNullableTypes? value) in echoObject!.indexed) {
+        compareAllNullableTypes(value, nonNullAllNullableTypesList[index]);
+      }
+    });
+
     testWidgets('null lists serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -1868,6 +2060,45 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       for (final MapEntry<int?, AllNullableTypes?> entry
           in echoObject!.entries) {
         compareAllNullableTypes(entry.value, allNullableTypesMap[entry.key]);
+      }
+    });
+
+    testWidgets(
+        'nullable NonNull string maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<String?, String?>? echoObject =
+          await api.callFlutterEchoNullableNonNullStringMap(nonNullStringMap);
+      expect(mapEquals(echoObject, nonNullStringMap), true);
+    });
+
+    testWidgets('nullable NonNull int maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<int?, int?>? echoObject =
+          await api.callFlutterEchoNullableNonNullIntMap(nonNullIntMap);
+      expect(mapEquals(echoObject, nonNullIntMap), true);
+    });
+
+    testWidgets(
+        'nullable NonNull enum maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<AnEnum?, AnEnum?>? echoObject =
+          await api.callFlutterEchoNullableNonNullEnumMap(nonNullEnumMap);
+      expect(mapEquals(echoObject, nonNullEnumMap), true);
+    });
+
+    testWidgets(
+        'nullable NonNull class maps serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      final Map<int?, AllNullableTypes?>? echoObject = await api
+          .callFlutterEchoNullableNonNullClassMap(nonNullAllNullableTypesMap);
+      for (final MapEntry<int?, AllNullableTypes?> entry
+          in echoObject!.entries) {
+        compareAllNullableTypes(
+            entry.value, nonNullAllNullableTypesMap[entry.key]);
       }
     });
 
@@ -2025,7 +2256,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('echoProxyApiList', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
 
-      final List<ProxyApiTestClass?> value = <ProxyApiTestClass?>[
+      final List<ProxyApiTestClass> value = <ProxyApiTestClass>[
         _createGenericProxyApiTestClass(),
         _createGenericProxyApiTestClass(),
       ];
@@ -2042,8 +2273,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('echoProxyApiMap', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
 
-      final Map<String?, ProxyApiTestClass?> value =
-          <String?, ProxyApiTestClass?>{
+      final Map<String, ProxyApiTestClass> value = <String, ProxyApiTestClass>{
         '42': _createGenericProxyApiTestClass(),
       };
       expect(await api.echoProxyApiMap(value), value);
@@ -2681,6 +2911,15 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   }
 
   @override
+  List<AnEnum> echoNonNullEnumList(List<AnEnum> enumList) => enumList;
+
+  @override
+  List<AllNullableTypes> echoNonNullClassList(
+      List<AllNullableTypes> classList) {
+    return classList;
+  }
+
+  @override
   Map<Object?, Object?> echoMap(Map<Object?, Object?> map) => map;
 
   @override
@@ -2696,6 +2935,23 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   @override
   Map<int?, AllNullableTypes?> echoClassMap(
       Map<int?, AllNullableTypes?> classMap) {
+    return classMap;
+  }
+
+  @override
+  Map<String, String> echoNonNullStringMap(Map<String, String> stringMap) =>
+      stringMap;
+
+  @override
+  Map<int, int> echoNonNullIntMap(Map<int, int> intMap) => intMap;
+
+  @override
+  Map<AnEnum, AnEnum> echoNonNullEnumMap(Map<AnEnum, AnEnum> enumMap) =>
+      enumMap;
+
+  @override
+  Map<int, AllNullableTypes> echoNonNullClassMap(
+      Map<int, AllNullableTypes> classMap) {
     return classMap;
   }
 
@@ -2727,6 +2983,17 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   }
 
   @override
+  List<AnEnum>? echoNullableNonNullEnumList(List<AnEnum>? enumList) {
+    return enumList;
+  }
+
+  @override
+  List<AllNullableTypes>? echoNullableNonNullClassList(
+      List<AllNullableTypes>? classList) {
+    return classList;
+  }
+
+  @override
   Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map) => map;
 
   @override
@@ -2746,6 +3013,29 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   @override
   Map<int?, AllNullableTypes?>? echoNullableClassMap(
       Map<int?, AllNullableTypes?>? classMap) {
+    return classMap;
+  }
+
+  @override
+  Map<String, String>? echoNullableNonNullStringMap(
+      Map<String, String>? stringMap) {
+    return stringMap;
+  }
+
+  @override
+  Map<int, int>? echoNullableNonNullIntMap(Map<int, int>? intMap) {
+    return intMap;
+  }
+
+  @override
+  Map<AnEnum, AnEnum>? echoNullableNonNullEnumMap(
+      Map<AnEnum, AnEnum>? enumMap) {
+    return enumMap;
+  }
+
+  @override
+  Map<int, AllNullableTypes>? echoNullableNonNullClassMap(
+      Map<int, AllNullableTypes>? classMap) {
     return classMap;
   }
 
