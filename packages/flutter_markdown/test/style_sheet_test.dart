@@ -150,6 +150,7 @@ void defineTests() {
         expect(
             style.code!.fontSize, theme.textTheme.bodyMedium!.fontSize! * 0.85);
         expect(style.code!.fontFamily, 'monospace');
+        expect(style.code!.backgroundColor, theme.cardTheme.color);
 
         // H1
         expect(style.h1, theme.textTheme.headlineSmall);
