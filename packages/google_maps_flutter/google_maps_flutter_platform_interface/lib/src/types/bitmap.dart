@@ -63,11 +63,12 @@ class BitmapDescriptor {
           assert(0 <= secondElement && secondElement < 360);
           return DefaultMarker(secondElement);
         }
-        return DefaultMarker();
+        return const DefaultMarker();
       case _fromBytes:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is List<int>);
         assert((jsonList[1] as List<int>).isNotEmpty);
+        return BytesBitmap(byteData: jsonList[1] as Uint8List);
       case _fromAsset:
         assert(jsonList.length <= 3);
         assert(jsonList[1] != null && jsonList[1] is String);
@@ -225,15 +226,7 @@ class BitmapDescriptor {
   static BitmapDescriptor fromBytes(Uint8List byteData, {Size? size}) {
     assert(byteData.isNotEmpty,
         'Cannot create BitmapDescriptor with empty byteData');
-    return BitmapDescriptor._(<Object>[
-      _fromBytes,
-      byteData,
-      if (kIsWeb && size != null)
-        <Object>[
-          size.width,
-          size.height,
-        ]
-    ]);
+    return BytesBitmap(byteData: byteData, size: size);
   }
 
   /// Creates a [BitmapDescriptor] from an asset using [AssetMapBitmap].
@@ -323,6 +316,18 @@ class DefaultMarker extends BitmapDescriptor {
   @override
   Object toJson() {
     return (hue == null) ? const <Object>[BitmapDescriptor._defaultMarker] : <Object>[BitmapDescriptor._defaultMarker, hue!];
+  }
+}
+
+class BytesBitmap extends BitmapDescriptor {
+  const BytesBitmap({required this.byteData, this.size}) : super._(const <Object>[]);
+
+  final Uint8List byteData;
+  final Size? size;
+
+  @override
+  Object toJson() {
+    return <Object>[BitmapDescriptor._fromBytes, byteData, if (size != null && kIsWeb) <Object>[size!.width, size!.height]];
   }
 }
 
