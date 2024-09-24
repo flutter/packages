@@ -87,7 +87,10 @@ class BitmapDescriptor {
         if (jsonList.length == 4) {
           assert(jsonList[3] != null && jsonList[3] is List<dynamic>);
           assert((jsonList[3] as List<dynamic>).length == 2);
+          final List<dynamic> sizeList = jsonList[3] as List<dynamic>;
+          return AssetImageBitmap(name: jsonList[1] as String, scale: jsonList[2] as double, size: Size((sizeList[0] as num).toDouble(), (sizeList[1] as num).toDouble()));
         }
+        return AssetImageBitmap(name: jsonList[1] as String, scale: jsonList[2] as double);
       case AssetMapBitmap.type:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is Map<String, dynamic>);
@@ -195,27 +198,14 @@ class BitmapDescriptor {
   }) async {
     final double? devicePixelRatio = configuration.devicePixelRatio;
     if (!mipmaps && devicePixelRatio != null) {
-      return BitmapDescriptor._(<Object>[
-        _fromAssetImage,
-        assetName,
-        devicePixelRatio,
-      ]);
+      return AssetImageBitmap(name: assetName, scale: devicePixelRatio);
     }
     final AssetImage assetImage =
         AssetImage(assetName, package: package, bundle: bundle);
     final AssetBundleImageKey assetBundleImageKey =
         await assetImage.obtainKey(configuration);
-    final Size? size = configuration.size;
-    return BitmapDescriptor._(<Object>[
-      _fromAssetImage,
-      assetBundleImageKey.name,
-      assetBundleImageKey.scale,
-      if (kIsWeb && size != null)
-        <Object>[
-          size.width,
-          size.height,
-        ],
-    ]);
+    final Size? size = kIsWeb ? configuration.size : null;
+    return AssetImageBitmap(name: assetBundleImageKey.name, scale: assetBundleImageKey.scale, size: size);
   }
 
   /// Creates a BitmapDescriptor using an array of bytes that must be encoded
@@ -341,6 +331,17 @@ class AssetBitmap extends BitmapDescriptor {
 
   @override
   Object toJson() => <Object>[BitmapDescriptor._fromAsset, name, if (package != null) package!];
+}
+
+class AssetImageBitmap extends BitmapDescriptor {
+  const AssetImageBitmap({required this.name, required this.scale, this.size}) : super._(const <Object>[]);
+
+  final String name;
+  final double scale;
+  final Size? size;
+
+  @override
+  Object toJson() => <Object>[BitmapDescriptor._fromAssetImage, name, scale, if (kIsWeb && size != null) <Object>[size!.width, size!.height]];
 }
 
 /// Represents a [BitmapDescriptor] base class for map bitmaps.
