@@ -4,7 +4,7 @@
     * adds `invalid_runtime_check_with_js_interop_types`
     * adds `unnecessary_library_name`
     * removes `avoid_null_checks_in_equality_operators`
-* Removed the following lints (see https://github.com/dart-lang/lints/issues/205):
+* Removes the following lints (see https://github.com/dart-lang/lints/issues/205):
     * `prefer_const_constructors`
     * `prefer_const_declarations`
     * `prefer_const_literals_to_create_immutables`
