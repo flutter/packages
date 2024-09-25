@@ -29,6 +29,12 @@ enum MapBitmapScaling {
   none,
 }
 
+MapBitmapScaling mapBitmapScalingFromString(String mode) => switch (mode) {
+    'auto' => MapBitmapScaling.auto,
+    'none' => MapBitmapScaling.none,
+    _ => throw ArgumentError('Unrecognized MapBitmapScaling $mode', 'mode'),
+  };
+
 // The default pixel ratio for custom bitmaps.
 const double _naturalPixelRatio = 1.0;
 
@@ -104,6 +110,9 @@ class BitmapDescriptor {
         assert(jsonMap['imagePixelRatio'] is double);
         assert(!jsonMap.containsKey('width') || jsonMap['width'] is double);
         assert(!jsonMap.containsKey('height') || jsonMap['height'] is double);
+        final double? width = jsonMap.containsKey('width') ? jsonMap['width'] as double : null;
+        final double? height = jsonMap.containsKey('height') ? jsonMap['height'] as double : null;
+        return AssetMapBitmap(jsonMap['assetName'] as String, bitmapScaling: mapBitmapScalingFromString(jsonMap['bitmapScaling'] as String), imagePixelRatio: jsonMap['imagePixelRatio'] as double, width: width, height: height);
       case BytesMapBitmap.type:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is Map<String, dynamic>);
