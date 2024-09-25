@@ -1,3 +1,8 @@
+## 2.9.3
+
+* Converts `PatternItem` to typesafe structure.
+* Converts `Cap` to typesafe structure.
+
 ## 2.9.2
 
 * Corrects JSON tag for `CameraUpdateNewLatLngBounds`.
