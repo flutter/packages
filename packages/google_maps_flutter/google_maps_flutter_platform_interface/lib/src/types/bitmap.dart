@@ -322,14 +322,16 @@ class DefaultMarker extends BitmapDescriptor {
 }
 
 class BytesBitmap extends BitmapDescriptor {
-  const BytesBitmap({required this.byteData, this.size}) : super._();
+  const BytesBitmap({required Uint8List byteData, Size? size}) : this._(byteData, kIsWeb ? size : null);
+
+  const BytesBitmap._(this.byteData, this.size) : super._();
 
   final Uint8List byteData;
   final Size? size;
 
   @override
   Object toJson() {
-    return <Object>[BitmapDescriptor._fromBytes, byteData, if (size != null && kIsWeb) <Object>[size!.width, size!.height]];
+    return <Object>[BitmapDescriptor._fromBytes, byteData, if (size != null) <Object>[size!.width, size!.height]];
   }
 }
 
@@ -344,7 +346,9 @@ class AssetBitmap extends BitmapDescriptor {
 }
 
 class AssetImageBitmap extends BitmapDescriptor {
-  const AssetImageBitmap({required this.name, required this.scale, this.size}) : super._();
+  const AssetImageBitmap({required String name, required double scale, Size? size}) : this._(name, scale, kIsWeb ? size : null);
+
+  const AssetImageBitmap._(this.name, this.scale, this.size) : super._();
 
   final String name;
   final double scale;
