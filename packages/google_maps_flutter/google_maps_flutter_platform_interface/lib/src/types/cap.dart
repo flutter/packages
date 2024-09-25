@@ -12,13 +12,16 @@ enum CapType {
   /// with solid stroke pattern, equivalent to having no additional cap beyond
   /// the start or end vertex.
   butt('buttCap'),
+
   /// Cap that is a semicircle with radius equal to half the stroke width,
   /// centered at the start or end vertex of a [Polyline] with solid stroke
   /// pattern.
   round('roundCap'),
+
   /// Cap that is squared off after extending half the stroke width beyond the
   /// start or end vertex of a [Polyline] with solid stroke pattern.
   square('squareCap'),
+
   /// CustomCap with a bitmap overlay centered at the start or
   /// end vertex of a [Polyline], orientated according to the direction of the line's
   /// first or last edge and scaled with respect to the line's stroke width.
@@ -86,7 +89,8 @@ class CustomCap extends Cap {
   /// [refWidth] is the reference stroke width (in pixels) - the stroke width for which
   /// the cap bitmap at its native dimension is designed. Must be positive. Default value
   /// is 10 pixels.
-  const CustomCap(this.bitmapDescriptor, [this.refWidth = 10]) : super._(CapType.custom);
+  const CustomCap(this.bitmapDescriptor, [this.refWidth = 10])
+      : super._(CapType.custom);
 
   /// Bitmap overlay centered at the start or end vertex of a [Polyline].
   final BitmapDescriptor bitmapDescriptor;
@@ -95,5 +99,6 @@ class CustomCap extends Cap {
   final double refWidth;
 
   @override
-  Object toJson() => <Object>[CapType.custom.name, bitmapDescriptor.toJson(), refWidth];
+  Object toJson() =>
+      <Object>[CapType.custom.name, bitmapDescriptor.toJson(), refWidth];
 }

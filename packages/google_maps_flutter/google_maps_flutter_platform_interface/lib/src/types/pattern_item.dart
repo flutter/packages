@@ -8,8 +8,10 @@ import 'package:flutter/foundation.dart' show immutable;
 enum PatternItemType {
   /// A dot used in the stroke pattern for a [Polyline].
   dot('dot'),
+
   /// A dash used in the stroke pattern for a [Polyline].
   dash('dash'),
+
   /// A gap used in the stroke pattern for a [Polyline].
   gap('gap');
 

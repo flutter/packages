@@ -25,11 +25,24 @@ void main() {
 
   test('customCap', () {
     final Cap cap = Cap.customCapFromBitmap(BitmapDescriptor.defaultMarker);
-    expect(cap.toJson(), equals(<Object>['customCap', <Object>['defaultMarker'], 10.0]));
+    expect(
+        cap.toJson(),
+        equals(<Object>[
+          'customCap',
+          <Object>['defaultMarker'],
+          10.0
+        ]));
   });
 
   test('customCapWithWidth', () {
-    final Cap cap = Cap.customCapFromBitmap(BitmapDescriptor.defaultMarker, refWidth: 100);
-    expect(cap.toJson(), equals(<Object>['customCap', <Object>['defaultMarker'], 100.0]));
+    final Cap cap =
+        Cap.customCapFromBitmap(BitmapDescriptor.defaultMarker, refWidth: 100);
+    expect(
+        cap.toJson(),
+        equals(<Object>[
+          'customCap',
+          <Object>['defaultMarker'],
+          100.0
+        ]));
   });
 }
