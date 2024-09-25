@@ -50,8 +50,8 @@ const double _naturalPixelRatio = 1.0;
 /// a default marker icon.
 /// Use the [BitmapDescriptor.defaultMarkerWithHue] to create a
 /// [BitmapDescriptor] for a default marker icon with a hue value.
-class BitmapDescriptor {
-  const BitmapDescriptor._(this.json);
+abstract class BitmapDescriptor {
+  const BitmapDescriptor._();
 
   /// The inverse of .toJson.
   // TODO(stuartmorgan): Remove this in the next breaking change.
@@ -306,14 +306,12 @@ class BitmapDescriptor {
     );
   }
 
-  final Object json;
-
   /// Convert the object to a Json format.
-  Object toJson() => json;
+  Object toJson();
 }
 
 class DefaultMarker extends BitmapDescriptor {
-  const DefaultMarker([this.hue]) : super._(const <Object>[]);
+  const DefaultMarker([this.hue]) : super._();
 
   final num? hue;
 
@@ -324,7 +322,7 @@ class DefaultMarker extends BitmapDescriptor {
 }
 
 class BytesBitmap extends BitmapDescriptor {
-  const BytesBitmap({required this.byteData, this.size}) : super._(const <Object>[]);
+  const BytesBitmap({required this.byteData, this.size}) : super._();
 
   final Uint8List byteData;
   final Size? size;
@@ -336,7 +334,7 @@ class BytesBitmap extends BitmapDescriptor {
 }
 
 class AssetBitmap extends BitmapDescriptor {
-  const AssetBitmap({required this.name, this.package}) : super._(const <Object>[]);
+  const AssetBitmap({required this.name, this.package}) : super._();
 
   final String name;
   final String? package;
@@ -346,7 +344,7 @@ class AssetBitmap extends BitmapDescriptor {
 }
 
 class AssetImageBitmap extends BitmapDescriptor {
-  const AssetImageBitmap({required this.name, required this.scale, this.size}) : super._(const <Object>[]);
+  const AssetImageBitmap({required this.name, required this.scale, this.size}) : super._();
 
   final String name;
   final double scale;
@@ -388,7 +386,7 @@ abstract class MapBitmap extends BitmapDescriptor {
     required this.imagePixelRatio,
     this.width,
     this.height,
-  }) : super._(const <Object>[]);
+  }) : super._();
 
   /// The scaling method of the bitmap.
   final MapBitmapScaling bitmapScaling;
