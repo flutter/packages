@@ -126,10 +126,13 @@ class BitmapDescriptor {
         assert(jsonMap['imagePixelRatio'] is double);
         assert(!jsonMap.containsKey('width') || jsonMap['width'] is double);
         assert(!jsonMap.containsKey('height') || jsonMap['height'] is double);
+        final double? width = jsonMap.containsKey('width') ? jsonMap['width'] as double : null;
+        final double? height = jsonMap.containsKey('height') ? jsonMap['height'] as double : null;
+        return BytesMapBitmap(jsonMap['byteData'] as Uint8List, bitmapScaling: mapBitmapScalingFromString(jsonMap['bitmapScaling'] as String), width: width, height: height, imagePixelRatio: jsonMap['imagePixelRatio'] as double);
       default:
         break;
     }
-    return BitmapDescriptor._(json);
+    throw ArgumentError('Unrecognized BitmapDescriptor type ${jsonList[0]}');
   }
 
   static const String _defaultMarker = 'defaultMarker';
