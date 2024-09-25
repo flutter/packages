@@ -310,9 +310,12 @@ abstract class BitmapDescriptor {
   Object toJson();
 }
 
+/// A BitmapDescriptor using the default marker.
 class DefaultMarker extends BitmapDescriptor {
+  /// Provide an optional [hue] for the default marker.
   const DefaultMarker([this.hue]) : super._();
 
+  /// Optional hue of the colorization of the default marker.
   final num? hue;
 
   @override
@@ -320,13 +323,24 @@ class DefaultMarker extends BitmapDescriptor {
     return (hue == null) ? const <Object>[BitmapDescriptor._defaultMarker] : <Object>[BitmapDescriptor._defaultMarker, hue!];
   }
 }
-
+/// A BitmapDescriptor using an array of bytes that must be encoded
+/// as PNG.
+@Deprecated('Use BytesMapBitmap instead')
 class BytesBitmap extends BitmapDescriptor {
+  /// On the web, the [size] parameter represents the *physical size* of the
+  /// bitmap, regardless of the actual resolution of the encoded PNG.
+  /// This helps the browser to render High-DPI images at the correct size.
+  /// `size` is not required (and ignored, if passed) in other platforms.
+  @Deprecated('Use BytesMapBitmap instead')
   const BytesBitmap({required Uint8List byteData, Size? size}) : this._(byteData, kIsWeb ? size : null);
 
+  @Deprecated('Use BytesMapBitmap instead')
   const BytesBitmap._(this.byteData, this.size) : super._();
 
+  /// Array of bytes encoding a PNG.
   final Uint8List byteData;
+
+  /// On web, the physical size of the bitmap. Null on all other platforms.
   final Size? size;
 
   @override
@@ -335,27 +349,43 @@ class BytesBitmap extends BitmapDescriptor {
   }
 }
 
+/// A bitmap specified by a name and optional package.
 class AssetBitmap extends BitmapDescriptor {
+  /// Provides an asset name with [name] and optionally a [package].
   const AssetBitmap({required this.name, this.package}) : super._();
 
+  /// Name of the asset backing the bitmap.
   final String name;
+
+  /// Optional package of the asset.
   final String? package;
 
   @override
   Object toJson() => <Object>[BitmapDescriptor._fromAsset, name, if (package != null) package!];
 }
 
+/// A [BitmapDescriptor] from an asset image.
+@Deprecated('Use AssetMapBitmap instead')
 class AssetImageBitmap extends BitmapDescriptor {
-  const AssetImageBitmap({required String name, required double scale, Size? size}) : this._(name, scale, kIsWeb ? size : null);
+  /// Creates a [BitmapDescriptor] from an asset image with specified [name] and [scale], and an optional [size].
+  /// Asset images in flutter are stored per:
+  /// https://flutter.dev/to/resolution-aware-images
+  /// This method takes into consideration various asset resolutions
+  /// and scales the images to the right resolution depending on the dpi.
+  @Deprecated('Use AssetMapBitmap instead')
+  const AssetImageBitmap({required this.name, required this.scale, this.size}) : super._();
 
-  const AssetImageBitmap._(this.name, this.scale, this.size) : super._();
-
+  /// Name of the image asset.
   final String name;
+
+  /// Scaling factor for the asset image.
   final double scale;
+
+  /// Size of the image if using mipmaps.
   final Size? size;
 
   @override
-  Object toJson() => <Object>[BitmapDescriptor._fromAssetImage, name, scale, if (kIsWeb && size != null) <Object>[size!.width, size!.height]];
+  Object toJson() => <Object>[BitmapDescriptor._fromAssetImage, name, scale, if (size != null) <Object>[size!.width, size!.height]];
 }
 
 /// Represents a [BitmapDescriptor] base class for map bitmaps.
