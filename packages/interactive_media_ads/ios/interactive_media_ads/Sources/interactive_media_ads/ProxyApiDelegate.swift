@@ -109,4 +109,13 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
     PigeonApiIMAAdsRenderingSettings(
       pigeonRegistrar: registrar, delegate: AdsRenderingSettingsProxyAPIDelegate())
   }
+
+  func pigeonApiIMAFriendlyObstruction(
+    _ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  )
+    -> PigeonApiIMAFriendlyObstruction
+  {
+    PigeonApiIMAFriendlyObstruction(
+      pigeonRegistrar: registrar, delegate: FriendlyObstructionProxyAPIDelegate())
+  }
 }
