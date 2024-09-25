@@ -1,4 +1,4 @@
-## NEXT
+## 2.9.3
 
 * Corrects an incorrect comment in polyline.dart file.
 
