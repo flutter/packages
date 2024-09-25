@@ -29,6 +29,7 @@ enum MapBitmapScaling {
   none,
 }
 
+/// Convert a string from provided JSON to a MapBitmapScaling enum.
 MapBitmapScaling mapBitmapScalingFromString(String mode) => switch (mode) {
       'auto' => MapBitmapScaling.auto,
       'none' => MapBitmapScaling.none,
@@ -341,11 +342,9 @@ class DefaultMarker extends BitmapDescriptor {
   final num? hue;
 
   @override
-  Object toJson() {
-    return (hue == null)
-        ? const <Object>[BitmapDescriptor._defaultMarker]
-        : <Object>[BitmapDescriptor._defaultMarker, hue!];
-  }
+  Object toJson() => (hue == null)
+      ? const <Object>[BitmapDescriptor._defaultMarker]
+      : <Object>[BitmapDescriptor._defaultMarker, hue!];
 }
 
 /// A BitmapDescriptor using an array of bytes that must be encoded
@@ -370,13 +369,11 @@ class BytesBitmap extends BitmapDescriptor {
   final Size? size;
 
   @override
-  Object toJson() {
-    return <Object>[
-      BitmapDescriptor._fromBytes,
-      byteData,
-      if (size != null) <Object>[size!.width, size!.height]
-    ];
-  }
+  Object toJson() => <Object>[
+        BitmapDescriptor._fromBytes,
+        byteData,
+        if (size != null) <Object>[size!.width, size!.height]
+      ];
 }
 
 /// A bitmap specified by a name and optional package.

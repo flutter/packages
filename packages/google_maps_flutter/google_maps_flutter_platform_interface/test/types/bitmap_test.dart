@@ -21,7 +21,6 @@ void main() {
           BitmapDescriptor.fromJson(json);
 
       expect(descriptorFromJson, isNot(descriptor)); // New instance
-      //expect(identical(descriptorFromJson.toJson(), json), isTrue); // Same JSON
       expect(descriptorFromJson.toJson(), json);
     });
 
@@ -681,5 +680,11 @@ void main() {
       expect(descriptor.bitmapScaling, MapBitmapScaling.auto);
       expect(descriptor.imagePixelRatio, 1.2345);
     });
+  });
+
+  test('mapBitmapScaling from String', () {
+    expect(mapBitmapScalingFromString('auto'), MapBitmapScaling.auto);
+    expect(mapBitmapScalingFromString('none'), MapBitmapScaling.none);
+    expect(() => mapBitmapScalingFromString('invalid'), throwsArgumentError);
   });
 }
