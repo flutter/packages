@@ -7,24 +7,26 @@ import 'package:flutter/foundation.dart' show immutable;
 /// Enumeration of types of pattern items.
 enum PatternItemType {
   /// A dot used in the stroke pattern for a [Polyline].
-  dot('dot'),
+  dot,
 
   /// A dash used in the stroke pattern for a [Polyline].
-  dash('dash'),
+  dash,
 
   /// A gap used in the stroke pattern for a [Polyline].
-  gap('gap');
-
-  const PatternItemType(this.name);
-
-  /// String name used for serialization.
-  final String name;
+  gap,
 }
+
+String _patternItemTypeToJson(PatternItemType itemType) =>
+    const <PatternItemType, String>{
+      PatternItemType.dot: 'dot',
+      PatternItemType.dash: 'dash',
+      PatternItemType.gap: 'gap',
+    }[itemType]!;
 
 /// Item used in the stroke pattern for a Polyline.
 @immutable
 class PatternItem {
-  const PatternItem._(this._type, [this._length]);
+  const PatternItem._(this.patternItemType, [this.length]);
 
   /// A dot used in the stroke pattern for a [Polyline].
   static const PatternItem dot = PatternItem._(PatternItemType.dot);
@@ -45,9 +47,15 @@ class PatternItem {
     return PatternItem._(PatternItemType.gap, length);
   }
 
-  final PatternItemType _type;
-  final double? _length;
+  /// The type of rendering used for an item in a pattern.
+  final PatternItemType patternItemType;
+
+  /// The length in pixels of a dash or gap.
+  final double? length;
 
   /// Converts this object to something serializable in JSON.
-  Object toJson() => <Object>[_type.name, if (_length != null) _length];
+  Object toJson() => <Object>[
+        _patternItemTypeToJson(patternItemType),
+        if (length != null) length!
+      ];
 }
