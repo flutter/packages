@@ -998,15 +998,24 @@ if (wrapped == null) {
         indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
       indent.format('''
-        object ${toUpperCamelCase(func.name)} : EventChannel.StreamHandler {
-          private const val CHANNEL_NAME: String = "${makeChannelName(api, func, dartPackageName)}"
-        
+        class ${toUpperCamelCase(func.name)} (instanceName: String = "", runOnListen: () -> Unit = {}, runBeforeCancel: () -> Unit = {}, runAfterCancel: () -> Unit = {})  : EventChannel.StreamHandler {
+          private var channelName: String = "${makeChannelName(api, func, dartPackageName)}"
           private var eventSink: EventChannel.EventSink? = null
-          private var runAfterListen: () -> Unit = {}
+          private var runOnListen: () -> Unit = {}
+          private var runBeforeCancel: () -> Unit = {}
+          private var runAfterCancel: () -> Unit = {}
+          
+          init {
+            this.runOnListen = runOnListen
+            this.runBeforeCancel = runBeforeCancel
+            this.runAfterCancel = runAfterCancel
+            if (instanceName.isNotEmpty()) {
+              channelName = "${makeChannelName(api, func, dartPackageName)}.\$instanceName"
+            }
+          }
 
-          fun register(messenger: BinaryMessenger, runOnListen: () -> Unit = {}) {
-          runAfterListen = runOnListen
-            EventChannel(messenger, CHANNEL_NAME).setStreamHandler(this)
+          fun register(messenger: BinaryMessenger) {
+            EventChannel(messenger, channelName).setStreamHandler(this)
           }
 
           fun success(value: ${_kotlinTypeForDartType(func.returnType)}) {
@@ -1019,11 +1028,13 @@ if (wrapped == null) {
 
           override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
             eventSink = sink
-            runAfterListen()
+            runOnListen()
           }
 
           override fun onCancel(p0: Any?) {
+            runBeforeCancel()
             eventSink = null
+            runAfterCancel()
           }
 
         }

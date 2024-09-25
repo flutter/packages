@@ -566,16 +566,31 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
   }
 }
 
-object StreamInts : EventChannel.StreamHandler {
-  private const val CHANNEL_NAME: String =
+class StreamInts(
+    instanceName: String = "",
+    runOnListen: () -> Unit = {},
+    runBeforeCancel: () -> Unit = {},
+    runAfterCancel: () -> Unit = {}
+) : EventChannel.StreamHandler {
+  private var channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts"
-
   private var eventSink: EventChannel.EventSink? = null
-  private var runAfterListen: () -> Unit = {}
+  private var runOnListen: () -> Unit = {}
+  private var runBeforeCancel: () -> Unit = {}
+  private var runAfterCancel: () -> Unit = {}
 
-  fun register(messenger: BinaryMessenger, runOnListen: () -> Unit = {}) {
-    runAfterListen = runOnListen
-    EventChannel(messenger, CHANNEL_NAME).setStreamHandler(this)
+  init {
+    this.runOnListen = runOnListen
+    this.runBeforeCancel = runBeforeCancel
+    this.runAfterCancel = runAfterCancel
+    if (instanceName.isNotEmpty()) {
+      channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts.$instanceName"
+    }
+  }
+
+  fun register(messenger: BinaryMessenger) {
+    EventChannel(messenger, channelName).setStreamHandler(this)
   }
 
   fun success(value: Long) {
@@ -588,11 +603,13 @@ object StreamInts : EventChannel.StreamHandler {
 
   override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
     eventSink = sink
-    runAfterListen()
+    runOnListen()
   }
 
   override fun onCancel(p0: Any?) {
+    runBeforeCancel()
     eventSink = null
+    runAfterCancel()
   }
 }
 
