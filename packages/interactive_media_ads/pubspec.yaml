@@ -31,11 +31,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: 5.4.4
-  pigeon:
-    git:
-      url: git@github.com:bparrishMines/packages.git
-      ref: pigeon_wrapper_swift
-      path: packages/pigeon
+  pigeon: ^22.2.0
 
 topics:
   - ads
