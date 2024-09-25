@@ -30,10 +30,10 @@ enum MapBitmapScaling {
 }
 
 MapBitmapScaling mapBitmapScalingFromString(String mode) => switch (mode) {
-    'auto' => MapBitmapScaling.auto,
-    'none' => MapBitmapScaling.none,
-    _ => throw ArgumentError('Unrecognized MapBitmapScaling $mode', 'mode'),
-  };
+      'auto' => MapBitmapScaling.auto,
+      'none' => MapBitmapScaling.none,
+      _ => throw ArgumentError('Unrecognized MapBitmapScaling $mode', 'mode'),
+    };
 
 // The default pixel ratio for custom bitmaps.
 const double _naturalPixelRatio = 1.0;
@@ -82,7 +82,8 @@ abstract class BitmapDescriptor {
         if (jsonList.length == 3) {
           assert(jsonList[2] != null && jsonList[2] is String);
           assert((jsonList[2] as String).isNotEmpty);
-          return AssetBitmap(name: jsonList[1] as String, package: jsonList[2] as String);
+          return AssetBitmap(
+              name: jsonList[1] as String, package: jsonList[2] as String);
         }
         return AssetBitmap(name: jsonList[1] as String);
       case _fromAssetImage:
@@ -94,9 +95,14 @@ abstract class BitmapDescriptor {
           assert(jsonList[3] != null && jsonList[3] is List<dynamic>);
           assert((jsonList[3] as List<dynamic>).length == 2);
           final List<dynamic> sizeList = jsonList[3] as List<dynamic>;
-          return AssetImageBitmap(name: jsonList[1] as String, scale: jsonList[2] as double, size: Size((sizeList[0] as num).toDouble(), (sizeList[1] as num).toDouble()));
+          return AssetImageBitmap(
+              name: jsonList[1] as String,
+              scale: jsonList[2] as double,
+              size: Size((sizeList[0] as num).toDouble(),
+                  (sizeList[1] as num).toDouble()));
         }
-        return AssetImageBitmap(name: jsonList[1] as String, scale: jsonList[2] as double);
+        return AssetImageBitmap(
+            name: jsonList[1] as String, scale: jsonList[2] as double);
       case AssetMapBitmap.type:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is Map<String, dynamic>);
@@ -110,9 +116,16 @@ abstract class BitmapDescriptor {
         assert(jsonMap['imagePixelRatio'] is double);
         assert(!jsonMap.containsKey('width') || jsonMap['width'] is double);
         assert(!jsonMap.containsKey('height') || jsonMap['height'] is double);
-        final double? width = jsonMap.containsKey('width') ? jsonMap['width'] as double : null;
-        final double? height = jsonMap.containsKey('height') ? jsonMap['height'] as double : null;
-        return AssetMapBitmap(jsonMap['assetName'] as String, bitmapScaling: mapBitmapScalingFromString(jsonMap['bitmapScaling'] as String), imagePixelRatio: jsonMap['imagePixelRatio'] as double, width: width, height: height);
+        final double? width =
+            jsonMap.containsKey('width') ? jsonMap['width'] as double : null;
+        final double? height =
+            jsonMap.containsKey('height') ? jsonMap['height'] as double : null;
+        return AssetMapBitmap(jsonMap['assetName'] as String,
+            bitmapScaling:
+                mapBitmapScalingFromString(jsonMap['bitmapScaling'] as String),
+            imagePixelRatio: jsonMap['imagePixelRatio'] as double,
+            width: width,
+            height: height);
       case BytesMapBitmap.type:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is Map<String, dynamic>);
@@ -126,9 +139,16 @@ abstract class BitmapDescriptor {
         assert(jsonMap['imagePixelRatio'] is double);
         assert(!jsonMap.containsKey('width') || jsonMap['width'] is double);
         assert(!jsonMap.containsKey('height') || jsonMap['height'] is double);
-        final double? width = jsonMap.containsKey('width') ? jsonMap['width'] as double : null;
-        final double? height = jsonMap.containsKey('height') ? jsonMap['height'] as double : null;
-        return BytesMapBitmap(jsonMap['byteData'] as Uint8List, bitmapScaling: mapBitmapScalingFromString(jsonMap['bitmapScaling'] as String), width: width, height: height, imagePixelRatio: jsonMap['imagePixelRatio'] as double);
+        final double? width =
+            jsonMap.containsKey('width') ? jsonMap['width'] as double : null;
+        final double? height =
+            jsonMap.containsKey('height') ? jsonMap['height'] as double : null;
+        return BytesMapBitmap(jsonMap['byteData'] as Uint8List,
+            bitmapScaling:
+                mapBitmapScalingFromString(jsonMap['bitmapScaling'] as String),
+            width: width,
+            height: height,
+            imagePixelRatio: jsonMap['imagePixelRatio'] as double);
       default:
         break;
     }
@@ -181,8 +201,7 @@ abstract class BitmapDescriptor {
   static const double hueRose = 330.0;
 
   /// Creates a BitmapDescriptor that refers to the default marker image.
-  static const BitmapDescriptor defaultMarker =
-      DefaultMarker();
+  static const BitmapDescriptor defaultMarker = DefaultMarker();
 
   /// Creates a BitmapDescriptor that refers to a colorization of the default
   /// marker image. For convenience, there is a predefined set of hue values.
@@ -217,7 +236,10 @@ abstract class BitmapDescriptor {
     final AssetBundleImageKey assetBundleImageKey =
         await assetImage.obtainKey(configuration);
     final Size? size = kIsWeb ? configuration.size : null;
-    return AssetImageBitmap(name: assetBundleImageKey.name, scale: assetBundleImageKey.scale, size: size);
+    return AssetImageBitmap(
+        name: assetBundleImageKey.name,
+        scale: assetBundleImageKey.scale,
+        size: size);
   }
 
   /// Creates a BitmapDescriptor using an array of bytes that must be encoded
@@ -320,9 +342,12 @@ class DefaultMarker extends BitmapDescriptor {
 
   @override
   Object toJson() {
-    return (hue == null) ? const <Object>[BitmapDescriptor._defaultMarker] : <Object>[BitmapDescriptor._defaultMarker, hue!];
+    return (hue == null)
+        ? const <Object>[BitmapDescriptor._defaultMarker]
+        : <Object>[BitmapDescriptor._defaultMarker, hue!];
   }
 }
+
 /// A BitmapDescriptor using an array of bytes that must be encoded
 /// as PNG.
 @Deprecated('Use BytesMapBitmap instead')
@@ -332,7 +357,8 @@ class BytesBitmap extends BitmapDescriptor {
   /// This helps the browser to render High-DPI images at the correct size.
   /// `size` is not required (and ignored, if passed) in other platforms.
   @Deprecated('Use BytesMapBitmap instead')
-  const BytesBitmap({required Uint8List byteData, Size? size}) : this._(byteData, kIsWeb ? size : null);
+  const BytesBitmap({required Uint8List byteData, Size? size})
+      : this._(byteData, kIsWeb ? size : null);
 
   @Deprecated('Use BytesMapBitmap instead')
   const BytesBitmap._(this.byteData, this.size) : super._();
@@ -345,7 +371,11 @@ class BytesBitmap extends BitmapDescriptor {
 
   @override
   Object toJson() {
-    return <Object>[BitmapDescriptor._fromBytes, byteData, if (size != null) <Object>[size!.width, size!.height]];
+    return <Object>[
+      BitmapDescriptor._fromBytes,
+      byteData,
+      if (size != null) <Object>[size!.width, size!.height]
+    ];
   }
 }
 
@@ -361,7 +391,11 @@ class AssetBitmap extends BitmapDescriptor {
   final String? package;
 
   @override
-  Object toJson() => <Object>[BitmapDescriptor._fromAsset, name, if (package != null) package!];
+  Object toJson() => <Object>[
+        BitmapDescriptor._fromAsset,
+        name,
+        if (package != null) package!
+      ];
 }
 
 /// A [BitmapDescriptor] from an asset image.
@@ -373,7 +407,8 @@ class AssetImageBitmap extends BitmapDescriptor {
   /// This method takes into consideration various asset resolutions
   /// and scales the images to the right resolution depending on the dpi.
   @Deprecated('Use AssetMapBitmap instead')
-  const AssetImageBitmap({required this.name, required this.scale, this.size}) : super._();
+  const AssetImageBitmap({required this.name, required this.scale, this.size})
+      : super._();
 
   /// Name of the image asset.
   final String name;
@@ -385,7 +420,12 @@ class AssetImageBitmap extends BitmapDescriptor {
   final Size? size;
 
   @override
-  Object toJson() => <Object>[BitmapDescriptor._fromAssetImage, name, scale, if (size != null) <Object>[size!.width, size!.height]];
+  Object toJson() => <Object>[
+        BitmapDescriptor._fromAssetImage,
+        name,
+        scale,
+        if (size != null) <Object>[size!.width, size!.height]
+      ];
 }
 
 /// Represents a [BitmapDescriptor] base class for map bitmaps.
