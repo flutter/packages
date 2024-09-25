@@ -625,7 +625,10 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-Stream<int> streamInts() {
+Stream<int> streamInts({String instanceName = ""}) {
+  if (instanceName.isNotEmpty) {
+    instanceName = '.$instanceName';
+  }
   const EventChannel streamIntsChannel = EventChannel(
       'dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts');
   return streamIntsChannel.receiveBroadcastStream().map((dynamic event) {

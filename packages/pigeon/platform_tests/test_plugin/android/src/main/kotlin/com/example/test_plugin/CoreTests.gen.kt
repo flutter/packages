@@ -566,32 +566,14 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
   }
 }
 
-class StreamInts(
-    instanceName: String = "",
-    runOnListen: () -> Unit = {},
-    runBeforeCancel: () -> Unit = {},
-    runAfterCancel: () -> Unit = {}
-) : EventChannel.StreamHandler {
-  private var channelName: String =
-      "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts"
+abstract class StreamInts : EventChannel.StreamHandler {
   private var eventSink: EventChannel.EventSink? = null
-  private var runOnListen: () -> Unit = {}
-  private var runBeforeCancel: () -> Unit = {}
-  private var runAfterCancel: () -> Unit = {}
 
-  init {
-    this.runOnListen = runOnListen
-    this.runBeforeCancel = runBeforeCancel
-    this.runAfterCancel = runAfterCancel
-    if (instanceName.isNotEmpty()) {
-      channelName =
-          "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts.$instanceName"
-    }
-  }
+  open fun runOnListen() {}
 
-  fun register(messenger: BinaryMessenger) {
-    EventChannel(messenger, channelName).setStreamHandler(this)
-  }
+  open fun runBeforeCancel() {}
+
+  open fun runAfterCancel() {}
 
   fun success(value: Long) {
     eventSink?.success(value)
@@ -610,6 +592,22 @@ class StreamInts(
     runBeforeCancel()
     eventSink = null
     runAfterCancel()
+  }
+
+  companion object {
+    fun register(
+        messenger: BinaryMessenger,
+        handler: EventChannel.StreamHandler,
+        instanceName: String = ""
+    ) {
+      var channelName: String =
+          "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts"
+      if (instanceName.isNotEmpty()) {
+        channelName =
+            "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts.$instanceName"
+      }
+      EventChannel(messenger, channelName).setStreamHandler(handler)
+    }
   }
 }
 

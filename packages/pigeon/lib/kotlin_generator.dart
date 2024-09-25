@@ -998,25 +998,12 @@ if (wrapped == null) {
         indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
       indent.format('''
-        class ${toUpperCamelCase(func.name)} (instanceName: String = "", runOnListen: () -> Unit = {}, runBeforeCancel: () -> Unit = {}, runAfterCancel: () -> Unit = {})  : EventChannel.StreamHandler {
-          private var channelName: String = "${makeChannelName(api, func, dartPackageName)}"
+        abstract class ${toUpperCamelCase(func.name)} : EventChannel.StreamHandler {
           private var eventSink: EventChannel.EventSink? = null
-          private var runOnListen: () -> Unit = {}
-          private var runBeforeCancel: () -> Unit = {}
-          private var runAfterCancel: () -> Unit = {}
-          
-          init {
-            this.runOnListen = runOnListen
-            this.runBeforeCancel = runBeforeCancel
-            this.runAfterCancel = runAfterCancel
-            if (instanceName.isNotEmpty()) {
-              channelName = "${makeChannelName(api, func, dartPackageName)}.\$instanceName"
-            }
-          }
 
-          fun register(messenger: BinaryMessenger) {
-            EventChannel(messenger, channelName).setStreamHandler(this)
-          }
+          open fun runOnListen() {}
+          open fun runBeforeCancel() {}
+          open fun runAfterCancel() {}
 
           fun success(value: ${_kotlinTypeForDartType(func.returnType)}) {
             eventSink?.success(value)
@@ -1035,6 +1022,16 @@ if (wrapped == null) {
             runBeforeCancel()
             eventSink = null
             runAfterCancel()
+          }
+
+          companion object {
+            fun register(messenger: BinaryMessenger, handler: EventChannel.StreamHandler, instanceName: String = "") {
+              var channelName: String = "${makeChannelName(api, func, dartPackageName)}"
+              if (instanceName.isNotEmpty()) {
+                channelName = "${makeChannelName(api, func, dartPackageName)}.\$instanceName"
+              }
+              EventChannel(messenger, channelName).setStreamHandler(handler)
+            }
           }
 
         }

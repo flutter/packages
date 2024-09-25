@@ -525,11 +525,12 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     indent.newln();
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
-    // indent.write('class ${api.name} ');
-    // indent.addScoped('{', '}', () {
     for (final Method func in api.methods) {
       indent.format('''
-      Stream<${func.returnType.baseName}> ${func.name}(${_getMethodParameterSignature(func.parameters)}) {
+      Stream<${func.returnType.baseName}> ${func.name}(${_getMethodParameterSignature(func.parameters, addTrailingComma: true)} {String instanceName = ""}) {
+        if (instanceName.isNotEmpty) {
+          instanceName = '.\$instanceName';
+        }
         const EventChannel ${func.name}Channel =
             EventChannel('${makeChannelName(api, func, dartPackageName)}');
         return ${func.name}Channel.receiveBroadcastStream().map((dynamic event) {
@@ -538,7 +539,6 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
       }
     ''');
     }
-    // });
   }
 
   @override
@@ -2124,7 +2124,10 @@ String _getParameterName(int count, NamedType field) =>
 
 /// Generates the parameters code for [func]
 /// Example: (func, _getParameterName) -> 'String? foo, int bar'
-String _getMethodParameterSignature(Iterable<Parameter> parameters) {
+String _getMethodParameterSignature(
+  Iterable<Parameter> parameters, {
+  bool addTrailingComma = false,
+}) {
   String signature = '';
   if (parameters.isEmpty) {
     return signature;
@@ -2174,8 +2177,10 @@ String _getMethodParameterSignature(Iterable<Parameter> parameters) {
     return '$baseParams[$optionalParameterString$trailingComma]';
   }
   if (namedParams.isNotEmpty) {
-    final String trailingComma =
-        requiredPositionalParams.length + namedParams.length > 2 ? ',' : '';
+    final String trailingComma = addTrailingComma ||
+            requiredPositionalParams.length + namedParams.length > 2
+        ? ', '
+        : '';
     return '$baseParams{$namedParameterString$trailingComma}';
   }
   return signature;

@@ -30,29 +30,11 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     proxyApiRegistrar = ProxyApiRegistrar(binding.binaryMessenger)
     proxyApiRegistrar!!.setUp()
 
-    streamIntsClass = StreamInts(runOnListen = sendInts)
-    streamIntsClass?.register(binding.binaryMessenger)
+    StreamInts.register(binding.binaryMessenger, SendInts)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     proxyApiRegistrar?.tearDown()
-  }
-
-  private val sendInts: (() -> Unit) = {
-    val handler = Handler(Looper.getMainLooper())
-    var count: Long = 0
-    // every 5 second send the time
-    val r: Runnable =
-        object : Runnable {
-          override fun run() {
-            handler.post {
-              count++
-              streamIntsClass?.success(count)
-            }
-            handler.postDelayed(this, 1000)
-          }
-        }
-    handler.postDelayed(r, 1000)
   }
 
   // HostIntegrationCoreApi
@@ -750,5 +732,25 @@ class TestPluginWithSuffix : HostSmallApi {
 
   override fun voidVoid(callback: (Result<Unit>) -> Unit) {
     callback(Result.success(Unit))
+  }
+}
+
+object SendInts : StreamInts() {
+  val handler = Handler(Looper.getMainLooper())
+
+  override fun runOnListen() {
+    var count: Long = 0
+    // every 5 second send the time
+    val r: Runnable =
+        object : Runnable {
+          override fun run() {
+            handler.post {
+              count++
+              success(count)
+            }
+            handler.postDelayed(this, 1000)
+          }
+        }
+    handler.postDelayed(r, 1000)
   }
 }
