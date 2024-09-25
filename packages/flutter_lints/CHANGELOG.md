@@ -1,5 +1,9 @@
 ## NEXT
 
+* Removed the following lints:
+    * `prefer_const_constructors` (see https://github.com/dart-lang/lints/issues/205)
+    * `prefer_const_declarations`
+    * `prefer_const_literals_to_create_immutables`
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 4.0.0
