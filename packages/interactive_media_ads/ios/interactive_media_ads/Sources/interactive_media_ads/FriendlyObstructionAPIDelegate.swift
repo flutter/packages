@@ -54,7 +54,6 @@ class FriendlyObstructionProxyAPIDelegate: PigeonApiDelegateIMAFriendlyObstructi
       return .other
     @unknown default:
       return .unknown
-
     }
   }
 
