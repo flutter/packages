@@ -278,7 +278,7 @@ create_nested_nullable_string(const gchar* nullable_string,
           0, nullptr, 0, nullptr, nullptr, nullable_string, nullptr, nullptr,
           nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
           nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-          nullptr);
+          nullptr, nullptr, nullptr, nullptr);
   FlValue* classList = fl_value_new_list();
   FlValue* classMap = fl_value_new_map();
   g_autoptr(CoreTestsPigeonTestAllClassesWrapper) wrapper =
@@ -298,7 +298,8 @@ send_multiple_nullable_types(gboolean* a_nullable_bool, int64_t* a_nullable_int,
           nullptr, 0, nullptr, 0, nullptr, 0, nullptr, nullptr,
           a_nullable_string, nullptr, nullptr, nullptr, nullptr, nullptr,
           nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-          nullptr, nullptr, nullptr, nullptr, nullptr);
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr);
   return core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_response_new(
       types);
 }
@@ -314,7 +315,7 @@ send_multiple_nullable_types_without_recursion(gboolean* a_nullable_bool,
           nullptr, 0, nullptr, 0, nullptr, 0, nullptr, nullptr,
           a_nullable_string, nullptr, nullptr, nullptr, nullptr, nullptr,
           nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-          nullptr, nullptr);
+          nullptr, nullptr, nullptr, nullptr, nullptr);
   return core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_without_recursion_response_new(
       types);
 }

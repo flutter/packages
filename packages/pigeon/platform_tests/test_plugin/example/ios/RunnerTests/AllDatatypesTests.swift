@@ -64,10 +64,13 @@ class AllDatatypesTests: XCTestCase {
       boolList: [true, false],
       objectList: ["string", 2],
       listList: [[true], [false]],
+      mapList: [["hello": 1234], ["hello": 1234]],
       map: ["hello": 1234],
       stringMap: ["hello": "you"],
       intMap: [1: 0],
-      objectMap: ["hello": 1234]
+      objectMap: ["hello": 1234],
+      listMap: [1234: ["string", 2]],
+      mapMap: [1234: ["hello": 1234]]
     )
 
     let binaryMessenger = EchoBinaryMessenger(codec: CoreTestsPigeonCodec.shared)
@@ -98,10 +101,25 @@ class AllDatatypesTests: XCTestCase {
             XCTAssert(equalsList(list, everything.listList![index]))
           }
         }
+        if res!.mapList != nil {
+          for (index, map) in res!.mapList!.enumerated() {
+            XCTAssert(equalsDictionary(map, everything.mapList![index]))
+          }
+        }
         XCTAssert(equalsDictionary(res!.map, everything.map))
         XCTAssert(equalsDictionary(res!.stringMap, everything.stringMap))
         XCTAssert(equalsDictionary(res!.intMap, everything.intMap))
         XCTAssert(equalsDictionary(res!.objectMap, everything.objectMap))
+        if res!.listMap != nil {
+          for (index, list) in res!.listMap! {
+            XCTAssert(equalsList(list, everything.listMap![index]!))
+          }
+        }
+        if res!.mapMap != nil {
+          for (index, map) in res!.mapMap! {
+            XCTAssert(equalsDictionary(map, everything.mapMap![index]!))
+          }
+        }
         expectation.fulfill()
         return
       case .failure(_):
