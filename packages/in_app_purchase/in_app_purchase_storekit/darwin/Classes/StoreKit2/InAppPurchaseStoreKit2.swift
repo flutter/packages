@@ -45,11 +45,13 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       do {
         let product = try await Product.products(for: [id]).first
         guard let product = product else {
-          throw PigeonError(
+          let error = PigeonError(
             code: "storekit2_failed_to_fetch_product", message: "Storekit has failed to fetch this product.",
             details: "Storekit has failed to fetch this product.")
+          return completion(.failure(error))
         }
-        let result = try await product.purchase()
+        
+        let result = try await product.purchase(options: [])
 
         switch result {
         case .success(let verification):

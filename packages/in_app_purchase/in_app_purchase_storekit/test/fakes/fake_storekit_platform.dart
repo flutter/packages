@@ -285,6 +285,7 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   late Set<String> validProductIDs;
   late Map<String, SK2Product> validProducts;
   PlatformException? queryProductException;
+  bool isListenerRegistered = false;
 
   void reset() {
     validProductIDs = <String>{'123', '456'};
@@ -331,28 +332,26 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   @override
   Future<SK2ProductPurchaseResultMessage> purchase(String id,
       {SK2ProductPurchaseOptionsMessage? options}) {
-    return SK2ProductPurchaseResultMessage.
+    return Future<SK2ProductPurchaseResultMessage>.value(SK2ProductPurchaseResultMessage.success);
   }
 
   @override
   Future<void> finish(int id) {
-    // TODO: implement finish
-    throw UnimplementedError();
+    return Future<void>.value();
   }
 
   @override
   Future<List<SK2TransactionMessage?>> transactions() {
-    // TODO: implement transactions
-    throw UnimplementedError();
+    return
+      Future<List<SK2TransactionMessage?>>.value([SK2TransactionMessage(id: 123, originalId: 123, productId: "product_id", purchaseDate: "12-12")]);
   }
 
   @override
   void startListeningToTransactions() {
-    // TODO: implement startListeningToTransactions
+    isListenerRegistered = true;
   }
 
   @override
   void stopListeningToTransactions() {
-    // TODO: implement stopListeningToTransactions
-  }
+    isListenerRegistered = false;  }
 }

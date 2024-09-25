@@ -19,10 +19,9 @@ final class InAppPurchase2PluginTests: XCTestCase {
     session = try! SKTestSession(configurationFileNamed: "Configuration")
     session.resetToDefaultState()
     session.clearTransactions()
-    print("deleting")
     session.disableDialogs = true
-    let receiptManagerStub = FIAPReceiptManagerStub()
-    plugin = InAppPurchasePluginStub(receiptManager: receiptManagerStub) { request in
+
+    plugin = InAppPurchasePluginStub(receiptManager: FIAPReceiptManagerStub()) { request in
       DefaultRequestHandler(requestHandler: FIAPRequestHandler(request: request))
     }
     try plugin.startListeningToTransactions()
@@ -126,9 +125,6 @@ final class InAppPurchase2PluginTests: XCTestCase {
       }
     }
     await fulfillment(of: [expectation], timeout: 5)
-
-    // Reset test session
-//    try await session.setSimulatedError(nil, forAPI: .loadProducts)
   }
 
   func testSuccessfulPurchase() async throws {
@@ -165,7 +161,60 @@ final class InAppPurchase2PluginTests: XCTestCase {
       }
     }
     await fulfillment(of: [expectation], timeout: 5)
-//    try await session.setSimulatedError(nil, forAPI: .loadProducts)
+  }
+
+  @available(iOS 17.0, *)
+  func testFailedProductUnavilablePurchase() async throws {
+    try await session.setSimulatedError(
+      .purchase(.productUnavailable), forAPI: .purchase)
+    let expectation = self.expectation(description: "Purchase request should succeed")
+    plugin.purchase(
+      id: "consumable", options: nil
+    ) { result in
+      switch result {
+      case .success(_):
+        XCTFail("Purchase should NOT suceed.")
+      case .failure(let error):
+        XCTAssertEqual(error.localizedDescription, "Item Unavailable")
+        expectation.fulfill()
+      }
+    }
+    await fulfillment(of: [expectation], timeout: 5)
+  }
+
+  func testInvalidProductPurchase() async throws {
+    let expectation = self.expectation(description: "products request should fail")
+    plugin.purchase(
+      id: "invalid_product", options: nil
+    ) { result in
+      switch result {
+      case .success(_):
+        XCTFail("Purchase should NOT suceed.")
+      case .failure(let error):
+        let pigeonError = error as! PigeonError;
+
+        XCTAssertEqual(pigeonError.code, "storekit2_failed_to_fetch_product")
+        expectation.fulfill()
+      }
+    }
+    await fulfillment(of: [expectation], timeout: 5)
+  }
+
+  func testPurchaseUpgradeConsumableSuccess() async throws {
+    let expectation = self.expectation(description: "Purchase request should succeed")
+    plugin.purchase(
+      id: "subscription_discounted", options: nil
+    ) { result in
+      switch result {
+      case .success(let purchaseResult):
+        print("Purchase successful: \(purchaseResult)")
+        expectation.fulfill()
+
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      }
+    }
+    await fulfillment(of: [expectation], timeout: 5)
   }
 
   func testDiscountedSubscriptionSuccess() async throws {
@@ -200,26 +249,5 @@ final class InAppPurchase2PluginTests: XCTestCase {
       }
     }
     await fulfillment(of: [expectation], timeout: 5)
-  }
-
-  @available(iOS 17.0, *)
-  func testPurchaseFailureReturnsCorrectError() async throws {
-    try await session.setSimulatedError(
-      .purchase(.productUnavailable), forAPI: .purchase)
-    let expectation = self.expectation(description: "Purchase request should succeed")
-    plugin.purchase(
-      id: "consumable", options: nil
-    ) { result in
-      switch result {
-      case .success(_):
-        XCTFail("Purchase should NOT suceed.")
-      case .failure(let error):
-        XCTAssertEqual(error.localizedDescription, "Item Unavailable")
-        expectation.fulfill()
-      }
-    }
-    await fulfillment(of: [expectation], timeout: 5)
-//    try await session.setSimulatedError(
-//      nil, forAPI: .purchase)
   }
 }

@@ -92,7 +92,10 @@
         "name" : "App Store Sync"
       },
       {
-        "current" : null,
+        "current" : {
+          "index" : 2,
+          "type" : "generic"
+        },
         "enabled" : false,
         "name" : "Subscription Status"
       },
