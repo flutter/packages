@@ -4,7 +4,7 @@ The Android implementation of [`camera`][1] built with the [CameraX library][2].
 
 *Note*: If any of [the limitations](#limitations) prevent you from using
 using `camera_android_camerax` or if you run into any problems, please report
-report these issues under [`flutter/flutter`][5] with `[camerax]` in the title.
+these issues under [`flutter/flutter`][5] with `[camerax]` in the title.
 You may also opt back into the [`camera_android`][9] implementation if you need.
 
 ## Usage
