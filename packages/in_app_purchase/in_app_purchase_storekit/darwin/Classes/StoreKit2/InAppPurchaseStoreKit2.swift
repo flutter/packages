@@ -121,7 +121,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         switch verificationResult {
         case .verified(let transaction):
           self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
-        case .unverified(let transaction, _):
+        case .unverified(_, _):
           break
         }
       }
