@@ -1,3 +1,7 @@
+## 0.3.18+2
+
+* Adds support for StoreKit2's `purchase` and `transactions`
+
 ## 0.3.18+1
 
 * Adds support for StoreKit2's `canMakePayments` and `products` 

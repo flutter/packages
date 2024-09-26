@@ -21,7 +21,7 @@ void main() {
       description: 'desc',
       price: 0.99,
       type: SK2ProductType.consumable,
-      priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: "\$"));
+      priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'));
 
   TestWidgetsFlutterBinding.ensureInitialized();
 

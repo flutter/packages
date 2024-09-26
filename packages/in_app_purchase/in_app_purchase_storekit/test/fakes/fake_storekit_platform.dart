@@ -353,12 +353,12 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
 
   @override
   Future<List<SK2TransactionMessage?>> transactions() {
-    return Future<List<SK2TransactionMessage?>>.value([
+    return Future<List<SK2TransactionMessage?>>.value(<SK2TransactionMessage?>[
       SK2TransactionMessage(
           id: 123,
           originalId: 123,
-          productId: "product_id",
-          purchaseDate: "12-12")
+          productId: 'product_id',
+          purchaseDate: '12-12')
     ]);
   }
 
