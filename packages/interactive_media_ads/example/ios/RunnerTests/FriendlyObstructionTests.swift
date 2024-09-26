@@ -9,7 +9,7 @@ import XCTest
 
 @testable import interactive_media_ads
 
-class FriendlyObstructionProxyApiTest {
+class FriendlyObstructionProxyApiTests: XCTestCase {
   func testPigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
