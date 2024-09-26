@@ -146,7 +146,7 @@ public class SystemServicesTest {
   }
 
   @Test
-  @Config(sdk = 29)
+  @Config(sdk = 28)
   public void isPreviewPreTransformed_returnsTrueWhenRunningSdk29() {
     final SystemServicesHostApiImpl systemServicesHostApi =
         new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
@@ -154,7 +154,7 @@ public class SystemServicesTest {
   }
 
   @Test
-  @Config(sdk = 30)
+  @Config(sdk = 29)
   public void isPreviewPreTransformed_returnsFalseWhenRunningAboveSdk29() {
     final SystemServicesHostApiImpl systemServicesHostApi =
         new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);

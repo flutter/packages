@@ -1,3 +1,9 @@
+## 0.6.9
+
+* Corrects assumption about automatic preview correction happening on API >= 29 to API > 29,
+  based on the fact that the `ImageReader` Impeller backend is not used for the most part on
+  devices running API 29+.
+
 ## 0.6.8+3
 
 * Removes dependency on org.jetbrains.kotlin:kotlin-bom.
