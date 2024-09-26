@@ -13,16 +13,15 @@ should add it to your `pubspec.yaml` as usual.
 
 ## Usage with launcher activities
 
-If your app implements an activity that launches the main `FlutterActivity`
-(`MainActivity.java`/`MainActivity.kt` by default), then you may need to change
-the launch mode of your launcher activity and/or modify the `Intent` flags used
-to launch the main `FlutterActivity` in order to achieve the desired back press
-behavior and task management.
+If you have an activity that launches the `FlutterActivity` (`MainActivity.java`/`MainActivity.kt` by default), like you may have in an add to app project or if you have other Android activities besides the main
+`FlutterActivity` in your app, Then you might need to change your launch mode
+configuration to have the back press behavior and back task stack that you expect.
 
-If your launcher activity only launches the main `FlutterActivity` without any
-additional relevant logic (like the code sample provided in the description of
-https://github.com/flutter/flutter/issues/152883), to have your app maintain the
-same behavior of `quick_actions_android` with/without a launcher activity, set
+For example, if you have two shortcuts to different layouts of your app, and
+a launcher activity that launches the `FlutterActivity`,
+if the launcher activity uses the `singleTop` launch mode (as the default `FlutterActivity`s `MainActivity.java`/`MainActivity.kt` do by default), then when the user launches your app from the first shortcut, leaves the app, then tries
+to launch the app from the second shortcut, then the user will not see the layout that the second shortcut launches. To
+fix that,set
 the launch mode of your launcher activity to `singleInstance` in
 `your_app/android/app/src/mainAndroidManifest.xml`:
 
@@ -32,8 +31,10 @@ the launch mode of your launcher activity to `singleInstance` in
         android:launchMode="singleInstance">
 ```
 
-See the [Tasks and the back stack][4] Android documentation for more information
-on the different launch modes and `Intent` flags you may need.
+Depending on your use case, you may additionally/instead need to set the proper launch mode related `Intent` flags
+in the `Intent` that launches the `FlutterActivity` to achieve your expected back press behavior and back task stack.
+See [Tasks and the back stack][4] for more documentation about the different launch modes and related `Intent` flags
+that Android provides.
 
 ## Contributing
 
