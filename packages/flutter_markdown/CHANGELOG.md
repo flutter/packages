@@ -1,6 +1,6 @@
 ## 0.7.3+2
 
-* Resolved an issue where code blocks in markdown were not highlighted during selection.
+* Resolves an issue where code blocks in markdown were not highlighted during selection.
 
 ## 0.7.3+1
 
