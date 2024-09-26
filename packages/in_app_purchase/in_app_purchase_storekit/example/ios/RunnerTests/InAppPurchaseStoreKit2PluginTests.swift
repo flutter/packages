@@ -117,7 +117,6 @@ final class InAppPurchase2PluginTests: XCTestCase {
         XCTFail("This `products` call should not succeed")
       case .failure(let error):
         expectation.fulfill()
-        print(error.localizedDescription)
         XCTAssert(
           error.localizedDescription
             == "The operation couldn’t be completed. (in_app_purchase_storekit.PigeonError error 1.)"
@@ -134,9 +133,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     ) { result in
       switch result {
       case .success(let purchaseResult):
-        print("Purchase successful: \(purchaseResult)")
         expectation.fulfill()
-
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
@@ -156,7 +153,9 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .success(_):
         XCTFail("Purchase should NOT suceed.")
       case .failure(let error):
-        XCTAssertEqual(error.localizedDescription, "The operation couldn’t be completed. (NSURLErrorDomain error -1009.)")
+        XCTAssertEqual(
+          error.localizedDescription,
+          "The operation couldn’t be completed. (NSURLErrorDomain error -1009.)")
         expectation.fulfill()
       }
     }
@@ -191,7 +190,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .success(_):
         XCTFail("Purchase should NOT suceed.")
       case .failure(let error):
-        let pigeonError = error as! PigeonError;
+        let pigeonError = error as! PigeonError
 
         XCTAssertEqual(pigeonError.code, "storekit2_failed_to_fetch_product")
         expectation.fulfill()
@@ -207,9 +206,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     ) { result in
       switch result {
       case .success(let purchaseResult):
-        print("Purchase successful: \(purchaseResult)")
         expectation.fulfill()
-
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
@@ -224,9 +221,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     ) { result in
       switch result {
       case .success(let purchaseResult):
-        print("Purchase successful: \(purchaseResult)")
         expectation.fulfill()
-
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
@@ -241,9 +236,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     ) { result in
       switch result {
       case .success(let purchaseResult):
-        print("Purchase successful: \(purchaseResult)")
         expectation.fulfill()
-
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }

@@ -13,9 +13,7 @@ import 'package:in_app_purchase_storekit/store_kit_2_wrappers.dart';
 import 'fakes/fake_storekit_platform.dart';
 import 'sk2_test_api.g.dart';
 
-
 void main() {
-
   final SK2Product dummyProductWrapper = SK2Product(
       id: '2',
       displayName: 'name',
@@ -23,8 +21,7 @@ void main() {
       description: 'desc',
       price: 0.99,
       type: SK2ProductType.consumable,
-      priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: "\$")
-  );
+      priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: "\$"));
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -89,67 +86,67 @@ void main() {
   group('make payment', () {
     test(
         'buying non consumable, should get purchase objects in the purchase update callback',
-            () async {
-          final List<PurchaseDetails> details = <PurchaseDetails>[];
-          final Completer<List<PurchaseDetails>> completer =
+        () async {
+      final List<PurchaseDetails> details = <PurchaseDetails>[];
+      final Completer<List<PurchaseDetails>> completer =
           Completer<List<PurchaseDetails>>();
-          final Stream<List<PurchaseDetails>> stream =
-              iapStoreKitPlatform.purchaseStream;
+      final Stream<List<PurchaseDetails>> stream =
+          iapStoreKitPlatform.purchaseStream;
 
-          late StreamSubscription<List<PurchaseDetails>> subscription;
-          subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
-            details.addAll(purchaseDetailsList);
-            if (purchaseDetailsList.first.status == PurchaseStatus.purchased) {
-              completer.complete(details);
-              subscription.cancel();
-            }
-          });
-          final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
-              productDetails:
+      late StreamSubscription<List<PurchaseDetails>> subscription;
+      subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        details.addAll(purchaseDetailsList);
+        if (purchaseDetailsList.first.status == PurchaseStatus.purchased) {
+          completer.complete(details);
+          subscription.cancel();
+        }
+      });
+      final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
+          productDetails:
               AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
-              applicationUserName: 'appName');
-          await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+          applicationUserName: 'appName');
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
 
-          final List<PurchaseDetails> result = await completer.future;
-          expect(result.length, 1);
-          expect(result.first.productID, dummyProductWrapper.id);
-        });
+      final List<PurchaseDetails> result = await completer.future;
+      expect(result.length, 1);
+      expect(result.first.productID, dummyProductWrapper.id);
+    });
 
     test(
         'buying consumable, should get purchase objects in the purchase update callback',
-            () async {
-          final List<PurchaseDetails> details = <PurchaseDetails>[];
-          final Completer<List<PurchaseDetails>> completer =
+        () async {
+      final List<PurchaseDetails> details = <PurchaseDetails>[];
+      final Completer<List<PurchaseDetails>> completer =
           Completer<List<PurchaseDetails>>();
-          final Stream<List<PurchaseDetails>> stream =
-              iapStoreKitPlatform.purchaseStream;
+      final Stream<List<PurchaseDetails>> stream =
+          iapStoreKitPlatform.purchaseStream;
 
-          late StreamSubscription<List<PurchaseDetails>> subscription;
-          subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
-            details.addAll(purchaseDetailsList);
-            if (purchaseDetailsList.first.status == PurchaseStatus.purchased) {
-              completer.complete(details);
-              subscription.cancel();
-            }
-          });
-          final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
-              productDetails:
+      late StreamSubscription<List<PurchaseDetails>> subscription;
+      subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        details.addAll(purchaseDetailsList);
+        if (purchaseDetailsList.first.status == PurchaseStatus.purchased) {
+          completer.complete(details);
+          subscription.cancel();
+        }
+      });
+      final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
+          productDetails:
               AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
-              applicationUserName: 'appName');
-          await iapStoreKitPlatform.buyConsumable(purchaseParam: purchaseParam);
+          applicationUserName: 'appName');
+      await iapStoreKitPlatform.buyConsumable(purchaseParam: purchaseParam);
 
-          final List<PurchaseDetails> result = await completer.future;
-          expect(result.length, 1);
-          expect(result.first.productID, dummyProductWrapper.id);
-        });
+      final List<PurchaseDetails> result = await completer.future;
+      expect(result.length, 1);
+      expect(result.first.productID, dummyProductWrapper.id);
+    });
 
     test('buying consumable, should throw when autoConsume is false', () async {
       final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
           productDetails:
-          AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+              AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
           applicationUserName: 'appName');
       expect(
-              () => iapStoreKitPlatform.buyConsumable(
+          () => iapStoreKitPlatform.buyConsumable(
               purchaseParam: purchaseParam, autoConsume: false),
           throwsA(isInstanceOf<AssertionError>()));
     });

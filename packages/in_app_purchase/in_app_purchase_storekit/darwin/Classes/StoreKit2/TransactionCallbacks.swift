@@ -12,8 +12,7 @@ class TransactionCallbacks: InAppPurchase2CallbackAPI {
       restoring: restoring)
     callbackAPI.onTransactionsUpdated(newTransaction: transactionMsg) { result in
       switch result {
-      case .success:
-        print("Transaction updates successfully sent")
+      case .success: break
       case .failure(let error):
         print("Failed to send transaction updates: \(error)")
       }

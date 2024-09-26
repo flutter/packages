@@ -48,7 +48,8 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   /// Callback handler for transaction status changes for StoreKit2 transactions
   @visibleForTesting
-  static SK2TransactionObserver get sk2transactionObserver => _sk2transactionObserver;
+  static SK2TransactionObserver get sk2transactionObserver =>
+      _sk2transactionObserver;
 
   /// Registers this class as the default instance of [InAppPurchasePlatform].
   static void registerPlatform() {
@@ -97,10 +98,12 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {
     if (_useStoreKit2) {
       final SK2ProductPurchaseOptions options = SK2ProductPurchaseOptions(
-          quantity: purchaseParam is AppStorePurchaseParam ? purchaseParam.quantity : 1,
-          appAccountToken: purchaseParam.applicationUserName
-      );
-      await SK2Product.purchase(purchaseParam.productDetails.id, options: options);
+          quantity: purchaseParam is AppStorePurchaseParam
+              ? purchaseParam.quantity
+              : 1,
+          appAccountToken: purchaseParam.applicationUserName);
+      await SK2Product.purchase(purchaseParam.productDetails.id,
+          options: options);
 
       return true;
     }

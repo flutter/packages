@@ -46,11 +46,12 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         let product = try await Product.products(for: [id]).first
         guard let product = product else {
           let error = PigeonError(
-            code: "storekit2_failed_to_fetch_product", message: "Storekit has failed to fetch this product.",
+            code: "storekit2_failed_to_fetch_product",
+            message: "Storekit has failed to fetch this product.",
             details: "Storekit has failed to fetch this product.")
           return completion(.failure(error))
         }
-        
+
         let result = try await product.purchase(options: [])
 
         switch result {
@@ -98,7 +99,6 @@ extension InAppPurchasePlugin: InAppPurchase2API {
 
   func finish(id: Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
     Task {
-      print("native finish")
       let transaction = try await fetchTransaction(by: UInt64(id))
       if let transaction = transaction {
         await transaction.finish()
