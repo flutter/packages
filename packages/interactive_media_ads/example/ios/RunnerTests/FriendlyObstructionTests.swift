@@ -18,14 +18,16 @@ class FriendlyObstructionProxyApiTest {
       pigeonApi: api, view: UIView(), purpose: .mediaControls, detailedReason: "myString")
     XCTAssertNotNil(instance)
   }
-  
+
   func testPigeonDefaultConstructorWithUnknownPurpose() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
 
-    XCTAssertThrowsError(try api.pigeonDelegate.pigeonDefaultConstructor(
-      pigeonApi: api, view: UIView(), purpose: .unknown, detailedReason: "myString")) { error in
-                XCTAssertTrue(error is PigeonError)
+    XCTAssertThrowsError(
+      try api.pigeonDelegate.pigeonDefaultConstructor(
+        pigeonApi: api, view: UIView(), purpose: .unknown, detailedReason: "myString")
+    ) { error in
+      XCTAssertTrue(error is PigeonError)
     }
   }
 
