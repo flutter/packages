@@ -6,7 +6,7 @@ class TransactionCallbacks: InAppPurchase2CallbackAPI {
     super.init(binaryMessenger: binaryMessenger)
   }
 
-  @available(iOS 15.0, *)
+  @available(iOS 15.0, macOS 12.0, *)
   func transactionUpdated(updatedTransactions: Transaction, restoring: Bool = false) {
     let transactionMsg = updatedTransactions.convertToPigeon(
       restoring: restoring)
