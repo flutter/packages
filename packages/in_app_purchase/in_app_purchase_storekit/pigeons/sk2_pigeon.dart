@@ -145,6 +145,7 @@ class SK2TransactionMessage {
       required this.purchaseDate,
       this.purchasedQuantity = 1,
       this.appAccountToken,
+      this.error,
       this.restoring = false});
   final int id;
   final int originalId;
@@ -153,6 +154,16 @@ class SK2TransactionMessage {
   final int purchasedQuantity;
   final String? appAccountToken;
   final bool restoring;
+  final SK2ErrorMessage? error;
+}
+
+class SK2ErrorMessage {
+  const SK2ErrorMessage(
+      {required this.code, required this.domain, required this.userInfo});
+
+  final int code;
+  final String domain;
+  final Map<String?, Object?>? userInfo;
 }
 
 enum SK2ProductPurchaseResultMessage { success, userCancelled, pending }

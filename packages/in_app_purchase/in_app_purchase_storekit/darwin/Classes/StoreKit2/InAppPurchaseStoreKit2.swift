@@ -69,7 +69,10 @@ extension InAppPurchasePlugin: InAppPurchase2API {
             .success(.pending))
         case .userCancelled:
           completion(
-            .success(.userCancelled))
+            .failure(
+              PigeonError(
+                code: "storekit2_purchase_cancelled",
+                message: "this transaction has been cancelled", details: "")))
         @unknown default:
           fatalError()
         }

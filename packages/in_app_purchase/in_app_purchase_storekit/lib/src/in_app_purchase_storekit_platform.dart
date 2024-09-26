@@ -35,7 +35,6 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   static late SKPaymentQueueWrapper _skPaymentQueueWrapper;
   static late _TransactionObserver _observer;
-
   static late SK2TransactionObserver _sk2transactionObserver;
 
   @override
@@ -46,6 +45,10 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   /// Callback handler for transaction status changes.
   @visibleForTesting
   static SKTransactionObserverWrapper get observer => _observer;
+
+  /// Callback handler for transaction status changes for StoreKit2 transactions
+  @visibleForTesting
+  static SK2TransactionObserver get sk2transactionObserver => _sk2transactionObserver;
 
   /// Registers this class as the default instance of [InAppPurchasePlatform].
   static void registerPlatform() {
@@ -93,7 +96,12 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @override
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {
     if (_useStoreKit2) {
-      await SK2Product.purchase(purchaseParam.productDetails.id);
+      final SK2ProductPurchaseOptions options = SK2ProductPurchaseOptions(
+          quantity: purchaseParam is AppStorePurchaseParam ? purchaseParam.quantity : 1,
+          appAccountToken: purchaseParam.applicationUserName
+      );
+      await SK2Product.purchase(purchaseParam.productDetails.id, options: options);
+
       return true;
     }
     await _skPaymentQueueWrapper.addPayment(SKPaymentWrapper(

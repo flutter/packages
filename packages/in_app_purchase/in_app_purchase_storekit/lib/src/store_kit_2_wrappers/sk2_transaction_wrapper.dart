@@ -103,12 +103,17 @@ extension on SK2TransactionMessage {
   PurchaseDetails convertToDetails() {
     return SK2PurchaseDetails(
       productID: productId,
+      // in SK2, as per Apple
+      // https://developer.apple.com/documentation/foundation/nsbundle/1407276-appstorereceipturl
+      // receipt isn’t necessary with SK2 as a Transaction can only be returned
+      // from validated purchases.
       verificationData: PurchaseVerificationData(
           localVerificationData: '', serverVerificationData: '', source: ''),
       transactionDate: purchaseDate,
-      // Note that with sk2, any transactions that *can* be returned will
+      // Note that with SK2, any transactions that *can* be returned will
       // require to be finished, and are already purchased.
       // So set this as purchased for all transactions initially.
+      // Any failed transaction will simply not be returned.
       status: restoring ? PurchaseStatus.restored : PurchaseStatus.purchased,
       purchaseID: id.toString(),
     );

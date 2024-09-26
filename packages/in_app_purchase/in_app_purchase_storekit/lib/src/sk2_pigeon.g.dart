@@ -18,8 +18,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -32,13 +31,10 @@ List<Object?> wrapResponse(
 enum SK2ProductTypeMessage {
   /// A consumable in-app purchase.
   consumable,
-
   /// A non-consumable in-app purchase.
   nonConsumable,
-
   /// A non-renewing subscription.
   nonRenewable,
-
   /// An auto-renewable subscription.
   autoRenewable,
 }
@@ -170,8 +166,7 @@ class SK2SubscriptionInfoMessage {
   static SK2SubscriptionInfoMessage decode(Object result) {
     result as List<Object?>;
     return SK2SubscriptionInfoMessage(
-      promotionalOffers:
-          (result[0] as List<Object?>?)!.cast<SK2SubscriptionOfferMessage?>(),
+      promotionalOffers: (result[0] as List<Object?>?)!.cast<SK2SubscriptionOfferMessage?>(),
       subscriptionGroupID: result[1]! as String,
       subscriptionPeriod: result[2]! as SK2SubscriptionPeriodMessage,
     );
@@ -305,6 +300,7 @@ class SK2TransactionMessage {
     this.purchasedQuantity = 1,
     this.appAccountToken,
     this.restoring = false,
+    this.error,
   });
 
   int id;
@@ -321,6 +317,8 @@ class SK2TransactionMessage {
 
   bool restoring;
 
+  SK2ErrorMessage? error;
+
   Object encode() {
     return <Object?>[
       id,
@@ -330,6 +328,7 @@ class SK2TransactionMessage {
       purchasedQuantity,
       appAccountToken,
       restoring,
+      error,
     ];
   }
 
@@ -343,9 +342,42 @@ class SK2TransactionMessage {
       purchasedQuantity: result[4]! as int,
       appAccountToken: result[5] as String?,
       restoring: result[6]! as bool,
+      error: result[7] as SK2ErrorMessage?,
     );
   }
 }
+
+class SK2ErrorMessage {
+  SK2ErrorMessage({
+    required this.code,
+    required this.domain,
+    this.userInfo,
+  });
+
+  int code;
+
+  String domain;
+
+  Map<String?, Object?>? userInfo;
+
+  Object encode() {
+    return <Object?>[
+      code,
+      domain,
+      userInfo,
+    ];
+  }
+
+  static SK2ErrorMessage decode(Object result) {
+    result as List<Object?>;
+    return SK2ErrorMessage(
+      code: result[0]! as int,
+      domain: result[1]! as String,
+      userInfo: (result[2] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
+    );
+  }
+}
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -354,41 +386,44 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is SK2ProductTypeMessage) {
+    }    else if (value is SK2ProductTypeMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is SK2SubscriptionOfferTypeMessage) {
+    }    else if (value is SK2SubscriptionOfferTypeMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is SK2SubscriptionOfferPaymentModeMessage) {
+    }    else if (value is SK2SubscriptionOfferPaymentModeMessage) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    } else if (value is SK2SubscriptionPeriodUnitMessage) {
+    }    else if (value is SK2SubscriptionPeriodUnitMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    } else if (value is SK2ProductPurchaseResultMessage) {
+    }    else if (value is SK2ProductPurchaseResultMessage) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    } else if (value is SK2SubscriptionOfferMessage) {
+    }    else if (value is SK2SubscriptionOfferMessage) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is SK2SubscriptionPeriodMessage) {
+    }    else if (value is SK2SubscriptionPeriodMessage) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is SK2SubscriptionInfoMessage) {
+    }    else if (value is SK2SubscriptionInfoMessage) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is SK2ProductMessage) {
+    }    else if (value is SK2ProductMessage) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is SK2PriceLocaleMessage) {
+    }    else if (value is SK2PriceLocaleMessage) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is SK2ProductPurchaseOptionsMessage) {
+    }    else if (value is SK2ProductPurchaseOptionsMessage) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is SK2TransactionMessage) {
+    }    else if (value is SK2TransactionMessage) {
       buffer.putUint8(140);
+      writeValue(buffer, value.encode());
+    }    else if (value is SK2ErrorMessage) {
+      buffer.putUint8(141);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -398,43 +433,37 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129:
+      case 129: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : SK2ProductTypeMessage.values[value];
-      case 130:
+      case 130: 
         final int? value = readValue(buffer) as int?;
-        return value == null
-            ? null
-            : SK2SubscriptionOfferTypeMessage.values[value];
-      case 131:
+        return value == null ? null : SK2SubscriptionOfferTypeMessage.values[value];
+      case 131: 
         final int? value = readValue(buffer) as int?;
-        return value == null
-            ? null
-            : SK2SubscriptionOfferPaymentModeMessage.values[value];
-      case 132:
+        return value == null ? null : SK2SubscriptionOfferPaymentModeMessage.values[value];
+      case 132: 
         final int? value = readValue(buffer) as int?;
-        return value == null
-            ? null
-            : SK2SubscriptionPeriodUnitMessage.values[value];
-      case 133:
+        return value == null ? null : SK2SubscriptionPeriodUnitMessage.values[value];
+      case 133: 
         final int? value = readValue(buffer) as int?;
-        return value == null
-            ? null
-            : SK2ProductPurchaseResultMessage.values[value];
-      case 134:
+        return value == null ? null : SK2ProductPurchaseResultMessage.values[value];
+      case 134: 
         return SK2SubscriptionOfferMessage.decode(readValue(buffer)!);
-      case 135:
+      case 135: 
         return SK2SubscriptionPeriodMessage.decode(readValue(buffer)!);
-      case 136:
+      case 136: 
         return SK2SubscriptionInfoMessage.decode(readValue(buffer)!);
-      case 137:
+      case 137: 
         return SK2ProductMessage.decode(readValue(buffer)!);
-      case 138:
+      case 138: 
         return SK2PriceLocaleMessage.decode(readValue(buffer)!);
-      case 139:
+      case 139: 
         return SK2ProductPurchaseOptionsMessage.decode(readValue(buffer)!);
-      case 140:
+      case 140: 
         return SK2TransactionMessage.decode(readValue(buffer)!);
+      case 141: 
+        return SK2ErrorMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -445,11 +474,9 @@ class InAppPurchase2API {
   /// Constructor for [InAppPurchase2API].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  InAppPurchase2API(
-      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  InAppPurchase2API({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -457,10 +484,8 @@ class InAppPurchase2API {
   final String pigeonVar_messageChannelSuffix;
 
   Future<bool> canMakePayments() async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -486,10 +511,8 @@ class InAppPurchase2API {
   }
 
   Future<List<SK2ProductMessage?>> products(List<String?> identifiers) async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -510,17 +533,13 @@ class InAppPurchase2API {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!
-          .cast<SK2ProductMessage?>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<SK2ProductMessage?>();
     }
   }
 
-  Future<SK2ProductPurchaseResultMessage> purchase(String id,
-      {SK2ProductPurchaseOptionsMessage? options}) async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.purchase$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+  Future<SK2ProductPurchaseResultMessage> purchase(String id, {SK2ProductPurchaseOptionsMessage? options}) async {
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.purchase$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -546,10 +565,8 @@ class InAppPurchase2API {
   }
 
   Future<List<SK2TransactionMessage?>> transactions() async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.transactions$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.transactions$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -570,16 +587,13 @@ class InAppPurchase2API {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!
-          .cast<SK2TransactionMessage?>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<SK2TransactionMessage?>();
     }
   }
 
   Future<void> finish(int id) async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -600,10 +614,8 @@ class InAppPurchase2API {
   }
 
   Future<void> startListeningToTransactions() async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.startListeningToTransactions$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.startListeningToTransactions$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -624,10 +636,8 @@ class InAppPurchase2API {
   }
 
   Future<void> stopListeningToTransactions() async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.stopListeningToTransactions$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.stopListeningToTransactions$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -653,29 +663,20 @@ abstract class InAppPurchase2CallbackAPI {
 
   void onTransactionsUpdated(SK2TransactionMessage newTransaction);
 
-  static void setUp(
-    InAppPurchase2CallbackAPI? api, {
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  static void setUp(InAppPurchase2CallbackAPI? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated was null.');
+          'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final SK2TransactionMessage? arg_newTransaction =
-              (args[0] as SK2TransactionMessage?);
+          final SK2TransactionMessage? arg_newTransaction = (args[0] as SK2TransactionMessage?);
           assert(arg_newTransaction != null,
               'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated was null, expected non-null SK2TransactionMessage.');
           try {
@@ -683,9 +684,8 @@ abstract class InAppPurchase2CallbackAPI {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }

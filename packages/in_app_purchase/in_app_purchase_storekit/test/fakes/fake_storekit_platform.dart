@@ -8,6 +8,7 @@ import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/src/messages.g.dart';
 import 'package:in_app_purchase_storekit/src/sk2_pigeon.g.dart';
 import 'package:in_app_purchase_storekit/src/store_kit_2_wrappers/sk2_product_wrapper.dart';
+import 'package:in_app_purchase_storekit/src/store_kit_2_wrappers/sk2_transaction_wrapper.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 import '../sk2_test_api.g.dart';
@@ -284,6 +285,11 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   late Set<String> validProductIDs;
   late Map<String, SK2Product> validProducts;
+  late List<SK2TransactionMessage> transactionList;
+  late bool testTransactionFail;
+  late int testTransactionCancel;
+  late List<SK2Transaction> finishedTransactions;
+
   PlatformException? queryProductException;
   bool isListenerRegistered = false;
 
@@ -332,6 +338,10 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   @override
   Future<SK2ProductPurchaseResultMessage> purchase(String id,
       {SK2ProductPurchaseOptionsMessage? options}) {
+    final SK2TransactionMessage transaction =
+    createPendingTransaction(id);
+
+    InAppPurchaseStoreKitPlatform.sk2transactionObserver.onTransactionsUpdated(transaction);
     return Future<SK2ProductPurchaseResultMessage>.value(SK2ProductPurchaseResultMessage.success);
   }
 
@@ -354,4 +364,14 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   @override
   void stopListeningToTransactions() {
     isListenerRegistered = false;  }
+}
+
+SK2TransactionMessage createPendingTransaction(String id,
+    {int quantity = 1}) {
+  return SK2TransactionMessage(
+      id: 1,
+      originalId: 2,
+      productId: id,
+      purchaseDate: 'purchaseDate', appAccountToken:
+  'appAccountToken');
 }
