@@ -8,6 +8,12 @@ import GoogleInteractiveMediaAds
 /// Implementation of `PigeonProxyApiDelegate` that provides each ProxyApi delegate implementation
 /// and any additional resources needed by an implementation.
 open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
+  func createUnknownEnumError(withEnum enumValue: Any) -> PigeonError {
+    return PigeonError(
+      code: "UnknownEnumError", message: "\(enumValue) doesn't represent a native value.",
+      details: nil)
+  }
+
   func pigeonApiUIView(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
     -> PigeonApiUIView
   {

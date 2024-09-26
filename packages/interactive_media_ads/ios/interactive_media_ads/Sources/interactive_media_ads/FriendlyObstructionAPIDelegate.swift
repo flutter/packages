@@ -26,9 +26,8 @@ class FriendlyObstructionProxyAPIDelegate: PigeonApiDelegateIMAFriendlyObstructi
     case .other:
       nativePurpose = IMAFriendlyObstructionPurpose.other
     case .unknown:
-      throw PigeonError(
-        code: "UnsupportedEnum", message: "\(purpose) doesn't represent a native value.",
-        details: nil)
+      throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyApiDelegate).createUnknownEnumError(
+        withEnum: purpose)
     }
     return IMAFriendlyObstruction(
       view: view, purpose: nativePurpose, detailedReason: detailedReason)
