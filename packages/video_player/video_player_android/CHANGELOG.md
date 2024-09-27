@@ -1,3 +1,8 @@
+## 2.7.6
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/154602) where
+  resuming a video player would cause a `Bad state: Future already completed`.
+
 ## 2.7.5
 
 * Add a deprecation suppression in advance of a new `SurfaceProducer` API.
@@ -18,11 +23,9 @@
 
 * Re-adds Impeller support.
 
-
 ## 2.7.1
 
 * Revert Impeller support.
-
 
 ## 2.7.0
 

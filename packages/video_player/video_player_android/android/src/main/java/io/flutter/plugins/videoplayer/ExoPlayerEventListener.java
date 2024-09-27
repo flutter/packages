@@ -14,11 +14,16 @@ final class ExoPlayerEventListener implements Player.Listener {
   private final ExoPlayer exoPlayer;
   private final VideoPlayerCallbacks events;
   private boolean isBuffering = false;
-  private boolean isInitialized = false;
+  private boolean isInitialized;
 
   ExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events) {
+    this(exoPlayer, events, false);
+  }
+
+  ExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events, boolean wasInitialized) {
     this.exoPlayer = exoPlayer;
     this.events = events;
+    this.isInitialized = wasInitialized;
   }
 
   private void setBuffering(boolean buffering) {

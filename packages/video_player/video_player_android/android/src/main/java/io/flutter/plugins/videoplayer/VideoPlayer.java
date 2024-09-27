@@ -108,7 +108,9 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
     exoPlayer.prepare();
 
     exoPlayer.setVideoSurface(surfaceProducer.getSurface());
-    exoPlayer.addListener(new ExoPlayerEventListener(exoPlayer, videoPlayerEvents));
+
+    boolean wasInitialized = savedStateDuring != null;
+    exoPlayer.addListener(new ExoPlayerEventListener(exoPlayer, videoPlayerEvents, wasInitialized));
     setAudioAttributes(exoPlayer, options.mixWithOthers);
 
     return exoPlayer;
