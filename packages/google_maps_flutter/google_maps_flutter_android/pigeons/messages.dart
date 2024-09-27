@@ -263,9 +263,8 @@ class PlatformPolyline {
   /// The joint type.
   final PlatformJointType jointType;
 
-  /// The pattern data, as JSON. Each element in this list should be set only from PatternItem.toJson, and the native code must interpret it according to the internal implementation details of that method.
-  // TODO(schectman): Convert field to structured data.
-  final List<Object?> patterns;
+  /// The pattern data, as a list of pattern items.
+  final List<PlatformPatternItem?> patterns;
   final List<PlatformLatLng?> points;
 
   /// The start and end cap data, as JSON. These should be set only from Cap.toJson, and the native code must interpret it according to the internal implementation details of that method.
@@ -275,6 +274,21 @@ class PlatformPolyline {
   final bool visible;
   final int width;
   final int zIndex;
+}
+
+/// Enumeration of possible types for PatternItem.
+enum PlatformPatternItemType {
+  dot,
+  dash,
+  gap,
+}
+
+/// Pigeon equivalent of the PatternItem class.
+class PlatformPatternItem {
+  PlatformPatternItem({required this.type, this.length});
+
+  final PlatformPatternItemType type;
+  final double? length;
 }
 
 /// Pigeon equivalent of the Tile class.
