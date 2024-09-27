@@ -39,7 +39,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   // https://developer.apple.com/documentation/storekit/product/3791971-purchase
   func purchase(
     id: String, options: SK2ProductPurchaseOptionsMessage?,
-    completion: @escaping (Result<SK2ProductPurchaseResultMessage, any Error>) -> Void
+    completion: @escaping (Result<SK2ProductPurchaseResultMessage, Error>) -> Void
   ) {
     Task {
       do {
@@ -85,7 +85,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   }
 
   func transactions(
-    completion: @escaping (Result<[SK2TransactionMessage], any Error>) -> Void
+    completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void
   ) {
     Task {
       do {
