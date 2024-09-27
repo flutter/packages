@@ -60,11 +60,10 @@ void main() {
 
   group('getEnrolledBiometrics', () {
     test('translates values', () async {
-      when(api.getEnrolledBiometrics())
-          .thenAnswer((_) async => <AuthBiometricWrapper>[
-                AuthBiometricWrapper(value: AuthBiometric.face),
-                AuthBiometricWrapper(value: AuthBiometric.fingerprint),
-              ]);
+      when(api.getEnrolledBiometrics()).thenAnswer((_) async => <AuthBiometric>[
+            AuthBiometric.face,
+            AuthBiometric.fingerprint,
+          ]);
 
       final List<BiometricType> result = await plugin.getEnrolledBiometrics();
 
@@ -76,7 +75,7 @@ void main() {
 
     test('handles empty', () async {
       when(api.getEnrolledBiometrics())
-          .thenAnswer((_) async => <AuthBiometricWrapper>[]);
+          .thenAnswer((_) async => <AuthBiometric>[]);
 
       final List<BiometricType> result = await plugin.getEnrolledBiometrics();
 
