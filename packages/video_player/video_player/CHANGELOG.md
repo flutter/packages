@@ -1,4 +1,4 @@
-## NEXT
+## 2.9.2
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 * Throws a more descriptive `StateError` in the case where 
