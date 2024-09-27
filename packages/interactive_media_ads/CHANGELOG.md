@@ -1,3 +1,7 @@
+## 0.2.2+3
+
+* Adds internal wrapper for iOS native `IMAFriendlyObstruction`.
+
 ## 0.2.2+2
 
 * Adds internal wrapper for Android native `AdsRenderingSettings`.
