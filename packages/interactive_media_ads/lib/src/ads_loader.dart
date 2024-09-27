@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 
 import 'ad_display_container.dart';
 import 'ads_manager_delegate.dart';
+import 'ads_request.dart';
 import 'platform_interface/platform_interface.dart';
 
 /// Allows publishers to request ads from ad servers or a dynamic ad insertion
@@ -97,7 +98,7 @@ class AdsLoader {
   /// Ads cannot be requested until the `AdDisplayContainer` has been added to
   /// the native View hierarchy. See [AdDisplayContainer.onContainerAdded].
   Future<void> requestAds(AdsRequest request) {
-    return platform.requestAds(request);
+    return platform.requestAds(request.platform);
   }
 }
 
@@ -156,6 +157,30 @@ class AdsManager {
   /// The [AdsManagerDelegate] to notify with events during ad playback.
   Future<void> setAdsManagerDelegate(AdsManagerDelegate delegate) {
     return platform.setAdsManagerDelegate(delegate.platform);
+  }
+
+  /// Pauses the current ad.
+  Future<void> pause() {
+    return platform.pause();
+  }
+
+  /// Resumes the current ad.
+  Future<void> resume() {
+    return platform.resume();
+  }
+
+  /// Skips the current ad.
+  ///
+  /// This only skips ads if IMA does not render the 'Skip ad' button.
+  Future<void> skip() {
+    return platform.skip();
+  }
+
+  /// Discards current ad break and resumes content.
+  ///
+  /// If there is no current ad then the next ad break is discarded.
+  Future<void> discardAdBreak() {
+    return platform.discardAdBreak();
   }
 
   /// Stops the ad and all tracking, then releases all assets that were loaded

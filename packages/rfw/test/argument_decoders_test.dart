@@ -392,7 +392,7 @@ void main() {
     expect(
       (tester.widgetList<DecoratedBox>(find.byType(DecoratedBox)).toList()[0].decoration as BoxDecoration).image.toString(),
       'DecorationImage(NetworkImage("x-invalid://", scale: 1.0), '
-      'ColorFilter.mode(Color(0xff8811ff), BlendMode.xor), Alignment.center, scale 1.0, '
+      'ColorFilter.mode(${const Color(0xff8811ff)}, BlendMode.xor), Alignment.center, scale 1.0, '
       'opacity 1.0, FilterQuality.high)',
     );
 

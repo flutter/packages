@@ -1,3 +1,15 @@
+## 2.14.7
+
+* Adds `PlatformPatternItem` pigeon class to convert `PlatformPolyline.pattern`.
+
+## 2.14.6
+
+* Converts 'PlatformCameraUpdate' to pigeon.
+
+## 2.14.5
+
+* Converts `JointType` to enum.
+
 ## 2.14.4
 
 * Converts 'PlatformTileOverlay' to pigeon.
