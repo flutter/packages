@@ -146,7 +146,8 @@ base class SharedPreferencesAsyncAndroid
     // is fixed. In practice, the values will never be null, and the native implementation assumes that.
     return _convertKnownExceptions<List<String>>(() async =>
         (await _api.getStringList(key, _convertOptionsToPigeonOptions(options)))
-            ?.cast<String>());
+            ?.cast<String>()
+            .toList());
   }
 
   Future<T?> _convertKnownExceptions<T>(Future<T?> Function() method) async {

@@ -156,7 +156,7 @@ void main() {
   });
 }
 
-class CopyableObject extends PigeonProxyApiBaseClass {
+class CopyableObject extends PigeonInternalProxyApiBaseClass {
   // ignore: non_constant_identifier_names
   CopyableObject({super.pigeon_instanceManager});
 

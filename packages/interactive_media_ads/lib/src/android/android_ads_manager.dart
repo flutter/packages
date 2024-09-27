@@ -49,6 +49,26 @@ class AndroidAdsManager extends PlatformAdsManager {
     return _manager.start();
   }
 
+  @override
+  Future<void> discardAdBreak() {
+    return _manager.discardAdBreak();
+  }
+
+  @override
+  Future<void> pause() {
+    return _manager.pause();
+  }
+
+  @override
+  Future<void> resume() {
+    return _manager.resume();
+  }
+
+  @override
+  Future<void> skip() {
+    return _manager.skip();
+  }
+
   // This value is created in a static method because the callback methods for
   // any wrapped classes must not reference the encapsulating object. This is to
   // prevent a circular reference that prevents garbage collection.
@@ -57,13 +77,13 @@ class AndroidAdsManager extends PlatformAdsManager {
     weakThis.target?._manager.addAdEventListener(
       proxy.newAdEventListener(
         onAdEvent: (_, ima.AdEvent event) {
-          late final AdEventType? eventType = toInterfaceEventType(event.type);
-          if (eventType == null) {
-            return;
-          }
-
-          weakThis.target?._managerDelegate?.params.onAdEvent
-              ?.call(AdEvent(type: eventType));
+          weakThis.target?._managerDelegate?.params.onAdEvent?.call(
+            AdEvent(
+              type: toInterfaceEventType(event.type),
+              adData:
+                  event.adData?.cast<String, String>() ?? <String, String>{},
+            ),
+          );
         },
       ),
     );

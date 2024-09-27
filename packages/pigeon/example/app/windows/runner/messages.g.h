@@ -90,18 +90,18 @@ class MessageData {
   flutter::EncodableList ToEncodableList() const;
   friend class ExampleHostApi;
   friend class MessageFlutterApi;
-  friend class PigeonCodecSerializer;
+  friend class PigeonInternalCodecSerializer;
   std::optional<std::string> name_;
   std::optional<std::string> description_;
   Code code_;
   flutter::EncodableMap data_;
 };
 
-class PigeonCodecSerializer : public flutter::StandardCodecSerializer {
+class PigeonInternalCodecSerializer : public flutter::StandardCodecSerializer {
  public:
-  PigeonCodecSerializer();
-  inline static PigeonCodecSerializer& GetInstance() {
-    static PigeonCodecSerializer sInstance;
+  PigeonInternalCodecSerializer();
+  inline static PigeonInternalCodecSerializer& GetInstance() {
+    static PigeonInternalCodecSerializer sInstance;
     return sInstance;
   }
 

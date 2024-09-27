@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
 ## 2.1.4
 
 * Updates minimum required `path_provider_android` to 2.2.0 to ensure support for `getDownloadsDirectory()` on Android.

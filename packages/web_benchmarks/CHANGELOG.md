@@ -1,3 +1,14 @@
+## 2.1.0-wip
+
+* Restructure the `testing/test_app` to make the example benchmarks easier to follow.
+
+## 2.0.2
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Updates benchmark server to serve the app as `crossOriginIsolated`. This
+allows us access to high precision timers and allows wasm benchmarks to run
+properly as well.
+
 ## 2.0.1
 
 * Adds support for `web: ^1.0.0`.

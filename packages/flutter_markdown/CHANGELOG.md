@@ -1,3 +1,12 @@
+## 0.7.3+2
+
+* Resolves an issue where code blocks in markdown were not highlighted during selection.
+
+## 0.7.3+1
+
+* Fixes issue with table column alignments not being respected.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
 ## 0.7.3
 
 * Adds horizontal scrolling for table when using `tableColumnWidth: FixedColumnWidth(width)`.

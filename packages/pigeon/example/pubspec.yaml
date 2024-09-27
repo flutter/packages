@@ -3,7 +3,7 @@ description: example app to show basic usage of pigeon.
 publish_to: none
 
 environment:
-  sdk: ^3.2.0
+  sdk: ^3.3.0
 
 dependencies:
 

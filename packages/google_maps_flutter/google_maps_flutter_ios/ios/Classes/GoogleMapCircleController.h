@@ -21,7 +21,6 @@
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler
                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-- (void)addJSONCircles:(NSArray<NSDictionary<NSString *, id> *> *)circlesToAdd;
 - (void)addCircles:(NSArray<FGMPlatformCircle *> *)circlesToAdd;
 - (void)changeCircles:(NSArray<FGMPlatformCircle *> *)circlesToChange;
 - (void)removeCirclesWithIdentifiers:(NSArray<NSString *> *)identifiers;

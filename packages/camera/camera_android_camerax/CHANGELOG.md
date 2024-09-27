@@ -1,3 +1,20 @@
+## 0.6.8+3
+
+* Removes dependency on org.jetbrains.kotlin:kotlin-bom.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 0.6.8+2
+
+* Marks uses of `Camera2Interop` with `@OptIn` annotation.
+
+## 0.6.8+1
+
+* Re-lands support for Impeller.
+
+## 0.6.8
+
+* Updates Guava version to 33.3.0.
+
 ## 0.6.7+2
 
 * Updates lint checks to ignore NewerVersionAvailable.
