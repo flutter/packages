@@ -278,7 +278,7 @@ class VideoEvent {
 /// completed or to communicate buffering events or play state changed.
 enum VideoEventType {
   /// The video has been initialized.
-  /// 
+  ///
   /// A maximum of one event of this type may be emitted per instance.
   initialized,
 
