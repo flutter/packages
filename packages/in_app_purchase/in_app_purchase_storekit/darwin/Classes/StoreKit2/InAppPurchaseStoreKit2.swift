@@ -97,7 +97,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
-  func finish(id: Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
+  func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
     Task {
       let transaction = try await fetchTransaction(by: UInt64(id))
       if let transaction = transaction {
