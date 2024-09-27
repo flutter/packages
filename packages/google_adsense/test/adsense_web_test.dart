@@ -10,7 +10,6 @@ library;
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_adsense/google_adsense.dart';
-import 'package:google_adsense/src/ad_unit_widget_interface.dart';
 import 'package:web/web.dart' as web;
 
 void main() {

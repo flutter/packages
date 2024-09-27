@@ -25,25 +25,25 @@ void main() async {
     testWidgets('AdUnitWidget is created and rendered',
         (WidgetTester tester) async {
       // When
+      // TODO(sokoloff06): Mock server response as ./test_ad.html
+
       Adsense().initialize(testClient);
       final Widget adUnitWidget = Adsense().adUnit(adSlot: testSlot);
       await tester.pumpWidget(adUnitWidget);
-      await tester.pumpWidget(adUnitWidget); // TODO(sokoloff06): remove hardcoded time
+      await tester.pumpWidget(adUnitWidget); // TODO(sokoloff06): do we need it twice?
       // Then
       // Widget level
       expect(find.byWidget(adUnitWidget), findsOneWidget);
       expect(adUnitWidget, isA<AdUnitWidget>());
-      print('Widget found');
 
       // DOM level
       final web.HTMLElement? platformView =
           web.document.querySelector('flt-platform-view') as web.HTMLElement?;
       expect(platformView, isNotNull);
-      print('flt-platform-view element found');
       final web.HTMLElement ins = platformView!.getElementsByTagName('ins').item(0)! as web.HTMLElement;
       expect(ins.style.display, 'block');
 
-      // TODO(sokoloff06): Add server response
+      // TODO(sokoloff06): Validate response is rendered
 
     });
   });

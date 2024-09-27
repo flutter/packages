@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:web/web.dart' as web;
-import 'ad_unit_widget_interface.dart';
+import 'ad_unit_widget.dart';
 import 'ad_unit_widget_web.dart';
 
 /// Main class to work with the library
@@ -22,6 +22,7 @@ class Adsense {
       'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-';
 
   /// Initialization API. Should be called ASAP, ideally in the main method of your app.
+  /// Throws [StateError] if called more than once
   void initialize(String adClient) {
     if (_isInitialized) {
       throw StateError('Adsense was already initialized, skipping');

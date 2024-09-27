@@ -10,8 +10,6 @@ import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
 import '../google_adsense.dart';
-import 'ad_unit_params.dart';
-import 'ad_unit_widget_interface.dart';
 
 /// Widget displaying an ad unit
 class AdUnitWidgetWeb extends AdUnitWidget {
