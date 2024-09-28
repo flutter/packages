@@ -339,44 +339,42 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     indent.write('class $_pigeonCodec extends StandardMessageCodec');
     indent.addScoped(' {', '}', () {
       indent.writeln('const $_pigeonCodec();');
-      if (enumeratedTypes.isNotEmpty) {
-        indent.writeln('@override');
-        indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
-        indent.addScoped('{', '}', () {
-          indent.writeScoped('if (value is int) {', '}', () {
-            indent.writeln('buffer.putUint8(4);');
-            indent.writeln('buffer.putInt64(value);');
-          }, addTrailingNewline: false);
+      indent.writeln('@override');
+      indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
+      indent.addScoped('{', '}', () {
+        indent.writeScoped('if (value is int) {', '}', () {
+          indent.writeln('buffer.putUint8(4);');
+          indent.writeln('buffer.putInt64(value);');
+        }, addTrailingNewline: false);
 
-          enumerate(enumeratedTypes,
-              (int index, final EnumeratedType customType) {
-            writeEncodeLogic(customType);
-          });
-          indent.addScoped(' else {', '}', () {
-            indent.writeln('super.writeValue(buffer, value);');
-          });
+        enumerate(enumeratedTypes,
+            (int index, final EnumeratedType customType) {
+          writeEncodeLogic(customType);
         });
-        indent.newln();
-        indent.writeln('@override');
-        indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
+        indent.addScoped(' else {', '}', () {
+          indent.writeln('super.writeValue(buffer, value);');
+        });
+      });
+      indent.newln();
+      indent.writeln('@override');
+      indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
+      indent.addScoped('{', '}', () {
+        indent.write('switch (type) ');
         indent.addScoped('{', '}', () {
-          indent.write('switch (type) ');
-          indent.addScoped('{', '}', () {
-            for (final EnumeratedType customType in enumeratedTypes) {
-              if (customType.enumeration < maximumCodecFieldKey) {
-                writeDecodeLogic(customType);
-              }
+          for (final EnumeratedType customType in enumeratedTypes) {
+            if (customType.enumeration < maximumCodecFieldKey) {
+              writeDecodeLogic(customType);
             }
-            if (root.requiresOverflowClass) {
-              writeDecodeLogic(overflowClass);
-            }
-            indent.writeln('default:');
-            indent.nest(1, () {
-              indent.writeln('return super.readValueOfType(type, buffer);');
-            });
+          }
+          if (root.requiresOverflowClass) {
+            writeDecodeLogic(overflowClass);
+          }
+          indent.writeln('default:');
+          indent.nest(1, () {
+            indent.writeln('return super.readValueOfType(type, buffer);');
           });
         });
-      }
+      });
     });
   }
 
