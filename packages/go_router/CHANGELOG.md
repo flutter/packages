@@ -1,3 +1,7 @@
+## 14.2.8
+
+- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView. 
+
 ## 14.2.7
 
 - Fixes issue so that the parseRouteInformationWithContext can handle non-http Uris.

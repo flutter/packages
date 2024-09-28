@@ -21,6 +21,7 @@ class InteractiveMediaAdsProxy {
     this.newIMAAdsLoaderDelegate = IMAAdsLoaderDelegate.new,
     this.newIMAAdsManagerDelegate = IMAAdsManagerDelegate.new,
     this.newIMAAdsRenderingSettings = IMAAdsRenderingSettings.new,
+    this.newIMAFriendlyObstruction = IMAFriendlyObstruction.new,
   });
 
   /// Constructs [IMAAdDisplayContainer].
@@ -72,4 +73,11 @@ class InteractiveMediaAdsProxy {
 
   /// Constructs [IMAAdsRenderingSettings].
   final IMAAdsRenderingSettings Function() newIMAAdsRenderingSettings;
+
+  /// Constructs [IMAFriendlyObstruction].
+  final IMAFriendlyObstruction Function({
+    required UIView view,
+    required FriendlyObstructionPurpose purpose,
+    String? detailedReason,
+  }) newIMAFriendlyObstruction;
 }
