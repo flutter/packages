@@ -994,43 +994,52 @@ if (wrapped == null) {
     required String dartPackageName,
   }) {
     indent.newln();
+    indent.format('''
+        private class GeneralStreamHandler(val wrapper: PigeonEventChannelWrapper) : EventChannel.StreamHandler {
+          var eventSink: EventChannel.EventSink? = null
+          
+          override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
+            wrapper.runBeforeListen()
+            eventSink = sink
+            wrapper.runAfterListen()
+          }
+
+          override fun onCancel(p0: Any?) {
+            wrapper.runBeforeCancel()
+            eventSink = null
+            wrapper.runAfterCancel()
+          }
+        }
+
+        interface PigeonEventChannelWrapper {
+          open fun runBeforeListen() {}
+          open fun runAfterListen() {}
+          open fun runBeforeCancel() {}
+          open fun runAfterCancel() {}
+        }
+      ''');
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
       indent.format('''
-        abstract class ${toUpperCamelCase(func.name)} : EventChannel.StreamHandler {
-          private var eventSink: EventChannel.EventSink? = null
-
-          open fun runOnListen() {}
-          open fun runBeforeCancel() {}
-          open fun runAfterCancel() {}
-
+        abstract class ${toUpperCamelCase(func.name)}: PigeonEventChannelWrapper {
           fun success(value: ${_kotlinTypeForDartType(func.returnType)}) {
-            eventSink?.success(value)
+            streamHandler?.eventSink?.success(value)
           }
 
           fun error(errorCode: String, errorMessage: String? = null, errorDetails: Any? = null) {
-            eventSink?.error(errorCode, errorMessage, errorDetails)
-          }
-
-          override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
-            eventSink = sink
-            runOnListen()
-          }
-
-          override fun onCancel(p0: Any?) {
-            runBeforeCancel()
-            eventSink = null
-            runAfterCancel()
+            streamHandler?.eventSink?.error(errorCode, errorMessage, errorDetails)
           }
 
           companion object {
-            fun register(messenger: BinaryMessenger, handler: EventChannel.StreamHandler, instanceName: String = "") {
+            private var streamHandler: GeneralStreamHandler? = null
+            fun register(messenger: BinaryMessenger, wrapper: ${toUpperCamelCase(func.name)}, instanceName: String = "") {
               var channelName: String = "${makeChannelName(api, func, dartPackageName)}"
               if (instanceName.isNotEmpty()) {
                 channelName = "${makeChannelName(api, func, dartPackageName)}.\$instanceName"
               }
-              EventChannel(messenger, channelName).setStreamHandler(handler)
+              streamHandler = GeneralStreamHandler(wrapper)
+              EventChannel(messenger, channelName).setStreamHandler(streamHandler)
             }
           }
 

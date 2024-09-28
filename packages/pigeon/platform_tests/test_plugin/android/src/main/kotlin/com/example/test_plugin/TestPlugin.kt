@@ -738,7 +738,7 @@ class TestPluginWithSuffix : HostSmallApi {
 object SendInts : StreamInts() {
   val handler = Handler(Looper.getMainLooper())
 
-  override fun runOnListen() {
+  override fun runAfterListen() {
     var count: Long = 0
     // every 5 second send the time
     val r: Runnable =
