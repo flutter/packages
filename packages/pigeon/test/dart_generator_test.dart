@@ -1771,4 +1771,35 @@ name: foobar
     final String mainCode = mainCodeSink.toString();
     expect(mainCode, contains('List<Object?> wrapResponse('));
   });
+
+  test('writes custom int codec without custom types', () {
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(name: 'Api', methods: <Method>[
+          Method(
+              name: 'doit',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              parameters: <Parameter>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const DartGenerator generator = DartGenerator();
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('if (value is int) {'));
+    expect(code, contains('buffer.putUint8(4);'));
+    expect(code, contains('buffer.putInt64(value);'));
+  });
 }
