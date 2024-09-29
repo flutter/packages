@@ -29,7 +29,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^16.0.4
+  pigeon: ^22.4.1
 
 topics:
   - persistence
