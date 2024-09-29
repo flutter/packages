@@ -20,12 +20,9 @@ class AllowedTypes {
     this.utis = const <String>[],
   });
 
-  // TODO(stuartmorgan): Declare these as non-nullable generics once
-  // https://github.com/flutter/flutter/issues/97848 is fixed. In practice,
-  // the values will never be null, and the native implementation assumes that.
-  final List<String?> extensions;
-  final List<String?> mimeTypes;
-  final List<String?> utis;
+  final List<String> extensions;
+  final List<String> mimeTypes;
+  final List<String> utis;
 }
 
 /// Options for save panels.
@@ -71,11 +68,8 @@ abstract class FileSelectorApi {
   /// selected paths.
   ///
   /// An empty list corresponds to a cancelled selection.
-  // TODO(stuartmorgan): Declare this return as a non-nullable generic once
-  // https://github.com/flutter/flutter/issues/97848 is fixed. In practice,
-  // the values will never be null, and the calling code assumes that.
   @async
-  List<String?> displayOpenPanel(OpenPanelOptions options);
+  List<String> displayOpenPanel(OpenPanelOptions options);
 
   /// Shows a save panel with the given [options], returning the selected path.
   ///
