@@ -58,7 +58,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(minSdk = Build.VERSION_CODES.P)
+@Config(minSdk = 23)
 public class ConvertTest {
   @Mock private AssetManager assetManager;
 
@@ -83,6 +83,11 @@ public class ConvertTest {
   @After
   public void tearDown() throws Exception {
     mockCloseable.close();
+  }
+
+  @Test
+  public void trivial() {
+    Assert.assertEquals(1.0, 1.1, 0.5);
   }
 
   @Test
