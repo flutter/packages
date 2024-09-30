@@ -31,7 +31,7 @@ List<Object?> wrapResponse(
 
 class FileSelectorConfig {
   FileSelectorConfig({
-    this.utis = const <String?>[],
+    this.utis = const <String>[],
     this.allowMultiSelection = false,
   });
 

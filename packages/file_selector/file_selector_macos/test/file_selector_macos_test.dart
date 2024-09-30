@@ -22,7 +22,7 @@ void main() {
   setUp(() {
     plugin = FileSelectorMacOS();
     mockApi = MockTestFileSelectorApi();
-    TestFileSelectorApi.setup(mockApi);
+    TestFileSelectorApi.setUp(mockApi);
 
     // Set default stubs for tests that don't expect a specific return value,
     // so calls don't throw. Tests that `expect` return values should override

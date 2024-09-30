@@ -12,7 +12,7 @@ import 'package:pigeon/pigeon.dart';
 ))
 class FileSelectorConfig {
   FileSelectorConfig(
-      {this.utis = const <String?>[], this.allowMultiSelection = false});
+      {this.utis = const <String>[], this.allowMultiSelection = false});
   List<String> utis;
   bool allowMultiSelection;
 }

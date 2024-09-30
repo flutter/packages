@@ -47,10 +47,10 @@ class SavePanelOptions {
 /// These correspond to NSOpenPanel properties.
 class OpenPanelOptions extends SavePanelOptions {
   const OpenPanelOptions({
-    this.allowsMultipleSelection = false,
-    this.canChooseDirectories = false,
-    this.canChooseFiles = true,
-    this.baseOptions = const SavePanelOptions(),
+    required this.allowsMultipleSelection,
+    required this.canChooseDirectories,
+    required this.canChooseFiles,
+    required this.baseOptions,
   });
   final bool allowsMultipleSelection;
   final bool canChooseDirectories;
