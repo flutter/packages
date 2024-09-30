@@ -28,12 +28,12 @@ enum CapType {
   custom,
 }
 
-String _capTypeToJson(CapType capType) => <CapType, String>{
-      CapType.butt: 'buttCap',
-      CapType.round: 'roundCap',
-      CapType.square: 'squareCap',
-      CapType.custom: 'customCap',
-    }[capType]!;
+String _capTypeToJson(CapType capType) => switch (capType) {
+      CapType.butt => 'buttCap',
+      CapType.round => 'roundCap',
+      CapType.square => 'squareCap',
+      CapType.custom => 'customCap',
+};
 
 /// Cap that can be applied at the start or end vertex of a [Polyline].
 @immutable

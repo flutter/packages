@@ -17,11 +17,11 @@ enum PatternItemType {
 }
 
 String _patternItemTypeToJson(PatternItemType itemType) =>
-    const <PatternItemType, String>{
-      PatternItemType.dot: 'dot',
-      PatternItemType.dash: 'dash',
-      PatternItemType.gap: 'gap',
-    }[itemType]!;
+    switch (itemType) {
+      PatternItemType.dot => 'dot',
+      PatternItemType.dash => 'dash',
+      PatternItemType.gap => 'gap',
+    };
 
 /// Item used in the stroke pattern for a Polyline.
 @immutable
