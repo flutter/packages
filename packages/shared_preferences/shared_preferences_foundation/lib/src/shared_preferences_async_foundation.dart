@@ -177,14 +177,11 @@ base class SharedPreferencesAsyncFoundation
     SharedPreferencesOptions options,
   ) async {
     final PreferencesFilters filter = parameters.filter;
-    final Map<String?, Object?>? data =
-        await _convertKnownExceptions<Map<String?, Object?>>(
-            () async => _api.getAll(
-                  filter.allowList?.toList(),
-                  _convertOptionsToPigeonOptions(options),
-                ));
-
-    return data!.cast<String, Object>();
+    return (await _convertKnownExceptions<Map<String, Object>>(
+        () async => _api.getAll(
+              filter.allowList?.toList(),
+              _convertOptionsToPigeonOptions(options),
+            )))!;
   }
 
   Future<T?> _convertKnownExceptions<T>(Future<T?> Function() method) async {
