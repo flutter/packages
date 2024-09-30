@@ -323,17 +323,6 @@ extension on EvalOnDartLibrary {
         throw StateError('Failed to get future value instance.');
       }
 
-      final Instance errorHolderInstance =
-          await safeGetInstance(errorHolderRef, isAlive);
-
-      // If the elements list is not empty it means the future has resolved with an error.
-      if (errorHolderInstance.elements case final List<dynamic> elements
-          when elements.isNotEmpty) {
-        final Object? errorInstance = elements.firstOrNull;
-
-        return errorInstance != null ? errorInstance as InstanceRef : null;
-      }
-
       final Instance holderInstance =
           await safeGetInstance(valueHolderRef, isAlive);
 
