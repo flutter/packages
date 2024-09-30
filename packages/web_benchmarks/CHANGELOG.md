@@ -1,4 +1,4 @@
-## 3.0.0-wip
+## 3.0.0
 
 * **Breaking change:** removed the `initialPage` parameter from the `serveWebBenchmark`
 method and `runBenchmarks` method. Replaced this parameter with `benchmarkPath`, which
