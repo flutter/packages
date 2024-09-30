@@ -53,7 +53,7 @@ class BenchmarkServer {
   /// [compilationOptions] specify the compiler and renderer to use for the
   /// benchmark app. This can either use dart2wasm & skwasm or
   /// dart2js & canvaskit.
-  /// 
+  ///
   /// [benchmarkPath] spcifies the path for the URL that will be loaded upon
   /// opening the benchmark app in Chrome.
   BenchmarkServer({
@@ -184,6 +184,7 @@ class BenchmarkServer {
       path.join(benchmarkAppDirectory.path, 'build', 'web'),
       defaultDocument: 'index.html',
     );
+
     // We want our page to be crossOriginIsolated. This will allow us to run the
     // skwasm renderer, which uses a SharedArrayBuffer, which requires the page
     // to be crossOriginIsolated. But also, even in the non-skwasm case, running
@@ -292,9 +293,20 @@ class BenchmarkServer {
       }
     });
 
-    // If all previous handlers returned HTTP 404, this is the last handler
-    // that simply warns about the unrecognized path.
-    cascade = cascade.add((Request request) {
+    // If all previous handlers returned HTTP 404, this handler either serves
+    // the static handler at the default document (for GET requests only) or
+    // warns about the unrecognized path.
+    cascade = cascade.add((Request request) async {
+      if (request.method == 'GET') {
+        final Uri newRequestUri = request.requestedUri.replace(path: '/');
+        final Request newRequest = Request(
+          request.method,
+          newRequestUri,
+          headers: request.headers,
+        );
+        return await buildFolderHandler(newRequest);
+      }
+
       io.stderr.writeln('Unrecognized URL path: ${request.requestedUri.path}');
       return Response.notFound('Not found: ${request.requestedUri.path}');
     });

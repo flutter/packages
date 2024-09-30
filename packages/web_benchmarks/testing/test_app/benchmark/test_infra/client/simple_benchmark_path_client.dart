@@ -14,5 +14,6 @@ Future<void> main() async {
             benchmark: BenchmarkName.simpleBenchmarkPathCheck,
           ),
     },
+    benchmarkPath: testBenchmarkPath,
   );
 }

@@ -4,7 +4,7 @@
 
 /// The benchmark path to load in the URL when loading or reloading the
 /// benchmark app in Chrome.
-const String testBenchmarkPath = 'index.html#about';
+const String testBenchmarkPath = 'about';
 
 enum BenchmarkName {
   appNavigate,
