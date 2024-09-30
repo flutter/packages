@@ -48,7 +48,7 @@ const int defaultChromeDebugPort = 10000;
 /// benchmark app. This can either use dart2wasm & skwasm or
 /// dart2js & canvaskit.
 ///
-/// [benchmarkPath] spcifies the path for the URL that will be loaded upon
+/// [benchmarkPath] specifies the path for the URL that will be loaded upon
 /// opening the benchmark app in Chrome.
 Future<BenchmarkResults> serveWebBenchmark({
   required io.Directory benchmarkAppDirectory,

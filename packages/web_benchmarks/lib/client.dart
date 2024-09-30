@@ -42,7 +42,7 @@ extension on HTMLElement {
 /// When used without a server, prompts the user to select a benchmark to
 /// run next.
 ///
-/// [benchmarkPath] spcifies the path for the URL that will be loaded in Chrome
+/// [benchmarkPath] specifies the path for the URL that will be loaded in Chrome
 /// when reloading the window for subsequent benchmark runs.
 Future<void> runBenchmarks(
   Map<String, RecorderFactory> benchmarks, {
