@@ -23,6 +23,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_plugin_android_lifecycle: ^2.0.2
+  pigeon: ^22.4.1
   stream_transform: ^2.0.0
 
 dev_dependencies:
