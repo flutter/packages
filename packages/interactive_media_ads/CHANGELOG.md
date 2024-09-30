@@ -1,3 +1,15 @@
+## 0.2.2+5
+
+* Changes the example app to initialize the `AdsLoader` in `onContainerAdded`.
+
+## 0.2.2+4
+
+* Adds internal wrapper for Android native `AdProgressInfo`.
+
+## 0.2.2+3
+
+* Adds internal wrapper for iOS native `IMAFriendlyObstruction`.
+
 ## 0.2.2+2
 
 * Adds internal wrapper for Android native `AdsRenderingSettings`.

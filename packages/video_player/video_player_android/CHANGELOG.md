@@ -1,3 +1,7 @@
+## 2.7.5
+
+* Add a deprecation suppression in advance of a new `SurfaceProducer` API.
+
 ## 2.7.4
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/154559) where

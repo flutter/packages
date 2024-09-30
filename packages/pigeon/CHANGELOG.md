@@ -2,6 +2,10 @@
 
 * [swift] Adds implementation for `@ProxyApi`.
 
+## 22.4.1
+
+* [dart] Fixes bug where special handling of ints is ignored if no custom types are used.
+
 ## 22.4.0
 
 * Adds support for non-nullable types in collections.
