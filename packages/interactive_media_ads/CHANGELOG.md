@@ -1,6 +1,6 @@
 ## 0.2.2+7
 
-* Adds internal wrapper for Android native `AdsRenderingSettings`.
+* Adds remaining methods for internal wrapper of the iOS native `IMAAdsRenderingSettings`.
 
 ## 0.2.2+5
 
