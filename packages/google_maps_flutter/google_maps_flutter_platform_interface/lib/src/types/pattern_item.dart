@@ -16,8 +16,7 @@ enum PatternItemType {
   gap,
 }
 
-String _patternItemTypeToJson(PatternItemType itemType) =>
-    switch (itemType) {
+String _patternItemTypeToJson(PatternItemType itemType) => switch (itemType) {
       PatternItemType.dot => 'dot',
       PatternItemType.dash => 'dash',
       PatternItemType.gap => 'gap',
