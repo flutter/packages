@@ -28,16 +28,20 @@ class PlatformCameraDescription {
   PlatformCameraDescription({
     required this.name,
     required this.lensDirection,
+    required this.sensorOrientation,
   });
 
   String name;
 
   PlatformCameraLensDirection lensDirection;
 
+  int sensorOrientation;
+
   Object encode() {
     return <Object?>[
       name,
       lensDirection,
+      sensorOrientation,
     ];
   }
 
@@ -46,6 +50,7 @@ class PlatformCameraDescription {
     return PlatformCameraDescription(
       name: result[0]! as String,
       lensDirection: result[1]! as PlatformCameraLensDirection,
+      sensorOrientation: result[2]! as int,
     );
   }
 }

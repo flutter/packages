@@ -110,6 +110,19 @@ public class Messages {
       this.lensDirection = setterArg;
     }
 
+    private @NonNull Long sensorOrientation;
+
+    public @NonNull Long getSensorOrientation() {
+      return sensorOrientation;
+    }
+
+    public void setSensorOrientation(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"sensorOrientation\" is null.");
+      }
+      this.sensorOrientation = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     PlatformCameraDescription() {}
 
@@ -118,12 +131,12 @@ public class Messages {
       if (this == o) { return true; }
       if (o == null || getClass() != o.getClass()) { return false; }
       PlatformCameraDescription that = (PlatformCameraDescription) o;
-      return name.equals(that.name) && lensDirection.equals(that.lensDirection);
+      return name.equals(that.name) && lensDirection.equals(that.lensDirection) && sensorOrientation.equals(that.sensorOrientation);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(name, lensDirection);
+      return Objects.hash(name, lensDirection, sensorOrientation);
     }
 
     public static final class Builder {
@@ -144,19 +157,29 @@ public class Messages {
         return this;
       }
 
+      private @Nullable Long sensorOrientation;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setSensorOrientation(@NonNull Long setterArg) {
+        this.sensorOrientation = setterArg;
+        return this;
+      }
+
       public @NonNull PlatformCameraDescription build() {
         PlatformCameraDescription pigeonReturn = new PlatformCameraDescription();
         pigeonReturn.setName(name);
         pigeonReturn.setLensDirection(lensDirection);
+        pigeonReturn.setSensorOrientation(sensorOrientation);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(2);
+      ArrayList<Object> toListResult = new ArrayList<>(3);
       toListResult.add(name);
       toListResult.add(lensDirection);
+      toListResult.add(sensorOrientation);
       return toListResult;
     }
 
@@ -166,6 +189,8 @@ public class Messages {
       pigeonResult.setName((String) name);
       Object lensDirection = pigeonVar_list.get(1);
       pigeonResult.setLensDirection((PlatformCameraLensDirection) lensDirection);
+      Object sensorOrientation = pigeonVar_list.get(2);
+      pigeonResult.setSensorOrientation((Long) sensorOrientation);
       return pigeonResult;
     }
   }

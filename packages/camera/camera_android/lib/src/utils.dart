@@ -5,6 +5,8 @@
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
 
+import 'messages.g.dart';
+
 /// Parses a string into a corresponding CameraLensDirection.
 CameraLensDirection parseCameraLensDirection(String string) {
   switch (string) {
@@ -16,6 +18,14 @@ CameraLensDirection parseCameraLensDirection(String string) {
       return CameraLensDirection.external;
   }
   throw ArgumentError('Unknown CameraLensDirection value');
+}
+
+CameraLensDirection cameraLensDirectionFromPlatform(PlatformCameraLensDirection direction) {
+  return switch (direction) {
+    PlatformCameraLensDirection.front => CameraLensDirection.front,
+    PlatformCameraLensDirection.back => CameraLensDirection.back,
+    PlatformCameraLensDirection.external => CameraLensDirection.external,
+  };
 }
 
 /// Returns the device orientation as a String.

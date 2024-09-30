@@ -14,9 +14,10 @@ enum PlatformCameraLensDirection {
 }
 
 class PlatformCameraDescription {
-  PlatformCameraDescription({required this.name, required this.lensDirection});
+  PlatformCameraDescription({required this.name, required this.lensDirection, required this.sensorOrientation});
   final String name;
   final PlatformCameraLensDirection lensDirection;
+  final int sensorOrientation;
 }
 
 @HostApi()
