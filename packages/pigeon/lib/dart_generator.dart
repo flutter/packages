@@ -343,8 +343,8 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
       indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
       indent.addScoped('{', '}', () {
         indent.writeScoped('if (value is int) {', '}', () {
-          indent.writeln('buffer.putUint8(4);');
-          indent.writeln('buffer.putInt64(value);');
+          indent.writeln('buffer..putUint8(4)');
+          indent.writeln('  ..putInt64(value);');
         }, addTrailingNewline: false);
 
         enumerate(enumeratedTypes,
