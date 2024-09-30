@@ -40,17 +40,67 @@ class PlatformCameraPosition {
 
 /// Pigeon representation of a CameraUpdate.
 class PlatformCameraUpdate {
-  PlatformCameraUpdate(this.json);
+  PlatformCameraUpdate({required this.cameraUpdate});
 
-  /// The update data, as JSON. This should only be set from
-  /// CameraUpdate.toJson, and the native code must interpret it according to the
-  /// internal implementation details of the CameraUpdate class.
-  // TODO(stuartmorgan): Update the google_maps_platform_interface CameraUpdate
-  //  class to provide a structured representation of an update. Currently it
-  //  uses JSON as its only state, so there is no way to preserve structure.
-  //  This wrapper class exists as a placeholder for now to at least provide
-  //  type safety in the top-level call's arguments.
-  final Object json;
+  /// This Object shall be any of the below classes prefixed with
+  /// PlatformCameraUpdate. Each such class represents a different type of
+  /// camera update, and each holds a different set of data, preventing the
+  /// use of a single unified class. Pigeon does not support inheritance, which
+  /// prevents a more strict type bound.
+  /// See https://github.com/flutter/flutter/issues/117819.
+  final Object cameraUpdate;
+}
+
+/// Pigeon equivalent of NewCameraPosition
+class PlatformCameraUpdateNewCameraPosition {
+  PlatformCameraUpdateNewCameraPosition(this.cameraPosition);
+  final PlatformCameraPosition cameraPosition;
+}
+
+/// Pigeon equivalent of NewLatLng
+class PlatformCameraUpdateNewLatLng {
+  PlatformCameraUpdateNewLatLng(this.latLng);
+  final PlatformLatLng latLng;
+}
+
+/// Pigeon equivalent of NewLatLngBounds
+class PlatformCameraUpdateNewLatLngBounds {
+  PlatformCameraUpdateNewLatLngBounds(this.bounds, this.padding);
+  final PlatformLatLngBounds bounds;
+  final double padding;
+}
+
+/// Pigeon equivalent of NewLatLngZoom
+class PlatformCameraUpdateNewLatLngZoom {
+  PlatformCameraUpdateNewLatLngZoom(this.latLng, this.zoom);
+  final PlatformLatLng latLng;
+  final double zoom;
+}
+
+/// Pigeon equivalent of ScrollBy
+class PlatformCameraUpdateScrollBy {
+  PlatformCameraUpdateScrollBy(this.dx, this.dy);
+  final double dx;
+  final double dy;
+}
+
+/// Pigeon equivalent of ZoomBy
+class PlatformCameraUpdateZoomBy {
+  PlatformCameraUpdateZoomBy(this.amount, [this.focus]);
+  final double amount;
+  final PlatformOffset? focus;
+}
+
+/// Pigeon equivalent of ZoomIn/ZoomOut
+class PlatformCameraUpdateZoom {
+  PlatformCameraUpdateZoom(this.out);
+  final bool out;
+}
+
+/// Pigeon equivalent of ZoomTo
+class PlatformCameraUpdateZoomTo {
+  PlatformCameraUpdateZoomTo(this.zoom);
+  final double zoom;
 }
 
 /// Pigeon equivalent of the Circle class.
@@ -213,9 +263,8 @@ class PlatformPolyline {
   /// The joint type.
   final PlatformJointType jointType;
 
-  /// The pattern data, as JSON. Each element in this list should be set only from PatternItem.toJson, and the native code must interpret it according to the internal implementation details of that method.
-  // TODO(schectman): Convert field to structured data.
-  final List<Object?> patterns;
+  /// The pattern data, as a list of pattern items.
+  final List<PlatformPatternItem?> patterns;
   final List<PlatformLatLng?> points;
 
   /// The start and end cap data, as JSON. These should be set only from Cap.toJson, and the native code must interpret it according to the internal implementation details of that method.
@@ -225,6 +274,21 @@ class PlatformPolyline {
   final bool visible;
   final int width;
   final int zIndex;
+}
+
+/// Enumeration of possible types for PatternItem.
+enum PlatformPatternItemType {
+  dot,
+  dash,
+  gap,
+}
+
+/// Pigeon equivalent of the PatternItem class.
+class PlatformPatternItem {
+  PlatformPatternItem({required this.type, this.length});
+
+  final PlatformPatternItemType type;
+  final double? length;
 }
 
 /// Pigeon equivalent of the Tile class.

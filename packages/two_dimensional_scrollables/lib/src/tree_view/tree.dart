@@ -886,6 +886,15 @@ class _TreeViewState<T> extends State<TreeView<T>>
       if (widget.onNodeToggle != null) {
         widget.onNodeToggle!(node);
       }
+
+      // If animation is disabled or duration is zero, skip the animation
+      // and update the active nodes immediately. This ensures the tree
+      // is updated correctly when the node's children are no longer active.
+      if (widget.toggleAnimationStyle?.duration == Duration.zero) {
+        _unpackActiveNodes();
+        return;
+      }
+
       final AnimationController controller =
           _currentAnimationForParent[node]?.controller ??
               AnimationController(

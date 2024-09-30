@@ -971,15 +971,6 @@ List<Error> _validateAst(Root root, String source) {
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
-      for (final TypeDeclaration typeArgument in field.type.typeArguments) {
-        if (!typeArgument.isNullable) {
-          result.add(Error(
-            message:
-                'Generic type parameters must be nullable in field "${field.name}" in class "${classDefinition.name}".',
-            lineNumber: _calculateLineNumberNullable(source, field.offset),
-          ));
-        }
-      }
       if (!(validTypes.contains(field.type.baseName) ||
           customClasses.contains(field.type.baseName) ||
           customEnums.contains(field.type.baseName))) {

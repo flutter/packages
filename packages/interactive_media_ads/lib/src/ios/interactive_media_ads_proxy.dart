@@ -15,11 +15,13 @@ class InteractiveMediaAdsProxy {
   const InteractiveMediaAdsProxy({
     this.newIMAAdDisplayContainer = IMAAdDisplayContainer.new,
     this.newUIViewController = UIViewController.new,
+    this.newIMAContentPlayhead = IMAContentPlayhead.new,
     this.newIMAAdsLoader = IMAAdsLoader.new,
     this.newIMAAdsRequest = IMAAdsRequest.new,
     this.newIMAAdsLoaderDelegate = IMAAdsLoaderDelegate.new,
     this.newIMAAdsManagerDelegate = IMAAdsManagerDelegate.new,
     this.newIMAAdsRenderingSettings = IMAAdsRenderingSettings.new,
+    this.newIMAFriendlyObstruction = IMAFriendlyObstruction.new,
   });
 
   /// Constructs [IMAAdDisplayContainer].
@@ -32,6 +34,9 @@ class InteractiveMediaAdsProxy {
   final UIViewController Function({
     void Function(UIViewController, bool)? viewDidAppear,
   }) newUIViewController;
+
+  /// Constructs [IMAContentPlayhead].
+  final IMAContentPlayhead Function() newIMAContentPlayhead;
 
   /// Constructs [IMAAdsLoader].
   final IMAAdsLoader Function({IMASettings? settings}) newIMAAdsLoader;
@@ -68,4 +73,11 @@ class InteractiveMediaAdsProxy {
 
   /// Constructs [IMAAdsRenderingSettings].
   final IMAAdsRenderingSettings Function() newIMAAdsRenderingSettings;
+
+  /// Constructs [IMAFriendlyObstruction].
+  final IMAFriendlyObstruction Function({
+    required UIView view,
+    required FriendlyObstructionPurpose purpose,
+    String? detailedReason,
+  }) newIMAFriendlyObstruction;
 }

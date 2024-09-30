@@ -362,7 +362,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     required int mapId,
   }) {
     return _hostApi(mapId)
-        .animateCamera(PlatformCameraUpdate(json: cameraUpdate.toJson()));
+        .animateCamera(_platformCameraUpdateFromCameraUpdate(cameraUpdate));
   }
 
   @override
@@ -371,7 +371,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     required int mapId,
   }) {
     return _hostApi(mapId)
-        .moveCamera(PlatformCameraUpdate(json: cameraUpdate.toJson()));
+        .moveCamera(_platformCameraUpdateFromCameraUpdate(cameraUpdate));
   }
 
   @override
@@ -769,9 +769,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   static PlatformPolyline _platformPolylineFromPolyline(Polyline polyline) {
     final List<PlatformLatLng?> points =
         polyline.points.map(_platformLatLngFromLatLng).toList();
-    final List<Object?> pattern = polyline.patterns.map((PatternItem item) {
-      return item.toJson();
-    }).toList();
+    final List<PlatformPatternItem?> pattern =
+        polyline.patterns.map(platformPatternItemFromPatternItem).toList();
     return PlatformPolyline(
       polylineId: polyline.polylineId.value,
       consumesTapEvents: polyline.consumeTapEvents,
@@ -798,6 +797,60 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       visible: tileOverlay.visible,
       tileSize: tileOverlay.tileSize,
     );
+  }
+
+  static PlatformCameraUpdate _platformCameraUpdateFromCameraUpdate(
+      CameraUpdate update) {
+    switch (update.updateType) {
+      case CameraUpdateType.newCameraPosition:
+        update as CameraUpdateNewCameraPosition;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateNewCameraPosition(
+                cameraPosition: _platformCameraPositionFromCameraPosition(
+                    update.cameraPosition)));
+      case CameraUpdateType.newLatLng:
+        update as CameraUpdateNewLatLng;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateNewLatLng(
+                latLng: _platformLatLngFromLatLng(update.latLng)));
+      case CameraUpdateType.newLatLngZoom:
+        update as CameraUpdateNewLatLngZoom;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateNewLatLngZoom(
+                latLng: _platformLatLngFromLatLng(update.latLng),
+                zoom: update.zoom));
+      case CameraUpdateType.newLatLngBounds:
+        update as CameraUpdateNewLatLngBounds;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateNewLatLngBounds(
+                bounds: _platformLatLngBoundsFromLatLngBounds(update.bounds)!,
+                padding: update.padding));
+      case CameraUpdateType.zoomTo:
+        update as CameraUpdateZoomTo;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateZoomTo(zoom: update.zoom));
+      case CameraUpdateType.zoomBy:
+        update as CameraUpdateZoomBy;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateZoomBy(
+                amount: update.amount,
+                focus: update.focus == null
+                    ? null
+                    : _platformOffsetFromOffset(update.focus!)));
+      case CameraUpdateType.zoomIn:
+        update as CameraUpdateZoomIn;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateZoom(out: false));
+      case CameraUpdateType.zoomOut:
+        update as CameraUpdateZoomOut;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateZoom(out: true));
+      case CameraUpdateType.scrollBy:
+        update as CameraUpdateScrollBy;
+        return PlatformCameraUpdate(
+            cameraUpdate:
+                PlatformCameraUpdateScrollBy(dx: update.dx, dy: update.dy));
+    }
   }
 }
 
@@ -1164,6 +1217,36 @@ PlatformJointType platformJointTypeFromJointType(JointType jointType) {
   // switch as needing an update.
   // ignore: dead_code
   return PlatformJointType.mitered;
+}
+
+/// Converts a PatternItem to Pigeon's PlatformPatternItem for PlatformPolyline
+/// pattern member.
+@visibleForTesting
+PlatformPatternItem platformPatternItemFromPatternItem(PatternItem item) {
+  final List<Object> json = item.toJson() as List<Object>;
+  final String tag = json[0] as String;
+  PlatformPatternItemType type;
+  double? length;
+
+  /// These string values identify the type of pattern. They are defined and
+  /// used in the PatternItem class's factory methods in
+  /// lib/src/types/pattern_item.dart, in the
+  /// google_maps_flutter_platform_interface package.
+  // TODO(schectman): Convert PatternItem to structured data.
+  // https://github.com/flutter/flutter/issues/155121
+  switch (tag) {
+    case 'dot':
+      type = PlatformPatternItemType.dot;
+    case 'dash':
+      type = PlatformPatternItemType.dash;
+      length = json[1] as double;
+    case 'gap':
+      type = PlatformPatternItemType.gap;
+      length = json[1] as double;
+    default:
+      throw ArgumentError('Invalid tag "$tag for PatternItem type.', 'item');
+  }
+  return PlatformPatternItem(type: type, length: length);
 }
 
 /// Update specification for a set of [TileOverlay]s.
