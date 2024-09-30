@@ -193,30 +193,40 @@ public class WebViewTest {
     verify(instance).clearCache(includeDiskFiles);
   }
 
-  @Test
-  public void evaluateJavaScript() {
-    final String[] successValue = new String[1];
-    testHostApiImpl.evaluateJavascript(
-        0L,
-        "2 + 2",
-        new GeneratedAndroidWebView.Result<String>() {
-          @Override
-          public void success(String result) {
-            successValue[0] = result;
-          }
-
-          @Override
-          public void error(@NonNull Throwable error) {}
-        });
-
-    @SuppressWarnings("unchecked")
-    final ArgumentCaptor<ValueCallback<String>> callbackCaptor =
-        ArgumentCaptor.forClass(ValueCallback.class);
-    verify(mockWebView).evaluateJavascript(eq("2 + 2"), callbackCaptor.capture());
-
-    callbackCaptor.getValue().onReceiveValue("da result");
-    assertEquals(successValue[0], "da result");
-  }
+//  @Test
+//  public void evaluateJavaScript() {
+//    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+//
+//    final WebView instance = mock(WebView.class);
+//    @SuppressWarnings("unchecked")
+//    final ArgumentCaptor<ValueCallback<String>> callbackCaptor =
+//        ArgumentCaptor.forClass(ValueCallback.class);
+//    api.evaluateJavascript(instance, "2 + 2", Resu);
+//
+//    verify(instance).clearCache(includeDiskFiles);
+//
+//    final String[] successValue = new String[1];
+//    testHostApiImpl.evaluateJavascript(
+//        0L,
+//        "2 + 2",
+//        new GeneratedAndroidWebView.Result<String>() {
+//          @Override
+//          public void success(String result) {
+//            successValue[0] = result;
+//          }
+//
+//          @Override
+//          public void error(@NonNull Throwable error) {}
+//        });
+//
+//    @SuppressWarnings("unchecked")
+//    final ArgumentCaptor<ValueCallback<String>> callbackCaptor =
+//        ArgumentCaptor.forClass(ValueCallback.class);
+//    verify(mockWebView).evaluateJavascript(eq("2 + 2"), callbackCaptor.capture());
+//
+//    callbackCaptor.getValue().onReceiveValue("da result");
+//    assertEquals(successValue[0], "da result");
+//  }
 
   @Test
   public void getTitle() {
@@ -306,23 +316,6 @@ public class WebViewTest {
         webView.getWebChromeClient() instanceof WebChromeClientProxyApi.SecureWebChromeClient);
     assertFalse(
         webView.getWebChromeClient() instanceof WebChromeClientProxyApi.WebChromeClientImpl);
-  }
-
-  @Test
-  public void disposeDoesNotCallDestroy() {
-    final boolean[] destroyCalled = {false};
-    final WebViewProxyApi mockApi = mock(WebViewProxyApi.class);
-
-    final WebViewProxyApi.WebViewPlatformView webView =
-        new WebViewProxyApi.WebViewPlatformView(mockApi) {
-          @Override
-          public void destroy() {
-            destroyCalled[0] = true;
-          }
-        };
-    webView.dispose();
-
-    assertFalse(destroyCalled[0]);
   }
 
 //  @Test

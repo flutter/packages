@@ -276,4 +276,9 @@ public class WebViewProxyApi extends PigeonApiWebView {
   public ProxyApiRegistrar getPigeonRegistrar() {
     return (ProxyApiRegistrar) super.getPigeonRegistrar();
   }
+
+  @Override
+  public void destroy(@NonNull WebView pigeon_instance) {
+    pigeon_instance.destroy();
+  }
 }

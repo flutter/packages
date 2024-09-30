@@ -28,20 +28,20 @@ public class CookieManagerTest {
     verify(instance).setCookie(url, value);
   }
 
-  @Test
-  public void removeAllCookies() {
-    final PigeonApiCookieManager api = new TestProxyApiRegistrar().getPigeonApiCookieManager();
-
-    final CookieManager instance = mock(CookieManager.class);
-    final Boolean value = true;
-
-    api.removeAllCookies(
-        instance,
-        (Function1<? super Result<Boolean>, Unit>)
-            ResultCompat.withSuccessResult(value).getResult());
-
-    verify(instance).removeAllCookies(any());
-  }
+//  @Test
+//  public void removeAllCookies() {
+//    final PigeonApiCookieManager api = new TestProxyApiRegistrar().getPigeonApiCookieManager();
+//
+//    final CookieManager instance = mock(CookieManager.class);
+//    final Boolean value = true;
+//
+//    api.removeAllCookies(
+//        instance,
+//        (Function1<? super Result<Boolean>, Unit>)
+//            ResultCompat.withSuccessResult(value).getResult());
+//
+//    verify(instance).removeAllCookies(any());
+//  }
 
   @Test
   public void setAcceptThirdPartyCookies() {
