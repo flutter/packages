@@ -4,25 +4,17 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.net.Uri;
 import android.webkit.HttpAuthHandler;
 import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
-
 import io.flutter.plugins.webviewflutter.WebViewClientProxyApi.WebViewClientImpl;
-
-import java.util.HashMap;
-
 import org.junit.Test;
 
 public class WebViewClientTest {
@@ -51,7 +43,9 @@ public class WebViewClientTest {
     final String failingUrl = "myString";
     instance.onReceivedError(webView, errorCode.intValue(), description, failingUrl);
 
-    verify(mockApi).onReceivedError(eq(instance), eq(webView), eq(errorCode), eq(description), eq(failingUrl), any());
+    verify(mockApi)
+        .onReceivedError(
+            eq(instance), eq(webView), eq(errorCode), eq(description), eq(failingUrl), any());
   }
 
   @Test
@@ -151,6 +145,8 @@ public class WebViewClientTest {
     final String realm = "myString";
     instance.onReceivedHttpAuthRequest(webView, handler, host, realm);
 
-    verify(mockApi).onReceivedHttpAuthRequest(eq(instance), eq(webView), eq(handler), eq(host), eq(realm), any());
+    verify(mockApi)
+        .onReceivedHttpAuthRequest(
+            eq(instance), eq(webView), eq(handler), eq(host), eq(realm), any());
   }
 }

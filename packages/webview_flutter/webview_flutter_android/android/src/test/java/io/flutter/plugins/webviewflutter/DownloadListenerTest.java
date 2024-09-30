@@ -12,20 +12,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.flutter.plugins.webviewflutter.DownloadListenerProxyApi.DownloadListenerImpl;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class DownloadListenerTest {
   @Test
   public void pigeon_defaultConstructor() {
-    final PigeonApiDownloadListener api = new TestProxyApiRegistrar().getPigeonApiDownloadListener();
+    final PigeonApiDownloadListener api =
+        new TestProxyApiRegistrar().getPigeonApiDownloadListener();
 
-    assertTrue(api.pigeon_defaultConstructor() instanceof DownloadListenerProxyApi.DownloadListenerImpl);
+    assertTrue(
+        api.pigeon_defaultConstructor() instanceof DownloadListenerProxyApi.DownloadListenerImpl);
   }
 
   @Test
@@ -41,6 +37,14 @@ public class DownloadListenerTest {
     final Long contentLength = 0L;
     instance.onDownloadStart(url, userAgent, contentDisposition, mimetype, contentLength);
 
-    verify(mockApi).onDownloadStart(eq(instance), eq(url), eq(userAgent), eq(contentDisposition), eq(mimetype), eq(contentLength), any());
+    verify(mockApi)
+        .onDownloadStart(
+            eq(instance),
+            eq(url),
+            eq(userAgent),
+            eq(contentDisposition),
+            eq(mimetype),
+            eq(contentLength),
+            any());
   }
 }

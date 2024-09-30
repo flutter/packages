@@ -4,26 +4,22 @@
 
 package io.flutter.plugins.webviewflutter;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import android.net.Uri;
 import android.webkit.WebResourceRequest;
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import org.mockito.Mockito;
-import static org.mockito.Mockito.any;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.junit.Test;
 
 public class WebResourceRequestTest {
   @Test
   public void url() {
-    final PigeonApiWebResourceRequest api = new TestProxyApiRegistrar().getPigeonApiWebResourceRequest();
+    final PigeonApiWebResourceRequest api =
+        new TestProxyApiRegistrar().getPigeonApiWebResourceRequest();
 
     final WebResourceRequest instance = mock(WebResourceRequest.class);
     final String value = "myString";
@@ -34,7 +30,8 @@ public class WebResourceRequestTest {
 
   @Test
   public void isForMainFrame() {
-    final PigeonApiWebResourceRequest api = new TestProxyApiRegistrar().getPigeonApiWebResourceRequest();
+    final PigeonApiWebResourceRequest api =
+        new TestProxyApiRegistrar().getPigeonApiWebResourceRequest();
 
     final WebResourceRequest instance = mock(WebResourceRequest.class);
     final Boolean value = true;
@@ -45,7 +42,8 @@ public class WebResourceRequestTest {
 
   @Test
   public void isRedirect() {
-    final PigeonApiWebResourceRequest api = new TestProxyApiRegistrar().getPigeonApiWebResourceRequest();
+    final PigeonApiWebResourceRequest api =
+        new TestProxyApiRegistrar().getPigeonApiWebResourceRequest();
 
     final WebResourceRequest instance = mock(WebResourceRequest.class);
     final Boolean value = true;
@@ -56,7 +54,8 @@ public class WebResourceRequestTest {
 
   @Test
   public void hasGesture() {
-    final PigeonApiWebResourceRequest api = new TestProxyApiRegistrar().getPigeonApiWebResourceRequest();
+    final PigeonApiWebResourceRequest api =
+        new TestProxyApiRegistrar().getPigeonApiWebResourceRequest();
 
     final WebResourceRequest instance = mock(WebResourceRequest.class);
     final Boolean value = true;
@@ -67,7 +66,8 @@ public class WebResourceRequestTest {
 
   @Test
   public void method() {
-    final PigeonApiWebResourceRequest api = new TestProxyApiRegistrar().getPigeonApiWebResourceRequest();
+    final PigeonApiWebResourceRequest api =
+        new TestProxyApiRegistrar().getPigeonApiWebResourceRequest();
 
     final WebResourceRequest instance = mock(WebResourceRequest.class);
     final String value = "myString";
@@ -78,10 +78,16 @@ public class WebResourceRequestTest {
 
   @Test
   public void requestHeaders() {
-    final PigeonApiWebResourceRequest api = new TestProxyApiRegistrar().getPigeonApiWebResourceRequest();
+    final PigeonApiWebResourceRequest api =
+        new TestProxyApiRegistrar().getPigeonApiWebResourceRequest();
 
     final WebResourceRequest instance = mock(WebResourceRequest.class);
-    final Map<String, String> value = new HashMap<String, String>() {{put("myString", "myString");}};
+    final Map<String, String> value =
+        new HashMap<String, String>() {
+          {
+            put("myString", "myString");
+          }
+        };
     when(instance.getRequestHeaders()).thenReturn(value);
 
     assertEquals(value, api.requestHeaders(instance));
@@ -89,7 +95,8 @@ public class WebResourceRequestTest {
 
   @Test
   public void requestHeadersHandlesNull() {
-    final PigeonApiWebResourceRequest api = new TestProxyApiRegistrar().getPigeonApiWebResourceRequest();
+    final PigeonApiWebResourceRequest api =
+        new TestProxyApiRegistrar().getPigeonApiWebResourceRequest();
 
     final WebResourceRequest instance = mock(WebResourceRequest.class);
     final Map<String, String> value = Collections.emptyMap();

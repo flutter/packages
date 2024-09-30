@@ -5,20 +5,12 @@
 package io.flutter.plugins.webviewflutter;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.webkit.WebSettings;
-import android.webkit.WebView;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class WebSettingsTest {
   @Test
@@ -172,6 +164,6 @@ public class WebSettingsTest {
     final String value = "myString";
     when(instance.getUserAgentString()).thenReturn(value);
 
-    assertEquals(value, api.getUserAgentString(instance ));
+    assertEquals(value, api.getUserAgentString(instance));
   }
 }

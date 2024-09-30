@@ -5,26 +5,14 @@
 package io.flutter.plugins.webviewflutter;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.webkit.PermissionRequest;
-import io.flutter.plugin.common.BinaryMessenger;
-
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class PermissionRequestTest {
   // These values MUST equal the constants for the Dart PermissionRequestConstants class.
@@ -40,29 +28,32 @@ public class PermissionRequestTest {
 
   @Test
   public void grant() {
-    final PigeonApiPermissionRequest api = new TestProxyApiRegistrar().getPigeonApiPermissionRequest();
+    final PigeonApiPermissionRequest api =
+        new TestProxyApiRegistrar().getPigeonApiPermissionRequest();
 
     final PermissionRequest instance = mock(PermissionRequest.class);
     final List<String> resources =
         Collections.singletonList(PermissionRequest.RESOURCE_AUDIO_CAPTURE);
     api.grant(instance, resources);
 
-    verify(instance).grant(new String[]{PermissionRequest.RESOURCE_AUDIO_CAPTURE});
+    verify(instance).grant(new String[] {PermissionRequest.RESOURCE_AUDIO_CAPTURE});
   }
 
   @Test
   public void deny() {
-    final PigeonApiPermissionRequest api = new TestProxyApiRegistrar().getPigeonApiPermissionRequest();
+    final PigeonApiPermissionRequest api =
+        new TestProxyApiRegistrar().getPigeonApiPermissionRequest();
 
     final PermissionRequest instance = mock(PermissionRequest.class);
-    api.deny(instance );
+    api.deny(instance);
 
     verify(instance).deny();
   }
 
   @Test
   public void resources() {
-    final PigeonApiPermissionRequest api = new TestProxyApiRegistrar().getPigeonApiPermissionRequest();
+    final PigeonApiPermissionRequest api =
+        new TestProxyApiRegistrar().getPigeonApiPermissionRequest();
 
     final PermissionRequest instance = mock(PermissionRequest.class);
     final List<String> value = Collections.singletonList(PermissionRequest.RESOURCE_AUDIO_CAPTURE);

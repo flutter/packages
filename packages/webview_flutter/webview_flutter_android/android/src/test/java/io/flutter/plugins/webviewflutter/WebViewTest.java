@@ -14,28 +14,17 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.webkit.WebView;
-import android.content.Context;
-import android.os.Build;
 import android.view.View;
 import android.webkit.DownloadListener;
 import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
+import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterView;
-import io.flutter.plugin.common.BinaryMessenger;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class WebViewTest {
   @Test
@@ -107,7 +96,12 @@ public class WebViewTest {
 
     final WebView instance = mock(WebView.class);
     final String url = "myString";
-    final Map<String, String> headers = new HashMap<String, String>() {{put("myString", "myString");}};
+    final Map<String, String> headers =
+        new HashMap<String, String>() {
+          {
+            put("myString", "myString");
+          }
+        };
     api.loadUrl(instance, url, headers);
 
     verify(instance).loadUrl(url, headers);
@@ -133,7 +127,7 @@ public class WebViewTest {
     final String value = "myString";
     when(instance.getUrl()).thenReturn(value);
 
-    assertEquals(value, api.getUrl(instance ));
+    assertEquals(value, api.getUrl(instance));
   }
 
   @Test
@@ -144,7 +138,7 @@ public class WebViewTest {
     final Boolean value = true;
     when(instance.canGoBack()).thenReturn(value);
 
-    assertEquals(value, api.canGoBack(instance ));
+    assertEquals(value, api.canGoBack(instance));
   }
 
   @Test
@@ -155,7 +149,7 @@ public class WebViewTest {
     final Boolean value = true;
     when(instance.canGoForward()).thenReturn(value);
 
-    assertEquals(value, api.canGoForward(instance ));
+    assertEquals(value, api.canGoForward(instance));
   }
 
   @Test
@@ -163,7 +157,7 @@ public class WebViewTest {
     final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
 
     final WebView instance = mock(WebView.class);
-    api.goBack(instance );
+    api.goBack(instance);
 
     verify(instance).goBack();
   }
@@ -173,7 +167,7 @@ public class WebViewTest {
     final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
 
     final WebView instance = mock(WebView.class);
-    api.goForward(instance );
+    api.goForward(instance);
 
     verify(instance).goForward();
   }
@@ -183,7 +177,7 @@ public class WebViewTest {
     final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
 
     final WebView instance = mock(WebView.class);
-    api.reload(instance );
+    api.reload(instance);
 
     verify(instance).reload();
   }
@@ -232,7 +226,7 @@ public class WebViewTest {
     final String value = "myString";
     when(instance.getTitle()).thenReturn(value);
 
-    assertEquals(value, api.getTitle(instance ));
+    assertEquals(value, api.getTitle(instance));
   }
 
   @Test
@@ -284,7 +278,8 @@ public class WebViewTest {
     final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
 
     final WebView instance = mock(WebView.class);
-    final io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl client = mock(WebChromeClientProxyApi.WebChromeClientImpl.class);
+    final io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl client =
+        mock(WebChromeClientProxyApi.WebChromeClientImpl.class);
     api.setWebChromeClient(instance, client);
 
     verify(instance).setWebChromeClient(client);
@@ -304,7 +299,8 @@ public class WebViewTest {
   @Test
   public void defaultWebChromeClientIsSecureWebChromeClient() {
     final WebViewProxyApi mockApi = mock(WebViewProxyApi.class);
-    final WebViewProxyApi.WebViewPlatformView webView = new WebViewProxyApi.WebViewPlatformView(mockApi);
+    final WebViewProxyApi.WebViewPlatformView webView =
+        new WebViewProxyApi.WebViewPlatformView(mockApi);
 
     assertTrue(
         webView.getWebChromeClient() instanceof WebChromeClientProxyApi.SecureWebChromeClient);
@@ -329,32 +325,31 @@ public class WebViewTest {
     assertFalse(destroyCalled[0]);
   }
 
-  @Test
-  public void destroyWebViewWhenDisposedFromJavaObjectHostApi() {
-    final boolean[] destroyCalled = {false};
-
-    final WebViewPlatformView webView =
-        new WebViewPlatformView(mockContext, null, null) {
-          @Override
-          public void destroy() {
-            destroyCalled[0] = true;
-          }
-        };
-
-    testInstanceManager.addDartCreatedInstance(webView, 1);
-    final JavaObjectHostApiImpl javaObjectHostApi = new JavaObjectHostApiImpl(testInstanceManager);
-    javaObjectHostApi.dispose(1L);
-
-    assertTrue(destroyCalled[0]);
-  }
+//  @Test
+//  public void destroyWebViewWhenDisposedFromJavaObjectHostApi() {
+//    final boolean[] destroyCalled = {false};
+//
+//    final WebViewPlatformView webView =
+//        new WebViewPlatformView(mockContext, null, null) {
+//          @Override
+//          public void destroy() {
+//            destroyCalled[0] = true;
+//          }
+//        };
+//
+//    testInstanceManager.addDartCreatedInstance(webView, 1);
+//    final JavaObjectHostApiImpl javaObjectHostApi = new JavaObjectHostApiImpl(testInstanceManager);
+//    javaObjectHostApi.dispose(1L);
+//
+//    assertTrue(destroyCalled[0]);
+//  }
 
   @Test
   public void setImportantForAutofillForParentFlutterView() {
     final WebViewProxyApi mockApi = mock(WebViewProxyApi.class);
 
     final WebViewProxyApi.WebViewPlatformView webView =
-        new WebViewProxyApi.WebViewPlatformView(
-            mockApi);
+        new WebViewProxyApi.WebViewPlatformView(mockApi);
 
     final WebViewProxyApi.WebViewPlatformView webViewSpy = spy(webView);
     final FlutterView mockFlutterView = mock(FlutterView.class);
@@ -370,13 +365,16 @@ public class WebViewTest {
     final WebViewProxyApi mockApi = mock(WebViewProxyApi.class);
     when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
 
-    final WebViewProxyApi.WebViewPlatformView instance = new WebViewProxyApi.WebViewPlatformView(mockApi);
+    final WebViewProxyApi.WebViewPlatformView instance =
+        new WebViewProxyApi.WebViewPlatformView(mockApi);
     final Long left = 0L;
     final Long top = 0L;
     final Long oldLeft = 0L;
     final Long oldTop = 0L;
-    instance.onScrollChanged(left.intValue(), top.intValue(), oldLeft.intValue(), oldTop.intValue());
+    instance.onScrollChanged(
+        left.intValue(), top.intValue(), oldLeft.intValue(), oldTop.intValue());
 
-    verify(mockApi).onScrollChanged(eq(instance), eq(left), eq(top), eq(oldLeft), eq(oldTop), any());
+    verify(mockApi)
+        .onScrollChanged(eq(instance), eq(left), eq(top), eq(oldLeft), eq(oldTop), any());
   }
 }

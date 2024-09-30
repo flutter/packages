@@ -7,7 +7,6 @@ package io.flutter.plugins.webviewflutter;
 import static org.mockito.Mockito.mock;
 
 import android.content.Context;
-
 import io.flutter.plugin.common.BinaryMessenger;
 
 /**

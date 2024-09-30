@@ -4,30 +4,16 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import android.os.Build;
 import android.webkit.CookieManager;
-import android.webkit.ValueCallback;
 import android.webkit.WebView;
-import androidx.annotation.NonNull;
-import io.flutter.plugin.common.BinaryMessenger;
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class CookieManagerTest {
   @Test
@@ -49,7 +35,10 @@ public class CookieManagerTest {
     final CookieManager instance = mock(CookieManager.class);
     final Boolean value = true;
 
-    api.removeAllCookies(instance, (Function1<? super Result<Boolean>, Unit>) ResultCompat.withSuccessResult(value).getResult());
+    api.removeAllCookies(
+        instance,
+        (Function1<? super Result<Boolean>, Unit>)
+            ResultCompat.withSuccessResult(value).getResult());
 
     verify(instance).removeAllCookies(any());
   }

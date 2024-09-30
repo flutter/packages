@@ -108,7 +108,8 @@ public class WebChromeClientTest {
 
     final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
     final android.view.View view = mock(View.class);
-    final android.webkit.WebChromeClient.CustomViewCallback callback = mock(WebChromeClient.CustomViewCallback.class);
+    final android.webkit.WebChromeClient.CustomViewCallback callback =
+        mock(WebChromeClient.CustomViewCallback.class);
     instance.onShowCustomView(view, callback);
 
     verify(mockApi).onShowCustomView(eq(instance), eq(view), eq(callback), any());
@@ -122,7 +123,7 @@ public class WebChromeClientTest {
     final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
     instance.onHideCustomView();
 
-    verify(mockApi).onHideCustomView(eq(instance) , any());
+    verify(mockApi).onHideCustomView(eq(instance), any());
   }
 
   @Test
@@ -132,10 +133,12 @@ public class WebChromeClientTest {
 
     final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
     final String origin = "myString";
-    final android.webkit.GeolocationPermissions.Callback callback = mock(GeolocationPermissions.Callback.class);
+    final android.webkit.GeolocationPermissions.Callback callback =
+        mock(GeolocationPermissions.Callback.class);
     instance.onGeolocationPermissionsShowPrompt(origin, callback);
 
-    verify(mockApi).onGeolocationPermissionsShowPrompt(eq(instance), eq(origin), eq(callback), any());
+    verify(mockApi)
+        .onGeolocationPermissionsShowPrompt(eq(instance), eq(origin), eq(callback), any());
   }
 
   @Test
@@ -146,7 +149,7 @@ public class WebChromeClientTest {
     final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
     instance.onGeolocationPermissionsHidePrompt();
 
-    verify(mockApi).onGeolocationPermissionsHidePrompt(eq(instance) , any());
+    verify(mockApi).onGeolocationPermissionsHidePrompt(eq(instance), any());
   }
 
   @Test
@@ -208,6 +211,7 @@ public class WebChromeClientTest {
     final JsPromptResult mockJsPromptResult = mock(JsPromptResult.class);
     instance.onJsPrompt(webView, url, message, defaultValue, mockJsPromptResult);
 
-    verify(mockApi).onJsPrompt(eq(instance), eq(webView), eq(url), eq(message), eq(defaultValue), any());
+    verify(mockApi)
+        .onJsPrompt(eq(instance), eq(webView), eq(url), eq(message), eq(defaultValue), any());
   }
 }

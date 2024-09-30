@@ -4,25 +4,18 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import android.net.Uri;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import org.mockito.Mockito;
-import static org.mockito.Mockito.any;
-import java.util.HashMap;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import android.webkit.WebResourceError;
+import org.junit.Test;
 
 public class WebResourceErrorTest {
   @Test
   public void errorCode() {
-    final PigeonApiWebResourceError api = new TestProxyApiRegistrar().getPigeonApiWebResourceError();
+    final PigeonApiWebResourceError api =
+        new TestProxyApiRegistrar().getPigeonApiWebResourceError();
 
     final WebResourceError instance = mock(WebResourceError.class);
     final Long value = 0L;
@@ -33,7 +26,8 @@ public class WebResourceErrorTest {
 
   @Test
   public void description() {
-    final PigeonApiWebResourceError api = new TestProxyApiRegistrar().getPigeonApiWebResourceError();
+    final PigeonApiWebResourceError api =
+        new TestProxyApiRegistrar().getPigeonApiWebResourceError();
 
     final WebResourceError instance = mock(WebResourceError.class);
     final String value = "myString";

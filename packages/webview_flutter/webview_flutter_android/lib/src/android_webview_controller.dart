@@ -93,6 +93,8 @@ class AndroidWebViewController extends PlatformWebViewController {
     _webView.settings.setBuiltInZoomControls(true);
 
     _webView.setWebChromeClient(_webChromeClient);
+
+    final Finalizer<int> a = Finalizer<int>((int value) {});
   }
 
   AndroidWebViewControllerCreationParams get _androidWebViewParams =>

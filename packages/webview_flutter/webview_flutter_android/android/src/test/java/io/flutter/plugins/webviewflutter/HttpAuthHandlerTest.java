@@ -5,20 +5,12 @@
 package io.flutter.plugins.webviewflutter;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.webkit.HttpAuthHandler;
-import io.flutter.plugin.common.BinaryMessenger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class HttpAuthHandlerTest {
   @Test
@@ -38,7 +30,7 @@ public class HttpAuthHandlerTest {
     final PigeonApiHttpAuthHandler api = new TestProxyApiRegistrar().getPigeonApiHttpAuthHandler();
 
     final HttpAuthHandler instance = mock(HttpAuthHandler.class);
-    api.cancel(instance );
+    api.cancel(instance);
 
     verify(instance).cancel();
   }
@@ -51,6 +43,6 @@ public class HttpAuthHandlerTest {
     final Boolean value = true;
     when(instance.useHttpAuthUsernamePassword()).thenReturn(value);
 
-    assertEquals(value, api.useHttpAuthUsernamePassword(instance ));
+    assertEquals(value, api.useHttpAuthUsernamePassword(instance));
   }
 }

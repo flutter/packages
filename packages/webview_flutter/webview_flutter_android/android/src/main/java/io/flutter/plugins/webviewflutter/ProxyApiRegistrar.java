@@ -56,11 +56,6 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
             Log.getStackTraceString(exception)));
   }
 
-  @Override
-  public AndroidWebkitLibraryPigeonInstanceManager getInstanceManager() {
-    return null;
-  }
-
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   @NonNull
   @Override

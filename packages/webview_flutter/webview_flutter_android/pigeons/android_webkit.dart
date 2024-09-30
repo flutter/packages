@@ -301,6 +301,9 @@ abstract class WebView extends View {
 
   /// Sets the background color for this view.
   void setBackgroundColor(int color);
+
+  /// Destroys the internal state of this WebView.
+  void destroy();
 }
 
 /// Manages settings state for a `WebView`.
