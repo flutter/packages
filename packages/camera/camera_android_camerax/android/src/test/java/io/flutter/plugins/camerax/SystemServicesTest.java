@@ -147,7 +147,7 @@ public class SystemServicesTest {
 
   @Test
   @Config(sdk = 28)
-  public void isPreviewPreTransformed_returnsTrueWhenRunningSdk29() {
+  public void isPreviewPreTransformed_returnsTrueWhenRunningSdk28() {
     final SystemServicesHostApiImpl systemServicesHostApi =
         new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
     assertTrue(systemServicesHostApi.isPreviewPreTransformed());
