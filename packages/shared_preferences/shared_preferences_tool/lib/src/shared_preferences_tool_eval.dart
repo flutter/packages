@@ -301,20 +301,12 @@ extension on EvalOnDartLibrary {
       isAlive: isAlive,
     );
 
-    // Create a empty list in memory to hold the future error instance.
-    // It could've been anything that can handle values passed by reference.
-    final InstanceRef errorHolderRef = await safeEval(
-      '[]',
-      isAlive: isAlive,
-    );
-
     // Add the future value instance to the list once the future completes
     await safeEval(
-      '$expression.then(valueHolder.add).onError(errorHolderRef.add);',
+      '$expression.then(valueHolder.add);',
       isAlive: isAlive,
       scope: <String, String>{
         'valueHolder': valueHolderRef.id!,
-        'errorHolderRef': errorHolderRef.id!,
       },
     );
 
