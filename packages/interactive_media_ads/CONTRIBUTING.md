@@ -147,10 +147,10 @@ iOS:
 
 ```yaml
 pigeon:
-    git:
-      url: git@github.com:bparrishMines/packages.git
-      ref: pigeon_wrapper_swift
-      path: packages/pigeon
+  git:
+    url: git@github.com:bparrishMines/packages.git
+    ref: pigeon_wrapper_swift
+    path: packages/pigeon
 ```
 
 ##### 3. Uncomment the multiline comments in the pigeon file
