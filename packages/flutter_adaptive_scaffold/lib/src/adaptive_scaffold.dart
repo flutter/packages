@@ -362,7 +362,7 @@ class AdaptiveScaffold extends StatefulWidget {
         padding: padding,
         child: SizedBox(
           width: width,
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.sizeOf(context).height,
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return SingleChildScrollView(

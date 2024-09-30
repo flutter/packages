@@ -1,3 +1,7 @@
+## 2.9.3
+
+* Corrects an incorrect comment in polyline.dart file.
+
 ## 2.9.2
 
 * Corrects JSON tag for `CameraUpdateNewLatLngBounds`.
