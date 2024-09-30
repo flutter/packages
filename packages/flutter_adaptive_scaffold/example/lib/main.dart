@@ -693,7 +693,7 @@ class _ItemListTile extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyLarge),
                 const SizedBox(height: 9),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width,
+                  width: MediaQuery.sizeOf(context).width,
                   child: (email.bodyImage != '')
                       ? Image.asset(email.bodyImage)
                       : Container(),
@@ -717,7 +717,7 @@ class _DetailTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SizedBox(
-        height: MediaQuery.of(context).size.height,
+        height: MediaQuery.sizeOf(context).height,
         child: Container(
           decoration: const BoxDecoration(
             color: Color.fromARGB(255, 245, 241, 248),
@@ -891,7 +891,7 @@ class _EmailTile extends StatelessWidget {
                       color: Colors.grey[700], height: 1.35, fontSize: 14.5)),
               const SizedBox(height: 9),
               SizedBox(
-                  width: MediaQuery.of(context).size.width,
+                  width: MediaQuery.sizeOf(context).width,
                   child:
                       (bodyImage != '') ? Image.asset(bodyImage) : Container()),
               const SizedBox(height: 10),

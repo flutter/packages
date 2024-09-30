@@ -11,8 +11,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
+  test: ^1.19.5
+  web: ">=0.5.1 <2.0.0"
   web_benchmarks:
     path: ../../
 

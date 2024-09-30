@@ -443,35 +443,35 @@ void main() {
 class TestBreakpoint0 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width >= 0;
+    return MediaQuery.sizeOf(context).width >= 0;
   }
 }
 
 class TestBreakpoint400 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width > 400;
+    return MediaQuery.sizeOf(context).width > 400;
   }
 }
 
 class TestBreakpoint800 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width > 800;
+    return MediaQuery.sizeOf(context).width > 800;
   }
 }
 
 class TestBreakpoint1200 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width > 1200;
+    return MediaQuery.sizeOf(context).width > 1200;
   }
 }
 
 class TestBreakpoint1600 extends Breakpoint {
   @override
   bool isActive(BuildContext context) {
-    return MediaQuery.of(context).size.width > 1600;
+    return MediaQuery.sizeOf(context).width > 1600;
   }
 }
 
@@ -664,35 +664,35 @@ MediaQuery slot(double width, Duration duration, WidgetTester tester) {
           TestBreakpoint0(): SlotLayout.from(
             inAnimation: leftOutIn,
             outAnimation: leftInOut,
-            duration: duration,
+            inDuration: duration,
             key: const Key('0'),
             builder: (_) => const SizedBox(width: 10, height: 10),
           ),
           TestBreakpoint400(): SlotLayout.from(
             inAnimation: leftOutIn,
             outAnimation: leftInOut,
-            duration: duration,
+            inDuration: duration,
             key: const Key('400'),
             builder: (_) => const SizedBox(width: 10, height: 10),
           ),
           TestBreakpoint800(): SlotLayout.from(
             inAnimation: leftOutIn,
             outAnimation: leftInOut,
-            duration: duration,
+            inDuration: duration,
             key: const Key('800'),
             builder: (_) => const SizedBox(width: 10, height: 10),
           ),
           TestBreakpoint1200(): SlotLayout.from(
             inAnimation: leftOutIn,
             outAnimation: leftInOut,
-            duration: duration,
+            inDuration: duration,
             key: const Key('1200'),
             builder: (_) => const SizedBox(width: 10, height: 10),
           ),
           TestBreakpoint1600(): SlotLayout.from(
             inAnimation: leftOutIn,
             outAnimation: leftInOut,
-            duration: duration,
+            inDuration: duration,
             key: const Key('1600'),
             builder: (_) => const SizedBox(width: 10, height: 10),
           ),
