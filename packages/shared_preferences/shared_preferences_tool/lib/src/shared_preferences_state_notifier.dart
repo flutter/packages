@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:devtools_app_shared/utils.dart';
 import 'package:flutter/material.dart';
 
 import 'async_state.dart';
@@ -93,27 +94,12 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
 
   /// Filters the keys based on the provided token.
   ///
-  /// The function converts the token and each key to lowercase to ensure case-insensitive matching.
-  /// It then iterates over each character in the token and checks if it exists in the key.
-  /// The search for the next character starts from the position after the current character was found.
-  /// This ensures that the characters in the token appear in the same order in the key.
-  /// If a character from the token is not found in the key, the key is excluded from the result.
-  /// If all characters from the token are found in the key, the key is included in the result.
+  /// This function uses [caseInsensitiveFuzzyMatch] to filter the keys.
   void filter(String token) {
-    final String lowercaseToken = token.toLowerCase();
-
     value = value.whenData((SharedPreferencesState data) {
       return data.copyWith(
         allKeys: _keysForSelectedApi.where((String key) {
-          String currentSubstring = key.toLowerCase();
-          for (final String char in lowercaseToken.characters) {
-            final int currentIndex = currentSubstring.indexOf(char);
-            if (currentIndex == -1) {
-              return false;
-            }
-            currentSubstring = currentSubstring.substring(currentIndex + 1);
-          }
-          return true;
+          return key.caseInsensitiveFuzzyMatch(token);
         }).toList(),
       );
     });

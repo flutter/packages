@@ -17,10 +17,22 @@ class _SharedPreferencesTool extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const DevToolsExtension(
-      child: SharedPreferencesStateProvider(
-        child: SharedPreferencesBody(),
-      ),
+    return DevToolsExtension(
+      child: Builder(builder: (BuildContext context) {
+        return FutureBuilder<Object>(
+            future: serviceManager.onServiceAvailable,
+            builder: (BuildContext context, AsyncSnapshot<Object> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: Text('Please connect to a VM service'),
+                );
+              }
+
+              return const SharedPreferencesStateProvider(
+                child: SharedPreferencesBody(),
+              );
+            });
+      }),
     );
   }
 }

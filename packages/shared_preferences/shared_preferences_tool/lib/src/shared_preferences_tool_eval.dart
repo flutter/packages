@@ -142,6 +142,23 @@ class SharedPreferencesToolEval {
   }
 
   Future<List<String>> _fetchAsyncKeys() async {
+    if (_isWeb) {
+      try {
+        final Instance checkLibraryLoaded = await _asyncEval.evalInstance(
+          'SharedPreferencesAsync()',
+          isAlive: _allKeysDisposable,
+        );
+        // Check if the library has been loaded for web targets
+        if (checkLibraryLoaded.valueAsString?.contains('has not been loaded') ??
+            false) {
+          return <String>[];
+        }
+      } on LibraryNotFound catch (_) {
+        // If the library is not found we also return an empty list.
+        return <String>[];
+      }
+    }
+
     final Instance keysInstance = await _asyncEval.prefsGetInstance(
       'getKeys()',
       _isWeb,
@@ -157,6 +174,23 @@ class SharedPreferencesToolEval {
   }
 
   Future<List<String>> _fetchLegacyKeys() async {
+    if (_isWeb) {
+      try {
+        final Instance checkLibraryLoaded = await _legacyEval.evalInstance(
+          'SharedPreferences.getInstance()',
+          isAlive: _allKeysDisposable,
+        );
+        // Check if the library has been loaded for web targets
+        if (checkLibraryLoaded.valueAsString?.contains('has not been loaded') ??
+            false) {
+          return <String>[];
+        }
+      } on LibraryNotFound catch (_) {
+        // If the library is not found we also return an empty list.
+        return <String>[];
+      }
+    }
+
     final Instance keysSetInstance = await _legacyEval.legacyPrefsGetInstance(
       'getKeys()',
       _isWeb,
@@ -267,12 +301,20 @@ extension on EvalOnDartLibrary {
       isAlive: isAlive,
     );
 
+    // Create a empty list in memory to hold the future error instance.
+    // It could've been anything that can handle values passed by reference.
+    final InstanceRef errorHolderRef = await safeEval(
+      '[]',
+      isAlive: isAlive,
+    );
+
     // Add the future value instance to the list once the future completes
     await safeEval(
-      '$expression.then(valueHolder.add);',
+      '$expression.then(valueHolder.add).onError(errorHolderRef.add);',
       isAlive: isAlive,
       scope: <String, String>{
         'valueHolder': valueHolderRef.id!,
+        'errorHolderRef': errorHolderRef.id!,
       },
     );
 
@@ -288,6 +330,18 @@ extension on EvalOnDartLibrary {
       if (retryCount > maxRetries) {
         throw StateError('Failed to get future value instance.');
       }
+
+      final Instance errorHolderInstance =
+          await safeGetInstance(errorHolderRef, isAlive);
+
+      // If the elements list is not empty it means the future has resolved with an error.
+      if (errorHolderInstance.elements case final List<dynamic> elements
+          when elements.isNotEmpty) {
+        final Object? errorInstance = elements.firstOrNull;
+
+        return errorInstance != null ? errorInstance as InstanceRef : null;
+      }
+
       final Instance holderInstance =
           await safeGetInstance(valueHolderRef, isAlive);
 
