@@ -110,7 +110,7 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
    * to CameraX to build the preview. If it is backed by an {@code ImageReader}, then CameraX will not
    * automatically apply the transformation needed to correct the preview.
    *
-   * <p>This is determine by the engine, who approximately uses {@code SurfaceTexture}s on Android SDKs
+   * <p>This is determined by the engine, which approximately uses {@code SurfaceTexture}s on Android SDKs
    * below 29.
    */
   @Override
