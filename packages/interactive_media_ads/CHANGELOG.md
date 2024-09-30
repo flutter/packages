@@ -2,6 +2,11 @@
 
 * Adds remaining methods for internal wrapper of the iOS native `IMAAdsRenderingSettings`.
 
+## 0.2.2+6
+
+* Bumps Android dependency `com.google.ads.interactivemedia.v3:interactivemedia` from `3.50.0` to
+  `3.35.1`.
+
 ## 0.2.2+5
 
 * Changes the example app to initialize the `AdsLoader` in `onContainerAdded`.
