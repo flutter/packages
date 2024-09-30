@@ -93,7 +93,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   // ···
   // Whether the widget should be displaying the content video. The content
   // player is hidden while Ads are playing.
-  bool _shouldShowContentVideo = true;
+  bool _shouldShowContentVideo = false;
 
   // Controls the content video player.
   late final VideoPlayerController _contentVideoController;
