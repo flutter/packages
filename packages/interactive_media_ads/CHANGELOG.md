@@ -1,3 +1,7 @@
+## 0.2.2+7
+
+* Adds internal wrapper for Android native `AdsRenderingSettings`.
+
 ## 0.2.2+5
 
 * Changes the example app to initialize the `AdsLoader` in `onContainerAdded`.
