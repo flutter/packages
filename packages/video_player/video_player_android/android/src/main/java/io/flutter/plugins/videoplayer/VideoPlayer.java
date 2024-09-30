@@ -85,6 +85,8 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
   }
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
+  // TODO(matanlurey): https://github.com/flutter/flutter/issues/155131.
+  @SuppressWarnings({"deprecation", "removal"})
   public void onSurfaceCreated() {
     if (savedStateDuring != null) {
       exoPlayer = createVideoPlayer();

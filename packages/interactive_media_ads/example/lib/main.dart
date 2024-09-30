@@ -52,7 +52,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   // #docregion example_widget
   // Whether the widget should be displaying the content video. The content
   // player is hidden while Ads are playing.
-  bool _shouldShowContentVideo = true;
+  bool _shouldShowContentVideo = false;
 
   // Controls the content video player.
   late final VideoPlayerController _contentVideoController;
@@ -70,6 +70,44 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   // #docregion ad_and_content_players
   late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
     onContainerAdded: (AdDisplayContainer container) {
+      _adsLoader = AdsLoader(
+        container: container,
+        onAdsLoaded: (OnAdsLoadedData data) {
+          final AdsManager manager = data.manager;
+          _adsManager = data.manager;
+
+          manager.setAdsManagerDelegate(AdsManagerDelegate(
+            onAdEvent: (AdEvent event) {
+              debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
+              switch (event.type) {
+                case AdEventType.loaded:
+                  manager.start();
+                case AdEventType.contentPauseRequested:
+                  _pauseContent();
+                case AdEventType.contentResumeRequested:
+                  _resumeContent();
+                case AdEventType.allAdsCompleted:
+                  manager.destroy();
+                  _adsManager = null;
+                case AdEventType.clicked:
+                case AdEventType.complete:
+                case _:
+              }
+            },
+            onAdErrorEvent: (AdErrorEvent event) {
+              debugPrint('AdErrorEvent: ${event.error.message}');
+              _resumeContent();
+            },
+          ));
+
+          manager.init();
+        },
+        onAdsLoadError: (AdsLoadErrorData data) {
+          debugPrint('OnAdsLoadError: ${data.error.message}');
+          _resumeContent();
+        },
+      );
+
       // Ads can't be requested until the `AdDisplayContainer` has been added to
       // the native View hierarchy.
       _requestAds(container);
@@ -127,44 +165,6 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
 
   // #docregion request_ads
   Future<void> _requestAds(AdDisplayContainer container) {
-    _adsLoader = AdsLoader(
-      container: container,
-      onAdsLoaded: (OnAdsLoadedData data) {
-        final AdsManager manager = data.manager;
-        _adsManager = data.manager;
-
-        manager.setAdsManagerDelegate(AdsManagerDelegate(
-          onAdEvent: (AdEvent event) {
-            debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
-            switch (event.type) {
-              case AdEventType.loaded:
-                manager.start();
-              case AdEventType.contentPauseRequested:
-                _pauseContent();
-              case AdEventType.contentResumeRequested:
-                _resumeContent();
-              case AdEventType.allAdsCompleted:
-                manager.destroy();
-                _adsManager = null;
-              case AdEventType.clicked:
-              case AdEventType.complete:
-              case _:
-            }
-          },
-          onAdErrorEvent: (AdErrorEvent event) {
-            debugPrint('AdErrorEvent: ${event.error.message}');
-            _resumeContent();
-          },
-        ));
-
-        manager.init();
-      },
-      onAdsLoadError: (AdsLoadErrorData data) {
-        debugPrint('OnAdsLoadError: ${data.error.message}');
-        _resumeContent();
-      },
-    );
-
     return _adsLoader.requestAds(AdsRequest(
       adTagUrl: _adTagUrl,
       contentProgressProvider: _contentProgressProvider,
