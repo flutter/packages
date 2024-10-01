@@ -15,11 +15,13 @@ void main() {
 
   test('dash', () {
     final PatternItem item = PatternItem.dash(10.0);
+    expect(item, isA<PatternItemWithLength>());
     expect(item.toJson(), equals(<Object>['dash', 10.0]));
   });
 
   test('gap', () {
     final PatternItem item = PatternItem.gap(20.0);
+    expect(item, isA<PatternItemWithLength>());
     expect(item.toJson(), equals(<Object>['gap', 20.0]));
   });
 }
