@@ -27,36 +27,6 @@ const int _kWarmUpSampleCount = 200;
 /// The total number of samples collected by a benchmark.
 const int kTotalSampleCount = _kWarmUpSampleCount + kMeasuredSampleCount;
 
-/// A benchmark metric that includes frame-related computations prior to
-/// submitting layer and picture operations to the underlying renderer, such as
-/// HTML and CanvasKit. During this phase we compute transforms, clips, and
-/// other information needed for rendering.
-const String kProfilePrerollFrame = 'preroll_frame';
-
-/// A benchmark metric that includes submitting layer and picture information
-/// to the renderer.
-const String kProfileApplyFrame = 'apply_frame';
-
-/// A benchmark metric that tracks the timespan between vsync start and raster
-/// finish for a Flutter frame.
-///
-/// This value corresponds to [FrameTiming.totalSpan] from the Flutter Engine.
-const String kFlutterFrameTotalTime = 'flutter_frame.total_time';
-
-/// A benchmark metric that tracks the duration to build the Flutter frame on
-/// the Dart UI thread.
-///
-/// This value corresponds to [FrameTiming.buildDuration] from the Flutter
-/// Engine.
-const String kFlutterFrameBuildTime = 'flutter_frame.build_time';
-
-/// A benchmark metric that tracks the duration to rasterize the Flutter frame
-/// on the Dart raster thread.
-///
-/// This value corresponds to [FrameTiming.rasterDuration] from the Flutter
-/// Engine.
-const String kFlutterFrameRasterTime = 'flutter_frame.raster_time';
-
 /// Measures the amount of time [action] takes.
 Duration timeAction(VoidCallback action) {
   final Stopwatch stopwatch = Stopwatch()..start();
@@ -270,7 +240,7 @@ abstract class SceneBuilderRecorder extends Recorder {
     PlatformDispatcher.instance.onDrawFrame = () {
       final FlutterView? view = PlatformDispatcher.instance.implicitView;
       try {
-        _profile.record('drawFrameDuration', () {
+        _profile.record(BenchmarkMetric.drawFrame.label, () {
           final SceneBuilder sceneBuilder = SceneBuilder();
           onDrawFrame(sceneBuilder);
           _profile.record('sceneBuildDuration', () {
@@ -410,8 +380,11 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
   @mustCallSuper
   void frameDidDraw() {
     endMeasureFrame();
-    profile.addDataPoint('drawFrameDuration', _drawFrameStopwatch.elapsed,
-        reported: true);
+    profile.addDataPoint(
+      BenchmarkMetric.drawFrame.label,
+      _drawFrameStopwatch.elapsed,
+      reported: true,
+    );
 
     if (shouldContinue()) {
       PlatformDispatcher.instance.scheduleFrame();
@@ -437,16 +410,18 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
         _RecordingWidgetsBinding.ensureInitialized();
     final Widget widget = createWidget();
 
-    registerEngineBenchmarkValueListener(kProfilePrerollFrame, (num value) {
+    registerEngineBenchmarkValueListener(BenchmarkMetric.prerollFrame.label,
+        (num value) {
       localProfile.addDataPoint(
-        kProfilePrerollFrame,
+        BenchmarkMetric.prerollFrame.label,
         Duration(microseconds: value.toInt()),
         reported: false,
       );
     });
-    registerEngineBenchmarkValueListener(kProfileApplyFrame, (num value) {
+    registerEngineBenchmarkValueListener(BenchmarkMetric.applyFrame.label,
+        (num value) {
       localProfile.addDataPoint(
-        kProfileApplyFrame,
+        BenchmarkMetric.applyFrame.label,
         Duration(microseconds: value.toInt()),
         reported: false,
       );
@@ -457,17 +432,17 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
         frameTimingsCallback = (List<FrameTiming> frameTimings) {
       for (final FrameTiming frameTiming in frameTimings) {
         localProfile.addDataPoint(
-          kFlutterFrameTotalTime,
+          BenchmarkMetric.flutterFrameTotalTime.label,
           frameTiming.totalSpan,
           reported: false,
         );
         localProfile.addDataPoint(
-          kFlutterFrameBuildTime,
+          BenchmarkMetric.flutterFrameBuildTime.label,
           frameTiming.buildDuration,
           reported: false,
         );
         localProfile.addDataPoint(
-          kFlutterFrameRasterTime,
+          BenchmarkMetric.flutterFrameRasterTime.label,
           frameTiming.rasterDuration,
           reported: false,
         );
@@ -480,8 +455,8 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
       await _runCompleter.future;
       return localProfile;
     } finally {
-      stopListeningToEngineBenchmarkValues(kProfilePrerollFrame);
-      stopListeningToEngineBenchmarkValues(kProfileApplyFrame);
+      stopListeningToEngineBenchmarkValues(BenchmarkMetric.prerollFrame.label);
+      stopListeningToEngineBenchmarkValues(BenchmarkMetric.applyFrame.label);
       binding.removeTimingsCallback(frameTimingsCallback);
     }
   }
@@ -551,8 +526,11 @@ abstract class WidgetBuildRecorder extends Recorder implements FrameRecorder {
     // Only record frames that show the widget.
     if (showWidget) {
       endMeasureFrame();
-      profile.addDataPoint('drawFrameDuration', _drawFrameStopwatch.elapsed,
-          reported: true);
+      profile.addDataPoint(
+        BenchmarkMetric.drawFrame.label,
+        _drawFrameStopwatch.elapsed,
+        reported: true,
+      );
     }
 
     if (shouldContinue()) {
