@@ -50,6 +50,36 @@ enum BenchmarkMetric {
 /// from the Blink trace summary.
 const String totalUiFrameAverage = 'totalUiFrame.average';
 
+/// The names for the values computed for each [BenchmarkMetric].
+enum BenchmarkMetricComputation {
+  /// The name for the computed value tracking the average value of the measured
+  /// samples without outliers.
+  average,
+
+  /// The name for the computed value tracking the average of outlier samples.
+  outlierAverage,
+
+  /// The name for the computed value tracking the outlier average divided by
+  /// the clean average.
+  outlierRatio,
+
+  /// The name for the computed value tracking the noise as a multiple of the
+  /// [average] value takes from clean samples.
+  noise,
+
+  /// The name for the computed value tracking the 50th percentile value from
+  /// the samples with outliers.
+  p50,
+
+  /// The name for the computed value tracking the 90th percentile value from
+  /// the samples with outliers.
+  p90,
+
+  /// The name for the computed value tracking the 95th percentile value from
+  /// the samples with outliers.
+  p95,
+}
+
 /// The list of expected benchmark metrics for the current compilation mode, as
 /// determined by the value of [useWasm].
 List<BenchmarkMetric> expectedBenchmarkMetrics({required bool useWasm}) {

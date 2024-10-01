@@ -98,22 +98,18 @@ Future<BenchmarkResults> _runBenchmarks({
 
   for (final String benchmarkName in benchmarkNames) {
     for (final String metricName in expectedMetrics) {
-      for (final String valueName in <String>[
-        'average',
-        'outlierAverage',
-        'outlierRatio',
-        'noise',
-      ]) {
+      for (final BenchmarkMetricComputation computation
+          in BenchmarkMetricComputation.values) {
         expect(
           taskResult.scores[benchmarkName]!.where((BenchmarkScore score) =>
-              score.metric == '$metricName.$valueName'),
+              score.metric == '$metricName.${computation.name}'),
           hasLength(1),
         );
       }
     }
     expect(
-      taskResult.scores[benchmarkName]!.where(
-          (BenchmarkScore score) => score.metric == 'totalUiFrame.average'),
+      taskResult.scores[benchmarkName]!
+          .where((BenchmarkScore score) => score.metric == totalUiFrameAverage),
       hasLength(1),
     );
   }

@@ -19,6 +19,7 @@ import 'package:web/web.dart' as html;
 
 import 'common.dart';
 import 'metrics.dart';
+import 'timeseries.dart';
 
 /// The number of samples from warm-up iterations.
 ///
@@ -692,6 +693,13 @@ class Timeseries {
     final double outlierAverage =
         outliers.isNotEmpty ? _computeAverage(name, outliers) : cleanAverage;
 
+    // Compute percentile values (e.g. p50, p90, p95).
+    final Map<double, double> percentiles = computePercentiles(
+      name,
+      generatePercentileTargets(),
+      candidateValues,
+    );
+
     final List<AnnotatedSample> annotatedValues = <AnnotatedSample>[
       for (final double warmUpValue in warmUpValues)
         AnnotatedSample(
@@ -714,6 +722,7 @@ class Timeseries {
       outlierAverage: outlierAverage,
       standardDeviation: standardDeviation,
       noise: noise,
+      percentiles: percentiles,
       cleanSampleCount: cleanValues.length,
       outlierSampleCount: outliers.length,
       samples: annotatedValues,
@@ -747,6 +756,7 @@ class TimeseriesStats {
     required this.outlierAverage,
     required this.standardDeviation,
     required this.noise,
+    required this.percentiles,
     required this.cleanSampleCount,
     required this.outlierSampleCount,
     required this.samples,
@@ -768,6 +778,13 @@ class TimeseriesStats {
   ///
   /// If [average] is zero, treats the result as perfect score, returns zero.
   final double noise;
+
+  /// The percentile values (p50, p90, p95, etc.) for the measured samples with
+  /// outliers.
+  ///
+  /// This [Map] is from percentile targets (e.g. 0.50 for p50, 0.90 for p90,
+  /// etc.) to the computed value for the [samples].
+  final Map<double, double> percentiles;
 
   /// The maximum value a sample can have without being considered an outlier.
   ///
@@ -815,6 +832,12 @@ class TimeseriesStats {
     buffer.writeln(' | outlier average: $outlierAverage μs');
     buffer.writeln(' | outlier/clean ratio: ${outlierRatio}x');
     buffer.writeln(' | noise: ${_ratioToPercent(noise)}');
+    for (final MapEntry<double, double> percentileEntry
+        in percentiles.entries) {
+      buffer.writeln(
+        ' | p${percentileEntry.key * 100}: ${percentileEntry.value} μs',
+      );
+    }
     return buffer.toString();
   }
 }
@@ -942,18 +965,24 @@ class Profile {
       final Timeseries timeseries = scoreData[key]!;
 
       if (timeseries.isReported) {
-        scoreKeys.add('$key.average');
+        scoreKeys.add('$key.${BenchmarkMetricComputation.average.name}');
         // Report `outlierRatio` rather than `outlierAverage`, because
         // the absolute value of outliers is less interesting than the
         // ratio.
-        scoreKeys.add('$key.outlierRatio');
+        scoreKeys.add('$key.${BenchmarkMetricComputation.outlierRatio.name}');
       }
 
       final TimeseriesStats stats = timeseries.computeStats();
-      json['$key.average'] = stats.average;
-      json['$key.outlierAverage'] = stats.outlierAverage;
-      json['$key.outlierRatio'] = stats.outlierRatio;
-      json['$key.noise'] = stats.noise;
+      json['$key.${BenchmarkMetricComputation.average.name}'] = stats.average;
+      json['$key.${BenchmarkMetricComputation.outlierAverage.name}'] =
+          stats.outlierAverage;
+      json['$key.${BenchmarkMetricComputation.outlierRatio.name}'] =
+          stats.outlierRatio;
+      json['$key.${BenchmarkMetricComputation.noise.name}'] = stats.noise;
+      for (final MapEntry<double, double> percentileEntry
+          in stats.percentiles.entries) {
+        json['$key.p${percentileEntry.key * 100}'] = percentileEntry.value;
+      }
     }
 
     json.addAll(extraData);
