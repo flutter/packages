@@ -106,12 +106,12 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   }
 
   /**
-   * Returns whether or not Impeller uses an {@code ImageReader} backend to provide a {@code Surface}
-   * to CameraX to build the preview. If it is backed by an {@code ImageReader}, then CameraX will not
-   * automatically apply the transformation needed to correct the preview.
+   * Returns whether or not Impeller uses an {@code ImageReader} backend to provide a {@code
+   * Surface} to CameraX to build the preview. If it is backed by an {@code ImageReader}, then
+   * CameraX will not automatically apply the transformation needed to correct the preview.
    *
-   * <p>This is determined by the engine, which approximately uses {@code SurfaceTexture}s on Android SDKs
-   * below 29.
+   * <p>This is determined by the engine, which approximately uses {@code SurfaceTexture}s on
+   * Android SDKs below 29.
    */
   @Override
   @NonNull
