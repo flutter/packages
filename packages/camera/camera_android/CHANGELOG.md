@@ -1,3 +1,7 @@
+## 0.10.9+12
+
+* Converts `getAvailableCameras` to Pigeon.
+
 ## 0.10.9+11
 
 * Updates annotations lib to 1.8.2.
