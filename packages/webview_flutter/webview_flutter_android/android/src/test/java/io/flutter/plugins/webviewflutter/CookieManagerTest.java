@@ -31,7 +31,6 @@ public class CookieManagerTest {
     verify(instance).setCookie(url, value);
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
   @Test
   public void removeAllCookies() {
     final PigeonApiCookieManager api = new TestProxyApiRegistrar().getPigeonApiCookieManager();
@@ -46,7 +45,8 @@ public class CookieManagerTest {
           return null;
         }));
 
-    final ArgumentCaptor<ValueCallback> valueCallbackArgumentCaptor =
+    @SuppressWarnings("unchecked")
+    final ArgumentCaptor<ValueCallback<Boolean>> valueCallbackArgumentCaptor =
         ArgumentCaptor.forClass(ValueCallback.class);
     verify(instance).removeAllCookies(valueCallbackArgumentCaptor.capture());
 

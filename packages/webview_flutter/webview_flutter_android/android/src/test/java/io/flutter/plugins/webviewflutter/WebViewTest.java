@@ -193,40 +193,27 @@ public class WebViewTest {
     verify(instance).clearCache(includeDiskFiles);
   }
 
-//  @Test
-//  public void evaluateJavaScript() {
-//    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
-//
-//    final WebView instance = mock(WebView.class);
-//    @SuppressWarnings("unchecked")
-//    final ArgumentCaptor<ValueCallback<String>> callbackCaptor =
-//        ArgumentCaptor.forClass(ValueCallback.class);
-//    api.evaluateJavascript(instance, "2 + 2", Resu);
-//
-//    verify(instance).clearCache(includeDiskFiles);
-//
-//    final String[] successValue = new String[1];
-//    testHostApiImpl.evaluateJavascript(
-//        0L,
-//        "2 + 2",
-//        new GeneratedAndroidWebView.Result<String>() {
-//          @Override
-//          public void success(String result) {
-//            successValue[0] = result;
-//          }
-//
-//          @Override
-//          public void error(@NonNull Throwable error) {}
-//        });
-//
-//    @SuppressWarnings("unchecked")
-//    final ArgumentCaptor<ValueCallback<String>> callbackCaptor =
-//        ArgumentCaptor.forClass(ValueCallback.class);
-//    verify(mockWebView).evaluateJavascript(eq("2 + 2"), callbackCaptor.capture());
-//
-//    callbackCaptor.getValue().onReceiveValue("da result");
-//    assertEquals(successValue[0], "da result");
-//  }
+  @SuppressWarnings("unchecked")
+  @Test
+  public void evaluateJavaScript() {
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    final String script = "2 + 2";
+    final String[] resultValue = new String[1];
+    api.evaluateJavascript(instance, script, ResultCompat.asCompatCallback(reply -> {
+      resultValue[0] = reply.getOrNull();
+      return null;
+    }));
+
+    final ArgumentCaptor<ValueCallback<String>> callbackCaptor =
+        ArgumentCaptor.forClass(ValueCallback.class);
+    verify(instance).evaluateJavascript(eq(script), callbackCaptor.capture());
+
+    final String result = "resultValue";
+    callbackCaptor.getValue().onReceiveValue(result);
+    assertEquals(resultValue[0], result);
+  }
 
   @Test
   public void getTitle() {
