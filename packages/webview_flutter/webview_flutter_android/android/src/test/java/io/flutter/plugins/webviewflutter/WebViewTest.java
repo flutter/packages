@@ -193,7 +193,6 @@ public class WebViewTest {
     verify(instance).clearCache(includeDiskFiles);
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void evaluateJavaScript() {
     final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
@@ -206,6 +205,7 @@ public class WebViewTest {
       return null;
     }));
 
+    @SuppressWarnings("unchecked")
     final ArgumentCaptor<ValueCallback<String>> callbackCaptor =
         ArgumentCaptor.forClass(ValueCallback.class);
     verify(instance).evaluateJavascript(eq(script), callbackCaptor.capture());
@@ -306,24 +306,30 @@ public class WebViewTest {
         webView.getWebChromeClient() instanceof WebChromeClientProxyApi.WebChromeClientImpl);
   }
 
-//  @Test
-//  public void destroyWebViewWhenDisposedFromJavaObjectHostApi() {
-//    final boolean[] destroyCalled = {false};
-//
-//    final WebViewPlatformView webView =
-//        new WebViewPlatformView(mockContext, null, null) {
-//          @Override
-//          public void destroy() {
-//            destroyCalled[0] = true;
-//          }
-//        };
-//
-//    testInstanceManager.addDartCreatedInstance(webView, 1);
-//    final JavaObjectHostApiImpl javaObjectHostApi = new JavaObjectHostApiImpl(testInstanceManager);
-//    javaObjectHostApi.dispose(1L);
-//
-//    assertTrue(destroyCalled[0]);
-//  }
+  // This test verifies that WebView.destroy() is called when the Dart instance is garbage collected.
+  // This requires adding
+  //
+  // ```
+  // val instance: Any? = getInstance(identifier)
+  // if (instance is WebViewPlatformView) {
+  //   instance.destroy()
+  // }
+  // ```
+  //
+  // to `AndroidWebkitLibraryPigeonInstanceManager.remove` in the generated code. This is done as a
+  // temporary workaround to prevent the transition to the new pigeon ProxyApi generator from being
+  // a breaking change. Maintainers should consider whether continuing  to call `destroy` on
+  // `WebView` is valuable.
+  @Test
+  public void destroyWebViewWhenRemovedFromInstanceManager() {
+    final WebViewProxyApi.WebViewPlatformView mockWebView = mock(WebViewProxyApi.WebViewPlatformView.class);
+
+    final TestProxyApiRegistrar registrar = new TestProxyApiRegistrar();
+    registrar.getInstanceManager().addDartCreatedInstance(mockWebView, 0);
+
+    registrar.getInstanceManager().remove(0);
+    verify(mockWebView).destroy();
+  }
 
   @Test
   public void setImportantForAutofillForParentFlutterView() {
