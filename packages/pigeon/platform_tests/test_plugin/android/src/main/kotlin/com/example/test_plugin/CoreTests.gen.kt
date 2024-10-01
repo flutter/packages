@@ -566,53 +566,50 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
   }
 }
 
-private class GeneralStreamHandler(val wrapper: PigeonEventChannelWrapper) :
+private class PigeonStreamHandler<T>(val wrapper: PigeonEventChannelWrapper<T>) :
     EventChannel.StreamHandler {
-  var eventSink: EventChannel.EventSink? = null
+  var pigeonSink: PigeonEventSink<T>? = null
 
   override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
-    wrapper.runBeforeListen()
-    eventSink = sink
-    wrapper.runAfterListen()
+    pigeonSink = PigeonEventSink<T>(sink)
+    wrapper.onListen(p0, pigeonSink!!)
   }
 
   override fun onCancel(p0: Any?) {
-    wrapper.runBeforeCancel()
-    eventSink = null
-    wrapper.runAfterCancel()
+    pigeonSink = null
+    wrapper.onCancel(p0)
   }
 }
 
-interface PigeonEventChannelWrapper {
-  open fun runBeforeListen() {}
+interface PigeonEventChannelWrapper<T> {
+  open fun onListen(p0: Any?, pigeonSink: PigeonEventSink<T>) {}
 
-  open fun runAfterListen() {}
-
-  open fun runBeforeCancel() {}
-
-  open fun runAfterCancel() {}
+  open fun onCancel(p0: Any?) {}
 }
 
-abstract class StreamInts : PigeonEventChannelWrapper {
-  fun success(value: Long) {
-    streamHandler?.eventSink?.success(value)
+class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
+  fun success(value: T) {
+    sink.success(value)
   }
 
-  fun error(errorCode: String, errorMessage: String? = null, errorDetails: Any? = null) {
-    streamHandler?.eventSink?.error(errorCode, errorMessage, errorDetails)
+  fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
+    sink.error(errorCode, errorMessage, errorDetails)
   }
+}
 
+abstract class StreamIntsStreamHandler : PigeonEventChannelWrapper<Long> {
   companion object {
-    private var streamHandler: GeneralStreamHandler? = null
-
-    fun register(messenger: BinaryMessenger, wrapper: StreamInts, instanceName: String = "") {
+    fun register(
+        messenger: BinaryMessenger,
+        wrapper: StreamIntsStreamHandler,
+        instanceName: String = ""
+    ) {
       var channelName: String =
           "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts"
       if (instanceName.isNotEmpty()) {
-        channelName =
-            "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts.$instanceName"
+        channelName += ".$instanceName"
       }
-      streamHandler = GeneralStreamHandler(wrapper)
+      val streamHandler = PigeonStreamHandler<Long>(wrapper)
       EventChannel(messenger, channelName).setStreamHandler(streamHandler)
     }
   }

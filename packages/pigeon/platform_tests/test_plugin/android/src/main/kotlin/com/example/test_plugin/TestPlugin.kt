@@ -15,7 +15,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   private var flutterSmallApiOne: FlutterSmallApi? = null
   private var flutterSmallApiTwo: FlutterSmallApi? = null
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
-  private var streamIntsClass: StreamInts? = null
+  private var streamIntsClass: StreamIntsStreamHandler? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -30,7 +30,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     proxyApiRegistrar = ProxyApiRegistrar(binding.binaryMessenger)
     proxyApiRegistrar!!.setUp()
 
-    StreamInts.register(binding.binaryMessenger, SendInts)
+    StreamIntsStreamHandler.register(binding.binaryMessenger, SendInts)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -735,10 +735,10 @@ class TestPluginWithSuffix : HostSmallApi {
   }
 }
 
-object SendInts : StreamInts() {
+object SendInts : StreamIntsStreamHandler() {
   val handler = Handler(Looper.getMainLooper())
 
-  override fun runAfterListen() {
+  override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {
     var count: Long = 0
     // every 5 second send the time
     val r: Runnable =
@@ -746,7 +746,7 @@ object SendInts : StreamInts() {
           override fun run() {
             handler.post {
               count++
-              success(count)
+              sink.success(count)
             }
             handler.postDelayed(this, 1000)
           }
