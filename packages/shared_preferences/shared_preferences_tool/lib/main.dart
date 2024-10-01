@@ -24,7 +24,7 @@ class _SharedPreferencesTool extends StatelessWidget {
             builder: (BuildContext context, AsyncSnapshot<Object> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
-                  child: Text('Please connect to a VM service'),
+                  child: CircularProgressIndicator(),
                 );
               }
 
