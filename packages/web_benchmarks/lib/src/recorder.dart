@@ -452,7 +452,9 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
       );
     });
 
-    binding.addTimingsCallback((List<FrameTiming> frameTimings) {
+    late void Function(List<FrameTiming> frameTimings) frameTimingsCallback;
+    binding.addTimingsCallback(
+        frameTimingsCallback = (List<FrameTiming> frameTimings) {
       for (final FrameTiming frameTiming in frameTimings) {
         localProfile.addDataPoint(
           kFlutterFrameTotalTime,
@@ -480,6 +482,7 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
     } finally {
       stopListeningToEngineBenchmarkValues(kProfilePrerollFrame);
       stopListeningToEngineBenchmarkValues(kProfileApplyFrame);
+      binding.removeTimingsCallback(frameTimingsCallback);
     }
   }
 }
