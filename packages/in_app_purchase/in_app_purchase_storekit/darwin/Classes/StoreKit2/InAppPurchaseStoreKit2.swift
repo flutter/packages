@@ -6,14 +6,14 @@
 extension InAppPurchasePlugin: @preconcurrency InAppPurchase2API {
   // MARK: - Pigeon Functions
 
-  // Wrapper method around StoreKit2's canMakePayments() method
-  // https://developer.apple.com/documentation/storekit/appstore/3822277-canmakepayments
+  /// Wrapper method around StoreKit2's canMakePayments() method
+  /// https://developer.apple.com/documentation/storekit/appstore/3822277-canmakepayments
   func canMakePayments() throws -> Bool {
     return AppStore.canMakePayments
   }
 
-  // Wrapper method around StoreKit2's products() method
-  // https://developer.apple.com/documentation/storekit/product/3851116-products
+  /// Wrapper method around StoreKit2's products() method
+  /// https://developer.apple.com/documentation/storekit/product/3851116-products
   func products(
     identifiers: [String], completion: @escaping (Result<[SK2ProductMessage], Error>) -> Void
   ) {
@@ -35,8 +35,8 @@ extension InAppPurchasePlugin: @preconcurrency InAppPurchase2API {
     }
   }
 
-  // Gets the appropriate product, then calls purchase on it.
-  // https://developer.apple.com/documentation/storekit/product/3791971-purchase
+  /// Gets the appropriate product, then calls purchase on it.
+  /// https://developer.apple.com/documentation/storekit/product/3791971-purchase
   @MainActor
   func purchase(
     id: String, options: SK2ProductPurchaseOptionsMessage?,
@@ -49,7 +49,7 @@ extension InAppPurchasePlugin: @preconcurrency InAppPurchase2API {
           let error = PigeonError(
             code: "storekit2_failed_to_fetch_product",
             message: "Storekit has failed to fetch this product.",
-            details: "Storekit has failed to fetch this product.")
+            details: "Product ID : \(id)")
           return completion(.failure(error))
         }
 
@@ -69,13 +69,16 @@ extension InAppPurchasePlugin: @preconcurrency InAppPurchase2API {
             .failure(
               PigeonError(
                 code: "storekit2_purchase_pending",
-                message: "This transaction is still pending.", details: "")))
+                message:
+                  "This transaction is still pending and but may complete in the future. If it completes, it will be delivered via `purchaseStream`",
+                details: "Product ID : \(id)")))
         case .userCancelled:
           completion(
             .failure(
               PigeonError(
                 code: "storekit2_purchase_cancelled",
-                message: "This transaction has been cancelled.", details: "")))
+                message: "This transaction has been cancelled by the user.",
+                details: "Product ID : \(id)")))
         @unknown default:
           fatalError("An unknown StoreKit PurchaseResult has been encountered.")
         }
@@ -112,7 +115,7 @@ extension InAppPurchasePlugin: @preconcurrency InAppPurchase2API {
 
   /// This Task listens  to Transation.updates as shown here
   /// https://developer.apple.com/documentation/storekit/transaction/3851206-updates
-  /// This function should be called as soon as the app starts to avoid missing any Transactions done outside of the app. 
+  /// This function should be called as soon as the app starts to avoid missing any Transactions done outside of the app.
   func startListeningToTransactions() throws {
     self.updateListenerTask = Task {
       for await verificationResult in Transaction.updates {
@@ -126,6 +129,7 @@ extension InAppPurchasePlugin: @preconcurrency InAppPurchase2API {
     }
   }
 
+  /// Stop subscribing to Transaction.updates
   func stopListeningToTransactions() throws {
     self.updateListenerTask = nil
   }

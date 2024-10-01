@@ -26,9 +26,9 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   public var registrar: FlutterPluginRegistrar?
   // This property is optional, as it requires self to exist to be initialized.
   public var paymentQueueHandler: FLTPaymentQueueHandlerProtocol?
-  
-  internal var updateListenerTask: Any?
-  internal var transactionListenerAPI: TransactionCallbacks? = nil
+
+  var updateListenerTask: Any?
+  var transactionListenerAPI: TransactionCallbacks? = nil
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
