@@ -194,6 +194,7 @@ Future<int> generateTestPigeons(
       objcSourceOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
           : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.m',
+      objcPrefix: input == 'core_tests' ? 'FLT' : '',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
       injectOverflowTypes: includeOverflow && input == 'core_tests',

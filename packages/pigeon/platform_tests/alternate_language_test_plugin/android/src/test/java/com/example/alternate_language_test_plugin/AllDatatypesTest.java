@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 
 public class AllDatatypesTest {
@@ -147,20 +148,8 @@ public class AllDatatypesTest {
     assertTrue(didCall[0]);
   }
 
-  private static HashMap<Object, Object> makeMap(String key, Integer value) {
-    HashMap<Object, Object> result = new HashMap<Object, Object>();
-    result.put(key, value);
-    return result;
-  }
-
-  private static HashMap<String, String> makeStringMap(String key, String value) {
-    HashMap<String, String> result = new HashMap<String, String>();
-    result.put(key, value);
-    return result;
-  }
-
-  private static HashMap<Long, Long> makeIntMap(Long key, Long value) {
-    HashMap<Long, Long> result = new HashMap<Long, Long>();
+  private static <K, J> HashMap<K, J> makeMap(K key, J value) {
+    HashMap<K, J> result = new HashMap<K, J>();
     result.put(key, value);
     return result;
   }
@@ -182,7 +171,13 @@ public class AllDatatypesTest {
     // Not inline due to warnings about an ambiguous varargs call when inline.
     final List<Object> genericList = Arrays.asList(new Object[] {"hello", 1, true, false, null});
     final List<List<Object>> listList = new ArrayList<>(Arrays.asList());
+    final List<Map<Object, Object>> mapList = new ArrayList<>(Arrays.asList());
+    final Map<Long, List<Object>> listMap = new HashMap<Long, List<Object>>();
+    final Map<Long, Map<Object, Object>> mapMap = new HashMap<Long, Map<Object, Object>>();
     listList.add(genericList);
+    mapList.add(makeMap("hello", 1234));
+    listMap.put(1L, genericList);
+    mapMap.put(1L, makeMap("hello", 1234));
     AllTypes allEverything =
         new AllTypes.Builder()
             .setABool(false)
@@ -202,10 +197,19 @@ public class AllDatatypesTest {
             .setDoubleList(Arrays.asList(new Double[] {0.5, 0.25, 1.5, 1.25}))
             .setIntList(Arrays.asList(new Long[] {1l, 2l, 3l, 4l}))
             .setStringList(Arrays.asList(new String[] {"string", "another one"}))
+            .setObjectList(genericList)
+            .setEnumList(
+                Arrays.asList(
+                    new CoreTests.AnEnum[] {CoreTests.AnEnum.ONE, CoreTests.AnEnum.FORTY_TWO}))
             .setListList(listList)
+            .setMapList(mapList)
             .setMap(makeMap("hello", 1234))
-            .setIntMap(makeIntMap(1L, 0L))
-            .setStringMap(makeStringMap("hello", "you"))
+            .setIntMap(makeMap(1L, 0L))
+            .setStringMap(makeMap("hello", "you"))
+            .setObjectMap(makeMap("E", 4321))
+            .setEnumMap(makeMap(CoreTests.AnEnum.ONE, CoreTests.AnEnum.FOUR_HUNDRED_TWENTY_TWO))
+            .setListMap(listMap)
+            .setMapMap(mapMap)
             .build();
 
     AllNullableTypes everything =
@@ -226,8 +230,8 @@ public class AllDatatypesTest {
             .setStringList(Arrays.asList(new String[] {"string", "another one"}))
             .setListList(listList)
             .setMap(makeMap("hello", 1234))
-            .setStringMap(makeStringMap("hello", "you"))
-            .setIntMap(makeIntMap(2L, -2L))
+            .setStringMap(makeMap("hello", "you"))
+            .setIntMap(makeMap(2L, -2L))
             .build();
 
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);

@@ -139,7 +139,7 @@ class FlutterApi {
 /// methods.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
-  const ProxyApi({this.superClass});
+  const ProxyApi({this.superClass, this.kotlinOptions});
 
   /// The proxy api that is a super class to this one.
   ///
@@ -149,6 +149,10 @@ class ProxyApi {
   /// Note that using this instead of `extends` can cause unexpected conflicts
   /// with inherited method names.
   final Type? superClass;
+
+  /// Options that control how Kotlin code will be generated for a specific
+  /// ProxyApi.
+  final KotlinProxyApiOptions? kotlinOptions;
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -967,22 +971,6 @@ List<Error> _validateAst(Root root, String source) {
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
-      for (final TypeDeclaration typeArgument in field.type.typeArguments) {
-        if (!typeArgument.isNullable) {
-          result.add(Error(
-            message:
-                'Generic type parameters must be nullable in field "${field.name}" in class "${classDefinition.name}".',
-            lineNumber: _calculateLineNumberNullable(source, field.offset),
-          ));
-        }
-        if (customEnums.contains(typeArgument.baseName)) {
-          result.add(Error(
-            message:
-                'Enum types aren\'t supported in type arguments in "${field.name}" in class "${classDefinition.name}".',
-            lineNumber: _calculateLineNumberNullable(source, field.offset),
-          ));
-        }
-      }
       if (!(validTypes.contains(field.type.baseName) ||
           customClasses.contains(field.type.baseName) ||
           customEnums.contains(field.type.baseName))) {
@@ -1686,6 +1674,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           }
         }
 
+        KotlinProxyApiOptions? kotlinOptions;
+        final Map<String, Object?>? kotlinOptionsMap =
+            annotationMap['kotlinOptions'] as Map<String, Object?>?;
+        if (kotlinOptionsMap != null) {
+          kotlinOptions = KotlinProxyApiOptions(
+            fullClassName: kotlinOptionsMap['fullClassName'] as String?,
+            minAndroidApi: kotlinOptionsMap['minAndroidApi'] as int?,
+          );
+        }
+
         _currentApi = AstProxyApi(
           name: node.name.lexeme,
           methods: <Method>[],
@@ -1693,6 +1691,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           fields: <ApiField>[],
           superClass: superClass,
           interfaces: interfaces,
+          kotlinOptions: kotlinOptions,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );

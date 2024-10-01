@@ -39,8 +39,6 @@ class BenchmarkServer {
   /// can be different (and typically is) from the production entry point of the
   /// app.
   ///
-  /// If [useCanvasKit] is true, builds the app in CanvasKit mode.
-  ///
   /// [benchmarkServerPort] is the port this benchmark server serves the app on.
   ///
   /// [chromeDebugPort] is the port Chrome uses for DevTool Protocol used to
@@ -48,6 +46,13 @@ class BenchmarkServer {
   ///
   /// If [headless] is true, runs Chrome without UI. In particular, this is
   /// useful in environments (e.g. CI) that doesn't have a display.
+  ///
+  /// If [treeShakeIcons] is false, '--no-tree-shake-icons' will be passed as a
+  /// build argument when building the benchmark app.
+  ///
+  /// [compilationOptions] specify the compiler and renderer to use for the
+  /// benchmark app. This can either use dart2wasm & skwasm or
+  /// dart2js & canvaskit.
   BenchmarkServer({
     required this.benchmarkAppDirectory,
     required this.entryPoint,

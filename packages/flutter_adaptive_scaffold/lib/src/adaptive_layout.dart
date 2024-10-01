@@ -293,7 +293,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout>
     });
 
     Rect? hinge;
-    for (final DisplayFeature e in MediaQuery.of(context).displayFeatures) {
+    for (final DisplayFeature e in MediaQuery.displayFeaturesOf(context)) {
       if (e.type == DisplayFeatureType.hinge ||
           e.type == DisplayFeatureType.fold) {
         if (e.bounds.left != 0) {
