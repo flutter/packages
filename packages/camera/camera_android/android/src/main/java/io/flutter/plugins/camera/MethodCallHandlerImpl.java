@@ -60,13 +60,6 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
     switch (call.method) {
-      case "availableCameras":
-        try {
-          result.success(CameraUtils.getAvailableCameras(activity));
-        } catch (Exception e) {
-          handleException(e, result);
-        }
-        break;
       case "create":
         {
           if (camera != null) {

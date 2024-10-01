@@ -5,6 +5,7 @@
 package io.flutter.plugins.camera;
 
 import android.app.Activity;
+import android.hardware.camera2.CameraAccessException;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -13,6 +14,8 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camera.CameraPermissions.PermissionsRegistry;
 import io.flutter.view.TextureRegistry;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Platform implementation of the camera_plugin.
@@ -20,11 +23,12 @@ import io.flutter.view.TextureRegistry;
  * <p>Instantiate this in an add to app scenario to gracefully handle activity and context changes.
  * See {@code io.flutter.plugins.camera.MainActivity} for an example.
  */
-public final class CameraPlugin implements FlutterPlugin, ActivityAware {
+public final class CameraPlugin implements FlutterPlugin, ActivityAware, Messages.CameraApi {
 
   private static final String TAG = "CameraPlugin";
   private @Nullable FlutterPluginBinding flutterPluginBinding;
   private @Nullable MethodCallHandlerImpl methodCallHandler;
+  private @Nullable Activity activity;
 
   /**
    * Initialize this within the {@code #configureFlutterEngine} of a Flutter activity or fragment.
@@ -76,8 +80,23 @@ public final class CameraPlugin implements FlutterPlugin, ActivityAware {
       BinaryMessenger messenger,
       PermissionsRegistry permissionsRegistry,
       TextureRegistry textureRegistry) {
+    this.activity = activity;
     methodCallHandler =
         new MethodCallHandlerImpl(
             activity, messenger, new CameraPermissions(), permissionsRegistry, textureRegistry);
+    Messages.CameraApi.setUp(messenger, this);
+  }
+
+  @NonNull
+  @Override
+  public List<Messages.PlatformCameraDescription> getAvailableCameras() {
+    if (activity == null) {
+      return Collections.emptyList();
+    }
+    try {
+      return CameraUtils.getAvailableCameras(activity);
+    } catch (CameraAccessException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
