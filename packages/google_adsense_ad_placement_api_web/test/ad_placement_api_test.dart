@@ -1,4 +1,4 @@
-// Copyright 2024 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,7 +7,7 @@ library;
 
 import 'dart:js_interop';
 
-import 'package:google_adsense_ad_placement_api_web/ad_placement_api.dart';
+import 'package:google_adsense_ad_placement_api_web/google_adsense_ad_placement_api_web.dart';
 import 'package:google_adsense_ad_placement_api_web/src/ad_placement_api.dart';
 import 'package:google_adsense_ad_placement_api_web/src/ad_placement_api_js_interop.dart';
 import 'package:test/test.dart';
@@ -110,8 +110,8 @@ void main() {
       );
 
       expect(fakeAdPlacementApi?.adBreakCalled, isTrue);
-      expect(fakeAdPlacementApi?.nameUsed?.toDart,
-          equals('APFlutter-My Break'));
+      expect(
+          fakeAdPlacementApi?.nameUsed?.toDart, equals('APFlutter-My Break'));
     });
   });
 }
