@@ -1,3 +1,4 @@
+import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
@@ -6,12 +7,15 @@ import 'package:pigeon/pigeon.dart';
   javaOut: 'android/src/main/java/io/flutter/plugins/camera/Messages.java',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
+
+/// Pigeon equivalent of [CameraLensDirection].
 enum PlatformCameraLensDirection {
   front,
   back,
   external,
 }
 
+/// Pigeon equivalent of [CameraDescription].
 class PlatformCameraDescription {
   PlatformCameraDescription(
       {required this.name,
@@ -24,5 +28,6 @@ class PlatformCameraDescription {
 
 @HostApi()
 abstract class CameraApi {
+  /// Returns the list of available cameras.
   List<PlatformCameraDescription> getAvailableCameras();
 }

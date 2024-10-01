@@ -20,12 +20,14 @@ const MethodChannel _channel =
 
 /// The Android implementation of [CameraPlatform] that uses method channels.
 class AndroidCamera extends CameraPlatform {
+  /// Creates a new [CameraPlatform] instance.
+  AndroidCamera([@visibleForTesting CameraApi? hostApi])
+      : _hostApi = hostApi ?? CameraApi();
+
   /// Registers this class as the default instance of [CameraPlatform].
   static void registerWith() {
     CameraPlatform.instance = AndroidCamera();
   }
-
-  AndroidCamera([CameraApi? hostApi]) : _hostApi = hostApi ?? CameraApi();
 
   final Map<int, MethodChannel> _channels = <int, MethodChannel>{};
 

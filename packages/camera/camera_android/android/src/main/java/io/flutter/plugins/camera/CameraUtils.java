@@ -83,6 +83,13 @@ public final class CameraUtils {
     }
   }
 
+  /**
+   * Converts a raw integer to a PlatformCameraLensDirection enum.
+   *
+   * @param lensDirection One of CameraMetadata.LENS_FACING_FRONT, LENS_FACING_BACK, or
+   *     LENS_FACING_EXTERNAL.
+   * @return One of Messages.PlatformCameraLensDirection.FRONT, BACK, or EXTERNAL.
+   */
   static Messages.PlatformCameraLensDirection lensDirectionFromInteger(int lensDirection) {
     switch (lensDirection) {
       case CameraMetadata.LENS_FACING_FRONT:

@@ -20,6 +20,7 @@ CameraLensDirection parseCameraLensDirection(String string) {
   throw ArgumentError('Unknown CameraLensDirection value');
 }
 
+/// Converts a [PlatformCameraLensDirection] to [CameraLensDirection].
 CameraLensDirection cameraLensDirectionFromPlatform(
     PlatformCameraLensDirection direction) {
   return switch (direction) {
