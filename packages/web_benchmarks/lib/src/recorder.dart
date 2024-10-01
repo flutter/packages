@@ -37,6 +37,26 @@ const String kProfilePrerollFrame = 'preroll_frame';
 /// to the renderer.
 const String kProfileApplyFrame = 'apply_frame';
 
+/// A benchmark metric that tracks the timespan between vsync start and raster
+/// finish for a Flutter frame.
+///
+/// This value corresponds to [FrameTiming.totalSpan] from the Flutter Engine.
+const String kFlutterFrameTotalTime = 'flutter_frame.total_time';
+
+/// A benchmark metric that tracks the duration to build the Flutter frame on
+/// the Dart UI thread.
+///
+/// This value corresponds to [FrameTiming.buildDuration] from the Flutter
+/// Engine.
+const String kFlutterFrameBuildTime = 'flutter_frame.build_time';
+
+/// A benchmark metric that tracks the duration to rasterize the Flutter frame
+/// on the Dart raster thread.
+///
+/// This value corresponds to [FrameTiming.rasterDuration] from the Flutter
+/// Engine.
+const String kFlutterFrameRasterTime = 'flutter_frame.raster_time';
+
 /// Measures the amount of time [action] takes.
 Duration timeAction(VoidCallback action) {
   final Stopwatch stopwatch = Stopwatch()..start();
@@ -430,6 +450,26 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
         Duration(microseconds: value.toInt()),
         reported: false,
       );
+    });
+
+    binding.addTimingsCallback((List<FrameTiming> frameTimings) {
+      for (final FrameTiming frameTiming in frameTimings) {
+        localProfile.addDataPoint(
+          kFlutterFrameTotalTime,
+          frameTiming.totalSpan,
+          reported: false,
+        );
+        localProfile.addDataPoint(
+          kFlutterFrameBuildTime,
+          frameTiming.buildDuration,
+          reported: false,
+        );
+        localProfile.addDataPoint(
+          kFlutterFrameRasterTime,
+          frameTiming.rasterDuration,
+          reported: false,
+        );
+      }
     });
 
     binding._beginRecording(this, widget);

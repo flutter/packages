@@ -1,3 +1,7 @@
+## 3.1.0-wip
+
+* Add `flutter_frame.total_time`, `flutter_frame.build_time`, and `flutter_frame.raster_time`
+metrics to benchmark results. These values are derived from the Flutter `FrameTiming` API.
 ## 3.0.0
 
 * **Breaking change:** removed the `initialPage` parameter from the `serveWebBenchmark`

@@ -12,6 +12,13 @@ import 'package:web_benchmarks/src/common.dart';
 
 import 'test_infra/common.dart';
 
+const List<String> _sharedExpectedMetrics = <String>[
+  'drawFrameDuration',
+  'flutter_frame.total_time',
+  'flutter_frame.build_time',
+  'flutter_frame.raster_time',
+];
+
 Future<void> main() async {
   test(
     'Can run a web benchmark',
@@ -92,11 +99,11 @@ Future<BenchmarkResults> _runBenchmarks({
 
   // The skwasm renderer doesn't have preroll or apply frame steps in its rendering.
   final List<String> expectedMetrics = compilationOptions.useWasm
-      ? <String>['drawFrameDuration']
+      ? _sharedExpectedMetrics
       : <String>[
           'preroll_frame',
           'apply_frame',
-          'drawFrameDuration',
+          ..._sharedExpectedMetrics,
         ];
 
   for (final String benchmarkName in benchmarkNames) {
