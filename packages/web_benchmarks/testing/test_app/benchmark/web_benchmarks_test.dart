@@ -91,7 +91,6 @@ Future<BenchmarkResults> _runBenchmarks({
     compilationOptions: compilationOptions,
   );
 
-  // The skwasm renderer doesn't have preroll or apply frame steps in its rendering.
   final List<String> expectedMetrics =
       expectedBenchmarkMetrics(useWasm: compilationOptions.useWasm)
           .map((BenchmarkMetric metric) => metric.label)
