@@ -35,7 +35,8 @@ class PatternItem {
   /// [length] has to be non-negative.
   static PatternItem dash(double length) {
     assert(length >= 0.0);
-    return PatternItemWithLength._(patternItemType: PatternItemType.dash, length: length);
+    return PatternItemWithLength._(
+        patternItemType: PatternItemType.dash, length: length);
   }
 
   /// A gap used in the stroke pattern for a [Polyline].
@@ -43,7 +44,8 @@ class PatternItem {
   /// [length] has to be non-negative.
   static PatternItem gap(double length) {
     assert(length >= 0.0);
-    return PatternItemWithLength._(patternItemType: PatternItemType.gap, length: length);
+    return PatternItemWithLength._(
+        patternItemType: PatternItemType.gap, length: length);
   }
 
   /// The type of rendering used for an item in a pattern.
@@ -58,7 +60,9 @@ class PatternItem {
 /// A pattern item with a length, i.e. a dash or gap.
 @immutable
 class PatternItemWithLength extends PatternItem {
-  const PatternItemWithLength._({required PatternItemType patternItemType, required this.length}) : super._(patternItemType);
+  const PatternItemWithLength._(
+      {required PatternItemType patternItemType, required this.length})
+      : super._(patternItemType);
 
   /// The length in pixels of a dash or gap.
   final double length;
