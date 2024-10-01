@@ -834,3 +834,31 @@ abstract class AdsRenderingSettings {
   /// Sets the ad UI elements to be rendered by the IMA SDK.
   void setUiElements(List<UiElement> uiElements);
 }
+
+/// Represents the progress within this ad break.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdProgressInfo.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdProgressInfo',
+  ),
+)
+abstract class AdProgressInfo {
+  /// Total ad break duration (in seconds).
+  late final double adBreakDuration;
+
+  /// Total ad period duration (in seconds).
+  late final double adPeriodDuration;
+
+  /// The position of current ad within the ad break, starting with 1.
+  late final int adPosition;
+
+  /// Current time within the ad (in seconds).
+  late final double currentTime;
+
+  /// Duration of current ad (in seconds).
+  late final double duration;
+
+  /// The total number of ads in this ad break.
+  late final int totalAds;
+}
