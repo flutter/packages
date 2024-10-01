@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 @available(iOS 15.0, macOS 12.0, *)
-extension InAppPurchasePlugin: @preconcurrency InAppPurchase2API {
+extension InAppPurchasePlugin: InAppPurchase2API {
   // MARK: - Pigeon Functions
 
   /// Wrapper method around StoreKit2's canMakePayments() method
@@ -37,12 +37,12 @@ extension InAppPurchasePlugin: @preconcurrency InAppPurchase2API {
 
   /// Gets the appropriate product, then calls purchase on it.
   /// https://developer.apple.com/documentation/storekit/product/3791971-purchase
-  @MainActor
   func purchase(
     id: String, options: SK2ProductPurchaseOptionsMessage?,
     completion: @escaping (Result<SK2ProductPurchaseResultMessage, Error>) -> Void
   ) {
     Task {
+      @MainActor in
       do {
         let product = try await Product.products(for: [id]).first
         guard let product = product else {
@@ -59,7 +59,7 @@ extension InAppPurchasePlugin: @preconcurrency InAppPurchase2API {
         case .success(let verification):
           switch verification {
           case .verified(let transaction):
-            self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
+            self.sendTransactionUpdate(transaction: transaction)
             completion(.success(result.convertToPigeon()))
           case .unverified(_, let error):
             completion(.failure(error))
@@ -94,6 +94,7 @@ extension InAppPurchasePlugin: @preconcurrency InAppPurchase2API {
     completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void
   ) {
     Task {
+      @MainActor in
       do {
         let transactionsMsgs = await rawTransactions().map {
           $0.convertToPigeon()
@@ -117,12 +118,12 @@ extension InAppPurchasePlugin: @preconcurrency InAppPurchase2API {
   /// https://developer.apple.com/documentation/storekit/transaction/3851206-updates
   /// This function should be called as soon as the app starts to avoid missing any Transactions done outside of the app.
   func startListeningToTransactions() throws {
-    self.updateListenerTask = Task {
+    self.updateListenerTask = Task { [weak self] in
       for await verificationResult in Transaction.updates {
         switch verificationResult {
         case .verified(let transaction):
-          self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
-        case .unverified(_, _):
+          self?.sendTransactionUpdate(transaction: transaction)
+        case .unverified:
           break
         }
       }
@@ -131,18 +132,29 @@ extension InAppPurchasePlugin: @preconcurrency InAppPurchase2API {
 
   /// Stop subscribing to Transaction.updates
   func stopListeningToTransactions() throws {
-    self.updateListenerTask = nil
+    getUpdateListenerTask().cancel()
+  }
+
+  /// Sends an transaction back to Dart. Access these transactions with `purchaseStream`
+  func sendTransactionUpdate(transaction: Transaction) {
+    let transactionMsg = transaction.convertToPigeon()
+    transactionDelegate?.onTransactionsUpdated(newTransaction: transactionMsg) { result in
+      switch result {
+      case .success: break
+      case .failure(let error):
+        print("Failed to send transaction updates: \(error)")
+      }
+    }
   }
 
   /// Helper function that fetches and unwraps all verified transactions
   private func rawTransactions() async -> [Transaction] {
     var transactions: [Transaction] = []
-
     for await verificationResult in Transaction.all {
       switch verificationResult {
       case .verified(let transaction):
         transactions.append(transaction)
-      case .unverified(_, _):
+      case .unverified:
         break
       }
     }
@@ -157,10 +169,15 @@ extension InAppPurchasePlugin: @preconcurrency InAppPurchase2API {
         if transaction.id == id {
           return transaction
         }
-      case .unverified(_, _):
+      case .unverified:
         continue
       }
     }
     return nil
+  }
+
+  /// Helper function to cast updateListenerTask to a task
+  func getUpdateListenerTask() -> Task<(), Never> {
+    return self.updateListenerTask as! Task<(), Never>
   }
 }
