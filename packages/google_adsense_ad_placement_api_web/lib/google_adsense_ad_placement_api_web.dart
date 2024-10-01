@@ -6,6 +6,7 @@
 library;
 
 export 'src/ad_placement_api.dart' show AdPlacementApi;
+export 'src/ad_placement_api_js_interop.dart' show AdPlacementApiJSObject;
 export 'src/enums.dart'
     show BreakFormat, BreakStatus, BreakType, PreloadAdBreaks, SoundEnabled;
 export 'src/globals.dart' show adPlacementApi;

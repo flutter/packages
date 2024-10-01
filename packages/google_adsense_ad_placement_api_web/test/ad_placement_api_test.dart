@@ -8,7 +8,6 @@ library;
 import 'dart:js_interop';
 
 import 'package:google_adsense_ad_placement_api_web/google_adsense_ad_placement_api_web.dart';
-import 'package:google_adsense_ad_placement_api_web/src/ad_placement_api.dart';
 import 'package:google_adsense_ad_placement_api_web/src/ad_placement_api_js_interop.dart';
 import 'package:test/test.dart';
 
