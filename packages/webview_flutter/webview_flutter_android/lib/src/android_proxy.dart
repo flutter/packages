@@ -78,7 +78,7 @@ class AndroidWebViewProxy {
   /// Constructs [WebChromeClient].
   final WebChromeClient Function({
     void Function(WebChromeClient, WebView, int)? onProgressChanged,
-    Future<List<String?>> Function(
+    Future<List<String>> Function(
       WebChromeClient,
       WebView,
       FileChooserParams,
