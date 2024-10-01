@@ -19,10 +19,12 @@ flutter:
         dartPluginClass: AndroidCamera
 
 dependencies:
+  build_runner: ^2.4.13
   camera_platform_interface: ^2.6.0
   flutter:
     sdk: flutter
   flutter_plugin_android_lifecycle: ^2.0.2
+  mockito: ^5.4.4
   pigeon: ^22.4.1
   stream_transform: ^2.0.0
 

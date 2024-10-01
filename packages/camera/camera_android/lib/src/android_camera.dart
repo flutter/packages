@@ -25,9 +25,11 @@ class AndroidCamera extends CameraPlatform {
     CameraPlatform.instance = AndroidCamera();
   }
 
+  AndroidCamera([CameraApi? hostApi]) : _hostApi = hostApi ?? CameraApi();
+
   final Map<int, MethodChannel> _channels = <int, MethodChannel>{};
 
-  final CameraApi _hostApi = CameraApi();
+  final CameraApi _hostApi;
 
   /// The name of the channel that device events from the platform side are
   /// sent on.
