@@ -33,6 +33,9 @@ void main() {
       final List<String> asyncKeys = <String>['key3', 'key4'];
       final MockInstance legacyKeysInstance = MockInstance();
 
+      asyncEval.stubEvalInstance('SharedPreferencesAsync()', MockInstance());
+      legacyEval.stubEvalInstance(
+          'SharedPreferences.getInstance()', MockInstance());
       asyncEval.stubPrefsGetInstance('getKeys()', isWeb, keysInstance);
       keysInstance.stubElements(asyncEval, asyncKeys);
       legacyEval.stubLegacyPrefsGetInstance(
@@ -60,6 +63,15 @@ void main() {
 extension on MockEvalOnDartLibrary {
   void stubSafeGetInstance(InstanceRef ref, Instance instance) {
     when(safeGetInstance(ref, any)).thenAnswer((_) async => instance);
+  }
+
+  void stubEvalInstance(String expression, Instance instance) {
+    when(
+      evalInstance(
+        expression,
+        isAlive: anyNamed('isAlive'),
+      ),
+    ).thenAnswer((_) async => instance);
   }
 
   void stubAsyncEval(String expression, bool isWeb, InstanceRef ref) {
