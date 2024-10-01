@@ -68,7 +68,7 @@ abstract class BitmapDescriptor {
           assert(jsonList[1] is num);
           final num secondElement = jsonList[1] as num;
           assert(0 <= secondElement && secondElement < 360);
-          return DefaultMarker(secondElement);
+          return DefaultMarker(hue: secondElement);
         }
         return const DefaultMarker();
       case _fromBytes:
@@ -209,7 +209,7 @@ abstract class BitmapDescriptor {
   /// See e.g. [hueYellow].
   static BitmapDescriptor defaultMarkerWithHue(double hue) {
     assert(0.0 <= hue && hue < 360.0);
-    return DefaultMarker(hue);
+    return DefaultMarker(hue: hue);
   }
 
   /// Creates a [BitmapDescriptor] from an asset image.
@@ -336,7 +336,7 @@ abstract class BitmapDescriptor {
 /// A BitmapDescriptor using the default marker.
 class DefaultMarker extends BitmapDescriptor {
   /// Provide an optional [hue] for the default marker.
-  const DefaultMarker([this.hue]) : super._();
+  const DefaultMarker({this.hue}) : super._();
 
   /// Optional hue of the colorization of the default marker.
   final num? hue;
