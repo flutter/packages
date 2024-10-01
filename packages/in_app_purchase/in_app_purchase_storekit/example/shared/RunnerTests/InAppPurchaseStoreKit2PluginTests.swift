@@ -7,7 +7,7 @@ import XCTest
 
 @testable import in_app_purchase_storekit
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 
 final class InAppPurchase2PluginTests: XCTestCase {
   private var session: SKTestSession!
