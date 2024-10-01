@@ -19,6 +19,7 @@ import 'benchmark_result.dart';
 import 'browser.dart';
 import 'common.dart';
 import 'compilation_options.dart';
+import 'metrics.dart';
 
 /// The default port number used by the local benchmark server.
 const int defaultBenchmarkServerPort = 9999;
@@ -224,11 +225,11 @@ class BenchmarkServer {
           if (latestPerformanceTrace != null) {
             final BlinkTraceSummary? traceSummary =
                 BlinkTraceSummary.fromJson(latestPerformanceTrace!);
-            profile['totalUiFrame.average'] =
+            profile[totalUiFrameAverage] =
                 traceSummary?.averageTotalUIFrameTime.inMicroseconds;
             profile['scoreKeys'] ??=
                 <dynamic>[]; // using dynamic for consistency with JSON
-            (profile['scoreKeys'] as List<dynamic>).add('totalUiFrame.average');
+            (profile['scoreKeys'] as List<dynamic>).add(totalUiFrameAverage);
             latestPerformanceTrace = null;
           }
           collectedProfiles.add(profile);

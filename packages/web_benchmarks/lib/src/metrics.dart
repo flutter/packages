@@ -46,13 +46,17 @@ enum BenchmarkMetric {
   final String label;
 }
 
+/// The name for the benchmark metric that records the 'averageTotalUIFrameTime'
+/// from the Blink trace summary.
+const String totalUiFrameAverage = 'totalUiFrame.average';
+
 /// The list of expected benchmark metrics for the current compilation mode, as
 /// determined by the value of [useWasm].
 List<BenchmarkMetric> expectedBenchmarkMetrics({required bool useWasm}) {
   return <BenchmarkMetric>[
     // The skwasm renderer doesn't have preroll or apply frame steps in its
     // rendering.
-    if (!useWasm) ...[
+    if (!useWasm) ...<BenchmarkMetric>[
       BenchmarkMetric.prerollFrame,
       BenchmarkMetric.applyFrame,
     ],
