@@ -8,6 +8,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import 'match.dart';
 
@@ -79,17 +80,34 @@ class GoRouteInformationProvider extends RouteInformationProvider
     required String initialLocation,
     required Object? initialExtra,
     Listenable? refreshListenable,
+    bool routerNeglect = false,
   })  : _refreshListenable = refreshListenable,
         _value = RouteInformation(
           uri: Uri.parse(initialLocation),
           state: RouteInformationState<void>(
               extra: initialExtra, type: NavigatingType.go),
         ),
-        _valueInEngine = _kEmptyRouteInformation {
+        _valueInEngine = _kEmptyRouteInformation,
+        _routerNeglect = routerNeglect {
     _refreshListenable?.addListener(notifyListeners);
   }
 
+  /// Notifies the platform for a route information change.
+  @visibleForTesting
+  @internal
+  Future<void> systemNavigatorRouteInformationUpdated(
+      {String? location, Uri? uri, Object? state, bool replace = false}) {
+    return SystemNavigator.routeInformationUpdated(
+      location: location,
+      uri: uri,
+      state: state,
+      replace: replace,
+    );
+  }
+
   final Listenable? _refreshListenable;
+
+  final bool _routerNeglect;
 
   static WidgetsBinding get _binding => WidgetsBinding.instance;
   static final RouteInformation _kEmptyRouteInformation =
@@ -117,10 +135,10 @@ class GoRouteInformationProvider extends RouteInformationProvider
         replace = false;
     }
     SystemNavigator.selectMultiEntryHistory();
-    SystemNavigator.routeInformationUpdated(
+    systemNavigatorRouteInformationUpdated(
       uri: routeInformation.uri,
       state: routeInformation.state,
-      replace: replace,
+      replace: _routerNeglect || replace,
     );
     _value = _valueInEngine = routeInformation;
   }

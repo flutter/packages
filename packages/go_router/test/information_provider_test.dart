@@ -67,5 +67,59 @@ void main() {
       expect(provider.value.uri.path, '/some/path');
       expect(provider.value.uri.toString(), expectedUriString);
     });
+
+    testWidgets('Route is correctly neglected when routerNeglect is true',
+        (WidgetTester tester) async {
+      late final _TestGoRouteInformationProvider provider =
+          _TestGoRouteInformationProvider(
+              initialLocation: initialRoute,
+              initialExtra: null,
+              routerNeglect: true);
+      provider.addListener(expectAsync0(() {}));
+      provider.go(newRoute);
+      provider.routerReportsNewRouteInformation(
+          RouteInformation(
+              uri: Uri.parse(newRoute), state: <Object?, Object?>{}),
+          type: RouteInformationReportingType.navigate);
+      expect(provider.uriIsNeglected[newRoute], true);
+    });
+
+    testWidgets('Route is NOT neglected when routerNeglect is false',
+        (WidgetTester tester) async {
+      late final _TestGoRouteInformationProvider provider =
+          _TestGoRouteInformationProvider(
+              initialLocation: initialRoute,
+              initialExtra: null,
+              routerNeglect: false);
+      provider.addListener(expectAsync0(() {}));
+      provider.go(newRoute);
+      provider.routerReportsNewRouteInformation(
+          RouteInformation(
+              uri: Uri.parse(newRoute), state: <Object?, Object?>{}),
+          type: RouteInformationReportingType.navigate);
+      expect(provider.uriIsNeglected[newRoute], false);
+    });
   });
+}
+
+class _TestGoRouteInformationProvider extends GoRouteInformationProvider {
+  _TestGoRouteInformationProvider({
+    required super.initialLocation,
+    required super.initialExtra,
+    required super.routerNeglect,
+  });
+
+  Map<String, bool> uriIsNeglected = <String, bool>{};
+
+  @override
+  Future<void> systemNavigatorRouteInformationUpdated(
+      {String? location, Uri? uri, Object? state, bool replace = false}) {
+    uriIsNeglected[uri?.path ?? location ?? ''] = replace;
+    return super.systemNavigatorRouteInformationUpdated(
+      location: location,
+      uri: uri,
+      state: state,
+      replace: replace,
+    );
+  }
 }
