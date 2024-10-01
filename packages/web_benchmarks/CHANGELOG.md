@@ -1,5 +1,8 @@
-## 2.1.0-wip
+## 3.0.0
 
+* **Breaking change:** removed the `initialPage` parameter from the `serveWebBenchmark`
+method and `runBenchmarks` method. Replaced this parameter with `benchmarkPath`, which
+allows for passing the combined value of the URL path segments, fragment, and query parameters.
 * Restructure the `testing/test_app` to make the example benchmarks easier to follow.
 
 ## 2.0.2
