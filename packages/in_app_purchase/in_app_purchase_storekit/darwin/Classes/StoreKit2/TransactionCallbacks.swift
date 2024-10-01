@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-class TransactionCallbacks: InAppPurchase2CallbackAPI {
-  var callbackAPI: InAppPurchase2CallbackAPI
+final class TransactionCallbacks: InAppPurchase2CallbackAPI {
+  let callbackAPI: InAppPurchase2CallbackAPI
 
   init(binaryMessenger: FlutterBinaryMessenger) {
     callbackAPI = InAppPurchase2CallbackAPI(binaryMessenger: binaryMessenger)

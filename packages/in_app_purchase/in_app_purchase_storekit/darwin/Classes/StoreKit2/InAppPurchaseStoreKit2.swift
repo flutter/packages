@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 @available(iOS 15.0, macOS 12.0, *)
-extension InAppPurchasePlugin: InAppPurchase2API {
+extension InAppPurchasePlugin: @preconcurrency InAppPurchase2API {
   // MARK: - Pigeon Functions
 
   // Wrapper method around StoreKit2's canMakePayments() method
@@ -37,6 +37,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
 
   // Gets the appropriate product, then calls purchase on it.
   // https://developer.apple.com/documentation/storekit/product/3791971-purchase
+  @MainActor
   func purchase(
     id: String, options: SK2ProductPurchaseOptionsMessage?,
     completion: @escaping (Result<SK2ProductPurchaseResultMessage, Error>) -> Void
@@ -58,32 +59,34 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         case .success(let verification):
           switch verification {
           case .verified(let transaction):
-            DispatchQueue.main.async {
-              self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
-            }
+            self.transactionListenerAPI?.transactionUpdated(updatedTransactions: transaction)
             completion(.success(result.convertToPigeon()))
           case .unverified(_, let error):
             completion(.failure(error))
           }
         case .pending:
           completion(
-            .success(.pending))
+            .failure(
+              PigeonError(
+                code: "storekit2_purchase_pending",
+                message: "This transaction is still pending.", details: "")))
         case .userCancelled:
           completion(
             .failure(
               PigeonError(
                 code: "storekit2_purchase_cancelled",
-                message: "this transaction has been cancelled", details: "")))
+                message: "This transaction has been cancelled.", details: "")))
         @unknown default:
-          fatalError()
+          fatalError("An unknown StoreKit PurchaseResult has been encountered.")
         }
       } catch {
         completion(.failure(error))
       }
-
     }
   }
 
+  /// Wrapper method around StoreKit2's transactions() method
+  /// https://developer.apple.com/documentation/storekit/product/3851116-products
   func transactions(
     completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void
   ) {
@@ -97,26 +100,21 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
+  /// Wrapper method around StoreKit2's finish() method https://developer.apple.com/documentation/storekit/transaction/3749694-finish
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
     Task {
       let transaction = try await fetchTransaction(by: UInt64(id))
       if let transaction = transaction {
         await transaction.finish()
       }
-
     }
   }
 
+  /// This Task listens  to Transation.updates as shown here
+  /// https://developer.apple.com/documentation/storekit/transaction/3851206-updates
+  /// This function should be called as soon as the app starts to avoid missing any Transactions done outside of the app. 
   func startListeningToTransactions() throws {
-    self.updateListenerTask = self.listenForTransactions()
-  }
-
-  func stopListeningToTransactions() throws {
-    self.updateListenerTask = nil
-  }
-
-  func listenForTransactions() -> Task<Void, Error> {
-    return Task.detached {
+    self.updateListenerTask = Task {
       for await verificationResult in Transaction.updates {
         switch verificationResult {
         case .verified(let transaction):
@@ -126,10 +124,14 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         }
       }
     }
-
   }
 
-  func rawTransactions() async -> [Transaction] {
+  func stopListeningToTransactions() throws {
+    self.updateListenerTask = nil
+  }
+
+  /// Helper function that fetches and unwraps all verified transactions
+  private func rawTransactions() async -> [Transaction] {
     var transactions: [Transaction] = []
 
     for await verificationResult in Transaction.all {
@@ -137,14 +139,14 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       case .verified(let transaction):
         transactions.append(transaction)
       case .unverified(_, _):
-        // Handle unverified transactions if necessary
         break
       }
     }
     return transactions
   }
 
-  func fetchTransaction(by id: UInt64) async throws -> Transaction? {
+  /// Helper function to fetch specific transaction
+  private func fetchTransaction(by id: UInt64) async throws -> Transaction? {
     for await result in Transaction.all {
       switch result {
       case .verified(let transaction):
