@@ -7,17 +7,11 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 
+import 'package:web_benchmarks/metrics.dart';
 import 'package:web_benchmarks/server.dart';
 import 'package:web_benchmarks/src/common.dart';
 
 import 'test_infra/common.dart';
-
-final List<String> _wasmExpectedMetrics = <String>[
-  BenchmarkMetric.drawFrame.label,
-  BenchmarkMetric.flutterFrameTotalTime.label,
-  BenchmarkMetric.flutterFrameBuildTime.label,
-  BenchmarkMetric.flutterFrameRasterTime.label,
-];
 
 Future<void> main() async {
   test(
@@ -98,9 +92,8 @@ Future<BenchmarkResults> _runBenchmarks({
   );
 
   // The skwasm renderer doesn't have preroll or apply frame steps in its rendering.
-  final List<String> expectedMetrics = compilationOptions.useWasm
-      ? _wasmExpectedMetrics
-      : BenchmarkMetric.values
+  final List<String> expectedMetrics =
+      expectedBenchmarkMetrics(useWasm: compilationOptions.useWasm)
           .map((BenchmarkMetric metric) => metric.label)
           .toList();
 

@@ -43,3 +43,20 @@ enum BenchmarkMetric {
   /// The metric name used in the recorded benchmark data.
   final String label;
 }
+
+/// The list of expected benchmark metrics for the current compilation mode, as
+/// determined by the value of [useWasm].
+List<BenchmarkMetric> expectedBenchmarkMetrics({required bool useWasm}) {
+  return <BenchmarkMetric>[
+    // The skwasm renderer doesn't have preroll or apply frame steps in its
+    // rendering.
+    if (!useWasm) ...[
+      BenchmarkMetric.prerollFrame,
+      BenchmarkMetric.applyFrame,
+    ],
+    BenchmarkMetric.drawFrame,
+    BenchmarkMetric.flutterFrameTotalTime,
+    BenchmarkMetric.flutterFrameBuildTime,
+    BenchmarkMetric.flutterFrameRasterTime,
+  ];
+}
