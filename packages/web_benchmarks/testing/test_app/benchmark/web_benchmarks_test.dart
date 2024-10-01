@@ -7,6 +7,7 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 
+import 'package:web_benchmarks/metrics.dart';
 import 'package:web_benchmarks/server.dart';
 import 'package:web_benchmarks/src/common.dart';
 
@@ -90,14 +91,10 @@ Future<BenchmarkResults> _runBenchmarks({
     compilationOptions: compilationOptions,
   );
 
-  // The skwasm renderer doesn't have preroll or apply frame steps in its rendering.
-  final List<String> expectedMetrics = compilationOptions.useWasm
-      ? <String>['drawFrameDuration']
-      : <String>[
-          'preroll_frame',
-          'apply_frame',
-          'drawFrameDuration',
-        ];
+  final List<String> expectedMetrics =
+      expectedBenchmarkMetrics(useWasm: compilationOptions.useWasm)
+          .map((BenchmarkMetric metric) => metric.label)
+          .toList();
 
   for (final String benchmarkName in benchmarkNames) {
     for (final String metricName in expectedMetrics) {
