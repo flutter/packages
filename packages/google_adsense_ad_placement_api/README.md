@@ -18,8 +18,15 @@ When you import the library inside a file, you'll have access to the singleton o
 
 Example
 ```
+import 'package:google_adsense_ad_placement_api/ad_placement_api.dart';
+
 void main (){
-    adPlacementApi.adBreak(___);
+    ...
+    adPlacementApi.adBreak(
+        name: "rewarded-example",
+        type: BreakType.reward,
+    );
+    ...
 }
 
 ```
