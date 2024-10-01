@@ -55,6 +55,7 @@ class PatternItem {
       ];
 }
 
+/// A pattern item with a length, i.e. a dash or gap.
 @immutable
 class PatternItemWithLength extends PatternItem {
   const PatternItemWithLength._({required PatternItemType patternItemType, required this.length}) : super._(patternItemType);
