@@ -1,3 +1,7 @@
+## 0.7.3+2
+
+* Resolves an issue where code blocks in markdown were not highlighted during selection.
+
 ## 0.7.3+1
 
 * Fixes issue with table column alignments not being respected.

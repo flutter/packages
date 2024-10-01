@@ -1,7 +1,11 @@
-## 2.9.3
+## 2.9.4
 
 * Converts `PatternItem` to typesafe structure.
 * Converts `Cap` to typesafe structure.
+
+## 2.9.3
+
+* Corrects an incorrect comment in polyline.dart file.
 
 ## 2.9.2
 
