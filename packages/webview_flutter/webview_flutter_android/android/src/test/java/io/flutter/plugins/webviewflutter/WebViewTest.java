@@ -309,6 +309,7 @@ public class WebViewTest {
   @Test
   public void defaultWebChromeClientIsSecureWebChromeClient() {
     final WebViewProxyApi mockApi = mock(WebViewProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
     final WebViewProxyApi.WebViewPlatformView webView =
         new WebViewProxyApi.WebViewPlatformView(mockApi);
 
@@ -340,7 +341,7 @@ public class WebViewTest {
   @Test
   public void setImportantForAutofillForParentFlutterView() {
     final WebViewProxyApi mockApi = mock(WebViewProxyApi.class);
-
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
     final WebViewProxyApi.WebViewPlatformView webView =
         new WebViewProxyApi.WebViewPlatformView(mockApi);
 

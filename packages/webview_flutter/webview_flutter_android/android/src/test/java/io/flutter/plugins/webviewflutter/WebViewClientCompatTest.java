@@ -5,6 +5,7 @@
 package io.flutter.plugins.webviewflutter;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -88,9 +89,8 @@ public class WebViewClientCompatTest {
     instance.setReturnValueForShouldOverrideUrlLoading(true);
     final android.webkit.WebView webView = mock(WebView.class);
     final String url = "myString";
-    instance.shouldOverrideUrlLoading(webView, url);
 
-    assertFalse(instance.shouldOverrideUrlLoading(webView, url));
+    assertTrue(instance.shouldOverrideUrlLoading(webView, url));
     verify(mockApi).urlLoading(eq(instance), eq(webView), eq(url), any());
   }
 
@@ -116,10 +116,11 @@ public class WebViewClientCompatTest {
 
     final WebViewClientProxyApi.WebViewClientCompatImpl instance =
         new WebViewClientProxyApi.WebViewClientCompatImpl(mockApi);
+    instance.setReturnValueForShouldOverrideUrlLoading(true);
+
     final android.webkit.WebView webView = mock(WebView.class);
     final android.webkit.WebResourceRequest request = mock(WebResourceRequest.class);
     when(request.isForMainFrame()).thenReturn(false);
-    instance.shouldOverrideUrlLoading(webView, request);
 
     assertFalse(instance.shouldOverrideUrlLoading(webView, request));
     verify(mockApi).requestLoading(eq(instance), eq(webView), eq(request), any());

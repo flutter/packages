@@ -42,10 +42,15 @@ public class FlutterAssetManagerTest {
 
   @Test(expected = RuntimeException.class)
   public void list_should_convert_io_exception_to_runtime_exception() {
+    final PigeonApiFlutterAssetManager api =
+        new TestProxyApiRegistrar().getPigeonApiFlutterAssetManager();
+
     final FlutterAssetManager instance = mock(FlutterAssetManager.class);
-    final String path = "myString";
+    final String path = "test/path";
+
     try {
-      when(instance.list(path)).thenReturn(null);
+      when(instance.list(path)).thenThrow(new IOException());
+      api.list(instance, "test/path");
     } catch (IOException e) {
       fail();
     }
