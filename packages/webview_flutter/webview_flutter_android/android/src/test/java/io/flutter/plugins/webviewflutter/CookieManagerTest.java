@@ -4,16 +4,19 @@
 
 package io.flutter.plugins.webviewflutter;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import android.webkit.CookieManager;
+import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 public class CookieManagerTest {
   @Test
@@ -28,20 +31,30 @@ public class CookieManagerTest {
     verify(instance).setCookie(url, value);
   }
 
-//  @Test
-//  public void removeAllCookies() {
-//    final PigeonApiCookieManager api = new TestProxyApiRegistrar().getPigeonApiCookieManager();
-//
-//    final CookieManager instance = mock(CookieManager.class);
-//    final Boolean value = true;
-//
-//    api.removeAllCookies(
-//        instance,
-//        (Function1<? super Result<Boolean>, Unit>)
-//            ResultCompat.withSuccessResult(value).getResult());
-//
-//    verify(instance).removeAllCookies(any());
-//  }
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  @Test
+  public void removeAllCookies() {
+    final PigeonApiCookieManager api = new TestProxyApiRegistrar().getPigeonApiCookieManager();
+
+    final CookieManager instance = mock(CookieManager.class);
+
+    final Boolean[] successResult = new Boolean[1];
+    api.removeAllCookies(
+        instance,
+        ResultCompat.asCompatCallback(reply -> {
+          successResult[0] = reply.getOrNull();
+          return null;
+        }));
+
+    final ArgumentCaptor<ValueCallback> valueCallbackArgumentCaptor =
+        ArgumentCaptor.forClass(ValueCallback.class);
+    verify(instance).removeAllCookies(valueCallbackArgumentCaptor.capture());
+
+    final Boolean returnValue = true;
+    valueCallbackArgumentCaptor.getValue().onReceiveValue(returnValue);
+
+    assertEquals(successResult[0], returnValue);
+  }
 
   @Test
   public void setAcceptThirdPartyCookies() {

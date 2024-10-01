@@ -9,8 +9,7 @@ package io.flutter.plugins.webviewflutter
  *
  * It is intended to solve the problem of being unable to obtain [kotlin.Result] in Java.
  *
- * [kotlin.Result] has a weird quirk when it is passed to Java. it seems to wrap itself when passed
- * to java.
+ * [kotlin.Result] has a weird quirk when it is passed to Java where it seems to wrap itself.
  */
 @Suppress("UNCHECKED_CAST")
 class ResultCompat<T>(val result: Result<T>) {
@@ -29,11 +28,6 @@ class ResultCompat<T>(val result: Result<T>) {
     @JvmStatic
     fun <T> asCompatCallback(result: (ResultCompat<T>) -> Unit): (Result<T>) -> Unit {
       return { result(ResultCompat(it)) }
-    }
-
-    @JvmStatic
-    fun <T> withSuccessResult(value: T): ResultCompat<T> {
-      return ResultCompat(Result.success(value))
     }
   }
 
