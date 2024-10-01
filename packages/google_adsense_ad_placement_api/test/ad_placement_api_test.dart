@@ -10,12 +10,12 @@ import 'dart:js_interop';
 import 'package:google_adsense_ad_placement_api/ad_placement_api.dart';
 import 'package:google_adsense_ad_placement_api/src/ad_placement_api.dart';
 import 'package:google_adsense_ad_placement_api/src/ad_placement_api_js_interop.dart';
-
 import 'package:test/test.dart';
 
 @JSExport()
 class FakeAdPlacementApiJSObject {
   bool adBreakCalled = false;
+  JSString? nameUsed;
   JSString? lastBreakTypeUsed;
   JSString? preloadAdBreaks;
   JSString? sound;
@@ -25,6 +25,7 @@ class FakeAdPlacementApiJSObject {
   void adBreak(AdBreakParamJSObject o) {
     adBreakCalled = true;
     lastBreakTypeUsed = o.type;
+    nameUsed = o.name;
     if (o.adBreakDone != null) {
       final AdBreakDoneCallbackParamJSObject adBreakDoneParam =
           AdBreakDoneCallbackParamJSObject(JSObject());
@@ -100,6 +101,17 @@ void main() {
       expect(fakeAdPlacementApi?.preloadAdBreaks?.toDart,
           equals(PreloadAdBreaks.on.name));
       expect(called, isTrue);
+    });
+
+    test('perfixes adBreak name', () {
+      adPlacementApi?.adBreak(
+        type: BreakType.preroll,
+        name: 'My Break',
+      );
+
+      expect(fakeAdPlacementApi?.adBreakCalled, isTrue);
+      expect(fakeAdPlacementApi?.nameUsed?.toDart,
+          equals('APFlutter-My Break'));
     });
   });
 }

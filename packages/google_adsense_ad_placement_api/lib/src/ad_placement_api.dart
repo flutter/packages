@@ -12,6 +12,8 @@ class AdPlacementApi {
   /// Wraps JS Ad Placement API in a dart object.
   AdPlacementApi(this._adPlacementApiJsObject);
 
+  final String _namePrefix = 'APFlutter-';
+
   final AdPlacementApiJSObject? _adPlacementApiJsObject;
 
   /// Key function for placing ads within your app. It defines an ad placement and takes an object called a placement config that specifies everything required to show an ad.
@@ -65,8 +67,13 @@ class AdPlacementApi {
       }
     }
 
+    String breakName = _namePrefix;
+    if (name != null) {
+      breakName = breakName + name;
+    }
+
     param.type = type.name.toJS;
-    param.name = name?.toJS;
+    param.name = breakName.toJS;
     param.beforeAd = beforeAd != null ? beforeAd.toJS : empty.toJS;
     param.afterAd = afterAd != null ? afterAd.toJS : empty.toJS;
     if (type == BreakType.reward) {
