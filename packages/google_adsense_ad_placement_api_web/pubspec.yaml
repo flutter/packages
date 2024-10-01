@@ -17,8 +17,7 @@ platforms:
   web:
 
 topics:
-  - google adsense
-  - adsense ad placement api
+  - google-adsense
+  - adsense-ad-placement-api
   - advertising
-  - rewarded ads
   - web

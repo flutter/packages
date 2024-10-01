@@ -17,19 +17,17 @@ This package supports interacting with the Ad Placement API after it's already l
 
 When you import the library inside a file, you'll have access to the singleton object `adPlacementApi`, which will have wrappers to both of the global functions that the Ad Placement API exposes: adBreak and adConfig.
 
-Example
+Example:
+<?code-excerpt "example/lib/main.dart (main-example)"?>
 ```dart
 import 'package:google_adsense_ad_placement_api_web/google_adsense_ad_placement_api_web.dart';
 
-void main (){
-    ...
-    adPlacementApi.adBreak(
-        name: "rewarded-example",
-        type: BreakType.reward,
-    );
-    ...
+void main() {
+  adPlacementApi.adBreak(
+    name: 'rewarded-example',
+    type: BreakType.reward,
+  );
 }
-
 ```
 
 ## Testing
