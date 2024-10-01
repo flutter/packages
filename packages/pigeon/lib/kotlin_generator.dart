@@ -1012,7 +1012,7 @@ if (wrapped == null) {
         }
 
         interface PigeonEventChannelWrapper<T> {
-          open fun onListen(p0: Any?, pigeonSink: PigeonEventSink<T>) {}
+          open fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
 
           open fun onCancel(p0: Any?) {}
         }
