@@ -1,3 +1,4 @@
+# google_adsense_ad_placement_api_web
 
 Wrapper of the AdSense Ad Placement API to be used in Dart and Flutter apps.
 This Wrapper targets only the WEB platform.
@@ -33,5 +34,5 @@ void main (){
 
 ## Testing
 
-Use `dart run script/tool/bin/flutter_plugin_tools.dart test --packages google_adsense_ad_placement_api --platform chrome` to test.
+Use `dart run script/tool/bin/flutter_plugin_tools.dart test --packages google_adsense_ad_placement_api_web --platform chrome` to test.
 You need to specify a web platform to be able to test the JS Interop library.
