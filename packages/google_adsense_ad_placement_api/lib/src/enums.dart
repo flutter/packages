@@ -4,19 +4,19 @@
 
 /// Available types of Ad Breaks.
 enum BreakType {
-  /// Before the game loads (before UI has rendered)
+  /// Before the app loads (before UI has rendered)
   preroll,
 
-  /// before the gameplay starts (after UI has rendered)
+  /// before the app flow starts (after UI has rendered)
   start,
 
-  /// the player pauses the game
+  /// the app is paused
   pause,
 
-  /// player navigates to the next level
+  /// user navigates to the next screen
   next,
 
-  /// the player explores options outside of the gameplay
+  /// the user explores options
   browse,
 
   /// a rewarded ad
