@@ -1,6 +1,6 @@
 name: google_adsense_ad_placement_api
 description: Dart classes to interact with Google's AdSense Ad Placement API
-version: 0.0.1
+version: 1.0.0
 repository: https://github.com/flutter/packages/google_adsense_ad_placement_api
 
 environment:
@@ -15,3 +15,10 @@ dev_dependencies:
 
 platforms:
   web:
+
+topics:
+  - Google AdSense
+  - AdSense Ad Placement API
+  - Advertising
+  - Rewarded Ads
+  
