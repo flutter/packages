@@ -913,10 +913,6 @@ class AndroidCameraCameraX extends CameraPlatform {
             naturalDeviceOrientationDegrees * signForCameraDirection +
             360) %
         360;
-    print('sensorOrientaiton: $sensorOrientation');
-    print('naturalDeviceOrientationDegrees $naturalDeviceOrientationDegrees');
-    print('signForCameraDirection: $signForCameraDirection');
-    print('rotation $rotation');
     int quarterTurnsToCorrectPreview = rotation ~/ 90;
 
     if (naturalOrientation == DeviceOrientation.landscapeLeft ||
