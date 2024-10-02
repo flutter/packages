@@ -3,10 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:web_benchmarks/src/timeseries.dart';
+import 'package:web_benchmarks/src/computations.dart';
 
 void main() {
-  group('Timeseries', () {
+  group('computations', () {
     test('computePercentiles', () {
       final Map<double, double> computed = computePercentiles(
         'test',
