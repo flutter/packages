@@ -130,27 +130,26 @@ List<PlatformTypeGroup>? _platformTypeGroupsFromXTypeGroups(
 }
 
 PlatformTypeGroup _platformTypeGroupFromXTypeGroup(XTypeGroup group) {
-  final PlatformTypeGroup platformGroup =
-      PlatformTypeGroup(label: group.label ?? '');
+  final String label = group.label ?? '';
   if (group.allowsAny) {
-    platformGroup.extensions = <String>['*'];
-  } else {
-    if ((group.extensions?.isEmpty ?? true) &&
-        (group.mimeTypes?.isEmpty ?? true)) {
-      throw ArgumentError('Provided type group $group does not allow '
-          'all files, but does not set any of the Linux-supported filter '
-          'categories. "extensions" or "mimeTypes" must be non-empty for Linux '
-          'if anything is non-empty.');
-    }
-    if (group.extensions?.isNotEmpty ?? false) {
-      platformGroup.extensions = group.extensions
+    return PlatformTypeGroup(
+      label: label,
+      extensions: <String>['*'],
+    );
+  }
+  if ((group.extensions?.isEmpty ?? true) &&
+      (group.mimeTypes?.isEmpty ?? true)) {
+    throw ArgumentError('Provided type group $group does not allow '
+        'all files, but does not set any of the Linux-supported filter '
+        'categories. "extensions" or "mimeTypes" must be non-empty for Linux '
+        'if anything is non-empty.');
+  }
+  return PlatformTypeGroup(
+      label: label,
+      // Covert to GtkFileFilter's *.<extension> format.
+      extensions: group.extensions
               ?.map((String extension) => '*.$extension')
               .toList() ??
-          <String>[];
-    }
-    if (group.mimeTypes?.isNotEmpty ?? false) {
-      platformGroup.mimeTypes = group.mimeTypes ?? <String>[];
-    }
-  }
-  return platformGroup;
+          <String>[],
+      mimeTypes: group.mimeTypes ?? <String>[]);
 }
