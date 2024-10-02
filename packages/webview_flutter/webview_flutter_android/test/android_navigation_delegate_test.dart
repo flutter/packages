@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_android/src/android_proxy.dart';
-import 'package:webview_flutter_android/src/android_webview.dart'
+import 'package:webview_flutter_android/src/android_webkit.g.dart'
     as android_webview;
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
