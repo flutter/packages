@@ -75,7 +75,9 @@ class AdPlacementApi {
     param.type = type.name.toJS;
     param.name = breakName.toJS;
     param.beforeAd = beforeAd != null ? beforeAd.toJS : empty.toJS;
-    param.afterAd = afterAd != null ? afterAd.toJS : empty.toJS;
+    if (type != BreakType.preroll) {
+      param.afterAd = afterAd != null ? afterAd.toJS : empty.toJS;
+    }
     if (type == BreakType.reward) {
       param.beforeReward =
           beforeReward != null ? beforeReward.toJS : showAdDefault.toJS;
