@@ -1,3 +1,8 @@
+## 0.6.8+4
+
+* Bumps `com.google.guava:guava` from `33.3.0` to `33.3.1`.
+
+
 ## 0.6.8+3
 
 * Removes dependency on org.jetbrains.kotlin:kotlin-bom.
