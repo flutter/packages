@@ -533,11 +533,14 @@ void main() {
 
     const Polyline object1 = Polyline(polylineId: PolylineId('1'));
     const Polyline object2old = Polyline(polylineId: PolylineId('2'));
-    final Polyline object2new =
-        object2old.copyWith(widthParam: 42, startCapParam: Cap.squareCap, endCapParam: Cap.buttCap);
-    final Cap customCap = Cap.customCapFromBitmap(BitmapDescriptor.defaultMarker, refWidth: 15);
-    final Polyline object3 =
-        Polyline(polylineId: const PolylineId('3'), startCap: customCap, endCap: Cap.roundCap);
+    final Polyline object2new = object2old.copyWith(
+        widthParam: 42, startCapParam: Cap.squareCap, endCapParam: Cap.buttCap);
+    final Cap customCap =
+        Cap.customCapFromBitmap(BitmapDescriptor.defaultMarker, refWidth: 15);
+    final Polyline object3 = Polyline(
+        polylineId: const PolylineId('3'),
+        startCap: customCap,
+        endCap: Cap.roundCap);
     await maps.updatePolylines(
         PolylineUpdates.from(
             <Polyline>{object1, object2old}, <Polyline>{object2new, object3}),
