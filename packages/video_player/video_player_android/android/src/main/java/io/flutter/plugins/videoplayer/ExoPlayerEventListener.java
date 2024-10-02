@@ -20,10 +20,10 @@ final class ExoPlayerEventListener implements Player.Listener {
     this(exoPlayer, events, false);
   }
 
-  ExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events, boolean wasInitialized) {
+  ExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events, boolean initialized) {
     this.exoPlayer = exoPlayer;
     this.events = events;
-    this.isInitialized = wasInitialized;
+    this.isInitialized = initialized;
   }
 
   private void setBuffering(boolean buffering) {
