@@ -135,7 +135,7 @@ PlatformTypeGroup _platformTypeGroupFromXTypeGroup(XTypeGroup group) {
   final PlatformTypeGroup platformGroup =
       PlatformTypeGroup(label: group.label ?? '');
   if (group.allowsAny) {
-    platformGroup.extensions.add('*');
+    platformGroup.extensions = <String>['*'];
   } else {
     if ((group.extensions?.isEmpty ?? true) &&
         (group.mimeTypes?.isEmpty ?? true)) {
