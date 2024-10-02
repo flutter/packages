@@ -121,9 +121,9 @@ extension on SK2TransactionMessage {
 }
 
 /// An observer that listens to all transactions created
-class SK2TransactionObserver implements InAppPurchase2CallbackAPI {
-  /// Creates a new instance of [SK2TransactionObserver]
-  SK2TransactionObserver({required this.transactionsCreatedController});
+class SK2TransactionObserverWrapper implements InAppPurchase2CallbackAPI {
+  /// Creates a new instance of [SK2TransactionObserverWrapper]
+  SK2TransactionObserverWrapper({required this.transactionsCreatedController});
 
   /// The transactions stream to listen to
   final StreamController<List<PurchaseDetails>> transactionsCreatedController;

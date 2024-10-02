@@ -47,7 +47,6 @@ final class InAppPurchase2PluginTests: XCTestCase {
         fetchedProductMsg = productMessages.first
         expectation.fulfill()
       case .failure(let error):
-        // Handle the error
         print("Failed to fetch products: \(error.localizedDescription)")
       }
     }
@@ -70,9 +69,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .success(let productMessages):
         fetchedProductMsg = productMessages.first
         expectation.fulfill()
-      case .failure(let error):
-        // Handle the error
-        print("Failed to fetch products: \(error.localizedDescription)")
+      case .failure(let error): print("Failed to fetch products: \(error.localizedDescription)")
       }
     }
     await fulfillment(of: [expectation], timeout: 5)
@@ -104,7 +101,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
   }
 
   //TODO(louisehsu): Add testing for lower versions.
-  @available(iOS 17.0, *)
+  @available(iOS 17.0, macOS 14.0, *)
   func testGetProductsWithStoreKitError() async throws {
     try await session.setSimulatedError(
       .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
@@ -128,9 +125,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   func testSuccessfulPurchase() async throws {
     let expectation = self.expectation(description: "Purchase request should succeed")
-    plugin.purchase(
-      id: "consumable", options: nil
-    ) { result in
+    plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
       case .success(let purchaseResult):
         expectation.fulfill()
@@ -141,14 +136,12 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [expectation], timeout: 5)
   }
 
-  @available(iOS 17.0, *)
+  @available(iOS 17.0, macOS 14.0, *)
   func testFailedNetworkErrorPurchase() async throws {
     try await session.setSimulatedError(
       .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
     let expectation = self.expectation(description: "products request should fail")
-    plugin.purchase(
-      id: "consumable", options: nil
-    ) { result in
+    plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
       case .success(_):
         XCTFail("Purchase should NOT suceed.")
@@ -162,14 +155,12 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [expectation], timeout: 5)
   }
 
-  @available(iOS 17.0, *)
+  @available(iOS 17.0, macOS 14.0, *)
   func testFailedProductUnavilablePurchase() async throws {
     try await session.setSimulatedError(
       .purchase(.productUnavailable), forAPI: .purchase)
     let expectation = self.expectation(description: "Purchase request should succeed")
-    plugin.purchase(
-      id: "consumable", options: nil
-    ) { result in
+    plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
       case .success(_):
         XCTFail("Purchase should NOT suceed.")
@@ -183,9 +174,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   func testInvalidProductPurchase() async throws {
     let expectation = self.expectation(description: "products request should fail")
-    plugin.purchase(
-      id: "invalid_product", options: nil
-    ) { result in
+    plugin.purchase(id: "invalid_product", options: nil) { result in
       switch result {
       case .success(_):
         XCTFail("Purchase should NOT suceed.")
@@ -201,9 +190,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   func testPurchaseUpgradeConsumableSuccess() async throws {
     let expectation = self.expectation(description: "Purchase request should succeed")
-    plugin.purchase(
-      id: "subscription_discounted", options: nil
-    ) { result in
+    plugin.purchase(id: "subscription_discounted", options: nil) { result in
       switch result {
       case .success(let purchaseResult):
         expectation.fulfill()
@@ -216,9 +203,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   func testDiscountedSubscriptionSuccess() async throws {
     let expectation = self.expectation(description: "Purchase request should succeed")
-    plugin.purchase(
-      id: "subscription_discounted", options: nil
-    ) { result in
+    plugin.purchase(id: "subscription_discounted", options: nil) { result in
       switch result {
       case .success(let purchaseResult):
         expectation.fulfill()
@@ -231,9 +216,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   func testDiscountedProductSuccess() async throws {
     let expectation = self.expectation(description: "Purchase request should succeed")
-    plugin.purchase(
-      id: "consumable_discounted", options: nil
-    ) { result in
+    plugin.purchase(id: "consumable_discounted", options: nil) { result in
       switch result {
       case .success(let purchaseResult):
         expectation.fulfill()

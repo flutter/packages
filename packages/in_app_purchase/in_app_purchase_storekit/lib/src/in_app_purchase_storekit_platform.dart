@@ -35,23 +35,23 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   /// StoreKit1
   static late SKPaymentQueueWrapper _skPaymentQueueWrapper;
-  static late _TransactionObserver _observer;
+  static late _TransactionObserver _sk1transactionObserver;
 
   /// StoreKit2
-  static late SK2TransactionObserver _sk2transactionObserver;
+  static late SK2TransactionObserverWrapper _sk2transactionObserver;
 
   @override
   Stream<List<PurchaseDetails>> get purchaseStream => _useStoreKit2
       ? _sk2transactionObserver.transactionsCreatedController.stream
-      : _observer.purchaseUpdatedController.stream;
+      : _sk1transactionObserver.purchaseUpdatedController.stream;
 
   /// Callback handler for transaction status changes.
   @visibleForTesting
-  static SKTransactionObserverWrapper get observer => _observer;
+  static SKTransactionObserverWrapper get observer => _sk1transactionObserver;
 
   /// Callback handler for transaction status changes for StoreKit2 transactions
   @visibleForTesting
-  static SK2TransactionObserver get sk2transactionObserver =>
+  static SK2TransactionObserverWrapper get sk2transactionObserver =>
       _sk2transactionObserver;
 
   /// Registers this class as the default instance of [InAppPurchasePlatform].
@@ -73,7 +73,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
         onListen: () => SK2Transaction.startListeningToTransactions(),
         onCancel: () => SK2Transaction.stopListeningToTransactions(),
       );
-      _sk2transactionObserver = SK2TransactionObserver(
+      _sk2transactionObserver = SK2TransactionObserverWrapper(
           transactionsCreatedController: updateController2);
       InAppPurchase2CallbackAPI.setUp(_sk2transactionObserver);
     } else {
@@ -84,7 +84,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
         onListen: () => _skPaymentQueueWrapper.startObservingTransactionQueue(),
         onCancel: () => _skPaymentQueueWrapper.stopObservingTransactionQueue(),
       );
-      _observer = _TransactionObserver(updateController);
+      _sk1transactionObserver = _TransactionObserver(updateController);
       _skPaymentQueueWrapper.setTransactionObserver(observer);
     }
   }
@@ -149,11 +149,12 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   @override
   Future<void> restorePurchases({String? applicationUserName}) async {
-    return _observer
+    return _sk1transactionObserver
         .restoreTransactions(
             queue: _skPaymentQueueWrapper,
             applicationUserName: applicationUserName)
-        .whenComplete(() => _observer.cleanUpRestoredTransactions());
+        .whenComplete(
+            () => _sk1transactionObserver.cleanUpRestoredTransactions());
   }
 
   /// Query the product detail list.
