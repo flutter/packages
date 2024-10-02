@@ -100,10 +100,11 @@ class FileSelectorLinux extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     final List<String> paths = await _hostApi.showFileChooser(
-        PlatformFileChooserActionType.open,
+        PlatformFileChooserActionType.chooseDirectory,
         PlatformFileChooserOptions(
           currentFolderPath: initialDirectory,
           acceptButtonLabel: confirmButtonText,
+          selectMultiple: false,
         ));
     return paths.isEmpty ? null : paths.first;
   }
@@ -114,7 +115,7 @@ class FileSelectorLinux extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     return _hostApi.showFileChooser(
-        PlatformFileChooserActionType.open,
+        PlatformFileChooserActionType.chooseDirectory,
         PlatformFileChooserOptions(
           currentFolderPath: initialDirectory,
           acceptButtonLabel: confirmButtonText,

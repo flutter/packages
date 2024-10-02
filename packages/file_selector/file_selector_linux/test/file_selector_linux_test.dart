@@ -184,6 +184,15 @@ void main() {
   });
 
   group('getSaveLocation', () {
+    test('passes the core flags correctly', () async {
+      const String path = '/foo/bar';
+      api.result = <String>[path];
+
+      expect((await plugin.getSaveLocation())?.path, path);
+
+      expect(api.passedType, PlatformFileChooserActionType.save);
+    });
+
     test('passes the accepted type groups correctly', () async {
       const XTypeGroup group = XTypeGroup(
         label: 'text',
@@ -252,6 +261,15 @@ void main() {
   });
 
   group('getSavePath (deprecated)', () {
+    test('passes the core flags correctly', () async {
+      const String path = '/foo/bar';
+      api.result = <String>[path];
+
+      expect(await plugin.getSavePath(), path);
+
+      expect(api.passedType, PlatformFileChooserActionType.save);
+    });
+
     test('passes the accepted type groups correctly', () async {
       const XTypeGroup group = XTypeGroup(
         label: 'text',
@@ -318,6 +336,16 @@ void main() {
   });
 
   group('getDirectoryPath', () {
+    test('passes the core flags correctly', () async {
+      const String path = '/foo/bar';
+      api.result = <String>[path];
+
+      expect(await plugin.getDirectoryPath(), path);
+
+      expect(api.passedType, PlatformFileChooserActionType.chooseDirectory);
+      expect(api.passedOptions?.selectMultiple, false);
+    });
+
     test('passes initialDirectory correctly', () async {
       const String path = '/example/directory';
       await plugin.getDirectoryPath(initialDirectory: path);
@@ -334,6 +362,15 @@ void main() {
   });
 
   group('getDirectoryPaths', () {
+    test('passes the core flags correctly', () async {
+      api.result = <String>['/foo/bar', 'baz'];
+
+      expect(await plugin.getDirectoryPaths(), api.result);
+
+      expect(api.passedType, PlatformFileChooserActionType.chooseDirectory);
+      expect(api.passedOptions?.selectMultiple, true);
+    });
+
     test('passes initialDirectory correctly', () async {
       const String path = '/example/directory';
       await plugin.getDirectoryPaths(initialDirectory: path);
