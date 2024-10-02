@@ -370,7 +370,9 @@ abstract class WebSettings {
 @ProxyApi()
 abstract class JavaScriptChannel {
   // ignore: avoid_unused_constructor_parameters
-  JavaScriptChannel(String channelName);
+  JavaScriptChannel();
+
+  late final String channelName;
 
   /// Handles callbacks messages from JavaScript.
   late void Function(String message) postMessage;

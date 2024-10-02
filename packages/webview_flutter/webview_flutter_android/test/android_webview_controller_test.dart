@@ -8,21 +8,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_android/src/android_proxy.dart';
-import 'package:webview_flutter_android/src/android_webview.dart'
+import 'package:webview_flutter_android/src/android_webkit.g.dart'
     as android_webview;
 import 'package:webview_flutter_android/src/android_webview_api_impls.dart';
-import 'package:webview_flutter_android/src/instance_manager.dart';
 import 'package:webview_flutter_android/src/platform_views_service_proxy.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_navigation_delegate_test.dart';
 import 'android_webview_controller_test.mocks.dart';
-import 'android_webview_test.mocks.dart'
-    show
-        MockTestCustomViewCallbackHostApi,
-        MockTestGeolocationPermissionsCallbackHostApi;
-import 'test_android_webview.g.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<AndroidNavigationDelegate>(),
@@ -40,8 +34,6 @@ import 'test_android_webview.g.dart';
   MockSpec<android_webview.WebView>(),
   MockSpec<android_webview.WebViewClient>(),
   MockSpec<android_webview.WebStorage>(),
-  MockSpec<InstanceManager>(),
-  MockSpec<TestInstanceManagerHostApi>(),
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

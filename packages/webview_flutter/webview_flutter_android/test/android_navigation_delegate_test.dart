@@ -14,17 +14,12 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_navigation_delegate_test.mocks.dart';
-import 'test_android_webview.g.dart';
 
 @GenerateMocks(<Type>[
-  TestInstanceManagerHostApi,
   android_webview.HttpAuthHandler,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-
-  // Mocks the call to clear the native InstanceManager.
-  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('AndroidNavigationDelegate', () {
     test('onPageFinished', () {
