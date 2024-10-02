@@ -832,11 +832,9 @@ class TimeseriesStats {
     buffer.writeln(' | outlier average: $outlierAverage μs');
     buffer.writeln(' | outlier/clean ratio: ${outlierRatio}x');
     buffer.writeln(' | noise: ${_ratioToPercent(noise)}');
-    for (final MapEntry<double, double> percentileEntry
-        in percentiles.entries) {
-      buffer.writeln(
-        ' | p${(percentileEntry.key * 100).round()}: ${percentileEntry.value} μs',
-      );
+    for (final PercentileMetricComputation metric
+        in PercentileMetricComputation.values) {
+      buffer.writeln(' | ${metric.name}: ${metric.percentile} μs');
     }
     return buffer.toString();
   }
@@ -979,10 +977,9 @@ class Profile {
       json['$key.${BenchmarkMetricComputation.outlierRatio.name}'] =
           stats.outlierRatio;
       json['$key.${BenchmarkMetricComputation.noise.name}'] = stats.noise;
-      for (final MapEntry<double, double> percentileEntry
-          in stats.percentiles.entries) {
-        json['$key.p${(percentileEntry.key * 100).round()}'] =
-            percentileEntry.value;
+      for (final PercentileMetricComputation metric
+          in PercentileMetricComputation.values) {
+        json['$key.${metric.name}'] = stats.percentiles[metric.percentile];
       }
     }
 
