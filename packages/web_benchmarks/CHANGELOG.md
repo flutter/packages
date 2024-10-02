@@ -1,4 +1,4 @@
-## 3.1.0-wip
+## 3.1.0
 
 * Add `flutter_frame.total_time`, `flutter_frame.build_time`, and `flutter_frame.raster_time`
 metrics to benchmark results. These values are derived from the Flutter `FrameTiming` API.
