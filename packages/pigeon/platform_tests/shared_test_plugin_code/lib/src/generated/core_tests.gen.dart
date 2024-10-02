@@ -86,11 +86,14 @@ class AllTypes {
     required this.enumList,
     required this.objectList,
     required this.listList,
+    required this.mapList,
     required this.map,
     required this.stringMap,
     required this.intMap,
     required this.enumMap,
     required this.objectMap,
+    required this.listMap,
+    required this.mapMap,
   });
 
   bool aBool;
@@ -133,6 +136,8 @@ class AllTypes {
 
   List<List<Object?>> listList;
 
+  List<Map<Object?, Object?>> mapList;
+
   Map<Object?, Object?> map;
 
   Map<String, String> stringMap;
@@ -142,6 +147,10 @@ class AllTypes {
   Map<AnEnum, AnEnum> enumMap;
 
   Map<Object, Object> objectMap;
+
+  Map<int, List<Object?>> listMap;
+
+  Map<int, Map<Object?, Object?>> mapMap;
 
   Object encode() {
     return <Object?>[
@@ -165,11 +174,14 @@ class AllTypes {
       enumList,
       objectList,
       listList,
+      mapList,
       map,
       stringMap,
       intMap,
       enumMap,
       objectMap,
+      listMap,
+      mapMap,
     ];
   }
 
@@ -196,11 +208,16 @@ class AllTypes {
       enumList: (result[17] as List<Object?>?)!.cast<AnEnum>(),
       objectList: (result[18] as List<Object?>?)!.cast<Object>(),
       listList: (result[19] as List<Object?>?)!.cast<List<Object?>>(),
-      map: result[20]! as Map<Object?, Object?>,
-      stringMap: (result[21] as Map<Object?, Object?>?)!.cast<String, String>(),
-      intMap: (result[22] as Map<Object?, Object?>?)!.cast<int, int>(),
-      enumMap: (result[23] as Map<Object?, Object?>?)!.cast<AnEnum, AnEnum>(),
-      objectMap: (result[24] as Map<Object?, Object?>?)!.cast<Object, Object>(),
+      mapList: (result[20] as List<Object?>?)!.cast<Map<Object?, Object?>>(),
+      map: result[21]! as Map<Object?, Object?>,
+      stringMap: (result[22] as Map<Object?, Object?>?)!.cast<String, String>(),
+      intMap: (result[23] as Map<Object?, Object?>?)!.cast<int, int>(),
+      enumMap: (result[24] as Map<Object?, Object?>?)!.cast<AnEnum, AnEnum>(),
+      objectMap: (result[25] as Map<Object?, Object?>?)!.cast<Object, Object>(),
+      listMap:
+          (result[26] as Map<Object?, Object?>?)!.cast<int, List<Object?>>(),
+      mapMap: (result[27] as Map<Object?, Object?>?)!
+          .cast<int, Map<Object?, Object?>>(),
     );
   }
 }
@@ -229,12 +246,15 @@ class AllNullableTypes {
     this.enumList,
     this.objectList,
     this.listList,
+    this.mapList,
     this.recursiveClassList,
     this.map,
     this.stringMap,
     this.intMap,
     this.enumMap,
     this.objectMap,
+    this.listMap,
+    this.mapMap,
     this.recursiveClassMap,
   });
 
@@ -280,6 +300,8 @@ class AllNullableTypes {
 
   List<List<Object?>?>? listList;
 
+  List<Map<Object?, Object?>?>? mapList;
+
   List<AllNullableTypes?>? recursiveClassList;
 
   Map<Object?, Object?>? map;
@@ -291,6 +313,10 @@ class AllNullableTypes {
   Map<AnEnum?, AnEnum?>? enumMap;
 
   Map<Object?, Object?>? objectMap;
+
+  Map<int?, List<Object?>?>? listMap;
+
+  Map<int?, Map<Object?, Object?>?>? mapMap;
 
   Map<int?, AllNullableTypes?>? recursiveClassMap;
 
@@ -317,12 +343,15 @@ class AllNullableTypes {
       enumList,
       objectList,
       listList,
+      mapList,
       recursiveClassList,
       map,
       stringMap,
       intMap,
       enumMap,
       objectMap,
+      listMap,
+      mapMap,
       recursiveClassMap,
     ];
   }
@@ -351,16 +380,21 @@ class AllNullableTypes {
       enumList: (result[18] as List<Object?>?)?.cast<AnEnum?>(),
       objectList: (result[19] as List<Object?>?)?.cast<Object?>(),
       listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
+      mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
       recursiveClassList:
-          (result[21] as List<Object?>?)?.cast<AllNullableTypes?>(),
-      map: result[22] as Map<Object?, Object?>?,
+          (result[22] as List<Object?>?)?.cast<AllNullableTypes?>(),
+      map: result[23] as Map<Object?, Object?>?,
       stringMap:
-          (result[23] as Map<Object?, Object?>?)?.cast<String?, String?>(),
-      intMap: (result[24] as Map<Object?, Object?>?)?.cast<int?, int?>(),
-      enumMap: (result[25] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>(),
+          (result[24] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      intMap: (result[25] as Map<Object?, Object?>?)?.cast<int?, int?>(),
+      enumMap: (result[26] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>(),
       objectMap:
-          (result[26] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
-      recursiveClassMap: (result[27] as Map<Object?, Object?>?)
+          (result[27] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
+      listMap:
+          (result[28] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
+      mapMap: (result[29] as Map<Object?, Object?>?)
+          ?.cast<int?, Map<Object?, Object?>?>(),
+      recursiveClassMap: (result[30] as Map<Object?, Object?>?)
           ?.cast<int?, AllNullableTypes?>(),
     );
   }
@@ -391,11 +425,14 @@ class AllNullableTypesWithoutRecursion {
     this.enumList,
     this.objectList,
     this.listList,
+    this.mapList,
     this.map,
     this.stringMap,
     this.intMap,
     this.enumMap,
     this.objectMap,
+    this.listMap,
+    this.mapMap,
   });
 
   bool? aNullableBool;
@@ -438,6 +475,8 @@ class AllNullableTypesWithoutRecursion {
 
   List<List<Object?>?>? listList;
 
+  List<Map<Object?, Object?>?>? mapList;
+
   Map<Object?, Object?>? map;
 
   Map<String?, String?>? stringMap;
@@ -447,6 +486,10 @@ class AllNullableTypesWithoutRecursion {
   Map<AnEnum?, AnEnum?>? enumMap;
 
   Map<Object?, Object?>? objectMap;
+
+  Map<int?, List<Object?>?>? listMap;
+
+  Map<int?, Map<Object?, Object?>?>? mapMap;
 
   Object encode() {
     return <Object?>[
@@ -470,11 +513,14 @@ class AllNullableTypesWithoutRecursion {
       enumList,
       objectList,
       listList,
+      mapList,
       map,
       stringMap,
       intMap,
       enumMap,
       objectMap,
+      listMap,
+      mapMap,
     ];
   }
 
@@ -501,13 +547,18 @@ class AllNullableTypesWithoutRecursion {
       enumList: (result[17] as List<Object?>?)?.cast<AnEnum?>(),
       objectList: (result[18] as List<Object?>?)?.cast<Object?>(),
       listList: (result[19] as List<Object?>?)?.cast<List<Object?>?>(),
-      map: result[20] as Map<Object?, Object?>?,
+      mapList: (result[20] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
+      map: result[21] as Map<Object?, Object?>?,
       stringMap:
-          (result[21] as Map<Object?, Object?>?)?.cast<String?, String?>(),
-      intMap: (result[22] as Map<Object?, Object?>?)?.cast<int?, int?>(),
-      enumMap: (result[23] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>(),
+          (result[22] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      intMap: (result[23] as Map<Object?, Object?>?)?.cast<int?, int?>(),
+      enumMap: (result[24] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>(),
       objectMap:
-          (result[24] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
+          (result[25] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
+      listMap:
+          (result[26] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
+      mapMap: (result[27] as Map<Object?, Object?>?)
+          ?.cast<int?, Map<Object?, Object?>?>(),
     );
   }
 }

@@ -567,8 +567,10 @@ void main() {
         expect(point?.longitude, actual.points[i]?.longitude);
       }
       expect(actual.patterns.length, expected.patterns.length);
-      for (final (int i, Object? pattern) in actual.patterns.indexed) {
-        expect(pattern, expected.patterns[i].toJson());
+      for (final (int i, PlatformPatternItem? pattern)
+          in actual.patterns.indexed) {
+        expect(pattern?.encode(),
+            platformPatternItemFromPatternItem(expected.patterns[i]).encode());
       }
     }
 

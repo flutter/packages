@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 
 public class AllDatatypesTest {
@@ -170,7 +171,13 @@ public class AllDatatypesTest {
     // Not inline due to warnings about an ambiguous varargs call when inline.
     final List<Object> genericList = Arrays.asList(new Object[] {"hello", 1, true, false, null});
     final List<List<Object>> listList = new ArrayList<>(Arrays.asList());
+    final List<Map<Object, Object>> mapList = new ArrayList<>(Arrays.asList());
+    final Map<Long, List<Object>> listMap = new HashMap<Long, List<Object>>();
+    final Map<Long, Map<Object, Object>> mapMap = new HashMap<Long, Map<Object, Object>>();
     listList.add(genericList);
+    mapList.add(makeMap("hello", 1234));
+    listMap.put(1L, genericList);
+    mapMap.put(1L, makeMap("hello", 1234));
     AllTypes allEverything =
         new AllTypes.Builder()
             .setABool(false)
@@ -195,11 +202,14 @@ public class AllDatatypesTest {
                 Arrays.asList(
                     new CoreTests.AnEnum[] {CoreTests.AnEnum.ONE, CoreTests.AnEnum.FORTY_TWO}))
             .setListList(listList)
+            .setMapList(mapList)
             .setMap(makeMap("hello", 1234))
             .setIntMap(makeMap(1L, 0L))
             .setStringMap(makeMap("hello", "you"))
             .setObjectMap(makeMap("E", 4321))
             .setEnumMap(makeMap(CoreTests.AnEnum.ONE, CoreTests.AnEnum.FOUR_HUNDRED_TWENTY_TWO))
+            .setListMap(listMap)
+            .setMapMap(mapMap)
             .build();
 
     AllNullableTypes everything =

@@ -1,3 +1,7 @@
+## 2.14.7
+
+* Adds `PlatformPatternItem` pigeon class to convert `PlatformPolyline.pattern`.
+
 ## 2.14.6
 
 * Converts 'PlatformCameraUpdate' to pigeon.

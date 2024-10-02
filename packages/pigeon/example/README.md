@@ -40,7 +40,7 @@ needed for your project.
 Then make a simple call to run pigeon on the Dart file containing your definitions.
 
 ```sh
-flutter pub run pigeon --input path/to/input.dart
+dart run pigeon --input path/to/input.dart
 ```
 
 ## HostApi Example

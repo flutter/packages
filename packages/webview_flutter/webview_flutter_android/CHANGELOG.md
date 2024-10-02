@@ -1,3 +1,7 @@
+## 3.16.8
+
+* Bumps androidx.webkit:webkit from 1.11.0 to 1.12.0.
+
 ## 3.16.7
 
 * Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.
