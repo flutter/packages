@@ -20,11 +20,5 @@ void main() {
       expect(computed[0.95], 95.0);
       expect(computed[1.0], 99.0);
     });
-
-    test('generatePercentileTargets', () {
-      // This should match the expected percentile values in the
-      // [BenchmarkMetricComputation] enum.
-      expect(generatePercentileTargets(), <double>[0.50, 0.90, 0.95]);
-    });
   });
 }

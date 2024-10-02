@@ -696,7 +696,7 @@ class Timeseries {
     // Compute percentile values (e.g. p50, p90, p95).
     final Map<double, double> percentiles = computePercentiles(
       name,
-      generatePercentileTargets(),
+      PercentileMetricComputation.percentilesAsDoubles,
       candidateValues,
     );
 

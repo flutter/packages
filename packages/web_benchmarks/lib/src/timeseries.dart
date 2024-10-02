@@ -4,8 +4,6 @@
 
 import 'package:collection/collection.dart';
 
-import 'metrics.dart';
-
 // TODO(kenz): move the time series logic from recorder.dart into this file for
 // better code separation.
 
@@ -43,23 +41,4 @@ Map<double, double> computePercentiles(
   }
 
   return computed;
-}
-
-// ignore: public_member_api_docs, this will be made private in a follow up PR
-extension PercentileExtension on BenchmarkMetricComputation {
-  // ignore: public_member_api_docs, this will be made private in a follow up PR
-  double? get toPercentile {
-    if (RegExp(r'^p\d+$').hasMatch(name)) {
-      return int.parse(name.substring(1)) / 100;
-    }
-    return null;
-  }
-}
-
-// ignore: public_member_api_docs, this will be made private in a follow up PR
-List<double> generatePercentileTargets() {
-  return BenchmarkMetricComputation.values
-      .map((BenchmarkMetricComputation metric) => metric.toPercentile)
-      .whereType<double>()
-      .toList();
 }
