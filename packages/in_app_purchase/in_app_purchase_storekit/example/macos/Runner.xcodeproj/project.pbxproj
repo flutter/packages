@@ -33,6 +33,7 @@
 		F27694192C49DBE800277144 /* FIATransactionCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694182C49DBE800277144 /* FIATransactionCacheTests.swift */; };
 		F29F1C9D2CACC17B00CC1FEE /* InAppPurchaseStoreKit2PluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F29F1C9B2CACC17B00CC1FEE /* InAppPurchaseStoreKit2PluginTests.swift */; };
 		F29F1C9E2CACC17B00CC1FEE /* StoreKit2TranslatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F29F1C9C2CACC17B00CC1FEE /* StoreKit2TranslatorTests.swift */; };
+		F29F1CA02CADCF1E00CC1FEE /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = F29F1C9F2CADCF1E00CC1FEE /* Configuration.storekit */; };
 		F2C3A7412BD9D33D000D35F2 /* Stubs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C3A7402BD9D33D000D35F2 /* Stubs.swift */; };
 		F2D5271E2C50645600C137C7 /* PaymentQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D5271D2C50645600C137C7 /* PaymentQueueTests.swift */; };
 		F2D527262C583C1C00C137C7 /* TranslatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D527252C583C1C00C137C7 /* TranslatorTests.swift */; };
@@ -99,6 +100,7 @@
 		F27694182C49DBE800277144 /* FIATransactionCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FIATransactionCacheTests.swift; path = ../../shared/RunnerTests/FIATransactionCacheTests.swift; sourceTree = "<group>"; };
 		F29F1C9B2CACC17B00CC1FEE /* InAppPurchaseStoreKit2PluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InAppPurchaseStoreKit2PluginTests.swift; path = ../shared/RunnerTests/InAppPurchaseStoreKit2PluginTests.swift; sourceTree = SOURCE_ROOT; };
 		F29F1C9C2CACC17B00CC1FEE /* StoreKit2TranslatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StoreKit2TranslatorTests.swift; path = ../shared/RunnerTests/StoreKit2TranslatorTests.swift; sourceTree = SOURCE_ROOT; };
+		F29F1C9F2CADCF1E00CC1FEE /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Configuration.storekit; path = ../../ios/Runner/Configuration.storekit; sourceTree = "<group>"; };
 		F2C3A73F2BD9D33D000D35F2 /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		F2C3A7402BD9D33D000D35F2 /* Stubs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stubs.swift; sourceTree = "<group>"; };
 		F2D5271D2C50645600C137C7 /* PaymentQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PaymentQueueTests.swift; path = ../../shared/RunnerTests/PaymentQueueTests.swift; sourceTree = "<group>"; };
@@ -232,6 +234,7 @@
 				F79BDC1F2906023C00E3999D /* Stubs.h */,
 				F79BDC152905FC0500E3999D /* Info.plist */,
 				F79BDC1B2905FC3200E3999D /* Stubs.m */,
+				F29F1C9F2CADCF1E00CC1FEE /* Configuration.storekit */,
 				F2C3A7402BD9D33D000D35F2 /* Stubs.swift */,
 				F2C3A73F2BD9D33D000D35F2 /* RunnerTests-Bridging-Header.h */,
 			);
@@ -347,6 +350,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F29F1CA02CADCF1E00CC1FEE /* Configuration.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
