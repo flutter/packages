@@ -783,6 +783,81 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     _writeNilOrValue(indent);
   }
 
+  @override
+  void writeEventChannelApi(
+    SwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstEventChannelApi api, {
+    required String dartPackageName,
+  }) {
+    indent.newln();
+    indent.format('''
+      private class PigeonStreamHandler<T>: NSObject, FlutterStreamHandler {
+        private let wrapper: PigeonEventChannelWrapper<T>
+        private var pigeonSink: PigeonEventSink<T>? = nil
+
+        init(wrapper: PigeonEventChannelWrapper<T>) {
+          self.wrapper = wrapper
+        }
+
+        func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
+          -> FlutterError?
+        {
+          pigeonSink = PigeonEventSink<T>(events)
+          wrapper.onListen(withArguments: arguments, sink: pigeonSink!)
+          return nil
+        }
+
+        func onCancel(withArguments arguments: Any?) -> FlutterError? {
+          pigeonSink = nil
+          wrapper.onCancel(withArguments: arguments)
+          return nil
+        }
+      }
+
+      class PigeonEventChannelWrapper<T> {
+        func onListen(withArguments arguments: Any?, sink: PigeonEventSink<T>) {}
+        func onCancel(withArguments arguments: Any?) {}
+      }
+
+      class PigeonEventSink<T> {
+        private let sink: FlutterEventSink
+
+        init(_ sink: @escaping FlutterEventSink) {
+          self.sink = sink
+        }
+
+        func success(_ value: T) {
+          sink(value)
+        }
+
+        func error(code: String, message: String?, details: Any?) {
+          sink(FlutterError(code: code, message: message, details: details))
+        }
+      }
+      ''');
+    addDocumentationComments(
+        indent, api.documentationComments, _docCommentSpec);
+    for (final Method func in api.methods) {
+      indent.format('''
+        class ${toUpperCamelCase(func.name)}StreamHandler: PigeonEventChannelWrapper<${_swiftTypeForDartType(func.returnType)}> {
+          static func register(with messenger: FlutterBinaryMessenger, 
+                              instanceName: String = "",
+                              wrapper: ${toUpperCamelCase(func.name)}StreamHandler) {
+            var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts"
+            if !instanceName.isEmpty {
+              channelName += ".\\(instanceName)"
+            }
+            let streamHandler = PigeonStreamHandler<${_swiftTypeForDartType(func.returnType)}>(wrapper: wrapper)
+            let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger)
+            channel.setStreamHandler(streamHandler)
+          }
+        }
+      ''');
+    }
+  }
+
   void _writeFlutterMethod(
     Indent indent, {
     required SwiftOptions generatorOptions,

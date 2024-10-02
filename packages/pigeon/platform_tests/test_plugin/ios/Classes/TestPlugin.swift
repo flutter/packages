@@ -12,6 +12,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   var flutterAPI: FlutterIntegrationCoreApi
   var flutterSmallApiOne: FlutterSmallApi
   var flutterSmallApiTwo: FlutterSmallApi
+  var sendInts: StreamIntsStreamHandler
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = TestPlugin(binaryMessenger: registrar.messenger())
@@ -26,6 +27,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixOne")
     flutterSmallApiTwo = FlutterSmallApi(
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
+    sendInts = SendInts()
+    StreamIntsStreamHandler.register(with: binaryMessenger, wrapper: sendInts)
   }
 
   // MARK: HostIntegrationCoreApi implementation
@@ -993,4 +996,19 @@ public class TestPluginWithSuffix: HostSmallApi {
     completion(.success(Void()))
   }
 
+}
+
+class SendInts: StreamIntsStreamHandler {
+  var timer = Timer()
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
+    var count: Int64 = 0
+
+    Timer.scheduledTimer(
+      withTimeInterval: 1, repeats: true,
+      block: { _ in
+        count += 1
+        sink.success(count)
+      })
+  }
 }

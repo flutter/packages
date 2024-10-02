@@ -652,6 +652,66 @@ class CoreTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = CoreTestsPigeonCodec(readerWriter: CoreTestsPigeonCodecReaderWriter())
 }
 
+private class PigeonStreamHandler<T>: NSObject, FlutterStreamHandler {
+  private let wrapper: PigeonEventChannelWrapper<T>
+  private var pigeonSink: PigeonEventSink<T>? = nil
+
+  init(wrapper: PigeonEventChannelWrapper<T>) {
+    self.wrapper = wrapper
+  }
+
+  func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
+    -> FlutterError?
+  {
+    pigeonSink = PigeonEventSink<T>(events)
+    wrapper.onListen(withArguments: arguments, sink: pigeonSink!)
+    return nil
+  }
+
+  func onCancel(withArguments arguments: Any?) -> FlutterError? {
+    pigeonSink = nil
+    wrapper.onCancel(withArguments: arguments)
+    return nil
+  }
+}
+
+class PigeonEventChannelWrapper<T> {
+  func onListen(withArguments arguments: Any?, sink: PigeonEventSink<T>) {}
+  func onCancel(withArguments arguments: Any?) {}
+}
+
+class PigeonEventSink<T> {
+  private let sink: FlutterEventSink
+
+  init(_ sink: @escaping FlutterEventSink) {
+    self.sink = sink
+  }
+
+  func success(_ value: T) {
+    sink(value)
+  }
+
+  func error(code: String, message: String?, details: Any?) {
+    sink(FlutterError(code: code, message: message, details: details))
+  }
+}
+
+class StreamIntsStreamHandler: PigeonEventChannelWrapper<Int64> {
+  static func register(
+    with messenger: FlutterBinaryMessenger,
+    instanceName: String = "",
+    wrapper: StreamIntsStreamHandler
+  ) {
+    var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts"
+    if !instanceName.isEmpty {
+      channelName += ".\(instanceName)"
+    }
+    let streamHandler = PigeonStreamHandler<Int64>(wrapper: wrapper)
+    let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger)
+    channel.setStreamHandler(streamHandler)
+  }
+}
+
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 ///

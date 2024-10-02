@@ -15,7 +15,6 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   private var flutterSmallApiOne: FlutterSmallApi? = null
   private var flutterSmallApiTwo: FlutterSmallApi? = null
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
-  private var streamIntsClass: StreamIntsStreamHandler? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
