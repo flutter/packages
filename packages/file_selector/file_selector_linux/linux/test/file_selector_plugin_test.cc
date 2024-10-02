@@ -165,7 +165,7 @@ TEST(FileSelectorPlugin, TestSaveSimple) {
 TEST(FileSelectorPlugin, TestSaveWithArguments) {
   g_autoptr(FfsPlatformFileChooserOptions) options =
       ffs_platform_file_chooser_options_new(nullptr, "initialDirectory",
-                                            "suggestedName", nullptr, nullptr);
+                                            "foo.txt", nullptr, nullptr);
 
   g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr, FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_SAVE,
