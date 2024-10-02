@@ -4,6 +4,10 @@
 
 @available(iOS 15.0, macOS 12.0, *)
 extension InAppPurchasePlugin: InAppPurchase2API {
+  var updateListenerTaskAsTask: Task<(), Never> {
+      return self.updateListenerTask as! Task<(), Never>
+  }
+
   // MARK: - Pigeon Functions
 
   /// Wrapper method around StoreKit2's canMakePayments() method
@@ -94,10 +98,10 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     Task {
       @MainActor in
       do {
-        let transactionsMessages = await rawTransactions().map {
+        let transactionsMsgs = await rawTransactions().map {
           $0.convertToPigeon()
         }
-        completion(.success(transactionsMessages))
+        completion(.success(transactionsMsgs))
       }
     }
   }
@@ -130,7 +134,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
 
   /// Stop subscribing to Transaction.updates
   func stopListeningToTransactions() throws {
-    getUpdateListenerTask().cancel()
+    updateListenerTaskAsTask.cancel()
   }
 
   /// Sends an transaction back to Dart. Access these transactions with `purchaseStream`
@@ -172,10 +176,5 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       }
     }
     return nil
-  }
-
-  /// Helper function to cast updateListenerTask to a task
-  func getUpdateListenerTask() -> Task<(), Never> {
-    return self.updateListenerTask as! Task<(), Never>
   }
 }

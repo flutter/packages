@@ -29,6 +29,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
 
   // This should be an Task, but Task is on available >= iOS 13
   var updateListenerTask: Any?
+  
   var transactionCallbackAPI: InAppPurchase2CallbackAPI? = nil
 
   public static func register(with registrar: FlutterPluginRegistrar) {
