@@ -126,10 +126,7 @@ class FileSelectorLinux extends FileSelectorPlatform {
 
 List<PlatformTypeGroup>? _platformTypeGroupsFromXTypeGroups(
     List<XTypeGroup>? groups) {
-  if (groups == null) {
-    return null;
-  }
-  return groups.map(_platformTypeGroupFromXTypeGroup).toList();
+  return groups?.map(_platformTypeGroupFromXTypeGroup).toList();
 }
 
 PlatformTypeGroup _platformTypeGroupFromXTypeGroup(XTypeGroup group) {
