@@ -1,6 +1,7 @@
-## NEXT
+## 1.0.5
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Adds `stateHome` property for `XDG_STATE_HOME`.
 
 ## 1.0.4
 
