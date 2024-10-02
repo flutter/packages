@@ -64,7 +64,7 @@ enum BenchmarkMetricComputation {
   outlierRatio,
 
   /// The name for the computed value tracking the noise as a multiple of the
-  /// [average] value takes from clean samples.
+  /// [average] value taken from clean samples.
   noise,
 
   /// The name for the computed value tracking the 50th percentile value from

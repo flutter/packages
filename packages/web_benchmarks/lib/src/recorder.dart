@@ -771,7 +771,7 @@ class TimeseriesStats {
   /// The standard deviation in the measured samples without outliers.
   final double standardDeviation;
 
-  /// The noise as a multiple of the [average] value takes from clean samples.
+  /// The noise as a multiple of the [average] value taken from clean samples.
   ///
   /// This value can be multiplied by 100.0 to get noise as a percentage of
   /// the average.
