@@ -1,6 +1,6 @@
 ## 22.4.2
 
-* Update README.md to use `dart run pigeon` instead of the deprecated command `flutter pub run pigeon`.
+* Changes `README.md` to replace the deprecated `flutter pub run pigeon` command with `dart run pigeon`.
 
 ## 22.4.1
 
