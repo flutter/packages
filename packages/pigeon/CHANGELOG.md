@@ -1,3 +1,7 @@
+## 22.4.2
+
+* Update outdated command of running pigeon in README.md
+
 ## 22.4.1
 
 * [dart] Fixes bug where special handling of ints is ignored if no custom types are used.
