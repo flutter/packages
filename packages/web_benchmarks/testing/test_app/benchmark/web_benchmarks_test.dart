@@ -101,10 +101,11 @@ Future<BenchmarkResults> _runBenchmarks({
       for (final BenchmarkMetricComputation computation
           in BenchmarkMetricComputation.values) {
         expect(
-          taskResult.scores[benchmarkName]!.where((BenchmarkScore score) =>
-              score.metric == '$metricName.${computation.name}'),
-          hasLength(1),
-        );
+            taskResult.scores[benchmarkName]!.where((BenchmarkScore score) =>
+                score.metric == '$metricName.${computation.name}'),
+            hasLength(1),
+            reason: 'Expected to find a metric named '
+                '$metricName.${computation.name}');
       }
     }
     expect(

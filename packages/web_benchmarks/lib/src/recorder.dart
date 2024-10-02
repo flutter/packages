@@ -835,7 +835,7 @@ class TimeseriesStats {
     for (final MapEntry<double, double> percentileEntry
         in percentiles.entries) {
       buffer.writeln(
-        ' | p${percentileEntry.key * 100}: ${percentileEntry.value} μs',
+        ' | p${(percentileEntry.key * 100).round()}: ${percentileEntry.value} μs',
       );
     }
     return buffer.toString();
@@ -981,7 +981,8 @@ class Profile {
       json['$key.${BenchmarkMetricComputation.noise.name}'] = stats.noise;
       for (final MapEntry<double, double> percentileEntry
           in stats.percentiles.entries) {
-        json['$key.p${percentileEntry.key * 100}'] = percentileEntry.value;
+        json['$key.p${(percentileEntry.key * 100).round()}'] =
+            percentileEntry.value;
       }
     }
 
