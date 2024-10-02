@@ -19,6 +19,12 @@
 // gtk_file_chooser_native_new to allow for testing values that are given as
 // construction paramaters and can't be queried later.
 
+// TODO(stuartmorgan): Remove this once
+// https://github.com/flutter/flutter/issues/156100 is fixed. For now, this may
+// need to be updated to make unit tests pass again any time the
+// Pigeon-generated files are updated.
+static const int platform_type_group_object_id = 130;
+
 TEST(FileSelectorPlugin, TestOpenSimple) {
   g_autoptr(FfsPlatformFileChooserOptions) options =
       ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
@@ -56,35 +62,45 @@ TEST(FileSelectorPlugin, TestOpenWithFilter) {
   g_autoptr(FlValue) type_groups = fl_value_new_list();
 
   {
+    g_autoptr(FlValue) text_group_extensions = fl_value_new_list();
+
     g_autoptr(FlValue) text_group_mime_types = fl_value_new_list();
     fl_value_append_take(text_group_mime_types,
                          fl_value_new_string("text/plain"));
-    g_autoptr(FlValue) text_group = fl_value_new_map();
-    fl_value_set_string_take(text_group, "label", fl_value_new_string("Text"));
-    fl_value_set_string(text_group, "mimeTypes", text_group_mime_types);
-    fl_value_append(type_groups, text_group);
+
+    g_autoptr(FfsPlatformTypeGroup) text_group = ffs_platform_type_group_new(
+        "Text", text_group_extensions, text_group_mime_types);
+    fl_value_append_take(
+        type_groups, fl_value_new_custom_object(platform_type_group_object_id,
+                                                G_OBJECT(text_group)));
   }
 
   {
     g_autoptr(FlValue) image_group_extensions = fl_value_new_list();
     fl_value_append_take(image_group_extensions, fl_value_new_string("*.png"));
     fl_value_append_take(image_group_extensions, fl_value_new_string("*.gif"));
-    fl_value_append_take(image_group_extensions,
-                         fl_value_new_string("*.jgpeg"));
-    g_autoptr(FlValue) image_group = fl_value_new_map();
-    fl_value_set_string_take(image_group, "label",
-                             fl_value_new_string("Images"));
-    fl_value_set_string(image_group, "extensions", image_group_extensions);
-    fl_value_append(type_groups, image_group);
+    fl_value_append_take(image_group_extensions, fl_value_new_string("*.jpeg"));
+
+    g_autoptr(FlValue) image_group_mime_types = fl_value_new_list();
+
+    g_autoptr(FfsPlatformTypeGroup) image_group = ffs_platform_type_group_new(
+        "Images", image_group_extensions, image_group_mime_types);
+    fl_value_append_take(
+        type_groups, fl_value_new_custom_object(platform_type_group_object_id,
+                                                G_OBJECT(image_group)));
   }
 
   {
     g_autoptr(FlValue) any_group_extensions = fl_value_new_list();
     fl_value_append_take(any_group_extensions, fl_value_new_string("*"));
-    g_autoptr(FlValue) any_group = fl_value_new_map();
-    fl_value_set_string_take(any_group, "label", fl_value_new_string("Any"));
-    fl_value_set_string(any_group, "extensions", any_group_extensions);
-    fl_value_append(type_groups, any_group);
+
+    g_autoptr(FlValue) any_group_mime_types = fl_value_new_list();
+
+    g_autoptr(FfsPlatformTypeGroup) any_group = ffs_platform_type_group_new(
+        "Any", any_group_extensions, any_group_mime_types);
+    fl_value_append_take(
+        type_groups, fl_value_new_custom_object(platform_type_group_object_id,
+                                                G_OBJECT(any_group)));
   }
 
   g_autoptr(FfsPlatformFileChooserOptions) options =
