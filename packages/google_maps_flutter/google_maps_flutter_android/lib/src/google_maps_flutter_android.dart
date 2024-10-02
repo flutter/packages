@@ -1219,7 +1219,7 @@ PlatformJointType platformJointTypeFromJointType(JointType jointType) {
   return PlatformJointType.mitered;
 }
 
-/// Converts platform interface's Cap to Pigeon's PlatformCap.
+/// Converts platform interface's [Cap] to Pigeon's [PlatformCap].
 @visibleForTesting
 PlatformCap platformCapFromCap(Cap cap) {
   // TODO(schectman): Convert Cap to structured data.

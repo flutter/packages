@@ -884,12 +884,14 @@ class Convert {
       case SQUARE_CAP:
         return new SquareCap();
       case CUSTOM_CAP:
-        assert cap.getRefWidth() != null;
+        if (cap.getRefWidth() == null) {
+          throw new IllegalArgumentException("A Custom Cap must specify a refWidth value.");
+        }
         return new CustomCap(
             toBitmapDescriptor(cap.getBitmapDescriptor(), assetManager, density),
             cap.getRefWidth().floatValue());
     }
-    throw new IllegalArgumentException("Unrecognized Cap type: " + cap.getType().toString());
+    throw new IllegalArgumentException("Unrecognized Cap type: " + cap.getType());
   }
 
   static String interpretTileOverlayOptions(
