@@ -17,8 +17,8 @@ import 'package:meta/meta.dart';
 import 'package:web/web.dart' as html;
 
 import 'common.dart';
-import 'metrics.dart';
 import 'computations.dart';
+import 'metrics.dart';
 
 /// The number of samples from warm-up iterations.
 ///

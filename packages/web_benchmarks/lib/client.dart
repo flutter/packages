@@ -10,11 +10,11 @@ import 'dart:math' as math;
 import 'package:web/web.dart';
 
 import 'src/common.dart';
-import 'src/recorder.dart';
 import 'src/computations.dart';
+import 'src/recorder.dart';
 
-export 'src/recorder.dart';
 export 'src/computations.dart';
+export 'src/recorder.dart';
 
 /// Signature for a function that creates a [Recorder].
 typedef RecorderFactory = Recorder Function();
