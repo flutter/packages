@@ -1000,7 +1000,7 @@ targets:
       target_file: macos_repo_checks.yaml
       dependencies: >
         [
-          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
+          {"dependency": "swift_format", "version": "build_id:8743565613984736785"}
         ]
 
   ### macOS desktop tasks ###
@@ -1073,7 +1073,7 @@ targets:
         }
       dependencies: >
         [
-          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
+          {"dependency": "swift_format", "version": "build_id:8743565613984736785"}
         ]
 
   - name: Mac_arm64 custom_package_tests stable
@@ -1089,7 +1089,7 @@ targets:
         }
       dependencies: >
         [
-          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
+          {"dependency": "swift_format", "version": "build_id:8743565613984736785"}
         ]
 
   ### iOS tasks ###
