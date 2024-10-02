@@ -35,9 +35,9 @@ class PlatformTypeGroup {
 
   String label;
 
-  List<String?> extensions;
+  List<String> extensions;
 
-  List<String?> mimeTypes;
+  List<String> mimeTypes;
 
   Object encode() {
     return <Object?>[
@@ -51,8 +51,8 @@ class PlatformTypeGroup {
     result as List<Object?>;
     return PlatformTypeGroup(
       label: result[0]! as String,
-      extensions: (result[1] as List<Object?>?)!.cast<String?>(),
-      mimeTypes: (result[2] as List<Object?>?)!.cast<String?>(),
+      extensions: (result[1] as List<Object?>?)!.cast<String>(),
+      mimeTypes: (result[2] as List<Object?>?)!.cast<String>(),
     );
   }
 }
@@ -69,7 +69,7 @@ class PlatformFileChooserOptions {
     this.selectMultiple,
   });
 
-  List<PlatformTypeGroup?>? allowedFileTypes;
+  List<PlatformTypeGroup>? allowedFileTypes;
 
   String? currentFolderPath;
 
@@ -96,7 +96,7 @@ class PlatformFileChooserOptions {
     result as List<Object?>;
     return PlatformFileChooserOptions(
       allowedFileTypes:
-          (result[0] as List<Object?>?)?.cast<PlatformTypeGroup?>(),
+          (result[0] as List<Object?>?)?.cast<PlatformTypeGroup>(),
       currentFolderPath: result[1] as String?,
       currentName: result[2] as String?,
       acceptButtonLabel: result[3] as String?,
@@ -163,7 +163,7 @@ class FileSelectorApi {
   /// list of selected paths.
   ///
   /// An empty list corresponds to a cancelled selection.
-  Future<List<String?>> showFileChooser(PlatformFileChooserActionType type,
+  Future<List<String>> showFileChooser(PlatformFileChooserActionType type,
       PlatformFileChooserOptions options) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.file_selector_linux.FileSelectorApi.showFileChooser$pigeonVar_messageChannelSuffix';
@@ -189,7 +189,7 @@ class FileSelectorApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<String?>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<String>();
     }
   }
 }

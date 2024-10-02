@@ -24,11 +24,8 @@ class PlatformTypeGroup {
   });
 
   final String label;
-  // TODO(stuartmorgan): Declare these as non-nullable generics once
-  // https://github.com/flutter/flutter/issues/97848 is fixed. In practice,
-  // the values will never be null, and the native implementation assumes that.
-  final List<String?> extensions;
-  final List<String?> mimeTypes;
+  final List<String> extensions;
+  final List<String> mimeTypes;
 }
 
 /// Options for GKT file chooser.
@@ -43,10 +40,7 @@ class PlatformFileChooserOptions {
     this.selectMultiple,
   });
 
-  // TODO(stuartmorgan): Declare this as a non-nullable generic once
-  // https://github.com/flutter/flutter/issues/97848 is fixed. In practice,
-  // the values will never be null, and the native implementation assumes that.
-  final List<PlatformTypeGroup?>? allowedFileTypes;
+  final List<PlatformTypeGroup>? allowedFileTypes;
   final String? currentFolderPath;
   final String? currentName;
   final String? acceptButtonLabel;
@@ -63,9 +57,6 @@ abstract class FileSelectorApi {
   /// list of selected paths.
   ///
   /// An empty list corresponds to a cancelled selection.
-  // TODO(stuartmorgan): Declare this return as a non-nullable generic once
-  // https://github.com/flutter/flutter/issues/97848 is fixed. In practice,
-  // the values will never be null, and the calling code assumes that.
-  List<String?> showFileChooser(
+  List<String> showFileChooser(
       PlatformFileChooserActionType type, PlatformFileChooserOptions options);
 }
