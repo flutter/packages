@@ -41,11 +41,9 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     id: String, options: SK2ProductPurchaseOptionsMessage?,
     completion: @escaping (Result<SK2ProductPurchaseResultMessage, Error>) -> Void
   ) {
-    Task {
-      @MainActor in
+    Task { @MainActor in
       do {
-        let product = try await Product.products(for: [id]).first
-        guard let product = product else {
+        guard let product = try await Product.products(for: [id]).first else {
           let error = PigeonError(
             code: "storekit2_failed_to_fetch_product",
             message: "Storekit has failed to fetch this product.",
@@ -96,10 +94,10 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     Task {
       @MainActor in
       do {
-        let transactionsMsgs = await rawTransactions().map {
+        let transactionsMessages = await rawTransactions().map {
           $0.convertToPigeon()
         }
-        completion(.success(transactionsMsgs))
+        completion(.success(transactionsMessages))
       }
     }
   }
@@ -137,8 +135,8 @@ extension InAppPurchasePlugin: InAppPurchase2API {
 
   /// Sends an transaction back to Dart. Access these transactions with `purchaseStream`
   func sendTransactionUpdate(transaction: Transaction) {
-    let transactionMsg = transaction.convertToPigeon()
-    transactionDelegate?.onTransactionsUpdated(newTransaction: transactionMsg) { result in
+    let transactionMessage = transaction.convertToPigeon()
+    transactionCallbackAPI?.onTransactionsUpdated(newTransaction: transactionMessage) { result in
       switch result {
       case .success: break
       case .failure(let error):
