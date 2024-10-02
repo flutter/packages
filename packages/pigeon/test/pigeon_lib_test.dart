@@ -744,25 +744,6 @@ abstract class Api {
     expect(field.type.typeArguments[0].typeArguments[0].baseName, 'int');
   });
 
-  test('error nonnull type argument', () {
-    const String code = '''
-class Foo {
-  List<int> list;
-}
-
-@HostApi()
-abstract class Api {
-  void doit(Foo foo);
-}
-''';
-    final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(1));
-    expect(parseResult.errors[0].message,
-        contains('Generic type parameters must be nullable'));
-    expect(parseResult.errors[0].message, contains('"list"'));
-    expect(parseResult.errors[0].lineNumber, 2);
-  });
-
   test('enums argument host', () {
     const String code = '''
 enum Foo {

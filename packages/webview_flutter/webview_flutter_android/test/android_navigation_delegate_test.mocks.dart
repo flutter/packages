@@ -43,6 +43,17 @@ class _FakeHttpAuthHandler_1 extends _i1.SmartFake
         );
 }
 
+class _FakeDownloadListener_2 extends _i1.SmartFake
+    implements _i2.DownloadListener {
+  _FakeDownloadListener_2(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [HttpAuthHandler].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -110,4 +121,64 @@ class MockHttpAuthHandler extends _i1.Mock implements _i2.HttpAuthHandler {
           ),
         ),
       ) as _i2.HttpAuthHandler);
+}
+
+/// A class which mocks [DownloadListener].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
+  MockDownloadListener() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void Function(
+    _i2.DownloadListener,
+    String,
+    String,
+    String,
+    String,
+    int,
+  ) get onDownloadStart => (super.noSuchMethod(
+        Invocation.getter(#onDownloadStart),
+        returnValue: (
+          _i2.DownloadListener pigeon_instance,
+          String url,
+          String userAgent,
+          String contentDisposition,
+          String mimetype,
+          int contentLength,
+        ) {},
+      ) as void Function(
+        _i2.DownloadListener,
+        String,
+        String,
+        String,
+        String,
+        int,
+      ));
+
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i2.DownloadListener pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeon_copy,
+          [],
+        ),
+        returnValue: _FakeDownloadListener_2(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+      ) as _i2.DownloadListener);
 }

@@ -45,6 +45,8 @@ void main() {
       PlatformAdsManagerDelegateCreationParams params,
     ) {
       throw UnimplementedError();
+    }, onCreatePlatformContentProgressProvider: (_) {
+      throw UnimplementedError();
     });
 
     final AdDisplayContainer adDisplayContainer = AdDisplayContainer(

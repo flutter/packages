@@ -3716,7 +3716,7 @@ class DownloadListener extends PigeonInternalProxyApiBaseClass {
   DownloadListener({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-    this.onDownloadStart,
+    required this.onDownloadStart,
   }) {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
@@ -3756,7 +3756,7 @@ class DownloadListener extends PigeonInternalProxyApiBaseClass {
   DownloadListener.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-    this.onDownloadStart,
+    required this.onDownloadStart,
   });
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecDownloadListener =
@@ -3788,13 +3788,12 @@ class DownloadListener extends PigeonInternalProxyApiBaseClass {
     String contentDisposition,
     String mimetype,
     int contentLength,
-  )? onDownloadStart;
+  ) onDownloadStart;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    DownloadListener Function()? pigeon_newInstance,
     void Function(
       DownloadListener pigeon_instance,
       String url,
@@ -3808,44 +3807,6 @@ class DownloadListener extends PigeonInternalProxyApiBaseClass {
         _PigeonInternalProxyApiBaseCodec(
             pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
-    {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_android.DownloadListener.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (pigeon_clearHandlers) {
-        pigeonVar_channel.setMessageHandler(null);
-      } else {
-        pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.pigeon_newInstance was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.pigeon_newInstance was null, expected non-null int.');
-          try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
-                .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  DownloadListener.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
-
     {
       final BasicMessageChannel<
           Object?> pigeonVar_channel = BasicMessageChannel<
@@ -3880,7 +3841,7 @@ class DownloadListener extends PigeonInternalProxyApiBaseClass {
           assert(arg_contentLength != null,
               'Argument for dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart was null, expected non-null int.');
           try {
-            (onDownloadStart ?? arg_pigeon_instance!.onDownloadStart)?.call(
+            (onDownloadStart ?? arg_pigeon_instance!.onDownloadStart).call(
                 arg_pigeon_instance!,
                 arg_url!,
                 arg_userAgent!,

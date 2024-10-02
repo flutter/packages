@@ -485,7 +485,7 @@ abstract class DownloadListener {
     String contentDisposition,
     String mimetype,
     int contentLength,
-  )? onDownloadStart;
+  ) onDownloadStart;
 }
 
 /// Handles notification of JavaScript dialogs, favicons, titles, and the

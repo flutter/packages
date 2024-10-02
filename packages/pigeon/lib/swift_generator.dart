@@ -1031,8 +1031,7 @@ String _flattenTypeArguments(List<TypeDeclaration> args) {
 }
 
 String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
-  if (type.typeArguments.isEmpty ||
-      (type.typeArguments.first.baseName == 'Object')) {
+  if (type.typeArguments.isEmpty) {
     if (type.baseName == 'List') {
       return '[Any?]';
     } else if (type.baseName == 'Map') {
@@ -1044,14 +1043,17 @@ String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
     if (type.baseName == 'List') {
       return '[${_nullSafeSwiftTypeForDartType(type.typeArguments.first)}]';
     } else if (type.baseName == 'Map') {
-      return '[${_nullSafeSwiftTypeForDartType(type.typeArguments.first)}: ${_nullSafeSwiftTypeForDartType(type.typeArguments.last)}]';
+      return '[${_nullSafeSwiftTypeForDartType(type.typeArguments.first, mapKey: true)}: ${_nullSafeSwiftTypeForDartType(type.typeArguments.last)}]';
     } else {
       return '${type.baseName}<${_flattenTypeArguments(type.typeArguments)}>';
     }
   }
 }
 
-String? _swiftTypeForBuiltinDartType(TypeDeclaration type) {
+String? _swiftTypeForBuiltinDartType(
+  TypeDeclaration type, {
+  bool mapKey = false,
+}) {
   const Map<String, String> swiftTypeForDartTypeMap = <String, String>{
     'void': 'Void',
     'bool': 'Bool',
@@ -1065,7 +1067,9 @@ String? _swiftTypeForBuiltinDartType(TypeDeclaration type) {
     'Float64List': 'FlutterStandardTypedData',
     'Object': 'Any',
   };
-  if (swiftTypeForDartTypeMap.containsKey(type.baseName)) {
+  if (mapKey && type.baseName == 'Object') {
+    return 'AnyHashable';
+  } else if (swiftTypeForDartTypeMap.containsKey(type.baseName)) {
     return swiftTypeForDartTypeMap[type.baseName];
   } else if (type.baseName == 'List' || type.baseName == 'Map') {
     return _swiftTypeForBuiltinGenericDartType(type);
@@ -1074,13 +1078,16 @@ String? _swiftTypeForBuiltinDartType(TypeDeclaration type) {
   }
 }
 
-String _swiftTypeForDartType(TypeDeclaration type) {
-  return _swiftTypeForBuiltinDartType(type) ?? type.baseName;
+String _swiftTypeForDartType(TypeDeclaration type, {bool mapKey = false}) {
+  return _swiftTypeForBuiltinDartType(type, mapKey: mapKey) ?? type.baseName;
 }
 
-String _nullSafeSwiftTypeForDartType(TypeDeclaration type) {
+String _nullSafeSwiftTypeForDartType(
+  TypeDeclaration type, {
+  bool mapKey = false,
+}) {
   final String nullSafe = type.isNullable ? '?' : '';
-  return '${_swiftTypeForDartType(type)}$nullSafe';
+  return '${_swiftTypeForDartType(type, mapKey: mapKey)}$nullSafe';
 }
 
 String _getMethodSignature({

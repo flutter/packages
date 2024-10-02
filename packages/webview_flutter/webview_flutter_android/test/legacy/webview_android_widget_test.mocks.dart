@@ -854,6 +854,33 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
   }
 
   @override
+  void Function(
+    _i2.DownloadListener,
+    String,
+    String,
+    String,
+    String,
+    int,
+  ) get onDownloadStart => (super.noSuchMethod(
+        Invocation.getter(#onDownloadStart),
+        returnValue: (
+          _i2.DownloadListener pigeon_instance,
+          String url,
+          String userAgent,
+          String contentDisposition,
+          String mimetype,
+          int contentLength,
+        ) {},
+      ) as void Function(
+        _i2.DownloadListener,
+        String,
+        String,
+        String,
+        String,
+        int,
+      ));
+
+  @override
   _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
         Invocation.getter(#pigeon_instanceManager),
         returnValue: _FakePigeonInstanceManager_0(
@@ -896,6 +923,15 @@ class MockWebViewAndroidJavaScriptChannel extends _i1.Mock
           Invocation.getter(#javascriptChannelRegistry),
         ),
       ) as _i3.JavascriptChannelRegistry);
+
+  @override
+  String get channelName => (super.noSuchMethod(
+        Invocation.getter(#channelName),
+        returnValue: _i5.dummyValue<String>(
+          this,
+          Invocation.getter(#channelName),
+        ),
+      ) as String);
 
   @override
   void Function(

@@ -1242,50 +1242,50 @@ class MockAndroidWebViewProxy extends _i1.Mock
 
   @override
   _i2.DownloadListener Function(
-      {void Function(
+      {required void Function(
         _i2.DownloadListener,
         String,
         String,
         String,
         String,
         int,
-      )? onDownloadStart}) get newDownloadListener => (super.noSuchMethod(
+      ) onDownloadStart}) get newDownloadListener => (super.noSuchMethod(
         Invocation.getter(#newDownloadListener),
         returnValue: (
-                {void Function(
+                {required void Function(
                   _i2.DownloadListener,
                   String,
                   String,
                   String,
                   String,
                   int,
-                )? onDownloadStart}) =>
+                ) onDownloadStart}) =>
             _FakeDownloadListener_2(
           this,
           Invocation.getter(#newDownloadListener),
         ),
         returnValueForMissingStub: (
-                {void Function(
+                {required void Function(
                   _i2.DownloadListener,
                   String,
                   String,
                   String,
                   String,
                   int,
-                )? onDownloadStart}) =>
+                ) onDownloadStart}) =>
             _FakeDownloadListener_2(
           this,
           Invocation.getter(#newDownloadListener),
         ),
       ) as _i2.DownloadListener Function(
-          {void Function(
+          {required void Function(
             _i2.DownloadListener,
             String,
             String,
             String,
             String,
             int,
-          )? onDownloadStart}));
+          ) onDownloadStart}));
 
   @override
   _i2.WebChromeClient Function({
@@ -1891,6 +1891,19 @@ class MockFlutterAssetManager extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
+  @override
+  String get channelName => (super.noSuchMethod(
+        Invocation.getter(#channelName),
+        returnValue: _i12.dummyValue<String>(
+          this,
+          Invocation.getter(#channelName),
+        ),
+        returnValueForMissingStub: _i12.dummyValue<String>(
+          this,
+          Invocation.getter(#channelName),
+        ),
+      ) as String);
+
   @override
   void Function(
     _i2.JavaScriptChannel,

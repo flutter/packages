@@ -71,7 +71,8 @@ class AndroidWebViewProxy {
 
   /// Constructs [DownloadListener].
   final DownloadListener Function({
-    void Function(DownloadListener, String, String, String, String, int)?
+    required void Function(
+            DownloadListener, String, String, String, String, int)
         onDownloadStart,
   }) newDownloadListener;
 

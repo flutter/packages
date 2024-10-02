@@ -2662,22 +2662,7 @@ abstract class PigeonApiDownloadListener(open val pigeonRegistrar: AndroidWebkit
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
-    val binaryMessenger = pigeonRegistrar.binaryMessenger
-    val codec = pigeonRegistrar.codec
-    val channelName = "dev.flutter.pigeon.webview_flutter_android.DownloadListener.pigeon_newInstance"
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_identifierArg)) {
-      if (it is List<*>) {
-        if (it.size > 1) {
-          callback(Result.failure(AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
-        } else {
-          callback(Result.success(Unit))
-        }
-      } else {
-        callback(Result.failure(createConnectionError(channelName)))
-      } 
-    }
+    throw IllegalStateException("Attempting to create a new Dart instance of DownloadListener, but the class has a nonnull callback method.")
   }
 
   /** Notify the host application that a file should be downloaded. */
