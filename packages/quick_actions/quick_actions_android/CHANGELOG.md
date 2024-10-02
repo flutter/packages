@@ -1,3 +1,12 @@
+## 1.0.17
+
+* Updates README to include more specific context on how to use launcher activities, including
+  a full explanation for https://github.com/flutter/flutter/issues/152883.
+
+## 1.0.16
+
+* Updates README to include guidance on using the plugin with a launcher activity.
+
 ## 1.0.15
 
 * Updates lint checks to ignore NewerVersionAvailable.
