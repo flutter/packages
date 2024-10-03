@@ -7,7 +7,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_android/src/android_webkit.g.dart'
     as android_webview;
-import 'package:webview_flutter_android/src/android_webview_api_impls.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
@@ -19,9 +18,6 @@ import 'android_webview_cookie_manager_test.mocks.dart';
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-
-  // Mocks the call to clear the native InstanceManager.
-  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   test('clearCookies should call android_webview.clearCookies', () async {
     final android_webview.CookieManager mockCookieManager = MockCookieManager();
@@ -88,13 +84,10 @@ void main() {
     final MockAndroidWebViewController mockController =
         MockAndroidWebViewController();
 
-    final InstanceManager instanceManager =
-        InstanceManager(onWeakReferenceRemoved: (_) {});
-    android_webview.WebView.api = WebViewHostApiImpl(
-      instanceManager: instanceManager,
-    );
-    final android_webview.WebView webView = android_webview.WebView.detached(
-      instanceManager: instanceManager,
+    final android_webview.PigeonInstanceManager instanceManager =
+        android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+    final android_webview.WebView webView = android_webview.WebView.pigeon_detached(
+      pigeon_instanceManager: instanceManager,
     );
 
     const int webViewIdentifier = 4;
@@ -108,6 +101,8 @@ void main() {
                 const PlatformWebViewCookieManagerCreationParams());
 
     final android_webview.CookieManager mockCookieManager = MockCookieManager();
+    // ignore: invalid_use_of_protected_member
+    when(mockCookieManager.pigeon_instanceManager).thenReturn(instanceManager);
 
     await AndroidWebViewCookieManager(
       params,
@@ -115,7 +110,5 @@ void main() {
     ).setAcceptThirdPartyCookies(mockController, false);
 
     verify(mockCookieManager.setAcceptThirdPartyCookies(webView, false));
-
-    android_webview.WebView.api = WebViewHostApiImpl();
   });
 }
