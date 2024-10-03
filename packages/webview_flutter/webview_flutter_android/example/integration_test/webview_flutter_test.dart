@@ -1694,7 +1694,7 @@ class ResizableWebViewState extends State<ResizableWebView> {
 }
 
 class CopyableObjectWithCallback
-    extends android_webkit.PigeonProxyApiBaseClass {
+    extends android_webkit.PigeonInternalProxyApiBaseClass {
   CopyableObjectWithCallback(this.callback);
 
   final VoidCallback callback;
