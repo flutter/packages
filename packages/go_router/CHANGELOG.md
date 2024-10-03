@@ -1,6 +1,6 @@
 ## 14.2.9
 
-- Relax route path requirements. Both root and child routes can now start with '/'.
+- Relaxes route path requirements. Both root and child routes can now start with or without '/'.
 
 ## 14.2.8
 
