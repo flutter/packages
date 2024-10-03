@@ -1,3 +1,7 @@
+## 0.4.0+2
+
+* Bumps `com.google.guava:guava` from `31.1` to `33.3.1`.
+
 ## 0.4.0+1
 
 * Updates lint checks to ignore NewerVersionAvailable.

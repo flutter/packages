@@ -1,3 +1,7 @@
+## 0.6.9+1
+
+* Bumps `com.google.guava:guava` from `33.3.0` to `33.3.1`.
+
 ## 0.6.9
 
 * Corrects assumption about automatic preview correction happening on API >= 29 to API > 29,
