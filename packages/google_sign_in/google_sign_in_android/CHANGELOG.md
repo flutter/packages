@@ -1,3 +1,7 @@
+## 6.1.32
+
+* Updates Pigeon for non-nullable collection type support.
+
 ## 6.1.31
 
 * Bumps `com.google.guava:guava` from `32.0.1` to `33.3.1`.
