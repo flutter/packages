@@ -6,35 +6,16 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
-    dartOut: 'lib/src/android_webview.g.dart',
-    dartTestOut: 'test/test_android_webview.g.dart',
-    dartOptions: DartOptions(copyrightHeader: <String>[
-      'Copyright 2013 The Flutter Authors. All rights reserved.',
-      'Use of this source code is governed by a BSD-style license that can be',
-      'found in the LICENSE file.',
-    ]),
-    javaOut:
-        'android/src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java',
-    javaOptions: JavaOptions(
+    copyrightHeader: 'pigeons/copyright.txt',
+    dartOut: 'lib/src/android_webkit.g.dart',
+    kotlinOut:
+        'android/src/main/java/io/flutter/plugins/webviewflutter/AndroidWebkitLibrary.g.kt',
+    kotlinOptions: KotlinOptions(
       package: 'io.flutter.plugins.webviewflutter',
-      className: 'GeneratedAndroidWebView',
-      copyrightHeader: <String>[
-        'Copyright 2013 The Flutter Authors. All rights reserved.',
-        'Use of this source code is governed by a BSD-style license that can be',
-        'found in the LICENSE file.',
-      ],
+      errorClassName: 'AndroidWebKitError',
     ),
   ),
 )
-
-/// Host API for managing the native `InstanceManager`.
-@HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
-abstract class InstanceManagerHostApi {
-  /// Clear the native `InstanceManager`.
-  ///
-  /// This is typically only used after a hot restart.
-  void clear();
-}
 
 /// Mode of how to select files for a file chooser.
 ///
@@ -55,6 +36,12 @@ enum FileChooserMode {
   ///
   /// See https://developer.android.com/reference/android/webkit/WebChromeClient.FileChooserParams#MODE_SAVE.
   save,
+
+  /// Indicates a `FileChooserMode` with an unknown mode.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
+  unknown,
 }
 
 /// Indicates the type of message logged to the console.
@@ -93,112 +80,161 @@ enum ConsoleMessageLevel {
   unknown,
 }
 
-class WebResourceRequestData {
-  WebResourceRequestData(
-    this.url,
-    this.isForMainFrame,
-    this.isRedirect,
-    this.hasGesture,
-    this.method,
-    this.requestHeaders,
-  );
+/// Encompasses parameters to the `WebViewClient.shouldInterceptRequest` method.
+///
+/// See https://developer.android.com/reference/android/webkit/WebResourceRequest.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.WebResourceRequest',
+    minAndroidApi: 21,
+  ),
+)
+abstract class WebResourceRequest {
+  /// The URL for which the resource request was made.
+  late String url;
 
-  String url;
-  bool isForMainFrame;
-  bool? isRedirect;
-  bool hasGesture;
-  String method;
-  Map<String?, String?> requestHeaders;
+  /// Whether the request was made in order to fetch the main frame's document.
+  late bool isForMainFrame;
+
+  /// Whether the request was a result of a server-side redirect.
+  late bool? isRedirect;
+
+  /// Whether a gesture (such as a click) was associated with the request.
+  late bool hasGesture;
+
+  /// The method associated with the request, for example "GET".
+  late String method;
+
+  /// The headers associated with the request.
+  late Map<String, String>? requestHeaders;
 }
 
-class WebResourceResponseData {
-  WebResourceResponseData(
-    this.statusCode,
-  );
-
-  int statusCode;
+/// Encapsulates a resource response.
+///
+/// See https://developer.android.com/reference/android/webkit/WebResourceResponse.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.WebResourceResponse',
+    minAndroidApi: 23,
+  ),
+)
+abstract class WebResourceResponse {
+  /// The resource response's status code.
+  late int statusCode;
 }
 
-class WebResourceErrorData {
-  WebResourceErrorData(this.errorCode, this.description);
+/// Encapsulates information about errors that occurred during loading of web
+/// resources.
+///
+/// See https://developer.android.com/reference/android/webkit/WebResourceError.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.WebResourceError',
+    minAndroidApi: 23,
+  ),
+)
+abstract class WebResourceError {
+  /// The error code of the error.
+  late int errorCode;
 
-  int errorCode;
-  String description;
+  /// The string describing the error.
+  late String description;
 }
 
-class WebViewPoint {
-  WebViewPoint(this.x, this.y);
+/// Encapsulates information about errors that occurred during loading of web
+/// resources.
+///
+/// See https://developer.android.com/reference/androidx/webkit/WebResourceErrorCompat.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.webkit.WebResourceErrorCompat',
+  ),
+)
+abstract class WebResourceErrorCompat {
+  /// The error code of the error.
+  late int errorCode;
 
-  int x;
-  int y;
+  /// The string describing the error.
+  late String description;
+}
+
+/// Represents a position on a web page.
+///
+/// This is a custom class created for convenience of the wrapper.
+@ProxyApi()
+abstract class WebViewPoint {
+  late int x;
+  late int y;
 }
 
 /// Represents a JavaScript console message from WebCore.
 ///
 /// See https://developer.android.com/reference/android/webkit/ConsoleMessage
-class ConsoleMessage {
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.ConsoleMessage',
+  ),
+)
+abstract class ConsoleMessage {
   late int lineNumber;
   late String message;
   late ConsoleMessageLevel level;
   late String sourceId;
 }
 
-/// Handles methods calls to the native Java Object class.
+/// Manages the cookies used by an application's `WebView` instances.
 ///
-/// Also handles calls to remove the reference to an instance with `dispose`.
-///
-/// See https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html.
-@HostApi(dartHostTestHandler: 'TestJavaObjectHostApi')
-abstract class JavaObjectHostApi {
-  void dispose(int identifier);
-}
+/// See https://developer.android.com/reference/android/webkit/CookieManager.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.CookieManager',
+  ),
+)
+abstract class CookieManager {
+  @static
+  late CookieManager instance;
 
-/// Handles callbacks methods for the native Java Object class.
-///
-/// See https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html.
-@FlutterApi()
-abstract class JavaObjectFlutterApi {
-  void dispose(int identifier);
-}
+  /// Sets a single cookie (key-value pair) for the given URL.
+  void setCookie(String url, String value);
 
-/// Host API for `CookieManager`.
-///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or handle method calls on the associated
-/// native class or an instance of the class.
-@HostApi(dartHostTestHandler: 'TestCookieManagerHostApi')
-abstract class CookieManagerHostApi {
-  /// Handles attaching `CookieManager.instance` to a native instance.
-  void attachInstance(int instanceIdentifier);
-
-  /// Handles Dart method `CookieManager.setCookie`.
-  void setCookie(int identifier, String url, String value);
-
-  /// Handles Dart method `CookieManager.removeAllCookies`.
+  /// Removes all cookies.
   @async
-  bool removeAllCookies(int identifier);
+  bool removeAllCookies();
 
-  /// Handles Dart method `CookieManager.setAcceptThirdPartyCookies`.
-  void setAcceptThirdPartyCookies(
-    int identifier,
-    int webViewIdentifier,
-    bool accept,
-  );
+  /// Sets whether the `WebView` should allow third party cookies to be set.
+  void setAcceptThirdPartyCookies(WebView webView, bool accept);
 }
 
-@HostApi(dartHostTestHandler: 'TestWebViewHostApi')
-abstract class WebViewHostApi {
-  void create(int instanceId);
+/// A View that displays web pages.
+///
+/// See https://developer.android.com/reference/android/webkit/WebView.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.WebView',
+  ),
+)
+abstract class WebView extends View {
+  WebView();
 
-  void loadData(
-    int instanceId,
-    String data,
-    String? mimeType,
-    String? encoding,
-  );
+  /// This is called in response to an internal scroll in this view (i.e., the
+  /// view scrolled its own contents).
+  late void Function(
+    int left,
+    int top,
+    int oldLeft,
+    int oldTop,
+  )? onScrollChanged;
 
+  /// The WebSettings object used to control the settings for this WebView.
+  @attached
+  late WebSettings settings;
+
+  /// Loads the given data into this WebView using a 'data' scheme URL.
+  void loadData(String data, String? mimeType, String? encoding);
+
+  /// Loads the given data into this WebView, using baseUrl as the base URL for
+  /// the content.
   void loadDataWithBaseUrl(
-    int instanceId,
     String? baseUrl,
     String data,
     String? mimeType,
@@ -206,436 +242,559 @@ abstract class WebViewHostApi {
     String? historyUrl,
   );
 
-  void loadUrl(
-    int instanceId,
-    String url,
-    Map<String, String> headers,
-  );
+  /// Loads the given URL.
+  void loadUrl(String url, Map<String, String> headers);
 
-  void postUrl(
-    int instanceId,
-    String url,
-    Uint8List data,
-  );
+  /// Loads the URL with postData using "POST" method into this WebView.
+  void postUrl(String url, Uint8List data);
 
-  String? getUrl(int instanceId);
+  /// Gets the URL for the current page.
+  String? getUrl();
 
-  bool canGoBack(int instanceId);
+  /// Gets whether this WebView has a back history item.
+  bool canGoBack();
 
-  bool canGoForward(int instanceId);
+  /// Gets whether this WebView has a forward history item.
+  bool canGoForward();
 
-  void goBack(int instanceId);
+  /// Goes back in the history of this WebView.
+  void goBack();
 
-  void goForward(int instanceId);
+  /// Goes forward in the history of this WebView.
+  void goForward();
 
-  void reload(int instanceId);
+  /// Reloads the current URL.
+  void reload();
 
-  void clearCache(int instanceId, bool includeDiskFiles);
+  /// Clears the resource cache.
+  void clearCache(bool includeDiskFiles);
 
+  /// Asynchronously evaluates JavaScript in the context of the currently
+  /// displayed page.
   @async
-  String? evaluateJavascript(
-    int instanceId,
-    String javascriptString,
-  );
+  String? evaluateJavascript(String javascriptString);
 
-  String? getTitle(int instanceId);
+  /// Gets the title for the current page.
+  String? getTitle();
 
-  void scrollTo(int instanceId, int x, int y);
-
-  void scrollBy(int instanceId, int x, int y);
-
-  int getScrollX(int instanceId);
-
-  int getScrollY(int instanceId);
-
-  WebViewPoint getScrollPosition(int instanceId);
-
+  /// Enables debugging of web contents (HTML / CSS / JavaScript) loaded into
+  /// any WebViews of this application.
+  @static
   void setWebContentsDebuggingEnabled(bool enabled);
 
-  void setWebViewClient(int instanceId, int webViewClientInstanceId);
+  /// Sets the WebViewClient that will receive various notifications and
+  /// requests.
+  void setWebViewClient(WebViewClient? client);
 
-  void addJavaScriptChannel(int instanceId, int javaScriptChannelInstanceId);
+  /// Injects the supplied Java object into this WebView.
+  void addJavaScriptChannel(JavaScriptChannel channel);
 
-  void removeJavaScriptChannel(int instanceId, int javaScriptChannelInstanceId);
+  /// Removes a previously injected Java object from this WebView.
+  void removeJavaScriptChannel(String name);
 
-  void setDownloadListener(int instanceId, int? listenerInstanceId);
+  /// Registers the interface to be used when content can not be handled by the
+  /// rendering engine, and should be downloaded instead.
+  void setDownloadListener(DownloadListener? listener);
 
-  void setWebChromeClient(int instanceId, int? clientInstanceId);
+  /// Sets the chrome handler.
+  void setWebChromeClient(WebChromeClient? client);
 
-  void setBackgroundColor(int instanceId, int color);
+  /// Sets the background color for this view.
+  void setBackgroundColor(int color);
+
+  /// Destroys the internal state of this WebView.
+  void destroy();
 }
 
-/// Flutter API for `WebView`.
+/// Manages settings state for a `WebView`.
 ///
-/// This class may handle instantiating and adding Dart instances that are
-/// attached to a native instance or receiving callback methods from an
-/// overridden native class.
+/// See https://developer.android.com/reference/android/webkit/WebSettings.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.WebSettings',
+  ),
+)
+abstract class WebSettings {
+  /// Sets whether the DOM storage API is enabled.
+  void setDomStorageEnabled(bool flag);
+
+  /// Tells JavaScript to open windows automatically.
+  void setJavaScriptCanOpenWindowsAutomatically(bool flag);
+
+  /// Sets whether the WebView whether supports multiple windows.
+  void setSupportMultipleWindows(bool support);
+
+  /// Tells the WebView to enable JavaScript execution.
+  void setJavaScriptEnabled(bool flag);
+
+  /// Sets the WebView's user-agent string.
+  void setUserAgentString(String? userAgentString);
+
+  /// Sets whether the WebView requires a user gesture to play media.
+  void setMediaPlaybackRequiresUserGesture(bool require);
+
+  /// Sets whether the WebView should support zooming using its on-screen zoom
+  /// controls and gestures.
+  void setSupportZoom(bool support);
+
+  /// Sets whether the WebView loads pages in overview mode, that is, zooms out
+  /// the content to fit on screen by width.
+  void setLoadWithOverviewMode(bool overview);
+
+  /// Sets whether the WebView should enable support for the "viewport" HTML
+  /// meta tag or should use a wide viewport.
+  void setUseWideViewPort(bool use);
+
+  /// Sets whether the WebView should display on-screen zoom controls when using
+  /// the built-in zoom mechanisms.
+  void setDisplayZoomControls(bool enabled);
+
+  /// Sets whether the WebView should display on-screen zoom controls when using
+  /// the built-in zoom mechanisms.
+  void setBuiltInZoomControls(bool enabled);
+
+  /// Enables or disables file access within WebView.
+  void setAllowFileAccess(bool enabled);
+
+  /// Sets the text zoom of the page in percent.
+  void setTextZoom(int textZoom);
+
+  /// Gets the WebView's user-agent string.
+  String getUserAgentString();
+}
+
+/// A JavaScript interface for exposing Javascript callbacks to Dart.
 ///
-/// See https://developer.android.com/reference/android/webkit/WebView.
-@FlutterApi()
-abstract class WebViewFlutterApi {
-  /// Create a new Dart instance and add it to the `InstanceManager`.
-  void create(int identifier);
+/// This is a custom class for the wrapper that is annotated with
+/// [JavascriptInterface](https://developer.android.com/reference/android/webkit/JavascriptInterface).
+@ProxyApi()
+abstract class JavaScriptChannel {
+  // ignore: avoid_unused_constructor_parameters
+  JavaScriptChannel();
 
-  void onScrollChanged(
-    int webViewInstanceId,
-    int left,
-    int top,
-    int oldLeft,
-    int oldTop,
-  );
+  late final String channelName;
+
+  /// Handles callbacks messages from JavaScript.
+  late void Function(String message) postMessage;
 }
 
-@HostApi(dartHostTestHandler: 'TestWebSettingsHostApi')
-abstract class WebSettingsHostApi {
-  void create(int instanceId, int webViewInstanceId);
+/// Receives various notifications and requests from a `WebView`.
+///
+/// See https://developer.android.com/reference/android/webkit/WebViewClient.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.WebViewClient',
+  ),
+)
+abstract class WebViewClient {
+  WebViewClient();
 
-  void setDomStorageEnabled(int instanceId, bool flag);
+  /// Notify the host application that a page has started loading.
+  late void Function(WebView webView, String url)? onPageStarted;
 
-  void setJavaScriptCanOpenWindowsAutomatically(int instanceId, bool flag);
+  /// Notify the host application that a page has finished loading.
+  late void Function(WebView webView, String url)? onPageFinished;
 
-  void setSupportMultipleWindows(int instanceId, bool support);
+  /// Notify the host application that an HTTP error has been received from the
+  /// server while loading a resource.
+  late void Function(
+    WebView webView,
+    WebResourceRequest request,
+    WebResourceResponse response,
+  )? onReceivedHttpError;
 
-  void setJavaScriptEnabled(int instanceId, bool flag);
+  /// Report web resource loading error to the host application.
+  late void Function(
+    WebView webView,
+    WebResourceRequest request,
+    WebResourceError error,
+  )? onReceivedRequestError;
 
-  void setUserAgentString(int instanceId, String? userAgentString);
+  /// Report web resource loading error to the host application.
+  late void Function(
+    WebView webView,
+    WebResourceRequest request,
+    WebResourceErrorCompat error,
+  )? onReceivedRequestErrorCompat;
 
-  void setMediaPlaybackRequiresUserGesture(int instanceId, bool require);
-
-  void setSupportZoom(int instanceId, bool support);
-
-  void setLoadWithOverviewMode(int instanceId, bool overview);
-
-  void setUseWideViewPort(int instanceId, bool use);
-
-  void setDisplayZoomControls(int instanceId, bool enabled);
-
-  void setBuiltInZoomControls(int instanceId, bool enabled);
-
-  void setAllowFileAccess(int instanceId, bool enabled);
-
-  void setTextZoom(int instanceId, int textZoom);
-
-  String getUserAgentString(int instanceId);
-}
-
-@HostApi(dartHostTestHandler: 'TestJavaScriptChannelHostApi')
-abstract class JavaScriptChannelHostApi {
-  void create(int instanceId, String channelName);
-}
-
-@FlutterApi()
-abstract class JavaScriptChannelFlutterApi {
-  void postMessage(int instanceId, String message);
-}
-
-@HostApi(dartHostTestHandler: 'TestWebViewClientHostApi')
-abstract class WebViewClientHostApi {
-  void create(int instanceId);
-
-  void setSynchronousReturnValueForShouldOverrideUrlLoading(
-    int instanceId,
-    bool value,
-  );
-}
-
-@FlutterApi()
-abstract class WebViewClientFlutterApi {
-  void onPageStarted(int instanceId, int webViewInstanceId, String url);
-
-  void onPageFinished(int instanceId, int webViewInstanceId, String url);
-
-  void onReceivedHttpError(
-    int instanceId,
-    int webViewInstanceId,
-    WebResourceRequestData request,
-    WebResourceResponseData response,
-  );
-
-  void onReceivedRequestError(
-    int instanceId,
-    int webViewInstanceId,
-    WebResourceRequestData request,
-    WebResourceErrorData error,
-  );
-
-  void onReceivedError(
-    int instanceId,
-    int webViewInstanceId,
+  /// Report an error to the host application.
+  late void Function(
+    WebView webView,
     int errorCode,
     String description,
     String failingUrl,
-  );
+  )? onReceivedError;
 
-  void requestLoading(
-    int instanceId,
-    int webViewInstanceId,
-    WebResourceRequestData request,
-  );
+  /// Give the host application a chance to take control when a URL is about to
+  /// be loaded in the current WebView.
+  late void Function(
+    WebView webView,
+    WebResourceRequest request,
+  )? requestLoading;
 
-  void urlLoading(int instanceId, int webViewInstanceId, String url);
+  /// Give the host application a chance to take control when a URL is about to
+  /// be loaded in the current WebView.
+  late void Function(WebView webView, String url)? urlLoading;
 
-  void doUpdateVisitedHistory(
-    int instanceId,
-    int webViewInstanceId,
+  /// Notify the host application to update its visited links database.
+  late void Function(
+    WebView webView,
     String url,
     bool isReload,
-  );
+  )? doUpdateVisitedHistory;
 
-  void onReceivedHttpAuthRequest(
-    int instanceId,
-    int webViewInstanceId,
-    int httpAuthHandlerInstanceId,
+  /// Notifies the host application that the WebView received an HTTP
+  /// authentication request.
+  late void Function(
+    WebView webView,
+    HttpAuthHandler handler,
     String host,
     String realm,
-  );
+  )? onReceivedHttpAuthRequest;
+
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebViewClient.shouldOverrideUrlLoading(...)`.
+  ///
+  /// The Java method, `WebViewClient.shouldOverrideUrlLoading(...)`, requires
+  /// a boolean to be returned and this method sets the returned value for all
+  /// calls to the Java method.
+  ///
+  /// Setting this to true causes the current [WebView] to abort loading any URL
+  /// received by [requestLoading] or [urlLoading], while setting this to false
+  /// causes the [WebView] to continue loading a URL as usual.
+  ///
+  /// Defaults to false.
+  void setSynchronousReturnValueForShouldOverrideUrlLoading(bool value);
 }
 
-@HostApi(dartHostTestHandler: 'TestDownloadListenerHostApi')
-abstract class DownloadListenerHostApi {
-  void create(int instanceId);
-}
+/// Handles notifications that a file should be downloaded.
+///
+/// See https://developer.android.com/reference/android/webkit/DownloadListener.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.DownloadListener',
+  ),
+)
+abstract class DownloadListener {
+  DownloadListener();
 
-@FlutterApi()
-abstract class DownloadListenerFlutterApi {
-  void onDownloadStart(
-    int instanceId,
+  /// Notify the host application that a file should be downloaded.
+  late void Function(
     String url,
     String userAgent,
     String contentDisposition,
     String mimetype,
     int contentLength,
-  );
+  ) onDownloadStart;
 }
 
-@HostApi(dartHostTestHandler: 'TestWebChromeClientHostApi')
-abstract class WebChromeClientHostApi {
-  void create(int instanceId);
+/// Handles notification of JavaScript dialogs, favicons, titles, and the
+/// progress.
+///
+/// See https://developer.android.com/reference/android/webkit/WebChromeClient.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl',
+  ),
+)
+abstract class WebChromeClient {
+  WebChromeClient();
 
-  void setSynchronousReturnValueForOnShowFileChooser(
-    int instanceId,
-    bool value,
-  );
+  /// Tell the host application the current progress of loading a page.
+  late void Function(WebView webView, int progress)? onProgressChanged;
 
-  void setSynchronousReturnValueForOnConsoleMessage(
-    int instanceId,
-    bool value,
-  );
+  /// Tell the client to show a file chooser.
+  @async
+  late List<String> Function(
+    WebView webView,
+    FileChooserParams params,
+  )? onShowFileChooser;
 
-  void setSynchronousReturnValueForOnJsAlert(
-    int instanceId,
-    bool value,
-  );
+  /// Notify the host application that web content is requesting permission to
+  /// access the specified resources and the permission currently isn't granted
+  /// or denied.
+  late void Function(PermissionRequest request)? onPermissionRequest;
 
-  void setSynchronousReturnValueForOnJsConfirm(
-    int instanceId,
-    bool value,
-  );
+  /// Callback to Dart function `WebChromeClient.onShowCustomView`.
+  late void Function(
+    View view,
+    CustomViewCallback callback,
+  )? onShowCustomView;
 
-  void setSynchronousReturnValueForOnJsPrompt(
-    int instanceId,
-    bool value,
-  );
+  /// Notify the host application that the current page has entered full screen
+  /// mode.
+  late void Function()? onHideCustomView;
+
+  /// Notify the host application that web content from the specified origin is
+  /// attempting to use the Geolocation API, but no permission state is
+  /// currently set for that origin.
+  late void Function(
+    String origin,
+    GeolocationPermissionsCallback callback,
+  )? onGeolocationPermissionsShowPrompt;
+
+  /// Notify the host application that a request for Geolocation permissions,
+  /// made with a previous call to `onGeolocationPermissionsShowPrompt` has been
+  /// canceled.
+  late void Function()? onGeolocationPermissionsHidePrompt;
+
+  /// Report a JavaScript console message to the host application.
+  late void Function(ConsoleMessage message)? onConsoleMessage;
+
+  /// Notify the host application that the web page wants to display a
+  /// JavaScript `alert()` dialog.
+  @async
+  late void Function(WebView webView, String url, String message)? onJsAlert;
+
+  /// Notify the host application that the web page wants to display a
+  /// JavaScript `confirm()` dialog.
+  @async
+  late bool Function(WebView webView, String url, String message)? onJsConfirm;
+
+  /// Notify the host application that the web page wants to display a
+  /// JavaScript `prompt()` dialog.
+  @async
+  late String? Function(
+    WebView webView,
+    String url,
+    String message,
+    String defaultValue,
+  )? onJsPrompt;
+
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onShowFileChooser(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onShowFileChooser(...)`, requires
+  /// a boolean to be returned and this method sets the returned value for all
+  /// calls to the Java method.
+  ///
+  /// Setting this to true indicates that all file chooser requests should be
+  /// handled by `onShowFileChooser` and the returned list of Strings will be
+  /// returned to the WebView. Otherwise, the client will use the default
+  /// handling and the returned value in `onShowFileChooser` will be ignored.
+  ///
+  /// Requires `onShowFileChooser` to be nonnull.
+  ///
+  /// Defaults to false.
+  void setSynchronousReturnValueForOnShowFileChooser(bool value);
+
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onConsoleMessage(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onConsoleMessage(...)`, requires
+  /// a boolean to be returned and this method sets the returned value for all
+  /// calls to the Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires `onConsoleMessage` to be nonnull.
+  ///
+  /// Defaults to false.
+  void setSynchronousReturnValueForOnConsoleMessage(bool value);
+
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onJsAlert(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onJsAlert(...)`, requires a boolean to
+  /// be returned and this method sets the returned value for all calls to the
+  /// Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires `onJsAlert` to be nonnull.
+  ///
+  /// Defaults to false.
+  void setSynchronousReturnValueForOnJsAlert(bool value);
+
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onJsConfirm(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onJsConfirm(...)`, requires a boolean to
+  /// be returned and this method sets the returned value for all calls to the
+  /// Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires `onJsConfirm` to be nonnull.
+  ///
+  /// Defaults to false.
+  void setSynchronousReturnValueForOnJsConfirm(bool value);
+
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onJsPrompt(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onJsPrompt(...)`, requires a boolean to
+  /// be returned and this method sets the returned value for all calls to the
+  /// Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires `onJsPrompt` to be nonnull.
+  ///
+  /// Defaults to false.
+  void setSynchronousReturnValueForOnJsPrompt(bool value);
 }
 
-@HostApi(dartHostTestHandler: 'TestAssetManagerHostApi')
-abstract class FlutterAssetManagerHostApi {
+/// Provides access to the assets registered as part of the App bundle.
+///
+/// Convenience class for accessing Flutter asset resources.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'io.flutter.plugins.webviewflutter.FlutterAssetManager',
+  ),
+)
+abstract class FlutterAssetManager {
+  /// The global instance of the `FlutterAssetManager`.
+  @static
+  late FlutterAssetManager instance;
+
+  /// Returns a String array of all the assets at the given path.
+  ///
+  /// Throws an IOException in case I/O operations were interrupted.
   List<String> list(String path);
 
+  /// Gets the relative file path to the Flutter asset with the given name, including the file's
+  /// extension, e.g., "myImage.jpg".
+  ///
+  /// The returned file path is relative to the Android app's standard asset's
+  /// directory. Therefore, the returned path is appropriate to pass to
+  /// Android's AssetManager, but the path is not appropriate to load as an
+  /// absolute path.
   String getAssetFilePathByName(String name);
 }
 
-@FlutterApi()
-abstract class WebChromeClientFlutterApi {
-  void onProgressChanged(int instanceId, int webViewInstanceId, int progress);
+/// This class is used to manage the JavaScript storage APIs provided by the
+/// WebView.
+///
+/// See https://developer.android.com/reference/android/webkit/WebStorage.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.WebStorage',
+  ),
+)
+abstract class WebStorage {
+  @static
+  late WebStorage instance;
 
-  @async
-  List<String> onShowFileChooser(
-    int instanceId,
-    int webViewInstanceId,
-    int paramsInstanceId,
-  );
-
-  /// Callback to Dart function `WebChromeClient.onPermissionRequest`.
-  void onPermissionRequest(int instanceId, int requestInstanceId);
-
-  /// Callback to Dart function `WebChromeClient.onShowCustomView`.
-  void onShowCustomView(
-    int instanceId,
-    int viewIdentifier,
-    int callbackIdentifier,
-  );
-
-  /// Callback to Dart function `WebChromeClient.onHideCustomView`.
-  void onHideCustomView(int instanceId);
-
-  /// Callback to Dart function `WebChromeClient.onGeolocationPermissionsShowPrompt`.
-  void onGeolocationPermissionsShowPrompt(
-    int instanceId,
-    int paramsInstanceId,
-    String origin,
-  );
-
-  /// Callback to Dart function `WebChromeClient.onGeolocationPermissionsHidePrompt`.
-  void onGeolocationPermissionsHidePrompt(int identifier);
-
-  /// Callback to Dart function `WebChromeClient.onConsoleMessage`.
-  void onConsoleMessage(int instanceId, ConsoleMessage message);
-
-  @async
-  void onJsAlert(int instanceId, String url, String message);
-
-  @async
-  bool onJsConfirm(int instanceId, String url, String message);
-
-  @async
-  String onJsPrompt(
-      int instanceId, String url, String message, String defaultValue);
+  /// Clears all storage currently being used by the JavaScript storage APIs.
+  void deleteAllData();
 }
 
-@HostApi(dartHostTestHandler: 'TestWebStorageHostApi')
-abstract class WebStorageHostApi {
-  void create(int instanceId);
-
-  void deleteAllData(int instanceId);
-}
-
-/// Handles callbacks methods for the native Java FileChooserParams class.
+/// Parameters used in the `WebChromeClient.onShowFileChooser` method.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebChromeClient.FileChooserParams.
-@FlutterApi()
-abstract class FileChooserParamsFlutterApi {
-  void create(
-    int instanceId,
-    bool isCaptureEnabled,
-    List<String> acceptTypes,
-    FileChooserMode mode,
-    String? filenameHint,
-  );
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.WebChromeClient.FileChooserParams',
+    minAndroidApi: 21,
+  ),
+)
+abstract class FileChooserParams {
+  /// Preference for a live media captured value (e.g. Camera, Microphone).
+  late bool isCaptureEnabled;
+
+  /// An array of acceptable MIME types.
+  late List<String> acceptTypes;
+
+  /// File chooser mode.
+  late FileChooserMode mode;
+
+  /// File name of a default selection if specified, or null.
+  late String? filenameHint;
 }
 
-/// Host API for `PermissionRequest`.
-///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or handle method calls on the associated
-/// native class or an instance of the class.
+/// This class defines a permission request and is used when web content
+/// requests access to protected resources.
 ///
 /// See https://developer.android.com/reference/android/webkit/PermissionRequest.
-@HostApi(dartHostTestHandler: 'TestPermissionRequestHostApi')
-abstract class PermissionRequestHostApi {
-  /// Handles Dart method `PermissionRequest.grant`.
-  void grant(int instanceId, List<String> resources);
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.PermissionRequest',
+    minAndroidApi: 21,
+  ),
+)
+abstract class PermissionRequest {
+  late List<String> resources;
 
-  /// Handles Dart method `PermissionRequest.deny`.
-  void deny(int instanceId);
+  /// Call this method to grant origin the permission to access the given
+  /// resources.
+  void grant(List<String> resources);
+
+  /// Call this method to deny the request.
+  void deny();
 }
 
-/// Flutter API for `PermissionRequest`.
-///
-/// This class may handle instantiating and adding Dart instances that are
-/// attached to a native instance or receiving callback methods from an
-/// overridden native class.
-///
-/// See https://developer.android.com/reference/android/webkit/PermissionRequest.
-@FlutterApi()
-abstract class PermissionRequestFlutterApi {
-  /// Create a new Dart instance and add it to the `InstanceManager`.
-  void create(int instanceId, List<String> resources);
-}
-
-/// Host API for `CustomViewCallback`.
-///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or handle method calls on the associated
-/// native class or an instance of the class.
+/// A callback interface used by the host application to notify the current page
+/// that its custom view has been dismissed.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
-@HostApi(dartHostTestHandler: 'TestCustomViewCallbackHostApi')
-abstract class CustomViewCallbackHostApi {
-  /// Handles Dart method `CustomViewCallback.onCustomViewHidden`.
-  void onCustomViewHidden(int identifier);
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.WebChromeClient.CustomViewCallback',
+  ),
+)
+abstract class CustomViewCallback {
+  /// Invoked when the host application dismisses the custom view.
+  void onCustomViewHidden();
 }
 
-/// Flutter API for `CustomViewCallback`.
-///
-/// This class may handle instantiating and adding Dart instances that are
-/// attached to a native instance or receiving callback methods from an
-/// overridden native class.
-///
-/// See https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
-@FlutterApi()
-abstract class CustomViewCallbackFlutterApi {
-  /// Create a new Dart instance and add it to the `InstanceManager`.
-  void create(int identifier);
-}
-
-/// Flutter API for `View`.
-///
-/// This class may handle instantiating and adding Dart instances that are
-/// attached to a native instance or receiving callback methods from an
-/// overridden native class.
+/// This class represents the basic building block for user interface
+/// components.
 ///
 /// See https://developer.android.com/reference/android/view/View.
-@FlutterApi()
-abstract class ViewFlutterApi {
-  /// Create a new Dart instance and add it to the `InstanceManager`.
-  void create(int identifier);
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.view.View',
+  ),
+)
+abstract class View {
+  /// Set the scrolled position of your view.
+  void scrollTo(int x, int y);
+
+  /// Move the scrolled position of your view.
+  void scrollBy(int x, int y);
+
+  /// Return the scrolled position of this view.
+  WebViewPoint getScrollPosition();
 }
 
-/// Host API for `GeolocationPermissionsCallback`.
-///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or handle method calls on the associated
-/// native class or an instance of the class.
+/// A callback interface used by the host application to set the Geolocation
+/// permission state for an origin.
 ///
 /// See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
-@HostApi(dartHostTestHandler: 'TestGeolocationPermissionsCallbackHostApi')
-abstract class GeolocationPermissionsCallbackHostApi {
-  /// Handles Dart method `GeolocationPermissionsCallback.invoke`.
-  void invoke(int instanceId, String origin, bool allow, bool retain);
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.GeolocationPermissions.Callback',
+  ),
+)
+abstract class GeolocationPermissionsCallback {
+  /// Sets the Geolocation permission state for the supplied origin.
+  void invoke(String origin, bool allow, bool retain);
 }
 
-/// Flutter API for `GeolocationPermissionsCallback`.
-///
-/// This class may handle instantiating and adding Dart instances that are
-/// attached to a native instance or receiving callback methods from an
-/// overridden native class.
-///
-/// See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
-@FlutterApi()
-abstract class GeolocationPermissionsCallbackFlutterApi {
-  /// Create a new Dart instance and add it to the `InstanceManager`.
-  void create(int instanceId);
-}
-
-/// Host API for `HttpAuthHandler`.
-///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or handle method calls on the associated
-/// native class or an instance of the class.
+/// Represents a request for HTTP authentication.
 ///
 /// See https://developer.android.com/reference/android/webkit/HttpAuthHandler.
-@HostApi(dartHostTestHandler: 'TestHttpAuthHandlerHostApi')
-abstract class HttpAuthHandlerHostApi {
-  /// Handles Dart method `HttpAuthHandler.useHttpAuthUsernamePassword`.
-  bool useHttpAuthUsernamePassword(int instanceId);
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.HttpAuthHandler',
+  ),
+)
+abstract class HttpAuthHandler {
+  /// Gets whether the credentials stored for the current host (i.e. the host
+  /// for which `WebViewClient.onReceivedHttpAuthRequest` was called) are
+  /// suitable for use.
+  bool useHttpAuthUsernamePassword();
 
-  /// Handles Dart method `HttpAuthHandler.cancel`.
-  void cancel(int instanceId);
+  /// Instructs the WebView to cancel the authentication request..
+  void cancel();
 
-  /// Handles Dart method `HttpAuthHandler.proceed`.
-  void proceed(int instanceId, String username, String password);
-}
-
-/// Flutter API for `HttpAuthHandler`.
-///
-/// This class may handle instantiating and adding Dart instances that are
-/// attached to a native instance or receiving callback methods from an
-/// overridden native class.
-///
-/// See https://developer.android.com/reference/android/webkit/HttpAuthHandler.
-@FlutterApi()
-abstract class HttpAuthHandlerFlutterApi {
-  /// Create a new Dart instance and add it to the `InstanceManager`.
-  void create(int instanceId);
+  /// Instructs the WebView to proceed with the authentication with the given
+  /// credentials.
+  void proceed(String username, String password);
 }
