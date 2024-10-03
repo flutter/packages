@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -70,8 +71,10 @@ void main() {
 
     testWidgets('Route is correctly neglected when routerNeglect is true',
         (WidgetTester tester) async {
-      late final _TestGoRouteInformationProvider provider =
-          _TestGoRouteInformationProvider(
+      final _SystemChannelsNavigationMock systemChannelsMock =
+          _SystemChannelsNavigationMock();
+      late final GoRouteInformationProvider provider =
+          GoRouteInformationProvider(
               initialLocation: initialRoute,
               initialExtra: null,
               routerNeglect: true);
@@ -81,45 +84,43 @@ void main() {
           RouteInformation(
               uri: Uri.parse(newRoute), state: <Object?, Object?>{}),
           type: RouteInformationReportingType.navigate);
-      expect(provider.uriIsNeglected[newRoute], true);
+      expect(systemChannelsMock.uriIsNeglected[newRoute], true);
     });
 
     testWidgets('Route is NOT neglected when routerNeglect is false',
         (WidgetTester tester) async {
-      late final _TestGoRouteInformationProvider provider =
-          _TestGoRouteInformationProvider(
-              initialLocation: initialRoute,
-              initialExtra: null,
-              routerNeglect: false);
+      final _SystemChannelsNavigationMock systemChannelsMock =
+          _SystemChannelsNavigationMock();
+      late final GoRouteInformationProvider provider =
+          GoRouteInformationProvider(
+              initialLocation: initialRoute, initialExtra: null);
       provider.addListener(expectAsync0(() {}));
       provider.go(newRoute);
       provider.routerReportsNewRouteInformation(
           RouteInformation(
               uri: Uri.parse(newRoute), state: <Object?, Object?>{}),
           type: RouteInformationReportingType.navigate);
-      expect(provider.uriIsNeglected[newRoute], false);
+      expect(systemChannelsMock.uriIsNeglected[newRoute], false);
     });
   });
 }
 
-class _TestGoRouteInformationProvider extends GoRouteInformationProvider {
-  _TestGoRouteInformationProvider({
-    required super.initialLocation,
-    required super.initialExtra,
-    required super.routerNeglect,
-  });
+class _SystemChannelsNavigationMock {
+  _SystemChannelsNavigationMock() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.navigation,
+            (MethodCall methodCall) async {
+      if (methodCall.method == 'routeInformationUpdated' &&
+          methodCall.arguments is Map<String, dynamic>) {
+        final Map<String, dynamic> args =
+            methodCall.arguments as Map<String, dynamic>;
+        final String? uri =
+            args['location'] as String? ?? args['uri'] as String?;
+        uriIsNeglected[uri ?? ''] = args['replace'] as bool;
+      }
+      return null;
+    });
+  }
 
   Map<String, bool> uriIsNeglected = <String, bool>{};
-
-  @override
-  Future<void> systemNavigatorRouteInformationUpdated(
-      {String? location, Uri? uri, Object? state, bool replace = false}) {
-    uriIsNeglected[uri?.path ?? location ?? ''] = replace;
-    return super.systemNavigatorRouteInformationUpdated(
-      location: location,
-      uri: uri,
-      state: state,
-      replace: replace,
-    );
-  }
 }

@@ -8,7 +8,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 
 import 'match.dart';
 
@@ -92,19 +91,6 @@ class GoRouteInformationProvider extends RouteInformationProvider
     _refreshListenable?.addListener(notifyListeners);
   }
 
-  /// Notifies the platform for a route information change.
-  @visibleForTesting
-  @internal
-  Future<void> systemNavigatorRouteInformationUpdated(
-      {String? location, Uri? uri, Object? state, bool replace = false}) {
-    return SystemNavigator.routeInformationUpdated(
-      location: location,
-      uri: uri,
-      state: state,
-      replace: replace,
-    );
-  }
-
   final Listenable? _refreshListenable;
 
   final bool _routerNeglect;
@@ -135,7 +121,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
         replace = false;
     }
     SystemNavigator.selectMultiEntryHistory();
-    systemNavigatorRouteInformationUpdated(
+    SystemNavigator.routeInformationUpdated(
       uri: routeInformation.uri,
       state: routeInformation.state,
       replace: _routerNeglect || replace,
