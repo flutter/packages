@@ -1,6 +1,6 @@
 ## 3.16.0
 
-* Support NTLM for authentication
+* Supports NTLM for authentication.
 
 ## 3.15.0
 
