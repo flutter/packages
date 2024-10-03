@@ -625,7 +625,7 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-Stream<int> streamInts({String instanceName = ""}) {
+Stream<int> streamInts({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }

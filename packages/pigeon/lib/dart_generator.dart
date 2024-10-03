@@ -527,7 +527,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
       indent.format('''
-      Stream<${func.returnType.baseName}> ${func.name}(${_getMethodParameterSignature(func.parameters, addTrailingComma: true)} {String instanceName = ""}) {
+      Stream<${func.returnType.baseName}> ${func.name}(${_getMethodParameterSignature(func.parameters, addTrailingComma: true)} {String instanceName = ''}) {
         if (instanceName.isNotEmpty) {
           instanceName = '.\$instanceName';
         }

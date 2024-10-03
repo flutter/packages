@@ -26,6 +26,7 @@ class ExampleApp extends StatefulWidget {
 class _ExampleAppState extends State<ExampleApp> {
   late final HostIntegrationCoreApi api;
   String status = 'Calling...';
+  String numsSoFar = '';
 
   @override
   void initState() {
@@ -68,7 +69,8 @@ class _ExampleAppState extends State<ExampleApp> {
                 stream: streamInts(),
                 builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
                   if (snapshot.hasData) {
-                    return Text('${snapshot.data}');
+                    numsSoFar += '${snapshot.data}, ';
+                    return Text(numsSoFar);
                   } else {
                     return const CircularProgressIndicator();
                   }

@@ -12,7 +12,6 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   var flutterAPI: FlutterIntegrationCoreApi
   var flutterSmallApiOne: FlutterSmallApi
   var flutterSmallApiTwo: FlutterSmallApi
-  var sendInts: StreamIntsStreamHandler
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = TestPlugin(binaryMessenger: registrar.messenger())
@@ -27,8 +26,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixOne")
     flutterSmallApiTwo = FlutterSmallApi(
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
-    sendInts = SendInts()
+
+    print("calledCook")
+    let sendInts = SendInts()
     StreamIntsStreamHandler.register(with: binaryMessenger, wrapper: sendInts)
+
   }
 
   // MARK: HostIntegrationCoreApi implementation
@@ -999,16 +1001,21 @@ public class TestPluginWithSuffix: HostSmallApi {
 }
 
 class SendInts: StreamIntsStreamHandler {
+  var timerActive = false
   var timer = Timer()
 
   override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
     var count: Int64 = 0
-
-    Timer.scheduledTimer(
-      withTimeInterval: 1, repeats: true,
-      block: { _ in
-        count += 1
-        sink.success(count)
-      })
+    print("onListen method called (in test plugin)")
+    if !timerActive {
+      timerActive = true
+      Timer.scheduledTimer(
+        withTimeInterval: 1, repeats: true,
+        block: { _ in
+          print(count)
+          count += 1
+          sink.success(count)
+        })
+    }
   }
 }
