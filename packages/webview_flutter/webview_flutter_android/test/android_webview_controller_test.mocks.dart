@@ -203,9 +203,20 @@ class _FakeSize_15 extends _i1.SmartFake implements _i4.Size {
         );
 }
 
-class _FakePermissionRequest_16 extends _i1.SmartFake
+class _FakeGeolocationPermissionsCallback_16 extends _i1.SmartFake
+    implements _i2.GeolocationPermissionsCallback {
+  _FakeGeolocationPermissionsCallback_16(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakePermissionRequest_17 extends _i1.SmartFake
     implements _i2.PermissionRequest {
-  _FakePermissionRequest_16(
+  _FakePermissionRequest_17(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -214,9 +225,9 @@ class _FakePermissionRequest_16 extends _i1.SmartFake
         );
 }
 
-class _FakeExpensiveAndroidViewController_17 extends _i1.SmartFake
+class _FakeExpensiveAndroidViewController_18 extends _i1.SmartFake
     implements _i6.ExpensiveAndroidViewController {
-  _FakeExpensiveAndroidViewController_17(
+  _FakeExpensiveAndroidViewController_18(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -225,9 +236,9 @@ class _FakeExpensiveAndroidViewController_17 extends _i1.SmartFake
         );
 }
 
-class _FakeSurfaceAndroidViewController_18 extends _i1.SmartFake
+class _FakeSurfaceAndroidViewController_19 extends _i1.SmartFake
     implements _i6.SurfaceAndroidViewController {
-  _FakeSurfaceAndroidViewController_18(
+  _FakeSurfaceAndroidViewController_19(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -236,8 +247,8 @@ class _FakeSurfaceAndroidViewController_18 extends _i1.SmartFake
         );
 }
 
-class _FakeWebSettings_19 extends _i1.SmartFake implements _i2.WebSettings {
-  _FakeWebSettings_19(
+class _FakeWebSettings_20 extends _i1.SmartFake implements _i2.WebSettings {
+  _FakeWebSettings_20(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -246,8 +257,8 @@ class _FakeWebSettings_19 extends _i1.SmartFake implements _i2.WebSettings {
         );
 }
 
-class _FakeWebViewPoint_20 extends _i1.SmartFake implements _i2.WebViewPoint {
-  _FakeWebViewPoint_20(
+class _FakeWebViewPoint_21 extends _i1.SmartFake implements _i2.WebViewPoint {
+  _FakeWebViewPoint_21(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -1887,6 +1898,66 @@ class MockFlutterAssetManager extends _i1.Mock
       ) as _i2.FlutterAssetManager);
 }
 
+/// A class which mocks [GeolocationPermissionsCallback].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGeolocationPermissionsCallback extends _i1.Mock
+    implements _i2.GeolocationPermissionsCallback {
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_12(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+        returnValueForMissingStub: _FakePigeonInstanceManager_12(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i8.Future<void> invoke(
+    String? origin,
+    bool? allow,
+    bool? retain,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #invoke,
+          [
+            origin,
+            allow,
+            retain,
+          ],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
+  _i2.GeolocationPermissionsCallback pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeon_copy,
+          [],
+        ),
+        returnValue: _FakeGeolocationPermissionsCallback_16(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeGeolocationPermissionsCallback_16(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+      ) as _i2.GeolocationPermissionsCallback);
+}
+
 /// A class which mocks [JavaScriptChannel].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -2009,14 +2080,14 @@ class MockPermissionRequest extends _i1.Mock implements _i2.PermissionRequest {
           #pigeon_copy,
           [],
         ),
-        returnValue: _FakePermissionRequest_16(
+        returnValue: _FakePermissionRequest_17(
           this,
           Invocation.method(
             #pigeon_copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakePermissionRequest_16(
+        returnValueForMissingStub: _FakePermissionRequest_17(
           this,
           Invocation.method(
             #pigeon_copy,
@@ -2054,7 +2125,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             #onFocus: onFocus,
           },
         ),
-        returnValue: _FakeExpensiveAndroidViewController_17(
+        returnValue: _FakeExpensiveAndroidViewController_18(
           this,
           Invocation.method(
             #initExpensiveAndroidView,
@@ -2069,7 +2140,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             },
           ),
         ),
-        returnValueForMissingStub: _FakeExpensiveAndroidViewController_17(
+        returnValueForMissingStub: _FakeExpensiveAndroidViewController_18(
           this,
           Invocation.method(
             #initExpensiveAndroidView,
@@ -2108,7 +2179,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             #onFocus: onFocus,
           },
         ),
-        returnValue: _FakeSurfaceAndroidViewController_18(
+        returnValue: _FakeSurfaceAndroidViewController_19(
           this,
           Invocation.method(
             #initSurfaceAndroidView,
@@ -2123,7 +2194,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             },
           ),
         ),
-        returnValueForMissingStub: _FakeSurfaceAndroidViewController_18(
+        returnValueForMissingStub: _FakeSurfaceAndroidViewController_19(
           this,
           Invocation.method(
             #initSurfaceAndroidView,
@@ -2606,14 +2677,14 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
           #pigeon_copy,
           [],
         ),
-        returnValue: _FakeWebSettings_19(
+        returnValue: _FakeWebSettings_20(
           this,
           Invocation.method(
             #pigeon_copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeWebSettings_19(
+        returnValueForMissingStub: _FakeWebSettings_20(
           this,
           Invocation.method(
             #pigeon_copy,
@@ -2630,11 +2701,11 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   @override
   _i2.WebSettings get settings => (super.noSuchMethod(
         Invocation.getter(#settings),
-        returnValue: _FakeWebSettings_19(
+        returnValue: _FakeWebSettings_20(
           this,
           Invocation.getter(#settings),
         ),
-        returnValueForMissingStub: _FakeWebSettings_19(
+        returnValueForMissingStub: _FakeWebSettings_20(
           this,
           Invocation.getter(#settings),
         ),
@@ -2659,14 +2730,14 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
           #pigeonVar_settings,
           [],
         ),
-        returnValue: _FakeWebSettings_19(
+        returnValue: _FakeWebSettings_20(
           this,
           Invocation.method(
             #pigeonVar_settings,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeWebSettings_19(
+        returnValueForMissingStub: _FakeWebSettings_20(
           this,
           Invocation.method(
             #pigeonVar_settings,
@@ -2978,7 +3049,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
           #getScrollPosition,
           [],
         ),
-        returnValue: _i8.Future<_i2.WebViewPoint>.value(_FakeWebViewPoint_20(
+        returnValue: _i8.Future<_i2.WebViewPoint>.value(_FakeWebViewPoint_21(
           this,
           Invocation.method(
             #getScrollPosition,
@@ -2986,7 +3057,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
           ),
         )),
         returnValueForMissingStub:
-            _i8.Future<_i2.WebViewPoint>.value(_FakeWebViewPoint_20(
+            _i8.Future<_i2.WebViewPoint>.value(_FakeWebViewPoint_21(
           this,
           Invocation.method(
             #getScrollPosition,

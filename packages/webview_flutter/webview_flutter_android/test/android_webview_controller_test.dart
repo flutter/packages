@@ -25,6 +25,7 @@ import 'android_webview_controller_test.mocks.dart';
   MockSpec<AndroidWebViewWidgetCreationParams>(),
   MockSpec<ExpensiveAndroidViewController>(),
   MockSpec<android_webview.FlutterAssetManager>(),
+  MockSpec<android_webview.GeolocationPermissionsCallback>(),
   MockSpec<android_webview.JavaScriptChannel>(),
   MockSpec<android_webview.PermissionRequest>(),
   MockSpec<PlatformViewsServiceProxy>(),
@@ -711,12 +712,9 @@ void main() {
     });
 
     test('setGeolocationPermissionsPromptCallbacks', () async {
-      final android_webview.GeolocationPermissionsCallback testCallback =
-          android_webview.GeolocationPermissionsCallback.pigeon_detached(
-        pigeon_instanceManager: testInstanceManager,
-      );
-
-      late final void Function(android_webview.WebChromeClient, String origin,
+      late final Future<void> Function(
+              android_webview.WebChromeClient,
+              String origin,
               android_webview.GeolocationPermissionsCallback callback)
           onGeoPermissionHandle;
       late final void Function(android_webview.WebChromeClient instance)
@@ -742,7 +740,12 @@ void main() {
           dynamic onJsConfirm,
           dynamic onJsPrompt,
         }) {
-          onGeoPermissionHandle = onGeolocationPermissionsShowPrompt!;
+          onGeoPermissionHandle =
+              onGeolocationPermissionsShowPrompt! as Future<void> Function(
+            android_webview.WebChromeClient,
+            String origin,
+            android_webview.GeolocationPermissionsCallback callback,
+          );
           onGeoPermissionHidePromptHandle = onGeolocationPermissionsHidePrompt!;
           return mockWebChromeClient;
         },
@@ -765,9 +768,16 @@ void main() {
         },
       );
 
-      onGeoPermissionHandle(MockWebChromeClient(), allowOrigin, testCallback);
+      final android_webview.GeolocationPermissionsCallback mockCallback =
+          MockGeolocationPermissionsCallback();
+      await onGeoPermissionHandle(
+        MockWebChromeClient(),
+        allowOrigin,
+        mockCallback,
+      );
 
       expect(isAllow, true);
+      verify(mockCallback.invoke(allowOrigin, isAllow, isAllow));
 
       onGeoPermissionHidePromptHandle(mockWebChromeClient);
       expect(testValue, 'changed');
