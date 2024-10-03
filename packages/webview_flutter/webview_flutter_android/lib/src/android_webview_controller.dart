@@ -1397,6 +1397,29 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           httpAuthHandler.cancel();
         }
       },
+      onReceivedSslError: (
+        android_webview.WebView webView,
+        android_webview.SslErrorHandler sslErrorHandler,
+        android_webview.SslError sslError,
+      ) {
+        final void Function(SslError)? callback = weakThis.target?._onSslError;
+        if (callback != null) {
+          callback(
+            SslError(
+              onProceed: (WebViewCredential credential) {
+                httpAuthHandler.proceed(credential.user, credential.password);
+              },
+              onCancel: () {
+                httpAuthHandler.cancel();
+              },
+              host: host,
+              realm: realm,
+            ),
+          );
+        } else {
+          httpAuthHandler.cancel();
+        }
+      },
     );
 
     _downloadListener = (this.params as AndroidNavigationDelegateCreationParams)
@@ -1455,6 +1478,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
   HttpAuthRequestCallback? _onHttpAuthRequest;
+  SslErrorCallback? _onSslError;
 
   void _handleNavigation(
     String url, {
@@ -1558,5 +1582,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     HttpAuthRequestCallback onHttpAuthRequest,
   ) async {
     _onHttpAuthRequest = onHttpAuthRequest;
+  }
+
+  @override
+  Future<void> setOnSslError(SslErrorCallback onSslError) async {
+    _onSslError = onSslError;
   }
 }

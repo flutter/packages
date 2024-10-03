@@ -5,8 +5,11 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.annotation.SuppressLint;
+import android.net.http.SslCertificate;
+import android.net.http.SslError;
 import android.os.Build;
 import android.webkit.HttpAuthHandler;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -17,7 +20,13 @@ import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewClientFlutterApi;
+
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -80,6 +89,79 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
 
     return responseData.build();
   }
+
+  static GeneratedAndroidWebView.SslErrorData createSslErrorData(SslError error) {
+      final SslCertificate certificate = error.getCertificate();
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-ddTHH:mm:ssZ", Locale.US);
+      String notValidNotAfterIso8601Date = sdf.format(certificate.getValidNotAfterDate());
+      String notValidNotBeforeIso8601Date = sdf.format(certificate.getValidNotBeforeDate());
+
+      GeneratedAndroidWebView.SslCertificateData.Builder sslCertificateData =
+              new GeneratedAndroidWebView.SslCertificateData.Builder()
+                      .setIssuedBy(certificate.getIssuedBy().toString())
+                      .setIssuedTo(certificate.getIssuedTo().toString())
+                      .setValidNotAfterIso8601Date(notValidNotAfterIso8601Date)
+                      .setValidNotBeforeIso8601Date(notValidNotBeforeIso8601Date);
+
+      if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+          X509Certificate x509Certificate = error.getCertificate().getX509Certificate();
+          if (x509Certificate != null) {
+              String pem = getPem(x509Certificate);
+              if (pem != null) {
+                  sslCertificateData.setX509CertificatePem(pem);
+              }
+          }
+      }
+
+    GeneratedAndroidWebView.SslErrorData.Builder sslErrorData =
+            new GeneratedAndroidWebView.SslErrorData.Builder()
+                    .setErrorTypeData(toSslErrorTypeData(error.getPrimaryError()))
+                    .setCertificateData(sslCertificateData.build())
+                    .setUrl(error.getUrl());
+
+    return sslErrorData.build();
+  }
+
+ static GeneratedAndroidWebView.SslErrorTypeData toSslErrorTypeData(int error) {
+    switch (error) {
+        case SslError.SSL_DATE_INVALID:
+            return GeneratedAndroidWebView.SslErrorTypeData.DATE_INVALID;
+        case SslError.SSL_EXPIRED:
+            return GeneratedAndroidWebView.SslErrorTypeData.EXPIRED;
+        case SslError.SSL_IDMISMATCH:
+            return GeneratedAndroidWebView.SslErrorTypeData.ID_MISMATCH;
+        case SslError.SSL_NOTYETVALID:
+            return GeneratedAndroidWebView.SslErrorTypeData.NOT_YET_VALID;
+        case SslError.SSL_UNTRUSTED:
+            return GeneratedAndroidWebView.SslErrorTypeData.UNTRUSTED;
+        default:
+            return GeneratedAndroidWebView.SslErrorTypeData.INVALID;
+    }
+  }
+
+    static String getPem(X509Certificate x509Certificate) {
+        final String BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
+        final String END_CERT = "-----END CERTIFICATE-----";
+        String LINE_SEPARATOR = System.getProperty("line.separator");
+
+        final Base64.Encoder encoder;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            assert(LINE_SEPARATOR != null);
+            encoder = Base64.getMimeEncoder(64, LINE_SEPARATOR.getBytes());
+        } else {
+            return null;
+        }
+
+        final byte[] rawText;
+        try {
+            rawText = x509Certificate.getEncoded();
+        } catch (CertificateEncodingException e) {
+            return null;
+        }
+
+        final String encodedText = new String(encoder.encode(rawText));
+        return BEGIN_CERT + LINE_SEPARATOR + encodedText + LINE_SEPARATOR + END_CERT;
+    }
 
   /**
    * Creates a Flutter api that sends messages to Dart.
@@ -281,6 +363,23 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         callback);
   }
 
+  /** Passes arguments from {@link WebViewClient#onReceivedSslError} to Dart. */
+  public void onReceivedSslError(
+          @NonNull WebViewClient webViewClient,
+          @NonNull WebView webview,
+          @NonNull SslErrorHandler sslErrorHandler,
+          @NonNull SslError error,
+          @NonNull Reply<Void> callback) {
+    new SslErrorHandlerFlutterApiImpl(binaryMessenger, instanceManager)
+            .create(sslErrorHandler, reply -> {});
+
+    onReceivedSslError(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webViewClient)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webview)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(sslErrorHandler)),
+        createSslErrorData(error),
+        callback);
+  }
   private long getIdentifierForClient(WebViewClient webViewClient) {
     final Long identifier = instanceManager.getIdentifierForStrongReference(webViewClient);
     if (identifier == null) {

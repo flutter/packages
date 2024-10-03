@@ -1,6 +1,7 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -782,6 +783,7 @@ class WebViewClient extends JavaObject {
     this.urlLoading,
     this.doUpdateVisitedHistory,
     this.onReceivedHttpAuthRequest,
+    this.onReceivedSslError,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -804,6 +806,7 @@ class WebViewClient extends JavaObject {
     this.urlLoading,
     this.doUpdateVisitedHistory,
     this.onReceivedHttpAuthRequest,
+    this.onReceivedSslError,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -969,6 +972,13 @@ class WebViewClient extends JavaObject {
     String realm,
   )? onReceivedHttpAuthRequest;
 
+  /// This callback is called when there's a SSL error
+  final void Function(
+    WebView webView,
+    SslErrorHandler handler,
+    SslError error,
+  )? onReceivedSslError;
+
   /// Sets the required synchronous return value for the Java method,
   /// `WebViewClient.shouldOverrideUrlLoading(...)`.
   ///
@@ -999,6 +1009,7 @@ class WebViewClient extends JavaObject {
       urlLoading: urlLoading,
       doUpdateVisitedHistory: doUpdateVisitedHistory,
       onReceivedHttpAuthRequest: onReceivedHttpAuthRequest,
+      onReceivedSslError: onReceivedSslError,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );
@@ -1674,4 +1685,103 @@ class HttpAuthHandler extends JavaObject {
   Future<bool> useHttpAuthUsernamePassword() {
     return api.useHttpAuthUsernamePasswordFromInstance(this);
   }
+}
+
+/// Represents an SSL error.
+///
+/// Instances of this class are created by the [WebView] and passed to
+/// [WebViewClient.onReceivedSslError]. The host application must call
+/// either [SslErrorHandler.proceed] or [SslErrorHandler.cancel] to set the
+/// WebView's response to the request.
+class SslErrorHandler extends JavaObject {
+  /// Constructs a [SslErrorHandler].
+  SslErrorHandler({
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super.detached();
+
+  /// Pigeon Host Api implementation for [SslErrorHandler].
+  @visibleForTesting
+  static SslErrorHandlerHostApiImpl api = SslErrorHandlerHostApiImpl();
+
+  /// Instructs the WebView to cancel the SSL trust request.
+  Future<void> cancel() {
+    return api.cancelFromInstance(this);
+  }
+
+  /// Instructs the WebView to proceed with the request
+  Future<void> proceed() {
+    return api.proceedFromInstance(this);
+  }
+}
+
+/// Defines the types of SSL errors
+enum SslErrorType {
+  /// The date of the certificate is invalid
+  dateInvalid,
+
+  /// The certificate has expired
+  expired,
+
+  /// Hostname mismatch
+  idMismatch,
+
+  /// The certificate is not yet valid
+  notYetValid,
+
+  /// The certificate authority is not trusted
+  untrusted,
+
+  /// Generic error occurred
+  invalid,
+}
+
+/// Encapsulates information about an SSL certificate
+///
+/// See [WebViewClient.onReceivedSslError].
+class SslCertificate {
+  /// Creates a [SslCertificate].
+  const SslCertificate({
+    required this.issuedBy,
+    required this.issuedTo,
+    required this.validNotAfterDate,
+    required this.validNotBeforeDate,
+    required this.x509CertificatePem,
+  });
+
+  /// The identity that the certificate is issued by
+  final String? issuedBy;
+
+  /// The identity that the certificate is issued to
+  final String? issuedTo;
+
+  /// The date that must not be passed for the certificate to be valid
+  final DateTime? validNotAfterDate;
+
+  /// The date that must be passed for the certificate to be valid
+  final DateTime? validNotBeforeDate;
+
+  /// The x509Certificate PEM associated with the SSL error
+  final String? x509CertificatePem;
+}
+
+/// Encapsulates information about SSL errors
+///
+/// See [WebViewClient.onReceivedSslError].
+class SslError {
+  /// Creates a [SslError].
+  const SslError({
+    required this.errorType,
+    required this.certificate,
+    required this.url,
+  });
+
+  /// The type of SSL error
+  final SslErrorType errorType;
+
+  /// The certificate associated with the error
+  final SslCertificate certificate;
+
+  /// The url associated with the error
+  final String url;
 }

@@ -95,6 +95,11 @@ class AndroidWebViewProxy {
       String host,
       String realm,
     )? onReceivedHttpAuthRequest,
+    void Function(
+      android_webview.WebView webView,
+      android_webview.SslErrorHandler handler,
+      android_webview.SslError error,
+    )? onReceivedSslError,
   }) createAndroidWebViewClient;
 
   /// Constructs a [android_webview.FlutterAssetManager].

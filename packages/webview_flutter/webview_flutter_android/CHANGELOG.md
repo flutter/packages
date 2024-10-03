@@ -1,3 +1,7 @@
+## 3.17.0
+
+* Implements onReceivedSslError
+
 ## 3.16.7
 
 * Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.

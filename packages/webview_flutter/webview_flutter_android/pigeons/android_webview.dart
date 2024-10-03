@@ -143,6 +143,73 @@ class ConsoleMessage {
   late String sourceId;
 }
 
+/// Defines the types of SSL errors
+enum SslErrorTypeData {
+  /// The date of the certificate is invalid
+  dateInvalid,
+
+  /// The certificate has expired
+  expired,
+
+  /// Hostname mismatch
+  idMismatch,
+
+  /// The certificate is not yet valid
+  notYetValid,
+
+  /// The certificate authority is not trusted
+  untrusted,
+
+  /// Generic error occurred
+  invalid,
+}
+
+/// Defines the parameters of an SSL certificate
+class SslCertificateData {
+  /// Creates a [SslCertificateData].
+  const SslCertificateData({
+    required this.issuedBy,
+    required this.issuedTo,
+    required this.validNotAfterIso8601Date,
+    required this.validNotBeforeIso8601Date,
+    required this.x509CertificatePem,
+  });
+
+  /// The identity that the certificate is issued by
+  final String? issuedBy;
+
+  /// The identity that the certificate is issued to
+  final String? issuedTo;
+
+  /// The date that must not be passed for the certificate to be valid
+  final String? validNotAfterIso8601Date;
+
+  /// The date that must be passed for the certificate to be valid
+  final String? validNotBeforeIso8601Date;
+
+  /// The x509Certificate PEM associated with the SSL error
+  final String? x509CertificatePem;
+}
+
+/// Defines the parameters of a SSL error
+class SslErrorData {
+  /// Creates a [SslErrorData].
+  const SslErrorData({
+    required this.errorTypeData,
+    required this.certificateData,
+    required this.url,
+  });
+
+  /// The type of SSL error
+  final SslErrorTypeData errorTypeData;
+
+  /// The certificate associated with the error
+  final SslCertificateData certificateData;
+
+  /// The url associated with the error
+  final String url;
+}
+
 /// Handles methods calls to the native Java Object class.
 ///
 /// Also handles calls to remove the reference to an instance with `dispose`.
@@ -388,6 +455,13 @@ abstract class WebViewClientFlutterApi {
     int httpAuthHandlerInstanceId,
     String host,
     String realm,
+  );
+
+  void onReceivedSslError(
+    int instanceId,
+    int webViewInstanceId,
+    int sslErrorHandlerInstanceId,
+    SslErrorData error,
   );
 }
 
@@ -636,6 +710,35 @@ abstract class HttpAuthHandlerHostApi {
 /// See https://developer.android.com/reference/android/webkit/HttpAuthHandler.
 @FlutterApi()
 abstract class HttpAuthHandlerFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int instanceId);
+}
+
+/// Host API for `SslErrorHandler`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/SslErrorHandler.
+@HostApi(dartHostTestHandler: 'TestSslErrorHandlerHostApi')
+abstract class SslErrorHandlerHostApi {
+  /// Handles Dart method `SslErrorHandler.cancel`.
+  void cancel(int instanceId);
+
+  /// Handles Dart method `SslErrorHandler.proceed`.
+  void proceed(int instanceId);
+}
+
+/// Flutter API for `SslErrorHandler`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/webkit/SslErrorHandler.
+@FlutterApi()
+abstract class SslErrorHandlerFlutterApi {
   /// Create a new Dart instance and add it to the `InstanceManager`.
   void create(int instanceId);
 }
