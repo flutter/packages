@@ -1,3 +1,7 @@
+## 2.7.7
+
+* Removes the flag to treat warnings as errors in client builds.
+
 ## 2.7.6
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/154602) where
