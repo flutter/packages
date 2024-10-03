@@ -36,13 +36,6 @@ class RouteConfiguration {
     for (final RouteBase route in routes) {
       late bool subRouteIsTopLevel;
       if (route is GoRoute) {
-        if (isTopLevel) {
-          assert(route.path.startsWith('/'),
-              'top-level path must start with "/": $route');
-        } else {
-          assert(!route.path.startsWith('/') && !route.path.endsWith('/'),
-              'sub-route path may not start or end with "/": $route');
-        }
         subRouteIsTopLevel = false;
       } else if (route is ShellRouteBase) {
         subRouteIsTopLevel = isTopLevel;

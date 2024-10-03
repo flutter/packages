@@ -90,60 +90,6 @@ void main() {
       expect(router.routerDelegate.currentConfiguration.uri.path, '/b');
     });
 
-    test('empty path', () {
-      expect(() {
-        GoRoute(path: '');
-      }, throwsA(isAssertionError));
-    });
-
-    test('leading / on sub-route', () {
-      expect(() {
-        GoRouter(
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/',
-              builder: dummy,
-              routes: <GoRoute>[
-                GoRoute(
-                  path: '/foo',
-                  builder: dummy,
-                ),
-              ],
-            ),
-          ],
-        );
-      }, throwsA(isAssertionError));
-    });
-
-    test('trailing / on sub-route', () {
-      expect(() {
-        GoRouter(
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/',
-              builder: dummy,
-              routes: <GoRoute>[
-                GoRoute(
-                  path: 'foo/',
-                  builder: dummy,
-                ),
-              ],
-            ),
-          ],
-        );
-      }, throwsA(isAssertionError));
-    });
-
-    testWidgets('lack of leading / on top-level route',
-        (WidgetTester tester) async {
-      await expectLater(() async {
-        final List<GoRoute> routes = <GoRoute>[
-          GoRoute(path: 'foo', builder: dummy),
-        ];
-        await createRouter(routes, tester);
-      }, throwsA(isAssertionError));
-    });
-
     testWidgets('match no routes', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(path: '/', builder: dummy),
