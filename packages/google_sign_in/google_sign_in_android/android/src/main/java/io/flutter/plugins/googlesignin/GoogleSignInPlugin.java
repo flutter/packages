@@ -56,13 +56,13 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       @NonNull GoogleSignInWrapper googleSignInWrapper) {
     this.messenger = messenger;
     delegate = new Delegate(context, googleSignInWrapper);
-    GoogleSignInApi.setup(messenger, delegate);
+    GoogleSignInApi.setUp(messenger, delegate);
   }
 
   private void dispose() {
     delegate = null;
     if (messenger != null) {
-      GoogleSignInApi.setup(messenger, null);
+      GoogleSignInApi.setUp(messenger, null);
       messenger = null;
     }
   }
