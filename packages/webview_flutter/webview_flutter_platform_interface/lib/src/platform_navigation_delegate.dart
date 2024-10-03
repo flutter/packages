@@ -34,6 +34,10 @@ typedef UrlChangeCallback = void Function(UrlChange change);
 /// authentication request.
 typedef HttpAuthRequestCallback = void Function(HttpAuthRequest request);
 
+/// Signature for callbacks that notify the host application of an
+/// SSL error
+typedef SslErrorCallback = FutureOr<SslErrorDecision> Function(SslError error);
+
 /// An interface defining navigation events that occur on the native platform.
 ///
 /// The [PlatformWebViewController] is notifying this delegate on events that
@@ -141,6 +145,13 @@ abstract class PlatformNavigationDelegate extends PlatformInterface {
   Future<void> setOnHttpAuthRequest(HttpAuthRequestCallback onHttpAuthRequest) {
     throw UnimplementedError(
       'setOnHttpAuthRequest is not implemented on the current platform.',
+    );
+  }
+
+  /// Invoked when the web view encounters an SSL error
+  Future<void> setOnSslError(SslErrorCallback onSslError) {
+    throw UnimplementedError(
+      'setOnSslError is not implemented on the current platform.',
     );
   }
 }
