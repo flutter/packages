@@ -33,7 +33,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon: ^11.0.1
+  pigeon: ^22.4.2
 
 topics:
   - authentication
