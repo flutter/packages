@@ -1334,8 +1334,7 @@ void main() {
 
       await controller.addJavaScriptChannel(paramsWithMock);
       verifyInOrder(<Object>[
-        mockWebView.removeJavaScriptChannel(
-            argThat(isA<android_webview.JavaScriptChannel>())),
+        mockWebView.removeJavaScriptChannel('test'),
         mockWebView.addJavaScriptChannel(
             argThat(isA<android_webview.JavaScriptChannel>())),
       ]);
@@ -1366,9 +1365,7 @@ void main() {
           .called(1);
 
       await controller.removeJavaScriptChannel('test');
-      verify(mockWebView.removeJavaScriptChannel(
-              argThat(isA<android_webview.JavaScriptChannel>())))
-          .called(1);
+      verify(mockWebView.removeJavaScriptChannel('test')).called(1);
     });
 
     test('getTitle', () async {
@@ -1718,9 +1715,12 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      final MockWebView mockWebView = MockWebView();
+      when(mockWebView.pigeon_instanceManager).thenReturn(testInstanceManager);
+
       onShowCustomViewCallback!(
         MockWebChromeClient(),
-        MockWebView(),
+        mockWebView,
         android_webview.CustomViewCallback.pigeon_detached(
           pigeon_instanceManager: testInstanceManager,
         ),
