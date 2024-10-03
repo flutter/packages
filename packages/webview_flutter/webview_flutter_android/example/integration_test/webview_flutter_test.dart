@@ -20,6 +20,7 @@ import 'package:webview_flutter_android/src/android_webkit.g.dart'
 //import 'package:webview_flutter_android/src/android_webview_api_impls.dart';
 //import 'package:webview_flutter_android/src/instance_manager.dart';
 import 'package:webview_flutter_android/src/weak_reference_utils.dart';
+import 'package:webview_flutter_android/src/android_proxy.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
@@ -85,104 +86,98 @@ Future<void> main() async {
     expect(currentUrl, primaryUrl);
   });
 
-  // testWidgets(
-  //     'withWeakRefenceTo allows encapsulating class to be garbage collected',
-  //     (WidgetTester tester) async {
-  //   final Completer<int> gcCompleter = Completer<int>();
-  //   final PigeonInstanceManager instanceManager = PigeonInstanceManager(
-  //     onWeakReferenceRemoved: gcCompleter.complete,
-  //   );
-  //
-  //   ClassWithCallbackClass? instance = ClassWithCallbackClass();
-  //   instanceManager.addHostCreatedInstance(instance.callbackClass, 0);
-  //   instance = null;
-  //
-  //   // Force garbage collection.
-  //   await IntegrationTestWidgetsFlutterBinding.instance
-  //       .watchPerformance(() async {
-  //     await tester.pumpAndSettle();
-  //   });
-  //
-  //   final int gcIdentifier = await gcCompleter.future;
-  //   expect(gcIdentifier, 0);
-  // }, timeout: const Timeout(Duration(seconds: 10)));
+  testWidgets(
+      'withWeakRefenceTo allows encapsulating class to be garbage collected',
+      (WidgetTester tester) async {
+    final Completer<int> gcCompleter = Completer<int>();
+    final android_webkit.PigeonInstanceManager instanceManager =
+        android_webkit.PigeonInstanceManager(
+      onWeakReferenceRemoved: gcCompleter.complete,
+    );
 
-  // testWidgets(
-  //   'WebView is released by garbage collection',
-  //   (WidgetTester tester) async {
-  //     final Completer<void> webViewGCCompleter = Completer<void>();
-  //
-  //     late final PigeonInstanceManager instanceManager;
-  //     instanceManager =
-  //         PigeonInstanceManager(onWeakReferenceRemoved: (int identifier) {
-  //       final Object instance =
-  //           instanceManager.getInstanceWithWeakReference(identifier)!;
-  //       if (instance is WebView && !webViewGCCompleter.isCompleted) {
-  //         webViewGCCompleter.complete();
-  //       }
-  //     });
-  //
-  //     // Since the InstanceManager of the apis are being changed, the native
-  //     // InstanceManager needs to be cleared otherwise an exception will be
-  //     // thrown that an identifier is being reused.
-  //     await InstanceManagerHostApi().clear();
-  //
-  //     android.WebView.api = WebViewHostApiImpl(
-  //       instanceManager: instanceManager,
-  //     );
-  //     android.WebSettings.api =
-  //         WebSettingsHostApiImpl(instanceManager: instanceManager);
-  //     android.WebChromeClient.api = WebChromeClientHostApiImpl(
-  //       instanceManager: instanceManager,
-  //     );
-  //
-  //     await tester.pumpWidget(
-  //       Builder(
-  //         builder: (BuildContext context) {
-  //           return PlatformWebViewWidget(
-  //             AndroidWebViewWidgetCreationParams(
-  //               instanceManager: instanceManager,
-  //               controller: PlatformWebViewController(
-  //                 const PlatformWebViewControllerCreationParams(),
-  //               ),
-  //             ),
-  //           ).build(context);
-  //         },
-  //       ),
-  //     );
-  //     await tester.pumpAndSettle();
-  //
-  //     await tester.pumpWidget(
-  //       Builder(
-  //         builder: (BuildContext context) {
-  //           return PlatformWebViewWidget(
-  //             AndroidWebViewWidgetCreationParams(
-  //               instanceManager: instanceManager,
-  //               controller: PlatformWebViewController(
-  //                 const PlatformWebViewControllerCreationParams(),
-  //               ),
-  //             ),
-  //           ).build(context);
-  //         },
-  //       ),
-  //     );
-  //     await tester.pumpAndSettle();
-  //
-  //     // Force garbage collection.
-  //     await IntegrationTestWidgetsFlutterBinding.instance
-  //         .watchPerformance(() async {
-  //       await tester.pumpAndSettle();
-  //     });
-  //
-  //     await tester.pumpAndSettle();
-  //     await expectLater(webViewGCCompleter.future, completes);
-  //
-  //     android.WebView.api = WebViewHostApiImpl();
-  //     android.WebSettings.api = WebSettingsHostApiImpl();
-  //     android.WebChromeClient.api = WebChromeClientHostApiImpl();
-  //   },
-  //   timeout: const Timeout(Duration(seconds: 10)),
-  // );
+    ClassWithCallbackClass? instance = ClassWithCallbackClass();
+    instanceManager.addHostCreatedInstance(instance.callbackClass, 0);
+    instance = null;
+
+    // Force garbage collection.
+    await IntegrationTestWidgetsFlutterBinding.instance
+        .watchPerformance(() async {
+      await tester.pumpAndSettle();
+    });
+
+    final int gcIdentifier = await gcCompleter.future;
+    expect(gcIdentifier, 0);
+  }, timeout: const Timeout(Duration(seconds: 10)));
+
+  testWidgets(
+    'WebView is released by garbage collection',
+    (WidgetTester tester) async {
+      final Completer<void> webViewGCCompleter = Completer<void>();
+
+      late final android_webkit.PigeonInstanceManager instanceManager;
+      instanceManager = android_webkit.PigeonInstanceManager(
+          onWeakReferenceRemoved: (int identifier) {
+        final Object instance =
+            instanceManager.getInstanceWithWeakReference(identifier)!;
+        if (instance is android_webkit.WebView &&
+            !webViewGCCompleter.isCompleted) {
+          webViewGCCompleter.complete();
+        }
+      });
+
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              AndroidWebViewWidgetCreationParams(
+                controller: PlatformWebViewController(
+                  AndroidWebViewControllerCreationParams(
+                    androidWebViewProxy: AndroidWebViewProxy(newWebView: ({
+                      void Function(android_webkit.WebView, int, int, int, int)?
+                          onScrollChanged,
+                    }) {
+                      final android_webkit.WebView webView =
+                          android_webkit.WebView(
+                              onScrollChanged: onScrollChanged);
+                      instanceManager.addDartCreatedInstance(webView);
+                      return webView;
+                    }),
+                  ),
+                ),
+              ),
+            ).build(context);
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              AndroidWebViewWidgetCreationParams(
+                instanceManager: instanceManager,
+                controller: PlatformWebViewController(
+                  const PlatformWebViewControllerCreationParams(),
+                ),
+              ),
+            ).build(context);
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Force garbage collection.
+      await IntegrationTestWidgetsFlutterBinding.instance
+          .watchPerformance(() async {
+        await tester.pumpAndSettle();
+      });
+
+      await tester.pumpAndSettle();
+      await expectLater(webViewGCCompleter.future, completes);
+    },
+    timeout: const Timeout(Duration(seconds: 10)),
+  );
 
   testWidgets('runJavaScriptReturningResult', (WidgetTester tester) async {
     final Completer<void> pageFinished = Completer<void>();
