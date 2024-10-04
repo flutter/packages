@@ -99,7 +99,8 @@ class CustomCap extends Cap {
   /// Bitmap overlay centered at the start or end vertex of a [Polyline].
   final BitmapDescriptor bitmapDescriptor;
 
-  /// Reference stroke width in pixels.
+  /// Reference stroke width in screen pixels. See
+  /// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/CustomCap#refWidth
   final double refWidth;
 
   @override
