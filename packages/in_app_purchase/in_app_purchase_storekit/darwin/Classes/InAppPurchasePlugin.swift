@@ -28,8 +28,13 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   public var paymentQueueHandler: FLTPaymentQueueHandlerProtocol?
 
   // This should be an Task, but Task is on available >= iOS 13
-  var updateListenerTask: Any?
-  
+  private var _updateListenerTask: Any?
+
+  @available(iOS 13.0, *)
+  var updateListenerTaskAsTask: Task<(), Never> {
+      return self._updateListenerTask as! Task<(), Never>
+  }
+
   var transactionCallbackAPI: InAppPurchase2CallbackAPI? = nil
 
   public static func register(with registrar: FlutterPluginRegistrar) {

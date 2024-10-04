@@ -9,10 +9,10 @@ import XCTest
 @testable import in_app_purchase_storekit
 
 @available(iOS 15.0, macOS 12.0, *)
-class StoreKit2TranslatorTests: XCTestCase {
-  var session: SKTestSession!
-  var plugin: InAppPurchasePlugin!
-  var product: Product!
+final class StoreKit2TranslatorTests: XCTestCase {
+  private var session: SKTestSession!
+  private var plugin: InAppPurchasePlugin!
+  private var product: Product!
 
   // This is transcribed from the Configuration.storekit file.
   var productMessage: SK2ProductMessage =

@@ -4,9 +4,6 @@
 
 @available(iOS 15.0, macOS 12.0, *)
 extension InAppPurchasePlugin: InAppPurchase2API {
-  var updateListenerTaskAsTask: Task<(), Never> {
-      return self.updateListenerTask as! Task<(), Never>
-  }
 
   // MARK: - Pigeon Functions
 
