@@ -1,3 +1,7 @@
+## 3.16.9
+
+* Updates internal API wrapper to use `ProxyApis`.
+
 ## 3.16.8
 
 * Bumps androidx.webkit:webkit from 1.11.0 to 1.12.0.
