@@ -1,6 +1,6 @@
 ## 3.16.9
 
-* Updates internal API wrapper to use `ProxyApis`.
+* Updates internal API wrapper to use `ProxyApi`s.
 
 ## 3.16.8
 
