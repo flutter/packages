@@ -1,6 +1,10 @@
-## 2.7.8
+## 2.7.9
 
 * Updates Java compatibility version to 11.
+
+## 2.7.8
+
+* Updates Pigeon for non-nullable collection type support.
 
 ## 2.7.7
 
