@@ -31,9 +31,9 @@ public class DownloadListenerTest {
 
     final DownloadListenerImpl instance = new DownloadListenerImpl(mockApi);
     final String url = "myString";
-    final String userAgent = "myString";
-    final String contentDisposition = "myString";
-    final String mimetype = "myString";
+    final String userAgent = "myString1";
+    final String contentDisposition = "myString2";
+    final String mimetype = "myString3";
     final Long contentLength = 0L;
     instance.onDownloadStart(url, userAgent, contentDisposition, mimetype, contentLength);
 
