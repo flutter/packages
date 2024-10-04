@@ -685,6 +685,10 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     return PlatformOffset(dx: offset.dx, dy: offset.dy);
   }
 
+  static PlatformOffset _platformOffsetFromSize(Size size) {
+    return PlatformOffset(dx: size.width, dy: size.height);
+  }
+
   static ScreenCoordinate _screenCoordinateFromPlatformPoint(
       PlatformPoint point) {
     return ScreenCoordinate(x: point.x, y: point.y);
@@ -734,7 +738,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       consumeTapEvents: marker.consumeTapEvents,
       draggable: marker.draggable,
       flat: marker.flat,
-      icon: marker.icon.toJson(),
+      icon: platformBitmapFromBitmapDescriptor(marker.icon),
       infoWindow: _platformInfoWindowFromInfoWindow(marker.infoWindow),
       position: _platformLatLngFromLatLng(marker.position),
       rotation: marker.rotation,
@@ -850,6 +854,36 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         return PlatformCameraUpdate(
             cameraUpdate:
                 PlatformCameraUpdateScrollBy(dx: update.dx, dy: update.dy));
+    }
+  }
+
+  static PlatformMapBitmapScaling platformMapBitmapScalingFromScaling(MapBitmapScaling scaling) {
+    switch(scaling) {
+      case MapBitmapScaling.auto:
+          return PlatformMapBitmapScaling.auto;
+      case MapBitmapScaling.none:
+          return PlatformMapBitmapScaling.none;
+    }
+    /// MapBitmapScaling is defined in the platform interface.
+    return PlatformMapBitmapScaling.auto;
+  }
+
+  static PlatformBitmap platformBitmapFromBitmapDescriptor(BitmapDescriptor bitmap) {
+    switch(bitmap.runtimeType) {
+      case final DefaultMarker marker:
+        return PlatformBitmap(bitmap: PlatformBitmapDefaultMarker(hue: marker.hue?.toDouble()));
+      case final BytesBitmap bytes:
+        return PlatformBitmap(bitmap: PlatformBitmapBytes(byteData: bytes.byteData, size: (bytes.size == null) ? null : _platformOffsetFromSize(bytes.size!)));
+      case final AssetBitmap asset:
+        return PlatformBitmap(bitmap: PlatformBitmapAsset(name: asset.name, package: asset.package));
+      case final AssetImageBitmap asset:
+        return PlatformBitmap(bitmap: PlatformBitmapAssetImage(name: asset.name, scale: asset.scale, size: (asset.size == null) ? null : _platformOffsetFromSize(asset.size!)));
+      case final AssetMapBitmap asset:
+        return PlatformBitmap(bitmap: PlatformBitmapAssetMap(assetName: asset.assetName, bitmapScaling: platformMapBitmapScalingFromScaling(asset.bitmapScaling), imagePixelRatio: asset.imagePixelRatio, width: asset.width, height: asset.height));
+      case final BytesMapBitmap bytes:
+        return PlatformBitmap(bitmap: PlatformBitmapBytesMap(byteData: bytes.byteData, bitmapScaling: platformMapBitmapScalingFromScaling(bytes.bitmapScaling), imagePixelRatio: bytes.imagePixelRatio, width: bytes.width, height: bytes.height));
+      default:
+        throw ArgumentError('Unrecognized type of bitmap ${bitmap.runtimeType}', 'bitmap');
     }
   }
 }

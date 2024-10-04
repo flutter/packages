@@ -172,12 +172,12 @@ class PlatformInfoWindow {
 class PlatformMarker {
   PlatformMarker({
     required this.markerId,
+    required this.icon,
     this.alpha = 1.0,
     required this.anchor,
     this.consumeTapEvents = false,
     this.draggable = false,
     this.flat = false,
-    this.icon = const <Object>['defaultMarker'],
     required this.infoWindow,
     required this.position,
     this.rotation = 0.0,
@@ -192,9 +192,7 @@ class PlatformMarker {
   final bool draggable;
   final bool flat;
 
-  /// The icon as JSON data.
-  // TODO(schectman): replace this with structured data.
-  final Object icon;
+  final PlatformBitmap icon;
   final PlatformInfoWindow infoWindow;
   final PlatformLatLng position;
   final double rotation;
@@ -482,6 +480,62 @@ class PlatformZoomRange {
 
   final double? min;
   final double? max;
+}
+
+class PlatformBitmap {
+  PlatformBitmap({required this.bitmap});
+
+  final Object bitmap;
+}
+
+class PlatformBitmapDefaultMarker {
+  PlatformBitmapDefaultMarker({this.hue});
+
+  final double? hue;
+}
+
+class PlatformBitmapBytes {
+  PlatformBitmapBytes({required this.byteData, this.size});
+
+  final Uint8List byteData;
+  final PlatformOffset? size;
+}
+
+class PlatformBitmapAsset {
+  PlatformBitmapAsset({required this.name, this.package});
+
+  final String name;
+  final String? package;
+}
+
+class PlatformBitmapAssetImage{
+  PlatformBitmapAssetImage({required this.name, required this.scale, this.size});
+  final String name;
+  final double scale;
+  final PlatformOffset? size;
+}
+
+enum PlatformMapBitmapScaling {
+  auto,
+  none,
+}
+
+class PlatformBitmapAssetMap {
+  PlatformBitmapAssetMap({required this.assetName, required this.bitmapScaling, required this.imagePixelRatio, this.width, this.height});
+  final String assetName;
+  final PlatformMapBitmapScaling bitmapScaling;
+  final double imagePixelRatio;
+  final double? width;
+  final double? height;
+}
+
+class PlatformBitmapBytesMap {
+  PlatformBitmapBytesMap({required this.byteData, required this.bitmapScaling, required this.imagePixelRatio, this.width, this.height});
+  final Uint8List byteData;
+  final PlatformMapBitmapScaling bitmapScaling;
+  final double imagePixelRatio;
+  final double? width;
+  final double? height;
 }
 
 /// Interface for non-test interactions with the native SDK.
