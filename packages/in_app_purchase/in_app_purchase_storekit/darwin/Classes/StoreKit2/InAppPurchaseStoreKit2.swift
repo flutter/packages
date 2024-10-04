@@ -117,21 +117,22 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   /// https://developer.apple.com/documentation/storekit/transaction/3851206-updates
   /// This function should be called as soon as the app starts to avoid missing any Transactions done outside of the app.
   func startListeningToTransactions() throws {
-    self.updateListenerTask = Task { [weak self] in
-      for await verificationResult in Transaction.updates {
-        switch verificationResult {
-        case .verified(let transaction):
-          self?.sendTransactionUpdate(transaction: transaction)
-        case .unverified:
-          break
+    self.setListenerTaskAsTask(
+      task: Task { [weak self] in
+        for await verificationResult in Transaction.updates {
+          switch verificationResult {
+          case .verified(let transaction):
+            self?.sendTransactionUpdate(transaction: transaction)
+          case .unverified:
+            break
+          }
         }
-      }
-    }
+      })
   }
 
   /// Stop subscribing to Transaction.updates
   func stopListeningToTransactions() throws {
-    updateListenerTaskAsTask.cancel()
+    getListenerTaskAsTask.cancel()
   }
 
   /// Sends an transaction back to Dart. Access these transactions with `purchaseStream`
