@@ -29,7 +29,7 @@ dev_dependencies:
   build_runner: ^2.3.3
   flutter_test:
     sdk: flutter
-  mockito: 5.4.4
+  mockito: ^5.4.4
   pigeon: ^22.1.0
   plugin_platform_interface: ^2.1.7
 

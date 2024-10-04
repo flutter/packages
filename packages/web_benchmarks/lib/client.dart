@@ -10,8 +10,10 @@ import 'dart:math' as math;
 import 'package:web/web.dart';
 
 import 'src/common.dart';
+import 'src/computations.dart';
 import 'src/recorder.dart';
 
+export 'src/computations.dart';
 export 'src/recorder.dart';
 
 /// Signature for a function that creates a [Recorder].
@@ -41,9 +43,12 @@ extension on HTMLElement {
 ///
 /// When used without a server, prompts the user to select a benchmark to
 /// run next.
+///
+/// [benchmarkPath] specifies the path for the URL that will be loaded in Chrome
+/// when reloading the window for subsequent benchmark runs.
 Future<void> runBenchmarks(
   Map<String, RecorderFactory> benchmarks, {
-  String initialPage = defaultInitialPage,
+  String benchmarkPath = defaultInitialPath,
 }) async {
   // Set local benchmarks.
   _benchmarks = benchmarks;
@@ -60,14 +65,15 @@ Future<void> runBenchmarks(
   await _runBenchmark(nextBenchmark);
 
   final Uri currentUri = Uri.parse(window.location.href);
-  // Create a new URI with the current 'page' value set to [initialPage] to
-  // ensure the benchmark app is reloaded at the proper location.
-  final String newUri = Uri(
-    scheme: currentUri.scheme,
-    host: currentUri.host,
-    port: currentUri.port,
-    path: initialPage,
-  ).toString();
+  // Create a new URI with the parsed value of [benchmarkPath] to ensure the
+  // benchmark app is reloaded with the proper configuration.
+  final String newUri = Uri.parse(benchmarkPath)
+      .replace(
+        scheme: currentUri.scheme,
+        host: currentUri.host,
+        port: currentUri.port,
+      )
+      .toString();
 
   // Reloading the window will trigger the next benchmark to run.
   await _client.printToConsole(

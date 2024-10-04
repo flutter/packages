@@ -1,6 +1,5 @@
 group 'io.flutter.plugins.videoplayer'
 version '1.0-SNAPSHOT'
-def args = ["-Xlint:deprecation","-Xlint:unchecked","-Werror"]
 
 buildscript {
     repositories {
@@ -18,10 +17,6 @@ rootProject.allprojects {
         google()
         mavenCentral()
     }
-}
-
-project.getTasks().withType(JavaCompile){
-    options.compilerArgs.addAll(args)
 }
 
 apply plugin: 'com.android.library'
