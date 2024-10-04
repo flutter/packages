@@ -36,12 +36,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
-@interface FVPMixWithOthersMessage ()
-+ (FVPMixWithOthersMessage *)fromList:(NSArray<id> *)list;
-+ (nullable FVPMixWithOthersMessage *)nullableFromList:(NSArray<id> *)list;
-- (NSArray<id> *)toList;
-@end
-
 @implementation FVPCreationOptions
 + (instancetype)makeWithAsset:(nullable NSString *)asset
                           uri:(nullable NSString *)uri
@@ -79,27 +73,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation FVPMixWithOthersMessage
-+ (instancetype)makeWithMixWithOthers:(BOOL)mixWithOthers {
-  FVPMixWithOthersMessage *pigeonResult = [[FVPMixWithOthersMessage alloc] init];
-  pigeonResult.mixWithOthers = mixWithOthers;
-  return pigeonResult;
-}
-+ (FVPMixWithOthersMessage *)fromList:(NSArray<id> *)list {
-  FVPMixWithOthersMessage *pigeonResult = [[FVPMixWithOthersMessage alloc] init];
-  pigeonResult.mixWithOthers = [GetNullableObjectAtIndex(list, 0) boolValue];
-  return pigeonResult;
-}
-+ (nullable FVPMixWithOthersMessage *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [FVPMixWithOthersMessage fromList:list] : nil;
-}
-- (NSArray<id> *)toList {
-  return @[
-    @(self.mixWithOthers),
-  ];
-}
-@end
-
 @interface FVPMessagesPigeonCodecReader : FlutterStandardReader
 @end
 @implementation FVPMessagesPigeonCodecReader
@@ -107,8 +80,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   switch (type) {
     case 129:
       return [FVPCreationOptions fromList:[self readValue]];
-    case 130:
-      return [FVPMixWithOthersMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -121,9 +92,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (void)writeValue:(id)value {
   if ([value isKindOfClass:[FVPCreationOptions class]]) {
     [self writeByte:129];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FVPMixWithOthersMessage class]]) {
-    [self writeByte:130];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];

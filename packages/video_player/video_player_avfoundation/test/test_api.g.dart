@@ -23,9 +23,6 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is CreationOptions) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is MixWithOthersMessage) {
-      buffer.putUint8(130);
-      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -36,8 +33,6 @@ class _PigeonCodec extends StandardMessageCodec {
     switch (type) {
       case 129:
         return CreationOptions.decode(readValue(buffer)!);
-      case 130:
-        return MixWithOthersMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

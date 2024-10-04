@@ -14,7 +14,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class FVPCreationOptions;
-@class FVPMixWithOthersMessage;
 
 @interface FVPCreationOptions : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
@@ -29,13 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, nullable) NSString *packageName;
 @property(nonatomic, copy, nullable) NSString *formatHint;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *httpHeaders;
-@end
-
-@interface FVPMixWithOthersMessage : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithMixWithOthers:(BOOL)mixWithOthers;
-@property(nonatomic, assign) BOOL mixWithOthers;
 @end
 
 /// The codec used by all APIs.

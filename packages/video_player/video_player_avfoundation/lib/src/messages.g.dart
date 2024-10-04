@@ -71,27 +71,6 @@ class CreationOptions {
   }
 }
 
-class MixWithOthersMessage {
-  MixWithOthersMessage({
-    required this.mixWithOthers,
-  });
-
-  bool mixWithOthers;
-
-  Object encode() {
-    return <Object?>[
-      mixWithOthers,
-    ];
-  }
-
-  static MixWithOthersMessage decode(Object result) {
-    result as List<Object?>;
-    return MixWithOthersMessage(
-      mixWithOthers: result[0]! as bool,
-    );
-  }
-}
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -101,9 +80,6 @@ class _PigeonCodec extends StandardMessageCodec {
       buffer.putInt64(value);
     } else if (value is CreationOptions) {
       buffer.putUint8(129);
-      writeValue(buffer, value.encode());
-    } else if (value is MixWithOthersMessage) {
-      buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -115,8 +91,6 @@ class _PigeonCodec extends StandardMessageCodec {
     switch (type) {
       case 129:
         return CreationOptions.decode(readValue(buffer)!);
-      case 130:
-        return MixWithOthersMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
