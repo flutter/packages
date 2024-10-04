@@ -155,7 +155,7 @@ public class ConvertTest {
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
-            assetDetails,
+            null, //assetDetails,
             assetManager,
             1.0f,
             bitmapDescriptorFactoryWrapper,
@@ -175,6 +175,8 @@ public class ConvertTest {
     assetDetails.put("width", 15.0f);
     assetDetails.put("imagePixelRatio", 2.0f);
 
+    Messages.PlatformBitmapAssetMap platformBitmap = new Messages.PlatformBitmapAssetMap.Builder().setAssetName(fakeAssetName).setWidth(15.0).setImagePixelRatio(2.0).setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO).build();
+
     when(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey);
 
     when(assetManager.open(fakeAssetKey)).thenReturn(buildImageInputStream());
@@ -183,7 +185,7 @@ public class ConvertTest {
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
-            assetDetails,
+            platformBitmap,
             assetManager,
             1.0f,
             bitmapDescriptorFactoryWrapper,
@@ -211,7 +213,7 @@ public class ConvertTest {
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
-            assetDetails,
+            null, //assetDetails,
             assetManager,
             1.0f,
             bitmapDescriptorFactoryWrapper,
@@ -240,7 +242,7 @@ public class ConvertTest {
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
-            assetDetails,
+            null, //assetDetails,
             assetManager,
             1.0f,
             bitmapDescriptorFactoryWrapper,
@@ -261,7 +263,7 @@ public class ConvertTest {
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
 
     BitmapDescriptor result =
-        Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+        Convert.getBitmapFromBytes(null, /*assetDetails, */1f, bitmapDescriptorFactoryWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -279,7 +281,7 @@ public class ConvertTest {
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
 
     BitmapDescriptor result =
-        Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+        Convert.getBitmapFromBytes(null, /*assetDetails, */ 1f, bitmapDescriptorFactoryWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -297,7 +299,7 @@ public class ConvertTest {
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
 
     BitmapDescriptor result =
-        Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+        Convert.getBitmapFromBytes(null, /*assetDetails, */1f, bitmapDescriptorFactoryWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -314,7 +316,7 @@ public class ConvertTest {
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
 
     BitmapDescriptor result =
-        Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+        Convert.getBitmapFromBytes(null, /*assetDetails, */1f, bitmapDescriptorFactoryWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -332,7 +334,7 @@ public class ConvertTest {
     verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any());
 
     try {
-      Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+      Convert.getBitmapFromBytes(null, /*assetDetails, */1f, bitmapDescriptorFactoryWrapper);
     } catch (IllegalArgumentException e) {
       Assert.assertEquals(e.getMessage(), "Unable to interpret bytes as a valid image.");
       throw e; // rethrow the exception

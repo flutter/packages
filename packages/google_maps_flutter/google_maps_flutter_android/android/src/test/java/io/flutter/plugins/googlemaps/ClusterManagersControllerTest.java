@@ -194,7 +194,7 @@ public class ClusterManagersControllerTest {
     return new Messages.PlatformMarker.Builder()
         .setMarkerId(markerId)
         .setConsumeTapEvents(false)
-        .setIcon(Arrays.asList("bytes", byteData))
+        .setIcon(null)//Arrays.asList("bytes", byteData))
         .setAlpha(1.0)
         .setDraggable(false)
         .setFlat(false)

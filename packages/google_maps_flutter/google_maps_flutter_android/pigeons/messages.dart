@@ -502,10 +502,10 @@ class PlatformBitmapBytes {
 }
 
 class PlatformBitmapAsset {
-  PlatformBitmapAsset({required this.name, this.package});
+  PlatformBitmapAsset({required this.name, this.pkg});
 
   final String name;
-  final String? package;
+  final String? pkg;
 }
 
 class PlatformBitmapAssetImage{

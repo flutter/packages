@@ -4812,14 +4812,14 @@ public class Messages {
       this.name = setterArg;
     }
 
-    private @Nullable String package;
+    private @Nullable String pkg;
 
-    public @Nullable String getPackage() {
-      return package;
+    public @Nullable String getPkg() {
+      return pkg;
     }
 
-    public void setPackage(@Nullable String setterArg) {
-      this.package = setterArg;
+    public void setPkg(@Nullable String setterArg) {
+      this.pkg = setterArg;
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
@@ -4830,12 +4830,12 @@ public class Messages {
       if (this == o) { return true; }
       if (o == null || getClass() != o.getClass()) { return false; }
       PlatformBitmapAsset that = (PlatformBitmapAsset) o;
-      return name.equals(that.name) && Objects.equals(package, that.package);
+      return name.equals(that.name) && Objects.equals(pkg, that.pkg);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(name, package);
+      return Objects.hash(name, pkg);
     }
 
     public static final class Builder {
@@ -4848,18 +4848,18 @@ public class Messages {
         return this;
       }
 
-      private @Nullable String package;
+      private @Nullable String pkg;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setPackage(@Nullable String setterArg) {
-        this.package = setterArg;
+      public @NonNull Builder setPkg(@Nullable String setterArg) {
+        this.pkg = setterArg;
         return this;
       }
 
       public @NonNull PlatformBitmapAsset build() {
         PlatformBitmapAsset pigeonReturn = new PlatformBitmapAsset();
         pigeonReturn.setName(name);
-        pigeonReturn.setPackage(package);
+        pigeonReturn.setPkg(pkg);
         return pigeonReturn;
       }
     }
@@ -4868,7 +4868,7 @@ public class Messages {
     ArrayList<Object> toList() {
       ArrayList<Object> toListResult = new ArrayList<>(2);
       toListResult.add(name);
-      toListResult.add(package);
+      toListResult.add(pkg);
       return toListResult;
     }
 
@@ -4876,8 +4876,8 @@ public class Messages {
       PlatformBitmapAsset pigeonResult = new PlatformBitmapAsset();
       Object name = pigeonVar_list.get(0);
       pigeonResult.setName((String) name);
-      Object package = pigeonVar_list.get(1);
-      pigeonResult.setPackage((String) package);
+      Object pkg = pigeonVar_list.get(1);
+      pigeonResult.setPkg((String) pkg);
       return pigeonResult;
     }
   }

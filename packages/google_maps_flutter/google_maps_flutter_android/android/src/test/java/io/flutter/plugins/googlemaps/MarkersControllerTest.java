@@ -81,7 +81,8 @@ public class MarkersControllerTest {
         .setRotation(0.0)
         .setZIndex(0.0)
         .setConsumeTapEvents(false)
-        .setIcon(Arrays.asList("bytes", byteData))
+            // TODO construct bitmap
+        .setIcon(null)//Arrays.asList("bytes", byteData))
         .setInfoWindow(infoWindow);
   }
 

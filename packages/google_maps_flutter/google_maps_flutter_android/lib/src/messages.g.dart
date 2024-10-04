@@ -1319,17 +1319,17 @@ class PlatformBitmapBytes {
 class PlatformBitmapAsset {
   PlatformBitmapAsset({
     required this.name,
-    this.package,
+    this.pkg,
   });
 
   String name;
 
-  String? package;
+  String? pkg;
 
   Object encode() {
     return <Object?>[
       name,
-      package,
+      pkg,
     ];
   }
 
@@ -1337,7 +1337,7 @@ class PlatformBitmapAsset {
     result as List<Object?>;
     return PlatformBitmapAsset(
       name: result[0]! as String,
-      package: result[1] as String?,
+      pkg: result[1] as String?,
     );
   }
 }

@@ -875,7 +875,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       case final BytesBitmap bytes:
         return PlatformBitmap(bitmap: PlatformBitmapBytes(byteData: bytes.byteData, size: (bytes.size == null) ? null : _platformOffsetFromSize(bytes.size!)));
       case final AssetBitmap asset:
-        return PlatformBitmap(bitmap: PlatformBitmapAsset(name: asset.name, package: asset.package));
+        return PlatformBitmap(bitmap: PlatformBitmapAsset(name: asset.name, pkg: asset.package));
       case final AssetImageBitmap asset:
         return PlatformBitmap(bitmap: PlatformBitmapAssetImage(name: asset.name, scale: asset.scale, size: (asset.size == null) ? null : _platformOffsetFromSize(asset.size!)));
       case final AssetMapBitmap asset:

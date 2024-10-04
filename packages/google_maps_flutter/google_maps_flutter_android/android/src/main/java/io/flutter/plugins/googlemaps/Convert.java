@@ -61,7 +61,7 @@ class Convert {
   public static final String HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY = "colorMapSize";
 
   private static BitmapDescriptor toBitmapDescriptor(
-      Object o, AssetManager assetManager, float density) {
+          Messages.PlatformBitmap o, AssetManager assetManager, float density) {
     return toBitmapDescriptor(o, assetManager, density, new BitmapDescriptorFactoryWrapper());
   }
 
@@ -80,7 +80,7 @@ class Convert {
     if (bitmap instanceof Messages.PlatformBitmapAsset) {
       Messages.PlatformBitmapAsset typedBitmap = (Messages.PlatformBitmapAsset) bitmap;
       final String assetPath = typedBitmap.getName();
-      final String assetPackage = typedBitmap.getPackage();
+      final String assetPackage = typedBitmap.getPkg();
       if (assetPackage == null) {
         return BitmapDescriptorFactory.fromAsset(
                 FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetPath));
@@ -833,10 +833,11 @@ class Convert {
         return new SquareCap();
       case "customCap":
         if (data.size() == 2) {
-          return new CustomCap(toBitmapDescriptor(data.get(1), assetManager, density));
+          // TODO needs new types
+          return new CustomCap(toBitmapDescriptor((Messages.PlatformBitmap) data.get(1), assetManager, density));
         } else {
           return new CustomCap(
-              toBitmapDescriptor(data.get(1), assetManager, density), toFloat(data.get(2)));
+              toBitmapDescriptor((Messages.PlatformBitmap)data.get(1), assetManager, density), toFloat(data.get(2)));
         }
       default:
         throw new IllegalArgumentException("Cannot interpret " + o + " as Cap");
