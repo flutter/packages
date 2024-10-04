@@ -25,9 +25,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    if (project.android.hasProperty("namespace")) {
-        namespace 'dev.flutter.packages.interactive_media_ads'
-    }
+    namespace 'dev.flutter.packages.interactive_media_ads'
 
     compileSdk 34
 
