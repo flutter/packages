@@ -1,3 +1,7 @@
+## 6.3.11
+
+* Updates Pigeon for non-nullable collection type support.
+
 ## 6.3.10
 
 * Removes dependency on org.jetbrains.kotlin:kotlin-bom.
