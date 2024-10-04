@@ -1,3 +1,7 @@
+## 2.9.5
+
+* Converts `BitmapDescriptor` to typesafe structures.
+
 ## 2.9.4
 
 * Converts `PatternItem` to typesafe structure.
