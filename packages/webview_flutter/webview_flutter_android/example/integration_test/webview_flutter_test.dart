@@ -14,13 +14,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-//import 'package:webview_flutter_android/src/android_webview.dart' as android;
+import 'package:webview_flutter_android/src/android_proxy.dart';
 import 'package:webview_flutter_android/src/android_webkit.g.dart'
     as android_webkit;
-//import 'package:webview_flutter_android/src/android_webview_api_impls.dart';
-//import 'package:webview_flutter_android/src/instance_manager.dart';
 import 'package:webview_flutter_android/src/weak_reference_utils.dart';
-import 'package:webview_flutter_android/src/android_proxy.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
@@ -1695,6 +1692,7 @@ class CopyableObjectWithCallback
   final VoidCallback callback;
 
   @override
+  // ignore: non_constant_identifier_names
   CopyableObjectWithCallback pigeon_copy() {
     return CopyableObjectWithCallback(callback);
   }

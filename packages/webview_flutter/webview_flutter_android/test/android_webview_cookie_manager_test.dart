@@ -86,7 +86,8 @@ void main() {
 
     final android_webview.PigeonInstanceManager instanceManager =
         android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
-    final android_webview.WebView webView = android_webview.WebView.pigeon_detached(
+    final android_webview.WebView webView =
+        android_webview.WebView.pigeon_detached(
       pigeon_instanceManager: instanceManager,
     );
 

@@ -5,16 +5,12 @@
 package io.flutter.plugins.webviewflutter;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
-import kotlin.Result;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -40,10 +36,11 @@ public class CookieManagerTest {
     final Boolean[] successResult = new Boolean[1];
     api.removeAllCookies(
         instance,
-        ResultCompat.asCompatCallback(reply -> {
-          successResult[0] = reply.getOrNull();
-          return null;
-        }));
+        ResultCompat.asCompatCallback(
+            reply -> {
+              successResult[0] = reply.getOrNull();
+              return null;
+            }));
 
     @SuppressWarnings("unchecked")
     final ArgumentCaptor<ValueCallback<Boolean>> valueCallbackArgumentCaptor =

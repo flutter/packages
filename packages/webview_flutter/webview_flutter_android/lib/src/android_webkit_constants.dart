@@ -1,3 +1,13 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'android_webkit.g.dart';
+
+/// Class constants for [PermissionRequest].
+///
+/// Since the Dart [PermissionRequest] is generated, the constants for the class
+/// are added here.
 class PermissionRequestConstants {
   /// Resource belongs to audio capture device, like microphone.
   ///
@@ -22,6 +32,10 @@ class PermissionRequestConstants {
       'android.webkit.resource.PROTECTED_MEDIA_ID';
 }
 
+/// Class constants for [WebViewClient].
+///
+/// Since the Dart [WebViewClient] is generated, the constants for the class
+/// are added here.
 class WebViewClientConstants {
   /// User authentication failed on server.
   ///

@@ -19,7 +19,6 @@ import android.webkit.DownloadListener;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterView;
 import java.util.HashMap;
 import java.util.Map;
@@ -200,10 +199,14 @@ public class WebViewTest {
     final WebView instance = mock(WebView.class);
     final String script = "2 + 2";
     final String[] resultValue = new String[1];
-    api.evaluateJavascript(instance, script, ResultCompat.asCompatCallback(reply -> {
-      resultValue[0] = reply.getOrNull();
-      return null;
-    }));
+    api.evaluateJavascript(
+        instance,
+        script,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              resultValue[0] = reply.getOrNull();
+              return null;
+            }));
 
     @SuppressWarnings("unchecked")
     final ArgumentCaptor<ValueCallback<String>> callbackCaptor =
@@ -322,7 +325,8 @@ public class WebViewTest {
   // `WebView` is valuable.
   @Test
   public void destroyWebViewWhenRemovedFromInstanceManager() {
-    final WebViewProxyApi.WebViewPlatformView mockWebView = mock(WebViewProxyApi.WebViewPlatformView.class);
+    final WebViewProxyApi.WebViewPlatformView mockWebView =
+        mock(WebViewProxyApi.WebViewPlatformView.class);
 
     final TestProxyApiRegistrar registrar = new TestProxyApiRegistrar();
     registrar.getInstanceManager().addDartCreatedInstance(mockWebView, 0);

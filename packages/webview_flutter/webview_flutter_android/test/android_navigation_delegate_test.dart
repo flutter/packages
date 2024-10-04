@@ -78,7 +78,10 @@ void main() {
             requestHeaders: const <String, String>{'X-Mock': 'mocking'},
             pigeon_instanceManager: TestInstanceManager(),
           ),
-          android_webview.WebResourceResponse.pigeon_detached(statusCode: 401, pigeon_instanceManager: TestInstanceManager(),));
+          android_webview.WebResourceResponse.pigeon_detached(
+            statusCode: 401,
+            pigeon_instanceManager: TestInstanceManager(),
+          ));
 
       expect(callbackError.response?.statusCode, 401);
     });
@@ -595,7 +598,9 @@ void main() {
       CapturingWebViewClient.lastCreatedDelegate.onReceivedHttpAuthRequest!(
         CapturingWebViewClient(),
         TestWebView(),
-        android_webview.HttpAuthHandler.pigeon_detached(pigeon_instanceManager: TestInstanceManager(),),
+        android_webview.HttpAuthHandler.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
         expectedHost,
         expectedRealm,
       );

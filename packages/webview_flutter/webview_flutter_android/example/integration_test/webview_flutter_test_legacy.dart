@@ -105,7 +105,8 @@ Future<void> main() async {
       'withWeakRefenceTo allows encapsulating class to be garbage collected',
       (WidgetTester tester) async {
     final Completer<int> gcCompleter = Completer<int>();
-    final android.PigeonInstanceManager instanceManager = android.PigeonInstanceManager(
+    final android.PigeonInstanceManager instanceManager =
+        android.PigeonInstanceManager(
       onWeakReferenceRemoved: gcCompleter.complete,
     );
 
@@ -131,8 +132,8 @@ Future<void> main() async {
       final Completer<void> webViewGCCompleter = Completer<void>();
 
       late final android.PigeonInstanceManager instanceManager;
-      instanceManager =
-          android.PigeonInstanceManager(onWeakReferenceRemoved: (int identifier) {
+      instanceManager = android.PigeonInstanceManager(
+          onWeakReferenceRemoved: (int identifier) {
         final android.PigeonInternalProxyApiBaseClass instance =
             instanceManager.getInstanceWithWeakReference(identifier)!;
         if (instance is android.WebView && !webViewGCCompleter.isCompleted) {
@@ -1593,6 +1594,7 @@ class CopyableObjectWithCallback
   final VoidCallback callback;
 
   @override
+  // ignore: non_constant_identifier_names
   CopyableObjectWithCallback pigeon_copy() {
     return CopyableObjectWithCallback(callback);
   }

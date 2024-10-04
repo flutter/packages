@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.webviewflutter;
 
-
 /**
  * Represents a position on a web page.
  *
