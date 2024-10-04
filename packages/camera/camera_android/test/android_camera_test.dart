@@ -506,7 +506,7 @@ void main() {
         },
       );
       mockCameraApi = MockCameraApi();
-      camera = AndroidCamera(mockCameraApi);
+      camera = AndroidCamera(hostApi: mockCameraApi);
       cameraId = await camera.createCamera(
         const CameraDescription(
           name: 'Test',
