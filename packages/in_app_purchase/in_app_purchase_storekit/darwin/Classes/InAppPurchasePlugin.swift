@@ -30,12 +30,12 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   // This should be an Task, but Task is on available >= iOS 13
   private var _updateListenerTask: Any?
 
-  @available(iOS 13.0, macOS 14.0, *)
+  @available(iOS 13.0, *)
   var getListenerTaskAsTask: Task<(), Never> {
     return self._updateListenerTask as! Task<(), Never>
   }
 
-  @available(iOS 13.0, macOS 14.0, *)
+  @available(iOS 13.0, *)
   func setListenerTaskAsTask(task: Task<(), Never>) {
     self._updateListenerTask = task
   }
