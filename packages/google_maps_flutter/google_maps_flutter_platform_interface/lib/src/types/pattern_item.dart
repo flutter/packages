@@ -25,7 +25,7 @@ String _patternItemTypeToJson(PatternItemType itemType) => switch (itemType) {
 /// Item used in the stroke pattern for a Polyline.
 @immutable
 class PatternItem {
-  const PatternItem._(this.patternItemType);
+  const PatternItem._(this.type);
 
   /// A dot used in the stroke pattern for a [Polyline].
   static const PatternItem dot = PatternItem._(PatternItemType.dot);
@@ -35,7 +35,7 @@ class PatternItem {
   /// [length] has to be non-negative.
   static PatternItem dash(double length) {
     assert(length >= 0.0);
-    return PatternItemWithLength._(
+    return VariableLengthPatternItem._(
         patternItemType: PatternItemType.dash, length: length);
   }
 
@@ -44,23 +44,23 @@ class PatternItem {
   /// [length] has to be non-negative.
   static PatternItem gap(double length) {
     assert(length >= 0.0);
-    return PatternItemWithLength._(
+    return VariableLengthPatternItem._(
         patternItemType: PatternItemType.gap, length: length);
   }
 
   /// The type of rendering used for an item in a pattern.
-  final PatternItemType patternItemType;
+  final PatternItemType type;
 
   /// Converts this object to something serializable in JSON.
   Object toJson() => <Object>[
-        _patternItemTypeToJson(patternItemType),
+        _patternItemTypeToJson(type),
       ];
 }
 
 /// A pattern item with a length, i.e. a dash or gap.
 @immutable
-class PatternItemWithLength extends PatternItem {
-  const PatternItemWithLength._(
+class VariableLengthPatternItem extends PatternItem {
+  const VariableLengthPatternItem._(
       {required PatternItemType patternItemType, required this.length})
       : super._(patternItemType);
 
@@ -70,7 +70,7 @@ class PatternItemWithLength extends PatternItem {
   /// Converts this object to something serializable in JSON.
   @override
   Object toJson() => <Object>[
-        _patternItemTypeToJson(patternItemType),
+        _patternItemTypeToJson(type),
         length,
       ];
 }

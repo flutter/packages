@@ -38,7 +38,7 @@ String _capTypeToJson(CapType capType) => switch (capType) {
 /// Cap that can be applied at the start or end vertex of a [Polyline].
 @immutable
 class Cap {
-  const Cap._(this.capType);
+  const Cap._(this.type);
 
   /// Cap that is squared off exactly at the start or end vertex of a [Polyline]
   /// with solid stroke pattern, equivalent to having no additional cap beyond
@@ -78,10 +78,10 @@ class Cap {
 
   /// The type of rendering used for the cap at a start or end vertex of a
   /// [Polyline].
-  final CapType capType;
+  final CapType type;
 
   /// Converts this object to something serializable in JSON.
-  Object toJson() => <Object>[_capTypeToJson(capType)];
+  Object toJson() => <Object>[_capTypeToJson(type)];
 }
 
 /// CustomCap with a bitmap overlay centered at the start or
@@ -104,5 +104,5 @@ class CustomCap extends Cap {
 
   @override
   Object toJson() =>
-      <Object>[_capTypeToJson(capType), bitmapDescriptor.toJson(), refWidth];
+      <Object>[_capTypeToJson(type), bitmapDescriptor.toJson(), refWidth];
 }
