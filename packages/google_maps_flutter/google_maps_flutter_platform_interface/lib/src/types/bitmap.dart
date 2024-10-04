@@ -5,8 +5,7 @@
 import 'dart:async' show Future;
 import 'dart:typed_data' show Uint8List;
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import 'package:flutter/material.dart'
     show
         AssetBundleImageKey,
