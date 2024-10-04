@@ -66,6 +66,7 @@ android {
                outputs.upToDateWhen {false}
                showStandardStreams = true
             }
+            jvmArgs "-Xmx1g"
         }
     }
 }

@@ -58,7 +58,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(minSdk = 23)
+@Config(minSdk = 21)
 public class ConvertTest {
   @Mock private AssetManager assetManager;
 
