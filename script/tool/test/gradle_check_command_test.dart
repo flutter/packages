@@ -66,9 +66,9 @@ java {
 
 ''';
     final String sourceCompat =
-        '${commentSourceLanguage ? '// ' : ''}sourceCompatibility JavaVersion.VERSION_1_8';
+        '${commentSourceLanguage ? '// ' : ''}sourceCompatibility JavaVersion.VERSION_11';
     final String targetCompat =
-        '${commentSourceLanguage ? '// ' : ''}targetCompatibility JavaVersion.VERSION_1_8';
+        '${commentSourceLanguage ? '// ' : ''}targetCompatibility JavaVersion.VERSION_11';
     final String namespace =
         "    ${commentNamespace ? '// ' : ''}namespace '$_defaultFakeNamespace'";
 
