@@ -79,17 +79,11 @@ void main() {
       expect(result, expected);
     }
 
-    void verifyThrows(String pathA, String pathB) {
-      expect(
-          () => concatenatePaths(pathA, pathB), throwsA(isA<AssertionError>()));
-    }
-
     verify('/a', 'b/c', '/a/b/c');
     verify('/', 'b', '/b');
-    verifyThrows('/a', '/b');
-    verifyThrows('/a', '/');
-    verifyThrows('/', '/');
-    verifyThrows('/', '');
-    verifyThrows('', '');
+    verify('/a', '/b/c/', '/a/b/c');
+    verify('/a', 'b/c', '/a/b/c');
+    verify('/', '/', '/');
+    verify('', '', '/');
   });
 }
