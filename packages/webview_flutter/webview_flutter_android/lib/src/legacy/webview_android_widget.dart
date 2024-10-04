@@ -619,12 +619,16 @@ class WebViewProxy {
 
   /// Constructs a [android_webview.WebViewClient].
   android_webview.WebViewClient createWebViewClient({
-    void Function(android_webview.WebViewClient,
-            android_webview.WebView webView, String url)?
-        onPageStarted,
-    void Function(android_webview.WebViewClient,
-            android_webview.WebView webView, String url)?
-        onPageFinished,
+    void Function(
+      android_webview.WebViewClient,
+      android_webview.WebView webView,
+      String url,
+    )? onPageStarted,
+    void Function(
+      android_webview.WebViewClient,
+      android_webview.WebView webView,
+      String url,
+    )? onPageFinished,
     void Function(
       android_webview.WebViewClient,
       android_webview.WebView webView,
@@ -639,13 +643,15 @@ class WebViewProxy {
       String failingUrl,
     )? onReceivedError,
     void Function(
-            android_webview.WebViewClient,
-            android_webview.WebView webView,
-            android_webview.WebResourceRequest request)?
-        requestLoading,
-    void Function(android_webview.WebViewClient,
-            android_webview.WebView webView, String url)?
-        urlLoading,
+      android_webview.WebViewClient,
+      android_webview.WebView webView,
+      android_webview.WebResourceRequest request,
+    )? requestLoading,
+    void Function(
+      android_webview.WebViewClient,
+      android_webview.WebView webView,
+      String url,
+    )? urlLoading,
   }) {
     return android_webview.WebViewClient(
       onPageStarted: onPageStarted,
