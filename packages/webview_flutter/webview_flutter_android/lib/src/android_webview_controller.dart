@@ -1150,14 +1150,14 @@ AndroidViewController _initAndroidView(
   required android_webview.PigeonInstanceManager instanceManager,
   TextDirection layoutDirection = TextDirection.ltr,
 }) {
-  final int? instanceId = instanceManager.getIdentifier(view);
+  final int identifier = instanceManager.getIdentifier(view)!;
 
   if (displayWithHybridComposition) {
     return platformViewsServiceProxy.initExpensiveAndroidView(
       id: params.id,
       viewType: 'plugins.flutter.io/webview',
       layoutDirection: layoutDirection,
-      creationParams: instanceId,
+      creationParams: identifier,
       creationParamsCodec: const StandardMessageCodec(),
     );
   } else {
@@ -1165,7 +1165,7 @@ AndroidViewController _initAndroidView(
       id: params.id,
       viewType: 'plugins.flutter.io/webview',
       layoutDirection: layoutDirection,
-      creationParams: instanceId,
+      creationParams: identifier,
       creationParamsCodec: const StandardMessageCodec(),
     );
   }

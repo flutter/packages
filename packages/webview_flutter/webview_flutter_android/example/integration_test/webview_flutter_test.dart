@@ -111,13 +111,9 @@ Future<void> main() async {
     (WidgetTester tester) async {
       final Completer<void> webViewGCCompleter = Completer<void>();
 
-      late final android_webkit.PigeonInstanceManager instanceManager;
-      instanceManager = android_webkit.PigeonInstanceManager(
-          onWeakReferenceRemoved: (int identifier) {
-        final Object instance =
-            instanceManager.getInstanceWithWeakReference(identifier)!;
-        if (instance is android_webkit.WebView &&
-            !webViewGCCompleter.isCompleted) {
+      const int webViewToken = -1;
+      final Finalizer<int> finalizer = Finalizer<int>((int token) {
+        if (token == webViewToken) {
           webViewGCCompleter.complete();
         }
       });
@@ -135,8 +131,9 @@ Future<void> main() async {
                     }) {
                       final android_webkit.WebView webView =
                           android_webkit.WebView(
-                              onScrollChanged: onScrollChanged);
-                      instanceManager.addDartCreatedInstance(webView);
+                        onScrollChanged: onScrollChanged,
+                      );
+                      finalizer.attach(webView, webViewToken);
                       return webView;
                     }),
                   ),
@@ -153,7 +150,6 @@ Future<void> main() async {
           builder: (BuildContext context) {
             return PlatformWebViewWidget(
               AndroidWebViewWidgetCreationParams(
-                instanceManager: instanceManager,
                 controller: PlatformWebViewController(
                   const PlatformWebViewControllerCreationParams(),
                 ),
