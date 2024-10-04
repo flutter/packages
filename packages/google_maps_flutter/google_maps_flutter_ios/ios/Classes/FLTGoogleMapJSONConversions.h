@@ -49,6 +49,9 @@ extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type)
 extern FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
                                                NSString *clusterManagerIdentifier);
 
+extern GMSCameraUpdate *_Nullable FGMGetCameraUpdateForPigeonCameraUpdate(
+    FGMPlatformCameraUpdate *update);
+
 @interface FLTGoogleMapJSONConversions : NSObject
 
 extern NSString *const kHeatmapsToAddKey;
@@ -72,7 +75,6 @@ extern NSString *const kHeatmapGradientColorMapSizeKey;
 + (NSArray<NSArray<CLLocation *> *> *)holesFromPointsArray:(NSArray *)data;
 + (nullable GMSCameraPosition *)cameraPostionFromDictionary:(nullable NSDictionary *)channelValue;
 + (GMSCoordinateBounds *)coordinateBoundsFromLatLongs:(NSArray *)latlongs;
-+ (nullable GMSCameraUpdate *)cameraUpdateFromArray:(NSArray *)channelValue;
 + (nullable GMUWeightedLatLng *)weightedLatLngFromArray:(NSArray<id> *)data;
 + (NSArray<id> *)arrayFromWeightedLatLng:(GMUWeightedLatLng *)weightedLatLng;
 + (NSArray<GMUWeightedLatLng *> *)weightedDataFromArray:(NSArray<NSArray<id> *> *)data;

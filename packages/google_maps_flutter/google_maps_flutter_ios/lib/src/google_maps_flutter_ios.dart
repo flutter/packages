@@ -348,7 +348,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     required int mapId,
   }) {
     return _hostApi(mapId)
-        .animateCamera(PlatformCameraUpdate(json: cameraUpdate.toJson()));
+        .animateCamera(_platformCameraUpdateFromCameraUpdate(cameraUpdate));
   }
 
   @override
@@ -357,7 +357,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     required int mapId,
   }) {
     return _hostApi(mapId)
-        .moveCamera(PlatformCameraUpdate(json: cameraUpdate.toJson()));
+        .moveCamera(_platformCameraUpdateFromCameraUpdate(cameraUpdate));
   }
 
   @override
@@ -586,6 +586,10 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
         x: coordinate.x.toDouble(), y: coordinate.y.toDouble());
   }
 
+  static PlatformPoint _platformPointFromOffset(Offset offset) {
+    return PlatformPoint(x: offset.dx, y: offset.dy);
+  }
+
   static PlatformCircle _platformCircleFromCircle(Circle circle) {
     return PlatformCircle(json: circle.toJson());
   }
@@ -615,6 +619,59 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       ClusterManager clusterManager) {
     return PlatformClusterManager(
         identifier: clusterManager.clusterManagerId.value);
+  }
+
+  static PlatformCameraUpdate _platformCameraUpdateFromCameraUpdate(
+      CameraUpdate update) {
+    switch (update.updateType) {
+      case CameraUpdateType.newCameraPosition:
+        update as CameraUpdateNewCameraPosition;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateNewCameraPosition(
+                cameraPosition: _platformCameraPositionFromCameraPosition(
+                    update.cameraPosition)));
+      case CameraUpdateType.newLatLng:
+        update as CameraUpdateNewLatLng;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateNewLatLng(
+                latLng: _platformLatLngFromLatLng(update.latLng)));
+      case CameraUpdateType.newLatLngZoom:
+        update as CameraUpdateNewLatLngZoom;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateNewLatLngZoom(
+                latLng: _platformLatLngFromLatLng(update.latLng),
+                zoom: update.zoom));
+      case CameraUpdateType.newLatLngBounds:
+        update as CameraUpdateNewLatLngBounds;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateNewLatLngBounds(
+                bounds: _platformLatLngBoundsFromLatLngBounds(update.bounds)!,
+                padding: update.padding));
+      case CameraUpdateType.zoomTo:
+        update as CameraUpdateZoomTo;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateZoomTo(zoom: update.zoom));
+      case CameraUpdateType.zoomBy:
+        update as CameraUpdateZoomBy;
+        final Offset? focus = update.focus;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateZoomBy(
+                amount: update.amount,
+                focus: focus == null ? null : _platformPointFromOffset(focus)));
+      case CameraUpdateType.zoomIn:
+        update as CameraUpdateZoomIn;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateZoom(out: false));
+      case CameraUpdateType.zoomOut:
+        update as CameraUpdateZoomOut;
+        return PlatformCameraUpdate(
+            cameraUpdate: PlatformCameraUpdateZoom(out: true));
+      case CameraUpdateType.scrollBy:
+        update as CameraUpdateScrollBy;
+        return PlatformCameraUpdate(
+            cameraUpdate:
+                PlatformCameraUpdateScrollBy(dx: update.dx, dy: update.dy));
+    }
   }
 }
 

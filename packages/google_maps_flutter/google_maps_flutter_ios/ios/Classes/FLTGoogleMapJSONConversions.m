@@ -86,6 +86,51 @@ FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
                      markerIds:markerIDs];
 }
 
+extern GMSCameraUpdate *FGMGetCameraUpdateForPigeonCameraUpdate(
+    FGMPlatformCameraUpdate *cameraUpdate) {
+  // See note in messages.dart for why this is so loosely typed.
+  id update = cameraUpdate.cameraUpdate;
+  if ([update isKindOfClass:[FGMPlatformCameraUpdateNewCameraPosition class]]) {
+    return [GMSCameraUpdate
+        setCamera:FGMGetCameraPositionForPigeonCameraPosition(
+                      ((FGMPlatformCameraUpdateNewCameraPosition *)update).cameraPosition)];
+  } else if ([update isKindOfClass:[FGMPlatformCameraUpdateNewLatLng class]]) {
+    return [GMSCameraUpdate setTarget:FGMGetCoordinateForPigeonLatLng(
+                                          ((FGMPlatformCameraUpdateNewLatLng *)update).latLng)];
+  } else if ([update isKindOfClass:[FGMPlatformCameraUpdateNewLatLngBounds class]]) {
+    FGMPlatformCameraUpdateNewLatLngBounds *typedUpdate =
+        (FGMPlatformCameraUpdateNewLatLngBounds *)update;
+    return
+        [GMSCameraUpdate fitBounds:FGMGetCoordinateBoundsForPigeonLatLngBounds(typedUpdate.bounds)
+                       withPadding:typedUpdate.padding];
+  } else if ([update isKindOfClass:[FGMPlatformCameraUpdateNewLatLngZoom class]]) {
+    FGMPlatformCameraUpdateNewLatLngZoom *typedUpdate =
+        (FGMPlatformCameraUpdateNewLatLngZoom *)update;
+    return [GMSCameraUpdate setTarget:FGMGetCoordinateForPigeonLatLng(typedUpdate.latLng)
+                                 zoom:typedUpdate.zoom];
+  } else if ([update isKindOfClass:[FGMPlatformCameraUpdateScrollBy class]]) {
+    FGMPlatformCameraUpdateScrollBy *typedUpdate = (FGMPlatformCameraUpdateScrollBy *)update;
+    return [GMSCameraUpdate scrollByX:typedUpdate.dx Y:typedUpdate.dy];
+  } else if ([update isKindOfClass:[FGMPlatformCameraUpdateZoomBy class]]) {
+    FGMPlatformCameraUpdateZoomBy *typedUpdate = (FGMPlatformCameraUpdateZoomBy *)update;
+    if (typedUpdate.focus) {
+      return [GMSCameraUpdate zoomBy:typedUpdate.amount
+                             atPoint:FGMGetCGPointForPigeonPoint(typedUpdate.focus)];
+    } else {
+      return [GMSCameraUpdate zoomBy:typedUpdate.amount];
+    }
+  } else if ([update isKindOfClass:[FGMPlatformCameraUpdateZoom class]]) {
+    if (((FGMPlatformCameraUpdateZoom *)update).out) {
+      return [GMSCameraUpdate zoomOut];
+    } else {
+      return [GMSCameraUpdate zoomIn];
+    }
+  } else if ([update isKindOfClass:[FGMPlatformCameraUpdateZoomTo class]]) {
+    return [GMSCameraUpdate zoomTo:((FGMPlatformCameraUpdateZoomTo *)update).zoom];
+  }
+  return nil;
+}
+
 @implementation FLTGoogleMapJSONConversions
 
 // These constants must match the corresponding constants in serialization.dart
@@ -167,42 +212,6 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
   return [[GMSCoordinateBounds alloc]
       initWithCoordinate:[FLTGoogleMapJSONConversions locationFromLatLong:latlongs[0]]
               coordinate:[FLTGoogleMapJSONConversions locationFromLatLong:latlongs[1]]];
-}
-
-+ (nullable GMSCameraUpdate *)cameraUpdateFromArray:(NSArray *)channelValue {
-  NSString *update = channelValue[0];
-  if ([update isEqualToString:@"newCameraPosition"]) {
-    return [GMSCameraUpdate
-        setCamera:[FLTGoogleMapJSONConversions cameraPostionFromDictionary:channelValue[1]]];
-  } else if ([update isEqualToString:@"newLatLng"]) {
-    return [GMSCameraUpdate
-        setTarget:[FLTGoogleMapJSONConversions locationFromLatLong:channelValue[1]]];
-  } else if ([update isEqualToString:@"newLatLngBounds"]) {
-    return [GMSCameraUpdate
-          fitBounds:[FLTGoogleMapJSONConversions coordinateBoundsFromLatLongs:channelValue[1]]
-        withPadding:[channelValue[2] doubleValue]];
-  } else if ([update isEqualToString:@"newLatLngZoom"]) {
-    return
-        [GMSCameraUpdate setTarget:[FLTGoogleMapJSONConversions locationFromLatLong:channelValue[1]]
-                              zoom:[channelValue[2] floatValue]];
-  } else if ([update isEqualToString:@"scrollBy"]) {
-    return [GMSCameraUpdate scrollByX:[channelValue[1] doubleValue]
-                                    Y:[channelValue[2] doubleValue]];
-  } else if ([update isEqualToString:@"zoomBy"]) {
-    if (channelValue.count == 2) {
-      return [GMSCameraUpdate zoomBy:[channelValue[1] floatValue]];
-    } else {
-      return [GMSCameraUpdate zoomBy:[channelValue[1] floatValue]
-                             atPoint:[FLTGoogleMapJSONConversions pointFromArray:channelValue[2]]];
-    }
-  } else if ([update isEqualToString:@"zoomIn"]) {
-    return [GMSCameraUpdate zoomIn];
-  } else if ([update isEqualToString:@"zoomOut"]) {
-    return [GMSCameraUpdate zoomOut];
-  } else if ([update isEqualToString:@"zoomTo"]) {
-    return [GMSCameraUpdate zoomTo:[channelValue[1] floatValue]];
-  }
-  return nil;
 }
 
 + (NSArray<GMSStrokeStyle *> *)strokeStylesFromPatterns:(NSArray<NSArray<NSObject *> *> *)patterns

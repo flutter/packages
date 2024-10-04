@@ -30,6 +30,14 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 
 @class FGMPlatformCameraPosition;
 @class FGMPlatformCameraUpdate;
+@class FGMPlatformCameraUpdateNewCameraPosition;
+@class FGMPlatformCameraUpdateNewLatLng;
+@class FGMPlatformCameraUpdateNewLatLngBounds;
+@class FGMPlatformCameraUpdateNewLatLngZoom;
+@class FGMPlatformCameraUpdateScrollBy;
+@class FGMPlatformCameraUpdateZoomBy;
+@class FGMPlatformCameraUpdateZoom;
+@class FGMPlatformCameraUpdateZoomTo;
 @class FGMPlatformCircle;
 @class FGMPlatformHeatmap;
 @class FGMPlatformCluster;
@@ -67,11 +75,80 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 @interface FGMPlatformCameraUpdate : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithJson:(id)json;
-/// The update data, as JSON. This should only be set from
-/// CameraUpdate.toJson, and the native code must interpret it according to the
-/// internal implementation details of the CameraUpdate class.
-@property(nonatomic, strong) id json;
++ (instancetype)makeWithCameraUpdate:(id)cameraUpdate;
+/// This Object must be one of the classes below prefixed with
+/// PlatformCameraUpdate. Each such class represents a different type of
+/// camera update, and each holds a different set of data, preventing the
+/// use of a single unified class.
+@property(nonatomic, strong) id cameraUpdate;
+@end
+
+/// Pigeon equivalent of NewCameraPosition
+@interface FGMPlatformCameraUpdateNewCameraPosition : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithCameraPosition:(FGMPlatformCameraPosition *)cameraPosition;
+@property(nonatomic, strong) FGMPlatformCameraPosition *cameraPosition;
+@end
+
+/// Pigeon equivalent of NewLatLng
+@interface FGMPlatformCameraUpdateNewLatLng : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithLatLng:(FGMPlatformLatLng *)latLng;
+@property(nonatomic, strong) FGMPlatformLatLng *latLng;
+@end
+
+/// Pigeon equivalent of NewLatLngBounds
+@interface FGMPlatformCameraUpdateNewLatLngBounds : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithBounds:(FGMPlatformLatLngBounds *)bounds padding:(double)padding;
+@property(nonatomic, strong) FGMPlatformLatLngBounds *bounds;
+@property(nonatomic, assign) double padding;
+@end
+
+/// Pigeon equivalent of NewLatLngZoom
+@interface FGMPlatformCameraUpdateNewLatLngZoom : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithLatLng:(FGMPlatformLatLng *)latLng zoom:(double)zoom;
+@property(nonatomic, strong) FGMPlatformLatLng *latLng;
+@property(nonatomic, assign) double zoom;
+@end
+
+/// Pigeon equivalent of ScrollBy
+@interface FGMPlatformCameraUpdateScrollBy : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithDx:(double)dx dy:(double)dy;
+@property(nonatomic, assign) double dx;
+@property(nonatomic, assign) double dy;
+@end
+
+/// Pigeon equivalent of ZoomBy
+@interface FGMPlatformCameraUpdateZoomBy : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithAmount:(double)amount focus:(nullable FGMPlatformPoint *)focus;
+@property(nonatomic, assign) double amount;
+@property(nonatomic, strong, nullable) FGMPlatformPoint *focus;
+@end
+
+/// Pigeon equivalent of ZoomIn/ZoomOut
+@interface FGMPlatformCameraUpdateZoom : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithOut:(BOOL)out;
+@property(nonatomic, assign) BOOL out;
+@end
+
+/// Pigeon equivalent of ZoomTo
+@interface FGMPlatformCameraUpdateZoomTo : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithZoom:(double)zoom;
+@property(nonatomic, assign) double zoom;
 @end
 
 /// Pigeon equivalent of the Circle class.

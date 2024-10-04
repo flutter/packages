@@ -62,6 +62,54 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FGMPlatformCameraUpdateNewCameraPosition ()
++ (FGMPlatformCameraUpdateNewCameraPosition *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformCameraUpdateNewCameraPosition *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FGMPlatformCameraUpdateNewLatLng ()
++ (FGMPlatformCameraUpdateNewLatLng *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformCameraUpdateNewLatLng *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FGMPlatformCameraUpdateNewLatLngBounds ()
++ (FGMPlatformCameraUpdateNewLatLngBounds *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformCameraUpdateNewLatLngBounds *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FGMPlatformCameraUpdateNewLatLngZoom ()
++ (FGMPlatformCameraUpdateNewLatLngZoom *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformCameraUpdateNewLatLngZoom *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FGMPlatformCameraUpdateScrollBy ()
++ (FGMPlatformCameraUpdateScrollBy *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformCameraUpdateScrollBy *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FGMPlatformCameraUpdateZoomBy ()
++ (FGMPlatformCameraUpdateZoomBy *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformCameraUpdateZoomBy *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FGMPlatformCameraUpdateZoom ()
++ (FGMPlatformCameraUpdateZoom *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformCameraUpdateZoom *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FGMPlatformCameraUpdateZoomTo ()
++ (FGMPlatformCameraUpdateZoomTo *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformCameraUpdateZoomTo *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @interface FGMPlatformCircle ()
 + (FGMPlatformCircle *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformCircle *)nullableFromList:(NSArray<id> *)list;
@@ -204,14 +252,14 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformCameraUpdate
-+ (instancetype)makeWithJson:(id)json {
++ (instancetype)makeWithCameraUpdate:(id)cameraUpdate {
   FGMPlatformCameraUpdate *pigeonResult = [[FGMPlatformCameraUpdate alloc] init];
-  pigeonResult.json = json;
+  pigeonResult.cameraUpdate = cameraUpdate;
   return pigeonResult;
 }
 + (FGMPlatformCameraUpdate *)fromList:(NSArray<id> *)list {
   FGMPlatformCameraUpdate *pigeonResult = [[FGMPlatformCameraUpdate alloc] init];
-  pigeonResult.json = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.cameraUpdate = GetNullableObjectAtIndex(list, 0);
   return pigeonResult;
 }
 + (nullable FGMPlatformCameraUpdate *)nullableFromList:(NSArray<id> *)list {
@@ -219,7 +267,193 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 - (NSArray<id> *)toList {
   return @[
-    self.json ?: [NSNull null],
+    self.cameraUpdate ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation FGMPlatformCameraUpdateNewCameraPosition
++ (instancetype)makeWithCameraPosition:(FGMPlatformCameraPosition *)cameraPosition {
+  FGMPlatformCameraUpdateNewCameraPosition *pigeonResult =
+      [[FGMPlatformCameraUpdateNewCameraPosition alloc] init];
+  pigeonResult.cameraPosition = cameraPosition;
+  return pigeonResult;
+}
++ (FGMPlatformCameraUpdateNewCameraPosition *)fromList:(NSArray<id> *)list {
+  FGMPlatformCameraUpdateNewCameraPosition *pigeonResult =
+      [[FGMPlatformCameraUpdateNewCameraPosition alloc] init];
+  pigeonResult.cameraPosition = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable FGMPlatformCameraUpdateNewCameraPosition *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformCameraUpdateNewCameraPosition fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.cameraPosition ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation FGMPlatformCameraUpdateNewLatLng
++ (instancetype)makeWithLatLng:(FGMPlatformLatLng *)latLng {
+  FGMPlatformCameraUpdateNewLatLng *pigeonResult = [[FGMPlatformCameraUpdateNewLatLng alloc] init];
+  pigeonResult.latLng = latLng;
+  return pigeonResult;
+}
++ (FGMPlatformCameraUpdateNewLatLng *)fromList:(NSArray<id> *)list {
+  FGMPlatformCameraUpdateNewLatLng *pigeonResult = [[FGMPlatformCameraUpdateNewLatLng alloc] init];
+  pigeonResult.latLng = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable FGMPlatformCameraUpdateNewLatLng *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformCameraUpdateNewLatLng fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.latLng ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation FGMPlatformCameraUpdateNewLatLngBounds
++ (instancetype)makeWithBounds:(FGMPlatformLatLngBounds *)bounds padding:(double)padding {
+  FGMPlatformCameraUpdateNewLatLngBounds *pigeonResult =
+      [[FGMPlatformCameraUpdateNewLatLngBounds alloc] init];
+  pigeonResult.bounds = bounds;
+  pigeonResult.padding = padding;
+  return pigeonResult;
+}
++ (FGMPlatformCameraUpdateNewLatLngBounds *)fromList:(NSArray<id> *)list {
+  FGMPlatformCameraUpdateNewLatLngBounds *pigeonResult =
+      [[FGMPlatformCameraUpdateNewLatLngBounds alloc] init];
+  pigeonResult.bounds = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.padding = [GetNullableObjectAtIndex(list, 1) doubleValue];
+  return pigeonResult;
+}
++ (nullable FGMPlatformCameraUpdateNewLatLngBounds *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformCameraUpdateNewLatLngBounds fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.bounds ?: [NSNull null],
+    @(self.padding),
+  ];
+}
+@end
+
+@implementation FGMPlatformCameraUpdateNewLatLngZoom
++ (instancetype)makeWithLatLng:(FGMPlatformLatLng *)latLng zoom:(double)zoom {
+  FGMPlatformCameraUpdateNewLatLngZoom *pigeonResult =
+      [[FGMPlatformCameraUpdateNewLatLngZoom alloc] init];
+  pigeonResult.latLng = latLng;
+  pigeonResult.zoom = zoom;
+  return pigeonResult;
+}
++ (FGMPlatformCameraUpdateNewLatLngZoom *)fromList:(NSArray<id> *)list {
+  FGMPlatformCameraUpdateNewLatLngZoom *pigeonResult =
+      [[FGMPlatformCameraUpdateNewLatLngZoom alloc] init];
+  pigeonResult.latLng = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.zoom = [GetNullableObjectAtIndex(list, 1) doubleValue];
+  return pigeonResult;
+}
++ (nullable FGMPlatformCameraUpdateNewLatLngZoom *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformCameraUpdateNewLatLngZoom fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.latLng ?: [NSNull null],
+    @(self.zoom),
+  ];
+}
+@end
+
+@implementation FGMPlatformCameraUpdateScrollBy
++ (instancetype)makeWithDx:(double)dx dy:(double)dy {
+  FGMPlatformCameraUpdateScrollBy *pigeonResult = [[FGMPlatformCameraUpdateScrollBy alloc] init];
+  pigeonResult.dx = dx;
+  pigeonResult.dy = dy;
+  return pigeonResult;
+}
++ (FGMPlatformCameraUpdateScrollBy *)fromList:(NSArray<id> *)list {
+  FGMPlatformCameraUpdateScrollBy *pigeonResult = [[FGMPlatformCameraUpdateScrollBy alloc] init];
+  pigeonResult.dx = [GetNullableObjectAtIndex(list, 0) doubleValue];
+  pigeonResult.dy = [GetNullableObjectAtIndex(list, 1) doubleValue];
+  return pigeonResult;
+}
++ (nullable FGMPlatformCameraUpdateScrollBy *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformCameraUpdateScrollBy fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.dx),
+    @(self.dy),
+  ];
+}
+@end
+
+@implementation FGMPlatformCameraUpdateZoomBy
++ (instancetype)makeWithAmount:(double)amount focus:(nullable FGMPlatformPoint *)focus {
+  FGMPlatformCameraUpdateZoomBy *pigeonResult = [[FGMPlatformCameraUpdateZoomBy alloc] init];
+  pigeonResult.amount = amount;
+  pigeonResult.focus = focus;
+  return pigeonResult;
+}
++ (FGMPlatformCameraUpdateZoomBy *)fromList:(NSArray<id> *)list {
+  FGMPlatformCameraUpdateZoomBy *pigeonResult = [[FGMPlatformCameraUpdateZoomBy alloc] init];
+  pigeonResult.amount = [GetNullableObjectAtIndex(list, 0) doubleValue];
+  pigeonResult.focus = GetNullableObjectAtIndex(list, 1);
+  return pigeonResult;
+}
++ (nullable FGMPlatformCameraUpdateZoomBy *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformCameraUpdateZoomBy fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.amount),
+    self.focus ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation FGMPlatformCameraUpdateZoom
++ (instancetype)makeWithOut:(BOOL)out {
+  FGMPlatformCameraUpdateZoom *pigeonResult = [[FGMPlatformCameraUpdateZoom alloc] init];
+  pigeonResult.out = out;
+  return pigeonResult;
+}
++ (FGMPlatformCameraUpdateZoom *)fromList:(NSArray<id> *)list {
+  FGMPlatformCameraUpdateZoom *pigeonResult = [[FGMPlatformCameraUpdateZoom alloc] init];
+  pigeonResult.out = [GetNullableObjectAtIndex(list, 0) boolValue];
+  return pigeonResult;
+}
++ (nullable FGMPlatformCameraUpdateZoom *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformCameraUpdateZoom fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.out),
+  ];
+}
+@end
+
+@implementation FGMPlatformCameraUpdateZoomTo
++ (instancetype)makeWithZoom:(double)zoom {
+  FGMPlatformCameraUpdateZoomTo *pigeonResult = [[FGMPlatformCameraUpdateZoomTo alloc] init];
+  pigeonResult.zoom = zoom;
+  return pigeonResult;
+}
++ (FGMPlatformCameraUpdateZoomTo *)fromList:(NSArray<id> *)list {
+  FGMPlatformCameraUpdateZoomTo *pigeonResult = [[FGMPlatformCameraUpdateZoomTo alloc] init];
+  pigeonResult.zoom = [GetNullableObjectAtIndex(list, 0) doubleValue];
+  return pigeonResult;
+}
++ (nullable FGMPlatformCameraUpdateZoomTo *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformCameraUpdateZoomTo fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.zoom),
   ];
 }
 @end
@@ -772,40 +1006,56 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 131:
       return [FGMPlatformCameraUpdate fromList:[self readValue]];
     case 132:
-      return [FGMPlatformCircle fromList:[self readValue]];
+      return [FGMPlatformCameraUpdateNewCameraPosition fromList:[self readValue]];
     case 133:
-      return [FGMPlatformHeatmap fromList:[self readValue]];
+      return [FGMPlatformCameraUpdateNewLatLng fromList:[self readValue]];
     case 134:
-      return [FGMPlatformCluster fromList:[self readValue]];
+      return [FGMPlatformCameraUpdateNewLatLngBounds fromList:[self readValue]];
     case 135:
-      return [FGMPlatformClusterManager fromList:[self readValue]];
+      return [FGMPlatformCameraUpdateNewLatLngZoom fromList:[self readValue]];
     case 136:
-      return [FGMPlatformMarker fromList:[self readValue]];
+      return [FGMPlatformCameraUpdateScrollBy fromList:[self readValue]];
     case 137:
-      return [FGMPlatformPolygon fromList:[self readValue]];
+      return [FGMPlatformCameraUpdateZoomBy fromList:[self readValue]];
     case 138:
-      return [FGMPlatformPolyline fromList:[self readValue]];
+      return [FGMPlatformCameraUpdateZoom fromList:[self readValue]];
     case 139:
-      return [FGMPlatformTile fromList:[self readValue]];
+      return [FGMPlatformCameraUpdateZoomTo fromList:[self readValue]];
     case 140:
-      return [FGMPlatformTileOverlay fromList:[self readValue]];
+      return [FGMPlatformCircle fromList:[self readValue]];
     case 141:
-      return [FGMPlatformEdgeInsets fromList:[self readValue]];
+      return [FGMPlatformHeatmap fromList:[self readValue]];
     case 142:
-      return [FGMPlatformLatLng fromList:[self readValue]];
+      return [FGMPlatformCluster fromList:[self readValue]];
     case 143:
-      return [FGMPlatformLatLngBounds fromList:[self readValue]];
+      return [FGMPlatformClusterManager fromList:[self readValue]];
     case 144:
-      return [FGMPlatformCameraTargetBounds fromList:[self readValue]];
+      return [FGMPlatformMarker fromList:[self readValue]];
     case 145:
-      return [FGMPlatformMapViewCreationParams fromList:[self readValue]];
+      return [FGMPlatformPolygon fromList:[self readValue]];
     case 146:
-      return [FGMPlatformMapConfiguration fromList:[self readValue]];
+      return [FGMPlatformPolyline fromList:[self readValue]];
     case 147:
-      return [FGMPlatformPoint fromList:[self readValue]];
+      return [FGMPlatformTile fromList:[self readValue]];
     case 148:
-      return [FGMPlatformTileLayer fromList:[self readValue]];
+      return [FGMPlatformTileOverlay fromList:[self readValue]];
     case 149:
+      return [FGMPlatformEdgeInsets fromList:[self readValue]];
+    case 150:
+      return [FGMPlatformLatLng fromList:[self readValue]];
+    case 151:
+      return [FGMPlatformLatLngBounds fromList:[self readValue]];
+    case 152:
+      return [FGMPlatformCameraTargetBounds fromList:[self readValue]];
+    case 153:
+      return [FGMPlatformMapViewCreationParams fromList:[self readValue]];
+    case 154:
+      return [FGMPlatformMapConfiguration fromList:[self readValue]];
+    case 155:
+      return [FGMPlatformPoint fromList:[self readValue]];
+    case 156:
+      return [FGMPlatformTileLayer fromList:[self readValue]];
+    case 157:
       return [FGMPlatformZoomRange fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -827,59 +1077,83 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FGMPlatformCameraUpdate class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformCircle class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCameraUpdateNewCameraPosition class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformHeatmap class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCameraUpdateNewLatLng class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformCluster class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCameraUpdateNewLatLngBounds class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformClusterManager class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCameraUpdateNewLatLngZoom class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMarker class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCameraUpdateScrollBy class]]) {
     [self writeByte:136];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPolygon class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCameraUpdateZoomBy class]]) {
     [self writeByte:137];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPolyline class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCameraUpdateZoom class]]) {
     [self writeByte:138];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTile class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCameraUpdateZoomTo class]]) {
     [self writeByte:139];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileOverlay class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCircle class]]) {
     [self writeByte:140];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformEdgeInsets class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformHeatmap class]]) {
     [self writeByte:141];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCluster class]]) {
     [self writeByte:142];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformClusterManager class]]) {
     [self writeByte:143];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformCameraTargetBounds class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMarker class]]) {
     [self writeByte:144];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMapViewCreationParams class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPolygon class]]) {
     [self writeByte:145];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPolyline class]]) {
     [self writeByte:146];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTile class]]) {
     [self writeByte:147];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTileOverlay class]]) {
     [self writeByte:148];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformEdgeInsets class]]) {
     [self writeByte:149];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
+    [self writeByte:150];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
+    [self writeByte:151];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformCameraTargetBounds class]]) {
+    [self writeByte:152];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformMapViewCreationParams class]]) {
+    [self writeByte:153];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
+    [self writeByte:154];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
+    [self writeByte:155];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
+    [self writeByte:156];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+    [self writeByte:157];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
