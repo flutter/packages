@@ -1,3 +1,7 @@
+## 2.7.8
+
+* Updates Java compatibility version to 11.
+
 ## 2.7.7
 
 * Removes the flag to treat warnings as errors in client builds.
