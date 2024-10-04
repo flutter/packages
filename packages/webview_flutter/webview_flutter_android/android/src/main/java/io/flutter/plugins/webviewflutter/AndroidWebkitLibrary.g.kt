@@ -578,8 +578,7 @@ private class AndroidWebkitLibraryPigeonProxyApiBaseCodec(
 
     if (android.os.Build.VERSION.SDK_INT >= 21 && value is android.webkit.WebResourceRequest) {
       registrar.getPigeonApiWebResourceRequest().pigeon_newInstance(value) {}
-    } else if (android.os.Build.VERSION.SDK_INT >= 23 &&
-        value is android.webkit.WebResourceResponse) {
+    } else if (value is android.webkit.WebResourceResponse) {
       registrar.getPigeonApiWebResourceResponse().pigeon_newInstance(value) {}
     } else if (android.os.Build.VERSION.SDK_INT >= 23 && value is android.webkit.WebResourceError) {
       registrar.getPigeonApiWebResourceError().pigeon_newInstance(value) {}
@@ -855,12 +854,10 @@ abstract class PigeonApiWebResourceResponse(
     open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   /** The resource response's status code. */
-  @androidx.annotation.RequiresApi(api = 23)
   abstract fun statusCode(pigeon_instance: android.webkit.WebResourceResponse): Long
 
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of WebResourceResponse and attaches it to [pigeon_instanceArg]. */
-  @androidx.annotation.RequiresApi(api = 23)
   fun pigeon_newInstance(
       pigeon_instanceArg: android.webkit.WebResourceResponse,
       callback: (Result<Unit>) -> Unit
@@ -2782,7 +2779,7 @@ abstract class PigeonApiWebViewClient(
    * Notify the host application that an HTTP error has been received from the server while loading
    * a resource.
    */
-  @androidx.annotation.RequiresApi(api = 23)
+  @androidx.annotation.RequiresApi(api = 21)
   fun onReceivedHttpError(
       pigeon_instanceArg: android.webkit.WebViewClient,
       webViewArg: android.webkit.WebView,

@@ -19,7 +19,7 @@ public class GeolocationPermissionsCallbackTest {
     final GeolocationPermissions.Callback instance = mock(GeolocationPermissions.Callback.class);
     final String origin = "myString";
     final boolean allow = true;
-    final boolean retain = true;
+    final boolean retain = false;
     api.invoke(instance, origin, allow, retain);
 
     verify(instance).invoke(origin, allow, retain);

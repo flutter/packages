@@ -10,8 +10,8 @@ import android.content.Context;
 import io.flutter.plugin.common.BinaryMessenger;
 
 /**
- * Test implementation of `ProxyApiRegistrar` that provides mocks and instantly runs callbacks
- * instead of posting them.
+ * Test implementation of `ProxyApiRegistrar` that provides mocks, instantly runs callbacks instead
+ * of posting them, and makes all SDK checks pass by default.
  */
 public class TestProxyApiRegistrar extends ProxyApiRegistrar {
   public TestProxyApiRegistrar() {

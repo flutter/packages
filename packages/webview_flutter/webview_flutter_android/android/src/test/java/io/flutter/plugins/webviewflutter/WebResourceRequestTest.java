@@ -85,7 +85,7 @@ public class WebResourceRequestTest {
     final Map<String, String> value =
         new HashMap<String, String>() {
           {
-            put("myString", "myString");
+            put("myString", "myString1");
           }
         };
     when(instance.getRequestHeaders()).thenReturn(value);

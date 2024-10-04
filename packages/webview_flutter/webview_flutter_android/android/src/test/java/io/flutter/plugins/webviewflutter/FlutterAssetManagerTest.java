@@ -63,7 +63,7 @@ public class FlutterAssetManagerTest {
 
     final FlutterAssetManager instance = mock(FlutterAssetManager.class);
     final String name = "myString";
-    final String value = "myString";
+    final String value = "myString1";
     when(instance.getAssetFilePathByName(name)).thenReturn(value);
 
     assertEquals(value, api.getAssetFilePathByName(instance, name));

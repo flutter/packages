@@ -164,7 +164,7 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
           .runOnMainThread(() -> api.onPageFinished(this, view, url, reply -> null));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onReceivedHttpError(
         @NonNull WebView view,
@@ -177,7 +177,7 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
 
     // This method is only called when the WebViewFeature.RECEIVE_WEB_RESOURCE_ERROR feature is
     // enabled. The deprecated method is called when a device doesn't support this.
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("RequiresFeature")
     @Override
     public void onReceivedError(

@@ -49,11 +49,10 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
   void logError(String tag, Throwable exception) {
     Log.e(
         tag,
-        String.format(
-            "%s, Message: %s, Stacktrace: %s",
-            exception.getClass().getSimpleName(),
-            exception.getMessage(),
-            Log.getStackTraceString(exception)));
+        exception.getClass().getSimpleName()
+            + ", Message: "
+            + exception.getMessage()
+            + ", Stacktrace: Log.getStackTraceString(exception)");
   }
 
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

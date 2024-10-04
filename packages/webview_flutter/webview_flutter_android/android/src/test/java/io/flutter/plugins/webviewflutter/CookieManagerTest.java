@@ -21,7 +21,7 @@ public class CookieManagerTest {
 
     final CookieManager instance = mock(CookieManager.class);
     final String url = "myString";
-    final String value = "myString";
+    final String value = "myString2";
     api.setCookie(instance, url, value);
 
     verify(instance).setCookie(url, value);

@@ -19,7 +19,7 @@ public class HttpAuthHandlerTest {
 
     final HttpAuthHandler instance = mock(HttpAuthHandler.class);
     final String username = "myString";
-    final String password = "myString";
+    final String password = "myString1";
     api.proceed(instance, username, password);
 
     verify(instance).proceed(username, password);

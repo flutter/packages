@@ -41,7 +41,7 @@ public class WebViewClientTest {
     final android.webkit.WebView webView = mock(WebView.class);
     final Long errorCode = 0L;
     final String description = "myString";
-    final String failingUrl = "myString";
+    final String failingUrl = "myString1";
     instance.onReceivedError(webView, errorCode.intValue(), description, failingUrl);
 
     verify(mockApi)
@@ -141,7 +141,7 @@ public class WebViewClientTest {
     final android.webkit.WebView webView = mock(WebView.class);
     final HttpAuthHandler handler = mock(HttpAuthHandler.class);
     final String host = "myString";
-    final String realm = "myString";
+    final String realm = "myString1";
     instance.onReceivedHttpAuthRequest(webView, handler, host, realm);
 
     verify(mockApi)
