@@ -24,14 +24,14 @@ buildscript {
         }
     }
     dependencies {
-        classpath "gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin:2.2.3"
+        classpath "gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin:2.2.1"
     }
 }
 
 plugins {
     id "dev.flutter.flutter-plugin-loader" version "1.0.0"
     id "com.android.application" version "8.1.0" apply false
-    id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.3" apply false
+    id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.1" apply false
 }
 
 include ":app"
