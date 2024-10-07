@@ -316,12 +316,8 @@ extension on EvalOnDartLibrary {
     int retryCount = 0;
 
     // Wait until the shared preferences instance is added to the list.
-    while (true) {
+    while (retryCount < maxRetries) {
       retryCount++;
-      // A break condition to avoid infinite loop.
-      if (retryCount > maxRetries) {
-        throw StateError('Failed to get future value instance.');
-      }
 
       final Instance holderInstance =
           await safeGetInstance(valueHolderRef, isAlive);
@@ -336,5 +332,7 @@ extension on EvalOnDartLibrary {
 
       await Future<void>.delayed(const Duration(milliseconds: 50));
     }
+
+    throw StateError('Failed to get future value instance.');
   }
 }

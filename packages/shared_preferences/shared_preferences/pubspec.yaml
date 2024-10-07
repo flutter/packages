@@ -41,6 +41,6 @@ dev_dependencies:
     sdk: flutter
 
 topics:
-- persistence
-- shared-preferences
-- storage
+  - persistence
+  - shared-preferences
+  - storage
