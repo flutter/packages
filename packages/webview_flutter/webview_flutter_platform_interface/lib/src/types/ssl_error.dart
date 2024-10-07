@@ -32,5 +32,5 @@ class SslError {
   final String scheme;
 
   /// The port of the url requesting trust
-  final String port;
+  final int port;
 }
