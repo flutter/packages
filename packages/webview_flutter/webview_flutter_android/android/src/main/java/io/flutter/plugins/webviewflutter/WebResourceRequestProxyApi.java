@@ -24,11 +24,13 @@ public class WebResourceRequestProxyApi extends PigeonApiWebResourceRequest {
     return pigeon_instance.getUrl().toString();
   }
 
+  @NonNull
   @Override
   public boolean isForMainFrame(@NonNull WebResourceRequest pigeon_instance) {
     return pigeon_instance.isForMainFrame();
   }
 
+  @Nullable
   @Override
   public Boolean isRedirect(@NonNull WebResourceRequest pigeon_instance) {
     if (getPigeonRegistrar().sdkIsAtLeast(Build.VERSION_CODES.N)) {
@@ -38,6 +40,7 @@ public class WebResourceRequestProxyApi extends PigeonApiWebResourceRequest {
     return null;
   }
 
+  @NonNull
   @Override
   public boolean hasGesture(@NonNull WebResourceRequest pigeon_instance) {
     return pigeon_instance.hasGesture();
