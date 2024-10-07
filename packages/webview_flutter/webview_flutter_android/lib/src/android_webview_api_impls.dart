@@ -5,7 +5,8 @@
 import 'dart:ui';
 
 import 'package:flutter/services.dart' show BinaryMessenger, Uint8List;
-import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart' as platform_interface;
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
+    as platform_interface;
 
 import 'android_webview.dart';
 import 'android_webview.g.dart';
@@ -98,6 +99,7 @@ class AndroidWebViewFlutterApis {
     CustomViewCallbackFlutterApiImpl? customViewCallbackFlutterApi,
     ViewFlutterApiImpl? viewFlutterApi,
     HttpAuthHandlerFlutterApiImpl? httpAuthHandlerFlutterApi,
+    SslErrorHandlerFlutterApiImpl? sslErrorHandlerFlutterApi,
   }) {
     this.javaObjectFlutterApi =
         javaObjectFlutterApi ?? JavaObjectFlutterApiImpl();
@@ -122,6 +124,8 @@ class AndroidWebViewFlutterApis {
     this.viewFlutterApi = viewFlutterApi ?? ViewFlutterApiImpl();
     this.httpAuthHandlerFlutterApi =
         httpAuthHandlerFlutterApi ?? HttpAuthHandlerFlutterApiImpl();
+    this.sslErrorHandlerFlutterApi =
+        sslErrorHandlerFlutterApi ?? SslErrorHandlerFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -168,6 +172,9 @@ class AndroidWebViewFlutterApis {
   /// Flutter Api for [HttpAuthHandler].
   late final HttpAuthHandlerFlutterApiImpl httpAuthHandlerFlutterApi;
 
+  /// Flutter Api for [SslErrorHandler].
+  late final SslErrorHandlerFlutterApiImpl sslErrorHandlerFlutterApi;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -184,6 +191,7 @@ class AndroidWebViewFlutterApis {
       CustomViewCallbackFlutterApi.setup(customViewCallbackFlutterApi);
       ViewFlutterApi.setup(viewFlutterApi);
       HttpAuthHandlerFlutterApi.setup(httpAuthHandlerFlutterApi);
+      SslErrorHandlerFlutterApi.setup(sslErrorHandlerFlutterApi);
       _haveBeenSetUp = true;
     }
   }
