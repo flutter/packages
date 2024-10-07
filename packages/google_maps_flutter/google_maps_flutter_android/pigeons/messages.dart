@@ -264,14 +264,32 @@ class PlatformPolyline {
   /// The pattern data, as a list of pattern items.
   final List<PlatformPatternItem?> patterns;
   final List<PlatformLatLng?> points;
-
-  /// The start and end cap data, as JSON. These should be set only from Cap.toJson, and the native code must interpret it according to the internal implementation details of that method.
-  // TODO(schectman): Convert below two fields to structured data.
-  final Object startCap;
-  final Object endCap;
+  final PlatformCap startCap;
+  final PlatformCap endCap;
   final bool visible;
   final int width;
   final int zIndex;
+}
+
+enum PlatformCapType {
+  butt,
+  square,
+  round,
+  custom,
+}
+
+class PlatformCap {
+  PlatformCap({required this.type, this.customCap});
+
+  final PlatformCapType type;
+  final PlatformCustomCap? customCap;
+}
+
+class PlatformCustomCap {
+  PlatformCustomCap({required this.bitmapDescriptor, required this.refWidth});
+
+  final PlatformBitmap bitmapDescriptor;
+  final double refWidth;
 }
 
 /// Enumeration of possible types for PatternItem.
