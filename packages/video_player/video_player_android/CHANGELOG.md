@@ -1,3 +1,20 @@
+## 2.7.9
+
+* Updates Java compatibility version to 11.
+
+## 2.7.8
+
+* Updates Pigeon for non-nullable collection type support.
+
+## 2.7.7
+
+* Removes the flag to treat warnings as errors in client builds.
+
+## 2.7.6
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/154602) where
+  resuming a video player would cause a `Bad state: Future already completed`.
+
 ## 2.7.5
 
 * Add a deprecation suppression in advance of a new `SurfaceProducer` API.
@@ -18,11 +35,9 @@
 
 * Re-adds Impeller support.
 
-
 ## 2.7.1
 
 * Revert Impeller support.
-
 
 ## 2.7.0
 
