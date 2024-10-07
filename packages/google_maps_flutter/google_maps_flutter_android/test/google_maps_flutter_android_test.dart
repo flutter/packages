@@ -952,6 +952,85 @@ void main() {
     expect(typedUpdate.out, true);
   });
 
+  test('MapBitmapScaling to PlatformMapBitmapScaling', () {
+    expect(
+        GoogleMapsFlutterAndroid.platformMapBitmapScalingFromScaling(
+            MapBitmapScaling.auto),
+        PlatformMapBitmapScaling.auto);
+    expect(
+        GoogleMapsFlutterAndroid.platformMapBitmapScalingFromScaling(
+            MapBitmapScaling.none),
+        PlatformMapBitmapScaling.none);
+  });
+
+  test('DefaultMarker bitmap to PlatformBitmap', () {
+    final BitmapDescriptor bitmap = BitmapDescriptor.defaultMarkerWithHue(10.0);
+    final PlatformBitmap platformBitmap =
+        GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap);
+    expect(platformBitmap.bitmap, isA<PlatformBitmapDefaultMarker>());
+    final PlatformBitmapDefaultMarker typedBitmap =
+        platformBitmap.bitmap as PlatformBitmapDefaultMarker;
+    expect(typedBitmap.hue, 10.0);
+  });
+
+  test('BytesMapBitmap bitmap to PlatformBitmap', () {
+    final Uint8List data = Uint8List.fromList(<int>[1, 2, 3, 4]);
+    final BytesMapBitmap bitmap = BitmapDescriptor.bytes(data,
+        imagePixelRatio: 2.0,
+        width: 100.0,
+        height: 200.0,
+        bitmapScaling: MapBitmapScaling.auto);
+    final PlatformBitmap platformBitmap =
+        GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap);
+    expect(platformBitmap.bitmap, isA<PlatformBitmapBytesMap>());
+    final PlatformBitmapBytesMap typedBitmap =
+        platformBitmap.bitmap as PlatformBitmapBytesMap;
+    expect(typedBitmap.byteData, data);
+    expect(typedBitmap.bitmapScaling, PlatformMapBitmapScaling.auto);
+    expect(typedBitmap.imagePixelRatio, 2.0);
+    expect(typedBitmap.width, 100.0);
+    expect(typedBitmap.height, 200.0);
+  });
+
+  test('AssetMapBitmap bitmap to PlatformBitmap', () {
+    const String assetName = 'fake_asset_name';
+    final AssetMapBitmap bitmap = AssetMapBitmap(assetName,
+        imagePixelRatio: 2.0,
+        width: 100.0,
+        height: 200.0,
+        bitmapScaling: MapBitmapScaling.auto);
+    final PlatformBitmap platformBitmap =
+        GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap);
+    expect(platformBitmap.bitmap, isA<PlatformBitmapAssetMap>());
+    final PlatformBitmapAssetMap typedBitmap =
+        platformBitmap.bitmap as PlatformBitmapAssetMap;
+    expect(typedBitmap.assetName, assetName);
+    expect(typedBitmap.bitmapScaling, PlatformMapBitmapScaling.auto);
+    expect(typedBitmap.imagePixelRatio, 2.0);
+    expect(typedBitmap.width, 100.0);
+    expect(typedBitmap.height, 200.0);
+  });
+
+  test('Cap to PlatformCap', () {
+    expect(GoogleMapsFlutterAndroid.platformCapFromCap(Cap.buttCap).encode(),
+        PlatformCap(type: PlatformCapType.butt).encode());
+    expect(GoogleMapsFlutterAndroid.platformCapFromCap(Cap.roundCap).encode(),
+        PlatformCap(type: PlatformCapType.round).encode());
+    expect(GoogleMapsFlutterAndroid.platformCapFromCap(Cap.squareCap).encode(),
+        PlatformCap(type: PlatformCapType.square).encode());
+
+    const BitmapDescriptor bitmap = BitmapDescriptor.defaultMarker;
+    const CustomCap customCap = CustomCap(bitmap, refWidth: 15.0);
+    final PlatformCap platformCap =
+        GoogleMapsFlutterAndroid.platformCapFromCap(customCap);
+    final PlatformCustomCap expected = PlatformCustomCap(
+        bitmapDescriptor:
+            GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap),
+        refWidth: 15.0);
+    expect(platformCap.type, PlatformCapType.custom);
+    expect(customCap.refWidth, expected.refWidth);
+  });
+
   testWidgets('Use PlatformViewLink when using surface view',
       (WidgetTester tester) async {
     final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();

@@ -857,6 +857,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     }
   }
 
+  /// Convert [MapBitmapScaling] from platform interface to [PlatformMapBitmapScaling] Pigeon.
+  @visibleForTesting
   static PlatformMapBitmapScaling platformMapBitmapScalingFromScaling(
       MapBitmapScaling scaling) {
     switch (scaling) {
@@ -870,6 +872,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     return PlatformMapBitmapScaling.auto;
   }
 
+  /// Convert [BitmapDescriptor] from platform interface to [PlatformBitmap] pigeon.
+  @visibleForTesting
   static PlatformBitmap platformBitmapFromBitmapDescriptor(
       BitmapDescriptor bitmap) {
     switch (bitmap) {
@@ -918,6 +922,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     }
   }
 
+  /// Convert [Cap] from platform interface to [PlatformCap] pigeon.
   @visibleForTesting
   static PlatformCap platformCapFromCap(Cap cap) {
     switch (cap.type) {
@@ -1308,30 +1313,22 @@ PlatformJointType platformJointTypeFromJointType(JointType jointType) {
 /// pattern member.
 @visibleForTesting
 PlatformPatternItem platformPatternItemFromPatternItem(PatternItem item) {
-  final List<Object> json = item.toJson() as List<Object>;
-  final String tag = json[0] as String;
-  PlatformPatternItemType type;
-  double? length;
-
-  /// These string values identify the type of pattern. They are defined and
-  /// used in the PatternItem class's factory methods in
-  /// lib/src/types/pattern_item.dart, in the
-  /// google_maps_flutter_platform_interface package.
-  // TODO(schectman): Convert PatternItem to structured data.
-  // https://github.com/flutter/flutter/issues/155121
-  switch (tag) {
-    case 'dot':
-      type = PlatformPatternItemType.dot;
-    case 'dash':
-      type = PlatformPatternItemType.dash;
-      length = json[1] as double;
-    case 'gap':
-      type = PlatformPatternItemType.gap;
-      length = json[1] as double;
-    default:
-      throw ArgumentError('Invalid tag "$tag for PatternItem type.', 'item');
+  switch (item.type) {
+    case PatternItemType.dot:
+      return PlatformPatternItem(type: PlatformPatternItemType.dot);
+    case PatternItemType.dash:
+      final double length = (item as VariableLengthPatternItem).length;
+      return PlatformPatternItem(
+          type: PlatformPatternItemType.dash, length: length);
+    case PatternItemType.gap:
+      final double length = (item as VariableLengthPatternItem).length;
+      return PlatformPatternItem(
+          type: PlatformPatternItemType.gap, length: length);
   }
-  return PlatformPatternItem(type: type, length: length);
+
+  /// [PatternItemType] is defined in the platform interface package. In case
+  /// a new value is added, a fallback default value is returned.
+  return PlatformPatternItem(type: PlatformPatternItemType.dot);
 }
 
 /// Update specification for a set of [TileOverlay]s.

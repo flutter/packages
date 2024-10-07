@@ -503,10 +503,6 @@ class Convert {
     return bitmap;
   }
 
-  private static String toString(Object o) {
-    return (String) o;
-  }
-
   static void interpretMapConfiguration(
       @NonNull Messages.PlatformMapConfiguration config, @NonNull GoogleMapOptionsSink sink) {
     final Messages.PlatformCameraTargetBounds cameraTargetBounds = config.getCameraTargetBounds();
@@ -850,10 +846,8 @@ class Convert {
           float refWidth = customCap.getRefWidth().floatValue();
           return new CustomCap(bitmap, refWidth);
         }
-      default:
-        throw new IllegalArgumentException(
-            "Unrecognized PlatformCap type " + platformCap.getType());
     }
+    throw new IllegalArgumentException("Unrecognized PlatformCap type " + platformCap.getType());
   }
 
   static String interpretTileOverlayOptions(
