@@ -9,7 +9,7 @@ class SslCertificate {
     required this.issuedTo,
     required this.validNotAfterDate,
     required this.validNotBeforeDate,
-    required this.x509certificatePem,
+    required this.x509CertificatePem,
   });
 
   /// The identity that the certificate is issued by
@@ -25,5 +25,5 @@ class SslCertificate {
   final DateTime? validNotBeforeDate;
 
   /// The original x509 certificate PEM
-  final String? x509certificatePem;
+  final String? x509CertificatePem;
 }
