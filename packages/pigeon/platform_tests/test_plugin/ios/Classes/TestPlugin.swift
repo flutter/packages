@@ -27,7 +27,6 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     flutterSmallApiTwo = FlutterSmallApi(
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
 
-    print("calledCook")
     let sendInts = SendInts()
     StreamIntsStreamHandler.register(with: binaryMessenger, wrapper: sendInts)
 
@@ -1006,15 +1005,15 @@ class SendInts: StreamIntsStreamHandler {
 
   override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
     var count: Int64 = 0
-    print("onListen method called (in test plugin)")
     if !timerActive {
       timerActive = true
       Timer.scheduledTimer(
         withTimeInterval: 1, repeats: true,
         block: { _ in
-          print(count)
           count += 1
-          sink.success(count)
+            DispatchQueue.main.async {
+                sink.success(count)
+            }
         })
     }
   }

@@ -104,8 +104,6 @@ to the api to allow for multiple instances to be created and operate in parallel
 1) Method declarations on the API classes should have arguments and a return
    value whose types are defined in the file, are supported datatypes, or are
    `void`.
-1) Generics are supported, but can currently only be used with nullable types
-   (example: `List<int?>`).
 1) Objc and Swift have special naming conventions that can be utilized with the
    `@ObjCSelector` and `@SwiftFunction` respectively. 
 
