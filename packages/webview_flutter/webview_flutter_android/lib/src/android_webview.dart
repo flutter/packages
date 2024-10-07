@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show BinaryMessenger;
 
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_webview.g.dart';
 import 'android_webview_api_impls.dart';
@@ -1715,73 +1716,3 @@ class SslErrorHandler extends JavaObject {
   }
 }
 
-/// Defines the types of SSL errors
-enum SslErrorType {
-  /// The date of the certificate is invalid
-  dateInvalid,
-
-  /// The certificate has expired
-  expired,
-
-  /// Hostname mismatch
-  idMismatch,
-
-  /// The certificate is not yet valid
-  notYetValid,
-
-  /// The certificate authority is not trusted
-  untrusted,
-
-  /// Generic error occurred
-  invalid,
-}
-
-/// Encapsulates information about an SSL certificate
-///
-/// See [WebViewClient.onReceivedSslError].
-class SslCertificate {
-  /// Creates a [SslCertificate].
-  const SslCertificate({
-    required this.issuedBy,
-    required this.issuedTo,
-    required this.validNotAfterDate,
-    required this.validNotBeforeDate,
-    required this.x509CertificatePem,
-  });
-
-  /// The identity that the certificate is issued by
-  final String? issuedBy;
-
-  /// The identity that the certificate is issued to
-  final String? issuedTo;
-
-  /// The date that must not be passed for the certificate to be valid
-  final DateTime? validNotAfterDate;
-
-  /// The date that must be passed for the certificate to be valid
-  final DateTime? validNotBeforeDate;
-
-  /// The x509Certificate PEM associated with the SSL error
-  final String? x509CertificatePem;
-}
-
-/// Encapsulates information about SSL errors
-///
-/// See [WebViewClient.onReceivedSslError].
-class SslError {
-  /// Creates a [SslError].
-  const SslError({
-    required this.errorType,
-    required this.certificate,
-    required this.url,
-  });
-
-  /// The type of SSL error
-  final SslErrorType errorType;
-
-  /// The certificate associated with the error
-  final SslCertificate certificate;
-
-  /// The url associated with the error
-  final String url;
-}

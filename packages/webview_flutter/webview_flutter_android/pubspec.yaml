@@ -23,7 +23,7 @@ dependencies:
   webview_flutter_platform_interface:
     git:
       url: https://github.com/Colman/packages.git
-      ref: b79399c2748fb59bfe5b729881fe0045a477b2fd
+      ref: ssl_error_decision
       path: packages/webview_flutter/webview_flutter_platform_interface
 
 dev_dependencies:

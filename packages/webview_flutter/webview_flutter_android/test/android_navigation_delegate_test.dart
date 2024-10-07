@@ -18,7 +18,8 @@ import 'test_android_webview.g.dart';
 
 @GenerateMocks(<Type>[
   TestInstanceManagerHostApi,
-  android_webview.fHttpAuthHandler,
+  android_webview.HttpAuthHandler,
+  android_webview.SslErrorHandler,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

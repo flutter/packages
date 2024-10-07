@@ -161,7 +161,7 @@ void main() {
                 void Function(
                   android_webview.WebView webView,
                   android_webview.SslErrorHandler handler,
-                  android_webview.SslError error,
+                  SslError error,
                 )? onReceivedSslError,
                 void Function(
                   android_webview.WebView webView,

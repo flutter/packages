@@ -5,6 +5,7 @@
 import 'dart:ui';
 
 import 'package:flutter/services.dart' show BinaryMessenger, Uint8List;
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart' as platform_interface;
 
 import 'android_webview.dart';
 import 'android_webview.g.dart';
@@ -41,28 +42,29 @@ WebResourceError _toWebResourceError(WebResourceErrorData data) {
 }
 
 /// Converts [SslErrorTypeData] to [SslErrorType]
-SslErrorType _toSslErrorType(SslErrorTypeData data) {
+platform_interface.SslErrorType _toSslErrorType(SslErrorTypeData data) {
   switch (data) {
     case SslErrorTypeData.dateInvalid:
-      return SslErrorType.dateInvalid;
+      return platform_interface.SslErrorType.dateInvalid;
     case SslErrorTypeData.expired:
-      return SslErrorType.expired;
+      return platform_interface.SslErrorType.expired;
     case SslErrorTypeData.idMismatch:
-      return SslErrorType.idMismatch;
+      return platform_interface.SslErrorType.idMismatch;
     case SslErrorTypeData.notYetValid:
-      return SslErrorType.notYetValid;
+      return platform_interface.SslErrorType.notYetValid;
     case SslErrorTypeData.untrusted:
-      return SslErrorType.untrusted;
+      return platform_interface.SslErrorType.untrusted;
     case SslErrorTypeData.invalid:
-      return SslErrorType.invalid;
+      return platform_interface.SslErrorType.otherError;
   }
 }
 
 /// Converts [SslErrorData] to [SslError]
-SslError _toSslError(SslErrorData data) {
-  return SslError(
+platform_interface.SslError _toSslError(SslErrorData data) {
+  final Uri uri = Uri.parse(data.url);
+  return platform_interface.SslError(
     errorType: _toSslErrorType(data.errorTypeData),
-    certificate: SslCertificate(
+    certificate: platform_interface.SslCertificate(
       issuedBy: data.certificateData.issuedBy,
       issuedTo: data.certificateData.issuedTo,
       validNotAfterDate: data.certificateData.validNotAfterIso8601Date == null
@@ -73,7 +75,9 @@ SslError _toSslError(SslErrorData data) {
           : null,
       x509CertificatePem: data.certificateData.x509CertificatePem,
     ),
-    url: data.url,
+    host: uri.host,
+    scheme: uri.scheme,
+    port: uri.port,
   );
 }
 
