@@ -20,6 +20,9 @@ import 'package:test/test.dart';
 import 'mocks.dart';
 import 'util.dart';
 
+const String _allAbiFlag =
+    '-Ptarget-platform=android-arm,android-arm64,android-x64,android-x86';
+
 const String _androidIntegrationTestFilter =
     '-Pandroid.testInstrumentationRunnerArguments.'
     'notAnnotation=io.flutter.plugins.DartIntegrationTest';
@@ -563,6 +566,7 @@ void main() {
               const <String>[
                 'app:connectedAndroidTest',
                 _androidIntegrationTestFilter,
+                _allAbiFlag,
               ],
               androidFolder.path,
             ),
@@ -697,6 +701,7 @@ public class FlutterActivityTest {
               const <String>[
                 'app:connectedAndroidTest',
                 _androidIntegrationTestFilter,
+                _allAbiFlag,
               ],
               androidFolder.path,
             ),
@@ -734,6 +739,7 @@ public class FlutterActivityTest {
               const <String>[
                 'app:connectedAndroidTest',
                 _androidIntegrationTestFilter,
+                _allAbiFlag,
               ],
               androidFolder.path,
             ),
@@ -800,7 +806,7 @@ public class FlutterActivityTest {
           orderedEquals(<ProcessCall>[
             ProcessCall(
               getFlutterCommand(mockPlatform),
-              const <String>['build', 'apk', '--debug', '--config-only'],
+              const <String>['build', 'apk', '--config-only'],
               example.path,
             ),
             ProcessCall(
