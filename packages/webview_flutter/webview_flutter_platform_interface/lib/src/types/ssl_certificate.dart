@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:meta/meta.dart';
 
 /// Defines the parameters of a SSL certificate
@@ -11,7 +9,7 @@ class SslCertificate {
     required this.issuedTo,
     required this.validNotAfterDate,
     required this.validNotBeforeDate,
-    required this.x509certificate,
+    required this.x509certificatePem,
   });
 
   /// The identity that the certificate is issued by
@@ -26,6 +24,6 @@ class SslCertificate {
   /// The date that must be passed for the certificate to be valid
   final DateTime? validNotBeforeDate;
 
-  /// The original x509 certificate
-  final X509Certificate? x509certificate;
+  /// The original x509 certificate PEM
+  final String? x509certificatePem;
 }
