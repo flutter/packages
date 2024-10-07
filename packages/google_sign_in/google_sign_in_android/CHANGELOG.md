@@ -1,3 +1,8 @@
+## 6.1.32
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 6.1.31
 
 * Bumps `com.google.guava:guava` from `32.0.1` to `33.3.1`.

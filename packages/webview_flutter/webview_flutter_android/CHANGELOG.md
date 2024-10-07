@@ -1,6 +1,11 @@
-## 3.16.9
+## 3.16.10
 
 * Updates internal API wrapper to use `ProxyApi`s.
+
+## 3.16.9
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
 
 ## 3.16.8
 

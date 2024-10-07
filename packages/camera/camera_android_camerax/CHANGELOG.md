@@ -1,3 +1,7 @@
+## 0.6.9+2
+
+* Updates Java compatibility version to 11.
+
 ## 0.6.9+1
 
 * Bumps `com.google.guava:guava` from `33.3.0` to `33.3.1`.
