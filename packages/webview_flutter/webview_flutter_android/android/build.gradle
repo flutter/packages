@@ -29,7 +29,7 @@ android {
     compileSdk 34
 
     kotlinOptions {
-        jvmTarget = '1.11'
+        jvmTarget = '11'
     }
 
     defaultConfig {
