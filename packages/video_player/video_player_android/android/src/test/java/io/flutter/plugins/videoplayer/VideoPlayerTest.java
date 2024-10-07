@@ -189,7 +189,7 @@ public final class VideoPlayerTest {
 
     // Create a new mock exo player so that we get a new instance.
     mockExoPlayer = mock(ExoPlayer.class);
-    producerLifecycle.onSurfaceCreated();
+    simulateSurfaceCreation(producerLifecycle);
 
     verify(mockExoPlayer).seekTo(10L);
     verify(mockExoPlayer).setRepeatMode(Player.REPEAT_MODE_ALL);
@@ -231,7 +231,7 @@ public final class VideoPlayerTest {
 
     // Trigger destroyed/created.
     producerLifecycle.onSurfaceDestroyed();
-    producerLifecycle.onSurfaceCreated();
+    simulateSurfaceCreation(producerLifecycle);
 
     // Initial listener, and the new one from the resume.
     verify(mockExoPlayer, times(2)).addListener(listenerCaptor.capture());
@@ -257,7 +257,7 @@ public final class VideoPlayerTest {
     TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
 
     // Calling onSurfaceCreated does not do anything, since the surface was never destroyed.
-    producerLifecycle.onSurfaceCreated();
+    simulateSurfaceCreation(producerLifecycle);
     verifyNoMoreInteractions(mockProducer);
 
     videoPlayer.dispose();
@@ -270,5 +270,13 @@ public final class VideoPlayerTest {
 
     verify(mockProducer).release();
     verify(mockExoPlayer).release();
+  }
+
+  // TODO(matanlurey): Replace with inline calls to onSurfaceAvailable once
+  // available on stable; see https://github.com/flutter/flutter/issues/155131.
+  // This seperate method only exists to scope the suppression.
+  @SuppressWarnings({"deprecation", "removal"})
+  void simulateSurfaceCreation(TextureRegistry.SurfaceProducer.Callback producerLifecycle) {
+    producerLifecycle.onSurfaceCreated();
   }
 }
