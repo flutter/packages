@@ -1,1 +1,0 @@
-../../shared/RunnerTests/InAppPurchaseStoreKit2PluginTests.swift
