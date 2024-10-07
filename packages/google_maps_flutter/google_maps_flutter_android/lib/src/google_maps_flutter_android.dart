@@ -857,33 +857,64 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     }
   }
 
-  static PlatformMapBitmapScaling platformMapBitmapScalingFromScaling(MapBitmapScaling scaling) {
-    switch(scaling) {
+  static PlatformMapBitmapScaling platformMapBitmapScalingFromScaling(
+      MapBitmapScaling scaling) {
+    switch (scaling) {
       case MapBitmapScaling.auto:
-          return PlatformMapBitmapScaling.auto;
+        return PlatformMapBitmapScaling.auto;
       case MapBitmapScaling.none:
-          return PlatformMapBitmapScaling.none;
+        return PlatformMapBitmapScaling.none;
     }
+
     /// MapBitmapScaling is defined in the platform interface.
     return PlatformMapBitmapScaling.auto;
   }
 
-  static PlatformBitmap platformBitmapFromBitmapDescriptor(BitmapDescriptor bitmap) {
-    switch(bitmap) {
+  static PlatformBitmap platformBitmapFromBitmapDescriptor(
+      BitmapDescriptor bitmap) {
+    switch (bitmap) {
       case final DefaultMarker marker:
-        return PlatformBitmap(bitmap: PlatformBitmapDefaultMarker(hue: marker.hue?.toDouble()));
+        return PlatformBitmap(
+            bitmap: PlatformBitmapDefaultMarker(hue: marker.hue?.toDouble()));
       case final BytesBitmap bytes:
-        return PlatformBitmap(bitmap: PlatformBitmapBytes(byteData: bytes.byteData, size: (bytes.size == null) ? null : _platformOffsetFromSize(bytes.size!)));
+        return PlatformBitmap(
+            bitmap: PlatformBitmapBytes(
+                byteData: bytes.byteData,
+                size: (bytes.size == null)
+                    ? null
+                    : _platformOffsetFromSize(bytes.size!)));
       case final AssetBitmap asset:
-        return PlatformBitmap(bitmap: PlatformBitmapAsset(name: asset.name, pkg: asset.package));
+        return PlatformBitmap(
+            bitmap: PlatformBitmapAsset(name: asset.name, pkg: asset.package));
       case final AssetImageBitmap asset:
-        return PlatformBitmap(bitmap: PlatformBitmapAssetImage(name: asset.name, scale: asset.scale, size: (asset.size == null) ? null : _platformOffsetFromSize(asset.size!)));
+        return PlatformBitmap(
+            bitmap: PlatformBitmapAssetImage(
+                name: asset.name,
+                scale: asset.scale,
+                size: (asset.size == null)
+                    ? null
+                    : _platformOffsetFromSize(asset.size!)));
       case final AssetMapBitmap asset:
-        return PlatformBitmap(bitmap: PlatformBitmapAssetMap(assetName: asset.assetName, bitmapScaling: platformMapBitmapScalingFromScaling(asset.bitmapScaling), imagePixelRatio: asset.imagePixelRatio, width: asset.width, height: asset.height));
+        return PlatformBitmap(
+            bitmap: PlatformBitmapAssetMap(
+                assetName: asset.assetName,
+                bitmapScaling:
+                    platformMapBitmapScalingFromScaling(asset.bitmapScaling),
+                imagePixelRatio: asset.imagePixelRatio,
+                width: asset.width,
+                height: asset.height));
       case final BytesMapBitmap bytes:
-        return PlatformBitmap(bitmap: PlatformBitmapBytesMap(byteData: bytes.byteData, bitmapScaling: platformMapBitmapScalingFromScaling(bytes.bitmapScaling), imagePixelRatio: bytes.imagePixelRatio, width: bytes.width, height: bytes.height));
+        return PlatformBitmap(
+            bitmap: PlatformBitmapBytesMap(
+                byteData: bytes.byteData,
+                bitmapScaling:
+                    platformMapBitmapScalingFromScaling(bytes.bitmapScaling),
+                imagePixelRatio: bytes.imagePixelRatio,
+                width: bytes.width,
+                height: bytes.height));
       default:
-        throw ArgumentError('Unrecognized type of bitmap ${bitmap.runtimeType}', 'bitmap');
+        throw ArgumentError(
+            'Unrecognized type of bitmap ${bitmap.runtimeType}', 'bitmap');
     }
   }
 
@@ -898,7 +929,12 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         return PlatformCap(type: PlatformCapType.round);
       case CapType.custom:
         cap as CustomCap;
-        return PlatformCap(type: PlatformCapType.custom, customCap: PlatformCustomCap(bitmapDescriptor: platformBitmapFromBitmapDescriptor(cap.bitmapDescriptor), refWidth: cap.refWidth));
+        return PlatformCap(
+            type: PlatformCapType.custom,
+            customCap: PlatformCustomCap(
+                bitmapDescriptor:
+                    platformBitmapFromBitmapDescriptor(cap.bitmapDescriptor),
+                refWidth: cap.refWidth));
     }
   }
 }

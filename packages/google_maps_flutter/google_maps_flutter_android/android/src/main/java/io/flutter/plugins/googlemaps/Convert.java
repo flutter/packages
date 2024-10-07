@@ -61,41 +61,45 @@ class Convert {
   public static final String HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY = "colorMapSize";
 
   private static BitmapDescriptor toBitmapDescriptor(
-          Messages.PlatformBitmap o, AssetManager assetManager, float density) {
+      Messages.PlatformBitmap o, AssetManager assetManager, float density) {
     return toBitmapDescriptor(o, assetManager, density, new BitmapDescriptorFactoryWrapper());
   }
 
   private static BitmapDescriptor toBitmapDescriptor(
-          Messages.PlatformBitmap platformBitmap, AssetManager assetManager, float density, BitmapDescriptorFactoryWrapper wrapper) {
+      Messages.PlatformBitmap platformBitmap,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper wrapper) {
     Object bitmap = platformBitmap.getBitmap();
     if (bitmap instanceof Messages.PlatformBitmapDefaultMarker) {
-      Messages.PlatformBitmapDefaultMarker typedBitmap = (Messages.PlatformBitmapDefaultMarker) bitmap;
-        if (typedBitmap.getHue() == null) {
-          return BitmapDescriptorFactory.defaultMarker();
-        } else {
-          final float hue = typedBitmap.getHue().floatValue();
-          return BitmapDescriptorFactory.defaultMarker(hue);
-        }
-        }
+      Messages.PlatformBitmapDefaultMarker typedBitmap =
+          (Messages.PlatformBitmapDefaultMarker) bitmap;
+      if (typedBitmap.getHue() == null) {
+        return BitmapDescriptorFactory.defaultMarker();
+      } else {
+        final float hue = typedBitmap.getHue().floatValue();
+        return BitmapDescriptorFactory.defaultMarker(hue);
+      }
+    }
     if (bitmap instanceof Messages.PlatformBitmapAsset) {
       Messages.PlatformBitmapAsset typedBitmap = (Messages.PlatformBitmapAsset) bitmap;
       final String assetPath = typedBitmap.getName();
       final String assetPackage = typedBitmap.getPkg();
       if (assetPackage == null) {
         return BitmapDescriptorFactory.fromAsset(
-                FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetPath));
+            FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetPath));
       } else {
         return BitmapDescriptorFactory.fromAsset(
-                FlutterInjector.instance()
-                        .flutterLoader()
-                        .getLookupKeyForAsset(assetPath, assetPackage));
+            FlutterInjector.instance()
+                .flutterLoader()
+                .getLookupKeyForAsset(assetPath, assetPackage));
       }
     }
     if (bitmap instanceof Messages.PlatformBitmapAssetImage) {
       Messages.PlatformBitmapAssetImage typedBitmap = (Messages.PlatformBitmapAssetImage) bitmap;
       final String assetImagePath = typedBitmap.getName();
       return BitmapDescriptorFactory.fromAsset(
-              FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetImagePath));
+          FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetImagePath));
     }
     if (bitmap instanceof Messages.PlatformBitmapBytes) {
       Messages.PlatformBitmapBytes typedBitmap = (Messages.PlatformBitmapBytes) bitmap;
@@ -104,7 +108,7 @@ class Convert {
     if (bitmap instanceof Messages.PlatformBitmapAssetMap) {
       Messages.PlatformBitmapAssetMap typedBitmap = (Messages.PlatformBitmapAssetMap) bitmap;
       return getBitmapFromAsset(
-              typedBitmap, assetManager, density, wrapper, new FlutterInjectorWrapper());
+          typedBitmap, assetManager, density, wrapper, new FlutterInjectorWrapper());
     }
     if (bitmap instanceof Messages.PlatformBitmapBytesMap) {
       Messages.PlatformBitmapBytesMap typedBitmap = (Messages.PlatformBitmapBytesMap) bitmap;
@@ -116,7 +120,8 @@ class Convert {
   // Used for deprecated fromBytes bitmap descriptor.
   // Can be removed after support for "fromBytes" bitmap descriptor type is
   // removed.
-  private static BitmapDescriptor getBitmapFromBytesLegacy(Messages.PlatformBitmapBytes bitmapBytes) {
+  private static BitmapDescriptor getBitmapFromBytesLegacy(
+      Messages.PlatformBitmapBytes bitmapBytes) {
     try {
       Bitmap bitmap = toBitmap(bitmapBytes.getByteData());
       return BitmapDescriptorFactory.fromBitmap(bitmap);
@@ -146,7 +151,9 @@ class Convert {
    */
   @VisibleForTesting
   public static BitmapDescriptor getBitmapFromBytes(
-          Messages.PlatformBitmapBytesMap bytesMap, float density, BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
+      Messages.PlatformBitmapBytesMap bytesMap,
+      float density,
+      BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
     try {
       Bitmap bitmap = toBitmap(bytesMap.getByteData());
       Messages.PlatformMapBitmapScaling scalingMode = bytesMap.getBitmapScaling();
@@ -651,8 +658,8 @@ class Convert {
       float density) {
     sink.setConsumeTapEvents(polyline.getConsumesTapEvents());
     sink.setColor(polyline.getColor().intValue());
-    sink.setEndCap(toCap(polyline.getEndCap(), assetManager, density));
-    sink.setStartCap(toCap(polyline.getStartCap(), assetManager, density));
+    sink.setEndCap(capFromPigeon(polyline.getEndCap(), assetManager, density));
+    sink.setStartCap(capFromPigeon(polyline.getStartCap(), assetManager, density));
     sink.setGeodesic(polyline.getGeodesic());
     sink.setJointType(jointTypeFromPigeon(polyline.getJointType()));
     sink.setVisible(polyline.getVisible());
@@ -822,25 +829,30 @@ class Convert {
     return pattern;
   }
 
-  private static Cap toCap(Object o, AssetManager assetManager, float density) {
-    final List<?> data = toList(o);
-    switch (toString(data.get(0))) {
-      case "buttCap":
+  private static Cap capFromPigeon(
+      Messages.PlatformCap platformCap, AssetManager assetManager, float density) {
+    switch (platformCap.getType()) {
+      case BUTT:
         return new ButtCap();
-      case "roundCap":
-        return new RoundCap();
-      case "squareCap":
+      case SQUARE:
         return new SquareCap();
-      case "customCap":
-        if (data.size() == 2) {
-          // TODO needs new types
-          return new CustomCap(toBitmapDescriptor((Messages.PlatformBitmap) data.get(1), assetManager, density));
-        } else {
-          return new CustomCap(
-              toBitmapDescriptor((Messages.PlatformBitmap)data.get(1), assetManager, density), toFloat(data.get(2)));
+      case ROUND:
+        return new RoundCap();
+      case CUSTOM:
+        {
+          Messages.PlatformCustomCap customCap = platformCap.getCustomCap();
+          if (customCap == null) {
+            throw new IllegalArgumentException(
+                "PlatformCap with type CUSTOM cannot have null customCap field");
+          }
+          BitmapDescriptor bitmap =
+              toBitmapDescriptor(customCap.getBitmapDescriptor(), assetManager, density);
+          float refWidth = customCap.getRefWidth().floatValue();
+          return new CustomCap(bitmap, refWidth);
         }
       default:
-        throw new IllegalArgumentException("Cannot interpret " + o + " as Cap");
+        throw new IllegalArgumentException(
+            "Unrecognized PlatformCap type " + platformCap.getType());
     }
   }
 

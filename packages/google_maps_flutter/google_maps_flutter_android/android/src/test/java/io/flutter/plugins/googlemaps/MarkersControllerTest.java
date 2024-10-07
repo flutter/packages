@@ -25,11 +25,8 @@ import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,10 +59,15 @@ public class MarkersControllerTest {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     fakeBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
     byte[] byteArray = byteArrayOutputStream.toByteArray();
-    Map<String, Object> byteData = new HashMap<>();
-    byteData.put("byteData", byteArray);
-    byteData.put("bitmapScaling", "none");
-    byteData.put("imagePixelRatio", "");
+    Messages.PlatformBitmap icon =
+        new Messages.PlatformBitmap.Builder()
+            .setBitmap(
+                new Messages.PlatformBitmapBytesMap.Builder()
+                    .setByteData(byteArray)
+                    .setImagePixelRatio(1.0)
+                    .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
+                    .build())
+            .build();
     Messages.PlatformOffset anchor =
         new Messages.PlatformOffset.Builder().setDx(0.5).setDy(0.0).build();
     Messages.PlatformInfoWindow infoWindow =
@@ -81,8 +83,7 @@ public class MarkersControllerTest {
         .setRotation(0.0)
         .setZIndex(0.0)
         .setConsumeTapEvents(false)
-            // TODO construct bitmap
-        .setIcon(null)//Arrays.asList("bytes", byteData))
+        .setIcon(icon)
         .setInfoWindow(infoWindow);
   }
 

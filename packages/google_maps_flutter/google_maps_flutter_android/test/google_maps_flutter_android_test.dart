@@ -416,7 +416,12 @@ void main() {
         object2new.draggable,
         object2new.flat,
       ]);
-      expect((encoded?[5] as PlatformBitmap?)?.bitmap.runtimeType, GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(object2new.icon).bitmap.runtimeType);
+      expect(
+          (encoded?[5] as PlatformBitmap?)?.bitmap.runtimeType,
+          GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(
+                  object2new.icon)
+              .bitmap
+              .runtimeType);
       final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
       expect(window?.title, object2new.infoWindow.title);
       expect(window?.snippet, object2new.infoWindow.snippet);
@@ -446,7 +451,12 @@ void main() {
         object3.draggable,
         object3.flat,
       ]);
-      expect((encoded?[5] as PlatformBitmap?)?.bitmap.runtimeType, GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(object3.icon).bitmap.runtimeType);
+      expect(
+          (encoded?[5] as PlatformBitmap?)?.bitmap.runtimeType,
+          GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(
+                  object3.icon)
+              .bitmap
+              .runtimeType);
       final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
       expect(window?.title, object3.infoWindow.title);
       expect(window?.snippet, object3.infoWindow.snippet);

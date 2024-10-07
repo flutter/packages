@@ -526,8 +526,9 @@ class PlatformBitmapAsset {
   final String? pkg;
 }
 
-class PlatformBitmapAssetImage{
-  PlatformBitmapAssetImage({required this.name, required this.scale, this.size});
+class PlatformBitmapAssetImage {
+  PlatformBitmapAssetImage(
+      {required this.name, required this.scale, this.size});
   final String name;
   final double scale;
   final PlatformOffset? size;
@@ -539,7 +540,12 @@ enum PlatformMapBitmapScaling {
 }
 
 class PlatformBitmapAssetMap {
-  PlatformBitmapAssetMap({required this.assetName, required this.bitmapScaling, required this.imagePixelRatio, this.width, this.height});
+  PlatformBitmapAssetMap(
+      {required this.assetName,
+      required this.bitmapScaling,
+      required this.imagePixelRatio,
+      this.width,
+      this.height});
   final String assetName;
   final PlatformMapBitmapScaling bitmapScaling;
   final double imagePixelRatio;
@@ -548,7 +554,12 @@ class PlatformBitmapAssetMap {
 }
 
 class PlatformBitmapBytesMap {
-  PlatformBitmapBytesMap({required this.byteData, required this.bitmapScaling, required this.imagePixelRatio, this.width, this.height});
+  PlatformBitmapBytesMap(
+      {required this.byteData,
+      required this.bitmapScaling,
+      required this.imagePixelRatio,
+      this.width,
+      this.height});
   final Uint8List byteData;
   final PlatformMapBitmapScaling bitmapScaling;
   final double imagePixelRatio;
