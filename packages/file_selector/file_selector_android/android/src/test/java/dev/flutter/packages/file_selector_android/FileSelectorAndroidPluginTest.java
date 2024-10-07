@@ -95,8 +95,8 @@ public class FileSelectorAndroidPluginTest {
               mockObjectFactory,
               (version) -> Build.VERSION.SDK_INT >= version);
 
-      final GeneratedFileSelectorApi.Result mockResult =
-          mock(GeneratedFileSelectorApi.Result.class);
+      final GeneratedFileSelectorApi.NullableResult mockResult =
+          mock(GeneratedFileSelectorApi.NullableResult.class);
       fileSelectorApi.openFile(
           null,
           new GeneratedFileSelectorApi.FileTypes.Builder()
@@ -243,8 +243,8 @@ public class FileSelectorAndroidPluginTest {
                 mockObjectFactory,
                 (version) -> Build.VERSION_CODES.LOLLIPOP >= version);
 
-        final GeneratedFileSelectorApi.Result mockResult =
-            mock(GeneratedFileSelectorApi.Result.class);
+        final GeneratedFileSelectorApi.NullableResult mockResult =
+            mock(GeneratedFileSelectorApi.NullableResult.class);
         fileSelectorApi.getDirectoryPath(null, mockResult);
 
         verify(mockActivity).startActivityForResult(mockIntent, 223);
@@ -273,8 +273,8 @@ public class FileSelectorAndroidPluginTest {
             (version) -> Build.VERSION_CODES.KITKAT >= version);
 
     @SuppressWarnings("unchecked")
-    final GeneratedFileSelectorApi.Result<String> mockResult =
-        mock(GeneratedFileSelectorApi.Result.class);
+    final GeneratedFileSelectorApi.NullableResult<String> mockResult =
+        mock(GeneratedFileSelectorApi.NullableResult.class);
     fileSelectorApi.getDirectoryPath(null, mockResult);
 
     verify(mockResult).error(any());

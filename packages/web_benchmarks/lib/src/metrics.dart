@@ -50,6 +50,89 @@ enum BenchmarkMetric {
 /// from the Blink trace summary.
 const String totalUiFrameAverage = 'totalUiFrame.average';
 
+/// Describes the values computed for each [BenchmarkMetric].
+sealed class BenchmarkMetricComputation {
+  const BenchmarkMetricComputation(this.name);
+
+  /// The name of each metric computation.
+  final String name;
+
+  /// The name for the computed value tracking the average value of the measured
+  /// samples without outliers.
+  static const NamedMetricComputation average =
+      NamedMetricComputation._('average');
+
+  /// The name for the computed value tracking the average of outlier samples.
+  static const NamedMetricComputation outlierAverage =
+      NamedMetricComputation._('outlierAverage');
+
+  /// The name for the computed value tracking the outlier average divided by
+  /// the clean average.
+  static const NamedMetricComputation outlierRatio =
+      NamedMetricComputation._('outlierRatio');
+
+  /// The name for the computed value tracking the noise as a multiple of the
+  /// [average] value takes from clean samples.
+  static const NamedMetricComputation noise = NamedMetricComputation._('noise');
+
+  /// The name for the computed value tracking the 50th percentile value from
+  /// the samples with outliers.
+  static const PercentileMetricComputation p50 =
+      PercentileMetricComputation._('p50', 0.5);
+
+  /// The name for the computed value tracking the 90th percentile value from
+  /// the samples with outliers.
+  static const PercentileMetricComputation p90 =
+      PercentileMetricComputation._('p90', 0.9);
+
+  /// The name for the computed value tracking the 95th percentile value from
+  /// the samples with outliers.
+  static const PercentileMetricComputation p95 =
+      PercentileMetricComputation._('p95', 0.95);
+
+  /// All of the computed vales for each [BenchmarkMetric].
+  static const List<BenchmarkMetricComputation> values =
+      <BenchmarkMetricComputation>[
+    average,
+    outlierAverage,
+    outlierRatio,
+    noise,
+    p50,
+    p90,
+    p95,
+  ];
+}
+
+/// A [BenchmarkMetricComputation] with a descriptive name.
+final class NamedMetricComputation extends BenchmarkMetricComputation {
+  const NamedMetricComputation._(super.name);
+}
+
+/// A [BenchmarkMetricComputation] describing a percentile (p50, p90, etc.).
+final class PercentileMetricComputation extends BenchmarkMetricComputation {
+  const PercentileMetricComputation._(super.name, this.percentile)
+      : assert(percentile >= 0.0 && percentile <= 1.0);
+
+  /// The percentile value as a double.
+  ///
+  /// This value must be between 0.0 and 1.0.
+  final double percentile;
+
+  /// The percentile [BenchmarkMetricComputation]s computed for each benchmark
+  /// metric.
+  static const List<PercentileMetricComputation> values =
+      <PercentileMetricComputation>[
+    BenchmarkMetricComputation.p50,
+    BenchmarkMetricComputation.p90,
+    BenchmarkMetricComputation.p95,
+  ];
+
+  /// The percentile values as doubles computed for each benchmark metric.
+  static List<double> percentilesAsDoubles = PercentileMetricComputation.values
+      .map((PercentileMetricComputation value) => value.percentile)
+      .toList();
+}
+
 /// The list of expected benchmark metrics for the current compilation mode, as
 /// determined by the value of [useWasm].
 List<BenchmarkMetric> expectedBenchmarkMetrics({required bool useWasm}) {

@@ -309,6 +309,44 @@ void main() {
       expect(callbackHost, expectedHost);
       expect(callbackRealm, expectedRealm);
     });
+
+    test('onHttpNtlmAuthRequest emits host and realm', () {
+      final WebKitNavigationDelegate iosNavigationDelegate =
+          WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            createNavigationDelegate: CapturingNavigationDelegate.new,
+          ),
+        ),
+      );
+
+      String? callbackHost;
+      String? callbackRealm;
+
+      iosNavigationDelegate.setOnHttpAuthRequest((HttpAuthRequest request) {
+        callbackHost = request.host;
+        callbackRealm = request.realm;
+      });
+
+      const String expectedHost = 'expectedHost';
+      const String expectedRealm = 'expectedRealm';
+
+      CapturingNavigationDelegate
+              .lastCreatedDelegate.didReceiveAuthenticationChallenge!(
+          WKWebViewIOS.detached(),
+          NSUrlAuthenticationChallenge.detached(
+            protectionSpace: NSUrlProtectionSpace.detached(
+              host: expectedHost,
+              realm: expectedRealm,
+              authenticationMethod: NSUrlAuthenticationMethod.httpNtlm,
+            ),
+          ),
+          (NSUrlSessionAuthChallengeDisposition disposition,
+              NSUrlCredential? credential) {});
+
+      expect(callbackHost, expectedHost);
+      expect(callbackRealm, expectedRealm);
+    });
   });
 }
 
