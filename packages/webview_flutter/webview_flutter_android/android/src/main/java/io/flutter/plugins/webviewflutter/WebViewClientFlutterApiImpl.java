@@ -92,7 +92,7 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
 
   static GeneratedAndroidWebView.SslErrorData createSslErrorData(SslError error) {
       final SslCertificate certificate = error.getCertificate();
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-ddTHH:mm:ssZ", Locale.US);
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
       String notValidNotAfterIso8601Date = sdf.format(certificate.getValidNotAfterDate());
       String notValidNotBeforeIso8601Date = sdf.format(certificate.getValidNotBeforeDate());
 
