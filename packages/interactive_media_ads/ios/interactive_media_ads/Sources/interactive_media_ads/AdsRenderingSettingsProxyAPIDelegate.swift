@@ -44,9 +44,9 @@ class AdsRenderingSettingsProxyAPIDelegate: PigeonApiDelegateIMAAdsRenderingSett
     pigeonInstance.playAdsAfterTime = seconds
   }
 
-  func setUiElements(
+  func setUIElements(
     pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
-    types: [UiElementType]?
+    types: [UIElementType]?
   ) throws {
     let nativeUiElementTypes: [NSNumber]? = try types?.map { type in
       switch type {

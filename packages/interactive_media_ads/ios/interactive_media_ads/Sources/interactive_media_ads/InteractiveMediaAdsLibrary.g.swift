@@ -593,7 +593,7 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         || value is AdErrorType || value is AdErrorCode || value is AdEventType
         || value is KeyValueObservingOptions || value is KeyValueChange
         || value is KeyValueChangeKey || value is FriendlyObstructionPurpose
-        || value is UiElementType
+        || value is UIElementType
       {
         super.writeValue(value)
         return
@@ -1034,7 +1034,7 @@ enum FriendlyObstructionPurpose: Int {
 /// Different UI elements that can be customized.
 ///
 /// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Enums/IMAUiElementType.html.
-enum UiElementType: Int {
+enum UIElementType: Int {
   /// Ad attribution UI element.
   case adAttribution = 0
   /// Ad countdown element.
@@ -1091,7 +1091,7 @@ private class InteractiveMediaAdsLibraryPigeonCodecReader: FlutterStandardReader
     case 136:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return UiElementType(rawValue: enumResultAsInt)
+        return UIElementType(rawValue: enumResultAsInt)
       }
       return nil
     default:
@@ -1123,7 +1123,7 @@ private class InteractiveMediaAdsLibraryPigeonCodecWriter: FlutterStandardWriter
     } else if let value = value as? FriendlyObstructionPurpose {
       super.writeByte(135)
       super.writeValue(value.rawValue)
-    } else if let value = value as? UiElementType {
+    } else if let value = value as? UIElementType {
       super.writeByte(136)
       super.writeValue(value.rawValue)
     } else {
@@ -2833,9 +2833,9 @@ protocol PigeonApiDelegateIMAAdsRenderingSettings {
     pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
     seconds: Double) throws
   /// Specifies the list of UI elements that should be visible.
-  func setUiElements(
+  func setUIElements(
     pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
-    types: [UiElementType]?) throws
+    types: [UIElementType]?) throws
   /// Whether or not the SDK will preload ad media.
   ///
   /// Default is YES.
@@ -2972,16 +2972,16 @@ final class PigeonApiIMAAdsRenderingSettings: PigeonApiProtocolIMAAdsRenderingSe
     } else {
       setPlayAdsAfterTimeChannel.setMessageHandler(nil)
     }
-    let setUiElementsChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setUiElements",
+    let setUIElementsChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setUIElements",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      setUiElementsChannel.setMessageHandler { message, reply in
+      setUIElementsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
-        let typesArg: [UiElementType]? = nilOrValue(args[1])
+        let typesArg: [UIElementType]? = nilOrValue(args[1])
         do {
-          try api.pigeonDelegate.setUiElements(
+          try api.pigeonDelegate.setUIElements(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, types: typesArg)
           reply(wrapResult(nil))
         } catch {
@@ -2989,7 +2989,7 @@ final class PigeonApiIMAAdsRenderingSettings: PigeonApiProtocolIMAAdsRenderingSe
         }
       }
     } else {
-      setUiElementsChannel.setMessageHandler(nil)
+      setUIElementsChannel.setMessageHandler(nil)
     }
     let setEnablePreloadingChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setEnablePreloading",

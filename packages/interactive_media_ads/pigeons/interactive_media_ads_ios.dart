@@ -294,7 +294,7 @@ enum FriendlyObstructionPurpose {
 /// Different UI elements that can be customized.
 ///
 /// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Enums/IMAUiElementType.html.
-enum UiElementType {
+enum UIElementType {
   /// Ad attribution UI element.
   adAttribution,
 
@@ -548,7 +548,7 @@ abstract class IMAAdsRenderingSettings extends NSObject {
   void setPlayAdsAfterTime(double seconds);
 
   /// Specifies the list of UI elements that should be visible.
-  void setUiElements(List<UiElementType>? types);
+  void setUIElements(List<UIElementType>? types);
 
   /// Whether or not the SDK will preload ad media.
   ///

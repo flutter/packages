@@ -66,13 +66,13 @@ final class AdsRenderingSettingsTests: XCTestCase {
     XCTAssertEqual(instance.playAdsAfterTime, seconds)
   }
 
-  func testSetUiElements() {
+  func testSetUIElements() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
     let instance = IMAAdsRenderingSettings()
-    let types = [UiElementType.adAttribution]
-    try? api.pigeonDelegate.setUiElements(pigeonApi: api, pigeonInstance: instance, types: types)
+    let types = [UIElementType.adAttribution]
+    try? api.pigeonDelegate.setUIElements(pigeonApi: api, pigeonInstance: instance, types: types)
 
     XCTAssertEqual(
       instance.uiElements, [IMAUiElementType.elements_AD_ATTRIBUTION.rawValue as NSNumber])

@@ -704,7 +704,7 @@ enum FriendlyObstructionPurpose {
 /// Different UI elements that can be customized.
 ///
 /// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Enums/IMAUiElementType.html.
-enum UiElementType {
+enum UIElementType {
   /// Ad attribution UI element.
   adAttribution,
 
@@ -743,7 +743,7 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is FriendlyObstructionPurpose) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    } else if (value is UiElementType) {
+    } else if (value is UIElementType) {
       buffer.putUint8(136);
       writeValue(buffer, value.index);
     } else {
@@ -777,7 +777,7 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : FriendlyObstructionPurpose.values[value];
       case 136:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : UiElementType.values[value];
+        return value == null ? null : UIElementType.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -3168,12 +3168,12 @@ class IMAAdsRenderingSettings extends NSObject {
   }
 
   /// Specifies the list of UI elements that should be visible.
-  Future<void> setUiElements(List<UiElementType>? types) async {
+  Future<void> setUIElements(List<UIElementType>? types) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecIMAAdsRenderingSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const String pigeonVar_channelName =
-        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setUiElements';
+        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setUIElements';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,
