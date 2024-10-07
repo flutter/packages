@@ -1,3 +1,7 @@
+## 0.5.1+9
+
+* Updates Java compatibility version to 11.
+
 ## 0.5.1+8
 
 * Updates Pigeon for non-nullable collection type support.
