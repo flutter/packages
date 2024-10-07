@@ -1,3 +1,8 @@
+## 1.0.18
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 1.0.17
 
 * Updates README to include more specific context on how to use launcher activities, including

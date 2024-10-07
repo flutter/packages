@@ -1,3 +1,8 @@
+## 0.2.2+7
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 0.2.2+6
 
 * Bumps Android dependency `com.google.ads.interactivemedia.v3:interactivemedia` from `3.50.0` to

@@ -429,7 +429,7 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
   }
 
   @override
-  Future<bool> launchUrl(String url, Map<String?, String?> headers) async {
+  Future<bool> launchUrl(String url, Map<String, String> headers) async {
     passedWebViewOptions = WebViewOptions(
       enableJavaScript: false,
       enableDomStorage: false,
@@ -478,4 +478,12 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
         return false;
     }
   }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => null;
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => '';
 }

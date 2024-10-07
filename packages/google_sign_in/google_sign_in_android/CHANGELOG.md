@@ -1,6 +1,11 @@
-## 6.1.32
+## 6.1.33
 
 * Updates Pigeon for non-nullable collection type support.
+
+## 6.1.32
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
 
 ## 6.1.31
 

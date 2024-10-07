@@ -1,3 +1,7 @@
+## 0.9.4+2
+
+* Updates Pigeon for non-nullable collection type support.
+
 ## 0.9.4+1
 
 * Adds privacy manifest.
