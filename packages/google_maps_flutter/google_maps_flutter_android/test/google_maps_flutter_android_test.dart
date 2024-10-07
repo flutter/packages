@@ -411,12 +411,12 @@ void main() {
       final PlatformOffset? offset = encoded?[1] as PlatformOffset?;
       expect(offset?.dx, object2new.anchor.dx);
       expect(offset?.dy, object2new.anchor.dy);
-      expect(encoded?.getRange(2, 6).toList(), <Object?>[
+      expect(encoded?.getRange(2, 5).toList(), <Object?>[
         object2new.consumeTapEvents,
         object2new.draggable,
         object2new.flat,
-        object2new.icon.toJson(),
       ]);
+      expect((encoded?[5] as PlatformBitmap?)?.bitmap.runtimeType, GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(object2new.icon).bitmap.runtimeType);
       final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
       expect(window?.title, object2new.infoWindow.title);
       expect(window?.snippet, object2new.infoWindow.snippet);
@@ -441,12 +441,12 @@ void main() {
       final PlatformOffset? offset = encoded?[1] as PlatformOffset?;
       expect(offset?.dx, object3.anchor.dx);
       expect(offset?.dy, object3.anchor.dy);
-      expect(encoded?.getRange(2, 6).toList(), <Object?>[
+      expect(encoded?.getRange(2, 5).toList(), <Object?>[
         object3.consumeTapEvents,
         object3.draggable,
         object3.flat,
-        object3.icon.toJson(),
       ]);
+      expect((encoded?[5] as PlatformBitmap?)?.bitmap.runtimeType, GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(object3.icon).bitmap.runtimeType);
       final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
       expect(window?.title, object3.infoWindow.title);
       expect(window?.snippet, object3.infoWindow.snippet);

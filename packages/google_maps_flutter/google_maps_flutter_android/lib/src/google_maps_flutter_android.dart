@@ -869,7 +869,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformBitmap platformBitmapFromBitmapDescriptor(BitmapDescriptor bitmap) {
-    switch(bitmap.runtimeType) {
+    switch(bitmap) {
       case final DefaultMarker marker:
         return PlatformBitmap(bitmap: PlatformBitmapDefaultMarker(hue: marker.hue?.toDouble()));
       case final BytesBitmap bytes:
