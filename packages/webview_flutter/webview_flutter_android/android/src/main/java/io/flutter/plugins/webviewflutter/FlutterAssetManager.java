@@ -44,6 +44,7 @@ public abstract class FlutterAssetManager {
    *     This value may be null.
    * @throws IOException Throws an IOException in case I/O operations were interrupted.
    */
+  @NonNull
   public String[] list(@NonNull String path) throws IOException {
     return assetManager.list(path);
   }
