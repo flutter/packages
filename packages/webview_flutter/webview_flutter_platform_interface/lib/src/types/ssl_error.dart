@@ -12,7 +12,7 @@ import 'ssl_error_type.dart';
 class SslError {
   /// Creates a [SslError].
   const SslError({
-    required this.error,
+    required this.errorType,
     required this.certificate,
     required this.host,
     required this.scheme,
@@ -20,7 +20,7 @@ class SslError {
   });
 
   /// The SSL error
-  final SslErrorType? error;
+  final SslErrorType? errorType;
 
   /// The SSL certificate
   final SslCertificate certificate;
