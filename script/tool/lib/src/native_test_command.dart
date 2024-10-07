@@ -317,7 +317,7 @@ this command.
       if (!project.isConfigured()) {
         final int exitCode = await processRunner.runAndStream(
           flutterCommand,
-          <String>['build', 'apk', '--config-only'],
+          <String>['build', 'apk', '--debug', '--config-only'],
           workingDir: example.directory,
         );
         if (exitCode != 0) {

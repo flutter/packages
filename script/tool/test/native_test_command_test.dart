@@ -800,7 +800,7 @@ public class FlutterActivityTest {
           orderedEquals(<ProcessCall>[
             ProcessCall(
               getFlutterCommand(mockPlatform),
-              const <String>['build', 'apk', '--config-only'],
+              const <String>['build', 'apk', '--debug', '--config-only'],
               example.path,
             ),
             ProcessCall(
@@ -1469,12 +1469,12 @@ public class FlutterActivityTest {
         processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']), // iOS list
-          FakeProcessInfo(
-              MockProcess(), <String>['xcodebuild', 'clean', 'test']), // iOS run
+          FakeProcessInfo(MockProcess(),
+              <String>['xcodebuild', 'clean', 'test']), // iOS run
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']), // macOS list
-          FakeProcessInfo(
-              MockProcess(), <String>['xcodebuild', 'clean', 'test']), // macOS run
+          FakeProcessInfo(MockProcess(),
+              <String>['xcodebuild', 'clean', 'test']), // macOS run
         ];
 
         final List<String> output = await runCapturingPrint(runner, <String>[
