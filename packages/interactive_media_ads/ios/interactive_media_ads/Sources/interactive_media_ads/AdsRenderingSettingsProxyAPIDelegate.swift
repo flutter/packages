@@ -50,7 +50,7 @@ class AdsRenderingSettingsProxyAPIDelegate: PigeonApiDelegateIMAAdsRenderingSett
   ) throws {
     let nativeUiElementTypes: [NSNumber]? = try types?.map { type in
       switch type {
-      case UiElementType.adAttribution:
+      case .adAttribution:
         return IMAUiElementType.elements_AD_ATTRIBUTION.rawValue as NSNumber
       case .countdown:
         return IMAUiElementType.elements_COUNTDOWN.rawValue as NSNumber
