@@ -86,11 +86,6 @@ public class ConvertTest {
   }
 
   @Test
-  public void trivial() {
-    Assert.assertEquals(1.0, 1.1, 0.5);
-  }
-
-  @Test
   public void ConvertPointsFromPigeonConvertsThePointsWithFullPrecision() {
     double latitude = 43.03725568057;
     double longitude = -87.90466904649;
