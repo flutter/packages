@@ -198,7 +198,7 @@ class SKErrorMessage {
 
   String domain;
 
-  Map<String?, Object?>? userInfo;
+  Map<String, Object>? userInfo;
 
   Object encode() {
     return <Object?>[
@@ -213,7 +213,7 @@ class SKErrorMessage {
     return SKErrorMessage(
       code: result[0]! as int,
       domain: result[1]! as String,
-      userInfo: (result[2] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
+      userInfo: (result[2] as Map<Object?, Object?>?)?.cast<String, Object>(),
     );
   }
 }
@@ -291,9 +291,9 @@ class SKProductsResponseMessage {
     this.invalidProductIdentifiers,
   });
 
-  List<SKProductMessage?>? products;
+  List<SKProductMessage>? products;
 
-  List<String?>? invalidProductIdentifiers;
+  List<String>? invalidProductIdentifiers;
 
   Object encode() {
     return <Object?>[
@@ -305,8 +305,8 @@ class SKProductsResponseMessage {
   static SKProductsResponseMessage decode(Object result) {
     result as List<Object?>;
     return SKProductsResponseMessage(
-      products: (result[0] as List<Object?>?)?.cast<SKProductMessage?>(),
-      invalidProductIdentifiers: (result[1] as List<Object?>?)?.cast<String?>(),
+      products: (result[0] as List<Object?>?)?.cast<SKProductMessage>(),
+      invalidProductIdentifiers: (result[1] as List<Object?>?)?.cast<String>(),
     );
   }
 }
@@ -340,7 +340,7 @@ class SKProductMessage {
 
   SKProductDiscountMessage? introductoryPrice;
 
-  List<SKProductDiscountMessage?>? discounts;
+  List<SKProductDiscountMessage>? discounts;
 
   Object encode() {
     return <Object?>[
@@ -368,7 +368,7 @@ class SKProductMessage {
       subscriptionPeriod: result[6] as SKProductSubscriptionPeriodMessage?,
       introductoryPrice: result[7] as SKProductDiscountMessage?,
       discounts:
-          (result[8] as List<Object?>?)?.cast<SKProductDiscountMessage?>(),
+          (result[8] as List<Object?>?)?.cast<SKProductDiscountMessage>(),
     );
   }
 }

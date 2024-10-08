@@ -91,7 +91,7 @@ class SKErrorMessage {
 
   final int code;
   final String domain;
-  final Map<String?, Object?>? userInfo;
+  final Map<String, Object>? userInfo;
 }
 
 class SKPaymentDiscountMessage {
@@ -123,8 +123,8 @@ class SKStorefrontMessage {
 class SKProductsResponseMessage {
   const SKProductsResponseMessage(
       {required this.products, required this.invalidProductIdentifiers});
-  final List<SKProductMessage?>? products;
-  final List<String?>? invalidProductIdentifiers;
+  final List<SKProductMessage>? products;
+  final List<String>? invalidProductIdentifiers;
 }
 
 class SKProductMessage {
@@ -150,7 +150,7 @@ class SKProductMessage {
   final String price;
   final SKProductSubscriptionPeriodMessage? subscriptionPeriod;
   final SKProductDiscountMessage? introductoryPrice;
-  final List<SKProductDiscountMessage?>? discounts;
+  final List<SKProductDiscountMessage>? discounts;
 }
 
 class SKPriceLocaleMessage {
