@@ -74,7 +74,7 @@ platform_interface.SslError _toSslError(SslErrorData data) {
       validNotBeforeDate: data.certificateData.validNotBeforeIso8601Date == null
           ? DateTime.parse(data.certificateData.validNotBeforeIso8601Date!)
           : null,
-      x509CertificatePem: data.certificateData.x509CertificatePem,
+      x509CertificateDer: data.certificateData.x509CertificateDer,
     ),
     host: uri.host,
     scheme: uri.scheme,

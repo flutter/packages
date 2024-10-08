@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 /// Defines the parameters of a SSL certificate
 @immutable
@@ -9,7 +9,7 @@ class SslCertificate {
     required this.issuedTo,
     required this.validNotAfterDate,
     required this.validNotBeforeDate,
-    required this.x509CertificatePem,
+    required this.x509CertificateDer,
   });
 
   /// The identity that the certificate is issued by
@@ -24,6 +24,6 @@ class SslCertificate {
   /// The date that must be passed for the certificate to be valid
   final DateTime? validNotBeforeDate;
 
-  /// The original x509 certificate PEM
-  final String? x509CertificatePem;
+  /// The original x509 certificate DER
+  final Uint8List? x509CertificateDer;
 }

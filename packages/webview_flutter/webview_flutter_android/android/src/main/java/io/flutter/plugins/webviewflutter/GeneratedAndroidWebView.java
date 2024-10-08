@@ -704,15 +704,15 @@ public class GeneratedAndroidWebView {
       this.validNotBeforeIso8601Date = setterArg;
     }
 
-    /** The x509Certificate PEM associated with the SSL error */
-    private @Nullable String x509CertificatePem;
+    /** The x509Certificate DER associated with the SSL error */
+    private @Nullable byte[] x509CertificateDer;
 
-    public @Nullable String getX509CertificatePem() {
-      return x509CertificatePem;
+    public @Nullable byte[] getX509CertificateDer() {
+      return x509CertificateDer;
     }
 
-    public void setX509CertificatePem(@Nullable String setterArg) {
-      this.x509CertificatePem = setterArg;
+    public void setX509CertificateDer(@Nullable byte[] setterArg) {
+      this.x509CertificateDer = setterArg;
     }
 
     public static final class Builder {
@@ -745,10 +745,10 @@ public class GeneratedAndroidWebView {
         return this;
       }
 
-      private @Nullable String x509CertificatePem;
+      private @Nullable byte[] x509CertificateDer;
 
-      public @NonNull Builder setX509CertificatePem(@Nullable String setterArg) {
-        this.x509CertificatePem = setterArg;
+      public @NonNull Builder setX509CertificateDer(@Nullable byte[] setterArg) {
+        this.x509CertificateDer = setterArg;
         return this;
       }
 
@@ -758,7 +758,7 @@ public class GeneratedAndroidWebView {
         pigeonReturn.setIssuedTo(issuedTo);
         pigeonReturn.setValidNotAfterIso8601Date(validNotAfterIso8601Date);
         pigeonReturn.setValidNotBeforeIso8601Date(validNotBeforeIso8601Date);
-        pigeonReturn.setX509CertificatePem(x509CertificatePem);
+        pigeonReturn.setX509CertificateDer(x509CertificateDer);
         return pigeonReturn;
       }
     }
@@ -770,7 +770,7 @@ public class GeneratedAndroidWebView {
       toListResult.add(issuedTo);
       toListResult.add(validNotAfterIso8601Date);
       toListResult.add(validNotBeforeIso8601Date);
-      toListResult.add(x509CertificatePem);
+      toListResult.add(x509CertificateDer);
       return toListResult;
     }
 
@@ -784,8 +784,8 @@ public class GeneratedAndroidWebView {
       pigeonResult.setValidNotAfterIso8601Date((String) validNotAfterIso8601Date);
       Object validNotBeforeIso8601Date = list.get(3);
       pigeonResult.setValidNotBeforeIso8601Date((String) validNotBeforeIso8601Date);
-      Object x509CertificatePem = list.get(4);
-      pigeonResult.setX509CertificatePem((String) x509CertificatePem);
+      Object x509CertificateDer = list.get(4);
+      pigeonResult.setX509CertificateDer((byte[]) x509CertificateDer);
       return pigeonResult;
     }
   }

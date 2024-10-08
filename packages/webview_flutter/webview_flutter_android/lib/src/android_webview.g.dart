@@ -242,7 +242,7 @@ class SslCertificateData {
     this.issuedTo,
     this.validNotAfterIso8601Date,
     this.validNotBeforeIso8601Date,
-    this.x509CertificatePem,
+    this.x509CertificateDer,
   });
 
   /// The identity that the certificate is issued by
@@ -257,8 +257,8 @@ class SslCertificateData {
   /// The date that must be passed for the certificate to be valid
   String? validNotBeforeIso8601Date;
 
-  /// The x509Certificate PEM associated with the SSL error
-  String? x509CertificatePem;
+  /// The x509Certificate DER associated with the SSL error
+  Uint8List? x509CertificateDer;
 
   Object encode() {
     return <Object?>[
@@ -266,7 +266,7 @@ class SslCertificateData {
       issuedTo,
       validNotAfterIso8601Date,
       validNotBeforeIso8601Date,
-      x509CertificatePem,
+      x509CertificateDer,
     ];
   }
 
@@ -277,7 +277,7 @@ class SslCertificateData {
       issuedTo: result[1] as String?,
       validNotAfterIso8601Date: result[2] as String?,
       validNotBeforeIso8601Date: result[3] as String?,
-      x509CertificatePem: result[4] as String?,
+      x509CertificateDer: result[4] as Uint8List?,
     );
   }
 }

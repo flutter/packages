@@ -172,7 +172,7 @@ class SslCertificateData {
     required this.issuedTo,
     required this.validNotAfterIso8601Date,
     required this.validNotBeforeIso8601Date,
-    required this.x509CertificatePem,
+    required this.x509CertificateDer,
   });
 
   /// The identity that the certificate is issued by
@@ -187,8 +187,8 @@ class SslCertificateData {
   /// The date that must be passed for the certificate to be valid
   final String? validNotBeforeIso8601Date;
 
-  /// The x509Certificate PEM associated with the SSL error
-  final String? x509CertificatePem;
+  /// The x509Certificate DER associated with the SSL error
+  final Uint8List? x509CertificateDer;
 }
 
 /// Defines the parameters of a SSL error

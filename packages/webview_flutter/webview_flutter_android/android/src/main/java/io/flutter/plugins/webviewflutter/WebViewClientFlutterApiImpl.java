@@ -24,7 +24,6 @@ import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewClientFl
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
@@ -106,9 +105,11 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
       if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
           X509Certificate x509Certificate = error.getCertificate().getX509Certificate();
           if (x509Certificate != null) {
-              String pem = getPem(x509Certificate);
-              if (pem != null) {
-                  sslCertificateData.setX509CertificatePem(pem);
+              try {
+                  byte[] encoded = x509Certificate.getEncoded();
+                  sslCertificateData.setX509CertificateDer(encoded);
+              } catch (CertificateEncodingException e) {
+                  //Do nothing
               }
           }
       }
@@ -138,30 +139,6 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
             return GeneratedAndroidWebView.SslErrorTypeData.INVALID;
     }
   }
-
-    static String getPem(X509Certificate x509Certificate) {
-        final String BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
-        final String END_CERT = "-----END CERTIFICATE-----";
-        String LINE_SEPARATOR = System.getProperty("line.separator");
-
-        final Base64.Encoder encoder;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            assert(LINE_SEPARATOR != null);
-            encoder = Base64.getMimeEncoder(64, LINE_SEPARATOR.getBytes());
-        } else {
-            return null;
-        }
-
-        final byte[] rawText;
-        try {
-            rawText = x509Certificate.getEncoded();
-        } catch (CertificateEncodingException e) {
-            return null;
-        }
-
-        final String encodedText = new String(encoder.encode(rawText));
-        return BEGIN_CERT + LINE_SEPARATOR + encodedText + LINE_SEPARATOR + END_CERT;
-    }
 
   /**
    * Creates a Flutter api that sends messages to Dart.
