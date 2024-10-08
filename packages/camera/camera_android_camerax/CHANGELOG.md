@@ -2,7 +2,7 @@
 
 * Removes logic to explicitly remove `READ_EXTERNAL_STORAGE` permission that may be implied
   from `WRITE_EXTERNAL_STORAGE` and updates the README to tell users how to manually
-  remove it from the app's merged manifest.
+  remove it from their app's merged manifest if they wish.
 
 ## 0.6.9+2
 
