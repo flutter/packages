@@ -5,6 +5,8 @@
 package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -198,6 +200,16 @@ public final class VideoPlayerTest {
     verify(mockExoPlayer).setPlaybackParameters(new PlaybackParameters(2.5f));
 
     videoPlayer.dispose();
+  }
+
+  @Test
+  public void onDisposeSurfaceProducerCallbackIsDisconnected() {
+    // Regression test for https://github.com/flutter/flutter/issues/156158.
+    VideoPlayer videoPlayer = createVideoPlayer();
+    verify(mockProducer).setCallback(any());
+
+    videoPlayer.dispose();
+    verify(mockProducer).setCallback(null);
   }
 
   @Test

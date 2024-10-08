@@ -162,5 +162,9 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
   void dispose() {
     exoPlayer.release();
     surfaceProducer.release();
+
+    // TODO(matanlurey): Remove when embedder no longer calls-back once released.
+    // https://github.com/flutter/flutter/issues/156434.
+    surfaceProducer.setCallback(null);
   }
 }
