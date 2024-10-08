@@ -30,8 +30,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@implementation SKPaymentTransactionStateMessageBox
-- (instancetype)initWithValue:(SKPaymentTransactionStateMessage)value {
+@implementation FIASKPaymentTransactionStateMessageBox
+- (instancetype)initWithValue:(FIASKPaymentTransactionStateMessage)value {
   self = [super init];
   if (self) {
     _value = value;
@@ -40,8 +40,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation SKProductDiscountTypeMessageBox
-- (instancetype)initWithValue:(SKProductDiscountTypeMessage)value {
+@implementation FIASKProductDiscountTypeMessageBox
+- (instancetype)initWithValue:(FIASKProductDiscountTypeMessage)value {
   self = [super init];
   if (self) {
     _value = value;
@@ -50,8 +50,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation SKProductDiscountPaymentModeMessageBox
-- (instancetype)initWithValue:(SKProductDiscountPaymentModeMessage)value {
+@implementation FIASKProductDiscountPaymentModeMessageBox
+- (instancetype)initWithValue:(FIASKProductDiscountPaymentModeMessage)value {
   self = [super init];
   if (self) {
     _value = value;
@@ -60,8 +60,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation SKSubscriptionPeriodUnitMessageBox
-- (instancetype)initWithValue:(SKSubscriptionPeriodUnitMessage)value {
+@implementation FIASKSubscriptionPeriodUnitMessageBox
+- (instancetype)initWithValue:(FIASKSubscriptionPeriodUnitMessage)value {
   self = [super init];
   if (self) {
     _value = value;
@@ -70,74 +70,74 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@interface SKPaymentTransactionMessage ()
-+ (SKPaymentTransactionMessage *)fromList:(NSArray<id> *)list;
-+ (nullable SKPaymentTransactionMessage *)nullableFromList:(NSArray<id> *)list;
+@interface FIASKPaymentTransactionMessage ()
++ (FIASKPaymentTransactionMessage *)fromList:(NSArray<id> *)list;
++ (nullable FIASKPaymentTransactionMessage *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
-@interface SKPaymentMessage ()
-+ (SKPaymentMessage *)fromList:(NSArray<id> *)list;
-+ (nullable SKPaymentMessage *)nullableFromList:(NSArray<id> *)list;
+@interface FIASKPaymentMessage ()
++ (FIASKPaymentMessage *)fromList:(NSArray<id> *)list;
++ (nullable FIASKPaymentMessage *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
-@interface SKErrorMessage ()
-+ (SKErrorMessage *)fromList:(NSArray<id> *)list;
-+ (nullable SKErrorMessage *)nullableFromList:(NSArray<id> *)list;
+@interface FIASKErrorMessage ()
++ (FIASKErrorMessage *)fromList:(NSArray<id> *)list;
++ (nullable FIASKErrorMessage *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
-@interface SKPaymentDiscountMessage ()
-+ (SKPaymentDiscountMessage *)fromList:(NSArray<id> *)list;
-+ (nullable SKPaymentDiscountMessage *)nullableFromList:(NSArray<id> *)list;
+@interface FIASKPaymentDiscountMessage ()
++ (FIASKPaymentDiscountMessage *)fromList:(NSArray<id> *)list;
++ (nullable FIASKPaymentDiscountMessage *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
-@interface SKStorefrontMessage ()
-+ (SKStorefrontMessage *)fromList:(NSArray<id> *)list;
-+ (nullable SKStorefrontMessage *)nullableFromList:(NSArray<id> *)list;
+@interface FIASKStorefrontMessage ()
++ (FIASKStorefrontMessage *)fromList:(NSArray<id> *)list;
++ (nullable FIASKStorefrontMessage *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
-@interface SKProductsResponseMessage ()
-+ (SKProductsResponseMessage *)fromList:(NSArray<id> *)list;
-+ (nullable SKProductsResponseMessage *)nullableFromList:(NSArray<id> *)list;
+@interface FIASKProductsResponseMessage ()
++ (FIASKProductsResponseMessage *)fromList:(NSArray<id> *)list;
++ (nullable FIASKProductsResponseMessage *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
-@interface SKProductMessage ()
-+ (SKProductMessage *)fromList:(NSArray<id> *)list;
-+ (nullable SKProductMessage *)nullableFromList:(NSArray<id> *)list;
+@interface FIASKProductMessage ()
++ (FIASKProductMessage *)fromList:(NSArray<id> *)list;
++ (nullable FIASKProductMessage *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
-@interface SKPriceLocaleMessage ()
-+ (SKPriceLocaleMessage *)fromList:(NSArray<id> *)list;
-+ (nullable SKPriceLocaleMessage *)nullableFromList:(NSArray<id> *)list;
+@interface FIASKPriceLocaleMessage ()
++ (FIASKPriceLocaleMessage *)fromList:(NSArray<id> *)list;
++ (nullable FIASKPriceLocaleMessage *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
-@interface SKProductDiscountMessage ()
-+ (SKProductDiscountMessage *)fromList:(NSArray<id> *)list;
-+ (nullable SKProductDiscountMessage *)nullableFromList:(NSArray<id> *)list;
+@interface FIASKProductDiscountMessage ()
++ (FIASKProductDiscountMessage *)fromList:(NSArray<id> *)list;
++ (nullable FIASKProductDiscountMessage *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
-@interface SKProductSubscriptionPeriodMessage ()
-+ (SKProductSubscriptionPeriodMessage *)fromList:(NSArray<id> *)list;
-+ (nullable SKProductSubscriptionPeriodMessage *)nullableFromList:(NSArray<id> *)list;
+@interface FIASKProductSubscriptionPeriodMessage ()
++ (FIASKProductSubscriptionPeriodMessage *)fromList:(NSArray<id> *)list;
++ (nullable FIASKProductSubscriptionPeriodMessage *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
-@implementation SKPaymentTransactionMessage
-+ (instancetype)makeWithPayment:(SKPaymentMessage *)payment
-               transactionState:(SKPaymentTransactionStateMessage)transactionState
-            originalTransaction:(nullable SKPaymentTransactionMessage *)originalTransaction
+@implementation FIASKPaymentTransactionMessage
++ (instancetype)makeWithPayment:(FIASKPaymentMessage *)payment
+               transactionState:(FIASKPaymentTransactionStateMessage)transactionState
+            originalTransaction:(nullable FIASKPaymentTransactionMessage *)originalTransaction
            transactionTimeStamp:(nullable NSNumber *)transactionTimeStamp
           transactionIdentifier:(nullable NSString *)transactionIdentifier
-                          error:(nullable SKErrorMessage *)error {
-  SKPaymentTransactionMessage *pigeonResult = [[SKPaymentTransactionMessage alloc] init];
+                          error:(nullable FIASKErrorMessage *)error {
+  FIASKPaymentTransactionMessage *pigeonResult = [[FIASKPaymentTransactionMessage alloc] init];
   pigeonResult.payment = payment;
   pigeonResult.transactionState = transactionState;
   pigeonResult.originalTransaction = originalTransaction;
@@ -146,25 +146,25 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.error = error;
   return pigeonResult;
 }
-+ (SKPaymentTransactionMessage *)fromList:(NSArray<id> *)list {
-  SKPaymentTransactionMessage *pigeonResult = [[SKPaymentTransactionMessage alloc] init];
++ (FIASKPaymentTransactionMessage *)fromList:(NSArray<id> *)list {
+  FIASKPaymentTransactionMessage *pigeonResult = [[FIASKPaymentTransactionMessage alloc] init];
   pigeonResult.payment = GetNullableObjectAtIndex(list, 0);
-  SKPaymentTransactionStateMessageBox *boxedSKPaymentTransactionStateMessage =
+  FIASKPaymentTransactionStateMessageBox *boxedFIASKPaymentTransactionStateMessage =
       GetNullableObjectAtIndex(list, 1);
-  pigeonResult.transactionState = boxedSKPaymentTransactionStateMessage.value;
+  pigeonResult.transactionState = boxedFIASKPaymentTransactionStateMessage.value;
   pigeonResult.originalTransaction = GetNullableObjectAtIndex(list, 2);
   pigeonResult.transactionTimeStamp = GetNullableObjectAtIndex(list, 3);
   pigeonResult.transactionIdentifier = GetNullableObjectAtIndex(list, 4);
   pigeonResult.error = GetNullableObjectAtIndex(list, 5);
   return pigeonResult;
 }
-+ (nullable SKPaymentTransactionMessage *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [SKPaymentTransactionMessage fromList:list] : nil;
++ (nullable FIASKPaymentTransactionMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FIASKPaymentTransactionMessage fromList:list] : nil;
 }
 - (NSArray<id> *)toList {
   return @[
     self.payment ?: [NSNull null],
-    [[SKPaymentTransactionStateMessageBox alloc] initWithValue:self.transactionState],
+    [[FIASKPaymentTransactionStateMessageBox alloc] initWithValue:self.transactionState],
     self.originalTransaction ?: [NSNull null],
     self.transactionTimeStamp ?: [NSNull null],
     self.transactionIdentifier ?: [NSNull null],
@@ -173,14 +173,14 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation SKPaymentMessage
+@implementation FIASKPaymentMessage
 + (instancetype)makeWithProductIdentifier:(NSString *)productIdentifier
                       applicationUsername:(nullable NSString *)applicationUsername
                               requestData:(nullable NSString *)requestData
                                  quantity:(NSInteger)quantity
                simulatesAskToBuyInSandbox:(BOOL)simulatesAskToBuyInSandbox
-                          paymentDiscount:(nullable SKPaymentDiscountMessage *)paymentDiscount {
-  SKPaymentMessage *pigeonResult = [[SKPaymentMessage alloc] init];
+                          paymentDiscount:(nullable FIASKPaymentDiscountMessage *)paymentDiscount {
+  FIASKPaymentMessage *pigeonResult = [[FIASKPaymentMessage alloc] init];
   pigeonResult.productIdentifier = productIdentifier;
   pigeonResult.applicationUsername = applicationUsername;
   pigeonResult.requestData = requestData;
@@ -189,8 +189,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.paymentDiscount = paymentDiscount;
   return pigeonResult;
 }
-+ (SKPaymentMessage *)fromList:(NSArray<id> *)list {
-  SKPaymentMessage *pigeonResult = [[SKPaymentMessage alloc] init];
++ (FIASKPaymentMessage *)fromList:(NSArray<id> *)list {
+  FIASKPaymentMessage *pigeonResult = [[FIASKPaymentMessage alloc] init];
   pigeonResult.productIdentifier = GetNullableObjectAtIndex(list, 0);
   pigeonResult.applicationUsername = GetNullableObjectAtIndex(list, 1);
   pigeonResult.requestData = GetNullableObjectAtIndex(list, 2);
@@ -199,8 +199,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.paymentDiscount = GetNullableObjectAtIndex(list, 5);
   return pigeonResult;
 }
-+ (nullable SKPaymentMessage *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [SKPaymentMessage fromList:list] : nil;
++ (nullable FIASKPaymentMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FIASKPaymentMessage fromList:list] : nil;
 }
 - (NSArray<id> *)toList {
   return @[
@@ -214,25 +214,25 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation SKErrorMessage
+@implementation FIASKErrorMessage
 + (instancetype)makeWithCode:(NSInteger)code
                       domain:(NSString *)domain
                     userInfo:(nullable NSDictionary<NSString *, id> *)userInfo {
-  SKErrorMessage *pigeonResult = [[SKErrorMessage alloc] init];
+  FIASKErrorMessage *pigeonResult = [[FIASKErrorMessage alloc] init];
   pigeonResult.code = code;
   pigeonResult.domain = domain;
   pigeonResult.userInfo = userInfo;
   return pigeonResult;
 }
-+ (SKErrorMessage *)fromList:(NSArray<id> *)list {
-  SKErrorMessage *pigeonResult = [[SKErrorMessage alloc] init];
++ (FIASKErrorMessage *)fromList:(NSArray<id> *)list {
+  FIASKErrorMessage *pigeonResult = [[FIASKErrorMessage alloc] init];
   pigeonResult.code = [GetNullableObjectAtIndex(list, 0) integerValue];
   pigeonResult.domain = GetNullableObjectAtIndex(list, 1);
   pigeonResult.userInfo = GetNullableObjectAtIndex(list, 2);
   return pigeonResult;
 }
-+ (nullable SKErrorMessage *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [SKErrorMessage fromList:list] : nil;
++ (nullable FIASKErrorMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FIASKErrorMessage fromList:list] : nil;
 }
 - (NSArray<id> *)toList {
   return @[
@@ -243,13 +243,13 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation SKPaymentDiscountMessage
+@implementation FIASKPaymentDiscountMessage
 + (instancetype)makeWithIdentifier:(NSString *)identifier
                      keyIdentifier:(NSString *)keyIdentifier
                              nonce:(NSString *)nonce
                          signature:(NSString *)signature
                          timestamp:(NSInteger)timestamp {
-  SKPaymentDiscountMessage *pigeonResult = [[SKPaymentDiscountMessage alloc] init];
+  FIASKPaymentDiscountMessage *pigeonResult = [[FIASKPaymentDiscountMessage alloc] init];
   pigeonResult.identifier = identifier;
   pigeonResult.keyIdentifier = keyIdentifier;
   pigeonResult.nonce = nonce;
@@ -257,8 +257,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.timestamp = timestamp;
   return pigeonResult;
 }
-+ (SKPaymentDiscountMessage *)fromList:(NSArray<id> *)list {
-  SKPaymentDiscountMessage *pigeonResult = [[SKPaymentDiscountMessage alloc] init];
++ (FIASKPaymentDiscountMessage *)fromList:(NSArray<id> *)list {
+  FIASKPaymentDiscountMessage *pigeonResult = [[FIASKPaymentDiscountMessage alloc] init];
   pigeonResult.identifier = GetNullableObjectAtIndex(list, 0);
   pigeonResult.keyIdentifier = GetNullableObjectAtIndex(list, 1);
   pigeonResult.nonce = GetNullableObjectAtIndex(list, 2);
@@ -266,8 +266,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.timestamp = [GetNullableObjectAtIndex(list, 4) integerValue];
   return pigeonResult;
 }
-+ (nullable SKPaymentDiscountMessage *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [SKPaymentDiscountMessage fromList:list] : nil;
++ (nullable FIASKPaymentDiscountMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FIASKPaymentDiscountMessage fromList:list] : nil;
 }
 - (NSArray<id> *)toList {
   return @[
@@ -280,21 +280,21 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation SKStorefrontMessage
+@implementation FIASKStorefrontMessage
 + (instancetype)makeWithCountryCode:(NSString *)countryCode identifier:(NSString *)identifier {
-  SKStorefrontMessage *pigeonResult = [[SKStorefrontMessage alloc] init];
+  FIASKStorefrontMessage *pigeonResult = [[FIASKStorefrontMessage alloc] init];
   pigeonResult.countryCode = countryCode;
   pigeonResult.identifier = identifier;
   return pigeonResult;
 }
-+ (SKStorefrontMessage *)fromList:(NSArray<id> *)list {
-  SKStorefrontMessage *pigeonResult = [[SKStorefrontMessage alloc] init];
++ (FIASKStorefrontMessage *)fromList:(NSArray<id> *)list {
+  FIASKStorefrontMessage *pigeonResult = [[FIASKStorefrontMessage alloc] init];
   pigeonResult.countryCode = GetNullableObjectAtIndex(list, 0);
   pigeonResult.identifier = GetNullableObjectAtIndex(list, 1);
   return pigeonResult;
 }
-+ (nullable SKStorefrontMessage *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [SKStorefrontMessage fromList:list] : nil;
++ (nullable FIASKStorefrontMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FIASKStorefrontMessage fromList:list] : nil;
 }
 - (NSArray<id> *)toList {
   return @[
@@ -304,22 +304,22 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation SKProductsResponseMessage
-+ (instancetype)makeWithProducts:(nullable NSArray<SKProductMessage *> *)products
+@implementation FIASKProductsResponseMessage
++ (instancetype)makeWithProducts:(nullable NSArray<FIASKProductMessage *> *)products
        invalidProductIdentifiers:(nullable NSArray<NSString *> *)invalidProductIdentifiers {
-  SKProductsResponseMessage *pigeonResult = [[SKProductsResponseMessage alloc] init];
+  FIASKProductsResponseMessage *pigeonResult = [[FIASKProductsResponseMessage alloc] init];
   pigeonResult.products = products;
   pigeonResult.invalidProductIdentifiers = invalidProductIdentifiers;
   return pigeonResult;
 }
-+ (SKProductsResponseMessage *)fromList:(NSArray<id> *)list {
-  SKProductsResponseMessage *pigeonResult = [[SKProductsResponseMessage alloc] init];
++ (FIASKProductsResponseMessage *)fromList:(NSArray<id> *)list {
+  FIASKProductsResponseMessage *pigeonResult = [[FIASKProductsResponseMessage alloc] init];
   pigeonResult.products = GetNullableObjectAtIndex(list, 0);
   pigeonResult.invalidProductIdentifiers = GetNullableObjectAtIndex(list, 1);
   return pigeonResult;
 }
-+ (nullable SKProductsResponseMessage *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [SKProductsResponseMessage fromList:list] : nil;
++ (nullable FIASKProductsResponseMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FIASKProductsResponseMessage fromList:list] : nil;
 }
 - (NSArray<id> *)toList {
   return @[
@@ -329,18 +329,18 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation SKProductMessage
+@implementation FIASKProductMessage
 + (instancetype)
       makeWithProductIdentifier:(NSString *)productIdentifier
                  localizedTitle:(NSString *)localizedTitle
            localizedDescription:(nullable NSString *)localizedDescription
-                    priceLocale:(SKPriceLocaleMessage *)priceLocale
+                    priceLocale:(FIASKPriceLocaleMessage *)priceLocale
     subscriptionGroupIdentifier:(nullable NSString *)subscriptionGroupIdentifier
                           price:(NSString *)price
-             subscriptionPeriod:(nullable SKProductSubscriptionPeriodMessage *)subscriptionPeriod
-              introductoryPrice:(nullable SKProductDiscountMessage *)introductoryPrice
-                      discounts:(nullable NSArray<SKProductDiscountMessage *> *)discounts {
-  SKProductMessage *pigeonResult = [[SKProductMessage alloc] init];
+             subscriptionPeriod:(nullable FIASKProductSubscriptionPeriodMessage *)subscriptionPeriod
+              introductoryPrice:(nullable FIASKProductDiscountMessage *)introductoryPrice
+                      discounts:(nullable NSArray<FIASKProductDiscountMessage *> *)discounts {
+  FIASKProductMessage *pigeonResult = [[FIASKProductMessage alloc] init];
   pigeonResult.productIdentifier = productIdentifier;
   pigeonResult.localizedTitle = localizedTitle;
   pigeonResult.localizedDescription = localizedDescription;
@@ -352,8 +352,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.discounts = discounts;
   return pigeonResult;
 }
-+ (SKProductMessage *)fromList:(NSArray<id> *)list {
-  SKProductMessage *pigeonResult = [[SKProductMessage alloc] init];
++ (FIASKProductMessage *)fromList:(NSArray<id> *)list {
+  FIASKProductMessage *pigeonResult = [[FIASKProductMessage alloc] init];
   pigeonResult.productIdentifier = GetNullableObjectAtIndex(list, 0);
   pigeonResult.localizedTitle = GetNullableObjectAtIndex(list, 1);
   pigeonResult.localizedDescription = GetNullableObjectAtIndex(list, 2);
@@ -365,8 +365,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.discounts = GetNullableObjectAtIndex(list, 8);
   return pigeonResult;
 }
-+ (nullable SKProductMessage *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [SKProductMessage fromList:list] : nil;
++ (nullable FIASKProductMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FIASKProductMessage fromList:list] : nil;
 }
 - (NSArray<id> *)toList {
   return @[
@@ -383,25 +383,25 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation SKPriceLocaleMessage
+@implementation FIASKPriceLocaleMessage
 + (instancetype)makeWithCurrencySymbol:(NSString *)currencySymbol
                           currencyCode:(NSString *)currencyCode
                            countryCode:(NSString *)countryCode {
-  SKPriceLocaleMessage *pigeonResult = [[SKPriceLocaleMessage alloc] init];
+  FIASKPriceLocaleMessage *pigeonResult = [[FIASKPriceLocaleMessage alloc] init];
   pigeonResult.currencySymbol = currencySymbol;
   pigeonResult.currencyCode = currencyCode;
   pigeonResult.countryCode = countryCode;
   return pigeonResult;
 }
-+ (SKPriceLocaleMessage *)fromList:(NSArray<id> *)list {
-  SKPriceLocaleMessage *pigeonResult = [[SKPriceLocaleMessage alloc] init];
++ (FIASKPriceLocaleMessage *)fromList:(NSArray<id> *)list {
+  FIASKPriceLocaleMessage *pigeonResult = [[FIASKPriceLocaleMessage alloc] init];
   pigeonResult.currencySymbol = GetNullableObjectAtIndex(list, 0);
   pigeonResult.currencyCode = GetNullableObjectAtIndex(list, 1);
   pigeonResult.countryCode = GetNullableObjectAtIndex(list, 2);
   return pigeonResult;
 }
-+ (nullable SKPriceLocaleMessage *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [SKPriceLocaleMessage fromList:list] : nil;
++ (nullable FIASKPriceLocaleMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FIASKPriceLocaleMessage fromList:list] : nil;
 }
 - (NSArray<id> *)toList {
   return @[
@@ -412,15 +412,15 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation SKProductDiscountMessage
+@implementation FIASKProductDiscountMessage
 + (instancetype)makeWithPrice:(NSString *)price
-                  priceLocale:(SKPriceLocaleMessage *)priceLocale
+                  priceLocale:(FIASKPriceLocaleMessage *)priceLocale
               numberOfPeriods:(NSInteger)numberOfPeriods
-                  paymentMode:(SKProductDiscountPaymentModeMessage)paymentMode
-           subscriptionPeriod:(SKProductSubscriptionPeriodMessage *)subscriptionPeriod
+                  paymentMode:(FIASKProductDiscountPaymentModeMessage)paymentMode
+           subscriptionPeriod:(FIASKProductSubscriptionPeriodMessage *)subscriptionPeriod
                    identifier:(nullable NSString *)identifier
-                         type:(SKProductDiscountTypeMessage)type {
-  SKProductDiscountMessage *pigeonResult = [[SKProductDiscountMessage alloc] init];
+                         type:(FIASKProductDiscountTypeMessage)type {
+  FIASKProductDiscountMessage *pigeonResult = [[FIASKProductDiscountMessage alloc] init];
   pigeonResult.price = price;
   pigeonResult.priceLocale = priceLocale;
   pigeonResult.numberOfPeriods = numberOfPeriods;
@@ -430,169 +430,170 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.type = type;
   return pigeonResult;
 }
-+ (SKProductDiscountMessage *)fromList:(NSArray<id> *)list {
-  SKProductDiscountMessage *pigeonResult = [[SKProductDiscountMessage alloc] init];
++ (FIASKProductDiscountMessage *)fromList:(NSArray<id> *)list {
+  FIASKProductDiscountMessage *pigeonResult = [[FIASKProductDiscountMessage alloc] init];
   pigeonResult.price = GetNullableObjectAtIndex(list, 0);
   pigeonResult.priceLocale = GetNullableObjectAtIndex(list, 1);
   pigeonResult.numberOfPeriods = [GetNullableObjectAtIndex(list, 2) integerValue];
-  SKProductDiscountPaymentModeMessageBox *boxedSKProductDiscountPaymentModeMessage =
+  FIASKProductDiscountPaymentModeMessageBox *boxedFIASKProductDiscountPaymentModeMessage =
       GetNullableObjectAtIndex(list, 3);
-  pigeonResult.paymentMode = boxedSKProductDiscountPaymentModeMessage.value;
+  pigeonResult.paymentMode = boxedFIASKProductDiscountPaymentModeMessage.value;
   pigeonResult.subscriptionPeriod = GetNullableObjectAtIndex(list, 4);
   pigeonResult.identifier = GetNullableObjectAtIndex(list, 5);
-  SKProductDiscountTypeMessageBox *boxedSKProductDiscountTypeMessage =
+  FIASKProductDiscountTypeMessageBox *boxedFIASKProductDiscountTypeMessage =
       GetNullableObjectAtIndex(list, 6);
-  pigeonResult.type = boxedSKProductDiscountTypeMessage.value;
+  pigeonResult.type = boxedFIASKProductDiscountTypeMessage.value;
   return pigeonResult;
 }
-+ (nullable SKProductDiscountMessage *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [SKProductDiscountMessage fromList:list] : nil;
++ (nullable FIASKProductDiscountMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FIASKProductDiscountMessage fromList:list] : nil;
 }
 - (NSArray<id> *)toList {
   return @[
     self.price ?: [NSNull null],
     self.priceLocale ?: [NSNull null],
     @(self.numberOfPeriods),
-    [[SKProductDiscountPaymentModeMessageBox alloc] initWithValue:self.paymentMode],
+    [[FIASKProductDiscountPaymentModeMessageBox alloc] initWithValue:self.paymentMode],
     self.subscriptionPeriod ?: [NSNull null],
     self.identifier ?: [NSNull null],
-    [[SKProductDiscountTypeMessageBox alloc] initWithValue:self.type],
+    [[FIASKProductDiscountTypeMessageBox alloc] initWithValue:self.type],
   ];
 }
 @end
 
-@implementation SKProductSubscriptionPeriodMessage
+@implementation FIASKProductSubscriptionPeriodMessage
 + (instancetype)makeWithNumberOfUnits:(NSInteger)numberOfUnits
-                                 unit:(SKSubscriptionPeriodUnitMessage)unit {
-  SKProductSubscriptionPeriodMessage *pigeonResult =
-      [[SKProductSubscriptionPeriodMessage alloc] init];
+                                 unit:(FIASKSubscriptionPeriodUnitMessage)unit {
+  FIASKProductSubscriptionPeriodMessage *pigeonResult =
+      [[FIASKProductSubscriptionPeriodMessage alloc] init];
   pigeonResult.numberOfUnits = numberOfUnits;
   pigeonResult.unit = unit;
   return pigeonResult;
 }
-+ (SKProductSubscriptionPeriodMessage *)fromList:(NSArray<id> *)list {
-  SKProductSubscriptionPeriodMessage *pigeonResult =
-      [[SKProductSubscriptionPeriodMessage alloc] init];
++ (FIASKProductSubscriptionPeriodMessage *)fromList:(NSArray<id> *)list {
+  FIASKProductSubscriptionPeriodMessage *pigeonResult =
+      [[FIASKProductSubscriptionPeriodMessage alloc] init];
   pigeonResult.numberOfUnits = [GetNullableObjectAtIndex(list, 0) integerValue];
-  SKSubscriptionPeriodUnitMessageBox *boxedSKSubscriptionPeriodUnitMessage =
+  FIASKSubscriptionPeriodUnitMessageBox *boxedFIASKSubscriptionPeriodUnitMessage =
       GetNullableObjectAtIndex(list, 1);
-  pigeonResult.unit = boxedSKSubscriptionPeriodUnitMessage.value;
+  pigeonResult.unit = boxedFIASKSubscriptionPeriodUnitMessage.value;
   return pigeonResult;
 }
-+ (nullable SKProductSubscriptionPeriodMessage *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [SKProductSubscriptionPeriodMessage fromList:list] : nil;
++ (nullable FIASKProductSubscriptionPeriodMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FIASKProductSubscriptionPeriodMessage fromList:list] : nil;
 }
 - (NSArray<id> *)toList {
   return @[
     @(self.numberOfUnits),
-    [[SKSubscriptionPeriodUnitMessageBox alloc] initWithValue:self.unit],
+    [[FIASKSubscriptionPeriodUnitMessageBox alloc] initWithValue:self.unit],
   ];
 }
 @end
 
-@interface nullMessagesPigeonCodecReader : FlutterStandardReader
+@interface FIAMessagesPigeonCodecReader : FlutterStandardReader
 @end
-@implementation nullMessagesPigeonCodecReader
+@implementation FIAMessagesPigeonCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 129: {
       NSNumber *enumAsNumber = [self readValue];
       return enumAsNumber == nil ? nil
-                                 : [[SKPaymentTransactionStateMessageBox alloc]
+                                 : [[FIASKPaymentTransactionStateMessageBox alloc]
                                        initWithValue:[enumAsNumber integerValue]];
     }
     case 130: {
       NSNumber *enumAsNumber = [self readValue];
       return enumAsNumber == nil ? nil
-                                 : [[SKProductDiscountTypeMessageBox alloc]
+                                 : [[FIASKProductDiscountTypeMessageBox alloc]
                                        initWithValue:[enumAsNumber integerValue]];
     }
     case 131: {
       NSNumber *enumAsNumber = [self readValue];
       return enumAsNumber == nil ? nil
-                                 : [[SKProductDiscountPaymentModeMessageBox alloc]
+                                 : [[FIASKProductDiscountPaymentModeMessageBox alloc]
                                        initWithValue:[enumAsNumber integerValue]];
     }
     case 132: {
       NSNumber *enumAsNumber = [self readValue];
       return enumAsNumber == nil ? nil
-                                 : [[SKSubscriptionPeriodUnitMessageBox alloc]
+                                 : [[FIASKSubscriptionPeriodUnitMessageBox alloc]
                                        initWithValue:[enumAsNumber integerValue]];
     }
     case 133:
-      return [SKPaymentTransactionMessage fromList:[self readValue]];
+      return [FIASKPaymentTransactionMessage fromList:[self readValue]];
     case 134:
-      return [SKPaymentMessage fromList:[self readValue]];
+      return [FIASKPaymentMessage fromList:[self readValue]];
     case 135:
-      return [SKErrorMessage fromList:[self readValue]];
+      return [FIASKErrorMessage fromList:[self readValue]];
     case 136:
-      return [SKPaymentDiscountMessage fromList:[self readValue]];
+      return [FIASKPaymentDiscountMessage fromList:[self readValue]];
     case 137:
-      return [SKStorefrontMessage fromList:[self readValue]];
+      return [FIASKStorefrontMessage fromList:[self readValue]];
     case 138:
-      return [SKProductsResponseMessage fromList:[self readValue]];
+      return [FIASKProductsResponseMessage fromList:[self readValue]];
     case 139:
-      return [SKProductMessage fromList:[self readValue]];
+      return [FIASKProductMessage fromList:[self readValue]];
     case 140:
-      return [SKPriceLocaleMessage fromList:[self readValue]];
+      return [FIASKPriceLocaleMessage fromList:[self readValue]];
     case 141:
-      return [SKProductDiscountMessage fromList:[self readValue]];
+      return [FIASKProductDiscountMessage fromList:[self readValue]];
     case 142:
-      return [SKProductSubscriptionPeriodMessage fromList:[self readValue]];
+      return [FIASKProductSubscriptionPeriodMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface nullMessagesPigeonCodecWriter : FlutterStandardWriter
+@interface FIAMessagesPigeonCodecWriter : FlutterStandardWriter
 @end
-@implementation nullMessagesPigeonCodecWriter
+@implementation FIAMessagesPigeonCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[SKPaymentTransactionStateMessageBox class]]) {
-    SKPaymentTransactionStateMessageBox *box = (SKPaymentTransactionStateMessageBox *)value;
+  if ([value isKindOfClass:[FIASKPaymentTransactionStateMessageBox class]]) {
+    FIASKPaymentTransactionStateMessageBox *box = (FIASKPaymentTransactionStateMessageBox *)value;
     [self writeByte:129];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
-  } else if ([value isKindOfClass:[SKProductDiscountTypeMessageBox class]]) {
-    SKProductDiscountTypeMessageBox *box = (SKProductDiscountTypeMessageBox *)value;
+  } else if ([value isKindOfClass:[FIASKProductDiscountTypeMessageBox class]]) {
+    FIASKProductDiscountTypeMessageBox *box = (FIASKProductDiscountTypeMessageBox *)value;
     [self writeByte:130];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
-  } else if ([value isKindOfClass:[SKProductDiscountPaymentModeMessageBox class]]) {
-    SKProductDiscountPaymentModeMessageBox *box = (SKProductDiscountPaymentModeMessageBox *)value;
+  } else if ([value isKindOfClass:[FIASKProductDiscountPaymentModeMessageBox class]]) {
+    FIASKProductDiscountPaymentModeMessageBox *box =
+        (FIASKProductDiscountPaymentModeMessageBox *)value;
     [self writeByte:131];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
-  } else if ([value isKindOfClass:[SKSubscriptionPeriodUnitMessageBox class]]) {
-    SKSubscriptionPeriodUnitMessageBox *box = (SKSubscriptionPeriodUnitMessageBox *)value;
+  } else if ([value isKindOfClass:[FIASKSubscriptionPeriodUnitMessageBox class]]) {
+    FIASKSubscriptionPeriodUnitMessageBox *box = (FIASKSubscriptionPeriodUnitMessageBox *)value;
     [self writeByte:132];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
-  } else if ([value isKindOfClass:[SKPaymentTransactionMessage class]]) {
+  } else if ([value isKindOfClass:[FIASKPaymentTransactionMessage class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[SKPaymentMessage class]]) {
+  } else if ([value isKindOfClass:[FIASKPaymentMessage class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[SKErrorMessage class]]) {
+  } else if ([value isKindOfClass:[FIASKErrorMessage class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[SKPaymentDiscountMessage class]]) {
+  } else if ([value isKindOfClass:[FIASKPaymentDiscountMessage class]]) {
     [self writeByte:136];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[SKStorefrontMessage class]]) {
+  } else if ([value isKindOfClass:[FIASKStorefrontMessage class]]) {
     [self writeByte:137];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[SKProductsResponseMessage class]]) {
+  } else if ([value isKindOfClass:[FIASKProductsResponseMessage class]]) {
     [self writeByte:138];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[SKProductMessage class]]) {
+  } else if ([value isKindOfClass:[FIASKProductMessage class]]) {
     [self writeByte:139];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[SKPriceLocaleMessage class]]) {
+  } else if ([value isKindOfClass:[FIASKPriceLocaleMessage class]]) {
     [self writeByte:140];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[SKProductDiscountMessage class]]) {
+  } else if ([value isKindOfClass:[FIASKProductDiscountMessage class]]) {
     [self writeByte:141];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[SKProductSubscriptionPeriodMessage class]]) {
+  } else if ([value isKindOfClass:[FIASKProductSubscriptionPeriodMessage class]]) {
     [self writeByte:142];
     [self writeValue:[value toList]];
   } else {
@@ -601,35 +602,35 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@interface nullMessagesPigeonCodecReaderWriter : FlutterStandardReaderWriter
+@interface FIAMessagesPigeonCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation nullMessagesPigeonCodecReaderWriter
+@implementation FIAMessagesPigeonCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[nullMessagesPigeonCodecWriter alloc] initWithData:data];
+  return [[FIAMessagesPigeonCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[nullMessagesPigeonCodecReader alloc] initWithData:data];
+  return [[FIAMessagesPigeonCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *nullGetMessagesCodec(void) {
+NSObject<FlutterMessageCodec> *FIAGetMessagesCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    nullMessagesPigeonCodecReaderWriter *readerWriter =
-        [[nullMessagesPigeonCodecReaderWriter alloc] init];
+    FIAMessagesPigeonCodecReaderWriter *readerWriter =
+        [[FIAMessagesPigeonCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
-void SetUpInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger,
-                           NSObject<InAppPurchaseAPI> *api) {
-  SetUpInAppPurchaseAPIWithSuffix(binaryMessenger, api, @"");
+void SetUpFIAInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger,
+                              NSObject<FIAInAppPurchaseAPI> *api) {
+  SetUpFIAInAppPurchaseAPIWithSuffix(binaryMessenger, api, @"");
 }
 
-void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
-                                     NSObject<InAppPurchaseAPI> *api,
-                                     NSString *messageChannelSuffix) {
+void SetUpFIAInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                        NSObject<FIAInAppPurchaseAPI> *api,
+                                        NSString *messageChannelSuffix) {
   messageChannelSuffix = messageChannelSuffix.length > 0
                              ? [NSString stringWithFormat:@".%@", messageChannelSuffix]
                              : @"";
@@ -641,11 +642,11 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.canMakePayments",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(canMakePaymentsWithError:)],
-          @"InAppPurchaseAPI api (%@) doesn't respond to @selector(canMakePaymentsWithError:)",
+          @"FIAInAppPurchaseAPI api (%@) doesn't respond to @selector(canMakePaymentsWithError:)",
           api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
@@ -663,14 +664,15 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.transactions",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(transactionsWithError:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to @selector(transactionsWithError:)",
-                api);
+      NSCAssert(
+          [api respondsToSelector:@selector(transactionsWithError:)],
+          @"FIAInAppPurchaseAPI api (%@) doesn't respond to @selector(transactionsWithError:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
-        NSArray<SKPaymentTransactionMessage *> *output = [api transactionsWithError:&error];
+        NSArray<FIASKPaymentTransactionMessage *> *output = [api transactionsWithError:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -684,14 +686,14 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.storefront",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(storefrontWithError:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to @selector(storefrontWithError:)",
+                @"FIAInAppPurchaseAPI api (%@) doesn't respond to @selector(storefrontWithError:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
-        SKStorefrontMessage *output = [api storefrontWithError:&error];
+        FIASKStorefrontMessage *output = [api storefrontWithError:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -705,11 +707,11 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.addPayment",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(addPaymentPaymentMap:error:)],
-          @"InAppPurchaseAPI api (%@) doesn't respond to @selector(addPaymentPaymentMap:error:)",
+          @"FIAInAppPurchaseAPI api (%@) doesn't respond to @selector(addPaymentPaymentMap:error:)",
           api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
@@ -729,18 +731,18 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.startProductRequest",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(startProductRequestProductIdentifiers:
                                                                              completion:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to "
+                @"FIAInAppPurchaseAPI api (%@) doesn't respond to "
                 @"@selector(startProductRequestProductIdentifiers:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSArray<NSString *> *arg_productIdentifiers = GetNullableObjectAtIndex(args, 0);
         [api startProductRequestProductIdentifiers:arg_productIdentifiers
-                                        completion:^(SKProductsResponseMessage *_Nullable output,
+                                        completion:^(FIASKProductsResponseMessage *_Nullable output,
                                                      FlutterError *_Nullable error) {
                                           callback(wrapResult(output, error));
                                         }];
@@ -756,10 +758,10 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.finishTransaction",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(finishTransactionFinishMap:error:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to "
+                @"FIAInAppPurchaseAPI api (%@) doesn't respond to "
                 @"@selector(finishTransactionFinishMap:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
@@ -780,10 +782,10 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.restoreTransactions",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(restoreTransactionsApplicationUserName:error:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to "
+                @"FIAInAppPurchaseAPI api (%@) doesn't respond to "
                 @"@selector(restoreTransactionsApplicationUserName:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
@@ -804,10 +806,10 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.presentCodeRedemptionSheet",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(presentCodeRedemptionSheetWithError:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to "
+                @"FIAInAppPurchaseAPI api (%@) doesn't respond to "
                 @"@selector(presentCodeRedemptionSheetWithError:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
@@ -826,12 +828,12 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.retrieveReceiptData",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(retrieveReceiptDataWithError:)],
-          @"InAppPurchaseAPI api (%@) doesn't respond to @selector(retrieveReceiptDataWithError:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(retrieveReceiptDataWithError:)],
+                @"FIAInAppPurchaseAPI api (%@) doesn't respond to "
+                @"@selector(retrieveReceiptDataWithError:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSString *output = [api retrieveReceiptDataWithError:&error];
@@ -848,10 +850,10 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.refreshReceipt",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(refreshReceiptReceiptProperties:completion:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to "
+                @"FIAInAppPurchaseAPI api (%@) doesn't respond to "
                 @"@selector(refreshReceiptReceiptProperties:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
@@ -873,10 +875,10 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.startObservingPaymentQueue",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(startObservingPaymentQueueWithError:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to "
+                @"FIAInAppPurchaseAPI api (%@) doesn't respond to "
                 @"@selector(startObservingPaymentQueueWithError:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
@@ -895,10 +897,10 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.stopObservingPaymentQueue",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(stopObservingPaymentQueueWithError:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to "
+                @"FIAInAppPurchaseAPI api (%@) doesn't respond to "
                 @"@selector(stopObservingPaymentQueueWithError:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
@@ -917,10 +919,10 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.registerPaymentQueueDelegate",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(registerPaymentQueueDelegateWithError:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to "
+                @"FIAInAppPurchaseAPI api (%@) doesn't respond to "
                 @"@selector(registerPaymentQueueDelegateWithError:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
@@ -939,10 +941,10 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.removePaymentQueueDelegate",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(removePaymentQueueDelegateWithError:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to "
+                @"FIAInAppPurchaseAPI api (%@) doesn't respond to "
                 @"@selector(removePaymentQueueDelegateWithError:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
@@ -961,10 +963,10 @@ void SetUpInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"InAppPurchaseAPI.showPriceConsentIfNeeded",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:nullGetMessagesCodec()];
+                  codec:FIAGetMessagesCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(showPriceConsentIfNeededWithError:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to "
+                @"FIAInAppPurchaseAPI api (%@) doesn't respond to "
                 @"@selector(showPriceConsentIfNeededWithError:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {

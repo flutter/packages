@@ -9,6 +9,9 @@ import 'package:pigeon/pigeon.dart';
   dartTestOut: 'test/test_api.g.dart',
   objcHeaderOut: 'darwin/Classes/messages.g.h',
   objcSourceOut: 'darwin/Classes/messages.g.m',
+  objcOptions: ObjcOptions(
+    prefix: 'FIA',
+  ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 class SKPaymentTransactionMessage {
