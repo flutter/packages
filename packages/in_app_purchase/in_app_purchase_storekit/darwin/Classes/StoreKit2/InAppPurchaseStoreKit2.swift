@@ -147,6 +147,8 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
+  // MARK: - Convenience Functions
+
   /// Helper function that fetches and unwraps all verified transactions
   private func rawTransactions() async -> [Transaction] {
     var transactions: [Transaction] = []
