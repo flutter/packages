@@ -1001,20 +1001,18 @@ public class TestPluginWithSuffix: HostSmallApi {
 
 class SendInts: StreamIntsStreamHandler {
   var timerActive = false
-  var timer = Timer()
 
   override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
     var count: Int64 = 0
     if !timerActive {
       timerActive = true
       Timer.scheduledTimer(
-        withTimeInterval: 1, repeats: true,
-        block: { _ in
+        withTimeInterval: 1, repeats: true ) { _ in
           count += 1
-            DispatchQueue.main.async {
-                sink.success(count)
-            }
-        })
+          DispatchQueue.main.async {
+            sink.success(count)
+          }
+        }
     }
   }
 }

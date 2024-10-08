@@ -652,18 +652,18 @@ class CoreTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = CoreTestsPigeonCodec(readerWriter: CoreTestsPigeonCodecReaderWriter())
 }
 
-private class PigeonStreamHandler<T>: NSObject, FlutterStreamHandler {
-  private let wrapper: PigeonEventChannelWrapper<T>
-  private var pigeonSink: PigeonEventSink<T>? = nil
+private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
+  private let wrapper: PigeonEventChannelWrapper<ReturnType>
+  private var pigeonSink: PigeonEventSink<ReturnType>? = nil
 
-  init(wrapper: PigeonEventChannelWrapper<T>) {
+  init(wrapper: PigeonEventChannelWrapper<ReturnType>) {
     self.wrapper = wrapper
   }
 
   func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
     -> FlutterError?
   {
-    pigeonSink = PigeonEventSink<T>(events)
+    pigeonSink = PigeonEventSink<ReturnType>(events)
     wrapper.onListen(withArguments: arguments, sink: pigeonSink!)
     return nil
   }
@@ -675,21 +675,17 @@ private class PigeonStreamHandler<T>: NSObject, FlutterStreamHandler {
   }
 }
 
-class PigeonEventChannelWrapper<T> {
+class PigeonEventChannelWrapper<ReturnType> {
   func onListen(withArguments arguments: Any?, sink: PigeonEventSink<T>) {}
   func onCancel(withArguments arguments: Any?) {}
 }
 
-class PigeonEventSink<T> {
+class PigeonEventSink<ReturnType> {
   private let sink: FlutterEventSink
 
-  init(_ sink: @escaping FlutterEventSink) {
-    self.sink = sink
-  }
+  init(_ sink: @escaping FlutterEventSink) { self.sink = sink }
 
-  func success(_ value: T) {
-    sink(value)
-  }
+  func success(_ value: ReturnType) { sink(value) }
 
   func error(code: String, message: String?, details: Any?) {
     sink(FlutterError(code: code, message: message, details: details))
