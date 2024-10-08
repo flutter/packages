@@ -28,7 +28,6 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
 
-
 /**
  * Unit tests for {@link VideoPlayer}.
  *
