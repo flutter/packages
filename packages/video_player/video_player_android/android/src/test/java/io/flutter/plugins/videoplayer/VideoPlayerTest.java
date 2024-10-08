@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -264,12 +265,16 @@ public final class VideoPlayerTest {
   }
 
   @Test
-  public void disposeReleasesTextureAndPlayer() {
+  public void disposeReleasesExoPlayerBeforeTexture() {
     VideoPlayer videoPlayer = createVideoPlayer();
+
     videoPlayer.dispose();
 
-    verify(mockProducer).release();
-    verify(mockExoPlayer).release();
+    // Regression test for https://github.com/flutter/flutter/issues/156158.
+    // The player must be destroyed before the surface it is writing to.
+    InOrder inOrder = inOrder(mockExoPlayer, mockProducer);
+    inOrder.verify(mockExoPlayer).release();
+    inOrder.verify(mockProducer).release();
   }
 
   // TODO(matanlurey): Replace with inline calls to onSurfaceAvailable once

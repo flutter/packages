@@ -160,7 +160,7 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
   }
 
   void dispose() {
-    surfaceProducer.release();
     exoPlayer.release();
+    surfaceProducer.release();
   }
 }
