@@ -2604,6 +2604,18 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     final UnusedClass unused = UnusedClass();
     expect(unused, unused);
   });
+
+  /// Event Channels
+  testWidgets('event channel sends continuous ints', (_) async {
+    final Stream<int> ints = streamInts();
+    await Future<dynamic>.delayed(const Duration(seconds: 5));
+    final List<int> listInts = await ints.toList();
+    expect(listInts.contains(1), true);
+    expect(listInts.contains(2), true);
+    expect(listInts.contains(3), true);
+    expect(listInts.contains(4), true);
+    expect(listInts.contains(6), false);
+  });
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {

@@ -1007,12 +1007,13 @@ class SendInts: StreamIntsStreamHandler {
     if !timerActive {
       timerActive = true
       Timer.scheduledTimer(
-        withTimeInterval: 1, repeats: true ) { _ in
-          count += 1
-          DispatchQueue.main.async {
-            sink.success(count)
-          }
+        withTimeInterval: 1, repeats: true
+      ) { _ in
+        count += 1
+        DispatchQueue.main.async {
+          sink.success(count)
         }
+      }
     }
   }
 }

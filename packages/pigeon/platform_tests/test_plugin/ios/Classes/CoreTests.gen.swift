@@ -683,9 +683,13 @@ class PigeonEventChannelWrapper<ReturnType> {
 class PigeonEventSink<ReturnType> {
   private let sink: FlutterEventSink
 
-  init(_ sink: @escaping FlutterEventSink) { self.sink = sink }
+  init(_ sink: @escaping FlutterEventSink) {
+    self.sink = sink
+  }
 
-  func success(_ value: ReturnType) { sink(value) }
+  func success(_ value: ReturnType) {
+    sink(value)
+  }
 
   func error(code: String, message: String?, details: Any?) {
     sink(FlutterError(code: code, message: message, details: details))

@@ -739,7 +739,6 @@ object SendInts : StreamIntsStreamHandler() {
 
   override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {
     var count: Long = 0
-    // every 5 second send the time
     val r: Runnable =
         object : Runnable {
           override fun run() {
