@@ -201,6 +201,16 @@ public final class VideoPlayerTest {
   }
 
   @Test
+  public void onDisposeSurfaceProducerCallbackIsDisconnected() {
+    // Regression test for https://github.com/flutter/flutter/issues/156158.
+    VideoPlayer videoPlayer = createVideoPlayer();
+    verify(mockProducer).setCallback(any());
+
+    videoPlayer.dispose();
+    verify(mockProducer).setCallback(null);
+  }
+
+  @Test
   public void onInitializedCalledWhenVideoPlayerInitiallyCreated() {
     VideoPlayer videoPlayer = createVideoPlayer();
 

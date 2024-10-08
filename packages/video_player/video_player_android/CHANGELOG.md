@@ -1,3 +1,10 @@
+## 2.7.11
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/156158) where a
+  harmless but annoying warning in the form of a native stack trace would be
+  printed when a previously disposed video player received a trim memory event
+  (i.e. by backgrounding).
+
 ## 2.7.10
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/156158) where
