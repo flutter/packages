@@ -31,7 +31,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   private var _updateListenerTask: Any?
 
   @available(iOS 13.0, *)
-  var getListenerTaskAsTask: Task<(), Never> {
+  var updateListenerTask: Task<(), Never> {
     return self._updateListenerTask as! Task<(), Never>
   }
 
