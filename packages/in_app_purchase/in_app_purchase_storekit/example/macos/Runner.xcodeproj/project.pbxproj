@@ -214,6 +214,7 @@
 				33CC11122044BFA00003C045 /* MainFlutterWindow.swift */,
 				33E51913231747F40026EE4D /* DebugProfile.entitlements */,
 				33E51914231749380026EE4D /* Release.entitlements */,
+				F29F1C9F2CADCF1E00CC1FEE /* Configuration.storekit */,
 				33CC11242044D66E0003C045 /* Resources */,
 				33BA886A226E78AF003329D5 /* Configs */,
 			);
@@ -234,7 +235,6 @@
 				F79BDC1F2906023C00E3999D /* Stubs.h */,
 				F79BDC152905FC0500E3999D /* Info.plist */,
 				F79BDC1B2905FC3200E3999D /* Stubs.m */,
-				F29F1C9F2CADCF1E00CC1FEE /* Configuration.storekit */,
 				F2C3A7402BD9D33D000D35F2 /* Stubs.swift */,
 				F2C3A73F2BD9D33D000D35F2 /* RunnerTests-Bridging-Header.h */,
 			);
