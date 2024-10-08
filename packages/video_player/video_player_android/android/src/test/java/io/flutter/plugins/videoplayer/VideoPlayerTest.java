@@ -5,6 +5,7 @@
 package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -22,10 +23,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Unit tests for {@link VideoPlayer}.
@@ -264,12 +270,14 @@ public final class VideoPlayerTest {
   }
 
   @Test
-  public void disposeReleasesTextureAndPlayer() {
+  public void disposeReleasesExoPlayerBeforeTexture() {
     VideoPlayer videoPlayer = createVideoPlayer();
+
     videoPlayer.dispose();
 
-    verify(mockProducer).release();
-    verify(mockExoPlayer).release();
+    InOrder inOrder = inOrder(mockExoPlayer, mockProducer);
+    inOrder.verify(mockExoPlayer).release();
+    inOrder.verify(mockProducer).release();
   }
 
   // TODO(matanlurey): Replace with inline calls to onSurfaceAvailable once

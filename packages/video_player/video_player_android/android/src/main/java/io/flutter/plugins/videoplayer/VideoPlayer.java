@@ -17,6 +17,8 @@ import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.exoplayer.ExoPlayer;
+
+import io.flutter.Log;
 import io.flutter.view.TextureRegistry;
 
 final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
@@ -97,6 +99,7 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
   public void onSurfaceDestroyed() {
+    Log.e("=================================VideoPlayer", "onSurfaceDestroyed()");
     exoPlayer.stop();
     savedStateDuring = ExoPlayerState.save(exoPlayer);
     exoPlayer.release();
@@ -160,7 +163,8 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
   }
 
   void dispose() {
-    surfaceProducer.release();
+    Log.e("=================================VideoPlayer", "dispose()");
     exoPlayer.release();
+    surfaceProducer.release();
   }
 }
