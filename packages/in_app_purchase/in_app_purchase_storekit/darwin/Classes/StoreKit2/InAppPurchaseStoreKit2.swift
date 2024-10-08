@@ -132,7 +132,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
 
   /// Stop subscribing to Transaction.updates
   func stopListeningToTransactions() throws {
-    getListenerTaskAsTask.cancel()
+    updateListenerTask.cancel()
   }
 
   /// Sends an transaction back to Dart. Access these transactions with `purchaseStream`
