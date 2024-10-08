@@ -275,6 +275,8 @@ public final class VideoPlayerTest {
 
     videoPlayer.dispose();
 
+    // Regression test for https://github.com/flutter/flutter/issues/156158.
+    // The player must be destroyed before the surface it is writing to.
     InOrder inOrder = inOrder(mockExoPlayer, mockProducer);
     inOrder.verify(mockExoPlayer).release();
     inOrder.verify(mockProducer).release();
