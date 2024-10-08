@@ -99,7 +99,6 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
   public void onSurfaceDestroyed() {
-    Log.e("=================================VideoPlayer", "onSurfaceDestroyed()");
     exoPlayer.stop();
     savedStateDuring = ExoPlayerState.save(exoPlayer);
     exoPlayer.release();
@@ -163,7 +162,6 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
   }
 
   void dispose() {
-    Log.e("=================================VideoPlayer", "dispose()");
     exoPlayer.release();
     surfaceProducer.release();
   }
