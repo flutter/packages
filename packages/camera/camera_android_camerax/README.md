@@ -57,8 +57,19 @@ and thus that parameter will silently be ignored.
 
 In order to save captured images and videos to files on Android 10 and below, CameraX
 requires specifying the `WRITE_EXTERNAL_STORAGE` permission (see [the CameraX documentation][10]).
-This is already done in the plugin, so no further action is required on your end. To understand
-the implications of specificying this permission, see [the `WRITE_EXTERNAL_STORAGE` documentation][11].
+This is already done in the plugin, so no further action is required on your end. To understand the
+implications of specificying this permission, see [the `WRITE_EXTERNAL_STORAGE` documentation][11].
+
+Please note that the [`READ_EXTERNAL_STORAGE`][13] permission may be implied from `WRITE_EXTERNAL_STORAGE`
+permission and thus, be included in the merged Android manifest of your app. If you do not want the
+`READ_EXTERNAL_STORAGE` permission to be included in the merged Android manifest of your app and your
+app nor any of the plugins that it depends on require it, then you may remove it by adding the following
+to your app's `AndroidManifest.xml`:
+
+```xml
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    tools:node="remove" />
+```
 
 ### Allowing image streaming in the background
 
@@ -91,4 +102,5 @@ For more information on contributing to this plugin, see [`CONTRIBUTING.md`](CON
 [10]: https://developer.android.com/media/camera/camerax/architecture#permissions
 [11]: https://developer.android.com/reference/android/Manifest.permission#WRITE_EXTERNAL_STORAGE
 [12]: https://developer.android.com/reference/android/Manifest.permission#FOREGROUND_SERVICE_CAMERA
+[13]: https://developer.android.com/reference/android/Manifest.permission#READ_EXTERNAL_STORAGE
 [148013]: https://github.com/flutter/flutter/issues/148013
