@@ -133,4 +133,8 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
   override fun getPigeonApiAdProgressInfo(): PigeonApiAdProgressInfo {
     return AdProgressInfoProxyApi(this)
   }
+
+  override fun getPigeonApiCompanionAd(): PigeonApiCompanionAd {
+    return CompanionAdProxyApi(this)
+  }
 }

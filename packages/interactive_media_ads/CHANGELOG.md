@@ -1,3 +1,11 @@
+## 0.2.2+9
+
+* Adds internal wrapper for Android native `CompanionAd`.
+
+## 0.2.2+8
+
+* Adds remaining methods for internal wrapper of the iOS native `IMAAdsRenderingSettings`.
+
 ## 0.2.2+7
 
 * Updates Java compatibility version to 11.
