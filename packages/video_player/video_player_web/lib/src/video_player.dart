@@ -179,8 +179,12 @@ class VideoPlayer {
 
     // TODO(ditman): Do we need to expose a "muted" API?
     // https://github.com/flutter/flutter/issues/60721
-    _videoElement.muted = !(volume > 0.0);
-    _videoElement.volume = volume;
+    if (volume > 0.0) {
+      _videoElement.muted = false;
+      _videoElement.volume = volume;
+    } else {
+      _videoElement.muted = true;
+    }
   }
 
   /// Sets the playback `speed`.
