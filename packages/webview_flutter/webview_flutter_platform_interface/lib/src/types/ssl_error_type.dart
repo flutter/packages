@@ -29,4 +29,7 @@ enum SslErrorType {
 
   /// Other error has occurred
   otherError,
+
+  /// An indication of an invalid setting or result
+  invalid,
 }
