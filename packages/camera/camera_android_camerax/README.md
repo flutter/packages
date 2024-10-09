@@ -57,13 +57,13 @@ and thus that parameter will silently be ignored.
 
 In order to save captured images and videos to files on Android 10 and below, CameraX
 requires specifying the `WRITE_EXTERNAL_STORAGE` permission (see [the CameraX documentation][10]).
-This is already done in the plugin, so no further action is required on your end. To understand
-the implications of specificying this permission, see [the `WRITE_EXTERNAL_STORAGE` documentation][11].
+This is already done in the plugin, so no further action is required on your end.
 
-Please note that the [`READ_EXTERNAL_STORAGE`][13] permission may be implied from `WRITE_EXTERNAL_STORAGE`
-permission and thus, be included in the merged Android manifest of your app. If you do not want the
-`READ_EXTERNAL_STORAGE` permission to be included in the merged Android manifest of your app, then you can
-do the following to remove it:
+To understand the privacy impact of specifying the `WRITE_EXTERNAL_STORAGE` permission, see the
+[`WRITE_EXTERNAL_STORAGE` documentation][11]. We have seen apps also have the `READ_EXTERNAL_STORAGE`
+permission automatically added to the merged Android manifest; it appears to be implied from
+`WRITE_EXTERNAL_STORAGE`. If you do not want the `READ_EXTERNAL_STORAGE` permission to be included
+in the merged Android manifest of your app, then take the following steps to remove it:
 
 1. Ensure that your app nor any of the plugins that it depends on require the `READ_EXTERNAL_STORAGE` permission.
 2. Add the following to your app's `your_app/android/app/src/main/AndroidManifest.xml`:
