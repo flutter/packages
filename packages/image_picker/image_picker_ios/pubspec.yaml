@@ -24,7 +24,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: 5.4.4
+  mockito: ^5.4.4
   pigeon: ^17.0.0
 
 topics:

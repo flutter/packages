@@ -1,6 +1,11 @@
-## 2.14.8
+## 2.14.9
 
 * Adds `PlatformCap` for `PlatformPolyline.startCap` and `endCap`.
+
+## 2.14.8
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
 
 ## 2.14.7
 

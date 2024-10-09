@@ -1,3 +1,37 @@
+## 2.7.11
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/156158) where a
+  harmless but annoying warning in the form of a native stack trace would be
+  printed when a previously disposed video player received a trim memory event
+  (i.e. by backgrounding).
+
+## 2.7.10
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/156158) where
+  disposing a video player (including implicitly by switching tabs or views
+  in a running app) would cause native stack traces.
+
+## 2.7.9
+
+* Updates Java compatibility version to 11.
+
+## 2.7.8
+
+* Updates Pigeon for non-nullable collection type support.
+
+## 2.7.7
+
+* Removes the flag to treat warnings as errors in client builds.
+
+## 2.7.6
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/154602) where
+  resuming a video player would cause a `Bad state: Future already completed`.
+
+## 2.7.5
+
+* Add a deprecation suppression in advance of a new `SurfaceProducer` API.
+
 ## 2.7.4
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/154559) where
@@ -14,11 +48,9 @@
 
 * Re-adds Impeller support.
 
-
 ## 2.7.1
 
 * Revert Impeller support.
-
 
 ## 2.7.0
 

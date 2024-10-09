@@ -834,3 +834,57 @@ abstract class AdsRenderingSettings {
   /// Sets the ad UI elements to be rendered by the IMA SDK.
   void setUiElements(List<UiElement> uiElements);
 }
+
+/// Represents the progress within this ad break.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdProgressInfo.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdProgressInfo',
+  ),
+)
+abstract class AdProgressInfo {
+  /// Total ad break duration (in seconds).
+  late final double adBreakDuration;
+
+  /// Total ad period duration (in seconds).
+  late final double adPeriodDuration;
+
+  /// The position of current ad within the ad break, starting with 1.
+  late final int adPosition;
+
+  /// Current time within the ad (in seconds).
+  late final double currentTime;
+
+  /// Duration of current ad (in seconds).
+  late final double duration;
+
+  /// The total number of ads in this ad break.
+  late final int totalAds;
+}
+
+/// An object that holds data corresponding to the companion Ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAd.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.CompanionAd',
+  ),
+)
+abstract class CompanionAd {
+  /// The API needed to execute this ad, or null if unavailable.
+  late final String? apiFramework;
+
+  /// The height of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  late final int height;
+
+  /// The URL for the static resource of this companion.
+  late final String resourceValue;
+
+  /// The width of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  late final int width;
+}
