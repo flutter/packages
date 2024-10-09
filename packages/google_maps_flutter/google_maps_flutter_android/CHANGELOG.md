@@ -1,3 +1,7 @@
+## 2.14.9
+
+* Adds `PlatformCap` for `PlatformPolyline.startCap` and `endCap`.
+
 ## 2.14.8
 
 * Updates Java compatibility version to 11.
