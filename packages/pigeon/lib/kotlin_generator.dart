@@ -1025,6 +1025,10 @@ if (wrapped == null) {
           fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
             sink.error(errorCode, errorMessage, errorDetails)
           }
+  
+          fun endOfStream() { 
+            sink.endOfStream()
+          }
         }
       ''');
     addDocumentationComments(
@@ -1032,6 +1036,14 @@ if (wrapped == null) {
     for (final Method func in api.methods) {
       indent.format('''
         abstract class ${toUpperCamelCase(func.name)}StreamHandler : PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
+          fun deregister(instanceName: String = "") {
+            var channelName: String = "${makeChannelName(api, func, dartPackageName)}"
+            if (instanceName.isNotEmpty()) {
+              channelName += ".\$instanceName"
+            }
+            EventChannel(null, channelName).setStreamHandler(null)
+          }
+
           companion object {
             fun register(messenger: BinaryMessenger, wrapper: ${toUpperCamelCase(func.name)}StreamHandler, instanceName: String = "") {
               var channelName: String = "${makeChannelName(api, func, dartPackageName)}"

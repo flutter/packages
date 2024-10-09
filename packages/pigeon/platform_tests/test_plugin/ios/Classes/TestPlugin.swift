@@ -1006,12 +1006,11 @@ class SendInts: StreamIntsStreamHandler {
     var count: Int64 = 0
     if !timerActive {
       timerActive = true
-      Timer.scheduledTimer(
-        withTimeInterval: 1, repeats: true
-      ) { _ in
+      Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
         count += 1
-        DispatchQueue.main.async {
-          sink.success(count)
+        sink.success(count)
+        if count >= 5 {
+          sink.endOfStream()
         }
       }
     }

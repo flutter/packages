@@ -747,6 +747,9 @@ object SendInts : StreamIntsStreamHandler() {
               sink.success(count)
             }
             handler.postDelayed(this, 1000)
+            if (count >= 5) {
+              sink.endOfStream()
+            }
           }
         }
     handler.postDelayed(r, 1000)

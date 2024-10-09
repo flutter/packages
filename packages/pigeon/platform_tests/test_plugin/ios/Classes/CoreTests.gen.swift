@@ -676,7 +676,7 @@ private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
 }
 
 class PigeonEventChannelWrapper<ReturnType> {
-  func onListen(withArguments arguments: Any?, sink: PigeonEventSink<T>) {}
+  func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
   func onCancel(withArguments arguments: Any?) {}
 }
 
@@ -694,6 +694,11 @@ class PigeonEventSink<ReturnType> {
   func error(code: String, message: String?, details: Any?) {
     sink(FlutterError(code: code, message: message, details: details))
   }
+
+  func endOfStream() {
+    sink(FlutterEndOfEventStream)
+  }
+
 }
 
 class StreamIntsStreamHandler: PigeonEventChannelWrapper<Int64> {

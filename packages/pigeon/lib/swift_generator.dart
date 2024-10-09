@@ -817,7 +817,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       }
 
       class PigeonEventChannelWrapper<ReturnType> {
-        func onListen(withArguments arguments: Any?, sink: PigeonEventSink<T>) {}
+        func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
         func onCancel(withArguments arguments: Any?) {}
       }
 
@@ -835,6 +835,11 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         func error(code: String, message: String?, details: Any?) {
           sink(FlutterError(code: code, message: message, details: details))
         }
+
+        func endOfStream() {
+          sink(FlutterEndOfEventStream)
+        }
+      
       }
       ''');
     addDocumentationComments(

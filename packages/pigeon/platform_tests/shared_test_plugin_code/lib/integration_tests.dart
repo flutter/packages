@@ -2607,14 +2607,18 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
   /// Event Channels
   testWidgets('event channel sends continuous ints', (_) async {
+    print('start');
     final Stream<int> ints = streamInts();
+    print('stream');
     await Future<dynamic>.delayed(const Duration(seconds: 5));
+    print('delay');
     final List<int> listInts = await ints.toList();
     expect(listInts.contains(1), true);
     expect(listInts.contains(2), true);
     expect(listInts.contains(3), true);
     expect(listInts.contains(4), true);
     expect(listInts.contains(6), false);
+    print('after tests');
   });
 }
 

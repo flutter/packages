@@ -595,9 +595,22 @@ class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
   fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
     sink.error(errorCode, errorMessage, errorDetails)
   }
+
+  fun endOfStream() {
+    sink.endOfStream()
+  }
 }
 
 abstract class StreamIntsStreamHandler : PigeonEventChannelWrapper<Long> {
+  fun deregister(instanceName: String = "") {
+    var channelName: String =
+        "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts"
+    if (instanceName.isNotEmpty()) {
+      channelName += ".$instanceName"
+    }
+    EventChannel(null, channelName).setStreamHandler(null)
+  }
+
   companion object {
     fun register(
         messenger: BinaryMessenger,
