@@ -17,7 +17,8 @@ dependencies:
   camera_platform_interface: ^2.6.0
   flutter:
     sdk: flutter
-  video_player: ^2.7.0
+  video_player:
+    path: ../../../video_player/video_player
 
 dev_dependencies:
   espresso: ^0.4.0

@@ -925,6 +925,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
     }
 
+    print('quarterTurnsToCorrectPreview: $quarterTurnsToCorrectPreview');
     return RotatedBox(
         quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
   }

@@ -120,6 +120,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         .receiveBroadcastStream()
         .map((dynamic event) {
       final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
+      print('rotation: ${map['rotationCorrection'] as int? ?? 9999999}');
       switch (map['event']) {
         case 'initialized':
           return VideoEvent(

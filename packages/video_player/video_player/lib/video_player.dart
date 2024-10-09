@@ -888,12 +888,16 @@ class _VideoPlayerWithRotation extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => rotation == 0
-      ? child
-      : Transform.rotate(
-          angle: rotation * math.pi / 180,
-          child: child,
-        );
+  Widget build(BuildContext context) {
+    print('widget rotation: $rotation');
+    print('angle: ${rotation * math.pi / 180}');
+    return rotation == 0
+        ? child
+        : Transform.rotate(
+            angle: rotation * math.pi / 180,
+            child: child,
+          );
+  }
 }
 
 /// Used to configure the [VideoProgressIndicator] widget's colors for how it

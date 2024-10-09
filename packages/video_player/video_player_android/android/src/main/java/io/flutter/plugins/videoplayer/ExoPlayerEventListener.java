@@ -10,6 +10,8 @@ import androidx.media3.common.Player;
 import androidx.media3.common.VideoSize;
 import androidx.media3.exoplayer.ExoPlayer;
 
+import android.util.Log;
+
 final class ExoPlayerEventListener implements Player.Listener {
   private final ExoPlayer exoPlayer;
   private final VideoPlayerCallbacks events;
@@ -50,6 +52,7 @@ final class ExoPlayerEventListener implements Player.Listener {
     int height = videoSize.height;
     if (width != 0 && height != 0) {
       int rotationDegrees = videoSize.unappliedRotationDegrees;
+      Log.e("CAMILLE rotation degrees", Integer.toString(rotationDegrees));
       // Switch the width/height if video was taken in portrait mode
       if (rotationDegrees == 90 || rotationDegrees == 270) {
         width = videoSize.height;
