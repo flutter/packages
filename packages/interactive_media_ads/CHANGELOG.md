@@ -1,3 +1,7 @@
+## 0.2.2+10
+
+* Adds internal wrapper for Android native `UniversalAdId`.
+
 ## 0.2.2+9
 
 * Adds internal wrapper for Android native `CompanionAd`.
