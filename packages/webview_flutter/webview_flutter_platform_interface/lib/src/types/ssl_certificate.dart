@@ -26,4 +26,17 @@ class SslCertificate {
 
   /// The original x509 certificate DER
   final Uint8List? x509CertificateDer;
+
+  /// Creates a copy of the SSL certificate
+  SslCertificate copy() {
+    return SslCertificate(
+      issuedBy: issuedBy,
+      issuedTo: issuedTo,
+      validNotAfterDate: validNotAfterDate,
+      validNotBeforeDate: validNotBeforeDate,
+      x509CertificateDer: x509CertificateDer == null
+          ? null
+          : Uint8List.fromList(x509CertificateDer!),
+    );
+  }
 }
