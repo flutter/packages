@@ -822,11 +822,13 @@ class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
 /// Widget that displays the video controlled by [controller].
 class VideoPlayer extends StatefulWidget {
   /// Uses the given [controller] for all video rendered in this widget.
-  const VideoPlayer(this.controller, {super.key});
+  const VideoPlayer(this.controller, {super.key, this.rotation});
 
   /// The [VideoPlayerController] responsible for the video being rendered in
   /// this widget.
   final VideoPlayerController controller;
+  /// Rotate the video to the angle in degrees set in [rotation]. 
+  final int? rotation;
 
   @override
   State<VideoPlayer> createState() => _VideoPlayerState();
@@ -876,7 +878,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
     return _textureId == VideoPlayerController.kUninitializedTextureId
         ? Container()
         : _VideoPlayerWithRotation(
-            rotation: widget.controller.value.rotationCorrection,
+            rotation: widget.rotation == null ? widget.controller.value.rotationCorrection : widget.rotation!,
             child: _videoPlayerPlatform.buildView(_textureId),
           );
   }
