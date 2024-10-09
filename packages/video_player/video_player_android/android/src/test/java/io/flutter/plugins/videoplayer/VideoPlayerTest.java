@@ -201,6 +201,21 @@ public final class VideoPlayerTest {
   }
 
   @Test
+  public void onSurfaceProducerDestroyedDoesNotStopOrPauseVideo() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    verify(mockProducer).setCallback(callbackCaptor.capture());
+    TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
+    producerLifecycle.onSurfaceDestroyed();
+
+    verify(mockExoPlayer, never()).stop();
+    verify(mockExoPlayer, never()).pause();
+    verify(mockExoPlayer, never()).setPlayWhenReady(anyBoolean());
+
+    videoPlayer.dispose();
+  }
+
+  @Test
   public void onDisposeSurfaceProducerCallbackIsDisconnected() {
     // Regression test for https://github.com/flutter/flutter/issues/156158.
     VideoPlayer videoPlayer = createVideoPlayer();
@@ -289,7 +304,7 @@ public final class VideoPlayerTest {
 
   // TODO(matanlurey): Replace with inline calls to onSurfaceAvailable once
   // available on stable; see https://github.com/flutter/flutter/issues/155131.
-  // This seperate method only exists to scope the suppression.
+  // This separate method only exists to scope the suppression.
   @SuppressWarnings({"deprecation", "removal"})
   void simulateSurfaceCreation(TextureRegistry.SurfaceProducer.Callback producerLifecycle) {
     producerLifecycle.onSurfaceCreated();
