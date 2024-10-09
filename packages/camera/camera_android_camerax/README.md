@@ -60,7 +60,7 @@ requires specifying the `WRITE_EXTERNAL_STORAGE` permission (see [the CameraX do
 This is already done in the plugin, so no further action is required on your end.
 
 To understand the privacy impact of specifying the `WRITE_EXTERNAL_STORAGE` permission, see the
-[`WRITE_EXTERNAL_STORAGE` documentation][11]. We have seen apps also have the `READ_EXTERNAL_STORAGE`
+[`WRITE_EXTERNAL_STORAGE` documentation][11]. We have seen apps also have the [`READ_EXTERNAL_STORAGE`][13]
 permission automatically added to the merged Android manifest; it appears to be implied from
 `WRITE_EXTERNAL_STORAGE`. If you do not want the `READ_EXTERNAL_STORAGE` permission to be included
 in the merged Android manifest of your app, then take the following steps to remove it:
