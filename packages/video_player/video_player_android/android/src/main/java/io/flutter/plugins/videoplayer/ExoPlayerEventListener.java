@@ -9,8 +9,7 @@ import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
 import androidx.media3.common.VideoSize;
 import androidx.media3.exoplayer.ExoPlayer;
-
-import android.util.Log;
+import java.util.Objects;
 
 final class ExoPlayerEventListener implements Player.Listener {
   private final ExoPlayer exoPlayer;
@@ -51,8 +50,8 @@ final class ExoPlayerEventListener implements Player.Listener {
     int width = videoSize.width;
     int height = videoSize.height;
     if (width != 0 && height != 0) {
-      int rotationDegrees = videoSize.unappliedRotationDegrees;
-      Log.e("CAMILLE rotation degrees", Integer.toString(rotationDegrees));
+      int rotationDegrees = Objects.requireNonNull(exoPlayer.getVideoFormat()).rotationDegrees;
+
       // Switch the width/height if video was taken in portrait mode
       if (rotationDegrees == 90 || rotationDegrees == 270) {
         width = videoSize.height;
@@ -63,10 +62,10 @@ final class ExoPlayerEventListener implements Player.Listener {
       // upside-down playback for videos with rotationDegrees of 180 (other orientations work
       // correctly without correction).
       if (rotationDegrees == 180) {
-        rotationCorrection = rotationDegrees;
+        rotationCorrection = realRotationDegrees;
       }
     }
-    events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection);
+    events.onInitialized(width, height, exoPlayer.getDuration(), rotationDegrees);
   }
 
   @Override
