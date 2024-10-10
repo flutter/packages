@@ -264,32 +264,39 @@ class PlatformPolyline {
   /// The pattern data, as a list of pattern items.
   final List<PlatformPatternItem?> patterns;
   final List<PlatformLatLng?> points;
+
+  /// The cap at the start and end vertex of a polyline.
+  /// See https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
   final PlatformCap startCap;
   final PlatformCap endCap;
+
   final bool visible;
   final int width;
   final int zIndex;
 }
 
+/// Enumeration of possible types of PlatformCap, corresponding to the
+/// subclasses of Cap in the Google Maps Android SDK.
+/// See https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
 enum PlatformCapType {
-  butt,
-  square,
-  round,
-  custom,
+  buttCap,
+  roundCap,
+  squareCap,
+  customCap,
 }
 
+/// Pigeon equivalent of Cap from the platform interface.
+/// https://github.com/flutter/packages/blob/main/packages/google_maps_flutter/google_maps_flutter_platform_interface/lib/src/types/cap.dart
 class PlatformCap {
-  PlatformCap({required this.type, this.customCap});
+  PlatformCap({required this.type, this.bitmapDescriptor, this.refWidth});
 
   final PlatformCapType type;
-  final PlatformCustomCap? customCap;
-}
 
-class PlatformCustomCap {
-  PlatformCustomCap({required this.bitmapDescriptor, required this.refWidth});
-
-  final PlatformBitmap bitmapDescriptor;
-  final double refWidth;
+  /// The JSON data returned by BitmapDescriptor.toJson.
+  // TODO(schectman): Convert to structured data.
+  // https://github.com/flutter/flutter/issues/155122
+  final Object? bitmapDescriptor;
+  final double? refWidth;
 }
 
 /// Enumeration of possible types for PatternItem.

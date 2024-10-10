@@ -826,28 +826,23 @@ class Convert {
   }
 
   private static Cap capFromPigeon(
-      Messages.PlatformCap platformCap, AssetManager assetManager, float density) {
-    switch (platformCap.getType()) {
-      case BUTT:
+      Messages.PlatformCap cap, AssetManager assetManager, float density) {
+    switch (cap.getType()) {
+      case BUTT_CAP:
         return new ButtCap();
-      case SQUARE:
-        return new SquareCap();
-      case ROUND:
+      case ROUND_CAP:
         return new RoundCap();
-      case CUSTOM:
-        {
-          Messages.PlatformCustomCap customCap = platformCap.getCustomCap();
-          if (customCap == null) {
-            throw new IllegalArgumentException(
-                "PlatformCap with type CUSTOM cannot have null customCap field");
-          }
-          BitmapDescriptor bitmap =
-              toBitmapDescriptor(customCap.getBitmapDescriptor(), assetManager, density);
-          float refWidth = customCap.getRefWidth().floatValue();
-          return new CustomCap(bitmap, refWidth);
+      case SQUARE_CAP:
+        return new SquareCap();
+      case CUSTOM_CAP:
+        if (cap.getRefWidth() == null) {
+          throw new IllegalArgumentException("A Custom Cap must specify a refWidth value.");
         }
+        return new CustomCap(
+            toBitmapDescriptor(cap.getBitmapDescriptor(), assetManager, density),
+            cap.getRefWidth().floatValue());
     }
-    throw new IllegalArgumentException("Unrecognized PlatformCap type " + platformCap.getType());
+    throw new IllegalArgumentException("Unrecognized PlatformCap type: " + cap.getType());
   }
 
   static String interpretTileOverlayOptions(

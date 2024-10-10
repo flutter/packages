@@ -1309,6 +1309,35 @@ PlatformJointType platformJointTypeFromJointType(JointType jointType) {
   return PlatformJointType.mitered;
 }
 
+/// Converts platform interface's [Cap] to Pigeon's [PlatformCap].
+@visibleForTesting
+PlatformCap platformCapFromCap(Cap cap) {
+  // TODO(schectman): Convert Cap to structured data.
+  // https://github.com/flutter/flutter/issues/155121
+  final List<Object> json = cap.toJson() as List<Object>;
+  final String tag = json[0] as String;
+  switch (tag) {
+    case 'buttCap':
+      return PlatformCap(type: PlatformCapType.buttCap);
+    case 'roundCap':
+      return PlatformCap(type: PlatformCapType.roundCap);
+    case 'squareCap':
+      return PlatformCap(type: PlatformCapType.squareCap);
+    case 'customCap':
+      final Object bitmapDescriptor = json[1];
+      final double refWidth = json[2] as double;
+      return PlatformCap(
+          type: PlatformCapType.customCap,
+          bitmapDescriptor: bitmapDescriptor,
+          refWidth: refWidth);
+  }
+  // The string tags used to identify the type of cap comes from a different
+  // package, which could get a new value at
+  // any time, so provide a fallback that ensures this won't break when used
+  // with a version that contains new values.
+  return PlatformCap(type: PlatformCapType.buttCap);
+}
+
 /// Converts a PatternItem to Pigeon's PlatformPatternItem for PlatformPolyline
 /// pattern member.
 @visibleForTesting

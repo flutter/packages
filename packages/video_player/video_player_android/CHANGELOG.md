@@ -1,3 +1,32 @@
+## 2.7.12
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/156451) where
+  additional harmless but annoying warnings in the form of native stack traces
+  would be printed when the app was backgrounded. There may be additional
+  warnings that are not yet fixed, but this should address the
+  most common case.
+
+## 2.7.11
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/156158) where a
+  harmless but annoying warning in the form of a native stack trace would be
+  printed when a previously disposed video player received a trim memory event
+  (i.e. by backgrounding).
+
+## 2.7.10
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/156158) where
+  disposing a video player (including implicitly by switching tabs or views
+  in a running app) would cause native stack traces.
+
+## 2.7.9
+
+* Updates Java compatibility version to 11.
+
+## 2.7.8
+
+* Updates Pigeon for non-nullable collection type support.
+
 ## 2.7.7
 
 * Removes the flag to treat warnings as errors in client builds.
