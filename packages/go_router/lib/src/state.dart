@@ -163,6 +163,10 @@ class GoRouterState {
         pathParameters: pathParameters, queryParameters: queryParameters);
   }
 
+  /// Get the location for the provided route.
+  String? locationForRoute(RouteBase route) =>
+      _configuration.locationForRoute(route);
+
   @override
   bool operator ==(Object other) {
     return other is GoRouterState &&
@@ -218,15 +222,6 @@ class ShellRouteState extends GoRouterState {
   /// Gets the index of the [Navigator] or [StatefulShellBranch] in the
   /// associated shell route.
   int get navigatorIndex => shellRoute.indexOfNavigatorKey(navigatorKey);
-
-  /// Get the initial location for the shell navigator at the given index, if
-  /// specified in the associated shell route.
-  ///
-  /// For [StatefulShellRoute], this method is guaranteed to return a non-null
-  /// value for the branch/navigator at the given index (see also
-  /// [StatefulShellBranch.initialLocation]).
-  String? initialLocation(int navigatorIndex) => _configuration
-      .initialLocationForShellNavigator(shellRoute, navigatorIndex);
 }
 
 /// An inherited widget to host a [GoRouterStateRegistry] for the subtree.

@@ -204,7 +204,8 @@ class ScaffoldWithNavBar extends StatelessWidget {
     // already active. This example demonstrates how to support this behavior,
     // using the '/initial' shell route redirect.
     if (index == shellState.navigatorIndex) {
-      final String initialLocation = shellState.initialLocation(index)!;
+      final String initialLocation =
+          _shellRoute.initialBranchLocation(shellState, index);
       GoRouter.of(context).go(initialLocation);
       // It is also possible to navigate to the initial location of the branch
       // like this:
