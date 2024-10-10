@@ -18,12 +18,44 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+  if (empty) {
+    return <Object?>[];
+  }
+  if (error == null) {
+    return <Object?>[result];
+  }
+  return <Object?>[error.code, error.message, error.details];
+}
+
+/// Pigeon equivalent of [CameraLensDirection].
 enum PlatformCameraLensDirection {
   front,
   back,
   external,
 }
 
+/// Pigeon equivalent of [DeviceOrientation].
+enum PlatformDeviceOrientation {
+  portraitUp,
+  portraitDown,
+  landscapeLeft,
+  landscapeRight,
+}
+
+/// Pigeon equivalent of [ExposureMode].
+enum PlatformExposureMode {
+  auto,
+  locked,
+}
+
+/// Pigeon equivalent of [FocusMode].
+enum PlatformFocusMode {
+  auto,
+  locked,
+}
+
+/// Pigeon equivalent of [CameraDescription].
 class PlatformCameraDescription {
   PlatformCameraDescription({
     required this.name,
@@ -55,6 +87,76 @@ class PlatformCameraDescription {
   }
 }
 
+/// Data needed for [CameraInitializedEvent].
+class PlatformCameraState {
+  PlatformCameraState({
+    required this.previewSize,
+    required this.exposureMode,
+    required this.focusMode,
+    required this.exposurePointSupported,
+    required this.focusPointSupported,
+  });
+
+  PlatformSize previewSize;
+
+  PlatformExposureMode exposureMode;
+
+  PlatformFocusMode focusMode;
+
+  bool exposurePointSupported;
+
+  bool focusPointSupported;
+
+  Object encode() {
+    return <Object?>[
+      previewSize,
+      exposureMode,
+      focusMode,
+      exposurePointSupported,
+      focusPointSupported,
+    ];
+  }
+
+  static PlatformCameraState decode(Object result) {
+    result as List<Object?>;
+    return PlatformCameraState(
+      previewSize: result[0]! as PlatformSize,
+      exposureMode: result[1]! as PlatformExposureMode,
+      focusMode: result[2]! as PlatformFocusMode,
+      exposurePointSupported: result[3]! as bool,
+      focusPointSupported: result[4]! as bool,
+    );
+  }
+}
+
+/// Pigeon equivalent of [Size].
+class PlatformSize {
+  PlatformSize({
+    required this.width,
+    required this.height,
+  });
+
+  double width;
+
+  double height;
+
+  Object encode() {
+    return <Object?>[
+      width,
+      height,
+    ];
+  }
+
+  static PlatformSize decode(Object result) {
+    result as List<Object?>;
+    return PlatformSize(
+      width: result[0]! as double,
+      height: result[1]! as double,
+    );
+  }
+}
+
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -62,11 +164,26 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is PlatformCameraLensDirection) {
+    }    else if (value is PlatformCameraLensDirection) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is PlatformCameraDescription) {
+    }    else if (value is PlatformDeviceOrientation) {
       buffer.putUint8(130);
+      writeValue(buffer, value.index);
+    }    else if (value is PlatformExposureMode) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.index);
+    }    else if (value is PlatformFocusMode) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.index);
+    }    else if (value is PlatformCameraDescription) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    }    else if (value is PlatformCameraState) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    }    else if (value is PlatformSize) {
+      buffer.putUint8(135);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -76,37 +193,48 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129:
+      case 129: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformCameraLensDirection.values[value];
-      case 130:
+      case 130: 
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PlatformDeviceOrientation.values[value];
+      case 131: 
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PlatformExposureMode.values[value];
+      case 132: 
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PlatformFocusMode.values[value];
+      case 133: 
         return PlatformCameraDescription.decode(readValue(buffer)!);
+      case 134: 
+        return PlatformCameraState.decode(readValue(buffer)!);
+      case 135: 
+        return PlatformSize.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
   }
 }
 
+/// Handles calls from Dart to the native side.
 class CameraApi {
   /// Constructor for [CameraApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  CameraApi(
-      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  CameraApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
 
+  /// Returns the list of available cameras.
   Future<List<PlatformCameraDescription>> getAvailableCameras() async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.camera_android.CameraApi.getAvailableCameras$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.camera_android.CameraApi.getAvailableCameras$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -127,8 +255,109 @@ class CameraApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!
-          .cast<PlatformCameraDescription>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<PlatformCameraDescription>();
+    }
+  }
+}
+
+/// Handles calls from native side to Dart that are not camera-specific.
+abstract class CameraGlobalEventApi {
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  /// Called when the device's physical orientation changes.
+  void deviceOrientationChanged(PlatformDeviceOrientation orientation);
+
+  static void setUp(CameraGlobalEventApi? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.camera_android.CameraGlobalEventApi.deviceOrientationChanged$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.camera_android.CameraGlobalEventApi.deviceOrientationChanged was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PlatformDeviceOrientation? arg_orientation = (args[0] as PlatformDeviceOrientation?);
+          assert(arg_orientation != null,
+              'Argument for dev.flutter.pigeon.camera_android.CameraGlobalEventApi.deviceOrientationChanged was null, expected non-null PlatformDeviceOrientation.');
+          try {
+            api.deviceOrientationChanged(arg_orientation!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+}
+
+/// Handles device-specific calls from native side to Dart.
+abstract class CameraEventApi {
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  /// Called when the camera is initialized.
+  void initialized(PlatformCameraState initialState);
+
+  /// Called when an error occurs in the camera.
+  void error(String message);
+
+  static void setUp(CameraEventApi? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.camera_android.CameraEventApi.initialized$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.camera_android.CameraEventApi.initialized was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PlatformCameraState? arg_initialState = (args[0] as PlatformCameraState?);
+          assert(arg_initialState != null,
+              'Argument for dev.flutter.pigeon.camera_android.CameraEventApi.initialized was null, expected non-null PlatformCameraState.');
+          try {
+            api.initialized(arg_initialState!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.camera_android.CameraEventApi.error$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.camera_android.CameraEventApi.error was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_message = (args[0] as String?);
+          assert(arg_message != null,
+              'Argument for dev.flutter.pigeon.camera_android.CameraEventApi.error was null, expected non-null String.');
+          try {
+            api.error(arg_message!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
   }
 }
