@@ -138,12 +138,11 @@ class Convert {
    * bytes, 'bitmapScaling' for scaling mode, and 'imagePixelRatio' for scale ratio. It may
    * optionally include 'width' and/or 'height' for explicit image dimensions.
    *
-   * @param bytesMap a map containing the byte data and scaling instructions. Expected keys are:
-   *     'byteData': the actual bytes of the image, 'bitmapScaling': the scaling mode, either 'auto'
-   *     or 'none', 'imagePixelRatio': used with 'auto' bitmapScaling if width or height are not
-   *     provided, 'width' (optional): the desired width, which affects scaling if 'height' is not
-   *     provided, 'height' (optional): the desired height, which affects scaling if 'width' is not
-   *     provided
+   * @param bytesMap a [PlatformBitmapBytesMap] containing the byte data from which to construct a
+   *     [BitmapDescriptor] and a bitmap scaling mode. If the scaling mode is `AUTO`, `bytesMap`
+   *     shall also contain an `imagePixelRatio` used to compute the scaling ratio. May also contain
+   *     an optional `width`, which affects scaling if `height` is omitted, and `height`, which
+   *     affects scaling if `width` is omitted.
    * @param density the density of the display, used to calculate pixel dimensions.
    * @param bitmapDescriptorFactory is an instance of the BitmapDescriptorFactoryWrapper.
    * @return BitmapDescriptor object from bytes data.
@@ -200,11 +199,11 @@ class Convert {
    * 'imagePixelRatio', and may optionally include 'width' and/or 'height' to explicitly set the
    * dimensions of the output image.
    *
-   * @param assetMap a map containing the asset details and scaling instructions, with keys
-   *     'assetName': the name of the asset file, 'bitmapScaling': the scaling mode, either 'auto'
-   *     or 'none', 'imagePixelRatio': used with 'auto' scaling to compute the scale ratio, 'width'
-   *     (optional): the desired width, which affects scaling if 'height' is not provided, 'height'
-   *     (optional): the desired height, which affects scaling if 'width' is not provided
+   * @param assetMap a [PlatformBitmapAssetMap] containing the asset name from which to construct a
+   *     [BitmapDescriptor] and a bitmap scaling mode. If the scaling mode is `AUTO`, `bytesMap`
+   *     shall also contain an `imagePixelRatio` used to compute the scaling ratio. May also contain
+   *     an optional `width`, which affects scaling if `height` is omitted, and `height`, which
+   *     affects scaling if `width` is omitted.
    * @param assetManager assetManager An instance of Android's AssetManager, which provides access
    *     to any raw asset files stored in the application's assets directory.
    * @param density density the density of the display, used to calculate pixel dimensions.

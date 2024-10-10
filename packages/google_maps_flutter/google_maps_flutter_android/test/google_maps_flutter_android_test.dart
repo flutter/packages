@@ -994,9 +994,7 @@ void main() {
   test('BytesMapBitmap bitmap to PlatformBitmap', () {
     final Uint8List data = Uint8List.fromList(<int>[1, 2, 3, 4]);
     final BytesMapBitmap bitmap = BitmapDescriptor.bytes(data,
-        imagePixelRatio: 2.0,
-        width: 100.0,
-        height: 200.0);
+        imagePixelRatio: 2.0, width: 100.0, height: 200.0);
     final PlatformBitmap platformBitmap =
         GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap);
     expect(platformBitmap.bitmap, isA<PlatformBitmapBytesMap>());
@@ -1012,9 +1010,7 @@ void main() {
   test('AssetMapBitmap bitmap to PlatformBitmap', () {
     const String assetName = 'fake_asset_name';
     final AssetMapBitmap bitmap = AssetMapBitmap(assetName,
-        imagePixelRatio: 2.0,
-        width: 100.0,
-        height: 200.0);
+        imagePixelRatio: 2.0, width: 100.0, height: 200.0);
     final PlatformBitmap platformBitmap =
         GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap);
     expect(platformBitmap.bitmap, isA<PlatformBitmapAssetMap>());
