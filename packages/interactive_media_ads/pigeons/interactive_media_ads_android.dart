@@ -556,7 +556,13 @@ abstract class FrameLayout extends ViewGroup {
   ),
 )
 abstract class ViewGroup extends View {
+  /// Adds a child view.
   void addView(View view);
+
+  /// Called by a ViewGroup subclass to remove child views from itself, when it
+  /// must first know its size on screen before it can calculate how many child
+  /// views it will render.
+  void removeView(View view);
 }
 
 /// Displays a video file.

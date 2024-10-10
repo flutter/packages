@@ -533,8 +533,14 @@ void main() {
 
     const Polyline object1 = Polyline(polylineId: PolylineId('1'));
     const Polyline object2old = Polyline(polylineId: PolylineId('2'));
-    final Polyline object2new = object2old.copyWith(widthParam: 42);
-    const Polyline object3 = Polyline(polylineId: PolylineId('3'));
+    final Polyline object2new = object2old.copyWith(
+        widthParam: 42, startCapParam: Cap.squareCap, endCapParam: Cap.buttCap);
+    final Cap customCap =
+        Cap.customCapFromBitmap(BitmapDescriptor.defaultMarker, refWidth: 15);
+    final Polyline object3 = Polyline(
+        polylineId: const PolylineId('3'),
+        startCap: customCap,
+        endCap: Cap.roundCap);
     await maps.updatePolylines(
         PolylineUpdates.from(
             <Polyline>{object1, object2old}, <Polyline>{object2new, object3}),
@@ -572,6 +578,10 @@ void main() {
         expect(pattern?.encode(),
             platformPatternItemFromPatternItem(expected.patterns[i]).encode());
       }
+      expect(actual.startCap.encode(),
+          platformCapFromCap(expected.startCap).encode());
+      expect(
+          actual.endCap.encode(), platformCapFromCap(expected.endCap).encode());
     }
 
     // Object one should be removed.
