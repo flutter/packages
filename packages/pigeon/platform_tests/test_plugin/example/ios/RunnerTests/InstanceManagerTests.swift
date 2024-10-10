@@ -25,8 +25,7 @@ final class InstanceManagerTests: XCTestCase {
     _ = instanceManager.addHostCreatedInstance(object)
 
     let identifier = instanceManager.identifierWithStrongReference(forInstance: object)
-    XCTAssertNotNil(identifier)
-    XCTAssertEqual(instanceManager.instance(forIdentifier: identifier!), object)
+    XCTAssertEqual(instanceManager.instance(forIdentifier: try XCTUnwrap(identifier)), object)
   }
 
   func testRemoveInstance() {
