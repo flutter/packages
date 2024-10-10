@@ -5,7 +5,6 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -109,11 +108,8 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
     WebStorageHostApi.setup(
         binaryMessenger,
         new WebStorageHostApiImpl(instanceManager, new WebStorageHostApiImpl.WebStorageCreator()));
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      PermissionRequestHostApi.setup(
-          binaryMessenger, new PermissionRequestHostApiImpl(binaryMessenger, instanceManager));
-    }
+    PermissionRequestHostApi.setup(
+        binaryMessenger, new PermissionRequestHostApiImpl(binaryMessenger, instanceManager));
     GeolocationPermissionsCallbackHostApi.setup(
         binaryMessenger,
         new GeolocationPermissionsCallbackHostApiImpl(binaryMessenger, instanceManager));
