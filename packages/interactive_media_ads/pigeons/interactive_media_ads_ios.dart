@@ -291,6 +291,20 @@ enum FriendlyObstructionPurpose {
   unknown,
 }
 
+/// Different UI elements that can be customized.
+///
+/// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Enums/IMAUiElementType.html.
+enum UIElementType {
+  /// Ad attribution UI element.
+  adAttribution,
+
+  /// Ad countdown element.
+  countdown,
+
+  /// The element is not recognized by this wrapper.
+  unknown,
+}
+
 /// The `IMAAdDisplayContainer` is responsible for managing the ad container
 /// view and companion ad slots used for ad playback.
 ///
@@ -515,6 +529,35 @@ abstract class IMAAdEvent extends NSObject {
 @ProxyApi()
 abstract class IMAAdsRenderingSettings extends NSObject {
   IMAAdsRenderingSettings();
+
+  /// If specified, the SDK will play the media with MIME type on the list.
+  void setMimeTypes(List<String>? types);
+
+  /// Maximum recommended bitrate.
+  ///
+  /// The value is in kbit/s.
+  void setBitrate(int bitrate);
+
+  /// Timeout (in seconds) when loading a video ad media file.
+  ///
+  /// Use -1 for the default of 8 seconds.
+  void setLoadVideoTimeout(double seconds);
+
+  /// For VMAP and ad rules playlists, only play ad breaks scheduled after this
+  /// time (in seconds).
+  void setPlayAdsAfterTime(double seconds);
+
+  /// Specifies the list of UI elements that should be visible.
+  void setUIElements(List<UIElementType>? types);
+
+  /// Whether or not the SDK will preload ad media.
+  ///
+  /// Default is YES.
+  void setEnablePreloading(bool enable);
+
+  /// Specifies the optional UIViewController that will be used to open links
+  /// in-app.
+  void setLinkOpenerPresentingController(UIViewController controller);
 }
 
 /// The root class of most Objective-C class hierarchies, from which subclasses

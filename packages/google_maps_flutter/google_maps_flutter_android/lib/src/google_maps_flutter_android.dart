@@ -775,8 +775,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       polylineId: polyline.polylineId.value,
       consumesTapEvents: polyline.consumeTapEvents,
       color: polyline.color.value,
-      startCap: polyline.startCap.toJson(),
-      endCap: polyline.endCap.toJson(),
+      startCap: platformCapFromCap(polyline.startCap),
+      endCap: platformCapFromCap(polyline.endCap),
       geodesic: polyline.geodesic,
       visible: polyline.visible,
       width: polyline.width,
@@ -1217,6 +1217,35 @@ PlatformJointType platformJointTypeFromJointType(JointType jointType) {
   // switch as needing an update.
   // ignore: dead_code
   return PlatformJointType.mitered;
+}
+
+/// Converts platform interface's [Cap] to Pigeon's [PlatformCap].
+@visibleForTesting
+PlatformCap platformCapFromCap(Cap cap) {
+  // TODO(schectman): Convert Cap to structured data.
+  // https://github.com/flutter/flutter/issues/155121
+  final List<Object> json = cap.toJson() as List<Object>;
+  final String tag = json[0] as String;
+  switch (tag) {
+    case 'buttCap':
+      return PlatformCap(type: PlatformCapType.buttCap);
+    case 'roundCap':
+      return PlatformCap(type: PlatformCapType.roundCap);
+    case 'squareCap':
+      return PlatformCap(type: PlatformCapType.squareCap);
+    case 'customCap':
+      final Object bitmapDescriptor = json[1];
+      final double refWidth = json[2] as double;
+      return PlatformCap(
+          type: PlatformCapType.customCap,
+          bitmapDescriptor: bitmapDescriptor,
+          refWidth: refWidth);
+  }
+  // The string tags used to identify the type of cap comes from a different
+  // package, which could get a new value at
+  // any time, so provide a fallback that ensures this won't break when used
+  // with a version that contains new values.
+  return PlatformCap(type: PlatformCapType.buttCap);
 }
 
 /// Converts a PatternItem to Pigeon's PlatformPatternItem for PlatformPolyline

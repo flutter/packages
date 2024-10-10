@@ -18,7 +18,6 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import java.util.List;
-import java.util.Map;
 import org.junit.Test;
 
 public class CameraUtilsTest {
@@ -87,14 +86,17 @@ public class CameraUtilsTest {
         .thenReturn(mockSensorOrientation2)
         .thenReturn(mockLensFacing2);
 
-    List<Map<String, Object>> availableCameras = CameraUtils.getAvailableCameras(mockActivity);
+    List<Messages.PlatformCameraDescription> availableCameras =
+        CameraUtils.getAvailableCameras(mockActivity);
 
     assertEquals(availableCameras.size(), 2);
-    assertEquals(availableCameras.get(0).get("name"), "1394902");
-    assertEquals(availableCameras.get(0).get("sensorOrientation"), mockSensorOrientation0);
-    assertEquals(availableCameras.get(0).get("lensFacing"), "front");
-    assertEquals(availableCameras.get(1).get("name"), "0283835");
-    assertEquals(availableCameras.get(1).get("sensorOrientation"), mockSensorOrientation2);
-    assertEquals(availableCameras.get(1).get("lensFacing"), "external");
+    assertEquals(availableCameras.get(0).getName(), "1394902");
+    assertEquals(availableCameras.get(0).getSensorOrientation().intValue(), mockSensorOrientation0);
+    assertEquals(
+        availableCameras.get(0).getLensDirection(), Messages.PlatformCameraLensDirection.FRONT);
+    assertEquals(availableCameras.get(1).getName(), "0283835");
+    assertEquals(availableCameras.get(1).getSensorOrientation().intValue(), mockSensorOrientation2);
+    assertEquals(
+        availableCameras.get(1).getLensDirection(), Messages.PlatformCameraLensDirection.EXTERNAL);
   }
 }

@@ -44,6 +44,7 @@
 - markdown
 - meta
 - mime
+- mockito
 - path
 - platform
 - pub_semver
@@ -61,6 +62,7 @@
 - _discoveryapis_commons
 - adaptive_navigation
 - file
+- file_testing
 - googleapis
 - googleapis_auth
 - json_annotation

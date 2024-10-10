@@ -556,7 +556,13 @@ abstract class FrameLayout extends ViewGroup {
   ),
 )
 abstract class ViewGroup extends View {
+  /// Adds a child view.
   void addView(View view);
+
+  /// Called by a ViewGroup subclass to remove child views from itself, when it
+  /// must first know its size on screen before it can calculate how many child
+  /// views it will render.
+  void removeView(View view);
 }
 
 /// Displays a video file.
@@ -861,4 +867,30 @@ abstract class AdProgressInfo {
 
   /// The total number of ads in this ad break.
   late final int totalAds;
+}
+
+/// An object that holds data corresponding to the companion Ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAd.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.CompanionAd',
+  ),
+)
+abstract class CompanionAd {
+  /// The API needed to execute this ad, or null if unavailable.
+  late final String? apiFramework;
+
+  /// The height of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  late final int height;
+
+  /// The URL for the static resource of this companion.
+  late final String resourceValue;
+
+  /// The width of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  late final int width;
 }

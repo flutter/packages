@@ -25,11 +25,13 @@ import io.flutter.plugins.camera.features.exposurelock.ExposureMode;
 import io.flutter.plugins.camera.features.flash.FlashMode;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.view.TextureRegistry;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
+final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler, Messages.CameraApi {
   private final Activity activity;
   private final BinaryMessenger messenger;
   private final CameraPermissions cameraPermissions;
@@ -55,18 +57,12 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     imageStreamChannel =
         new EventChannel(messenger, "plugins.flutter.io/camera_android/imageStream");
     methodChannel.setMethodCallHandler(this);
+    Messages.CameraApi.setUp(messenger, this);
   }
 
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
     switch (call.method) {
-      case "availableCameras":
-        try {
-          result.success(CameraUtils.getAvailableCameras(activity));
-        } catch (Exception e) {
-          handleException(e, result);
-        }
-        break;
       case "create":
         {
           if (camera != null) {
@@ -429,5 +425,18 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
 
     // CameraAccessException can not be cast to a RuntimeException.
     throw (RuntimeException) exception;
+  }
+
+  @NonNull
+  @Override
+  public List<Messages.PlatformCameraDescription> getAvailableCameras() {
+    if (activity == null) {
+      return Collections.emptyList();
+    }
+    try {
+      return CameraUtils.getAvailableCameras(activity);
+    } catch (CameraAccessException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

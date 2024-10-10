@@ -35,10 +35,7 @@ class InitParams {
     this.forceCodeForRefreshToken = false,
   });
 
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The Java code treats the values as non-nullable.
-  final List<String?> scopes;
+  final List<String> scopes;
   final SignInType signInType;
   final String? hostedDomain;
   final String? clientId;
