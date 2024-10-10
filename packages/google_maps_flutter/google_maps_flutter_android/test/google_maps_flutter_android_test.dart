@@ -996,8 +996,7 @@ void main() {
     final BytesMapBitmap bitmap = BitmapDescriptor.bytes(data,
         imagePixelRatio: 2.0,
         width: 100.0,
-        height: 200.0,
-        bitmapScaling: MapBitmapScaling.auto);
+        height: 200.0);
     final PlatformBitmap platformBitmap =
         GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap);
     expect(platformBitmap.bitmap, isA<PlatformBitmapBytesMap>());
@@ -1015,8 +1014,7 @@ void main() {
     final AssetMapBitmap bitmap = AssetMapBitmap(assetName,
         imagePixelRatio: 2.0,
         width: 100.0,
-        height: 200.0,
-        bitmapScaling: MapBitmapScaling.auto);
+        height: 200.0);
     final PlatformBitmap platformBitmap =
         GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap);
     expect(platformBitmap.bitmap, isA<PlatformBitmapAssetMap>());
