@@ -19,7 +19,7 @@ class TileOverlaysController extends GeometryController {
         tileOverlayController,
         (TileOverlayController c) => c.tileOverlay.zIndex);
 
-    googleMap.overlayMapTypes!.insertAt(index, tileOverlayController.gmMapType);
+    googleMap.overlayMapTypes.insertAt(index, tileOverlayController.gmMapType);
     _visibleTileOverlays.insert(index, tileOverlayController);
   }
 
@@ -30,7 +30,7 @@ class TileOverlaysController extends GeometryController {
       return;
     }
 
-    googleMap.overlayMapTypes!.removeAt(index);
+    googleMap.overlayMapTypes.removeAt(index);
     _visibleTileOverlays.removeAt(index);
   }
 
@@ -93,7 +93,7 @@ class TileOverlaysController extends GeometryController {
     if (controller != null && controller.tileOverlay.visible) {
       final int i = _visibleTileOverlays.indexOf(controller);
       // This causes the map to reload the overlay.
-      googleMap.overlayMapTypes!.setAt(i, controller.gmMapType);
+      googleMap.overlayMapTypes.setAt(i, controller.gmMapType);
     }
   }
 }

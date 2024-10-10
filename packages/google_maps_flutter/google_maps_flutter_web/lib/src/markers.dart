@@ -60,7 +60,7 @@ class MarkersController extends GeometryController {
 
     final gmaps.Marker gmMarker = gmaps.Marker(markerOptions);
 
-    gmMarker.set('markerId', marker.markerId.value);
+    gmMarker.set('markerId', marker.markerId.value.toJS);
 
     if (marker.clusterManagerId != null) {
       _clusterManagersController.addItem(marker.clusterManagerId!, gmMarker);

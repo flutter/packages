@@ -71,8 +71,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   PGNMessageData *pigeonResult = [[PGNMessageData alloc] init];
   pigeonResult.name = GetNullableObjectAtIndex(list, 0);
   pigeonResult.description = GetNullableObjectAtIndex(list, 1);
-  PGNCodeBox *enumBox = GetNullableObjectAtIndex(list, 2);
-  pigeonResult.code = enumBox.value;
+  PGNCodeBox *boxedPGNCode = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.code = boxedPGNCode.value;
   pigeonResult.data = GetNullableObjectAtIndex(list, 3);
   return pigeonResult;
 }
@@ -94,13 +94,13 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @implementation PGNMessagesPigeonCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 129:
-      return [PGNMessageData fromList:[self readValue]];
-    case 130: {
+    case 129: {
       NSNumber *enumAsNumber = [self readValue];
       return enumAsNumber == nil ? nil
                                  : [[PGNCodeBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
+    case 130:
+      return [PGNMessageData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -111,13 +111,13 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 @implementation PGNMessagesPigeonCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[PGNMessageData class]]) {
-    [self writeByte:129];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[PGNCodeBox class]]) {
+  if ([value isKindOfClass:[PGNCodeBox class]]) {
     PGNCodeBox *box = (PGNCodeBox *)value;
-    [self writeByte:130];
+    [self writeByte:129];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[PGNMessageData class]]) {
+    [self writeByte:130];
+    [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
   }

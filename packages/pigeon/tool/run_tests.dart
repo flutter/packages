@@ -238,5 +238,5 @@ Future<void> main(List<String> args) async {
     exit(2);
   }
 
-  await runTests(testsToRun, ciMode: true);
+  await runTests(testsToRun, ciMode: true, includeOverflow: true);
 }

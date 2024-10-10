@@ -1,3 +1,16 @@
+## 2.0.23
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 2.0.22
+
+* Bumps `com.android.tools.build:gradle` from 7.2.1 to 8.5.1.
+
+## 2.0.21
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 2.0.20
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

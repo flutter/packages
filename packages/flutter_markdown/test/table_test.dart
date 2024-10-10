@@ -64,6 +64,25 @@ void defineTests() {
     );
 
     testWidgets(
+      'should work with table alignments',
+      (WidgetTester tester) async {
+        const String data =
+            '|Header 1|Header 2|Header 3|\n|:----|:----:|----:|\n|Col 1|Col 2|Col 3|';
+        await tester.pumpWidget(
+          boilerplate(
+            const MarkdownBody(data: data),
+          ),
+        );
+
+        final Iterable<Wrap> wraps = tester.widgetList(find.byType(Wrap));
+
+        expect(wraps.first.alignment, WrapAlignment.start);
+        expect(wraps.elementAt(1).alignment, WrapAlignment.center);
+        expect(wraps.last.alignment, WrapAlignment.end);
+      },
+    );
+
+    testWidgets(
       'should work with styling',
       (WidgetTester tester) async {
         const String data = '|Header|\n|----|\n|*italic*|';

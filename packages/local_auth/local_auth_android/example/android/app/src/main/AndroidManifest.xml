@@ -6,7 +6,8 @@
 
     <application android:label="local_auth_example" android:icon="@mipmap/ic_launcher">
         <activity android:name="io.flutter.embedding.android.FlutterFragmentActivity"
-                  android:launchMode="singleTop"
+            android:exported="true"
+            android:launchMode="singleTop"
                   android:theme="@style/Theme.AppCompat.Light"
                   android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection"
                   android:hardwareAccelerated="true"

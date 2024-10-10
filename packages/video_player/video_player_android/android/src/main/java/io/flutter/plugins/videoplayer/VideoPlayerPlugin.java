@@ -24,7 +24,6 @@ import io.flutter.plugins.videoplayer.Messages.VolumeMessage;
 import io.flutter.view.TextureRegistry;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 
 /** Android platform implementation of the VideoPlayerPlugin. */
@@ -94,8 +93,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   public @NonNull TextureMessage create(@NonNull CreateMessage arg) {
-    TextureRegistry.SurfaceTextureEntry handle =
-        flutterState.textureRegistry.createSurfaceTexture();
+    TextureRegistry.SurfaceProducer handle = flutterState.textureRegistry.createSurfaceProducer();
     EventChannel eventChannel =
         new EventChannel(
             flutterState.binaryMessenger, "flutter.io/videoPlayer/videoEvents" + handle.id());
@@ -110,8 +108,9 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
         assetLookupKey = flutterState.keyForAsset.get(arg.getAsset());
       }
       videoAsset = VideoAsset.fromAssetUrl("asset:///" + assetLookupKey);
+    } else if (arg.getUri().startsWith("rtsp://")) {
+      videoAsset = VideoAsset.fromRtspUrl(arg.getUri());
     } else {
-      Map<String, String> httpHeaders = arg.getHttpHeaders();
       VideoAsset.StreamingFormat streamingFormat = VideoAsset.StreamingFormat.UNKNOWN;
       String formatHint = arg.getFormatHint();
       if (formatHint != null) {
@@ -222,11 +221,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     }
 
     void startListening(VideoPlayerPlugin methodCallHandler, BinaryMessenger messenger) {
-      AndroidVideoPlayerApi.setup(messenger, methodCallHandler);
+      AndroidVideoPlayerApi.setUp(messenger, methodCallHandler);
     }
 
     void stopListening(BinaryMessenger messenger) {
-      AndroidVideoPlayerApi.setup(messenger, null);
+      AndroidVideoPlayerApi.setUp(messenger, null);
     }
   }
 }

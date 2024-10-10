@@ -186,7 +186,7 @@ typedef NS_ENUM(NSUInteger, SKSubscriptionPeriodUnitMessage) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithProductIdentifier:(NSString *)productIdentifier
                            localizedTitle:(NSString *)localizedTitle
-                     localizedDescription:(NSString *)localizedDescription
+                     localizedDescription:(nullable NSString *)localizedDescription
                               priceLocale:(SKPriceLocaleMessage *)priceLocale
               subscriptionGroupIdentifier:(nullable NSString *)subscriptionGroupIdentifier
                                     price:(NSString *)price
@@ -196,7 +196,7 @@ typedef NS_ENUM(NSUInteger, SKSubscriptionPeriodUnitMessage) {
                                 discounts:(nullable NSArray<SKProductDiscountMessage *> *)discounts;
 @property(nonatomic, copy) NSString *productIdentifier;
 @property(nonatomic, copy) NSString *localizedTitle;
-@property(nonatomic, copy) NSString *localizedDescription;
+@property(nonatomic, copy, nullable) NSString *localizedDescription;
 @property(nonatomic, strong) SKPriceLocaleMessage *priceLocale;
 @property(nonatomic, copy, nullable) NSString *subscriptionGroupIdentifier;
 @property(nonatomic, copy) NSString *price;

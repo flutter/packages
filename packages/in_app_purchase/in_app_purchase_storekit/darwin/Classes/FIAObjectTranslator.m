@@ -118,11 +118,9 @@
     return nil;
   }
   NSMutableDictionary *map = [[NSMutableDictionary alloc] init];
-  [map setObject:[locale objectForKey:NSLocaleCurrencySymbol] ?: [NSNull null]
-          forKey:@"currencySymbol"];
-  [map setObject:[locale objectForKey:NSLocaleCurrencyCode] ?: [NSNull null]
-          forKey:@"currencyCode"];
-  [map setObject:[locale objectForKey:NSLocaleCountryCode] ?: [NSNull null] forKey:@"countryCode"];
+  [map setObject:locale.currencySymbol ?: [NSNull null] forKey:@"currencySymbol"];
+  [map setObject:locale.currencyCode ?: [NSNull null] forKey:@"currencyCode"];
+  [map setObject:locale.countryCode ?: [NSNull null] forKey:@"countryCode"];
   return map;
 }
 
@@ -509,9 +507,9 @@
     [pigeonProducts addObject:[self convertProductToPigeon:product]];
   };
 
-  SKProductsResponseMessage *msg =
-      [SKProductsResponseMessage makeWithProducts:pigeonProducts
-                        invalidProductIdentifiers:productsResponse.invalidProductIdentifiers];
+  SKProductsResponseMessage *msg = [SKProductsResponseMessage
+               makeWithProducts:pigeonProducts
+      invalidProductIdentifiers:productsResponse.invalidProductIdentifiers ?: @[]];
   return msg;
 }
 

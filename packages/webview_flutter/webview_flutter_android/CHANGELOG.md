@@ -1,3 +1,29 @@
+## 4.0.0
+
+* Bumps androidx.webkit:webkit from 1.12.0 to 1.12.1.
+* **Breaking Change** Bumps Android `minSdkVersion` from 19 to 21.
+
+## 3.16.9
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 3.16.8
+
+* Bumps androidx.webkit:webkit from 1.11.0 to 1.12.0.
+
+## 3.16.7
+
+* Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.
+
+## 3.16.6
+
+* Bumps androidx.annotation:annotation from 1.7.1 to 1.8.1.
+
+## 3.16.5
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 3.16.4
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

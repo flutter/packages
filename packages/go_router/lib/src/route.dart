@@ -132,7 +132,7 @@ typedef ExitCallback = FutureOr<bool> Function(
 ///   routes: <GoRoute>[
 ///     GoRoute(
 ///       path: '/',
-///       redirect: (_) => '/family/${Families.data[0].id}',
+///       redirect: (_, __) => '/family/${Families.data[0].id}',
 ///     ),
 ///     GoRoute(
 ///       path: '/family',
@@ -169,7 +169,7 @@ abstract class RouteBase with Diagnosticable {
   ///   routes: <GoRoute>[
   ///     GoRoute(
   ///       path: '/',
-  ///       redirect: (_) => '/family/${Families.data[0].id}',
+  ///       redirect: (_, __) => '/family/${Families.data[0].id}',
   ///     ),
   ///     GoRoute(
   ///       path: '/family/:fid',
@@ -188,11 +188,11 @@ abstract class RouteBase with Diagnosticable {
   ///   routes: <GoRoute>[
   ///     GoRoute(
   ///       path: '/',
-  ///       redirect: (_) => '/page1', // this takes priority over the sub-route.
+  ///       redirect: (_, __) => '/page1', // this takes priority over the sub-route.
   ///       routes: <GoRoute>[
   ///         GoRoute(
   ///           path: 'child',
-  ///           redirect: (_) => '/page2',
+  ///           redirect: (_, __) => '/page2',
   ///         ),
   ///       ],
   ///     ),
@@ -432,8 +432,10 @@ class GoRoute extends RouteBase {
 
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.
-  RegExpMatch? matchPatternAsPrefix(String loc) =>
-      _pathRE.matchAsPrefix(loc) as RegExpMatch?;
+  RegExpMatch? matchPatternAsPrefix(String loc) {
+    return _pathRE.matchAsPrefix('/$loc') as RegExpMatch? ??
+        _pathRE.matchAsPrefix(loc) as RegExpMatch?;
+  }
 
   /// Extract the path parameters from a match.
   Map<String, String> extractPathParams(RegExpMatch match) =>
@@ -777,6 +779,8 @@ class ShellRoute extends ShellRouteBase {
 /// * [Custom StatefulShellRoute example](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/others/custom_stateful_shell_route.dart)
 /// which demonstrates how to customize the container for the branch Navigators
 /// and how to implement animated transitions when switching branches.
+///
+/// {@category Configuration}
 class StatefulShellRoute extends ShellRouteBase {
   /// Constructs a [StatefulShellRoute] from a list of [StatefulShellBranch]es,
   /// each representing a separate nested navigation tree (branch).

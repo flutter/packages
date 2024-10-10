@@ -1,3 +1,7 @@
+## 0.12.4+2
+
+* Adds support for `web: ^1.0.0`.
+
 ## 0.12.4+1
 
 * Fixes README.md typo.

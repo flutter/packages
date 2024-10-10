@@ -1,3 +1,58 @@
+## 0.3.1
+
+* Use improved MediaQuery methods.
+
+## 0.3.0
+
+* Adds `inDuration`, `outDuration`, `inCurve`, and `outCurve` parameters for 
+configuring additional `SlotLayoutConfig` animation behavior.
+* **BREAKING CHANGES**:
+  * Removes `duration` parameter from `SlotLayoutConfig`.
+
+## 0.2.6
+
+* Add new sample for using AdaptiveScaffold with GoRouter.
+
+## 0.2.5
+
+* Fix breakpoint not being active in certain cases like foldables.
+
+## 0.2.4
+
+* Compare breakpoints to each other using operators.
+
+## 0.2.3
+
+* Update the spacing and margins to the latest material m3 specs.
+* Add `margin`, `spacing`, `padding`, `recommendedPanes` and `maxPanes` with their Material value to `Breakpoint`.
+
+## 0.2.2
+
+* Fix a bug where landscape would not show body when using `andUp`.
+
+## 0.2.1
+
+* Add `Breakpoint.activeBreakpointOf(context)` to find the currently active breakpoint.
+* Don't check for height on Desktop platforms.
+
+## 0.2.0
+
+* Add breakpoints for mediumLarge and extraLarge.
+* Add height and orientation based breakpoint checks.
+* **BREAKING CHANGES**:
+  * Removes `WidthPlatformBreakpoint`
+  * Breakpoints can now be constructed directly with `Breakpoint`
+  * Checks for `andUp` or `platform` can be done as parameter: `Breakpoint.small(andUp: true, platform: Breakpoint.mobile)`
+
+## 0.1.12
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Expose `labelType` for NavigationRails.
+* Add `navigationRailDestinationBuilder` to apply custom Destinations.
+* Add `groupAlignment` property to change alignment.
+* Set `navRailTheme` when using the Drawer just like the other NavigationRails.
+
 ## 0.1.11+1
 
 * Allows custom animation duration for the NavigationRail and 

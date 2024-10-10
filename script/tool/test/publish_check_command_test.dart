@@ -319,6 +319,22 @@ void main() {
           ));
     });
 
+    test('skips packages that are marked as not for publishing', () async {
+      createFakePackage('a_package', packagesDir,
+          version: '0.1.0', publishTo: 'none');
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['publish-check']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('SKIPPING: Package is marked as unpublishable.'),
+        ]),
+      );
+      expect(processRunner.recordedCalls, isEmpty);
+    });
+
     test(
         'runs validation even for packages that are already published and reports success',
         () async {
@@ -400,6 +416,43 @@ void main() {
                   const <String>[
                     'run',
                     'tool/pre_publish.dart',
+                  ],
+                  package.directory.path),
+            ]));
+      });
+
+      test('runs before publish --dry-run', () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir, examples: <String>[]);
+        package.prePublishScript.createSync(recursive: true);
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'publish-check',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running pre-publish hook tool/pre_publish.dart...'),
+          ]),
+        );
+        expect(
+            processRunner.recordedCalls,
+            containsAllInOrder(<ProcessCall>[
+              ProcessCall(
+                  'dart',
+                  const <String>[
+                    'run',
+                    'tool/pre_publish.dart',
+                  ],
+                  package.directory.path),
+              ProcessCall(
+                  'flutter',
+                  const <String>[
+                    'pub',
+                    'publish',
+                    '--',
+                    '--dry-run',
                   ],
                   package.directory.path),
             ]));

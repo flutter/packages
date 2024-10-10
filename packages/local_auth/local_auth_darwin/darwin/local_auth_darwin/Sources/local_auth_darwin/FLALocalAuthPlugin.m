@@ -68,6 +68,140 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 #pragma mark -
 
+#if TARGET_OS_OSX
+/// A default alert that wraps NSAlert.
+// TODO(stuartmorgan): When converting to Swift, eliminate this class and use an extension to make
+// NSAlert declare conformance to FLANSAlert.
+@interface FLADefaultNSAlert : NSObject <FLANSAlert>
+/// Returns a wrapper for the given NSAlert.
+- (instancetype)initWithAlert:(NSAlert *)alert NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+/// The wrapped alert.
+@property(nonatomic) NSAlert *alert;
+@end
+
+@implementation FLADefaultNSAlert
+- (instancetype)initWithAlert:(NSAlert *)alert {
+  self = [super init];
+  if (self) {
+    _alert = alert;
+  }
+  return self;
+}
+
+- (NSString *)messageText {
+  return self.alert.messageText;
+}
+
+- (void)setMessageText:(NSString *)messageText {
+  self.alert.messageText = messageText;
+}
+
+- (NSButton *)addButtonWithTitle:(NSString *)title {
+  return [self.alert addButtonWithTitle:title];
+}
+
+- (void)beginSheetModalForWindow:(NSWindow *)sheetWindow
+               completionHandler:(void (^_Nullable)(NSModalResponse returnCode))handler {
+  [self.alert beginSheetModalForWindow:sheetWindow completionHandler:handler];
+}
+@end
+#elif TARGET_OS_IOS
+/// A default alert controller that wraps UIAlertController.
+// TODO(stuartmorgan): When converting to Swift, eliminate this class and use an extension to make
+// UIAlertController declare conformance to FLAUIAlertController.
+@interface FLADefaultUIAlertController : NSObject <FLAUIAlertController>
+/// Returns a wrapper for the given UIAlertController.
+- (instancetype)initWithAlertController:(UIAlertController *)controller NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+/// The wrapped alert controller.
+@property(nonatomic) UIAlertController *controller;
+@end
+
+@implementation FLADefaultUIAlertController
+- (instancetype)initWithAlertController:(UIAlertController *)controller {
+  self = [super init];
+  if (self) {
+    _controller = controller;
+  }
+  return self;
+}
+
+- (void)addAction:(UIAlertAction *)action {
+  [self.controller addAction:action];
+}
+
+- (void)presentOnViewController:(UIViewController *)presentingViewController
+                       animated:(BOOL)flag
+                     completion:(void (^__nullable)(void))completion {
+  [presentingViewController presentViewController:self.controller
+                                         animated:flag
+                                       completion:completion];
+}
+@end
+#endif
+
+/// A default alert factory that wraps standard UIAlertController and NSAlert allocation for iOS and
+/// macOS respectfully.
+@interface FLADefaultAlertFactory : NSObject <FLADAlertFactory>
+@end
+
+@implementation FLADefaultAlertFactory
+
+#if TARGET_OS_OSX
+- (NSObject<FLANSAlert> *)createAlert {
+  // TODO(stuartmorgan): When converting to Swift, just return NSAlert here.
+  return [[FLADefaultNSAlert alloc] initWithAlert:[[NSAlert alloc] init]];
+}
+#elif TARGET_OS_IOS
+- (NSObject<FLAUIAlertController> *)createAlertControllerWithTitle:(nullable NSString *)title
+                                                           message:(nullable NSString *)message
+                                                    preferredStyle:
+                                                        (UIAlertControllerStyle)preferredStyle {
+  // TODO(stuartmorgan): When converting to Swift, just return UIAlertController here.
+  return [[FLADefaultUIAlertController alloc]
+      initWithAlertController:[UIAlertController alertControllerWithTitle:title
+                                                                  message:message
+                                                           preferredStyle:preferredStyle]];
+}
+#endif
+@end
+
+#pragma mark -
+
+/// A default view provider that wraps the FlutterPluginRegistrar.
+// TODO(stuartmorgan): When converting to Swift, eliminate this class and use an extension to make
+// FlutterPluginRegistrar declare conformance to FLAViewProvider.
+@interface FLADefaultViewProvider : NSObject <FLAViewProvider>
+/// Returns a wrapper for the given registrar.
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
+    NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+/// The wrapped registrar.
+@property(nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
+@end
+
+@implementation FLADefaultViewProvider
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  self = [super init];
+  if (self) {
+    _registrar = registrar;
+  }
+  return self;
+}
+
+#if TARGET_OS_OSX
+- (NSView *)view {
+  return self.registrar.view;
+}
+#endif
+@end
+
+#pragma mark -
+
 /// A data container for sticky auth state.
 @interface FLAStickyAuthState : NSObject
 @property(nonatomic, strong, nonnull) FLADAuthOptions *options;
@@ -94,27 +228,45 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 #pragma mark -
 
+/// A flutter plugin for local authentication.
 @interface FLALocalAuthPlugin ()
+
+/// Manages the last call state for sticky auth.
 @property(nonatomic, strong, nullable) FLAStickyAuthState *lastCallState;
+
+/// The factory to create LAContexts.
 @property(nonatomic, strong) NSObject<FLADAuthContextFactory> *authContextFactory;
+
+/// The factory to create alerts.
+@property(nonatomic, strong) NSObject<FLADAlertFactory> *alertFactory;
+
+/// The Flutter view provider.
+@property(nonatomic, strong) NSObject<FLAViewProvider> *viewProvider;
 @end
 
 @implementation FLALocalAuthPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FLALocalAuthPlugin *instance = [[FLALocalAuthPlugin alloc] init];
+  NSObject<FLADAlertFactory> *alertFactory = [[FLADefaultAlertFactory alloc] init];
+  NSObject<FLADAuthContextFactory> *authContextFactory =
+      [[FLADefaultAuthContextFactory alloc] init];
+  FLALocalAuthPlugin *instance = [[FLALocalAuthPlugin alloc]
+      initWithContextFactory:authContextFactory
+                alertFactory:alertFactory
+                viewProvider:[[FLADefaultViewProvider alloc] initWithRegistrar:registrar]];
   [registrar addApplicationDelegate:instance];
   SetUpFLADLocalAuthApi([registrar messenger], instance);
 }
 
-- (instancetype)init {
-  return [self initWithContextFactory:[[FLADefaultAuthContextFactory alloc] init]];
-}
-
-- (instancetype)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)factory {
+/// Returns an instance that uses the given factory to create LAContexts.
+- (instancetype)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)authFactory
+                          alertFactory:(NSObject<FLADAlertFactory> *)alertFactory
+                          viewProvider:(NSObject<FLAViewProvider> *)viewProvider {
   self = [super init];
   if (self) {
-    _authContextFactory = factory;
+    _viewProvider = viewProvider;
+    _authContextFactory = authFactory;
+    _alertFactory = alertFactory;
   }
   return self;
 }
@@ -170,19 +322,23 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   return @NO;
 }
 
-- (nullable NSArray<FLADAuthBiometricWrapper *> *)getEnrolledBiometricsWithError:
+- (nullable NSArray<FLADAuthBiometricBox *> *)getEnrolledBiometricsWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   id<FLADAuthContext> context = [self.authContextFactory createAuthContext];
   NSError *authError = nil;
-  NSMutableArray<FLADAuthBiometricWrapper *> *biometrics = [[NSMutableArray alloc] init];
+  NSMutableArray<FLADAuthBiometricBox *> *biometrics = [[NSMutableArray alloc] init];
   if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
                            error:&authError]) {
     if (authError == nil) {
-      if (context.biometryType == LABiometryTypeFaceID) {
-        [biometrics addObject:[FLADAuthBiometricWrapper makeWithValue:FLADAuthBiometricFace]];
-      } else if (context.biometryType == LABiometryTypeTouchID) {
+      if (@available(macOS 10.15, iOS 11.0, *)) {
+        if (context.biometryType == LABiometryTypeFaceID) {
+          [biometrics addObject:[[FLADAuthBiometricBox alloc] initWithValue:FLADAuthBiometricFace]];
+          return biometrics;
+        }
+      }
+      if (context.biometryType == LABiometryTypeTouchID) {
         [biometrics
-            addObject:[FLADAuthBiometricWrapper makeWithValue:FLADAuthBiometricFingerprint]];
+            addObject:[[FLADAuthBiometricBox alloc] initWithValue:FLADAuthBiometricFingerprint]];
       }
     }
   }
@@ -201,10 +357,21 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
           dismissButtonTitle:(NSString *)dismissButtonTitle
      openSettingsButtonTitle:(NSString *)openSettingsButtonTitle
                   completion:(FLADAuthCompletion)completion {
-  UIAlertController *alert =
-      [UIAlertController alertControllerWithTitle:@""
-                                          message:message
-                                   preferredStyle:UIAlertControllerStyleAlert];
+#if TARGET_OS_OSX
+  id<FLANSAlert> alert = [_alertFactory createAlert];
+  alert.messageText = message;
+  [alert addButtonWithTitle:dismissButtonTitle];
+  NSWindow *window = self.viewProvider.view.window;
+  [alert beginSheetModalForWindow:window
+                completionHandler:^(NSModalResponse returnCode) {
+                  [self handleSucceeded:NO withCompletion:completion];
+                }];
+  return;
+#elif TARGET_OS_IOS
+  id<FLAUIAlertController> alert =
+      [_alertFactory createAlertControllerWithTitle:@""
+                                            message:message
+                                     preferredStyle:UIAlertControllerStyleAlert];
 
   UIAlertAction *defaultAction = [UIAlertAction actionWithTitle:dismissButtonTitle
                                                           style:UIAlertActionStyleDefault
@@ -227,9 +394,11 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
                 }];
     [alert addAction:additionalAction];
   }
-  [[UIApplication sharedApplication].delegate.window.rootViewController presentViewController:alert
-                                                                                     animated:YES
-                                                                                   completion:nil];
+  [alert
+      presentOnViewController:[UIApplication sharedApplication].delegate.window.rootViewController
+                     animated:YES
+                   completion:nil];
+#endif
 }
 
 - (void)handleAuthReplyWithSuccess:(BOOL)success
@@ -305,6 +474,8 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 #pragma mark - AppDelegate
 
+// This method is called when the app is resumed from the background only on iOS
+#if TARGET_OS_IOS
 - (void)applicationDidBecomeActive:(UIApplication *)application {
   if (self.lastCallState != nil) {
     [self authenticateWithOptions:_lastCallState.options
@@ -312,5 +483,6 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
                        completion:_lastCallState.resultHandler];
   }
 }
+#endif
 
 @end
