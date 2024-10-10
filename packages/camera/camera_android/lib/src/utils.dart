@@ -57,19 +57,3 @@ String serializeDeviceOrientation(DeviceOrientation orientation) {
   // ignore: dead_code
   return 'portraitUp';
 }
-
-/// Returns the device orientation for a given String.
-DeviceOrientation deserializeDeviceOrientation(String str) {
-  switch (str) {
-    case 'portraitUp':
-      return DeviceOrientation.portraitUp;
-    case 'portraitDown':
-      return DeviceOrientation.portraitDown;
-    case 'landscapeRight':
-      return DeviceOrientation.landscapeRight;
-    case 'landscapeLeft':
-      return DeviceOrientation.landscapeLeft;
-    default:
-      throw ArgumentError('"$str" is not a valid DeviceOrientation value');
-  }
-}
