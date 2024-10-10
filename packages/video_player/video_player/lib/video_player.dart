@@ -889,8 +889,6 @@ class _VideoPlayerWithRotation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('widget rotation: $rotation');
-    print('angle: ${rotation * math.pi / 180}');
     return rotation == 0
         ? child
         : Transform.rotate(
