@@ -588,10 +588,18 @@ void main() {
         expect(pattern?.encode(),
             platformPatternItemFromPatternItem(expected.patterns[i]).encode());
       }
-      expect(actual.startCap.encode(),
-          platformCapFromCap(expected.startCap).encode());
-      expect(
-          actual.endCap.encode(), platformCapFromCap(expected.endCap).encode());
+      final PlatformCap expectedStartCap =
+          GoogleMapsFlutterAndroid.platformCapFromCap(expected.startCap);
+      final PlatformCap expectedEndCap =
+          GoogleMapsFlutterAndroid.platformCapFromCap(expected.endCap);
+      expect(actual.startCap.type, expectedStartCap.type);
+      expect(actual.startCap.refWidth, expectedStartCap.refWidth);
+      expect(actual.startCap.bitmapDescriptor?.bitmap.runtimeType,
+          expectedStartCap.bitmapDescriptor?.bitmap.runtimeType);
+      expect(actual.endCap.type, expectedEndCap.type);
+      expect(actual.endCap.refWidth, expectedEndCap.refWidth);
+      expect(actual.endCap.bitmapDescriptor?.bitmap.runtimeType,
+          expectedEndCap.bitmapDescriptor?.bitmap.runtimeType);
     }
 
     // Object one should be removed.
@@ -1023,22 +1031,18 @@ void main() {
 
   test('Cap to PlatformCap', () {
     expect(GoogleMapsFlutterAndroid.platformCapFromCap(Cap.buttCap).encode(),
-        PlatformCap(type: PlatformCapType.butt).encode());
+        PlatformCap(type: PlatformCapType.buttCap).encode());
     expect(GoogleMapsFlutterAndroid.platformCapFromCap(Cap.roundCap).encode(),
-        PlatformCap(type: PlatformCapType.round).encode());
+        PlatformCap(type: PlatformCapType.roundCap).encode());
     expect(GoogleMapsFlutterAndroid.platformCapFromCap(Cap.squareCap).encode(),
-        PlatformCap(type: PlatformCapType.square).encode());
+        PlatformCap(type: PlatformCapType.squareCap).encode());
 
     const BitmapDescriptor bitmap = BitmapDescriptor.defaultMarker;
     const CustomCap customCap = CustomCap(bitmap, refWidth: 15.0);
     final PlatformCap platformCap =
         GoogleMapsFlutterAndroid.platformCapFromCap(customCap);
-    final PlatformCustomCap expected = PlatformCustomCap(
-        bitmapDescriptor:
-            GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap),
-        refWidth: 15.0);
-    expect(platformCap.type, PlatformCapType.custom);
-    expect(customCap.refWidth, expected.refWidth);
+    expect(platformCap.type, PlatformCapType.customCap);
+    expect(customCap.refWidth, 15.0);
   });
 
   testWidgets('Use PlatformViewLink when using surface view',

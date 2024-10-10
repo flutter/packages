@@ -61,8 +61,9 @@ class Convert {
   public static final String HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY = "colorMapSize";
 
   private static BitmapDescriptor toBitmapDescriptor(
-      Messages.PlatformBitmap o, AssetManager assetManager, float density) {
-    return toBitmapDescriptor(o, assetManager, density, new BitmapDescriptorFactoryWrapper());
+      Messages.PlatformBitmap platformBitmap, AssetManager assetManager, float density) {
+    return toBitmapDescriptor(
+        platformBitmap, assetManager, density, new BitmapDescriptorFactoryWrapper());
   }
 
   private static BitmapDescriptor toBitmapDescriptor(

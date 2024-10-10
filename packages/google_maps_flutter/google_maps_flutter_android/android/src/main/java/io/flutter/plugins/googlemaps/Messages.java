@@ -113,7 +113,6 @@ public class Messages {
     }
   }
 
-
   /**
    * Enumeration of possible types of PlatformCap, corresponding to the subclasses of Cap in the
    * Google Maps Android SDK. See
@@ -2785,187 +2784,6 @@ public class Messages {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class PlatformCap {
-    private @NonNull PlatformCapType type;
-
-    public @NonNull PlatformCapType getType() {
-      return type;
-    }
-
-    public void setType(@NonNull PlatformCapType setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"type\" is null.");
-      }
-      this.type = setterArg;
-    }
-
-    private @Nullable PlatformCustomCap customCap;
-
-    public @Nullable PlatformCustomCap getCustomCap() {
-      return customCap;
-    }
-
-    public void setCustomCap(@Nullable PlatformCustomCap setterArg) {
-      this.customCap = setterArg;
-    }
-
-    /** Constructor is non-public to enforce null safety; use Builder. */
-    PlatformCap() {}
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
-      PlatformCap that = (PlatformCap) o;
-      return type.equals(that.type) && Objects.equals(customCap, that.customCap);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(type, customCap);
-    }
-
-    public static final class Builder {
-
-      private @Nullable PlatformCapType type;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setType(@NonNull PlatformCapType setterArg) {
-        this.type = setterArg;
-        return this;
-      }
-
-      private @Nullable PlatformCustomCap customCap;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setCustomCap(@Nullable PlatformCustomCap setterArg) {
-        this.customCap = setterArg;
-        return this;
-      }
-
-      public @NonNull PlatformCap build() {
-        PlatformCap pigeonReturn = new PlatformCap();
-        pigeonReturn.setType(type);
-        pigeonReturn.setCustomCap(customCap);
-        return pigeonReturn;
-      }
-    }
-
-    @NonNull
-    ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(2);
-      toListResult.add(type);
-      toListResult.add(customCap);
-      return toListResult;
-    }
-
-    static @NonNull PlatformCap fromList(@NonNull ArrayList<Object> pigeonVar_list) {
-      PlatformCap pigeonResult = new PlatformCap();
-      Object type = pigeonVar_list.get(0);
-      pigeonResult.setType((PlatformCapType) type);
-      Object customCap = pigeonVar_list.get(1);
-      pigeonResult.setCustomCap((PlatformCustomCap) customCap);
-      return pigeonResult;
-    }
-  }
-
-  /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class PlatformCustomCap {
-    private @NonNull PlatformBitmap bitmapDescriptor;
-
-    public @NonNull PlatformBitmap getBitmapDescriptor() {
-      return bitmapDescriptor;
-    }
-
-    public void setBitmapDescriptor(@NonNull PlatformBitmap setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"bitmapDescriptor\" is null.");
-      }
-      this.bitmapDescriptor = setterArg;
-    }
-
-    private @NonNull Double refWidth;
-
-    public @NonNull Double getRefWidth() {
-      return refWidth;
-    }
-
-    public void setRefWidth(@NonNull Double setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"refWidth\" is null.");
-      }
-      this.refWidth = setterArg;
-    }
-
-    /** Constructor is non-public to enforce null safety; use Builder. */
-    PlatformCustomCap() {}
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
-      PlatformCustomCap that = (PlatformCustomCap) o;
-      return bitmapDescriptor.equals(that.bitmapDescriptor) && refWidth.equals(that.refWidth);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(bitmapDescriptor, refWidth);
-    }
-
-    public static final class Builder {
-
-      private @Nullable PlatformBitmap bitmapDescriptor;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setBitmapDescriptor(@NonNull PlatformBitmap setterArg) {
-        this.bitmapDescriptor = setterArg;
-        return this;
-      }
-
-      private @Nullable Double refWidth;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setRefWidth(@NonNull Double setterArg) {
-        this.refWidth = setterArg;
-        return this;
-      }
-
-      public @NonNull PlatformCustomCap build() {
-        PlatformCustomCap pigeonReturn = new PlatformCustomCap();
-        pigeonReturn.setBitmapDescriptor(bitmapDescriptor);
-        pigeonReturn.setRefWidth(refWidth);
-        return pigeonReturn;
-      }
-    }
-
-    @NonNull
-    ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(2);
-      toListResult.add(bitmapDescriptor);
-      toListResult.add(refWidth);
-      return toListResult;
-    }
-
-    static @NonNull PlatformCustomCap fromList(@NonNull ArrayList<Object> pigeonVar_list) {
-      PlatformCustomCap pigeonResult = new PlatformCustomCap();
-      Object bitmapDescriptor = pigeonVar_list.get(0);
-      pigeonResult.setBitmapDescriptor((PlatformBitmap) bitmapDescriptor);
-      Object refWidth = pigeonVar_list.get(1);
-      pigeonResult.setRefWidth((Double) refWidth);
-      return pigeonResult;
-    }
-  }
-
   /**
    * Pigeon equivalent of Cap from the platform interface.
    * https://github.com/flutter/packages/blob/main/packages/google_maps_flutter/google_maps_flutter_platform_interface/lib/src/types/cap.dart
@@ -2986,14 +2804,13 @@ public class Messages {
       this.type = setterArg;
     }
 
-    /** The JSON data returned by BitmapDescriptor.toJson. */
-    private @Nullable Object bitmapDescriptor;
+    private @Nullable PlatformBitmap bitmapDescriptor;
 
-    public @Nullable Object getBitmapDescriptor() {
+    public @Nullable PlatformBitmap getBitmapDescriptor() {
       return bitmapDescriptor;
     }
 
-    public void setBitmapDescriptor(@Nullable Object setterArg) {
+    public void setBitmapDescriptor(@Nullable PlatformBitmap setterArg) {
       this.bitmapDescriptor = setterArg;
     }
 
@@ -3039,10 +2856,10 @@ public class Messages {
         return this;
       }
 
-      private @Nullable Object bitmapDescriptor;
+      private @Nullable PlatformBitmap bitmapDescriptor;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setBitmapDescriptor(@Nullable Object setterArg) {
+      public @NonNull Builder setBitmapDescriptor(@Nullable PlatformBitmap setterArg) {
         this.bitmapDescriptor = setterArg;
         return this;
       }
@@ -3078,7 +2895,7 @@ public class Messages {
       Object type = pigeonVar_list.get(0);
       pigeonResult.setType((PlatformCapType) type);
       Object bitmapDescriptor = pigeonVar_list.get(1);
-      pigeonResult.setBitmapDescriptor(bitmapDescriptor);
+      pigeonResult.setBitmapDescriptor((PlatformBitmap) bitmapDescriptor);
       Object refWidth = pigeonVar_list.get(2);
       pigeonResult.setRefWidth((Double) refWidth);
       return pigeonResult;
@@ -5223,6 +5040,748 @@ public class Messages {
     PlatformBitmap() {}
 
     @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformBitmap that = (PlatformBitmap) o;
+      return bitmap.equals(that.bitmap);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(bitmap);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Object bitmap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBitmap(@NonNull Object setterArg) {
+        this.bitmap = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformBitmap build() {
+        PlatformBitmap pigeonReturn = new PlatformBitmap();
+        pigeonReturn.setBitmap(bitmap);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(1);
+      toListResult.add(bitmap);
+      return toListResult;
+    }
+
+    static @NonNull PlatformBitmap fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      PlatformBitmap pigeonResult = new PlatformBitmap();
+      Object bitmap = pigeonVar_list.get(0);
+      pigeonResult.setBitmap(bitmap);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class PlatformBitmapDefaultMarker {
+    private @Nullable Double hue;
+
+    public @Nullable Double getHue() {
+      return hue;
+    }
+
+    public void setHue(@Nullable Double setterArg) {
+      this.hue = setterArg;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformBitmapDefaultMarker that = (PlatformBitmapDefaultMarker) o;
+      return Objects.equals(hue, that.hue);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(hue);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Double hue;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setHue(@Nullable Double setterArg) {
+        this.hue = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformBitmapDefaultMarker build() {
+        PlatformBitmapDefaultMarker pigeonReturn = new PlatformBitmapDefaultMarker();
+        pigeonReturn.setHue(hue);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(1);
+      toListResult.add(hue);
+      return toListResult;
+    }
+
+    static @NonNull PlatformBitmapDefaultMarker fromList(
+        @NonNull ArrayList<Object> pigeonVar_list) {
+      PlatformBitmapDefaultMarker pigeonResult = new PlatformBitmapDefaultMarker();
+      Object hue = pigeonVar_list.get(0);
+      pigeonResult.setHue((Double) hue);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class PlatformBitmapBytes {
+    private @NonNull byte[] byteData;
+
+    public @NonNull byte[] getByteData() {
+      return byteData;
+    }
+
+    public void setByteData(@NonNull byte[] setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"byteData\" is null.");
+      }
+      this.byteData = setterArg;
+    }
+
+    private @Nullable PlatformOffset size;
+
+    public @Nullable PlatformOffset getSize() {
+      return size;
+    }
+
+    public void setSize(@Nullable PlatformOffset setterArg) {
+      this.size = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformBitmapBytes() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformBitmapBytes that = (PlatformBitmapBytes) o;
+      return Arrays.equals(byteData, that.byteData) && Objects.equals(size, that.size);
+    }
+
+    @Override
+    public int hashCode() {
+      int pigeonVar_result = Objects.hash(size);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(byteData);
+      return pigeonVar_result;
+    }
+
+    public static final class Builder {
+
+      private @Nullable byte[] byteData;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setByteData(@NonNull byte[] setterArg) {
+        this.byteData = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformOffset size;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setSize(@Nullable PlatformOffset setterArg) {
+        this.size = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformBitmapBytes build() {
+        PlatformBitmapBytes pigeonReturn = new PlatformBitmapBytes();
+        pigeonReturn.setByteData(byteData);
+        pigeonReturn.setSize(size);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(2);
+      toListResult.add(byteData);
+      toListResult.add(size);
+      return toListResult;
+    }
+
+    static @NonNull PlatformBitmapBytes fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      PlatformBitmapBytes pigeonResult = new PlatformBitmapBytes();
+      Object byteData = pigeonVar_list.get(0);
+      pigeonResult.setByteData((byte[]) byteData);
+      Object size = pigeonVar_list.get(1);
+      pigeonResult.setSize((PlatformOffset) size);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class PlatformBitmapAsset {
+    private @NonNull String name;
+
+    public @NonNull String getName() {
+      return name;
+    }
+
+    public void setName(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"name\" is null.");
+      }
+      this.name = setterArg;
+    }
+
+    private @Nullable String pkg;
+
+    public @Nullable String getPkg() {
+      return pkg;
+    }
+
+    public void setPkg(@Nullable String setterArg) {
+      this.pkg = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformBitmapAsset() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformBitmapAsset that = (PlatformBitmapAsset) o;
+      return name.equals(that.name) && Objects.equals(pkg, that.pkg);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(name, pkg);
+    }
+
+    public static final class Builder {
+
+      private @Nullable String name;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setName(@NonNull String setterArg) {
+        this.name = setterArg;
+        return this;
+      }
+
+      private @Nullable String pkg;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPkg(@Nullable String setterArg) {
+        this.pkg = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformBitmapAsset build() {
+        PlatformBitmapAsset pigeonReturn = new PlatformBitmapAsset();
+        pigeonReturn.setName(name);
+        pigeonReturn.setPkg(pkg);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(2);
+      toListResult.add(name);
+      toListResult.add(pkg);
+      return toListResult;
+    }
+
+    static @NonNull PlatformBitmapAsset fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      PlatformBitmapAsset pigeonResult = new PlatformBitmapAsset();
+      Object name = pigeonVar_list.get(0);
+      pigeonResult.setName((String) name);
+      Object pkg = pigeonVar_list.get(1);
+      pigeonResult.setPkg((String) pkg);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class PlatformBitmapAssetImage {
+    private @NonNull String name;
+
+    public @NonNull String getName() {
+      return name;
+    }
+
+    public void setName(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"name\" is null.");
+      }
+      this.name = setterArg;
+    }
+
+    private @NonNull Double scale;
+
+    public @NonNull Double getScale() {
+      return scale;
+    }
+
+    public void setScale(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"scale\" is null.");
+      }
+      this.scale = setterArg;
+    }
+
+    private @Nullable PlatformOffset size;
+
+    public @Nullable PlatformOffset getSize() {
+      return size;
+    }
+
+    public void setSize(@Nullable PlatformOffset setterArg) {
+      this.size = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformBitmapAssetImage() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformBitmapAssetImage that = (PlatformBitmapAssetImage) o;
+      return name.equals(that.name) && scale.equals(that.scale) && Objects.equals(size, that.size);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(name, scale, size);
+    }
+
+    public static final class Builder {
+
+      private @Nullable String name;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setName(@NonNull String setterArg) {
+        this.name = setterArg;
+        return this;
+      }
+
+      private @Nullable Double scale;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setScale(@NonNull Double setterArg) {
+        this.scale = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformOffset size;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setSize(@Nullable PlatformOffset setterArg) {
+        this.size = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformBitmapAssetImage build() {
+        PlatformBitmapAssetImage pigeonReturn = new PlatformBitmapAssetImage();
+        pigeonReturn.setName(name);
+        pigeonReturn.setScale(scale);
+        pigeonReturn.setSize(size);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(3);
+      toListResult.add(name);
+      toListResult.add(scale);
+      toListResult.add(size);
+      return toListResult;
+    }
+
+    static @NonNull PlatformBitmapAssetImage fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      PlatformBitmapAssetImage pigeonResult = new PlatformBitmapAssetImage();
+      Object name = pigeonVar_list.get(0);
+      pigeonResult.setName((String) name);
+      Object scale = pigeonVar_list.get(1);
+      pigeonResult.setScale((Double) scale);
+      Object size = pigeonVar_list.get(2);
+      pigeonResult.setSize((PlatformOffset) size);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class PlatformBitmapAssetMap {
+    private @NonNull String assetName;
+
+    public @NonNull String getAssetName() {
+      return assetName;
+    }
+
+    public void setAssetName(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"assetName\" is null.");
+      }
+      this.assetName = setterArg;
+    }
+
+    private @NonNull PlatformMapBitmapScaling bitmapScaling;
+
+    public @NonNull PlatformMapBitmapScaling getBitmapScaling() {
+      return bitmapScaling;
+    }
+
+    public void setBitmapScaling(@NonNull PlatformMapBitmapScaling setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"bitmapScaling\" is null.");
+      }
+      this.bitmapScaling = setterArg;
+    }
+
+    private @NonNull Double imagePixelRatio;
+
+    public @NonNull Double getImagePixelRatio() {
+      return imagePixelRatio;
+    }
+
+    public void setImagePixelRatio(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"imagePixelRatio\" is null.");
+      }
+      this.imagePixelRatio = setterArg;
+    }
+
+    private @Nullable Double width;
+
+    public @Nullable Double getWidth() {
+      return width;
+    }
+
+    public void setWidth(@Nullable Double setterArg) {
+      this.width = setterArg;
+    }
+
+    private @Nullable Double height;
+
+    public @Nullable Double getHeight() {
+      return height;
+    }
+
+    public void setHeight(@Nullable Double setterArg) {
+      this.height = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformBitmapAssetMap() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformBitmapAssetMap that = (PlatformBitmapAssetMap) o;
+      return assetName.equals(that.assetName)
+          && bitmapScaling.equals(that.bitmapScaling)
+          && imagePixelRatio.equals(that.imagePixelRatio)
+          && Objects.equals(width, that.width)
+          && Objects.equals(height, that.height);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(assetName, bitmapScaling, imagePixelRatio, width, height);
+    }
+
+    public static final class Builder {
+
+      private @Nullable String assetName;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAssetName(@NonNull String setterArg) {
+        this.assetName = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformMapBitmapScaling bitmapScaling;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBitmapScaling(@NonNull PlatformMapBitmapScaling setterArg) {
+        this.bitmapScaling = setterArg;
+        return this;
+      }
+
+      private @Nullable Double imagePixelRatio;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setImagePixelRatio(@NonNull Double setterArg) {
+        this.imagePixelRatio = setterArg;
+        return this;
+      }
+
+      private @Nullable Double width;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setWidth(@Nullable Double setterArg) {
+        this.width = setterArg;
+        return this;
+      }
+
+      private @Nullable Double height;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setHeight(@Nullable Double setterArg) {
+        this.height = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformBitmapAssetMap build() {
+        PlatformBitmapAssetMap pigeonReturn = new PlatformBitmapAssetMap();
+        pigeonReturn.setAssetName(assetName);
+        pigeonReturn.setBitmapScaling(bitmapScaling);
+        pigeonReturn.setImagePixelRatio(imagePixelRatio);
+        pigeonReturn.setWidth(width);
+        pigeonReturn.setHeight(height);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(5);
+      toListResult.add(assetName);
+      toListResult.add(bitmapScaling);
+      toListResult.add(imagePixelRatio);
+      toListResult.add(width);
+      toListResult.add(height);
+      return toListResult;
+    }
+
+    static @NonNull PlatformBitmapAssetMap fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      PlatformBitmapAssetMap pigeonResult = new PlatformBitmapAssetMap();
+      Object assetName = pigeonVar_list.get(0);
+      pigeonResult.setAssetName((String) assetName);
+      Object bitmapScaling = pigeonVar_list.get(1);
+      pigeonResult.setBitmapScaling((PlatformMapBitmapScaling) bitmapScaling);
+      Object imagePixelRatio = pigeonVar_list.get(2);
+      pigeonResult.setImagePixelRatio((Double) imagePixelRatio);
+      Object width = pigeonVar_list.get(3);
+      pigeonResult.setWidth((Double) width);
+      Object height = pigeonVar_list.get(4);
+      pigeonResult.setHeight((Double) height);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class PlatformBitmapBytesMap {
+    private @NonNull byte[] byteData;
+
+    public @NonNull byte[] getByteData() {
+      return byteData;
+    }
+
+    public void setByteData(@NonNull byte[] setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"byteData\" is null.");
+      }
+      this.byteData = setterArg;
+    }
+
+    private @NonNull PlatformMapBitmapScaling bitmapScaling;
+
+    public @NonNull PlatformMapBitmapScaling getBitmapScaling() {
+      return bitmapScaling;
+    }
+
+    public void setBitmapScaling(@NonNull PlatformMapBitmapScaling setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"bitmapScaling\" is null.");
+      }
+      this.bitmapScaling = setterArg;
+    }
+
+    private @NonNull Double imagePixelRatio;
+
+    public @NonNull Double getImagePixelRatio() {
+      return imagePixelRatio;
+    }
+
+    public void setImagePixelRatio(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"imagePixelRatio\" is null.");
+      }
+      this.imagePixelRatio = setterArg;
+    }
+
+    private @Nullable Double width;
+
+    public @Nullable Double getWidth() {
+      return width;
+    }
+
+    public void setWidth(@Nullable Double setterArg) {
+      this.width = setterArg;
+    }
+
+    private @Nullable Double height;
+
+    public @Nullable Double getHeight() {
+      return height;
+    }
+
+    public void setHeight(@Nullable Double setterArg) {
+      this.height = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformBitmapBytesMap() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformBitmapBytesMap that = (PlatformBitmapBytesMap) o;
+      return Arrays.equals(byteData, that.byteData)
+          && bitmapScaling.equals(that.bitmapScaling)
+          && imagePixelRatio.equals(that.imagePixelRatio)
+          && Objects.equals(width, that.width)
+          && Objects.equals(height, that.height);
+    }
+
+    @Override
+    public int hashCode() {
+      int pigeonVar_result = Objects.hash(bitmapScaling, imagePixelRatio, width, height);
+      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(byteData);
+      return pigeonVar_result;
+    }
+
+    public static final class Builder {
+
+      private @Nullable byte[] byteData;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setByteData(@NonNull byte[] setterArg) {
+        this.byteData = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformMapBitmapScaling bitmapScaling;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBitmapScaling(@NonNull PlatformMapBitmapScaling setterArg) {
+        this.bitmapScaling = setterArg;
+        return this;
+      }
+
+      private @Nullable Double imagePixelRatio;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setImagePixelRatio(@NonNull Double setterArg) {
+        this.imagePixelRatio = setterArg;
+        return this;
+      }
+
+      private @Nullable Double width;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setWidth(@Nullable Double setterArg) {
+        this.width = setterArg;
+        return this;
+      }
+
+      private @Nullable Double height;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setHeight(@Nullable Double setterArg) {
+        this.height = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformBitmapBytesMap build() {
+        PlatformBitmapBytesMap pigeonReturn = new PlatformBitmapBytesMap();
+        pigeonReturn.setByteData(byteData);
+        pigeonReturn.setBitmapScaling(bitmapScaling);
+        pigeonReturn.setImagePixelRatio(imagePixelRatio);
+        pigeonReturn.setWidth(width);
+        pigeonReturn.setHeight(height);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(5);
+      toListResult.add(byteData);
+      toListResult.add(bitmapScaling);
+      toListResult.add(imagePixelRatio);
+      toListResult.add(width);
+      toListResult.add(height);
+      return toListResult;
+    }
+
+    static @NonNull PlatformBitmapBytesMap fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      PlatformBitmapBytesMap pigeonResult = new PlatformBitmapBytesMap();
+      Object byteData = pigeonVar_list.get(0);
+      pigeonResult.setByteData((byte[]) byteData);
+      Object bitmapScaling = pigeonVar_list.get(1);
+      pigeonResult.setBitmapScaling((PlatformMapBitmapScaling) bitmapScaling);
+      Object imagePixelRatio = pigeonVar_list.get(2);
+      pigeonResult.setImagePixelRatio((Double) imagePixelRatio);
+      Object width = pigeonVar_list.get(3);
+      pigeonResult.setWidth((Double) width);
+      Object height = pigeonVar_list.get(4);
+      pigeonResult.setHeight((Double) height);
+      return pigeonResult;
+    }
+  }
+
+  private static class PigeonCodec extends StandardMessageCodec {
+    public static final PigeonCodec INSTANCE = new PigeonCodec();
+
+    private PigeonCodec() {}
+
+    @Override
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 129:
@@ -5253,79 +5812,95 @@ public class Messages {
                 : PlatformPatternItemType.values()[((Long) value).intValue()];
           }
         case (byte) 134:
-          return PlatformCameraPosition.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null
+                ? null
+                : PlatformMapBitmapScaling.values()[((Long) value).intValue()];
+          }
         case (byte) 135:
-          return PlatformCameraUpdate.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraPosition.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
+          return PlatformCameraUpdate.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 137:
           return PlatformCameraUpdateNewCameraPosition.fromList(
               (ArrayList<Object>) readValue(buffer));
-        case (byte) 137:
-          return PlatformCameraUpdateNewLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 138:
+          return PlatformCameraUpdateNewLatLng.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 139:
           return PlatformCameraUpdateNewLatLngBounds.fromList(
               (ArrayList<Object>) readValue(buffer));
-        case (byte) 139:
-          return PlatformCameraUpdateNewLatLngZoom.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 140:
-          return PlatformCameraUpdateScrollBy.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateNewLatLngZoom.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 141:
-          return PlatformCameraUpdateZoomBy.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateScrollBy.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 142:
-          return PlatformCameraUpdateZoom.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateZoomBy.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 143:
-          return PlatformCameraUpdateZoomTo.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateZoom.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 144:
-          return PlatformCircle.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateZoomTo.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 145:
-          return PlatformHeatmap.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCircle.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 146:
-          return PlatformClusterManager.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformHeatmap.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 147:
-          return PlatformOffset.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformClusterManager.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 148:
-          return PlatformInfoWindow.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformOffset.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 149:
-          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformInfoWindow.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 150:
-          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 151:
-          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 152:
-          return PlatformCap.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 153:
-          return PlatformPatternItem.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCap.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 154:
-          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPatternItem.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 155:
-          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 156:
-          return PlatformEdgeInsets.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 157:
-          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformEdgeInsets.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 158:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 159:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 160:
-          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 161:
-          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 162:
-          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 163:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 164:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 165:
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 166:
           return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 167:
+          return PlatformBitmap.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 168:
+          return PlatformBitmapDefaultMarker.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 169:
+          return PlatformBitmapBytes.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 170:
+          return PlatformBitmapAsset.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 171:
+          return PlatformBitmapAssetImage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 172:
+          return PlatformBitmapAssetMap.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 173:
+          return PlatformBitmapBytesMap.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
-      PlatformBitmap that = (PlatformBitmap) o;
-      return bitmap.equals(that.bitmap);
     }
 
     @Override
@@ -5345,122 +5920,125 @@ public class Messages {
       } else if (value instanceof PlatformPatternItemType) {
         stream.write(133);
         writeValue(stream, value == null ? null : ((PlatformPatternItemType) value).index);
-      } else if (value instanceof PlatformCameraPosition) {
+      } else if (value instanceof PlatformMapBitmapScaling) {
         stream.write(134);
+        writeValue(stream, value == null ? null : ((PlatformMapBitmapScaling) value).index);
+      } else if (value instanceof PlatformCameraPosition) {
+        stream.write(135);
         writeValue(stream, ((PlatformCameraPosition) value).toList());
       } else if (value instanceof PlatformCameraUpdate) {
-        stream.write(135);
+        stream.write(136);
         writeValue(stream, ((PlatformCameraUpdate) value).toList());
       } else if (value instanceof PlatformCameraUpdateNewCameraPosition) {
-        stream.write(136);
+        stream.write(137);
         writeValue(stream, ((PlatformCameraUpdateNewCameraPosition) value).toList());
       } else if (value instanceof PlatformCameraUpdateNewLatLng) {
-        stream.write(137);
+        stream.write(138);
         writeValue(stream, ((PlatformCameraUpdateNewLatLng) value).toList());
       } else if (value instanceof PlatformCameraUpdateNewLatLngBounds) {
-        stream.write(138);
+        stream.write(139);
         writeValue(stream, ((PlatformCameraUpdateNewLatLngBounds) value).toList());
       } else if (value instanceof PlatformCameraUpdateNewLatLngZoom) {
-        stream.write(139);
+        stream.write(140);
         writeValue(stream, ((PlatformCameraUpdateNewLatLngZoom) value).toList());
       } else if (value instanceof PlatformCameraUpdateScrollBy) {
-        stream.write(140);
+        stream.write(141);
         writeValue(stream, ((PlatformCameraUpdateScrollBy) value).toList());
       } else if (value instanceof PlatformCameraUpdateZoomBy) {
-        stream.write(141);
+        stream.write(142);
         writeValue(stream, ((PlatformCameraUpdateZoomBy) value).toList());
       } else if (value instanceof PlatformCameraUpdateZoom) {
-        stream.write(142);
+        stream.write(143);
         writeValue(stream, ((PlatformCameraUpdateZoom) value).toList());
       } else if (value instanceof PlatformCameraUpdateZoomTo) {
-        stream.write(143);
+        stream.write(144);
         writeValue(stream, ((PlatformCameraUpdateZoomTo) value).toList());
       } else if (value instanceof PlatformCircle) {
-        stream.write(144);
+        stream.write(145);
         writeValue(stream, ((PlatformCircle) value).toList());
       } else if (value instanceof PlatformHeatmap) {
-        stream.write(145);
+        stream.write(146);
         writeValue(stream, ((PlatformHeatmap) value).toList());
       } else if (value instanceof PlatformClusterManager) {
-        stream.write(146);
+        stream.write(147);
         writeValue(stream, ((PlatformClusterManager) value).toList());
       } else if (value instanceof PlatformOffset) {
-        stream.write(147);
+        stream.write(148);
         writeValue(stream, ((PlatformOffset) value).toList());
       } else if (value instanceof PlatformInfoWindow) {
-        stream.write(148);
+        stream.write(149);
         writeValue(stream, ((PlatformInfoWindow) value).toList());
       } else if (value instanceof PlatformMarker) {
-        stream.write(149);
+        stream.write(150);
         writeValue(stream, ((PlatformMarker) value).toList());
       } else if (value instanceof PlatformPolygon) {
-        stream.write(150);
+        stream.write(151);
         writeValue(stream, ((PlatformPolygon) value).toList());
       } else if (value instanceof PlatformPolyline) {
-        stream.write(151);
+        stream.write(152);
         writeValue(stream, ((PlatformPolyline) value).toList());
       } else if (value instanceof PlatformCap) {
-        stream.write(152);
+        stream.write(153);
         writeValue(stream, ((PlatformCap) value).toList());
       } else if (value instanceof PlatformPatternItem) {
-        stream.write(153);
+        stream.write(154);
         writeValue(stream, ((PlatformPatternItem) value).toList());
       } else if (value instanceof PlatformTile) {
-        stream.write(154);
+        stream.write(155);
         writeValue(stream, ((PlatformTile) value).toList());
       } else if (value instanceof PlatformTileOverlay) {
-        stream.write(155);
+        stream.write(156);
         writeValue(stream, ((PlatformTileOverlay) value).toList());
       } else if (value instanceof PlatformEdgeInsets) {
-        stream.write(156);
+        stream.write(157);
         writeValue(stream, ((PlatformEdgeInsets) value).toList());
       } else if (value instanceof PlatformLatLng) {
-        stream.write(157);
+        stream.write(158);
         writeValue(stream, ((PlatformLatLng) value).toList());
       } else if (value instanceof PlatformLatLngBounds) {
-        stream.write(158);
+        stream.write(159);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(159);
+        stream.write(160);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformCameraTargetBounds) {
-        stream.write(160);
+        stream.write(161);
         writeValue(stream, ((PlatformCameraTargetBounds) value).toList());
       } else if (value instanceof PlatformMapViewCreationParams) {
-        stream.write(161);
+        stream.write(162);
         writeValue(stream, ((PlatformMapViewCreationParams) value).toList());
       } else if (value instanceof PlatformMapConfiguration) {
-        stream.write(162);
+        stream.write(163);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(163);
+        stream.write(164);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(164);
+        stream.write(165);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(165);
+        stream.write(166);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else if (value instanceof PlatformBitmap) {
-        stream.write(168);
+        stream.write(167);
         writeValue(stream, ((PlatformBitmap) value).toList());
       } else if (value instanceof PlatformBitmapDefaultMarker) {
-        stream.write(169);
+        stream.write(168);
         writeValue(stream, ((PlatformBitmapDefaultMarker) value).toList());
       } else if (value instanceof PlatformBitmapBytes) {
-        stream.write(170);
+        stream.write(169);
         writeValue(stream, ((PlatformBitmapBytes) value).toList());
       } else if (value instanceof PlatformBitmapAsset) {
-        stream.write(171);
+        stream.write(170);
         writeValue(stream, ((PlatformBitmapAsset) value).toList());
       } else if (value instanceof PlatformBitmapAssetImage) {
-        stream.write(172);
+        stream.write(171);
         writeValue(stream, ((PlatformBitmapAssetImage) value).toList());
       } else if (value instanceof PlatformBitmapAssetMap) {
-        stream.write(173);
+        stream.write(172);
         writeValue(stream, ((PlatformBitmapAssetMap) value).toList());
       } else if (value instanceof PlatformBitmapBytesMap) {
-        stream.write(174);
+        stream.write(173);
         writeValue(stream, ((PlatformBitmapBytesMap) value).toList());
       } else {
         super.writeValue(stream, value);

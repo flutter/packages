@@ -292,10 +292,7 @@ class PlatformCap {
 
   final PlatformCapType type;
 
-  /// The JSON data returned by BitmapDescriptor.toJson.
-  // TODO(schectman): Convert to structured data.
-  // https://github.com/flutter/flutter/issues/155122
-  final Object? bitmapDescriptor;
+  final PlatformBitmap? bitmapDescriptor;
   final double? refWidth;
 }
 
