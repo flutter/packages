@@ -109,6 +109,8 @@
     [self setFillColor:[FLTGoogleMapJSONConversions colorFromRGBA:fillColor]];
   }
 
+  // Setting the visibility adds the circle to the map.
+  // Therefore, it should be done after the other properties are set.
   NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
   if (visible) {
     [self setVisible:[visible boolValue]];

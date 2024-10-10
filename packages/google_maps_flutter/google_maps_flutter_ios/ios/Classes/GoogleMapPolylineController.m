@@ -115,6 +115,8 @@
            lengths:[FLTGoogleMapJSONConversions spanLengthsFromPatterns:patterns]];
   }
 
+  // Setting the visibility adds the polyline to the map.
+  // Therefore, it should be done after the other properties are set.
   NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
   if (visible) {
     [self setVisible:[visible boolValue]];
