@@ -40,7 +40,7 @@ void main() {
       expect(video.playsInline, true, reason: 'Needed by safari iOS');
     });
 
-     testWidgets('setVolume', (WidgetTester tester) async {
+    testWidgets('setVolume', (WidgetTester tester) async {
       final VideoPlayer player = VideoPlayer(videoElement: video)..initialize();
 
       player.setVolume(0);
