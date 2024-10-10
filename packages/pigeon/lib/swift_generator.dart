@@ -729,11 +729,8 @@ if (wrapped == nil) {
     required String dartPackageName,
   }) {
     indent.format(instanceManagerFinalizerDelegateTemplate(generatorOptions));
-    indent.newln();
     indent.format(instanceManagerFinalizerTemplate(generatorOptions));
-    indent.newln();
     indent.format(instanceManagerTemplate(generatorOptions));
-    indent.newln();
   }
 
   @override
@@ -2447,7 +2444,12 @@ String? _tryGetAvailabilityAnnotation(Iterable<TypeDeclaration> types) {
   return apis.isNotEmpty ? 'available(${apis.join(', ')}, *)' : null;
 }
 
-/// Recursively iterates
+/// Creates the string used to indicate a platform is unsupported.
+///
+/// Recursively iterates through all types to find any that are not supported
+/// by a platform.
+///
+/// Returns `null` if every type supports all platforms.
 String? _tryGetUnsupportedPlatformsCondition(Iterable<TypeDeclaration> types) {
   Iterable<TypeDeclaration> addAllRecursive(TypeDeclaration type) sync* {
     yield type;

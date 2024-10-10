@@ -29,6 +29,7 @@ protocol ${instanceManagerFinalizerDelegateName(options)}: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
   func onDeinit(identifier: Int64)
 }
+
 ''';
 
 /// Template for an object that tracks when an object is deallocated.
@@ -62,6 +63,7 @@ internal final class ${_instanceManagerFinalizerName(options)} {
     delegate?.onDeinit(identifier: identifier)
   }
 }
+
 ''';
 
 /// The Swift `InstanceManager`.
@@ -246,6 +248,7 @@ final class ${swiftInstanceManagerClassName(options)} {
     return count
   }
 }
+
 ''';
 }
 
