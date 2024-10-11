@@ -26,16 +26,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-<<<<<<< HEAD
-  mockito: 5.4.4
-  pigeon: ^22.4.1
-||||||| 048ae847ae
-  mockito: 5.4.4
-  pigeon: ^17.0.0
-=======
   mockito: ^5.4.4
-  pigeon: ^17.0.0
->>>>>>> main
+  pigeon: ^22.4.1
 
 topics:
   - camera
