@@ -1071,14 +1071,14 @@ abstract class NSUrlProtectionSpaceFlutterApi {
 
   /// Create a new Dart instance and add it to the `InstanceManager`.
   @ObjCSelector(
-    'createWithIdentifier:host:protocol:port:sslError:sslCertificate:',
+    'createWithIdentifier:protocol:host:port:sslErrorType:sslCertificate:',
   )
   void createWithServerTrust(
     int identifier,
-    String? host,
     String? protocol,
+    String? host,
     int port,
-    SslErrorTypeData? sslError,
+    SslErrorTypeData? sslErrorType,
     SslCertificateData sslCertificate,
   );
 }

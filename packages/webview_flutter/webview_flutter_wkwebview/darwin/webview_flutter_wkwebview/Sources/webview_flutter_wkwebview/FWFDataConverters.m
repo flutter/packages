@@ -354,3 +354,23 @@ NSURLCredentialPersistence FWFNativeNSURLCredentialPersistenceFromFWFNSUrlCreden
 
   return -1;
 }
+
+
+FWFSslErrorTypeData FWFSslErrorTypeDataFromSecTrustResult(SecTrustResultType result) {
+  switch (result) {
+    case kSecTrustResultInvalid:
+      return FWFSslErrorTypeDataInvalid;
+    case kSecTrustResultDeny:
+      return FWFSslErrorTypeDataDeny;
+    case kSecTrustResultUnspecified:
+      return FWFSslErrorTypeDataUnspecified;
+    case kSecTrustResultRecoverableTrustFailure:
+      return FWFSslErrorTypeDataRecoverableTrustFailure;
+    case kSecTrustResultFatalTrustFailure:
+      return FWFSslErrorTypeDataFatalTrustFailure;
+    case kSecTrustResultOtherError:
+      return FWFSslErrorTypeDataOtherError;
+    default:
+      return -1;
+  }
+}

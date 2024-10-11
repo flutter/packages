@@ -4,6 +4,7 @@
 
 #import "./include/webview_flutter_wkwebview/FWFURLAuthenticationChallengeHostApi.h"
 #import "./include/webview_flutter_wkwebview/FWFURLProtectionSpaceHostApi.h"
+#import "./include/webview_flutter_wkwebview/FWFDataConverters.h"
 
 @interface FWFURLAuthenticationChallengeFlutterApiImpl ()
 // BinaryMessenger must be weak to prevent a circular reference with the host API it
@@ -36,13 +37,45 @@
   FWFURLProtectionSpaceFlutterApiImpl *protectionSpaceApi =
       [[FWFURLProtectionSpaceFlutterApiImpl alloc] initWithBinaryMessenger:self.binaryMessenger
                                                            instanceManager:self.instanceManager];
-  [protectionSpaceApi createWithInstance:protectionSpace
-                                    host:protectionSpace.host
-                                   realm:protectionSpace.realm
-                    authenticationMethod:protectionSpace.authenticationMethod
-                              completion:^(FlutterError *error) {
-                                NSAssert(!error, @"%@", error);
-                              }];
+  
+  if (protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust) {
+    SecTrustRef serverTrust = protectionSpace.serverTrust;
+    
+    SecTrustResultType result;
+    SecTrustEvaluate(serverTrust, &result);
+    FWFSslErrorTypeData sslErrorTypeData = FWFSslErrorTypeDataFromSecTrustResult(result);
+    FWFSslErrorTypeDataBox* sslErrorTypeDataBox = NULL;
+    if (sslErrorTypeData != -1) {
+      sslErrorTypeDataBox = [[FWFSslErrorTypeDataBox alloc] initWithValue: sslErrorTypeData];
+    }
+    
+    SecCertificateRef certificate = SecTrustGetCertificateAtIndex(serverTrust, 0);
+    NSData* certificateDer = (NSData*)CFBridgingRelease(SecCertificateCopyData(certificate));
+    FlutterStandardTypedData* flutterTypedData = [FlutterStandardTypedData typedDataWithBytes:certificateDer];
+    
+    FWFSslCertificateData* sslCertificateData = [FWFSslCertificateData makeWithIssuedBy:NULL
+                                                                                       issuedTo:NULL
+                                                                                       validNotAfterIso8601Date:NULL
+                                                                                       validNotBeforeIso8601Date:NULL
+                                                                                       x509CertificateDer:flutterTypedData];
+    
+    [protectionSpaceApi createWithInstance:protectionSpace
+                                      host:protectionSpace.host
+                                     protocol:protectionSpace.protocol
+                                      port: protectionSpace.port
+                              sslErrorTypeBoxed:sslErrorTypeDataBox
+                            sslCertificate:sslCertificateData completion:^(FlutterError *error) {
+      NSAssert(!error, @"%@", error);
+    }];
+  } else {
+    [protectionSpaceApi createWithInstance:protectionSpace
+                                      host:protectionSpace.host
+                                     realm:protectionSpace.realm
+                      authenticationMethod:protectionSpace.authenticationMethod
+                                completion:^(FlutterError *error) {
+                                  NSAssert(!error, @"%@", error);
+                                }];
+  }
 
   [self.api createWithIdentifier:[self.instanceManager addHostCreatedInstance:instance]
        protectionSpaceIdentifier:[self.instanceManager

@@ -4,6 +4,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import '../common/instance_manager.dart';
 import '../common/weak_reference_utils.dart';
@@ -467,27 +468,49 @@ class NSUrlProtectionSpace extends NSObject {
   @protected
   NSUrlProtectionSpace.detached({
     required this.host,
-    required this.realm,
     required this.authenticationMethod,
+    this.protocol,
+    this.port,
+    this.realm,
+    this.sslErrorType,
+    this.sslCertificate,
     super.binaryMessenger,
     super.instanceManager,
-  }) : super.detached();
+  })  : assert((sslErrorType == null && sslCertificate == null) ||
+            authenticationMethod == NSUrlAuthenticationMethod.serverTrust),
+        super.detached();
+
+  /// The receiver’s protocol
+  final String? protocol;
 
   /// The receiver’s host.
   final String? host;
 
-  /// The receiver’s authentication realm.
+  /// The receiver’s port
+  final int? port;
+
+  /// The receiver’s realm
   final String? realm;
 
   /// The authentication method used by the receiver.
   final String? authenticationMethod;
 
+  /// The SSL error type (only applicable if the authentication method is server trust)
+  final SslErrorType? sslErrorType;
+
+  /// The SSL certificate (only applicable if the authentication method is server trust)
+  final SslCertificate? sslCertificate;
+
   @override
   NSUrlProtectionSpace copy() {
     return NSUrlProtectionSpace.detached(
+      protocol: protocol,
       host: host,
+      port: port,
       realm: realm,
       authenticationMethod: authenticationMethod,
+      sslErrorType: sslErrorType,
+      sslCertificate: sslCertificate?.copy(),
     );
   }
 }

@@ -1183,15 +1183,14 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
             NSUrlAuthenticationMethod.serverTrust) {
           final FutureOr<SslErrorDecision> Function(SslError)? callback =
               weakThis.target?._onSslError;
-          final String? host = challenge.protectionSpace.host;
-          final String? realm = challenge.protectionSpace.realm;
-
-          if (callback != null && host != null) {
+          if (callback != null) {
             callback(
               SslError(
-                errorType: ,
-                host: host,
-                realm: realm,
+                errorType: challenge.protectionSpace.sslErrorType,
+                certificate: challenge.protectionSpace.sslCertificate!,
+                host: challenge.protectionSpace.host!,
+                scheme: challenge.protectionSpace.protocol!,
+                port: challenge.protectionSpace.port!,
               ),
             );
             return;

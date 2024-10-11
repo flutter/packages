@@ -3395,14 +3395,14 @@ NSObject<FlutterMessageCodec> *FWFNSUrlProtectionSpaceFlutterApiGetCodec(void) {
     } 
   }];
 }
-- (void)createWithIdentifier:(NSInteger)arg_identifier host:(nullable NSString *)arg_host protocol:(nullable NSString *)arg_protocol port:(NSInteger)arg_port sslError:(nullable FWFSslErrorTypeDataBox *)arg_sslError sslCertificate:(FWFSslCertificateData *)arg_sslCertificate completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)createWithIdentifier:(NSInteger)arg_identifier protocol:(nullable NSString *)arg_protocol host:(nullable NSString *)arg_host port:(NSInteger)arg_port sslErrorType:(nullable FWFSslErrorTypeDataBox *)arg_sslErrorType sslCertificate:(FWFSslCertificateData *)arg_sslCertificate completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlProtectionSpaceFlutterApi.createWithServerTrust", _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
     [FlutterBasicMessageChannel
       messageChannelWithName:channelName
       binaryMessenger:self.binaryMessenger
       codec:FWFNSUrlProtectionSpaceFlutterApiGetCodec()];
-  [channel sendMessage:@[@(arg_identifier), arg_host ?: [NSNull null], arg_protocol ?: [NSNull null], @(arg_port), arg_sslError == nil ? [NSNull null] : [NSNumber numberWithInteger:arg_sslError.value], arg_sslCertificate ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+  [channel sendMessage:@[@(arg_identifier), arg_protocol ?: [NSNull null], arg_host ?: [NSNull null], @(arg_port), arg_sslErrorType == nil ? [NSNull null] : [NSNumber numberWithInteger:arg_sslErrorType.value], arg_sslCertificate ?: [NSNull null]] reply:^(NSArray<id> *reply) {
     if (reply != nil) {
       if (reply.count > 1) {
         completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);

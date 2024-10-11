@@ -4,6 +4,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import '../common/instance_manager.dart';
 import '../common/web_kit.g.dart';
@@ -39,6 +40,41 @@ extension _NSKeyValueChangeKeyEnumDataConverter on NSKeyValueChangeKeyEnumData {
   NSKeyValueChangeKey toNSKeyValueChangeKey() {
     return NSKeyValueChangeKey.values.firstWhere(
       (NSKeyValueChangeKey element) => element.name == value.name,
+    );
+  }
+}
+
+extension _SslErrorTypeDataConverter on SslErrorTypeData {
+  SslErrorType toSslErrorType() {
+    switch (this) {
+      case SslErrorTypeData.unspecified:
+        return SslErrorType.unspecified;
+      case SslErrorTypeData.deny:
+        return SslErrorType.deny;
+      case SslErrorTypeData.recoverableTrustFailure:
+        return SslErrorType.recoverableTrustFailure;
+      case SslErrorTypeData.fatalTrustFailure:
+        return SslErrorType.fatalTrustFailure;
+      case SslErrorTypeData.otherError:
+        return SslErrorType.otherError;
+      case SslErrorTypeData.invalid:
+        return SslErrorType.invalid;
+    }
+  }
+}
+
+extension _SslCertificateDataConverter on SslCertificateData {
+  SslCertificate toSslCertificate() {
+    return SslCertificate(
+      issuedBy: issuedBy,
+      issuedTo: issuedTo,
+      validNotAfterDate: validNotAfterIso8601Date == null
+          ? DateTime.parse(validNotAfterIso8601Date!)
+          : null,
+      validNotBeforeDate: validNotBeforeIso8601Date == null
+          ? DateTime.parse(validNotBeforeIso8601Date!)
+          : null,
+      x509CertificateDer: x509CertificateDer,
     );
   }
 }
@@ -342,6 +378,30 @@ class NSUrlProtectionSpaceFlutterApiImpl
         host: host,
         realm: realm,
         authenticationMethod: authenticationMethod,
+        binaryMessenger: binaryMessenger,
+        instanceManager: instanceManager,
+      ),
+      identifier,
+    );
+  }
+
+  @override
+  void createWithServerTrust(
+    int identifier,
+    String? protocol,
+    String? host,
+    int port,
+    SslErrorTypeData? sslErrorType,
+    SslCertificateData sslCertificate,
+  ) {
+    instanceManager.addHostCreatedInstance(
+      NSUrlProtectionSpace.detached(
+        protocol: protocol,
+        host: host,
+        port: port,
+        authenticationMethod: NSUrlAuthenticationMethod.serverTrust,
+        sslErrorType: sslErrorType?.toSslErrorType(),
+        sslCertificate: sslCertificate.toSslCertificate(),
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
       ),

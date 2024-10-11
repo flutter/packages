@@ -986,7 +986,7 @@ NSObject<FlutterMessageCodec> *FWFNSUrlProtectionSpaceFlutterApiGetCodec(void);
 /// Create a new Dart instance and add it to the `InstanceManager`.
 - (void)createWithIdentifier:(NSInteger)identifier host:(nullable NSString *)host realm:(nullable NSString *)realm authenticationMethod:(nullable NSString *)authenticationMethod completion:(void (^)(FlutterError *_Nullable))completion;
 /// Create a new Dart instance and add it to the `InstanceManager`.
-- (void)createWithIdentifier:(NSInteger)identifier host:(nullable NSString *)host protocol:(nullable NSString *)protocol port:(NSInteger)port sslError:(nullable FWFSslErrorTypeDataBox *)sslErrorBoxed sslCertificate:(FWFSslCertificateData *)sslCertificate completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)createWithIdentifier:(NSInteger)identifier protocol:(nullable NSString *)protocol host:(nullable NSString *)host port:(NSInteger)port sslErrorType:(nullable FWFSslErrorTypeDataBox *)sslErrorTypeBoxed sslCertificate:(FWFSslCertificateData *)sslCertificate completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFNSUrlAuthenticationChallengeFlutterApi.
