@@ -379,6 +379,7 @@ class ShellRouteMatch extends RouteMatchBase {
       configuration,
       uri: matches.uri,
       matchedLocation: matchedLocation,
+      name: route.name,
       fullPath: matches.fullPath,
       pathParameters: matches.pathParameters,
       pageKey: pageKey,

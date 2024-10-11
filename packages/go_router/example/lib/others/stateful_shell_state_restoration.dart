@@ -19,11 +19,11 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
     routes: <RouteBase>[
       StatefulShellRoute.indexedStack(
         restorationScopeId: 'shell1',
-        pageBuilder: (BuildContext context, GoRouterState state,
-            StatefulNavigationShell navigationShell) {
+        pageBuilder:
+            (BuildContext context, ShellRouteState state, Widget child) {
           return MaterialPage<void>(
               restorationId: 'shellWidget1',
-              child: ScaffoldWithNavBar(navigationShell: navigationShell));
+              child: ScaffoldWithNavBar(shellState: state, child: child));
         },
         branches: <StatefulShellBranch>[
           // The route branch for the first tab of the bottom navigation bar.
@@ -105,24 +105,29 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
 class ScaffoldWithNavBar extends StatelessWidget {
   /// Constructs an [ScaffoldWithNavBar].
   const ScaffoldWithNavBar({
-    required this.navigationShell,
+    required this.shellState,
+    required this.child,
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
+  /// The state of the shell route.
+  final ShellRouteState shellState;
+
   /// The navigation shell and container for the branch Navigators.
-  final StatefulNavigationShell navigationShell;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: navigationShell,
+      body: child,
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Section A'),
           BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Section B'),
         ],
-        currentIndex: navigationShell.currentIndex,
-        onTap: (int tappedIndex) => navigationShell.goBranch(tappedIndex),
+        currentIndex: shellState.navigatorIndex,
+        onTap: (int tappedIndex) =>
+            shellState.restoreNavigator(context, tappedIndex),
       ),
     );
   }

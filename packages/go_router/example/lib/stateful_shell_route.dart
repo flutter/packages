@@ -201,15 +201,11 @@ class ScaffoldWithNavBar extends StatelessWidget {
   void _onTap(BuildContext context, int index) {
     // A common pattern when using bottom navigation bars is to support
     // navigating to the initial location when tapping the item that is
-    // already active. This example demonstrates how to support this behavior,
-    // using the '/initial' shell route redirect.
+    // already active.
     if (index == shellState.navigatorIndex) {
       final String initialLocation =
           _shellRoute.initialBranchLocation(shellState, index);
       GoRouter.of(context).go(initialLocation);
-      // It is also possible to navigate to the initial location of the branch
-      // like this:
-      //GoRouter.of(context).go('/shell/$index/initial');
     } else {
       return switch (index) {
         1 => GoRouter.of(context).goNamed('branchB'),
@@ -245,7 +241,8 @@ class RootScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Root of section $label'),
+        title: Text(
+            'Root of section $label - navigatorIndex: ${ShellRouteState.of(context).navigatorIndex}'),
       ),
       body: Center(
         child: Column(

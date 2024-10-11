@@ -10,6 +10,8 @@ final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 final GlobalKey<NavigatorState> _tabANavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'tabANav');
+final GlobalKey<NavigatorState> _tabBNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'tabBNav');
 
 // This example demonstrates how to setup nested navigation using a
 // BottomNavigationBar, where each bar item uses its own persistent navigator,
@@ -33,23 +35,25 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     initialLocation: '/a',
     routes: <RouteBase>[
       StatefulShellRoute(
+        name: 'rootShell',
+        shellRedirectPath: '/rootShell',
         // This nested StatefulShellRoute demonstrates the use of a custom
         // container for the branch Navigators, using the
         // `navigatorContainerBuilder` parameter. When doing so, the `builder`
         // should not be provided, and `pageBuilder` is optional.
-        navigatorContainerBuilder: (BuildContext context,
-            StatefulNavigationShell navigationShell, List<Widget> children) {
+        navigatorContainerBuilder: (BuildContext context, ShellRouteState state,
+            List<Widget> children) {
           // Returning a customized container for the branch
           // Navigators (i.e. the `List<Widget> children` argument).
           //
           // See ScaffoldWithNavBar for more details on how the children
           // are managed (using AnimatedBranchContainer).
-          return ScaffoldWithNavBar(
-              navigationShell: navigationShell, children: children);
+          return ScaffoldWithNavBar(shellState: state, children: children);
         },
         branches: <StatefulShellBranch>[
           // The route branch for the first tab of the bottom navigation bar.
           StatefulShellBranch(
+            name: 'branchA',
             navigatorKey: _tabANavigatorKey,
             routes: <RouteBase>[
               GoRoute(
@@ -74,6 +78,8 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
 
           // The route branch for the third tab of the bottom navigation bar.
           StatefulShellBranch(
+            name: 'branchB',
+            navigatorKey: _tabBNavigatorKey,
             // StatefulShellBranch will automatically use the first descendant
             // GoRoute as the initial location of the branch. If another route
             // is desired, specify the location of it using the defaultLocation
@@ -81,22 +87,17 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
             // defaultLocation: '/c2',
             routes: <RouteBase>[
               StatefulShellRoute(
-                builder: (BuildContext context, GoRouterState state,
-                    StatefulNavigationShell navigationShell) {
-                  // Just like with the top level StatefulShellRoute, no
-                  // customization is done in the builder function.
-                  return navigationShell;
-                },
+                name: 'nestedShell',
+                shellRedirectPath: '/nestedShell',
                 navigatorContainerBuilder: (BuildContext context,
-                    StatefulNavigationShell navigationShell,
-                    List<Widget> children) {
+                    ShellRouteState state, List<Widget> children) {
                   // Returning a customized container for the branch
                   // Navigators (i.e. the `List<Widget> children` argument).
                   //
                   // See TabbedRootScreen for more details on how the children
                   // are managed (in a TabBarView).
                   return TabbedRootScreen(
-                      navigationShell: navigationShell, children: children);
+                      shellState: state, children: children);
                 },
                 // This bottom tab uses a nested shell, wrapping sub routes in a
                 // top TabBar.
@@ -165,23 +166,26 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
 class ScaffoldWithNavBar extends StatelessWidget {
   /// Constructs an [ScaffoldWithNavBar].
   const ScaffoldWithNavBar({
-    required this.navigationShell,
+    required this.shellState,
     required this.children,
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
   /// The navigation shell and container for the branch Navigators.
-  final StatefulNavigationShell navigationShell;
+  final ShellRouteState shellState;
 
   /// The children (branch Navigators) to display in a custom container
   /// ([AnimatedBranchContainer]).
   final List<Widget> children;
 
+  StatefulShellRoute get _shellRoute =>
+      shellState.shellRoute as StatefulShellRoute;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnimatedBranchContainer(
-        currentIndex: navigationShell.currentIndex,
+        currentIndex: shellState.navigatorIndex,
         children: children,
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -193,23 +197,27 @@ class ScaffoldWithNavBar extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Section A'),
           BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Section B'),
         ],
-        currentIndex: navigationShell.currentIndex,
+        currentIndex: shellState.navigatorIndex,
         onTap: (int index) => _onTap(context, index),
       ),
     );
   }
 
-  /// Navigate to the current location of the branch at the provided index when
-  /// tapping an item in the BottomNavigationBar.
   void _onTap(BuildContext context, int index) {
     // A common pattern when using bottom navigation bars is to support
     // navigating to the initial location when tapping the item that is
-    // already active. This example demonstrates how to support this behavior,
-    // using the '/initial' shell route redirect.
-    if (index == navigationShell.currentIndex) {
-      GoRouter.of(context).go('/shell/$index/initial');
+    // already active.
+    if (index == shellState.navigatorIndex) {
+      final String initialLocation =
+          _shellRoute.initialBranchLocation(shellState, index);
+      GoRouter.of(context).go(initialLocation);
     } else {
-      GoRouter.of(context).go('/shell/$index');
+      return switch (index) {
+        1 => GoRouter.of(context).goNamed('branchB'),
+        _ => GoRouter.of(context).goNamed('branchA'),
+      };
+      // It is also possible to navigate to the branch by index like this:
+      //GoRouter.of(context).go('/rootShell/$index');
     }
   }
 }
@@ -369,10 +377,10 @@ class DetailsScreenState extends State<DetailsScreen> {
 class TabbedRootScreen extends StatefulWidget {
   /// Constructs a TabbedRootScreen
   const TabbedRootScreen(
-      {required this.navigationShell, required this.children, super.key});
+      {required this.shellState, required this.children, super.key});
 
   /// The current state of the parent StatefulShellRoute.
-  final StatefulNavigationShell navigationShell;
+  final ShellRouteState shellState;
 
   /// The children (branch Navigators) to display in the [TabBarView].
   final List<Widget> children;
@@ -386,12 +394,12 @@ class _TabbedRootScreenState extends State<TabbedRootScreen>
   late final TabController _tabController = TabController(
       length: widget.children.length,
       vsync: this,
-      initialIndex: widget.navigationShell.currentIndex);
+      initialIndex: widget.shellState.navigatorIndex);
 
   @override
   void didUpdateWidget(covariant TabbedRootScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _tabController.index = widget.navigationShell.currentIndex;
+    _tabController.index = widget.shellState.navigatorIndex;
   }
 
   @override
@@ -416,7 +424,7 @@ class _TabbedRootScreenState extends State<TabbedRootScreen>
   }
 
   void _onTabTap(BuildContext context, int index) {
-    widget.navigationShell.goBranch(index);
+    widget.shellState.restoreNavigator(context, index);
   }
 }
 
@@ -438,6 +446,10 @@ class TabScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text('Screen $label', style: Theme.of(context).textTheme.titleLarge),
+          Text(
+              'Shell navigator index: ${ShellRouteState.of(context).navigatorIndex}'),
+          Text(
+              'Root shell navigator index: ${ShellRouteState.of(context, name: 'rootShell').navigatorIndex}'),
           const Padding(padding: EdgeInsets.all(4)),
           TextButton(
             onPressed: () {

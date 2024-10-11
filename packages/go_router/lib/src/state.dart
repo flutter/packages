@@ -9,6 +9,7 @@ import 'configuration.dart';
 import 'match.dart';
 import 'misc/errors.dart';
 import 'route.dart';
+import 'router.dart';
 
 /// The route state during routing.
 ///
@@ -196,7 +197,7 @@ class GoRouterState {
 }
 
 /// The route state of a [ShellRouteBase] (i.e. [ShellRoute] or
-/// [StatefulShellRoute]).
+/// [StatefulShellRoute]) during routing.
 class ShellRouteState extends GoRouterState {
   const ShellRouteState(
     super._configuration, {
@@ -222,6 +223,35 @@ class ShellRouteState extends GoRouterState {
   /// Gets the index of the [Navigator] or [StatefulShellBranch] in the
   /// associated shell route.
   int get navigatorIndex => shellRoute.indexOfNavigatorKey(navigatorKey);
+
+  void restoreNavigator(BuildContext context, int navigatorIndex) {
+    final RouteMatchList routeMatchList =
+        shellRoute.restoreNavigatorLocation(navigatorIndex, _configuration);
+    GoRouter.of(context).restore(routeMatchList);
+  }
+
+  /// Gets the [ShellRouteState] from context.
+  static ShellRouteState of(BuildContext context, {String? name}) {
+    while (true) {
+      final GoRouterStateRegistryScope? scope = context
+          .dependOnInheritedWidgetOfExactType<GoRouterStateRegistryScope>();
+      if (scope?.notifier?.parentShellRouteState == null) {
+        throw GoRouterState._noGoRouterStateError;
+      }
+      final ShellRouteState shellRouteState =
+          scope!.notifier!.parentShellRouteState!;
+      if (name == null || shellRouteState.name == name) {
+        return shellRouteState;
+      }
+
+      final NavigatorState? state =
+          scope.notifier!.parentNavigatorKey?.currentState;
+      if (state == null) {
+        throw GoRouterState._noGoRouterStateError;
+      }
+      context = state.context;
+    }
+  }
 }
 
 /// An inherited widget to host a [GoRouterStateRegistry] for the subtree.
@@ -246,7 +276,10 @@ class GoRouterStateRegistryScope
 @internal
 class GoRouterStateRegistry extends ChangeNotifier {
   /// creates a [GoRouterStateRegistry].
-  GoRouterStateRegistry();
+  GoRouterStateRegistry(this.parentNavigatorKey, this.parentShellRouteState);
+
+  final GlobalKey<NavigatorState>? parentNavigatorKey;
+  final ShellRouteState? parentShellRouteState;
 
   /// A [Map] that maps a [Page] to a [GoRouterState].
   @visibleForTesting

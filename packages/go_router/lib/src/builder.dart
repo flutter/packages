@@ -109,7 +109,9 @@ class RouteBuilder {
     return builderWithNav(
       context,
       _CustomNavigator(
+        parentNavigatorKey: null,
         navigatorKey: configuration.navigatorKey,
+        shellRouteState: null,
         observers: observers,
         navigatorRestorationId: restorationScopeId,
         onPopPageWithRouteMatch: onPopPageWithRouteMatch,
@@ -126,7 +128,9 @@ class RouteBuilder {
 class _CustomNavigator extends StatefulWidget {
   const _CustomNavigator({
     super.key,
+    required this.parentNavigatorKey,
     required this.navigatorKey,
+    required this.shellRouteState,
     required this.observers,
     required this.navigatorRestorationId,
     required this.onPopPageWithRouteMatch,
@@ -137,7 +141,9 @@ class _CustomNavigator extends StatefulWidget {
     required this.errorPageBuilder,
   });
 
+  final GlobalKey<NavigatorState>? parentNavigatorKey;
   final GlobalKey<NavigatorState> navigatorKey;
+  final ShellRouteState? shellRouteState;
   final List<NavigatorObserver> observers;
 
   /// The actual [RouteMatchBase]s to be built.
@@ -160,7 +166,8 @@ class _CustomNavigator extends StatefulWidget {
 class _CustomNavigatorState extends State<_CustomNavigator> {
   HeroController? _controller;
   late Map<Page<Object?>, RouteMatchBase> _pageToRouteMatchBase;
-  final GoRouterStateRegistry _registry = GoRouterStateRegistry();
+  late final GoRouterStateRegistry _registry =
+      GoRouterStateRegistry(widget.parentNavigatorKey, widget.shellRouteState);
   List<Page<Object?>>? _pages;
 
   @override
@@ -271,6 +278,8 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       return _CustomNavigator(
         // The state needs to persist across rebuild.
         key: GlobalObjectKey(navigatorKey.hashCode),
+        parentNavigatorKey: widget.navigatorKey,
+        shellRouteState: state,
         navigatorRestorationId: restorationScopeId,
         navigatorKey: navigatorKey,
         matches: match.matches,
