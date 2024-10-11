@@ -33,8 +33,6 @@ final List<String> _kBlockTags = <String>[
 
 const List<String> _kListTags = <String>['ul', 'ol'];
 
-bool _isBlockTag(String? tag) => _kBlockTags.contains(tag);
-
 bool _isListTag(String tag) => _kListTags.contains(tag);
 
 class _BlockElement {
@@ -111,6 +109,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.builders,
     required this.paddingBuilders,
     required this.listItemCrossAxisAlignment,
+    required this.customBlockTags,
     this.fitContent = false,
     this.onSelectionChanged,
     this.onTapText,
@@ -156,6 +155,9 @@ class MarkdownBuilder implements md.NodeVisitor {
   /// does not allow for intrinsic height measurements.
   final MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment;
 
+  /// Collection of custom block tags to be used building block widgets.
+  final List<String>? customBlockTags;
+
   /// Called when the user changes selection when [selectable] is set to true.
   final MarkdownOnSelectionChangedCallback? onSelectionChanged;
 
@@ -177,6 +179,10 @@ class MarkdownBuilder implements md.NodeVisitor {
   String? _currentBlockTag;
   String? _lastVisitedTag;
   bool _isInBlockquote = false;
+
+  bool _isBlockTag(String? tag) =>
+      _kBlockTags.contains(tag) ||
+      (customBlockTags ?? <String>[]).contains(tag);
 
   /// Returns widgets that display the given Markdown nodes.
   ///
@@ -395,6 +401,19 @@ class MarkdownBuilder implements md.NodeVisitor {
         );
       } else {
         child = const SizedBox();
+      }
+
+      if (builders.containsKey(tag)) {
+        final Widget? builderChild =
+            builders[tag]!.visitElementAfterWithContext(
+          delegate.context,
+          element,
+          styleSheet.styles[tag],
+          _inlines.isNotEmpty ? _inlines.last.style : null,
+        );
+        if (builderChild != null) {
+          child = builderChild;
+        }
       }
 
       if (_isListTag(tag)) {
