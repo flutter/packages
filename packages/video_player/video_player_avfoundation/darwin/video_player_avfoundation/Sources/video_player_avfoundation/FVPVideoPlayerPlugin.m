@@ -5,9 +5,9 @@
 #import "FVPVideoPlayerPlugin.h"
 #import "FVPVideoPlayerPlugin_Test.h"
 
-#import <stdatomic.h>
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
+#import <stdatomic.h>
 
 #import "./include/video_player_avfoundation/AVAssetTrackUtils.h"
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
@@ -247,7 +247,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   if (CMTIME_IS_VALID(videoTrack.minFrameDuration)) {
     videoComposition.frameDuration = videoTrack.minFrameDuration;
   } else {
-    NSLog(@"Warning: videoTrack.minFrameDuration for input video is invalid, please report this.");
+    NSLog(@"Warning: videoTrack.minFrameDuration for input video is invalid, please report this to https://github.com/flutter/flutter/issues with input video attached.");
     videoComposition.frameDuration = CMTimeMake(1, 120);
   }
 
@@ -576,8 +576,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   CVPixelBufferRef buffer = NULL;
   CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:self.targetTime];
   if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
-    buffer = [self.videoOutput copyPixelBufferForItemTime:outputItemTime
-                                       itemTimeForDisplay:NULL];
+    buffer = [self.videoOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
     if (buffer) {
       CVBufferRelease(self.latestPixelBuffer);
       self.latestPixelBuffer = buffer;
@@ -597,7 +596,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // solution to minimize missed video frames due to race between displayLinkFired, copyPixelBuffer
   // and place where is _textureFrameAvailable reset to false in the flutter engine. Ideally
   // FlutterTexture would support mode of operation where the copyPixelBuffer is called always,
-  // maybe with possibility to start and stop it, instead of on demand by calling textureFrameAvailable.
+  // maybe with possibility to start and stop it, instead of on demand by calling
+  // textureFrameAvailable.
   if (self.displayLink.running) {
     dispatch_async(dispatch_get_main_queue(), ^{
       [self.frameUpdater.registry textureFrameAvailable:self.frameUpdater.textureId];
