@@ -1,7 +1,10 @@
-## 2.6.2
+## 2.6.3
 
 * Adds possibility to play videos at more than 30 FPS.
 * Fixes playing state not updating in some paths.
+
+## 2.6.2
+
 * Updates Pigeon for non-nullable collection type support.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
