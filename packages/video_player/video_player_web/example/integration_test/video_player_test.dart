@@ -57,6 +57,31 @@ void main() {
       }, throwsAssertionError, reason: 'Volume cannot be > 1');
     });
 
+    testWidgets('setVolume correctly handles mute and volume states',
+        (WidgetTester tester) async {
+      final VideoPlayer player = VideoPlayer(videoElement: video)..initialize();
+
+      // Test setting volume > 0 (should unmute and set the volume)
+      player.setVolume(0.5);
+      expect(video.volume, equals(0.5), reason: 'Volume should be 0.5');
+      expect(video.muted, isFalse, reason: 'muted attribute should be false');
+
+      // Test setting volume to 0 (should mute the video)
+      player.setVolume(0.0);
+      expect(video.volume, equals(0.0), reason: 'Volume should be zero');
+      expect(video.muted, isTrue, reason: 'muted attribute should be true');
+
+      // Ensure setting negative volume still throws an assertion
+      expect(() {
+        player.setVolume(-0.1);
+      }, throwsAssertionError, reason: 'Volume cannot be < 0');
+
+      // Ensure setting volume greater than 1 throws an assertion
+      expect(() {
+        player.setVolume(1.1);
+      }, throwsAssertionError, reason: 'Volume cannot be > 1');
+    });
+
     testWidgets('setPlaybackSpeed', (WidgetTester tester) async {
       final VideoPlayer player = VideoPlayer(videoElement: video)..initialize();
 
