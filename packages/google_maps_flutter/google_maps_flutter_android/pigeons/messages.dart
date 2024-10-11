@@ -88,7 +88,7 @@ class PlatformCameraUpdateScrollBy {
 class PlatformCameraUpdateZoomBy {
   PlatformCameraUpdateZoomBy(this.amount, [this.focus]);
   final double amount;
-  final PlatformOffset? focus;
+  final PlatformDoublePair? focus;
 }
 
 /// Pigeon equivalent of ZoomIn/ZoomOut
@@ -147,12 +147,12 @@ class PlatformClusterManager {
   final String identifier;
 }
 
-/// Pigeon equivalent of the Offset class.
-class PlatformOffset {
-  PlatformOffset(this.dx, this.dy);
+/// Pair of double values, such as for an offset or size.
+class PlatformDoublePair {
+  PlatformDoublePair(this.x, this.y);
 
-  final double dx;
-  final double dy;
+  final double x;
+  final double y;
 }
 
 /// Pigeon equivalent of the InfoWindow class.
@@ -165,7 +165,7 @@ class PlatformInfoWindow {
 
   final String? title;
   final String? snippet;
-  final PlatformOffset anchor;
+  final PlatformDoublePair anchor;
 }
 
 /// Pigeon equivalent of the Marker class.
@@ -187,7 +187,7 @@ class PlatformMarker {
   });
 
   final double alpha;
-  final PlatformOffset anchor;
+  final PlatformDoublePair anchor;
   final bool consumeTapEvents;
   final bool draggable;
   final bool flat;
@@ -504,25 +504,41 @@ class PlatformZoomRange {
   final double? max;
 }
 
+/// Pigeon equivalent of [BitmapDescriptor]. As there are multiple disjoint
+/// types of [BitmapDescriptor], [PlatformBitmap] contains a single field which
+/// may hold the pigeon equivalent type of any of them.
 class PlatformBitmap {
   PlatformBitmap({required this.bitmap});
 
+  /// One of [PlatformBitmapAssetMap], [PlatformBitmapAsset],
+  /// [PlatformBitmapAssetImage], [PlatformBitmapBytesMap],
+  /// [PlatformBitmapBytes], or [PlatformBitmapDefaultMarker].
+  /// As Pigeon does not currently support data class inheritance, this
+  /// approach allows for the different bitmap implementations to be valid
+  /// argument and return types of the API methods. See
+  /// https://github.com/flutter/flutter/issues/117819.
   final Object bitmap;
 }
 
+/// Pigeon equivalent of [DefaultMarker]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#defaultMarker(float)
 class PlatformBitmapDefaultMarker {
   PlatformBitmapDefaultMarker({this.hue});
 
   final double? hue;
 }
 
+/// Pigeon equivalent of [BytesBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#fromBitmap(android.graphics.Bitmap)
 class PlatformBitmapBytes {
   PlatformBitmapBytes({required this.byteData, this.size});
 
   final Uint8List byteData;
-  final PlatformOffset? size;
+  final PlatformDoublePair? size;
 }
 
+/// Pigeon equivalent of [AssetBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
 class PlatformBitmapAsset {
   PlatformBitmapAsset({required this.name, this.pkg});
 
@@ -530,19 +546,24 @@ class PlatformBitmapAsset {
   final String? pkg;
 }
 
+/// Pigeon equivalent of [AssetImageBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
 class PlatformBitmapAssetImage {
   PlatformBitmapAssetImage(
       {required this.name, required this.scale, this.size});
   final String name;
   final double scale;
-  final PlatformOffset? size;
+  final PlatformDoublePair? size;
 }
 
+/// Pigeon equivalent of [MapBitmapScaling].
 enum PlatformMapBitmapScaling {
   auto,
   none,
 }
 
+/// Pigeon equivalent of [AssetMapBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
 class PlatformBitmapAssetMap {
   PlatformBitmapAssetMap(
       {required this.assetName,
@@ -557,6 +578,8 @@ class PlatformBitmapAssetMap {
   final double? height;
 }
 
+/// Pigeon equivalent of [BytesMapBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-frombitmap-bitmap-image
 class PlatformBitmapBytesMap {
   PlatformBitmapBytesMap(
       {required this.byteData,

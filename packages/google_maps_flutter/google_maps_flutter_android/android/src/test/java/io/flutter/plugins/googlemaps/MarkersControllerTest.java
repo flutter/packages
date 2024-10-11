@@ -68,14 +68,14 @@ public class MarkersControllerTest {
                     .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
                     .build())
             .build();
-    Messages.PlatformOffset anchor =
-        new Messages.PlatformOffset.Builder().setDx(0.5).setDy(0.0).build();
+    Messages.PlatformDoublePair anchor =
+        new Messages.PlatformDoublePair.Builder().setX(0.5).setY(0.0).build();
     Messages.PlatformInfoWindow infoWindow =
         new Messages.PlatformInfoWindow.Builder().setAnchor(anchor).build();
     return new Messages.PlatformMarker.Builder()
         .setPosition(
             new Messages.PlatformLatLng.Builder().setLatitude(0.0).setLongitude(0.0).build())
-        .setAnchor(new Messages.PlatformOffset.Builder().setDx(0.0).setDy(0.0).build())
+        .setAnchor(new Messages.PlatformDoublePair.Builder().setX(0.0).setY(0.0).build())
         .setFlat(false)
         .setDraggable(false)
         .setVisible(true)

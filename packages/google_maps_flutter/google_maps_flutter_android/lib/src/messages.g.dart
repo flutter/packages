@@ -67,6 +67,7 @@ enum PlatformPatternItemType {
   gap,
 }
 
+/// Pigeon equivalent of [MapBitmapScaling].
 enum PlatformMapBitmapScaling {
   auto,
   none,
@@ -271,7 +272,7 @@ class PlatformCameraUpdateZoomBy {
 
   double amount;
 
-  PlatformOffset? focus;
+  PlatformDoublePair? focus;
 
   Object encode() {
     return <Object?>[
@@ -284,7 +285,7 @@ class PlatformCameraUpdateZoomBy {
     result as List<Object?>;
     return PlatformCameraUpdateZoomBy(
       amount: result[0]! as double,
-      focus: result[1] as PlatformOffset?,
+      focus: result[1] as PlatformDoublePair?,
     );
   }
 }
@@ -442,29 +443,29 @@ class PlatformClusterManager {
   }
 }
 
-/// Pigeon equivalent of the Offset class.
-class PlatformOffset {
-  PlatformOffset({
-    required this.dx,
-    required this.dy,
+/// Pair of double values, such as for an offset or size.
+class PlatformDoublePair {
+  PlatformDoublePair({
+    required this.x,
+    required this.y,
   });
 
-  double dx;
+  double x;
 
-  double dy;
+  double y;
 
   Object encode() {
     return <Object?>[
-      dx,
-      dy,
+      x,
+      y,
     ];
   }
 
-  static PlatformOffset decode(Object result) {
+  static PlatformDoublePair decode(Object result) {
     result as List<Object?>;
-    return PlatformOffset(
-      dx: result[0]! as double,
-      dy: result[1]! as double,
+    return PlatformDoublePair(
+      x: result[0]! as double,
+      y: result[1]! as double,
     );
   }
 }
@@ -481,7 +482,7 @@ class PlatformInfoWindow {
 
   String? snippet;
 
-  PlatformOffset anchor;
+  PlatformDoublePair anchor;
 
   Object encode() {
     return <Object?>[
@@ -496,7 +497,7 @@ class PlatformInfoWindow {
     return PlatformInfoWindow(
       title: result[0] as String?,
       snippet: result[1] as String?,
-      anchor: result[2]! as PlatformOffset,
+      anchor: result[2]! as PlatformDoublePair,
     );
   }
 }
@@ -521,7 +522,7 @@ class PlatformMarker {
 
   double alpha;
 
-  PlatformOffset anchor;
+  PlatformDoublePair anchor;
 
   bool consumeTapEvents;
 
@@ -567,7 +568,7 @@ class PlatformMarker {
     result as List<Object?>;
     return PlatformMarker(
       alpha: result[0]! as double,
-      anchor: result[1]! as PlatformOffset,
+      anchor: result[1]! as PlatformDoublePair,
       consumeTapEvents: result[2]! as bool,
       draggable: result[3]! as bool,
       flat: result[4]! as bool,
@@ -1296,11 +1297,21 @@ class PlatformZoomRange {
   }
 }
 
+/// Pigeon equivalent of [BitmapDescriptor]. As there are multiple disjoint
+/// types of [BitmapDescriptor], [PlatformBitmap] contains a single field which
+/// may hold the pigeon equivalent type of any of them.
 class PlatformBitmap {
   PlatformBitmap({
     required this.bitmap,
   });
 
+  /// One of [PlatformBitmapAssetMap], [PlatformBitmapAsset],
+  /// [PlatformBitmapAssetImage], [PlatformBitmapBytesMap],
+  /// [PlatformBitmapBytes], or [PlatformBitmapDefaultMarker].
+  /// As Pigeon does not currently support data class inheritance, this
+  /// approach allows for the different bitmap implementations to be valid
+  /// argument and return types of the API methods. See
+  /// https://github.com/flutter/flutter/issues/117819.
   Object bitmap;
 
   Object encode() {
@@ -1317,6 +1328,8 @@ class PlatformBitmap {
   }
 }
 
+/// Pigeon equivalent of [DefaultMarker]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#defaultMarker(float)
 class PlatformBitmapDefaultMarker {
   PlatformBitmapDefaultMarker({
     this.hue,
@@ -1338,6 +1351,8 @@ class PlatformBitmapDefaultMarker {
   }
 }
 
+/// Pigeon equivalent of [BytesBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#fromBitmap(android.graphics.Bitmap)
 class PlatformBitmapBytes {
   PlatformBitmapBytes({
     required this.byteData,
@@ -1346,7 +1361,7 @@ class PlatformBitmapBytes {
 
   Uint8List byteData;
 
-  PlatformOffset? size;
+  PlatformDoublePair? size;
 
   Object encode() {
     return <Object?>[
@@ -1359,11 +1374,13 @@ class PlatformBitmapBytes {
     result as List<Object?>;
     return PlatformBitmapBytes(
       byteData: result[0]! as Uint8List,
-      size: result[1] as PlatformOffset?,
+      size: result[1] as PlatformDoublePair?,
     );
   }
 }
 
+/// Pigeon equivalent of [AssetBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
 class PlatformBitmapAsset {
   PlatformBitmapAsset({
     required this.name,
@@ -1390,6 +1407,8 @@ class PlatformBitmapAsset {
   }
 }
 
+/// Pigeon equivalent of [AssetImageBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
 class PlatformBitmapAssetImage {
   PlatformBitmapAssetImage({
     required this.name,
@@ -1401,7 +1420,7 @@ class PlatformBitmapAssetImage {
 
   double scale;
 
-  PlatformOffset? size;
+  PlatformDoublePair? size;
 
   Object encode() {
     return <Object?>[
@@ -1416,11 +1435,13 @@ class PlatformBitmapAssetImage {
     return PlatformBitmapAssetImage(
       name: result[0]! as String,
       scale: result[1]! as double,
-      size: result[2] as PlatformOffset?,
+      size: result[2] as PlatformDoublePair?,
     );
   }
 }
 
+/// Pigeon equivalent of [AssetMapBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
 class PlatformBitmapAssetMap {
   PlatformBitmapAssetMap({
     required this.assetName,
@@ -1462,6 +1483,8 @@ class PlatformBitmapAssetMap {
   }
 }
 
+/// Pigeon equivalent of [BytesMapBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-frombitmap-bitmap-image
 class PlatformBitmapBytesMap {
   PlatformBitmapBytesMap({
     required this.byteData,
@@ -1567,7 +1590,7 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformClusterManager) {
       buffer.putUint8(147);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformOffset) {
+    } else if (value is PlatformDoublePair) {
       buffer.putUint8(148);
       writeValue(buffer, value.encode());
     } else if (value is PlatformInfoWindow) {
@@ -1698,7 +1721,7 @@ class _PigeonCodec extends StandardMessageCodec {
       case 147:
         return PlatformClusterManager.decode(readValue(buffer)!);
       case 148:
-        return PlatformOffset.decode(readValue(buffer)!);
+        return PlatformDoublePair.decode(readValue(buffer)!);
       case 149:
         return PlatformInfoWindow.decode(readValue(buffer)!);
       case 150:

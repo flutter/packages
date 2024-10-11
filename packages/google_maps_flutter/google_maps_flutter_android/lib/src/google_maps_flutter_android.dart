@@ -681,12 +681,12 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         latitude: latLng.latitude, longitude: latLng.longitude);
   }
 
-  static PlatformOffset _platformOffsetFromOffset(Offset offset) {
-    return PlatformOffset(dx: offset.dx, dy: offset.dy);
+  static PlatformDoublePair _platformPairFromOffset(Offset offset) {
+    return PlatformDoublePair(x: offset.dx, y: offset.dy);
   }
 
-  static PlatformOffset _platformOffsetFromSize(Size size) {
-    return PlatformOffset(dx: size.width, dy: size.height);
+  static PlatformDoublePair _platformPairFromSize(Size size) {
+    return PlatformDoublePair(x: size.width, y: size.height);
   }
 
   static ScreenCoordinate _screenCoordinateFromPlatformPoint(
@@ -728,13 +728,13 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     return PlatformInfoWindow(
         title: window.title,
         snippet: window.snippet,
-        anchor: _platformOffsetFromOffset(window.anchor));
+        anchor: _platformPairFromOffset(window.anchor));
   }
 
   static PlatformMarker _platformMarkerFromMarker(Marker marker) {
     return PlatformMarker(
       alpha: marker.alpha,
-      anchor: _platformOffsetFromOffset(marker.anchor),
+      anchor: _platformPairFromOffset(marker.anchor),
       consumeTapEvents: marker.consumeTapEvents,
       draggable: marker.draggable,
       flat: marker.flat,
@@ -840,7 +840,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
                 amount: update.amount,
                 focus: update.focus == null
                     ? null
-                    : _platformOffsetFromOffset(update.focus!)));
+                    : _platformPairFromOffset(update.focus!)));
       case CameraUpdateType.zoomIn:
         update as CameraUpdateZoomIn;
         return PlatformCameraUpdate(
@@ -891,7 +891,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
                 byteData: bytes.byteData,
                 size: (bytes.size == null)
                     ? null
-                    : _platformOffsetFromSize(bytes.size!)));
+                    : _platformPairFromSize(bytes.size!)));
       case final AssetBitmap asset:
         return PlatformBitmap(
             bitmap: PlatformBitmapAsset(name: asset.name, pkg: asset.package));
@@ -902,7 +902,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
                 scale: asset.scale,
                 size: (asset.size == null)
                     ? null
-                    : _platformOffsetFromSize(asset.size!)));
+                    : _platformPairFromSize(asset.size!)));
       case final AssetMapBitmap asset:
         return PlatformBitmap(
             bitmap: PlatformBitmapAssetMap(

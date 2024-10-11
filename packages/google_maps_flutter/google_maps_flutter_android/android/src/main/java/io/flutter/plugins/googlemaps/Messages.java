@@ -144,6 +144,7 @@ public class Messages {
     }
   }
 
+  /** Pigeon equivalent of [MapBitmapScaling]. */
   public enum PlatformMapBitmapScaling {
     AUTO(0),
     NONE(1);
@@ -838,13 +839,13 @@ public class Messages {
       this.amount = setterArg;
     }
 
-    private @Nullable PlatformOffset focus;
+    private @Nullable PlatformDoublePair focus;
 
-    public @Nullable PlatformOffset getFocus() {
+    public @Nullable PlatformDoublePair getFocus() {
       return focus;
     }
 
-    public void setFocus(@Nullable PlatformOffset setterArg) {
+    public void setFocus(@Nullable PlatformDoublePair setterArg) {
       this.focus = setterArg;
     }
 
@@ -878,10 +879,10 @@ public class Messages {
         return this;
       }
 
-      private @Nullable PlatformOffset focus;
+      private @Nullable PlatformDoublePair focus;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setFocus(@Nullable PlatformOffset setterArg) {
+      public @NonNull Builder setFocus(@Nullable PlatformDoublePair setterArg) {
         this.focus = setterArg;
         return this;
       }
@@ -907,7 +908,7 @@ public class Messages {
       Object amount = pigeonVar_list.get(0);
       pigeonResult.setAmount((Double) amount);
       Object focus = pigeonVar_list.get(1);
-      pigeonResult.setFocus((PlatformOffset) focus);
+      pigeonResult.setFocus((PlatformDoublePair) focus);
       return pigeonResult;
     }
   }
@@ -1489,39 +1490,39 @@ public class Messages {
   }
 
   /**
-   * Pigeon equivalent of the Offset class.
+   * Pair of double values, such as for an offset or size.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
    */
-  public static final class PlatformOffset {
-    private @NonNull Double dx;
+  public static final class PlatformDoublePair {
+    private @NonNull Double x;
 
-    public @NonNull Double getDx() {
-      return dx;
+    public @NonNull Double getX() {
+      return x;
     }
 
-    public void setDx(@NonNull Double setterArg) {
+    public void setX(@NonNull Double setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"dx\" is null.");
+        throw new IllegalStateException("Nonnull field \"x\" is null.");
       }
-      this.dx = setterArg;
+      this.x = setterArg;
     }
 
-    private @NonNull Double dy;
+    private @NonNull Double y;
 
-    public @NonNull Double getDy() {
-      return dy;
+    public @NonNull Double getY() {
+      return y;
     }
 
-    public void setDy(@NonNull Double setterArg) {
+    public void setY(@NonNull Double setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"dy\" is null.");
+        throw new IllegalStateException("Nonnull field \"y\" is null.");
       }
-      this.dy = setterArg;
+      this.y = setterArg;
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
-    PlatformOffset() {}
+    PlatformDoublePair() {}
 
     @Override
     public boolean equals(Object o) {
@@ -1531,37 +1532,37 @@ public class Messages {
       if (o == null || getClass() != o.getClass()) {
         return false;
       }
-      PlatformOffset that = (PlatformOffset) o;
-      return dx.equals(that.dx) && dy.equals(that.dy);
+      PlatformDoublePair that = (PlatformDoublePair) o;
+      return x.equals(that.x) && y.equals(that.y);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(dx, dy);
+      return Objects.hash(x, y);
     }
 
     public static final class Builder {
 
-      private @Nullable Double dx;
+      private @Nullable Double x;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setDx(@NonNull Double setterArg) {
-        this.dx = setterArg;
+      public @NonNull Builder setX(@NonNull Double setterArg) {
+        this.x = setterArg;
         return this;
       }
 
-      private @Nullable Double dy;
+      private @Nullable Double y;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setDy(@NonNull Double setterArg) {
-        this.dy = setterArg;
+      public @NonNull Builder setY(@NonNull Double setterArg) {
+        this.y = setterArg;
         return this;
       }
 
-      public @NonNull PlatformOffset build() {
-        PlatformOffset pigeonReturn = new PlatformOffset();
-        pigeonReturn.setDx(dx);
-        pigeonReturn.setDy(dy);
+      public @NonNull PlatformDoublePair build() {
+        PlatformDoublePair pigeonReturn = new PlatformDoublePair();
+        pigeonReturn.setX(x);
+        pigeonReturn.setY(y);
         return pigeonReturn;
       }
     }
@@ -1569,17 +1570,17 @@ public class Messages {
     @NonNull
     ArrayList<Object> toList() {
       ArrayList<Object> toListResult = new ArrayList<>(2);
-      toListResult.add(dx);
-      toListResult.add(dy);
+      toListResult.add(x);
+      toListResult.add(y);
       return toListResult;
     }
 
-    static @NonNull PlatformOffset fromList(@NonNull ArrayList<Object> pigeonVar_list) {
-      PlatformOffset pigeonResult = new PlatformOffset();
-      Object dx = pigeonVar_list.get(0);
-      pigeonResult.setDx((Double) dx);
-      Object dy = pigeonVar_list.get(1);
-      pigeonResult.setDy((Double) dy);
+    static @NonNull PlatformDoublePair fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      PlatformDoublePair pigeonResult = new PlatformDoublePair();
+      Object x = pigeonVar_list.get(0);
+      pigeonResult.setX((Double) x);
+      Object y = pigeonVar_list.get(1);
+      pigeonResult.setY((Double) y);
       return pigeonResult;
     }
   }
@@ -1610,13 +1611,13 @@ public class Messages {
       this.snippet = setterArg;
     }
 
-    private @NonNull PlatformOffset anchor;
+    private @NonNull PlatformDoublePair anchor;
 
-    public @NonNull PlatformOffset getAnchor() {
+    public @NonNull PlatformDoublePair getAnchor() {
       return anchor;
     }
 
-    public void setAnchor(@NonNull PlatformOffset setterArg) {
+    public void setAnchor(@NonNull PlatformDoublePair setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"anchor\" is null.");
       }
@@ -1663,10 +1664,10 @@ public class Messages {
         return this;
       }
 
-      private @Nullable PlatformOffset anchor;
+      private @Nullable PlatformDoublePair anchor;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setAnchor(@NonNull PlatformOffset setterArg) {
+      public @NonNull Builder setAnchor(@NonNull PlatformDoublePair setterArg) {
         this.anchor = setterArg;
         return this;
       }
@@ -1696,7 +1697,7 @@ public class Messages {
       Object snippet = pigeonVar_list.get(1);
       pigeonResult.setSnippet((String) snippet);
       Object anchor = pigeonVar_list.get(2);
-      pigeonResult.setAnchor((PlatformOffset) anchor);
+      pigeonResult.setAnchor((PlatformDoublePair) anchor);
       return pigeonResult;
     }
   }
@@ -1720,13 +1721,13 @@ public class Messages {
       this.alpha = setterArg;
     }
 
-    private @NonNull PlatformOffset anchor;
+    private @NonNull PlatformDoublePair anchor;
 
-    public @NonNull PlatformOffset getAnchor() {
+    public @NonNull PlatformDoublePair getAnchor() {
       return anchor;
     }
 
-    public void setAnchor(@NonNull PlatformOffset setterArg) {
+    public void setAnchor(@NonNull PlatformDoublePair setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"anchor\" is null.");
       }
@@ -1928,10 +1929,10 @@ public class Messages {
         return this;
       }
 
-      private @Nullable PlatformOffset anchor;
+      private @Nullable PlatformDoublePair anchor;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setAnchor(@NonNull PlatformOffset setterArg) {
+      public @NonNull Builder setAnchor(@NonNull PlatformDoublePair setterArg) {
         this.anchor = setterArg;
         return this;
       }
@@ -2067,7 +2068,7 @@ public class Messages {
       Object alpha = pigeonVar_list.get(0);
       pigeonResult.setAlpha((Double) alpha);
       Object anchor = pigeonVar_list.get(1);
-      pigeonResult.setAnchor((PlatformOffset) anchor);
+      pigeonResult.setAnchor((PlatformDoublePair) anchor);
       Object consumeTapEvents = pigeonVar_list.get(2);
       pigeonResult.setConsumeTapEvents((Boolean) consumeTapEvents);
       Object draggable = pigeonVar_list.get(3);
@@ -5021,8 +5022,21 @@ public class Messages {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
+  /**
+   * Pigeon equivalent of [BitmapDescriptor]. As there are multiple disjoint types of
+   * [BitmapDescriptor], [PlatformBitmap] contains a single field which may hold the pigeon
+   * equivalent type of any of them.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
   public static final class PlatformBitmap {
+    /**
+     * One of [PlatformBitmapAssetMap], [PlatformBitmapAsset], [PlatformBitmapAssetImage],
+     * [PlatformBitmapBytesMap], [PlatformBitmapBytes], or [PlatformBitmapDefaultMarker]. As Pigeon
+     * does not currently support data class inheritance, this approach allows for the different
+     * bitmap implementations to be valid argument and return types of the API methods. See
+     * https://github.com/flutter/flutter/issues/117819.
+     */
     private @NonNull Object bitmap;
 
     public @NonNull Object getBitmap() {
@@ -5088,7 +5102,12 @@ public class Messages {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
+  /**
+   * Pigeon equivalent of [DefaultMarker]. See
+   * https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#defaultMarker(float)
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
   public static final class PlatformBitmapDefaultMarker {
     private @Nullable Double hue;
 
@@ -5150,7 +5169,12 @@ public class Messages {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
+  /**
+   * Pigeon equivalent of [BytesBitmap]. See
+   * https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#fromBitmap(android.graphics.Bitmap)
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
   public static final class PlatformBitmapBytes {
     private @NonNull byte[] byteData;
 
@@ -5165,13 +5189,13 @@ public class Messages {
       this.byteData = setterArg;
     }
 
-    private @Nullable PlatformOffset size;
+    private @Nullable PlatformDoublePair size;
 
-    public @Nullable PlatformOffset getSize() {
+    public @Nullable PlatformDoublePair getSize() {
       return size;
     }
 
-    public void setSize(@Nullable PlatformOffset setterArg) {
+    public void setSize(@Nullable PlatformDoublePair setterArg) {
       this.size = setterArg;
     }
 
@@ -5207,10 +5231,10 @@ public class Messages {
         return this;
       }
 
-      private @Nullable PlatformOffset size;
+      private @Nullable PlatformDoublePair size;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setSize(@Nullable PlatformOffset setterArg) {
+      public @NonNull Builder setSize(@Nullable PlatformDoublePair setterArg) {
         this.size = setterArg;
         return this;
       }
@@ -5236,12 +5260,17 @@ public class Messages {
       Object byteData = pigeonVar_list.get(0);
       pigeonResult.setByteData((byte[]) byteData);
       Object size = pigeonVar_list.get(1);
-      pigeonResult.setSize((PlatformOffset) size);
+      pigeonResult.setSize((PlatformDoublePair) size);
       return pigeonResult;
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
+  /**
+   * Pigeon equivalent of [AssetBitmap]. See
+   * https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
   public static final class PlatformBitmapAsset {
     private @NonNull String name;
 
@@ -5330,7 +5359,12 @@ public class Messages {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
+  /**
+   * Pigeon equivalent of [AssetImageBitmap]. See
+   * https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
   public static final class PlatformBitmapAssetImage {
     private @NonNull String name;
 
@@ -5358,13 +5392,13 @@ public class Messages {
       this.scale = setterArg;
     }
 
-    private @Nullable PlatformOffset size;
+    private @Nullable PlatformDoublePair size;
 
-    public @Nullable PlatformOffset getSize() {
+    public @Nullable PlatformDoublePair getSize() {
       return size;
     }
 
-    public void setSize(@Nullable PlatformOffset setterArg) {
+    public void setSize(@Nullable PlatformDoublePair setterArg) {
       this.size = setterArg;
     }
 
@@ -5406,10 +5440,10 @@ public class Messages {
         return this;
       }
 
-      private @Nullable PlatformOffset size;
+      private @Nullable PlatformDoublePair size;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setSize(@Nullable PlatformOffset setterArg) {
+      public @NonNull Builder setSize(@Nullable PlatformDoublePair setterArg) {
         this.size = setterArg;
         return this;
       }
@@ -5439,12 +5473,17 @@ public class Messages {
       Object scale = pigeonVar_list.get(1);
       pigeonResult.setScale((Double) scale);
       Object size = pigeonVar_list.get(2);
-      pigeonResult.setSize((PlatformOffset) size);
+      pigeonResult.setSize((PlatformDoublePair) size);
       return pigeonResult;
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
+  /**
+   * Pigeon equivalent of [AssetMapBitmap]. See
+   * https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
   public static final class PlatformBitmapAssetMap {
     private @NonNull String assetName;
 
@@ -5609,7 +5648,12 @@ public class Messages {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
+  /**
+   * Pigeon equivalent of [BytesMapBitmap]. See
+   * https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-frombitmap-bitmap-image
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
   public static final class PlatformBitmapBytesMap {
     private @NonNull byte[] byteData;
 
@@ -5847,7 +5891,7 @@ public class Messages {
         case (byte) 147:
           return PlatformClusterManager.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 148:
-          return PlatformOffset.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformDoublePair.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 149:
           return PlatformInfoWindow.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 150:
@@ -5962,9 +6006,9 @@ public class Messages {
       } else if (value instanceof PlatformClusterManager) {
         stream.write(147);
         writeValue(stream, ((PlatformClusterManager) value).toList());
-      } else if (value instanceof PlatformOffset) {
+      } else if (value instanceof PlatformDoublePair) {
         stream.write(148);
-        writeValue(stream, ((PlatformOffset) value).toList());
+        writeValue(stream, ((PlatformDoublePair) value).toList());
       } else if (value instanceof PlatformInfoWindow) {
         stream.write(149);
         writeValue(stream, ((PlatformInfoWindow) value).toList());

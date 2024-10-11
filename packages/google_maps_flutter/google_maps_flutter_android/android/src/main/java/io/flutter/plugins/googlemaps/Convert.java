@@ -139,10 +139,8 @@ class Convert {
    * optionally include 'width' and/or 'height' for explicit image dimensions.
    *
    * @param bytesMap a [PlatformBitmapBytesMap] containing the byte data from which to construct a
-   *     [BitmapDescriptor] and a bitmap scaling mode. If the scaling mode is `AUTO`, `bytesMap`
-   *     shall also contain an `imagePixelRatio` used to compute the scaling ratio. May also contain
-   *     an optional `width`, which affects scaling if `height` is omitted, and `height`, which
-   *     affects scaling if `width` is omitted.
+   *     [BitmapDescriptor] and a bitmap scaling mode. The optional `width` affects scaling when
+   *     `height` is `null`, and the optional `height` affects scaling when `width` is `null.
    * @param density the density of the display, used to calculate pixel dimensions.
    * @param bitmapDescriptorFactory is an instance of the BitmapDescriptorFactoryWrapper.
    * @return BitmapDescriptor object from bytes data.
@@ -200,10 +198,8 @@ class Convert {
    * dimensions of the output image.
    *
    * @param assetMap a [PlatformBitmapAssetMap] containing the asset name from which to construct a
-   *     [BitmapDescriptor] and a bitmap scaling mode. If the scaling mode is `AUTO`, `bytesMap`
-   *     shall also contain an `imagePixelRatio` used to compute the scaling ratio. May also contain
-   *     an optional `width`, which affects scaling if `height` is omitted, and `height`, which
-   *     affects scaling if `width` is omitted.
+   *     [BitmapDescriptor] and a bitmap scaling mode. The optional `width` affects scaling when
+   *     `height` is `null`, and the optional `height` affects scaling when `width` is `null.
    * @param assetManager assetManager An instance of Android's AssetManager, which provides access
    *     to any raw asset files stored in the application's assets directory.
    * @param density density the density of the display, used to calculate pixel dimensions.
@@ -456,11 +452,11 @@ class Convert {
   }
 
   @Nullable
-  static Point pointFromPigeon(@Nullable Messages.PlatformOffset point, float density) {
+  static Point pointFromPigeon(@Nullable Messages.PlatformDoublePair point, float density) {
     if (point == null) {
       return null;
     }
-    return new Point((int) (point.getDx() * density), (int) (point.getDy() * density));
+    return new Point((int) (point.getX() * density), (int) (point.getY() * density));
   }
 
   static Messages.PlatformPoint pointToPigeon(Point point) {
@@ -598,8 +594,7 @@ class Convert {
       float density,
       BitmapDescriptorFactoryWrapper wrapper) {
     sink.setAlpha(marker.getAlpha().floatValue());
-    sink.setAnchor(
-        marker.getAnchor().getDx().floatValue(), marker.getAnchor().getDy().floatValue());
+    sink.setAnchor(marker.getAnchor().getX().floatValue(), marker.getAnchor().getY().floatValue());
     sink.setConsumeTapEvents(marker.getConsumeTapEvents());
     sink.setDraggable(marker.getDraggable());
     sink.setFlat(marker.getFlat());
@@ -617,9 +612,9 @@ class Convert {
     if (title != null) {
       sink.setInfoWindowText(title, infoWindow.getSnippet());
     }
-    Messages.PlatformOffset infoWindowAnchor = infoWindow.getAnchor();
+    Messages.PlatformDoublePair infoWindowAnchor = infoWindow.getAnchor();
     sink.setInfoWindowAnchor(
-        infoWindowAnchor.getDx().floatValue(), infoWindowAnchor.getDy().floatValue());
+        infoWindowAnchor.getX().floatValue(), infoWindowAnchor.getY().floatValue());
   }
 
   static String interpretPolygonOptions(Messages.PlatformPolygon polygon, PolygonOptionsSink sink) {

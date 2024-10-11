@@ -191,8 +191,8 @@ public class ClusterManagersControllerTest {
                     .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
                     .build())
             .build();
-    Messages.PlatformOffset anchor =
-        new Messages.PlatformOffset.Builder().setDx(0.0).setDy(0.0).build();
+    Messages.PlatformDoublePair anchor =
+        new Messages.PlatformDoublePair.Builder().setX(0.0).setY(0.0).build();
     return new Messages.PlatformMarker.Builder()
         .setMarkerId(markerId)
         .setConsumeTapEvents(false)
