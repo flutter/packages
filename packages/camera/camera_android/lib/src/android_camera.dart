@@ -568,54 +568,6 @@ class AndroidCamera extends CameraPlatform {
     // ignore: dead_code
     return 'max';
   }
-
-  /// Converts messages received from the native platform into camera events.
-  ///
-  /// This is only exposed for test purposes. It shouldn't be used by clients of
-  /// the plugin as it may break or change at any time.
-  @visibleForTesting
-  Future<dynamic> handleCameraMethodCall(MethodCall call, int cameraId) async {
-    switch (call.method) {
-      case 'initialized':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(CameraInitializedEvent(
-          cameraId,
-          arguments['previewWidth']! as double,
-          arguments['previewHeight']! as double,
-          deserializeExposureMode(arguments['exposureMode']! as String),
-          arguments['exposurePointSupported']! as bool,
-          deserializeFocusMode(arguments['focusMode']! as String),
-          arguments['focusPointSupported']! as bool,
-        ));
-      case 'resolution_changed':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(CameraResolutionChangedEvent(
-          cameraId,
-          arguments['captureWidth']! as double,
-          arguments['captureHeight']! as double,
-        ));
-      case 'camera_closing':
-        cameraEventStreamController.add(CameraClosingEvent(
-          cameraId,
-        ));
-      case 'error':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(CameraErrorEvent(
-          cameraId,
-          arguments['description']! as String,
-        ));
-      default:
-        throw MissingPluginException();
-    }
-  }
-
-  /// Returns the arguments of [call] as typed string-keyed Map.
-  ///
-  /// This does not do any type validation, so is only safe to call if the
-  /// arguments are known to be a map.
-  Map<String, Object?> _getArgumentDictionary(MethodCall call) {
-    return (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
-  }
 }
 
 /// Handles callbacks from the platform host that are not camera-specific.
@@ -656,6 +608,11 @@ class HostCameraMessageHandler implements CameraEventApi {
   @override
   void initialized(PlatformCameraState initialState) {
     cameraEventStreamController.add(CameraInitializedEvent(cameraId, initialState.previewSize.width, initialState.previewSize.height, exposureModeFromPlatform(initialState.exposureMode), initialState.exposurePointSupported, focusModeFromPlatform(initialState.focusMode), initialState.focusPointSupported));
+  }
+
+  @override
+  void closed() {
+    cameraEventStreamController.add(CameraClosingEvent(cameraId));
   }
 
 }

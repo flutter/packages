@@ -746,5 +746,26 @@ public class Messages {
             } 
           });
     }
+    /** Called when the camera closes. */
+    public void closed(@NonNull VoidResult result) {
+      final String channelName = "dev.flutter.pigeon.camera_android.CameraEventApi.closed" + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger, channelName, getCodec());
+      channel.send(
+          null,
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+              } else {
+                result.success();
+              }
+            }  else {
+              result.error(createConnectionError(channelName));
+            } 
+          });
+    }
   }
 }

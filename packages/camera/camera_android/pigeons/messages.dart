@@ -87,4 +87,7 @@ abstract class CameraEventApi {
 
   /// Called when an error occurs in the camera.
   void error(String message);
+
+  /// Called when the camera closes.
+  void closed();
 }

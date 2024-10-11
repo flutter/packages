@@ -362,51 +362,20 @@ void main() {
           StreamQueue<CameraInitializedEvent>(eventStream);
 
       // Emit test events
+      final PlatformSize previewSize = PlatformSize(width: 3840, height: 2160);
       final CameraInitializedEvent event = CameraInitializedEvent(
         cameraId,
-        3840,
-        2160,
+        previewSize.width,
+        previewSize.height,
         ExposureMode.auto,
         true,
         FocusMode.auto,
         true,
       );
-      await camera.handleCameraMethodCall(
-          MethodCall('initialized', event.toJson()), cameraId);
+      camera.hostCameraHandlers[cameraId]!.initialized(PlatformCameraState(previewSize: previewSize, exposureMode: PlatformExposureMode.auto, focusMode: PlatformFocusMode.auto, exposurePointSupported: true, focusPointSupported: true));
 
       // Assert
       expect(await streamQueue.next, event);
-
-      // Clean up
-      await streamQueue.cancel();
-    });
-
-    test('Should receive resolution changes', () async {
-      // Act
-      final Stream<CameraResolutionChangedEvent> resolutionStream =
-          camera.onCameraResolutionChanged(cameraId);
-      final StreamQueue<CameraResolutionChangedEvent> streamQueue =
-          StreamQueue<CameraResolutionChangedEvent>(resolutionStream);
-
-      // Emit test events
-      final CameraResolutionChangedEvent fhdEvent =
-          CameraResolutionChangedEvent(cameraId, 1920, 1080);
-      final CameraResolutionChangedEvent uhdEvent =
-          CameraResolutionChangedEvent(cameraId, 3840, 2160);
-      await camera.handleCameraMethodCall(
-          MethodCall('resolution_changed', fhdEvent.toJson()), cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('resolution_changed', uhdEvent.toJson()), cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('resolution_changed', fhdEvent.toJson()), cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('resolution_changed', uhdEvent.toJson()), cameraId);
-
-      // Assert
-      expect(await streamQueue.next, fhdEvent);
-      expect(await streamQueue.next, uhdEvent);
-      expect(await streamQueue.next, fhdEvent);
-      expect(await streamQueue.next, uhdEvent);
 
       // Clean up
       await streamQueue.cancel();
@@ -421,12 +390,9 @@ void main() {
 
       // Emit test events
       final CameraClosingEvent event = CameraClosingEvent(cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('camera_closing', event.toJson()), cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('camera_closing', event.toJson()), cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('camera_closing', event.toJson()), cameraId);
+      for (int i = 0; i < 3; i++) {
+        camera.hostCameraHandlers[cameraId]!.closed();
+      }
 
       // Assert
       expect(await streamQueue.next, event);
@@ -447,12 +413,9 @@ void main() {
       // Emit test events
       final CameraErrorEvent event =
           CameraErrorEvent(cameraId, 'Error Description');
-      await camera.handleCameraMethodCall(
-          MethodCall('error', event.toJson()), cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('error', event.toJson()), cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('error', event.toJson()), cameraId);
+      for (int i = 0; i < 3; i++) {
+        camera.hostCameraHandlers[cameraId]!.error('Error Description');
+      }
 
       // Assert
       expect(await streamQueue.next, event);
@@ -951,16 +914,6 @@ void main() {
       // Act
       expect(widget is Texture, isTrue);
       expect((widget as Texture).textureId, cameraId);
-    });
-
-    test('Should throw MissingPluginException when handling unknown method',
-        () {
-      final AndroidCamera camera = AndroidCamera();
-
-      expect(
-          () => camera.handleCameraMethodCall(
-              const MethodCall('unknown_method'), 1),
-          throwsA(isA<MissingPluginException>()));
     });
 
     test('Should get the max zoom level', () async {
