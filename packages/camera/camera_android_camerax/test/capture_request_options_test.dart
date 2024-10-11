@@ -132,7 +132,7 @@ void main() {
           // This ignore statement is safe beause this will test when
           // a new CaptureRequestKeySupportedType is being added, but the logic in
           // in the CaptureRequestOptions class has not yet been updated.
-          // ignore: no_default_cases
+          // ignore: no_default_cases, unreachable_switch_default
           default:
             fail(
                 'Option $option contains unrecognized CaptureRequestKeySupportedType key ${option.$1}');

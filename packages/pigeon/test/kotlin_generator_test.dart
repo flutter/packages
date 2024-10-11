@@ -133,7 +133,7 @@ void main() {
     expect(code, contains('val field1: Foo,'));
     expect(code, contains('val field2: String'));
     expect(code, contains('fun fromList(pigeonVar_list: List<Any?>): Bar'));
-    expect(code, contains('Foo.ofRaw(it)'));
+    expect(code, contains('Foo.ofRaw(it.toInt())'));
     expect(code, contains('val field1 = pigeonVar_list[0] as Foo'));
     expect(code, contains('val field2 = pigeonVar_list[1] as String\n'));
     expect(code, contains('fun toList(): List<Any?>'));
@@ -173,7 +173,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('enum class Foo(val raw: Int) {'));
-    expect(code, contains('Foo.ofRaw(it)'));
+    expect(code, contains('Foo.ofRaw(it.toInt())'));
   });
 
   test('gen one host api', () {
@@ -391,10 +391,6 @@ void main() {
     expect(code, contains('val aInt32List: IntArray'));
     expect(code, contains('val aInt64List: LongArray'));
     expect(code, contains('val aFloat64List: DoubleArray'));
-    expect(
-        code,
-        contains(
-            'val aInt = pigeonVar_list[1].let { num -> if (num is Int) num.toLong() else num as Long }'));
     expect(code, contains('val aNullableBool: Boolean? = null'));
     expect(code, contains('val aNullableInt: Long? = null'));
     expect(code, contains('val aNullableDouble: Double? = null'));
@@ -403,10 +399,6 @@ void main() {
     expect(code, contains('val aNullableInt32List: IntArray? = null'));
     expect(code, contains('val aNullableInt64List: LongArray? = null'));
     expect(code, contains('val aNullableFloat64List: DoubleArray? = null'));
-    expect(
-        code,
-        contains(
-            'val aNullableInt = pigeonVar_list[9].let { num -> if (num is Int) num.toLong() else num as Long? }'));
   });
 
   test('gen one flutter api', () {
@@ -1163,14 +1155,6 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('fun add(x: Long, y: Long): Long'));
     expect(code, contains('val args = message as List<Any?>'));
-    expect(
-        code,
-        contains(
-            'val xArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }'));
-    expect(
-        code,
-        contains(
-            'val yArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }'));
     expect(code, contains('listOf(api.add(xArg, yArg))'));
     expect(code, contains('reply.reply(wrapped)'));
   });
@@ -1206,11 +1190,6 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('val channel = BasicMessageChannel'));
-    expect(
-      code,
-      contains(
-          'val output = it[0].let { num -> if (num is Int) num.toLong() else num as Long }'),
-    );
     expect(code, contains('callback(Result.success(output))'));
     expect(
         code,
@@ -1311,10 +1290,7 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(
-        code,
-        contains(
-            'val fooArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long? }'));
+    expect(code, contains('val fooArg = args[0]'));
   });
 
   test('nullable argument flutter', () {

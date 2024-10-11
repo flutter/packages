@@ -5,7 +5,8 @@
 
     <application>
         <activity android:name="io.flutter.embedding.android.FlutterActivity"
-                  android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:exported="true"
+            android:theme="@android:style/Theme.Black.NoTitleBar"
                   android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection"
                   android:hardwareAccelerated="true"
                   android:windowSoftInputMode="adjustResize">

@@ -40,17 +40,67 @@ class PlatformCameraPosition {
 
 /// Pigeon representation of a CameraUpdate.
 class PlatformCameraUpdate {
-  PlatformCameraUpdate(this.json);
+  PlatformCameraUpdate({required this.cameraUpdate});
 
-  /// The update data, as JSON. This should only be set from
-  /// CameraUpdate.toJson, and the native code must interpret it according to the
-  /// internal implementation details of the CameraUpdate class.
-  // TODO(stuartmorgan): Update the google_maps_platform_interface CameraUpdate
-  //  class to provide a structured representation of an update. Currently it
-  //  uses JSON as its only state, so there is no way to preserve structure.
-  //  This wrapper class exists as a placeholder for now to at least provide
-  //  type safety in the top-level call's arguments.
-  final Object json;
+  /// This Object shall be any of the below classes prefixed with
+  /// PlatformCameraUpdate. Each such class represents a different type of
+  /// camera update, and each holds a different set of data, preventing the
+  /// use of a single unified class. Pigeon does not support inheritance, which
+  /// prevents a more strict type bound.
+  /// See https://github.com/flutter/flutter/issues/117819.
+  final Object cameraUpdate;
+}
+
+/// Pigeon equivalent of NewCameraPosition
+class PlatformCameraUpdateNewCameraPosition {
+  PlatformCameraUpdateNewCameraPosition(this.cameraPosition);
+  final PlatformCameraPosition cameraPosition;
+}
+
+/// Pigeon equivalent of NewLatLng
+class PlatformCameraUpdateNewLatLng {
+  PlatformCameraUpdateNewLatLng(this.latLng);
+  final PlatformLatLng latLng;
+}
+
+/// Pigeon equivalent of NewLatLngBounds
+class PlatformCameraUpdateNewLatLngBounds {
+  PlatformCameraUpdateNewLatLngBounds(this.bounds, this.padding);
+  final PlatformLatLngBounds bounds;
+  final double padding;
+}
+
+/// Pigeon equivalent of NewLatLngZoom
+class PlatformCameraUpdateNewLatLngZoom {
+  PlatformCameraUpdateNewLatLngZoom(this.latLng, this.zoom);
+  final PlatformLatLng latLng;
+  final double zoom;
+}
+
+/// Pigeon equivalent of ScrollBy
+class PlatformCameraUpdateScrollBy {
+  PlatformCameraUpdateScrollBy(this.dx, this.dy);
+  final double dx;
+  final double dy;
+}
+
+/// Pigeon equivalent of ZoomBy
+class PlatformCameraUpdateZoomBy {
+  PlatformCameraUpdateZoomBy(this.amount, [this.focus]);
+  final double amount;
+  final PlatformOffset? focus;
+}
+
+/// Pigeon equivalent of ZoomIn/ZoomOut
+class PlatformCameraUpdateZoom {
+  PlatformCameraUpdateZoom(this.out);
+  final bool out;
+}
+
+/// Pigeon equivalent of ZoomTo
+class PlatformCameraUpdateZoomTo {
+  PlatformCameraUpdateZoomTo(this.zoom);
+  final double zoom;
 }
 
 /// Pigeon equivalent of the Circle class.
@@ -156,26 +206,114 @@ class PlatformMarker {
 
 /// Pigeon equivalent of the Polygon class.
 class PlatformPolygon {
-  PlatformPolygon(this.json);
+  PlatformPolygon({
+    required this.polygonId,
+    required this.consumesTapEvents,
+    required this.fillColor,
+    required this.geodesic,
+    required this.points,
+    required this.holes,
+    required this.visible,
+    required this.strokeColor,
+    required this.strokeWidth,
+    required this.zIndex,
+  });
 
-  /// The polygon data, as JSON. This should only be set from
-  /// Polygon.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Map<String?, Object?> json;
+  final String polygonId;
+  final bool consumesTapEvents;
+  final int fillColor;
+  final bool geodesic;
+  final List<PlatformLatLng?> points;
+  final List<List<PlatformLatLng?>?> holes;
+  final bool visible;
+  final int strokeColor;
+  final int strokeWidth;
+  final int zIndex;
+}
+
+/// Join types for polyline joints.
+enum PlatformJointType {
+  mitered,
+  bevel,
+  round,
 }
 
 /// Pigeon equivalent of the Polyline class.
 class PlatformPolyline {
-  PlatformPolyline(this.json);
+  PlatformPolyline({
+    required this.polylineId,
+    required this.consumesTapEvents,
+    required this.color,
+    required this.geodesic,
+    required this.jointType,
+    required this.patterns,
+    required this.points,
+    required this.startCap,
+    required this.endCap,
+    required this.visible,
+    required this.width,
+    required this.zIndex,
+  });
 
-  /// The polyline data, as JSON. This should only be set from
-  /// Polyline.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Map<String?, Object?> json;
+  final String polylineId;
+  final bool consumesTapEvents;
+  final int color;
+  final bool geodesic;
+
+  /// The joint type.
+  final PlatformJointType jointType;
+
+  /// The pattern data, as a list of pattern items.
+  final List<PlatformPatternItem?> patterns;
+  final List<PlatformLatLng?> points;
+
+  /// The cap at the start and end vertex of a polyline.
+  /// See https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
+  final PlatformCap startCap;
+  final PlatformCap endCap;
+
+  final bool visible;
+  final int width;
+  final int zIndex;
+}
+
+/// Enumeration of possible types of PlatformCap, corresponding to the
+/// subclasses of Cap in the Google Maps Android SDK.
+/// See https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
+enum PlatformCapType {
+  buttCap,
+  roundCap,
+  squareCap,
+  customCap,
+}
+
+/// Pigeon equivalent of Cap from the platform interface.
+/// https://github.com/flutter/packages/blob/main/packages/google_maps_flutter/google_maps_flutter_platform_interface/lib/src/types/cap.dart
+class PlatformCap {
+  PlatformCap({required this.type, this.bitmapDescriptor, this.refWidth});
+
+  final PlatformCapType type;
+
+  /// The JSON data returned by BitmapDescriptor.toJson.
+  // TODO(schectman): Convert to structured data.
+  // https://github.com/flutter/flutter/issues/155122
+  final Object? bitmapDescriptor;
+  final double? refWidth;
+}
+
+/// Enumeration of possible types for PatternItem.
+enum PlatformPatternItemType {
+  dot,
+  dash,
+  gap,
+}
+
+/// Pigeon equivalent of the PatternItem class.
+class PlatformPatternItem {
+  PlatformPatternItem({required this.type, this.length});
+
+  final PlatformPatternItemType type;
+  final double? length;
 }
 
 /// Pigeon equivalent of the Tile class.
@@ -189,14 +327,21 @@ class PlatformTile {
 
 /// Pigeon equivalent of the TileOverlay class.
 class PlatformTileOverlay {
-  PlatformTileOverlay(this.json);
+  PlatformTileOverlay({
+    required this.tileOverlayId,
+    required this.fadeIn,
+    required this.transparency,
+    required this.zIndex,
+    required this.visible,
+    required this.tileSize,
+  });
 
-  /// The tile overlay data, as JSON. This should only be set from
-  /// TileOverlay.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Map<String?, Object?> json;
+  final String tileOverlayId;
+  final bool fadeIn;
+  final double transparency;
+  final int zIndex;
+  final bool visible;
+  final int tileSize;
 }
 
 /// Pigeon equivalent of Flutter's EdgeInsets.

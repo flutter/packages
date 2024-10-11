@@ -43,7 +43,7 @@ import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,15 +86,12 @@ public class ConvertTest {
   }
 
   @Test
-  public void ConvertToPointsConvertsThePointsWithFullPrecision() {
+  public void ConvertPointsFromPigeonConvertsThePointsWithFullPrecision() {
     double latitude = 43.03725568057;
     double longitude = -87.90466904649;
-    ArrayList<Double> point = new ArrayList<>();
-    point.add(latitude);
-    point.add(longitude);
-    ArrayList<ArrayList<Double>> pointsList = new ArrayList<>();
-    pointsList.add(point);
-    List<LatLng> latLngs = Convert.toPoints(pointsList);
+    Messages.PlatformLatLng platLng =
+        new Messages.PlatformLatLng.Builder().setLatitude(latitude).setLongitude(longitude).build();
+    List<LatLng> latLngs = Convert.pointsFromPigeon(Collections.singletonList(platLng));
     LatLng latLng = latLngs.get(0);
     Assert.assertEquals(latitude, latLng.latitude, 1e-15);
     Assert.assertEquals(longitude, latLng.longitude, 1e-15);

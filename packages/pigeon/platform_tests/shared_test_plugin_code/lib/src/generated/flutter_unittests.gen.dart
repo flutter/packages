@@ -112,7 +112,10 @@ class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is FlutterSearchRequest) {
+    if (value is int) {
+      buffer.putUint8(4);
+      buffer.putInt64(value);
+    } else if (value is FlutterSearchRequest) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else if (value is FlutterSearchReply) {

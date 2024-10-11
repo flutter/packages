@@ -1,3 +1,16 @@
+## 6.3.12
+
+* Updates Java compatibility version to 11.
+
+## 6.3.11
+
+* Updates Pigeon for non-nullable collection type support.
+
+## 6.3.10
+
+* Removes dependency on org.jetbrains.kotlin:kotlin-bom.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 6.3.9
 
 * Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.

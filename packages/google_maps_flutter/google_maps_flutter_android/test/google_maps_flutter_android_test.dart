@@ -104,7 +104,7 @@ void main() {
     expect(bounds, expectedBounds);
   });
 
-  test('moveCamera calls through', () async {
+  test('moveCamera calls through with expected scrollBy', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -115,10 +115,14 @@ void main() {
     final VerificationResult verification = verify(api.moveCamera(captureAny));
     final PlatformCameraUpdate passedUpdate =
         verification.captured[0] as PlatformCameraUpdate;
-    expect(passedUpdate.json, update.toJson());
+    final PlatformCameraUpdateScrollBy scroll =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
+    update as CameraUpdateScrollBy;
+    expect(scroll.dx, update.dx);
+    expect(scroll.dy, update.dy);
   });
 
-  test('animateCamera calls through', () async {
+  test('animateCamera calls through with expected scrollBy', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
         setUpMockMap(mapId: mapId);
@@ -130,7 +134,11 @@ void main() {
         verify(api.animateCamera(captureAny));
     final PlatformCameraUpdate passedUpdate =
         verification.captured[0] as PlatformCameraUpdate;
-    expect(passedUpdate.json, update.toJson());
+    final PlatformCameraUpdateScrollBy scroll =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
+    update as CameraUpdateScrollBy;
+    expect(scroll.dx, update.dx);
+    expect(scroll.dy, update.dy);
   });
 
   test('getZoomLevel passes values correctly', () async {
@@ -481,12 +489,41 @@ void main() {
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.polygonId.value);
+    void expectPolygon(PlatformPolygon actual, Polygon expected) {
+      final List<Object?> encoded = actual.encode() as List<Object?>;
+      expect(encoded.sublist(0, 4), <Object>[
+        expected.polygonId.value,
+        expected.consumeTapEvents,
+        expected.fillColor.value,
+        expected.geodesic,
+      ]);
+      expect(actual.points.length, expected.points.length);
+      for (final (int i, PlatformLatLng? point) in actual.points.indexed) {
+        expect(point?.latitude, actual.points[i]?.latitude);
+        expect(point?.longitude, actual.points[i]?.longitude);
+      }
+      expect(actual.holes.length, expected.holes.length);
+      for (final (int i, List<PlatformLatLng?>? hole) in actual.holes.indexed) {
+        final List<LatLng> expectedHole = expected.holes[i];
+        for (final (int j, PlatformLatLng? point) in hole!.indexed) {
+          expect(point?.latitude, expectedHole[j].latitude);
+          expect(point?.longitude, expectedHole[j].longitude);
+        }
+      }
+      expect(encoded.sublist(6), <Object>[
+        expected.visible,
+        expected.strokeColor.value,
+        expected.strokeWidth,
+        expected.zIndex,
+      ]);
+    }
+
     // Object two should be changed.
     expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    expectPolygon(toChange.first!, object2new);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    expectPolygon(toAdd.first!, object3);
   });
 
   test('updatePolylines passes expected arguments', () async {
@@ -496,8 +533,14 @@ void main() {
 
     const Polyline object1 = Polyline(polylineId: PolylineId('1'));
     const Polyline object2old = Polyline(polylineId: PolylineId('2'));
-    final Polyline object2new = object2old.copyWith(widthParam: 42);
-    const Polyline object3 = Polyline(polylineId: PolylineId('3'));
+    final Polyline object2new = object2old.copyWith(
+        widthParam: 42, startCapParam: Cap.squareCap, endCapParam: Cap.buttCap);
+    final Cap customCap =
+        Cap.customCapFromBitmap(BitmapDescriptor.defaultMarker, refWidth: 15);
+    final Polyline object3 = Polyline(
+        polylineId: const PolylineId('3'),
+        startCap: customCap,
+        endCap: Cap.roundCap);
     await maps.updatePolylines(
         PolylineUpdates.from(
             <Polyline>{object1, object2old}, <Polyline>{object2new, object3}),
@@ -510,15 +553,46 @@ void main() {
     final List<PlatformPolyline?> toChange =
         verification.captured[1] as List<PlatformPolyline?>;
     final List<String?> toRemove = verification.captured[2] as List<String?>;
+    void expectPolyline(PlatformPolyline actual, Polyline expected) {
+      final List<Object?> encoded = actual.encode() as List<Object?>;
+      expect(encoded.sublist(0, 5), <Object?>[
+        expected.polylineId.value,
+        expected.consumeTapEvents,
+        expected.color.value,
+        expected.geodesic,
+        platformJointTypeFromJointType(expected.jointType),
+      ]);
+      expect(encoded.sublist(9), <Object?>[
+        expected.visible,
+        expected.width,
+        expected.zIndex,
+      ]);
+      expect(actual.points.length, expected.points.length);
+      for (final (int i, PlatformLatLng? point) in actual.points.indexed) {
+        expect(point?.latitude, actual.points[i]?.latitude);
+        expect(point?.longitude, actual.points[i]?.longitude);
+      }
+      expect(actual.patterns.length, expected.patterns.length);
+      for (final (int i, PlatformPatternItem? pattern)
+          in actual.patterns.indexed) {
+        expect(pattern?.encode(),
+            platformPatternItemFromPatternItem(expected.patterns[i]).encode());
+      }
+      expect(actual.startCap.encode(),
+          platformCapFromCap(expected.startCap).encode());
+      expect(
+          actual.endCap.encode(), platformCapFromCap(expected.endCap).encode());
+    }
+
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.polylineId.value);
     // Object two should be changed.
     expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    expectPolyline(toChange.first!, object2new);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    expectPolyline(toAdd.first!, object3);
   });
 
   test('updateTileOverlays passes expected arguments', () async {
@@ -547,15 +621,26 @@ void main() {
     final List<PlatformTileOverlay?> toChange =
         verification.captured[1] as List<PlatformTileOverlay?>;
     final List<String?> toRemove = verification.captured[2] as List<String?>;
+    void expectTileOverlay(PlatformTileOverlay? actual, TileOverlay expected) {
+      expect(actual?.encode(), <Object?>[
+        expected.tileOverlayId.value,
+        expected.fadeIn,
+        expected.transparency,
+        expected.zIndex,
+        expected.visible,
+        expected.tileSize,
+      ]);
+    }
+
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.tileOverlayId.value);
     // Object two should be changed.
     expect(toChange.length, 1);
-    expect(toChange.first?.json, object2new.toJson());
+    expectTileOverlay(toChange.first, object2new);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.json, object3.toJson());
+    expectTileOverlay(toAdd.first, object3);
   });
 
   test('markers send drag event to correct streams', () async {
@@ -708,6 +793,164 @@ void main() {
       expect(widget, isA<AndroidView>());
     },
   );
+
+  test('moveCamera calls through with expected newCameraPosition', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const LatLng latLng = LatLng(10.0, 20.0);
+    const CameraPosition position = CameraPosition(target: latLng);
+    final CameraUpdate update = CameraUpdate.newCameraPosition(position);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateNewCameraPosition typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateNewCameraPosition;
+    update as CameraUpdateNewCameraPosition;
+    expect(typedUpdate.cameraPosition.target.latitude,
+        update.cameraPosition.target.latitude);
+    expect(typedUpdate.cameraPosition.target.longitude,
+        update.cameraPosition.target.longitude);
+  });
+
+  test('moveCamera calls through with expected newLatLng', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const LatLng latLng = LatLng(10.0, 20.0);
+    final CameraUpdate update = CameraUpdate.newLatLng(latLng);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateNewLatLng typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLng;
+    update as CameraUpdateNewLatLng;
+    expect(typedUpdate.latLng.latitude, update.latLng.latitude);
+    expect(typedUpdate.latLng.longitude, update.latLng.longitude);
+  });
+
+  test('moveCamera calls through with expected newLatLngBounds', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final LatLngBounds latLng = LatLngBounds(
+        northeast: const LatLng(10.0, 20.0),
+        southwest: const LatLng(9.0, 21.0));
+    final CameraUpdate update = CameraUpdate.newLatLngBounds(latLng, 1.0);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateNewLatLngBounds typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLngBounds;
+    update as CameraUpdateNewLatLngBounds;
+    expect(typedUpdate.bounds.northeast.latitude,
+        update.bounds.northeast.latitude);
+    expect(typedUpdate.bounds.northeast.longitude,
+        update.bounds.northeast.longitude);
+    expect(typedUpdate.bounds.southwest.latitude,
+        update.bounds.southwest.latitude);
+    expect(typedUpdate.bounds.southwest.longitude,
+        update.bounds.southwest.longitude);
+    expect(typedUpdate.padding, update.padding);
+  });
+
+  test('moveCamera calls through with expected newLatLngZoom', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const LatLng latLng = LatLng(10.0, 20.0);
+    final CameraUpdate update = CameraUpdate.newLatLngZoom(latLng, 2.0);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateNewLatLngZoom typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLngZoom;
+    update as CameraUpdateNewLatLngZoom;
+    expect(typedUpdate.latLng.latitude, update.latLng.latitude);
+    expect(typedUpdate.latLng.longitude, update.latLng.longitude);
+    expect(typedUpdate.zoom, update.zoom);
+  });
+
+  test('moveCamera calls through with expected zoomBy', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const Offset focus = Offset(10.0, 20.0);
+    final CameraUpdate update = CameraUpdate.zoomBy(2.0, focus);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateZoomBy typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateZoomBy;
+    update as CameraUpdateZoomBy;
+    expect(typedUpdate.focus?.dx, update.focus?.dx);
+    expect(typedUpdate.focus?.dy, update.focus?.dy);
+    expect(typedUpdate.amount, update.amount);
+  });
+
+  test('moveCamera calls through with expected zoomTo', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final CameraUpdate update = CameraUpdate.zoomTo(2.0);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateZoomTo typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateZoomTo;
+    update as CameraUpdateZoomTo;
+    expect(typedUpdate.zoom, update.zoom);
+  });
+
+  test('moveCamera calls through with expected zoomIn', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final CameraUpdate update = CameraUpdate.zoomIn();
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateZoom typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateZoom;
+    expect(typedUpdate.out, false);
+  });
+
+  test('moveCamera calls through with expected zoomOut', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final CameraUpdate update = CameraUpdate.zoomOut();
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateZoom typedUpdate =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateZoom;
+    expect(typedUpdate.out, true);
+  });
 
   testWidgets('Use PlatformViewLink when using surface view',
       (WidgetTester tester) async {
