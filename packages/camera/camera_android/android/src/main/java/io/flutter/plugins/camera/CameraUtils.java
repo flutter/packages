@@ -146,8 +146,16 @@ public final class CameraUtils {
     return cameras;
   }
 
+  /**
+   * Converts a DeviceOrientation from the systemchannels package to a PlatformDeviceOrientation
+   * from Pigeon.
+   *
+   * @param orientation A DeviceOrientation.
+   * @return The corresponding PlatformDeviceOrientation.
+   */
+  @NonNull
   public static Messages.PlatformDeviceOrientation orientationToPigeon(
-      PlatformChannel.DeviceOrientation orientation) {
+      @NonNull PlatformChannel.DeviceOrientation orientation) {
     switch (orientation) {
       case PORTRAIT_UP:
         return Messages.PlatformDeviceOrientation.PORTRAIT_UP;
@@ -161,7 +169,14 @@ public final class CameraUtils {
     return Messages.PlatformDeviceOrientation.PORTRAIT_UP;
   }
 
-  public static Messages.PlatformFocusMode focusModeToPigeon(FocusMode focusMode) {
+  /**
+   * Converts a FocusMode from the autofocus package to a PlatformFocusMode from Pigeon.
+   *
+   * @param focusMode A FocusMode.
+   * @return The corresponding PlatformFocusMode.
+   */
+  @NonNull
+  public static Messages.PlatformFocusMode focusModeToPigeon(@NonNull FocusMode focusMode) {
     switch (focusMode) {
       case auto:
         return Messages.PlatformFocusMode.AUTO;
@@ -171,7 +186,15 @@ public final class CameraUtils {
     return Messages.PlatformFocusMode.AUTO;
   }
 
-  public static Messages.PlatformExposureMode exposureModeToPigeon(ExposureMode exposureMode) {
+  /**
+   * Converts an ExposureMode from the exposurelock package to a PlatformExposureMode from Pigeon.
+   *
+   * @param exposureMode An ExposureMode.
+   * @return The corresponding PlatformExposureMode.
+   */
+  @NonNull
+  public static Messages.PlatformExposureMode exposureModeToPigeon(
+      @NonNull ExposureMode exposureMode) {
     switch (exposureMode) {
       case auto:
         return Messages.PlatformExposureMode.AUTO;

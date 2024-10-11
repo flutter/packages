@@ -24,6 +24,9 @@ public class DartMessenger {
    * @param handler the handler used to manage the thread's message queue. This should always be a
    *     handler managing the main thread since communication with Flutter should always happen on
    *     the main thread. The handler is mainly supplied so it will be easier test this class.
+   * @param globalEventApi the API used to consume calls to dart that are not tied to a specific
+   *     camera instance.
+   * @param eventApi the API used to consume calls to dart that are tied to this specific camera.
    */
   DartMessenger(
       @NonNull Handler handler,
