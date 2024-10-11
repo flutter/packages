@@ -2625,7 +2625,14 @@ abstract class PigeonApiFrameLayout(
 abstract class PigeonApiViewGroup(
     open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
 ) {
+  /** Adds a child view. */
   abstract fun addView(pigeon_instance: android.view.ViewGroup, view: android.view.View)
+
+  /**
+   * Called by a ViewGroup subclass to remove child views from itself, when it must first know its
+   * size on screen before it can calculate how many child views it will render.
+   */
+  abstract fun removeView(pigeon_instance: android.view.ViewGroup, view: android.view.View)
 
   companion object {
     @Suppress("LocalVariableName")
@@ -2645,6 +2652,30 @@ abstract class PigeonApiViewGroup(
             val wrapped: List<Any?> =
                 try {
                   api.addView(pigeon_instanceArg, viewArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.ViewGroup.removeView",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as android.view.ViewGroup
+            val viewArg = args[1] as android.view.View
+            val wrapped: List<Any?> =
+                try {
+                  api.removeView(pigeon_instanceArg, viewArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)

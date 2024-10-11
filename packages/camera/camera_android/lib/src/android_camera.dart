@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
 
+import 'messages.g.dart';
 import 'type_conversion.dart';
 import 'utils.dart';
 
@@ -19,12 +20,18 @@ const MethodChannel _channel =
 
 /// The Android implementation of [CameraPlatform] that uses method channels.
 class AndroidCamera extends CameraPlatform {
+  /// Creates a new [CameraPlatform] instance.
+  AndroidCamera({@visibleForTesting CameraApi? hostApi})
+      : _hostApi = hostApi ?? CameraApi();
+
   /// Registers this class as the default instance of [CameraPlatform].
   static void registerWith() {
     CameraPlatform.instance = AndroidCamera();
   }
 
   final Map<int, MethodChannel> _channels = <int, MethodChannel>{};
+
+  final CameraApi _hostApi;
 
   /// The name of the channel that device events from the platform side are
   /// sent on.
@@ -71,20 +78,15 @@ class AndroidCamera extends CameraPlatform {
   @override
   Future<List<CameraDescription>> availableCameras() async {
     try {
-      final List<Map<dynamic, dynamic>>? cameras = await _channel
-          .invokeListMethod<Map<dynamic, dynamic>>('availableCameras');
-
-      if (cameras == null) {
-        return <CameraDescription>[];
-      }
-
-      return cameras.map((Map<dynamic, dynamic> camera) {
+      final List<PlatformCameraDescription> cameraDescriptions =
+          await _hostApi.getAvailableCameras();
+      return cameraDescriptions
+          .map((PlatformCameraDescription cameraDescription) {
         return CameraDescription(
-          name: camera['name']! as String,
-          lensDirection:
-              parseCameraLensDirection(camera['lensFacing']! as String),
-          sensorOrientation: camera['sensorOrientation']! as int,
-        );
+            name: cameraDescription.name,
+            lensDirection: cameraLensDirectionFromPlatform(
+                cameraDescription.lensDirection),
+            sensorOrientation: cameraDescription.sensorOrientation);
       }).toList();
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);

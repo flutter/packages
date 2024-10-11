@@ -17,7 +17,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  webview_flutter_android: ^3.16.0
+  webview_flutter_android: ^4.0.0
   webview_flutter_wkwebview: ^3.13.0
 
 dev_dependencies:

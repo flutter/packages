@@ -80,7 +80,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       _androidParams._imaProxy.newFrameLayout();
 
   // Handles loading and displaying an ad.
-  late final ima.VideoView _videoView;
+  late ima.VideoView _videoView;
 
   // After an ad is loaded in the `VideoView`, this is used to control
   // playback.
@@ -285,7 +285,13 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         if (container != null) {
           // Clear and reset all state.
           container._stopAdProgressTracking();
-          container._videoView.setVideoUri(null);
+
+          container._frameLayout.removeView(container._videoView);
+          container._videoView = _setUpVideoView(
+            WeakReference<AndroidAdDisplayContainer>(container),
+          );
+          container._frameLayout.addView(container._videoView);
+
           container._clearMediaPlayer();
           container._loadedAdMediaInfo = null;
           container._adDuration = null;
