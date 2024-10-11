@@ -66,32 +66,37 @@ public class DartMessengerTest {
 
   @Test
   public void sendCameraErrorEvent_includesErrorDescriptions() {
-    doAnswer(createPostHandlerAnswer()).when(mockHandler).post(any(Runnable.class));
+    final List<String> errorsList = new ArrayList<>();
+    doAnswer((InvocationOnMock invocation) -> {
+      String description = invocation.getArgument(0);
+      errorsList.add(description);
+      return null;
+    }).when(mockEventApi).error(any(), any());
 
     dartMessenger.sendCameraErrorEvent("error description");
-    List<ByteBuffer> sentMessages = fakeBinaryMessenger.getMessages();
 
-    assertEquals(1, sentMessages.size());
-    MethodCall call = decodeSentMessage(sentMessages.get(0));
-    assertEquals("error", call.method);
-    assertEquals("error description", call.argument("description"));
+    assertEquals(1, errorsList.size());
+    assertEquals("error description", errorsList.get(0));
   }
 
   @Test
   public void sendCameraInitializedEvent_includesPreviewSize() {
-    doAnswer(createPostHandlerAnswer()).when(mockHandler).post(any(Runnable.class));
+    final List<Messages.PlatformCameraState> statesList = new ArrayList<>();
+    doAnswer((InvocationOnMock invocation) -> {
+      Messages.PlatformCameraState state = invocation.getArgument(0);
+      statesList.add(state);
+      return null;
+    }).when(mockEventApi).initialized(any(), any());
     dartMessenger.sendCameraInitializedEvent(0, 0, ExposureMode.auto, FocusMode.auto, true, true);
 
-    List<ByteBuffer> sentMessages = fakeBinaryMessenger.getMessages();
-    assertEquals(1, sentMessages.size());
-    MethodCall call = decodeSentMessage(sentMessages.get(0));
-    assertEquals("initialized", call.method);
-    assertEquals(0, (double) call.argument("previewWidth"), 0);
-    assertEquals(0, (double) call.argument("previewHeight"), 0);
-    assertEquals("ExposureMode auto", call.argument("exposureMode"), "auto");
-    assertEquals("FocusMode continuous", call.argument("focusMode"), "auto");
-    assertEquals("exposurePointSupported", call.argument("exposurePointSupported"), true);
-    assertEquals("focusPointSupported", call.argument("focusPointSupported"), true);
+    assertEquals(1, statesList.size());
+    Messages.PlatformCameraState state = statesList.get(0);
+    assertEquals(0, state.getPreviewSize().getWidth(), 0);
+    assertEquals(0, state.getPreviewSize().getHeight(), 0);
+    assertEquals("ExposureMode auto", Messages.PlatformExposureMode.AUTO, state.getExposureMode());
+    assertEquals("FocusMode continuous", Messages.PlatformFocusMode.AUTO, state.getFocusMode());
+    assertEquals("exposurePointSupported", true, state.getExposurePointSupported());
+    assertEquals("focusPointSupported", true, state.getFocusPointSupported());
   }
 
   @Test
