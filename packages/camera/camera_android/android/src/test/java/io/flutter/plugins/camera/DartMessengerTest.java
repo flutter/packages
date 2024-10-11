@@ -52,12 +52,16 @@ public class DartMessengerTest {
   private Handler mockHandler;
   private DartMessenger dartMessenger;
   private FakeBinaryMessenger fakeBinaryMessenger;
+  private Messages.CameraGlobalEventApi mockGlobalEventApi;
+  private Messages.CameraEventApi mockEventApi;
 
   @Before
   public void setUp() {
     mockHandler = mock(Handler.class);
+    mockGlobalEventApi = mock(Messages.CameraGlobalEventApi.class);
+    mockEventApi = mock(Messages.CameraEventApi.class);
     fakeBinaryMessenger = new FakeBinaryMessenger();
-    dartMessenger = new DartMessenger(fakeBinaryMessenger, 0, mockHandler);
+    dartMessenger = new DartMessenger(fakeBinaryMessenger, 0, mockHandler, mockGlobalEventApi, mockEventApi);
   }
 
   @Test
@@ -104,14 +108,16 @@ public class DartMessengerTest {
 
   @Test
   public void sendDeviceOrientationChangedEvent() {
-    doAnswer(createPostHandlerAnswer()).when(mockHandler).post(any(Runnable.class));
+    final List<Messages.PlatformDeviceOrientation> eventsList = new ArrayList<>();
+    doAnswer((InvocationOnMock invocation) -> {
+      Messages.PlatformDeviceOrientation orientation = invocation.getArgument(0);
+      eventsList.add(orientation);
+      return null;
+    }).when(mockGlobalEventApi).deviceOrientationChanged(any(), any());
     dartMessenger.sendDeviceOrientationChangeEvent(PlatformChannel.DeviceOrientation.PORTRAIT_UP);
 
-    List<ByteBuffer> sentMessages = fakeBinaryMessenger.getMessages();
-    assertEquals(1, sentMessages.size());
-    MethodCall call = decodeSentMessage(sentMessages.get(0));
-    assertEquals("orientation_changed", call.method);
-    assertEquals(call.argument("orientation"), "portraitUp");
+    assertEquals(1, eventsList.size());
+    assertEquals(Messages.PlatformDeviceOrientation.PORTRAIT_UP, eventsList.get(0));
   }
 
   private static Answer<Boolean> createPostHandlerAnswer() {

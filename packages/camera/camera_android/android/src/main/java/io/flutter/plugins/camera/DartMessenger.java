@@ -64,13 +64,13 @@ public class DartMessenger {
    *     handler managing the main thread since communication with Flutter should always happen on
    *     the main thread. The handler is mainly supplied so it will be easier test this class.
    */
-  DartMessenger(BinaryMessenger messenger, long cameraId, @NonNull Handler handler) {
+  DartMessenger(BinaryMessenger messenger, long cameraId, @NonNull Handler handler, Messages.CameraGlobalEventApi globalEventApi, Messages.CameraEventApi eventApi) {
     cameraChannel =
         new MethodChannel(messenger, "plugins.flutter.io/camera_android/camera" + cameraId);
     deviceChannel = new MethodChannel(messenger, "plugins.flutter.io/camera_android/fromPlatform");
     this.handler = handler;
-    globalEventApi = new Messages.CameraGlobalEventApi(messenger);
-    this.eventApi = new Messages.CameraEventApi(messenger, String.valueOf(cameraId));
+    this.globalEventApi = globalEventApi;
+    this.eventApi = eventApi;
   }
 
   /**
