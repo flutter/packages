@@ -8,7 +8,6 @@ import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
-import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.camera.features.autofocus.FocusMode;
 import io.flutter.plugins.camera.features.exposurelock.ExposureMode;
@@ -22,8 +21,6 @@ public class DartMessenger {
   /**
    * Creates a new instance of the {@link DartMessenger} class.
    *
-   * @param messenger is the {@link BinaryMessenger} that is used to communicate with Flutter.
-   * @param cameraId identifies the camera which is the source of the communication.
    * @param handler the handler used to manage the thread's message queue. This should always be a
    *     handler managing the main thread since communication with Flutter should always happen on
    *     the main thread. The handler is mainly supplied so it will be easier test this class.
@@ -44,15 +41,17 @@ public class DartMessenger {
    */
   public void sendDeviceOrientationChangeEvent(
       @NonNull PlatformChannel.DeviceOrientation orientation) {
-    globalEventApi.deviceOrientationChanged(
-        CameraUtils.orientationToPigeon(orientation),
-        new Messages.VoidResult() {
-          @Override
-          public void success() {}
+    handler.post(
+        () ->
+            globalEventApi.deviceOrientationChanged(
+                CameraUtils.orientationToPigeon(orientation),
+                new Messages.VoidResult() {
+                  @Override
+                  public void success() {}
 
-          @Override
-          public void error(@NonNull Throwable error) {}
-        });
+                  @Override
+                  public void error(@NonNull Throwable error) {}
+                }));
   }
 
   /**
@@ -78,37 +77,41 @@ public class DartMessenger {
     assert (focusMode != null);
     assert (exposurePointSupported != null);
     assert (focusPointSupported != null);
-    eventApi.initialized(
-        new Messages.PlatformCameraState.Builder()
-            .setPreviewSize(
-                new Messages.PlatformSize.Builder()
-                    .setWidth(previewWidth.doubleValue())
-                    .setHeight(previewHeight.doubleValue())
-                    .build())
-            .setExposurePointSupported(exposurePointSupported)
-            .setFocusPointSupported(focusPointSupported)
-            .setExposureMode(CameraUtils.exposureModeToPigeon(exposureMode))
-            .setFocusMode(CameraUtils.focusModeToPigeon(focusMode))
-            .build(),
-        new Messages.VoidResult() {
-          @Override
-          public void success() {}
+    handler.post(
+        () ->
+            eventApi.initialized(
+                new Messages.PlatformCameraState.Builder()
+                    .setPreviewSize(
+                        new Messages.PlatformSize.Builder()
+                            .setWidth(previewWidth.doubleValue())
+                            .setHeight(previewHeight.doubleValue())
+                            .build())
+                    .setExposurePointSupported(exposurePointSupported)
+                    .setFocusPointSupported(focusPointSupported)
+                    .setExposureMode(CameraUtils.exposureModeToPigeon(exposureMode))
+                    .setFocusMode(CameraUtils.focusModeToPigeon(focusMode))
+                    .build(),
+                new Messages.VoidResult() {
+                  @Override
+                  public void success() {}
 
-          @Override
-          public void error(@NonNull Throwable error) {}
-        });
+                  @Override
+                  public void error(@NonNull Throwable error) {}
+                }));
   }
 
   /** Sends a message to the Flutter client informing that the camera is closing. */
   void sendCameraClosingEvent() {
-    eventApi.closed(
-        new Messages.VoidResult() {
-          @Override
-          public void success() {}
+    handler.post(
+        () ->
+            eventApi.closed(
+                new Messages.VoidResult() {
+                  @Override
+                  public void success() {}
 
-          @Override
-          public void error(@NonNull Throwable error) {}
-        });
+                  @Override
+                  public void error(@NonNull Throwable error) {}
+                }));
   }
 
   /**
@@ -118,15 +121,17 @@ public class DartMessenger {
    * @param description contains details regarding the error that occurred.
    */
   void sendCameraErrorEvent(@Nullable String description) {
-    eventApi.error(
-        description,
-        new Messages.VoidResult() {
-          @Override
-          public void success() {}
+    handler.post(
+        () ->
+            eventApi.error(
+                description,
+                new Messages.VoidResult() {
+                  @Override
+                  public void success() {}
 
-          @Override
-          public void error(@NonNull Throwable error) {}
-        });
+                  @Override
+                  public void error(@NonNull Throwable error) {}
+                }));
   }
 
   /**

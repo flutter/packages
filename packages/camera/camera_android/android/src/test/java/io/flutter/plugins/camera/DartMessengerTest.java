@@ -28,6 +28,16 @@ public class DartMessengerTest {
   @Before
   public void setUp() {
     Handler mockHandler = mock(Handler.class);
+    doAnswer(
+            (InvocationOnMock invocation) -> {
+              Runnable r = invocation.getArgument(0);
+              if (r != null) {
+                r.run();
+              }
+              return true;
+            })
+        .when(mockHandler)
+        .post(any(Runnable.class));
     mockGlobalEventApi = mock(Messages.CameraGlobalEventApi.class);
     mockEventApi = mock(Messages.CameraEventApi.class);
     dartMessenger = new DartMessenger(mockHandler, mockGlobalEventApi, mockEventApi);
