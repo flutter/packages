@@ -5,7 +5,6 @@
 package io.flutter.plugins.camera;
 
 import android.os.Handler;
-import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
@@ -21,6 +20,8 @@ public class DartMessenger {
   @NonNull private final Handler handler;
   @Nullable MethodChannel cameraChannel;
   @Nullable MethodChannel deviceChannel;
+  Messages.CameraGlobalEventApi globalEventApi;
+  Messages.CameraEventApi eventApi;
 
   /** Specifies the different device related message types. */
   enum DeviceEventType {
@@ -68,6 +69,8 @@ public class DartMessenger {
         new MethodChannel(messenger, "plugins.flutter.io/camera_android/camera" + cameraId);
     deviceChannel = new MethodChannel(messenger, "plugins.flutter.io/camera_android/fromPlatform");
     this.handler = handler;
+    globalEventApi = new Messages.CameraGlobalEventApi(messenger);
+    this.eventApi = new Messages.CameraEventApi(messenger, String.valueOf(cameraId));
   }
 
   /**
@@ -77,13 +80,17 @@ public class DartMessenger {
    */
   public void sendDeviceOrientationChangeEvent(
       @NonNull PlatformChannel.DeviceOrientation orientation) {
-    this.send(
-        DeviceEventType.ORIENTATION_CHANGED,
-        new HashMap<String, Object>() {
-          {
-            put("orientation", CameraUtils.serializeDeviceOrientation(orientation));
-          }
-        });
+    globalEventApi.deviceOrientationChanged(CameraUtils.orientationToPigeon(orientation), new Messages.VoidResult() {
+      @Override
+      public void success() {
+
+      }
+
+      @Override
+      public void error(@NonNull Throwable error) {
+
+      }
+    });
   }
 
   /**
@@ -109,18 +116,17 @@ public class DartMessenger {
     assert (focusMode != null);
     assert (exposurePointSupported != null);
     assert (focusPointSupported != null);
-    this.send(
-        CameraEventType.INITIALIZED,
-        new HashMap<String, Object>() {
-          {
-            put("previewWidth", previewWidth.doubleValue());
-            put("previewHeight", previewHeight.doubleValue());
-            put("exposureMode", exposureMode.toString());
-            put("focusMode", focusMode.toString());
-            put("exposurePointSupported", exposurePointSupported);
-            put("focusPointSupported", focusPointSupported);
-          }
-        });
+    eventApi.initialized(new Messages.PlatformCameraState.Builder().setPreviewSize(new Messages.PlatformSize.Builder().setWidth(previewWidth.doubleValue()).setHeight(previewHeight.doubleValue()).build()).setExposurePointSupported(exposurePointSupported).setFocusPointSupported(focusPointSupported).setExposureMode(CameraUtils.exposureModeToPigeon(exposureMode)).setFocusMode(CameraUtils.focusModeToPigeon(focusMode)).build(), new Messages.VoidResult() {
+      @Override
+      public void success() {
+
+      }
+
+      @Override
+      public void error(@NonNull Throwable error) {
+
+      }
+    });
   }
 
   /** Sends a message to the Flutter client informing that the camera is closing. */
@@ -135,13 +141,17 @@ public class DartMessenger {
    * @param description contains details regarding the error that occurred.
    */
   void sendCameraErrorEvent(@Nullable String description) {
-    this.send(
-        CameraEventType.ERROR,
-        new HashMap<String, Object>() {
-          {
-            if (!TextUtils.isEmpty(description)) put("description", description);
-          }
-        });
+    eventApi.error(description, new Messages.VoidResult() {
+      @Override
+      public void success() {
+
+      }
+
+      @Override
+      public void error(@NonNull Throwable error) {
+
+      }
+    });
   }
 
   private void send(CameraEventType eventType) {
@@ -160,18 +170,6 @@ public class DartMessenger {
             cameraChannel.invokeMethod(eventType.method, args);
           }
         });
-  }
-
-  private void send(DeviceEventType eventType) {
-    send(eventType, new HashMap<>());
-  }
-
-  private void send(DeviceEventType eventType, Map<String, Object> args) {
-    if (deviceChannel == null) {
-      return;
-    }
-
-    handler.post(() -> deviceChannel.invokeMethod(eventType.method, args));
   }
 
   /**

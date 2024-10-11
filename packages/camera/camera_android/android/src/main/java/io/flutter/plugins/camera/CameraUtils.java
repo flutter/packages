@@ -12,6 +12,9 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
+import io.flutter.plugins.camera.features.autofocus.FocusMode;
+import io.flutter.plugins.camera.features.exposurelock.ExposureMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,5 +145,39 @@ public final class CameraUtils {
       cameras.add(details);
     }
     return cameras;
+  }
+
+  public static Messages.PlatformDeviceOrientation orientationToPigeon(PlatformChannel.DeviceOrientation orientation) {
+    switch (orientation) {
+      case PORTRAIT_UP:
+        return Messages.PlatformDeviceOrientation.PORTRAIT_UP;
+      case PORTRAIT_DOWN:
+              return Messages.PlatformDeviceOrientation.PORTRAIT_DOWN;
+      case LANDSCAPE_LEFT:
+        return Messages.PlatformDeviceOrientation.LANDSCAPE_LEFT;
+      case LANDSCAPE_RIGHT:
+        return Messages.PlatformDeviceOrientation.LANDSCAPE_RIGHT;
+    }
+    return Messages.PlatformDeviceOrientation.PORTRAIT_UP;
+  }
+
+  public static Messages.PlatformFocusMode focusModeToPigeon(FocusMode focusMode) {
+    switch (focusMode) {
+      case auto:
+        return Messages.PlatformFocusMode.AUTO;
+      case locked:
+              return Messages.PlatformFocusMode.LOCKED;
+    }
+    return Messages.PlatformFocusMode.AUTO;
+  }
+
+  public static Messages.PlatformExposureMode exposureModeToPigeon(ExposureMode exposureMode) {
+    switch (exposureMode) {
+      case auto:
+        return Messages.PlatformExposureMode.AUTO;
+      case locked:
+              return Messages.PlatformExposureMode.LOCKED;
+    }
+    return Messages.PlatformExposureMode.AUTO;
   }
 }
