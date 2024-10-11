@@ -5,6 +5,7 @@
 #import "FVPVideoPlayerPlugin.h"
 #import "FVPVideoPlayerPlugin_Test.h"
 
+#import <stdatomic.h>
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
 
@@ -21,10 +22,10 @@
 @property(nonatomic, weak, readonly) NSObject<FlutterTextureRegistry> *registry;
 // The output that this updater is managing.
 @property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
-// Latest copied pixel buffer ready to display.
-@property(nonatomic) CVPixelBufferRef latestPixelBuffer;
-// Synchronization queue for sending and receiving pixel buffers.
-@property(nonatomic) dispatch_queue_t pixelBufferSynchronizationQueue;
+// The display link that drives frameUpdater.
+@property(nonatomic) FVPDisplayLink *displayLink;
+// The time interval between screen refresh updates.
+@property(nonatomic) _Atomic CFTimeInterval duration;
 @end
 
 @implementation FVPFrameUpdater
@@ -32,38 +33,18 @@
   NSAssert(self, @"super init cannot be nil");
   if (self == nil) return nil;
   _registry = registry;
-  dispatch_queue_attr_t attributes = dispatch_queue_attr_make_with_qos_class(NULL, QOS_CLASS_USER_INTERACTIVE, -1);
-  _pixelBufferSynchronizationQueue =
-      dispatch_queue_create("io.flutter.video_player.pixelBufferSynchronizationQueue", attributes);
   return self;
 }
 
 - (void)displayLinkFired {
-  // Only report a new frame if one is actually available.
-  CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
-  if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
-    CVPixelBufferRef pixelBuffer = [self.videoOutput copyPixelBufferForItemTime:outputItemTime
-                                                             itemTimeForDisplay:NULL];
-    dispatch_sync(self.pixelBufferSynchronizationQueue, ^{
-      CVBufferRelease(self.latestPixelBuffer);
-      self.latestPixelBuffer = pixelBuffer;
-    });
-    [_registry textureFrameAvailable:_textureId];
-  }
+  // Display link duration is in an undefined state until displayLinkFired is called at least once
+  // so it should not be used directly.
+  atomic_store_explicit(&_duration, _displayLink.duration, memory_order_relaxed);
+  [_registry textureFrameAvailable:_textureId];
 }
 
-- (CVPixelBufferRef)acquirePixelBuffer
-{
-  __block CVPixelBufferRef pixelBuffer;
-  dispatch_sync(self.pixelBufferSynchronizationQueue, ^{
-    pixelBuffer = self.latestPixelBuffer;
-    self.latestPixelBuffer = NULL;
-  });
-  return pixelBuffer;
-}
-
-- (void)dealloc {
-  CVBufferRelease(_latestPixelBuffer);
+- (CFTimeInterval)duration {
+  return atomic_load_explicit(&_duration, memory_order_relaxed);
 }
 @end
 
@@ -111,6 +92,10 @@
 @property(nonatomic) FVPFrameUpdater *frameUpdater;
 // The display link that drives frameUpdater.
 @property(nonatomic) FVPDisplayLink *displayLink;
+// Latest copied pixel buffer.
+@property(nonatomic) CVPixelBufferRef latestPixelBuffer;
+// The time that represents when the next frame displays.
+@property(nonatomic) CFTimeInterval targetTime;
 // Whether a new frame needs to be provided to the engine regardless of the current play/pause state
 // (e.g., after a seek while paused). If YES, the display link should continue to run until the next
 // frame is successfully provided.
@@ -158,6 +143,7 @@ static void *rateContext = &rateContext;
 }
 
 - (void)dealloc {
+  CVBufferRelease(_latestPixelBuffer);
   if (!_disposed) {
     [self removeKeyValueObservers];
   }
@@ -350,6 +336,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   };
   _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
   frameUpdater.videoOutput = _videoOutput;
+  frameUpdater.displayLink = _displayLink;
 
   [self addObserversForItem:item player:_player];
 
@@ -574,7 +561,28 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (CVPixelBufferRef)copyPixelBuffer {
-  CVPixelBufferRef buffer = self.frameUpdater.acquirePixelBuffer;
+  // Ensure video sampling at regular intervals. This function is not called at exact time intervals
+  // so CACurrentMediaTime returns irregular timestamps which causes missed video frames. The range
+  // outside which targetTime is reset should be narrow enough to make possible lag as small as
+  // possible and at the same time wide enough to avoid too frequent resets which would lead to
+  // irregular sampling. Ideally there would be a targetTimestamp of display link used by flutter
+  // engine (FlutterTexture can provide timestamp and duration or timestamp and targetTimestamp).
+  CFTimeInterval currentTime = CACurrentMediaTime();
+  if (fabs(self.targetTime - currentTime) > self.frameUpdater.duration / 2) {
+    self.targetTime = currentTime;
+  }
+  self.targetTime += self.frameUpdater.duration;
+
+  CVPixelBufferRef buffer = NULL;
+  CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:self.targetTime];
+  if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
+    buffer = [self.videoOutput copyPixelBufferForItemTime:outputItemTime
+                                       itemTimeForDisplay:NULL];
+    if (buffer) {
+      CVBufferRelease(self.latestPixelBuffer);
+      self.latestPixelBuffer = buffer;
+    }
+  }
 
   if (self.waitingForFrame && buffer) {
     self.waitingForFrame = NO;
@@ -585,7 +593,19 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     }
   }
 
-  return buffer;
+  // Calling textureFrameAvailable only from within displayLinkFired would require a non-trivial
+  // solution to minimize missed video frames due to race between displayLinkFired, copyPixelBuffer
+  // and place where is _textureFrameAvailable reset to false in the flutter engine. Ideally
+  // FlutterTexture would support mode of operation where the copyPixelBuffer is called always,
+  // maybe with possibility to start and stop it, instead of on demand by calling textureFrameAvailable.
+  if (self.displayLink.running) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [self.frameUpdater.registry textureFrameAvailable:self.frameUpdater.textureId];
+    });
+  }
+
+  // Better to avoid returning NULL as it is unspecified what should be displayed in such a case.
+  return CVBufferRetain(self.latestPixelBuffer);
 }
 
 - (void)onTextureUnregistered:(NSObject<FlutterTexture> *)texture {
