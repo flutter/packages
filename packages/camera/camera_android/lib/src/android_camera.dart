@@ -55,7 +55,8 @@ class AndroidCamera extends CameraPlatform {
   /// Map of camera IDs to camera-level callback handlers listening to their
   /// respective platform channels.
   @visibleForTesting
-  final Map<int, HostCameraMessageHandler> hostCameraHandlers = <int, HostCameraMessageHandler>{};
+  final Map<int, HostCameraMessageHandler> hostCameraHandlers =
+      <int, HostCameraMessageHandler>{};
 
   // The stream to receive frames from the native code.
   StreamSubscription<dynamic>? _platformImageStreamSubscription;
@@ -130,7 +131,8 @@ class AndroidCamera extends CameraPlatform {
     int cameraId, {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
   }) {
-    hostCameraHandlers.putIfAbsent(cameraId, () => HostCameraMessageHandler(cameraId, cameraEventStreamController));
+    hostCameraHandlers.putIfAbsent(cameraId,
+        () => HostCameraMessageHandler(cameraId, cameraEventStreamController));
 
     final Completer<void> completer = Completer<void>();
 
@@ -166,7 +168,8 @@ class AndroidCamera extends CameraPlatform {
 
   @override
   Future<void> dispose(int cameraId) async {
-    final HostCameraMessageHandler? handler = hostCameraHandlers.remove(cameraId);
+    final HostCameraMessageHandler? handler =
+        hostCameraHandlers.remove(cameraId);
     handler?.dispose();
 
     await _channel.invokeMethod<void>(
@@ -577,11 +580,14 @@ class HostDeviceMessageHandler implements CameraGlobalEventApi {
   HostDeviceMessageHandler() {
     CameraGlobalEventApi.setUp(this);
   }
+
   /// The controller that broadcasts device events coming from the host platform.
-  final StreamController<DeviceEvent> deviceEventStreamController = StreamController<DeviceEvent>.broadcast();
+  final StreamController<DeviceEvent> deviceEventStreamController =
+      StreamController<DeviceEvent>.broadcast();
   @override
   void deviceOrientationChanged(PlatformDeviceOrientation orientation) {
-    deviceEventStreamController.add(DeviceOrientationChangedEvent(deviceOrientationFromPlatform(orientation)));
+    deviceEventStreamController.add(DeviceOrientationChangedEvent(
+        deviceOrientationFromPlatform(orientation)));
   }
 }
 
@@ -592,12 +598,15 @@ class HostCameraMessageHandler implements CameraEventApi {
   HostCameraMessageHandler(this.cameraId, this.cameraEventStreamController) {
     CameraEventApi.setUp(this, messageChannelSuffix: '$cameraId');
   }
+
   /// Removes this handler from its platform channel.
   void dispose() {
     CameraEventApi.setUp(null, messageChannelSuffix: '$cameraId');
   }
+
   /// The ID of the camera for which this handler listens for events.
   final int cameraId;
+
   /// The controller which broadcasts camera events from the host platform.
   final StreamController<CameraEvent> cameraEventStreamController;
   @override
@@ -607,12 +616,18 @@ class HostCameraMessageHandler implements CameraEventApi {
 
   @override
   void initialized(PlatformCameraState initialState) {
-    cameraEventStreamController.add(CameraInitializedEvent(cameraId, initialState.previewSize.width, initialState.previewSize.height, exposureModeFromPlatform(initialState.exposureMode), initialState.exposurePointSupported, focusModeFromPlatform(initialState.focusMode), initialState.focusPointSupported));
+    cameraEventStreamController.add(CameraInitializedEvent(
+        cameraId,
+        initialState.previewSize.width,
+        initialState.previewSize.height,
+        exposureModeFromPlatform(initialState.exposureMode),
+        initialState.exposurePointSupported,
+        focusModeFromPlatform(initialState.focusMode),
+        initialState.focusPointSupported));
   }
 
   @override
   void closed() {
     cameraEventStreamController.add(CameraClosingEvent(cameraId));
   }
-
 }

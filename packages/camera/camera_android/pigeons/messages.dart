@@ -50,7 +50,12 @@ enum PlatformFocusMode {
 
 /// Data needed for [CameraInitializedEvent].
 class PlatformCameraState {
-  PlatformCameraState({required this.previewSize, required this.exposureMode, required this.focusMode, required this.exposurePointSupported, required this.focusPointSupported});
+  PlatformCameraState(
+      {required this.previewSize,
+      required this.exposureMode,
+      required this.focusMode,
+      required this.exposurePointSupported,
+      required this.focusPointSupported});
   final PlatformSize previewSize;
   final PlatformExposureMode exposureMode;
   final PlatformFocusMode focusMode;

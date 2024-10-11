@@ -18,24 +18,30 @@ CameraLensDirection cameraLensDirectionFromPlatform(
 }
 
 /// Converts a [PlatformDeviceOrientation] to [DeviceOrientation].
-DeviceOrientation deviceOrientationFromPlatform(PlatformDeviceOrientation orientation) => switch(orientation) {
-  PlatformDeviceOrientation.portraitUp => DeviceOrientation.portraitUp,
-PlatformDeviceOrientation.portraitDown => DeviceOrientation.portraitDown,
-PlatformDeviceOrientation.landscapeLeft => DeviceOrientation.landscapeLeft,
-PlatformDeviceOrientation.landscapeRight => DeviceOrientation.landscapeRight,
-};
+DeviceOrientation deviceOrientationFromPlatform(
+        PlatformDeviceOrientation orientation) =>
+    switch (orientation) {
+      PlatformDeviceOrientation.portraitUp => DeviceOrientation.portraitUp,
+      PlatformDeviceOrientation.portraitDown => DeviceOrientation.portraitDown,
+      PlatformDeviceOrientation.landscapeLeft =>
+        DeviceOrientation.landscapeLeft,
+      PlatformDeviceOrientation.landscapeRight =>
+        DeviceOrientation.landscapeRight,
+    };
 
 /// Converts a [PlatformExposureMode] to [ExposureMode].
-ExposureMode exposureModeFromPlatform(PlatformExposureMode exposureMode) => switch(exposureMode) {
-  PlatformExposureMode.auto => ExposureMode.auto,
-PlatformExposureMode.locked => ExposureMode.locked,
-};
+ExposureMode exposureModeFromPlatform(PlatformExposureMode exposureMode) =>
+    switch (exposureMode) {
+      PlatformExposureMode.auto => ExposureMode.auto,
+      PlatformExposureMode.locked => ExposureMode.locked,
+    };
 
 /// Converts a [PlatformFocusMode] to [FocusMode].
-FocusMode focusModeFromPlatform(PlatformFocusMode focusMode) => switch(focusMode) {
-  PlatformFocusMode.auto => FocusMode.auto,
-PlatformFocusMode.locked => FocusMode.locked,
-};
+FocusMode focusModeFromPlatform(PlatformFocusMode focusMode) =>
+    switch (focusMode) {
+      PlatformFocusMode.auto => FocusMode.auto,
+      PlatformFocusMode.locked => FocusMode.locked,
+    };
 
 /// Returns the device orientation as a String.
 String serializeDeviceOrientation(DeviceOrientation orientation) {

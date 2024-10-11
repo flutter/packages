@@ -21,11 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /** Generated class from Pigeon. */
@@ -41,8 +38,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -61,14 +57,15 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
 
   @NonNull
   protected static FlutterError createConnectionError(@NonNull String channelName) {
-    return new FlutterError("channel-error",  "Unable to establish connection on channel: " + channelName + ".", "");
+    return new FlutterError(
+        "channel-error", "Unable to establish connection on channel: " + channelName + ".", "");
   }
 
   @Target(METHOD)
@@ -129,7 +126,7 @@ public class Messages {
   /**
    * Pigeon equivalent of [CameraDescription].
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformCameraDescription {
     private @NonNull String name;
@@ -176,10 +173,16 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformCameraDescription that = (PlatformCameraDescription) o;
-      return name.equals(that.name) && lensDirection.equals(that.lensDirection) && sensorOrientation.equals(that.sensorOrientation);
+      return name.equals(that.name)
+          && lensDirection.equals(that.lensDirection)
+          && sensorOrientation.equals(that.sensorOrientation);
     }
 
     @Override
@@ -246,7 +249,7 @@ public class Messages {
   /**
    * Data needed for [CameraInitializedEvent].
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformCameraState {
     private @NonNull PlatformSize previewSize;
@@ -319,15 +322,24 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformCameraState that = (PlatformCameraState) o;
-      return previewSize.equals(that.previewSize) && exposureMode.equals(that.exposureMode) && focusMode.equals(that.focusMode) && exposurePointSupported.equals(that.exposurePointSupported) && focusPointSupported.equals(that.focusPointSupported);
+      return previewSize.equals(that.previewSize)
+          && exposureMode.equals(that.exposureMode)
+          && focusMode.equals(that.focusMode)
+          && exposurePointSupported.equals(that.exposurePointSupported)
+          && focusPointSupported.equals(that.focusPointSupported);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(previewSize, exposureMode, focusMode, exposurePointSupported, focusPointSupported);
+      return Objects.hash(
+          previewSize, exposureMode, focusMode, exposurePointSupported, focusPointSupported);
     }
 
     public static final class Builder {
@@ -413,7 +425,7 @@ public class Messages {
   /**
    * Pigeon equivalent of [Size].
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformSize {
     private @NonNull Double width;
@@ -447,8 +459,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformSize that = (PlatformSize) o;
       return width.equals(that.width) && height.equals(that.height);
     }
@@ -510,22 +526,30 @@ public class Messages {
     @Override
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
-        case (byte) 129: {
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformCameraLensDirection.values()[((Long) value).intValue()];
-        }
-        case (byte) 130: {
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformDeviceOrientation.values()[((Long) value).intValue()];
-        }
-        case (byte) 131: {
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformExposureMode.values()[((Long) value).intValue()];
-        }
-        case (byte) 132: {
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformFocusMode.values()[((Long) value).intValue()];
-        }
+        case (byte) 129:
+          {
+            Object value = readValue(buffer);
+            return value == null
+                ? null
+                : PlatformCameraLensDirection.values()[((Long) value).intValue()];
+          }
+        case (byte) 130:
+          {
+            Object value = readValue(buffer);
+            return value == null
+                ? null
+                : PlatformDeviceOrientation.values()[((Long) value).intValue()];
+          }
+        case (byte) 131:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformExposureMode.values()[((Long) value).intValue()];
+          }
+        case (byte) 132:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformFocusMode.values()[((Long) value).intValue()];
+          }
         case (byte) 133:
           return PlatformCameraDescription.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
@@ -566,7 +590,6 @@ public class Messages {
     }
   }
 
-
   /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
     /** Success case callback method for handling returns. */
@@ -594,27 +617,34 @@ public class Messages {
   /**
    * Handles calls from Dart to the native side.
    *
-   * Generated interface from Pigeon that represents a handler of messages from Flutter.
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
    */
   public interface CameraApi {
     /** Returns the list of available cameras. */
-    @NonNull 
+    @NonNull
     List<PlatformCameraDescription> getAvailableCameras();
 
     /** The codec used by CameraApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `CameraApi` to handle messages through the `binaryMessenger`. */
+    /** Sets up an instance of `CameraApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable CameraApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable CameraApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable CameraApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.camera_android.CameraApi.getAvailableCameras" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.camera_android.CameraApi.getAvailableCameras"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -622,8 +652,7 @@ public class Messages {
                 try {
                   List<PlatformCameraDescription> output = api.getAvailableCameras();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -637,7 +666,7 @@ public class Messages {
   /**
    * Handles calls from native side to Dart that are not camera-specific.
    *
-   * Generated class from Pigeon that represents Flutter messages that can be called from Java.
+   * <p>Generated class from Pigeon that represents Flutter messages that can be called from Java.
    */
   public static class CameraGlobalEventApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -646,44 +675,47 @@ public class Messages {
     public CameraGlobalEventApi(@NonNull BinaryMessenger argBinaryMessenger) {
       this(argBinaryMessenger, "");
     }
-    public CameraGlobalEventApi(@NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
+
+    public CameraGlobalEventApi(
+        @NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
       this.binaryMessenger = argBinaryMessenger;
       this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
     }
 
-    /**
-     * Public interface for sending reply.
-     * The codec used by CameraGlobalEventApi.
-     */
+    /** Public interface for sending reply. The codec used by CameraGlobalEventApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
     /** Called when the device's physical orientation changes. */
-    public void deviceOrientationChanged(@NonNull PlatformDeviceOrientation orientationArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.camera_android.CameraGlobalEventApi.deviceOrientationChanged" + messageChannelSuffix;
+    public void deviceOrientationChanged(
+        @NonNull PlatformDeviceOrientation orientationArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.camera_android.CameraGlobalEventApi.deviceOrientationChanged"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<>(Collections.singletonList(orientationArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
   }
   /**
    * Handles device-specific calls from native side to Dart.
    *
-   * Generated class from Pigeon that represents Flutter messages that can be called from Java.
+   * <p>Generated class from Pigeon that represents Flutter messages that can be called from Java.
    */
   public static class CameraEventApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -692,79 +724,85 @@ public class Messages {
     public CameraEventApi(@NonNull BinaryMessenger argBinaryMessenger) {
       this(argBinaryMessenger, "");
     }
-    public CameraEventApi(@NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
+
+    public CameraEventApi(
+        @NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
       this.binaryMessenger = argBinaryMessenger;
       this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
     }
 
-    /**
-     * Public interface for sending reply.
-     * The codec used by CameraEventApi.
-     */
+    /** Public interface for sending reply. The codec used by CameraEventApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
     /** Called when the camera is initialized. */
-    public void initialized(@NonNull PlatformCameraState initialStateArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.camera_android.CameraEventApi.initialized" + messageChannelSuffix;
+    public void initialized(
+        @NonNull PlatformCameraState initialStateArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.camera_android.CameraEventApi.initialized" + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<>(Collections.singletonList(initialStateArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when an error occurs in the camera. */
     public void error(@NonNull String messageArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.camera_android.CameraEventApi.error" + messageChannelSuffix;
+      final String channelName =
+          "dev.flutter.pigeon.camera_android.CameraEventApi.error" + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<>(Collections.singletonList(messageArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called when the camera closes. */
     public void closed(@NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.camera_android.CameraEventApi.closed" + messageChannelSuffix;
+      final String channelName =
+          "dev.flutter.pigeon.camera_android.CameraEventApi.closed" + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           null,
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
   }

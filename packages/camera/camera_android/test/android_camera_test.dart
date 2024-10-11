@@ -372,7 +372,12 @@ void main() {
         FocusMode.auto,
         true,
       );
-      camera.hostCameraHandlers[cameraId]!.initialized(PlatformCameraState(previewSize: previewSize, exposureMode: PlatformExposureMode.auto, focusMode: PlatformFocusMode.auto, exposurePointSupported: true, focusPointSupported: true));
+      camera.hostCameraHandlers[cameraId]!.initialized(PlatformCameraState(
+          previewSize: previewSize,
+          exposureMode: PlatformExposureMode.auto,
+          focusMode: PlatformFocusMode.auto,
+          exposurePointSupported: true,
+          focusPointSupported: true));
 
       // Assert
       expect(await streamQueue.next, event);
@@ -437,7 +442,8 @@ void main() {
       const DeviceOrientationChangedEvent event =
           DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
       for (int i = 0; i < 3; i++) {
-        camera.hostHandler.deviceOrientationChanged(PlatformDeviceOrientation.portraitUp);
+        camera.hostHandler
+            .deviceOrientationChanged(PlatformDeviceOrientation.portraitUp);
       }
 
       // Assert

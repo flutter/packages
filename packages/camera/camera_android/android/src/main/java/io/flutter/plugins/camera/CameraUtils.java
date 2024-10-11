@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugins.camera.features.autofocus.FocusMode;
 import io.flutter.plugins.camera.features.exposurelock.ExposureMode;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,12 +146,13 @@ public final class CameraUtils {
     return cameras;
   }
 
-  public static Messages.PlatformDeviceOrientation orientationToPigeon(PlatformChannel.DeviceOrientation orientation) {
+  public static Messages.PlatformDeviceOrientation orientationToPigeon(
+      PlatformChannel.DeviceOrientation orientation) {
     switch (orientation) {
       case PORTRAIT_UP:
         return Messages.PlatformDeviceOrientation.PORTRAIT_UP;
       case PORTRAIT_DOWN:
-              return Messages.PlatformDeviceOrientation.PORTRAIT_DOWN;
+        return Messages.PlatformDeviceOrientation.PORTRAIT_DOWN;
       case LANDSCAPE_LEFT:
         return Messages.PlatformDeviceOrientation.LANDSCAPE_LEFT;
       case LANDSCAPE_RIGHT:
@@ -166,7 +166,7 @@ public final class CameraUtils {
       case auto:
         return Messages.PlatformFocusMode.AUTO;
       case locked:
-              return Messages.PlatformFocusMode.LOCKED;
+        return Messages.PlatformFocusMode.LOCKED;
     }
     return Messages.PlatformFocusMode.AUTO;
   }
@@ -176,7 +176,7 @@ public final class CameraUtils {
       case auto:
         return Messages.PlatformExposureMode.AUTO;
       case locked:
-              return Messages.PlatformExposureMode.LOCKED;
+        return Messages.PlatformExposureMode.LOCKED;
     }
     return Messages.PlatformExposureMode.AUTO;
   }
