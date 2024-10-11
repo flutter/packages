@@ -112,7 +112,8 @@ to the api to allow for multiple instances to be created and operate in parallel
 ### Flutter calling into iOS steps
 
 1) Add the generated Objective-C or Swift code to your Xcode project for compilation
-   (e.g. `ios/Runner.xcworkspace` or `.podspec`).
+   (e.g. `ios/Runner.xcworkspace` or `.podspec`), dragging it from IDE to Xcode as
+   a reference.
 1) Implement the generated protocol for handling the calls on iOS, set it up
    as the handler for the messages.
 
