@@ -1,3 +1,7 @@
+##NEXT
+
+* [swift] Adds `includeErrorClass` to `SwiftOptions`.
+
 ## 22.5.0
 
 * [swift] Adds implementation for `@ProxyApi`.
