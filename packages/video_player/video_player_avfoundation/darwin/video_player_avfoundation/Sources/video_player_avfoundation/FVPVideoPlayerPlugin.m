@@ -564,7 +564,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 - (CVPixelBufferRef)copyPixelBuffer {
   // Ensure video sampling at regular intervals. This function is not called at exact time intervals
   // so CACurrentMediaTime returns irregular timestamps which causes missed video frames. The range
-  // outside which targetTime is reset should be narrow enough to make possible lag as small as
+  // outside of which targetTime is reset should be narrow enough to make possible lag as small as
   // possible and at the same time wide enough to avoid too frequent resets which would lead to
   // irregular sampling. Ideally there would be a targetTimestamp of display link used by flutter
   // engine (FlutterTexture can provide timestamp and duration or timestamp and targetTimestamp).
@@ -596,9 +596,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // Calling textureFrameAvailable only from within displayLinkFired would require a non-trivial
   // solution to minimize missed video frames due to race between displayLinkFired, copyPixelBuffer
   // and place where is _textureFrameAvailable reset to false in the flutter engine. Ideally
-  // FlutterTexture would support mode of operation where the copyPixelBuffer is called always,
-  // maybe with possibility to start and stop it, instead of on demand by calling
-  // textureFrameAvailable.
+  // FlutterTexture would support mode of operation where the copyPixelBuffer is called always or
+  // some other alternative, instead of on demand by calling textureFrameAvailable.
   if (self.displayLink.running) {
     dispatch_async(dispatch_get_main_queue(), ^{
       [self.frameUpdater.registry textureFrameAvailable:self.frameUpdater.textureId];
