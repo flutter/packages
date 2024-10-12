@@ -202,9 +202,7 @@ static void selectBestFormatForRequestedFrameRate(
       isBestSubTypePreferred = isSubTypePreferred;
     }
   }
-  if (![bestFormat isEqual:captureDevice.activeFormat]) {
-    captureDevice.activeFormat = bestFormat;
-  }
+  captureDevice.activeFormat = bestFormat;
   mediaSettings.framesPerSecond = @(bestFrameRate);
 }
 
