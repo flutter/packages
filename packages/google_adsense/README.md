@@ -29,13 +29,14 @@ void main() {
 <?code-excerpt "example/lib/main.dart (adUnit)"?>
 ```dart
 Adsense().adUnit(
-  adSlot: 'your_ad_slot_id',
-  isAdTest: true,
-  adUnitParams: <String, dynamic>{
-    AdUnitParams.AD_FORMAT: 'auto',
-    AdUnitParams.FULL_WIDTH_RESPONSIVE: true,
-  },
-)
+    adSlot: 'your_ad_slot_id',
+    isAdTest: true,
+    adUnitParams: <String, dynamic>{
+      AdUnitParams.AD_FORMAT: 'auto',
+      AdUnitParams.FULL_WIDTH_RESPONSIVE: true,
+    },
+    cssText:
+        'border: 5px solid red; display: block; padding: 20px'),
 ```
 ## Testing and common errors
 
