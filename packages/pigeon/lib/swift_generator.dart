@@ -1312,7 +1312,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         .any((Api api) => api.methods.isNotEmpty);
     final bool hasProxyApi = root.apis.any((Api api) => api is AstProxyApi);
 
-    _writePigeonError(generatorOptions, indent);
     if (generatorOptions.includeErrorClass) {
       _writePigeonError(generatorOptions, indent);
     }
