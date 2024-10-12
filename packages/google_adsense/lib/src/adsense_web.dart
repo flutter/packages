@@ -37,21 +37,25 @@ class Adsense {
       {required String adSlot,
       String adClient = '',
       bool isAdTest = false,
-      Map<String, dynamic> adUnitParams = const <String, dynamic>{}}) {
+      Map<String, dynamic> adUnitParams = const <String, dynamic>{},
+      String? cssText}) {
     return AdUnitWidgetWeb(
-      adSlot: adSlot,
-      adClient: adClient.isNotEmpty ? adClient : _adClient,
-      isAdTest: isAdTest,
-      additionalParams: adUnitParams,
-    );
+        adSlot: adSlot,
+        adClient: adClient.isNotEmpty ? adClient : _adClient,
+        isAdTest: isAdTest,
+        additionalParams: adUnitParams,
+        cssText: cssText);
   }
 
   void _addMasterScript(String adClient) {
+    final web.HTMLScriptElement adsbygoogle = web.HTMLScriptElement();
+    adsbygoogle.innerText = 'adsbygoogle = window.adsbygoogle || [];';
     final web.HTMLScriptElement script =
         web.document.createElement('script') as web.HTMLScriptElement
           ..async = true
           ..crossOrigin = 'anonymous';
     script.src = _url + adClient;
+    (web.document.head ?? web.document).appendChild(adsbygoogle);
     (web.document.head ?? web.document).appendChild(script);
   }
 

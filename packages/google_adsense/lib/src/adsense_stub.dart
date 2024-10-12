@@ -25,7 +25,8 @@ class Adsense {
       {required String adSlot,
       String adClient = '',
       bool isAdTest = false,
-      Map<String, dynamic> adUnitParams = const <String, dynamic>{}}) {
+      Map<String, dynamic> adUnitParams = const <String, dynamic>{},
+      String? cssText}) {
     throw UnsupportedError('Only supported on web');
   }
 

@@ -10,24 +10,29 @@ import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
 import '../google_adsense.dart';
+import 'js_interop/adsbygoogle.dart';
 
 /// Widget displaying an ad unit
 class AdUnitWidgetWeb extends AdUnitWidget {
   // TODO(sokoloff06): consider builder?
   /// Constructs [AdUnitWidgetWeb]
-  AdUnitWidgetWeb(
-      {required String adClient,
-      required String adSlot,
-      required bool isAdTest,
-      required Map<String, dynamic> additionalParams,
-      super.key})
-      : _adClient = adClient,
+  AdUnitWidgetWeb({
+    required String adClient,
+    required String adSlot,
+    required bool isAdTest,
+    required Map<String, dynamic> additionalParams,
+    String? cssText,
+    super.key,
+  })  : _adClient = adClient,
         _adSlot = adSlot,
         _isAdTest = isAdTest,
         _additionalParams = additionalParams {
     _insElement
       ..className = 'adsbygoogle'
       ..style.display = 'block';
+    if (cssText != null && cssText.isNotEmpty) {
+      _insElement.style.cssText = cssText;
+    }
     final Map<String, String> dataAttrs =
         Map<String, String>.of(<String, String>{
       AdUnitParams.AD_CLIENT: 'ca-pub-$_adClient',
@@ -138,6 +143,8 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
           } else {
             // Prevent scrolling issues over empty ad slot
             target.style.pointerEvents = 'none';
+            target.style.height = '0px';
+            updateWidgetHeight(0);
           }
         }
       }
@@ -152,12 +159,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
 
   void onElementAttached(web.HTMLElement element) {
     log('Element ${element.id} attached with style: height=${element.offsetHeight} and width=${element.offsetWidth}');
-    // TODO(sokoloff06): replace with proper js_interop
-    final web.HTMLScriptElement pushAdsScript = web.HTMLScriptElement();
-    pushAdsScript.innerText =
-        '(adsbygoogle = window.adsbygoogle || []).push({});';
-    log('Adding push ads script');
-    element.append(pushAdsScript);
+    adsbygoogle.loadAds();
   }
 
   bool isLoaded(web.HTMLElement target) {

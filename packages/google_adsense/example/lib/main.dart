@@ -62,19 +62,20 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
+            Adsense().adUnit(
+                adSlot: 'your_ad_slot_id',
+                isAdTest: true,
+                adUnitParams: <String, dynamic>{
+                  AdUnitParams.AD_FORMAT: 'auto',
+                  AdUnitParams.FULL_WIDTH_RESPONSIVE: true,
+                },
+                cssText:
+                    'border: 5px solid red; display: block; padding: 20px'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             // #docregion adUnit
-            Adsense().adUnit(
-              adSlot: 'your_ad_slot_id',
-              isAdTest: true,
-              adUnitParams: <String, dynamic>{
-                AdUnitParams.AD_FORMAT: 'auto',
-                AdUnitParams.FULL_WIDTH_RESPONSIVE: true,
-              },
-            )
             // #enddocregion adUnit
           ],
         ),

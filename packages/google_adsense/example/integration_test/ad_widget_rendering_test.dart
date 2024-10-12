@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Run with: flutter drive -d web-server --web-port 7357 --browser-name chrome --driver test_driver/integration_test.dart --target integration_test/ad_widget_rendering_test.dart
+// TO run the test:
+// 1. Run chrome driver with --port=4444
+// 2. Run the test from example folder with: flutter drive -d web-server --web-port 7357 --browser-name chrome --driver test_driver/integration_test.dart --target integration_test/ad_widget_rendering_test.dart
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30,7 +32,7 @@ void main() async {
       Adsense().initialize(testClient);
       final Widget adUnitWidget = Adsense().adUnit(adSlot: testSlot);
       await tester.pumpWidget(adUnitWidget);
-      await tester.pumpWidget(adUnitWidget); // TODO(sokoloff06): do we need it twice?
+      await tester.pumpWidget(adUnitWidget); // TODO(sokoloff06): Why only works when pumping twice?
       // Then
       // Widget level
       expect(find.byWidget(adUnitWidget), findsOneWidget);
