@@ -3,8 +3,8 @@ description: Demonstrates how to use the in_app_purchase_storekit plugin.
 publish_to: none
 
 environment:
-  sdk: ^3.2.3
-  flutter: ">=3.16.6"
+  sdk: ^3.3.0
+  flutter: ">=3.19.0"
 
 dependencies:
   flutter:

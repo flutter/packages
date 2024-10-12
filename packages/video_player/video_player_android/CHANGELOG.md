@@ -1,3 +1,33 @@
+## 2.7.5
+
+* Add a deprecation suppression in advance of a new `SurfaceProducer` API.
+
+## 2.7.4
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/154559) where
+  resuming (or using a plugin like `share_plus` that implicitly resumes the
+  activity where) a video player would cause a `DecoderInitializationException`.
+
+## 2.7.3
+
+* Updates Media3-ExoPlayer to 1.4.1.
+
+## 2.7.2
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+* Re-adds Impeller support.
+
+
+## 2.7.1
+
+* Revert Impeller support.
+
+
+## 2.7.0
+
+* Re-adds [support for Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
+
 ## 2.6.0
 
 * Adds RTSP support.

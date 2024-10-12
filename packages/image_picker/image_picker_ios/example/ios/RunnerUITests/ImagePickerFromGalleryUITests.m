@@ -201,7 +201,8 @@ const int kElementWaitingTime = 30;
   // Find an image and tap on it. (IOS 14 UI, images are showing directly)
   XCUIElement *aImage;
   if (@available(iOS 14, *)) {
-    aImage = [self.app.scrollViews.firstMatch.images elementBoundByIndex:1];
+    NSPredicate *imagePredicate = [NSPredicate predicateWithFormat:@"label BEGINSWITH 'Photo, '"];
+    aImage = [self.app.images matchingPredicate:imagePredicate].firstMatch;
   } else {
     XCUIElement *allPhotosCell = self.app.cells[@"All Photos"].firstMatch;
     if (![allPhotosCell waitForExistenceWithTimeout:kElementWaitingTime]) {

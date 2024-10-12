@@ -1,3 +1,39 @@
+## 2.14.7
+
+* Adds `PlatformPatternItem` pigeon class to convert `PlatformPolyline.pattern`.
+
+## 2.14.6
+
+* Converts 'PlatformCameraUpdate' to pigeon.
+
+## 2.14.5
+
+* Converts `JointType` to enum.
+
+## 2.14.4
+
+* Converts 'PlatformTileOverlay' to pigeon.
+
+## 2.14.3
+
+* Converts `PlatformPolygon` and `PlatformPolyline` to pigeon.
+
+## 2.14.2
+
+* Bumps `com.android.tools.build:gradle` from 7.3.1 to 8.5.1.
+
+## 2.14.1
+
+* Converts `PlatformCircle` and `PlatformMarker` to pigeon.
+
+## 2.14.0
+
+* Updates map configuration and platform view creation parameters to use Pigeon.
+
+## 2.13.0
+
+* Adds support for heatmap layers.
+
 ## 2.12.2
 
 * Updates the example app to use TLHC mode, per current package guidance.

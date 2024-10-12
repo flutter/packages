@@ -158,7 +158,8 @@ base class SharedPreferencesAsyncFoundation
     return _convertKnownExceptions<List<String>>(() async =>
         ((await _api.getValue(key, _convertOptionsToPigeonOptions(options)))
                 as List<Object?>?)
-            ?.cast<String>());
+            ?.cast<String>()
+            .toList());
   }
 
   @override

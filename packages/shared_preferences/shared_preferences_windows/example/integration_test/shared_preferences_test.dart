@@ -354,12 +354,15 @@ void main() {
     const double testDouble = 3.14159;
     const List<String> testList = <String>['foo', 'bar'];
 
-    Future<SharedPreferencesAsyncPlatform> getPreferences() async {
+    Future<SharedPreferencesAsyncPlatform> getPreferences(
+        {bool clear = true}) async {
       final SharedPreferencesAsyncPlatform preferences =
           SharedPreferencesAsyncPlatform.instance!;
-      await preferences.clear(
-          const ClearPreferencesParameters(filter: PreferencesFilters()),
-          emptyOptions);
+      if (clear) {
+        await preferences.clear(
+            const ClearPreferencesParameters(filter: PreferencesFilters()),
+            emptyOptions);
+      }
       return preferences;
     }
 
@@ -396,6 +399,25 @@ void main() {
 
       await preferences.setStringList(listKey, testList, emptyOptions);
       expect(await preferences.getStringList(listKey, emptyOptions), testList);
+    });
+
+    testWidgets('getStringList does not throw cast error',
+        (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
+
+      await preferences.setStringList(listKey, testList, emptyOptions);
+      await (preferences as SharedPreferencesAsyncWindows).reload(emptyOptions);
+      expect(await preferences.getStringList(listKey, emptyOptions), testList);
+    });
+
+    testWidgets('getStringList returns mutable list', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
+
+      await preferences.setStringList(listKey, testList, emptyOptions);
+      final List<String>? list =
+          await preferences.getStringList(listKey, emptyOptions);
+      list?.add('value');
+      expect(list?.length, testList.length + 1);
     });
 
     testWidgets('getPreferences', (WidgetTester _) async {

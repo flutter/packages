@@ -17,13 +17,34 @@ AdErrorType toInterfaceErrorType(ima.AdErrorType type) {
 /// Attempts to convert an [ima.AdEventType] to [AdEventType].
 ///
 /// Returns null is the type is not supported by the platform interface.
-AdEventType? toInterfaceEventType(ima.AdEventType type) {
+AdEventType toInterfaceEventType(ima.AdEventType type) {
   return switch (type) {
     ima.AdEventType.allAdsCompleted => AdEventType.allAdsCompleted,
     ima.AdEventType.completed => AdEventType.complete,
     ima.AdEventType.loaded => AdEventType.loaded,
     ima.AdEventType.clicked => AdEventType.clicked,
-    _ => null,
+    ima.AdEventType.adBreakEnded => AdEventType.adBreakEnded,
+    ima.AdEventType.adBreakFetchError => AdEventType.adBreakFetchError,
+    ima.AdEventType.adBreakReady => AdEventType.adBreakReady,
+    ima.AdEventType.adBreakStarted => AdEventType.adBreakStarted,
+    ima.AdEventType.adPeriodEnded => AdEventType.adPeriodEnded,
+    ima.AdEventType.adPeriodStarted => AdEventType.adPeriodStarted,
+    ima.AdEventType.cuepointsChanged => AdEventType.cuepointsChanged,
+    ima.AdEventType.firstQuartile => AdEventType.firstQuartile,
+    ima.AdEventType.iconFallbackImageClosed =>
+      AdEventType.iconFallbackImageClosed,
+    ima.AdEventType.iconTapped => AdEventType.iconTapped,
+    ima.AdEventType.log => AdEventType.log,
+    ima.AdEventType.midpoint => AdEventType.midpoint,
+    ima.AdEventType.pause => AdEventType.paused,
+    ima.AdEventType.resume => AdEventType.resumed,
+    ima.AdEventType.skipped => AdEventType.skipped,
+    ima.AdEventType.started => AdEventType.started,
+    ima.AdEventType.streamLoaded => AdEventType.streamLoaded,
+    ima.AdEventType.streamStarted => AdEventType.streamStarted,
+    ima.AdEventType.tapped => AdEventType.tapped,
+    ima.AdEventType.thirdQuartile => AdEventType.thirdQuartile,
+    ima.AdEventType.unknown => AdEventType.unknown,
   };
 }
 

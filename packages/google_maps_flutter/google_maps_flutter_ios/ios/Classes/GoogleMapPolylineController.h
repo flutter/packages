@@ -25,7 +25,6 @@
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler
                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-- (void)addJSONPolylines:(NSArray<NSDictionary<NSString *, id> *> *)polylinesToAdd;
 - (void)addPolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToAdd;
 - (void)changePolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToChange;
 - (void)removePolylineWithIdentifiers:(NSArray<NSString *> *)identifiers;

@@ -1,3 +1,34 @@
+## 22.4.0
+
+* Adds support for non-nullable types in collections.
+
+## 22.3.0
+
+* Adds support for enums and classes in collections.
+
+## 22.2.0
+
+* [kotlin] Adds implementation for `@ProxyApi`.
+
+## 22.1.0
+
+* Allows generation of classes that aren't referenced in an API.
+
+## 22.0.0
+
+* [dart] Changes codec to send int64 instead of int32.
+* **Breaking Change** [swift] Changes generic `map` to nullable keys of `AnyHashable` to conform to other platforms.
+* Adds tests to validate collections of ints.
+
+## 21.2.0
+
+* Removes restriction on number of custom types.
+* [java] Fixes bug with multiple enums.
+* [java] Removes `Object` from generics.
+* [objc] Fixes bug with multiple enums per data class.
+* Updates `varPrefix` and `classMemberNamePrefix`.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
 ## 21.1.0
 
 * Adds GObject (Linux) support.
