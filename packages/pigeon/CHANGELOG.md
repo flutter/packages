@@ -1,4 +1,4 @@
-##NEXT
+## NEXT
 
 * [swift] Adds `includeErrorClass` to `SwiftOptions`.
 
