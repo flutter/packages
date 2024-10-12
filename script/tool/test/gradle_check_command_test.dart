@@ -41,7 +41,6 @@ void main() {
     bool includeTargetCompat = false,
     bool commentSourceLanguage = false,
     bool includeNamespace = true,
-    bool conditionalizeNamespace = true,
     bool commentNamespace = false,
     bool warningsConfigured = true,
   }) {
@@ -67,18 +66,11 @@ java {
 
 ''';
     final String sourceCompat =
-        '${commentSourceLanguage ? '// ' : ''}sourceCompatibility JavaVersion.VERSION_1_8';
+        '${commentSourceLanguage ? '// ' : ''}sourceCompatibility JavaVersion.VERSION_11';
     final String targetCompat =
-        '${commentSourceLanguage ? '// ' : ''}targetCompatibility JavaVersion.VERSION_1_8';
-    String namespace =
+        '${commentSourceLanguage ? '// ' : ''}targetCompatibility JavaVersion.VERSION_11';
+    final String namespace =
         "    ${commentNamespace ? '// ' : ''}namespace '$_defaultFakeNamespace'";
-    if (conditionalizeNamespace) {
-      namespace = '''
-    if (project.android.hasProperty("namespace")) {
-    $namespace
-    }
-''';
-    }
 
     buildGradle.writeAsStringSync('''
 group 'dev.flutter.plugins.fake'
@@ -486,28 +478,6 @@ dependencies {
       containsAllInOrder(<Matcher>[
         contains(
             'build.gradle "namespace" must match the "package" attribute in AndroidManifest.xml'),
-      ]),
-    );
-  });
-
-  test('fails when plugin namespace is not conditional', () async {
-    final RepositoryPackage package =
-        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
-    writeFakePluginBuildGradle(package,
-        includeLanguageVersion: true, conditionalizeNamespace: false);
-    writeFakeManifest(package);
-
-    Error? commandError;
-    final List<String> output = await runCapturingPrint(
-        runner, <String>['gradle-check'], errorHandler: (Error e) {
-      commandError = e;
-    });
-
-    expect(commandError, isA<ToolExit>());
-    expect(
-      output,
-      containsAllInOrder(<Matcher>[
-        contains('build.gradle for a plugin must conditionalize "namespace"'),
       ]),
     );
   });

@@ -40,14 +40,11 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<FileResponse?> files = await _api.openFiles(
+    final List<FileResponse> files = await _api.openFiles(
       initialDirectory,
       _fileTypesFromTypeGroups(acceptedTypeGroups),
     );
-    return files
-        .cast<FileResponse>()
-        .map<XFile>(_xFileFromFileResponse)
-        .toList();
+    return files.map<XFile>(_xFileFromFileResponse).toList();
   }
 
   @override

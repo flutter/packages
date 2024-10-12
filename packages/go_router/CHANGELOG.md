@@ -1,3 +1,11 @@
+## 14.3.0
+
+- Added missing implementation for the routerNeglect parameter in GoRouter.
+
+## 14.2.9
+
+- Relaxes route path requirements. Both root and child routes can now start with or without '/'.
+
 ## 14.2.8
 
 - Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView. 

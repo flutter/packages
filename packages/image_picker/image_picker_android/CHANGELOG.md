@@ -1,3 +1,11 @@
+## 0.8.12+15
+
+* Updates Java compatibility version to 11.
+
+## 0.8.12+14
+
+* Bumps androidx.activity:activity from 1.9.1 to 1.9.2.
+
 ## 0.8.12+13
 
 * Removes dependency on org.jetbrains.kotlin:kotlin-bom.

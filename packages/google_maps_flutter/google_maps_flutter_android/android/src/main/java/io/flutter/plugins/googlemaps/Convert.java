@@ -703,8 +703,8 @@ class Convert {
       float density) {
     sink.setConsumeTapEvents(polyline.getConsumesTapEvents());
     sink.setColor(polyline.getColor().intValue());
-    sink.setEndCap(toCap(polyline.getEndCap(), assetManager, density));
-    sink.setStartCap(toCap(polyline.getStartCap(), assetManager, density));
+    sink.setEndCap(capFromPigeon(polyline.getEndCap(), assetManager, density));
+    sink.setStartCap(capFromPigeon(polyline.getStartCap(), assetManager, density));
     sink.setGeodesic(polyline.getGeodesic());
     sink.setJointType(jointTypeFromPigeon(polyline.getJointType()));
     sink.setVisible(polyline.getVisible());
@@ -874,25 +874,24 @@ class Convert {
     return pattern;
   }
 
-  private static Cap toCap(Object o, AssetManager assetManager, float density) {
-    final List<?> data = toList(o);
-    switch (toString(data.get(0))) {
-      case "buttCap":
+  private static Cap capFromPigeon(
+      Messages.PlatformCap cap, AssetManager assetManager, float density) {
+    switch (cap.getType()) {
+      case BUTT_CAP:
         return new ButtCap();
-      case "roundCap":
+      case ROUND_CAP:
         return new RoundCap();
-      case "squareCap":
+      case SQUARE_CAP:
         return new SquareCap();
-      case "customCap":
-        if (data.size() == 2) {
-          return new CustomCap(toBitmapDescriptor(data.get(1), assetManager, density));
-        } else {
-          return new CustomCap(
-              toBitmapDescriptor(data.get(1), assetManager, density), toFloat(data.get(2)));
+      case CUSTOM_CAP:
+        if (cap.getRefWidth() == null) {
+          throw new IllegalArgumentException("A Custom Cap must specify a refWidth value.");
         }
-      default:
-        throw new IllegalArgumentException("Cannot interpret " + o + " as Cap");
+        return new CustomCap(
+            toBitmapDescriptor(cap.getBitmapDescriptor(), assetManager, density),
+            cap.getRefWidth().floatValue());
     }
+    throw new IllegalArgumentException("Unrecognized Cap type: " + cap.getType());
   }
 
   static String interpretTileOverlayOptions(

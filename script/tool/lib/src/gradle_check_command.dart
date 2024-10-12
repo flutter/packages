@@ -298,31 +298,13 @@ apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
     final RegExpMatch? namespaceMatch =
         namespaceRegex.firstMatch(gradleContents);
 
-    // For plugins, make sure the namespace is conditionalized so that it
-    // doesn't break client apps using AGP 4.1 and earlier (which don't have
-    // a namespace property, and will fail to build if it's set).
-    const String namespaceConditional =
-        'if (project.android.hasProperty("namespace"))';
-    String exampleSetNamespace = "namespace 'dev.flutter.foo'";
-    if (!isExample) {
-      exampleSetNamespace = '''
-$namespaceConditional {
-    $exampleSetNamespace
-}''';
-    }
-    // Wrap the namespace command in an `android` block, adding the indentation
-    // to make it line up correctly.
-    final String exampleAndroidNamespaceBlock = '''
-    android {
-        ${exampleSetNamespace.split('\n').join('\n        ')}
-    }
-''';
-
     if (namespaceMatch == null) {
-      final String errorMessage = '''
+      const String errorMessage = '''
 build.gradle must set a "namespace":
 
-$exampleAndroidNamespaceBlock
+    android {
+        namespace 'dev.flutter.foo'
+    }
 
 The value must match the "package" attribute in AndroidManifest.xml, if one is
 present. For more information, see:
@@ -333,18 +315,6 @@ https://developer.android.com/build/publish-library/prep-lib-release#choose-name
           '$indentation${errorMessage.split('\n').join('\n$indentation')}');
       return false;
     } else {
-      if (!isExample && !gradleContents.contains(namespaceConditional)) {
-        final String errorMessage = '''
-build.gradle for a plugin must conditionalize "namespace":
-
-$exampleAndroidNamespaceBlock
-''';
-
-        printError(
-            '$indentation${errorMessage.split('\n').join('\n$indentation')}');
-        return false;
-      }
-
       return _validateNamespaceMatchesManifest(package,
           isExample: isExample, namespace: namespaceMatch.group(1)!);
     }
@@ -398,15 +368,15 @@ build.gradle must set an explicit Java compatibility version.
 This can be done either via "sourceCompatibility"/"targetCompatibility":
     android {
         compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_8
-            targetCompatibility JavaVersion.VERSION_1_8
+            sourceCompatibility JavaVersion.VERSION_11
+            targetCompatibility JavaVersion.VERSION_11
         }
     }
 
 or "toolchain":
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(8)
+            languageVersion = JavaLanguageVersion.of(11)
         }
     }
 

@@ -49,6 +49,32 @@ widget.
 See [issue #102408](https://github.com/flutter/flutter/issues/102408)
 for details on what such an API might look like in go_router.
 
+## Disable browser history tracking when navigating 
+
+To disable browser history tracking when navigating, use the `neglect` method 
+of the `Router` class:
+
+```dart
+ElevatedButton(
+  onPressed: () => Router.neglect(
+    context,
+    () => context.go('/destination'),
+  ),
+  child: ...
+),
+```
+
+To disable browser history tracking for the **entire** application, set the 
+`routerNeglect` property of the `GoRouter` widget to `true`:
+```dart
+final _router = GoRouter(
+  routerNeglect: true,
+  routes: [
+    ...
+  ],
+);
+```
+
 ## Imperative navigation with Navigator
 You can continue using the Navigator to push and pop pages. Pages displayed in
 this way are not deep-linkable and will be replaced if any parent page that is

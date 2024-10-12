@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/src/services/binary_messenger.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_foundation/shared_preferences_foundation.dart';
 import 'package:shared_preferences_foundation/src/messages.g.dart';
@@ -214,7 +215,7 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
   }
 
   @override
-  Future<Map<String?, Object?>> getAll(
+  Future<Map<String, Object>> getAll(
       List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
     final Map<String, Object> filteredItems = <String, Object>{...items};
     if (allowList != null) {
@@ -224,7 +225,7 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
   }
 
   @override
-  Future<List<String?>> getKeys(
+  Future<List<String>> getKeys(
       List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
     final List<String> filteredItems = items.keys.toList();
     if (allowList != null) {
@@ -244,4 +245,12 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
       String key, SharedPreferencesPigeonOptions options) async {
     return items[key];
   }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => null;
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => '';
 }
