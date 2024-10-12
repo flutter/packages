@@ -168,10 +168,11 @@ static double bestFrameRateForFormat(AVCaptureDeviceFormat *format, double targe
   return bestFrameRate;
 }
 
-// Finds format with same resolution as current activeFormat for which bestFrameRateForFormat
-// returned frame rate closest to mediaSettings.framesPerSecond. Preferred are formats with the
-// same subtype as current activeFormat. Sets this format as activeFormat and also updates
-// mediaSettings.framesPerSecond to value which bestFrameRateForFormat returned for that format.
+// Finds format with same resolution as current activeFormat in captureDevice for which
+// bestFrameRateForFormat returned frame rate closest to mediaSettings.framesPerSecond.
+// Preferred are formats with the same subtype as current activeFormat. Sets this format
+// as activeFormat and also updates mediaSettings.framesPerSecond to value which
+// bestFrameRateForFormat returned for that format.
 static void selectBestFormatForRequestedFrameRate(
     AVCaptureDevice *captureDevice, FCPPlatformMediaSettings *mediaSettings,
     VideoDimensionsForFormat videoDimensionsForFormat) {
@@ -587,6 +588,7 @@ static void selectBestFormatForRequestedFrameRate(
 }
 
 /// Finds the highest available resolution in terms of pixel count for the given device.
+/// Preferred are formats with the same subtype as current activeFormat.
 - (AVCaptureDeviceFormat *)highestResolutionFormatForCaptureDevice:
     (AVCaptureDevice *)captureDevice {
   FourCharCode preferredSubType =
