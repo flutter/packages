@@ -15,7 +15,6 @@ import 'package:web/web.dart' as web;
 const String testClient = 'test_client';
 const String testSlot = 'test_slot';
 
-
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -32,7 +31,8 @@ void main() async {
       Adsense().initialize(testClient);
       final Widget adUnitWidget = Adsense().adUnit(adSlot: testSlot);
       await tester.pumpWidget(adUnitWidget);
-      await tester.pumpWidget(adUnitWidget); // TODO(sokoloff06): Why only works when pumping twice?
+      await tester.pumpWidget(
+          adUnitWidget); // TODO(sokoloff06): Why only works when pumping twice?
       // Then
       // Widget level
       expect(find.byWidget(adUnitWidget), findsOneWidget);
@@ -42,11 +42,11 @@ void main() async {
       final web.HTMLElement? platformView =
           web.document.querySelector('flt-platform-view') as web.HTMLElement?;
       expect(platformView, isNotNull);
-      final web.HTMLElement ins = platformView!.getElementsByTagName('ins').item(0)! as web.HTMLElement;
+      final web.HTMLElement ins =
+          platformView!.getElementsByTagName('ins').item(0)! as web.HTMLElement;
       expect(ins.style.display, 'block');
 
       // TODO(sokoloff06): Validate response is rendered
-
     });
   });
 }
