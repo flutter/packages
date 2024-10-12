@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 
 import '../in_app_purchase_storekit.dart';
+import '../store_kit_2_wrappers.dart';
 import '../store_kit_wrappers.dart';
 
 /// [IAPError.code] code for failed purchases.
@@ -28,6 +29,9 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   /// get the connection from the [instance] getter.
   @visibleForTesting
   InAppPurchaseStoreKitPlatform();
+
+  /// Experimental flag for StoreKit2.
+  static bool _useStoreKit2 = false;
 
   static late SKPaymentQueueWrapper _skPaymentQueueWrapper;
   static late _TransactionObserver _observer;
@@ -65,7 +69,12 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   }
 
   @override
-  Future<bool> isAvailable() => SKPaymentQueueWrapper.canMakePayments();
+  Future<bool> isAvailable() {
+    if (_useStoreKit2) {
+      return AppStore().canMakePayments();
+    }
+    return SKPaymentQueueWrapper.canMakePayments();
+  }
 
   @override
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {
@@ -119,6 +128,38 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @override
   Future<ProductDetailsResponse> queryProductDetails(
       Set<String> identifiers) async {
+    if (_useStoreKit2) {
+      List<SK2Product> products = <SK2Product>[];
+      Set<String> invalidProductIdentifiers;
+      PlatformException? exception;
+      try {
+        products = await SK2Product.products(identifiers.toList());
+        // Storekit 2 no longer automatically returns a list of invalid identifiers,
+        // so get the difference between given identifiers and returned products
+        invalidProductIdentifiers = identifiers.difference(
+            products.map((SK2Product product) => product.id).toSet());
+      } on PlatformException catch (e) {
+        exception = e;
+        invalidProductIdentifiers = identifiers;
+      }
+      List<AppStoreProduct2Details> productDetails;
+      productDetails = products
+          .map((SK2Product productWrapper) =>
+              AppStoreProduct2Details.fromSK2Product(productWrapper))
+          .toList();
+      final ProductDetailsResponse response = ProductDetailsResponse(
+        productDetails: productDetails,
+        notFoundIDs: invalidProductIdentifiers.toList(),
+        error: exception == null
+            ? null
+            : IAPError(
+                source: kIAPSource,
+                code: exception.code,
+                message: exception.message ?? '',
+                details: exception.details),
+      );
+      return response;
+    }
     final SKRequestMaker requestMaker = SKRequestMaker();
     SkProductResponseWrapper response;
     PlatformException? exception;
@@ -166,6 +207,11 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   /// Use countryCode instead.
   @Deprecated('Use countryCode')
   Future<String?> getCountryCode() => countryCode();
+
+  /// Turns on StoreKit2. You cannot disable this after it is enabled.
+  void enableStoreKit2() {
+    _useStoreKit2 = true;
+  }
 }
 
 enum _TransactionRestoreState {

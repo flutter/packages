@@ -92,9 +92,10 @@ TEST(NullFields, BuildReplyWithNulls) {
 }
 
 TEST_F(NullFieldsTest, RequestFromListWithValues) {
+  int64_t one = 1;
   EncodableList list{
       EncodableValue("hello"),
-      EncodableValue(1),
+      EncodableValue(one),
   };
   NullFieldsSearchRequest request = RequestFromList(list);
 
@@ -103,9 +104,10 @@ TEST_F(NullFieldsTest, RequestFromListWithValues) {
 }
 
 TEST_F(NullFieldsTest, RequestFromListWithNulls) {
+  int64_t one = 1;
   EncodableList list{
       EncodableValue(),
-      EncodableValue(1),
+      EncodableValue(one),
   };
   NullFieldsSearchRequest request = RequestFromList(list);
 

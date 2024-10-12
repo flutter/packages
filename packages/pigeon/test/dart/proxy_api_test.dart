@@ -80,7 +80,7 @@ void main() {
       final String collapsedCode = _collapseNewlineAndIndentation(code);
 
       // Instance Manager
-      expect(code, contains(r'class PigeonInternalInstanceManager'));
+      expect(code, contains(r'class PigeonInstanceManager'));
       expect(code, contains(r'class _PigeonInternalInstanceManagerApi'));
 
       // Base Api class
@@ -158,13 +158,13 @@ void main() {
       expect(
         code,
         contains(
-          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInternalInstanceManagerApi.removeStrongReference',
+          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInternalInstanceManager.removeStrongReference',
         ),
       );
       expect(
         collapsedCode,
         contains(
-          '(instanceManager ?? PigeonInternalInstanceManager.instance) .remove(arg_identifier!);',
+          '(instanceManager ?? PigeonInstanceManager.instance) .remove(arg_identifier!);',
         ),
       );
 
@@ -172,7 +172,7 @@ void main() {
       expect(
         code,
         contains(
-          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInternalInstanceManagerApi.clear',
+          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInternalInstanceManager.clear',
         ),
       );
     });
@@ -890,7 +890,7 @@ void main() {
           collapsedCode,
           contains(
             r'static Future<void> doSomething({ BinaryMessenger? pigeon_binaryMessenger, '
-            r'PigeonInternalInstanceManager? pigeon_instanceManager, })',
+            r'PigeonInstanceManager? pigeon_instanceManager, })',
           ),
         );
         expect(
