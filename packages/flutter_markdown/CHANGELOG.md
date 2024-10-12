@@ -1,3 +1,8 @@
+## 0.7.5
+
+* Added the ability to extend the list of allowed customizable block tags with the
+  `customBlockTags` attribute on `MarkdownBuilder`.
+
 ## 0.7.4
 
 * Makes paragraphs in blockquotes soft-wrap like a normal `<blockquote>` instead of hard-wrapping like a `<pre>` block.
