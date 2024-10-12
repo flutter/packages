@@ -1,4 +1,4 @@
-## 0.7.3+3
+## 0.7.4
 
 * Makes paragraphs in blockquotes soft-wrap like a normal `<blockquote>` instead of hard-wrapping like a `<pre>` block.
 

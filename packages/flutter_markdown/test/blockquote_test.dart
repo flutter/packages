@@ -24,7 +24,7 @@ void defineTests() {
         expectTextStrings(widgets, <String>['quote']);
       },
     );
-    
+
     testWidgets(
       'soft wrapping in blockquote',
       (WidgetTester tester) async {
