@@ -1,5 +1,6 @@
-## NEXT
+## 6.3.1
 
+* Removes incorrect SMS instructions from README.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 6.3.0

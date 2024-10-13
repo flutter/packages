@@ -275,6 +275,36 @@ enum KeyValueChangeKey {
   unknown,
 }
 
+/// A list of purposes for which an obstruction would be registered as friendly.
+///
+/// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Enums/IMAFriendlyObstructionPurpose.html.
+enum FriendlyObstructionPurpose {
+  mediaControls,
+
+  closeAd,
+
+  notVisible,
+
+  other,
+
+  /// The purpose type is not recognized by this wrapper.
+  unknown,
+}
+
+/// Different UI elements that can be customized.
+///
+/// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Enums/IMAUiElementType.html.
+enum UIElementType {
+  /// Ad attribution UI element.
+  adAttribution,
+
+  /// Ad countdown element.
+  countdown,
+
+  /// The element is not recognized by this wrapper.
+  unknown,
+}
+
 /// The `IMAAdDisplayContainer` is responsible for managing the ad container
 /// view and companion ad slots used for ad playback.
 ///
@@ -499,6 +529,35 @@ abstract class IMAAdEvent extends NSObject {
 @ProxyApi()
 abstract class IMAAdsRenderingSettings extends NSObject {
   IMAAdsRenderingSettings();
+
+  /// If specified, the SDK will play the media with MIME type on the list.
+  void setMimeTypes(List<String>? types);
+
+  /// Maximum recommended bitrate.
+  ///
+  /// The value is in kbit/s.
+  void setBitrate(int bitrate);
+
+  /// Timeout (in seconds) when loading a video ad media file.
+  ///
+  /// Use -1 for the default of 8 seconds.
+  void setLoadVideoTimeout(double seconds);
+
+  /// For VMAP and ad rules playlists, only play ad breaks scheduled after this
+  /// time (in seconds).
+  void setPlayAdsAfterTime(double seconds);
+
+  /// Specifies the list of UI elements that should be visible.
+  void setUIElements(List<UIElementType>? types);
+
+  /// Whether or not the SDK will preload ad media.
+  ///
+  /// Default is YES.
+  void setEnablePreloading(bool enable);
+
+  /// Specifies the optional UIViewController that will be used to open links
+  /// in-app.
+  void setLinkOpenerPresentingController(UIViewController controller);
 }
 
 /// The root class of most Objective-C class hierarchies, from which subclasses
@@ -508,4 +567,27 @@ abstract class IMAAdsRenderingSettings extends NSObject {
 /// See https://developer.apple.com/documentation/objectivec/nsobject.
 @ProxyApi()
 abstract class NSObject {}
+
+/// An obstruction that is marked as “friendly” for viewability measurement
+/// purposes.
+///
+/// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Classes/IMAFriendlyObstruction.html.
+@ProxyApi()
+abstract class IMAFriendlyObstruction {
+  /// Initializes a friendly obstruction.
+  IMAFriendlyObstruction();
+
+  /// The view causing the obstruction.
+  late final UIView view;
+
+  /// The purpose for registering the obstruction as friendly.
+  late final FriendlyObstructionPurpose purpose;
+
+  /// Optional, detailed reasoning for registering this obstruction as friendly.
+  ///
+  /// If the detailedReason is not null, it must follow the IAB standard by
+  /// being 50 characters or less and only containing characters A-z, 0-9, or
+  /// spaces.
+  late final String? detailedReason;
+}
 */

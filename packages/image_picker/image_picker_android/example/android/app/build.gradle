@@ -33,7 +33,7 @@ android {
     defaultConfig {
         applicationId "io.flutter.plugins.imagepicker.example"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 33
+        targetSdkVersion 34
         multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

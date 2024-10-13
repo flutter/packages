@@ -83,7 +83,6 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
       flutterApi.onGeolocationPermissionsHidePrompt(this, reply -> {});
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressWarnings("LambdaLast")
     @Override
     public boolean onShowFileChooser(
@@ -109,7 +108,6 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
       return currentReturnValueForOnShowFileChooser;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onPermissionRequest(@NonNull PermissionRequest request) {
       flutterApi.onPermissionRequest(this, request, reply -> {});
