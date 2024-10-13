@@ -424,14 +424,15 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // be played at these speeds, updatePlayingState will be called again when
   // status changes to AVPlayerItemStatusReadyToPlay.
   float speed = _playbackSpeed.floatValue;
+  bool readyToPlay = _player.currentItem.status == AVPlayerItemStatusReadyToPlay;
   if (speed > 2.0 && !_player.currentItem.canPlayFastForward) {
-    if (_player.currentItem.status != AVPlayerItemStatusReadyToPlay) {
+    if (!readyToPlay) {
       return;
     }
     speed = 2.0;
   }
   if (speed < 1.0 && !_player.currentItem.canPlaySlowForward) {
-    if (_player.currentItem.status != AVPlayerItemStatusReadyToPlay) {
+    if (!readyToPlay) {
       return;
     }
     speed = 1.0;
