@@ -48,7 +48,6 @@ void defineTests() {
               builders: <String, MarkdownElementBuilder>{
                 'note': NoteBuilder(),
               },
-              customBlockTags: const <String>['note'],
             ),
           ),
         );
@@ -77,7 +76,6 @@ void defineTests() {
               builders: <String, MarkdownElementBuilder>{
                 'custom': CustomTagBlockBuilder(),
               },
-              customBlockTags: const <String>['custom'],
             ),
           ),
         );
@@ -413,6 +411,11 @@ class NoteSyntax extends md.BlockSyntax {
 }
 
 class CustomTagBlockBuilder extends MarkdownElementBuilder {
+  @override
+  bool isBlockElement() {
+    return true;
+  }
+
   @override
   Widget visitElementAfterWithContext(
     BuildContext context,
