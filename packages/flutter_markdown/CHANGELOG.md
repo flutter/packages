@@ -1,4 +1,4 @@
-## 0.7.5
+## 0.7.4+1
 
 * Makes it so that custom blocks are not limited to being a Column or
   SizedBox.
