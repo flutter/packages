@@ -12,6 +12,8 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
+import io.flutter.plugins.camera.features.autofocus.FocusMode;
+import io.flutter.plugins.camera.features.exposurelock.ExposureMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,5 +144,63 @@ public final class CameraUtils {
       cameras.add(details);
     }
     return cameras;
+  }
+
+  /**
+   * Converts a DeviceOrientation from the systemchannels package to a PlatformDeviceOrientation
+   * from Pigeon.
+   *
+   * @param orientation A DeviceOrientation.
+   * @return The corresponding PlatformDeviceOrientation.
+   */
+  @NonNull
+  public static Messages.PlatformDeviceOrientation orientationToPigeon(
+      @NonNull PlatformChannel.DeviceOrientation orientation) {
+    switch (orientation) {
+      case PORTRAIT_UP:
+        return Messages.PlatformDeviceOrientation.PORTRAIT_UP;
+      case PORTRAIT_DOWN:
+        return Messages.PlatformDeviceOrientation.PORTRAIT_DOWN;
+      case LANDSCAPE_LEFT:
+        return Messages.PlatformDeviceOrientation.LANDSCAPE_LEFT;
+      case LANDSCAPE_RIGHT:
+        return Messages.PlatformDeviceOrientation.LANDSCAPE_RIGHT;
+    }
+    return Messages.PlatformDeviceOrientation.PORTRAIT_UP;
+  }
+
+  /**
+   * Converts a FocusMode from the autofocus package to a PlatformFocusMode from Pigeon.
+   *
+   * @param focusMode A FocusMode.
+   * @return The corresponding PlatformFocusMode.
+   */
+  @NonNull
+  public static Messages.PlatformFocusMode focusModeToPigeon(@NonNull FocusMode focusMode) {
+    switch (focusMode) {
+      case auto:
+        return Messages.PlatformFocusMode.AUTO;
+      case locked:
+        return Messages.PlatformFocusMode.LOCKED;
+    }
+    return Messages.PlatformFocusMode.AUTO;
+  }
+
+  /**
+   * Converts an ExposureMode from the exposurelock package to a PlatformExposureMode from Pigeon.
+   *
+   * @param exposureMode An ExposureMode.
+   * @return The corresponding PlatformExposureMode.
+   */
+  @NonNull
+  public static Messages.PlatformExposureMode exposureModeToPigeon(
+      @NonNull ExposureMode exposureMode) {
+    switch (exposureMode) {
+      case auto:
+        return Messages.PlatformExposureMode.AUTO;
+      case locked:
+        return Messages.PlatformExposureMode.LOCKED;
+    }
+    return Messages.PlatformExposureMode.AUTO;
   }
 }

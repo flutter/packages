@@ -1,3 +1,7 @@
+## 0.10.9+14
+
+* Converts native to Dart platform calls to Pigeon.
+
 ## 0.10.9+13
 
 * Converts `getAvailableCameras` to Pigeon.
