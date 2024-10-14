@@ -135,22 +135,17 @@ To update a wrapper for a platform, follow the steps:
 * Android: Run `flutter build apk --debug` in `example/`.
 * iOS: Run `flutter build ios --simulator` in `example/`
 
-##### 2. Uncomment the multiline comments in the pigeon file
-
-* Android: `pigeons/interactive_media_ads_android.dart`
-* iOS: `pigeons/interactive_media_ads_ios.dart`
-
-##### 3. Make changes that match the native SDK
+##### 2. Make changes that match the native SDK
 
 * [Android SDK]
 * [iOS SDK]
 
-##### 4. Run the code generator from the terminal
+##### 3. Run the code generator from the terminal
 
 * Android: `dart run pigeon --input pigeons/interactive_media_ads_android.dart`
 * iOS: `dart run pigeon --input pigeons/interactive_media_ads_ios.dart`
 
-##### 5. Update the generated APIs in native code
+##### 4. Update the generated APIs in native code
 
 Running the `flutter build` step from step 1 again should provide build errors and indicate what
 needs to be done. Alternatively, it can be easier to update native code with the platform's specific
@@ -159,7 +154,7 @@ IDE:
 * Android: Open `example/android/` in a separate Android Studio project.
 * iOS: Open `example/ios/` in Xcode.
 
-##### 6. Write API tests
+##### 5. Write API tests
 
 Assuming a non-static method or constructor was added to the native wrapper, a native test will need
 to be added.
