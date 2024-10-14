@@ -228,7 +228,7 @@ class AndroidCamera extends CameraPlatform {
 
   @override
   Future<void> resumeVideoRecording(int cameraId) =>
-      _hostApi.resumePreview(cameraId);
+      _hostApi.resumeVideoRecording(cameraId);
 
   @override
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
