@@ -81,7 +81,6 @@ class PlatformPoint {
   final double y;
 }
 
-
 /// Pigeon equivalent of [ResolutionPreset].
 enum PlatformResolutionPreset {
   low,
@@ -92,10 +91,14 @@ enum PlatformResolutionPreset {
   max,
 }
 
-
 /// Pigeon equivalent of [MediaSettings].
 class PlatformMediaSettings {
-  PlatformMediaSettings({required this.resolutionPreset, required this.enableAudio, this.fps, this.videoBitrate, this.audioBitrate});
+  PlatformMediaSettings(
+      {required this.resolutionPreset,
+      required this.enableAudio,
+      this.fps,
+      this.videoBitrate,
+      this.audioBitrate});
   final PlatformResolutionPreset resolutionPreset;
   final int? fps;
   final int? videoBitrate;
@@ -135,7 +138,8 @@ abstract class CameraApi {
   void dispose(int cameraId);
 
   /// Locks the camera with the given ID to the given orientation.
-  void lockCaptureOrientation(int cameraId, PlatformDeviceOrientation orientation);
+  void lockCaptureOrientation(
+      int cameraId, PlatformDeviceOrientation orientation);
 
   /// Unlocks the orientation for the camera with the given ID.
   void unlockCaptureOrientation(int cameraId);
