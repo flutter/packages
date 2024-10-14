@@ -134,10 +134,6 @@ class Convert {
   /**
    * Creates a BitmapDescriptor object from bytes data.
    *
-   * <p>This method requires the `byteData` map to contain specific keys: 'byteData' for image
-   * bytes, 'bitmapScaling' for scaling mode, and 'imagePixelRatio' for scale ratio. It may
-   * optionally include 'width' and/or 'height' for explicit image dimensions.
-   *
    * @param bytesMap a [PlatformBitmapBytesMap] containing the byte data from which to construct a
    *     [BitmapDescriptor] and a bitmap scaling mode. The optional `width` affects scaling when
    *     `height` is `null`, and the optional `height` affects scaling when `width` is `null.
@@ -193,9 +189,9 @@ class Convert {
    * Creates a BitmapDescriptor object from asset, using given details and density.
    *
    * <p>This method processes an asset specified by name and applies scaling based on the provided
-   * parameters. The `assetDetails` map must contain the keys 'assetName', 'bitmapScaling', and
-   * 'imagePixelRatio', and may optionally include 'width' and/or 'height' to explicitly set the
-   * dimensions of the output image.
+   * parameters. The `assetMap` object provides the asset name, bitmap scaling mode, and image pixel
+   * ratio, and may optionally include 'width' and/or 'height' to explicitly set the dimensions of
+   * the output image.
    *
    * @param assetMap a [PlatformBitmapAssetMap] containing the asset name from which to construct a
    *     [BitmapDescriptor] and a bitmap scaling mode. The optional `width` affects scaling when
