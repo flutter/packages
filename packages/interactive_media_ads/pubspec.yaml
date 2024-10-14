@@ -31,7 +31,11 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon: ^22.4.2
+  pigeon:
+    git:
+      url: git@github.com:bparrishMines/packages.git
+      ref: pigeon_helper
+      path: packages/pigeon
 
 topics:
   - ads
