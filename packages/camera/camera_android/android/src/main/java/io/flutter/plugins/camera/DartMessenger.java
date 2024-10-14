@@ -95,6 +95,8 @@ public class DartMessenger {
     handler.post(() -> eventApi.closed(new NoOpVoidResult()));
   }
 
+  // TODO(schectman): Make `description` non-null, see
+  // https://github.com/flutter/flutter/issues/156729
   /**
    * Sends a message to the Flutter client informing that an error occurred while interacting with
    * the camera.
