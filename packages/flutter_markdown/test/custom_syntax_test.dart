@@ -412,9 +412,7 @@ class NoteSyntax extends md.BlockSyntax {
 
 class CustomTagBlockBuilder extends MarkdownElementBuilder {
   @override
-  bool isBlockElement() {
-    return true;
-  }
+  bool isBlockElement() => true;
 
   @override
   Widget visitElementAfterWithContext(
