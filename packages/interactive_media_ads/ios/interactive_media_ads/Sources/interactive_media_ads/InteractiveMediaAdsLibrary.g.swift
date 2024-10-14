@@ -31,7 +31,7 @@ final class PigeonError: Error {
   var localizedDescription: String {
     return
       "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
-      }
+  }
 }
 
 private func wrapResult(_ result: Any?) -> [Any?] {
@@ -61,7 +61,9 @@ private func wrapError(_ error: Any) -> [Any?] {
 }
 
 private func createConnectionError(withChannelName channelName: String) -> PigeonError {
-  return PigeonError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
+  return PigeonError(
+    code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
+    details: "")
 }
 
 private func isNullish(_ value: Any?) -> Bool {
@@ -78,7 +80,6 @@ protocol InteractiveMediaAdsLibraryPigeonInternalFinalizerDelegate: AnyObject {
   func onDeinit(identifier: Int64)
 }
 
-
 // Attaches to an object to receive a callback when the object is deallocated.
 internal final class InteractiveMediaAdsLibraryPigeonInternalFinalizer {
   private static let associatedObjectKey = malloc(1)!
@@ -88,15 +89,19 @@ internal final class InteractiveMediaAdsLibraryPigeonInternalFinalizer {
   // `InstanceManager` is deallocated.
   private weak var delegate: InteractiveMediaAdsLibraryPigeonInternalFinalizerDelegate?
 
-  private init(identifier: Int64, delegate: InteractiveMediaAdsLibraryPigeonInternalFinalizerDelegate) {
+  private init(
+    identifier: Int64, delegate: InteractiveMediaAdsLibraryPigeonInternalFinalizerDelegate
+  ) {
     self.identifier = identifier
     self.delegate = delegate
   }
 
   internal static func attach(
-    to instance: AnyObject, identifier: Int64, delegate: InteractiveMediaAdsLibraryPigeonInternalFinalizerDelegate
+    to instance: AnyObject, identifier: Int64,
+    delegate: InteractiveMediaAdsLibraryPigeonInternalFinalizerDelegate
   ) {
-    let finalizer = InteractiveMediaAdsLibraryPigeonInternalFinalizer(identifier: identifier, delegate: delegate)
+    let finalizer = InteractiveMediaAdsLibraryPigeonInternalFinalizer(
+      identifier: identifier, delegate: delegate)
     objc_setAssociatedObject(instance, associatedObjectKey, finalizer, .OBJC_ASSOCIATION_RETAIN)
   }
 
@@ -108,7 +113,6 @@ internal final class InteractiveMediaAdsLibraryPigeonInternalFinalizer {
     delegate?.onDeinit(identifier: identifier)
   }
 }
-
 
 /// Maintains instances used to communicate with the corresponding objects in Dart.
 ///
@@ -213,7 +217,8 @@ final class InteractiveMediaAdsLibraryPigeonInstanceManager {
     identifiers.setObject(NSNumber(value: identifier), forKey: instance)
     weakInstances.setObject(instance, forKey: NSNumber(value: identifier))
     strongInstances.setObject(instance, forKey: NSNumber(value: identifier))
-    InteractiveMediaAdsLibraryPigeonInternalFinalizer.attach(to: instance, identifier: identifier, delegate: finalizerDelegate)
+    InteractiveMediaAdsLibraryPigeonInternalFinalizer.attach(
+      to: instance, identifier: identifier, delegate: finalizerDelegate)
   }
 
   /// Retrieves the identifier paired with an instance.
@@ -290,7 +295,6 @@ final class InteractiveMediaAdsLibraryPigeonInstanceManager {
   }
 }
 
-
 private class InteractiveMediaAdsLibraryPigeonInstanceManagerApi {
   /// The codec used for serializing messages.
   var codec: FlutterStandardMessageCodec { InteractiveMediaAdsLibraryPigeonCodec.shared }
@@ -303,9 +307,15 @@ private class InteractiveMediaAdsLibraryPigeonInstanceManagerApi {
   }
 
   /// Sets up an instance of `InteractiveMediaAdsLibraryPigeonInstanceManagerApi` to handle messages through the `binaryMessenger`.
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, instanceManager: InteractiveMediaAdsLibraryPigeonInstanceManager?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger,
+    instanceManager: InteractiveMediaAdsLibraryPigeonInstanceManager?
+  ) {
     let codec = InteractiveMediaAdsLibraryPigeonCodec.shared
-    let removeStrongReferenceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManager.removeStrongReference", binaryMessenger: binaryMessenger, codec: codec)
+    let removeStrongReferenceChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManager.removeStrongReference",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       removeStrongReferenceChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -320,7 +330,9 @@ private class InteractiveMediaAdsLibraryPigeonInstanceManagerApi {
     } else {
       removeStrongReferenceChannel.setMessageHandler(nil)
     }
-    let clearChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManager.clear", binaryMessenger: binaryMessenger, codec: codec)
+    let clearChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManager.clear",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       clearChannel.setMessageHandler { _, reply in
         do {
@@ -336,9 +348,13 @@ private class InteractiveMediaAdsLibraryPigeonInstanceManagerApi {
   }
 
   /// Sends a message to the Dart `InstanceManager` to remove the strong reference of the instance associated with `identifier`.
-  func removeStrongReference(identifier identifierArg: Int64, completion: @escaping (Result<Void, PigeonError>) -> Void) {
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManager.removeStrongReference"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+  func removeStrongReference(
+    identifier identifierArg: Int64, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManager.removeStrongReference"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([identifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -358,68 +374,98 @@ private class InteractiveMediaAdsLibraryPigeonInstanceManagerApi {
 protocol InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
   /// An implementation of [PigeonApiIMAAdDisplayContainer] used to add a new Dart instance of
   /// `IMAAdDisplayContainer` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMAAdDisplayContainer(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAAdDisplayContainer
+  func pigeonApiIMAAdDisplayContainer(
+    _ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  ) -> PigeonApiIMAAdDisplayContainer
   /// An implementation of [PigeonApiUIView] used to add a new Dart instance of
   /// `UIView` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiUIView(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiUIView
+  func pigeonApiUIView(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiUIView
   /// An implementation of [PigeonApiUIViewController] used to add a new Dart instance of
   /// `UIViewController` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiUIViewController(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiUIViewController
+  func pigeonApiUIViewController(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiUIViewController
   /// An implementation of [PigeonApiIMAContentPlayhead] used to add a new Dart instance of
   /// `IMAContentPlayhead` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMAContentPlayhead(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAContentPlayhead
+  func pigeonApiIMAContentPlayhead(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAContentPlayhead
   /// An implementation of [PigeonApiIMAAdsLoader] used to add a new Dart instance of
   /// `IMAAdsLoader` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMAAdsLoader(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAAdsLoader
+  func pigeonApiIMAAdsLoader(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdsLoader
   /// An implementation of [PigeonApiIMASettings] used to add a new Dart instance of
   /// `IMASettings` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMASettings(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMASettings
+  func pigeonApiIMASettings(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMASettings
   /// An implementation of [PigeonApiIMAAdsRequest] used to add a new Dart instance of
   /// `IMAAdsRequest` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMAAdsRequest(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAAdsRequest
+  func pigeonApiIMAAdsRequest(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdsRequest
   /// An implementation of [PigeonApiIMAAdsLoaderDelegate] used to add a new Dart instance of
   /// `IMAAdsLoaderDelegate` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMAAdsLoaderDelegate(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAAdsLoaderDelegate
+  func pigeonApiIMAAdsLoaderDelegate(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdsLoaderDelegate
   /// An implementation of [PigeonApiIMAAdsLoadedData] used to add a new Dart instance of
   /// `IMAAdsLoadedData` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMAAdsLoadedData(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAAdsLoadedData
+  func pigeonApiIMAAdsLoadedData(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdsLoadedData
   /// An implementation of [PigeonApiIMAAdLoadingErrorData] used to add a new Dart instance of
   /// `IMAAdLoadingErrorData` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMAAdLoadingErrorData(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAAdLoadingErrorData
+  func pigeonApiIMAAdLoadingErrorData(
+    _ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  ) -> PigeonApiIMAAdLoadingErrorData
   /// An implementation of [PigeonApiIMAAdError] used to add a new Dart instance of
   /// `IMAAdError` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMAAdError(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAAdError
+  func pigeonApiIMAAdError(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdError
   /// An implementation of [PigeonApiIMAAdsManager] used to add a new Dart instance of
   /// `IMAAdsManager` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMAAdsManager(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAAdsManager
+  func pigeonApiIMAAdsManager(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdsManager
   /// An implementation of [PigeonApiIMAAdsManagerDelegate] used to add a new Dart instance of
   /// `IMAAdsManagerDelegate` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMAAdsManagerDelegate(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAAdsManagerDelegate
+  func pigeonApiIMAAdsManagerDelegate(
+    _ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  ) -> PigeonApiIMAAdsManagerDelegate
   /// An implementation of [PigeonApiIMAAdEvent] used to add a new Dart instance of
   /// `IMAAdEvent` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMAAdEvent(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAAdEvent
+  func pigeonApiIMAAdEvent(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdEvent
   /// An implementation of [PigeonApiIMAAdsRenderingSettings] used to add a new Dart instance of
   /// `IMAAdsRenderingSettings` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMAAdsRenderingSettings(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAAdsRenderingSettings
+  func pigeonApiIMAAdsRenderingSettings(
+    _ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  ) -> PigeonApiIMAAdsRenderingSettings
   /// An implementation of [PigeonApiNSObject] used to add a new Dart instance of
   /// `NSObject` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiNSObject(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiNSObject
+  func pigeonApiNSObject(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiNSObject
   /// An implementation of [PigeonApiIMAFriendlyObstruction] used to add a new Dart instance of
   /// `IMAFriendlyObstruction` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMAFriendlyObstruction(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAFriendlyObstruction
+  func pigeonApiIMAFriendlyObstruction(
+    _ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  ) -> PigeonApiIMAFriendlyObstruction
   /// An implementation of [PigeonApiIMACompanionAd] used to add a new Dart instance of
   /// `IMACompanionAd` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiIMACompanionAd(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMACompanionAd
+  func pigeonApiIMACompanionAd(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMACompanionAd
 }
 
 extension InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
-  func pigeonApiUIView(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiUIView {
+  func pigeonApiUIView(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiUIView
+  {
     return PigeonApiUIView(pigeonRegistrar: registrar, delegate: PigeonApiDelegateUIView())
   }
-  func pigeonApiIMASettings(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMASettings {
-    return PigeonApiIMASettings(pigeonRegistrar: registrar, delegate: PigeonApiDelegateIMASettings())
+  func pigeonApiIMASettings(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMASettings
+  {
+    return PigeonApiIMASettings(
+      pigeonRegistrar: registrar, delegate: PigeonApiDelegateIMASettings())
   }
-  func pigeonApiNSObject(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiNSObject {
+  func pigeonApiNSObject(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiNSObject
+  {
     return PigeonApiNSObject(pigeonRegistrar: registrar, delegate: PigeonApiDelegateNSObject())
   }
 }
@@ -434,12 +480,15 @@ open class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar {
   var codec: FlutterStandardMessageCodec {
     if _codec == nil {
       _codec = FlutterStandardMessageCodec(
-        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: self))
+        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: self))
     }
     return _codec!
   }
 
-  private class InstanceManagerApiFinalizerDelegate: InteractiveMediaAdsLibraryPigeonInternalFinalizerDelegate {
+  private class InstanceManagerApiFinalizerDelegate:
+    InteractiveMediaAdsLibraryPigeonInternalFinalizerDelegate
+  {
     let api: InteractiveMediaAdsLibraryPigeonInstanceManagerApi
 
     init(_ api: InteractiveMediaAdsLibraryPigeonInstanceManagerApi) {
@@ -453,7 +502,10 @@ open class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar {
     }
   }
 
-  init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate) {
+  init(
+    binaryMessenger: FlutterBinaryMessenger,
+    apiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate
+  ) {
     self.binaryMessenger = binaryMessenger
     self.apiDelegate = apiDelegate
     self.instanceManager = InteractiveMediaAdsLibraryPigeonInstanceManager(
@@ -462,20 +514,32 @@ open class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar {
   }
 
   func setUp() {
-    InteractiveMediaAdsLibraryPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: instanceManager)
-    PigeonApiIMAAdDisplayContainer.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdDisplayContainer(self))
-    PigeonApiUIViewController.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiUIViewController(self))
-    PigeonApiIMAContentPlayhead.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAContentPlayhead(self))
-    PigeonApiIMAAdsLoader.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsLoader(self))
-    PigeonApiIMAAdsRequest.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsRequest(self))
-    PigeonApiIMAAdsLoaderDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsLoaderDelegate(self))
-    PigeonApiIMAAdsManager.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsManager(self))
-    PigeonApiIMAAdsManagerDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsManagerDelegate(self))
-    PigeonApiIMAAdsRenderingSettings.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsRenderingSettings(self))
-    PigeonApiIMAFriendlyObstruction.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAFriendlyObstruction(self))
+    InteractiveMediaAdsLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, instanceManager: instanceManager)
+    PigeonApiIMAAdDisplayContainer.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdDisplayContainer(self))
+    PigeonApiUIViewController.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiUIViewController(self))
+    PigeonApiIMAContentPlayhead.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAContentPlayhead(self))
+    PigeonApiIMAAdsLoader.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsLoader(self))
+    PigeonApiIMAAdsRequest.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsRequest(self))
+    PigeonApiIMAAdsLoaderDelegate.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsLoaderDelegate(self))
+    PigeonApiIMAAdsManager.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsManager(self))
+    PigeonApiIMAAdsManagerDelegate.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsManagerDelegate(self))
+    PigeonApiIMAAdsRenderingSettings.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsRenderingSettings(self))
+    PigeonApiIMAFriendlyObstruction.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAFriendlyObstruction(self))
   }
   func tearDown() {
-    InteractiveMediaAdsLibraryPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)
+    InteractiveMediaAdsLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, instanceManager: nil)
     PigeonApiIMAAdDisplayContainer.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiUIViewController.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiIMAContentPlayhead.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
@@ -484,14 +548,19 @@ open class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar {
     PigeonApiIMAAdsLoaderDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiIMAAdsManager.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiIMAAdsManagerDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
-    PigeonApiIMAAdsRenderingSettings.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiIMAAdsRenderingSettings.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: nil)
     PigeonApiIMAFriendlyObstruction.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
   }
 }
-private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
+private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
+  FlutterStandardReaderWriter
+{
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
 
-  private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReader: InteractiveMediaAdsLibraryPigeonCodecReader {
+  private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReader:
+    InteractiveMediaAdsLibraryPigeonCodecReader
+  {
     unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
 
     init(data: Data, pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
@@ -512,7 +581,9 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
     }
   }
 
-  private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecWriter: InteractiveMediaAdsLibraryPigeonCodecWriter {
+  private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecWriter:
+    InteractiveMediaAdsLibraryPigeonCodecWriter
+  {
     unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
 
     init(data: NSMutableData, pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
@@ -521,22 +592,28 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
     }
 
     override func writeValue(_ value: Any) {
-      if value is [Any] || value is Bool || value is Data || value is [AnyHashable: Any] || value is Double || value is FlutterStandardTypedData || value is Int64 || value is String || value is AdErrorType || value is AdErrorCode || value is AdEventType || value is KeyValueObservingOptions || value is KeyValueChange || value is KeyValueChangeKey || value is FriendlyObstructionPurpose || value is UIElementType {
+      if value is [Any] || value is Bool || value is Data || value is [AnyHashable: Any]
+        || value is Double || value is FlutterStandardTypedData || value is Int64 || value is String
+        || value is AdErrorType || value is AdErrorCode || value is AdEventType
+        || value is KeyValueObservingOptions || value is KeyValueChange
+        || value is KeyValueChangeKey || value is FriendlyObstructionPurpose
+        || value is UIElementType
+      {
         super.writeValue(value)
         return
       }
 
-
       if let instance = value as? IMAAdDisplayContainer {
-        pigeonRegistrar.apiDelegate.pigeonApiIMAAdDisplayContainer(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiIMAAdDisplayContainer(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? UIView {
         pigeonRegistrar.apiDelegate.pigeonApiUIView(pigeonRegistrar).pigeonNewInstance(
@@ -544,10 +621,10 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? UIViewController {
         pigeonRegistrar.apiDelegate.pigeonApiUIViewController(pigeonRegistrar).pigeonNewInstance(
@@ -555,10 +632,10 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? IMAContentPlayhead {
         pigeonRegistrar.apiDelegate.pigeonApiIMAContentPlayhead(pigeonRegistrar).pigeonNewInstance(
@@ -566,10 +643,10 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? IMAAdsLoader {
         pigeonRegistrar.apiDelegate.pigeonApiIMAAdsLoader(pigeonRegistrar).pigeonNewInstance(
@@ -577,10 +654,10 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? IMASettings {
         pigeonRegistrar.apiDelegate.pigeonApiIMASettings(pigeonRegistrar).pigeonNewInstance(
@@ -588,10 +665,10 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? IMAAdsRequest {
         pigeonRegistrar.apiDelegate.pigeonApiIMAAdsRequest(pigeonRegistrar).pigeonNewInstance(
@@ -599,21 +676,22 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? IMAAdsLoaderDelegate {
-        pigeonRegistrar.apiDelegate.pigeonApiIMAAdsLoaderDelegate(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiIMAAdsLoaderDelegate(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? IMAAdsLoadedData {
         pigeonRegistrar.apiDelegate.pigeonApiIMAAdsLoadedData(pigeonRegistrar).pigeonNewInstance(
@@ -621,21 +699,22 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? IMAAdLoadingErrorData {
-        pigeonRegistrar.apiDelegate.pigeonApiIMAAdLoadingErrorData(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiIMAAdLoadingErrorData(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? IMAAdError {
         pigeonRegistrar.apiDelegate.pigeonApiIMAAdError(pigeonRegistrar).pigeonNewInstance(
@@ -643,10 +722,10 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? IMAAdsManager {
         pigeonRegistrar.apiDelegate.pigeonApiIMAAdsManager(pigeonRegistrar).pigeonNewInstance(
@@ -654,21 +733,22 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? IMAAdsManagerDelegate {
-        pigeonRegistrar.apiDelegate.pigeonApiIMAAdsManagerDelegate(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiIMAAdsManagerDelegate(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? IMAAdEvent {
         pigeonRegistrar.apiDelegate.pigeonApiIMAAdEvent(pigeonRegistrar).pigeonNewInstance(
@@ -676,32 +756,34 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? IMAAdsRenderingSettings {
-        pigeonRegistrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? IMAFriendlyObstruction {
-        pigeonRegistrar.apiDelegate.pigeonApiIMAFriendlyObstruction(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiIMAFriendlyObstruction(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? IMACompanionAd {
         pigeonRegistrar.apiDelegate.pigeonApiIMACompanionAd(pigeonRegistrar).pigeonNewInstance(
@@ -709,10 +791,10 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? NSObject {
         pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar).pigeonNewInstance(
@@ -720,19 +802,22 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
 
-
-      if let instance = value as AnyObject?, pigeonRegistrar.instanceManager.containsInstance(instance)
+      if let instance = value as AnyObject?,
+        pigeonRegistrar.instanceManager.containsInstance(instance)
       {
         super.writeByte(128)
         super.writeValue(
           pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
       } else {
         print("Unsupported value: \(value) of \(type(of: value))")
-        assert(false, "Unsupported value for InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecWriter")
+        assert(
+          false, "Unsupported value for InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecWriter"
+        )
       }
 
     }
@@ -743,11 +828,13 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
   }
 
   override func reader(with data: Data) -> FlutterStandardReader {
-    return InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReader(data: data, pigeonRegistrar: pigeonRegistrar)
+    return InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReader(
+      data: data, pigeonRegistrar: pigeonRegistrar)
   }
 
   override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecWriter(data: data, pigeonRegistrar: pigeonRegistrar)
+    return InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecWriter(
+      data: data, pigeonRegistrar: pigeonRegistrar)
   }
 }
 
@@ -1071,17 +1158,21 @@ private class InteractiveMediaAdsLibraryPigeonCodecReaderWriter: FlutterStandard
 }
 
 class InteractiveMediaAdsLibraryPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = InteractiveMediaAdsLibraryPigeonCodec(readerWriter: InteractiveMediaAdsLibraryPigeonCodecReaderWriter())
+  static let shared = InteractiveMediaAdsLibraryPigeonCodec(
+    readerWriter: InteractiveMediaAdsLibraryPigeonCodecReaderWriter())
 }
 
 protocol PigeonApiDelegateIMAAdDisplayContainer {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdDisplayContainer, adContainer: UIView, adContainerViewController: UIViewController?) throws -> IMAAdDisplayContainer
+  func pigeonDefaultConstructor(
+    pigeonApi: PigeonApiIMAAdDisplayContainer, adContainer: UIView,
+    adContainerViewController: UIViewController?
+  ) throws -> IMAAdDisplayContainer
 }
 
 protocol PigeonApiProtocolIMAAdDisplayContainer {
 }
 
-final class PigeonApiIMAAdDisplayContainer: PigeonApiProtocolIMAAdDisplayContainer  {
+final class PigeonApiIMAAdDisplayContainer: PigeonApiProtocolIMAAdDisplayContainer {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdDisplayContainer
   ///An implementation of [NSObject] used to access callback methods
@@ -1089,17 +1180,26 @@ final class PigeonApiIMAAdDisplayContainer: PigeonApiProtocolIMAAdDisplayContain
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMAAdDisplayContainer) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAAdDisplayContainer
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAAdDisplayContainer?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAAdDisplayContainer?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdDisplayContainer.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.interactive_media_ads.IMAAdDisplayContainer.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1108,8 +1208,10 @@ final class PigeonApiIMAAdDisplayContainer: PigeonApiProtocolIMAAdDisplayContain
         let adContainerViewControllerArg: UIViewController? = nilOrValue(args[2])
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, adContainer: adContainerArg, adContainerViewController: adContainerViewControllerArg),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(
+              pigeonApi: api, adContainer: adContainerArg,
+              adContainerViewController: adContainerViewControllerArg),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -1121,7 +1223,9 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of IMAAdDisplayContainer and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMAAdDisplayContainer, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMAAdDisplayContainer, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -1134,11 +1238,14 @@ withIdentifier: pigeonIdentifierArg)
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdDisplayContainer.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdDisplayContainer.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -1155,60 +1262,13 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import GoogleInteractiveMediaAds
-import UIKit
-
-
-/// ProxyApi implementation for [IMAAdDisplayContainer].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class AdDisplayContainerProxyAPIDelegate : PigeonApiDelegateIMAAdDisplayContainer {
-  func pigeon_defaultConstructor(pigeonApi: PigeonApiIMAAdDisplayContainer, adContainer: UIView, adContainerViewController: UIViewController?) throws -> IMAAdDisplayContainer {
-    return IMAAdDisplayContainer(,adContainer: adContainer, adContainerViewController: adContainerViewController)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import GoogleInteractiveMediaAds
-import UIKit
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class AdDisplayContainerProxyApiTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
-
-    let instance = try? api.pigeonDefaultConstructor(pigeonApi: api, adContainer: TestView, adContainerViewController: TestViewController)
-    XCTAssertNotNil(instance)
-  }
-
-}
-*/
-
 open class PigeonApiDelegateUIView {
 }
 
 protocol PigeonApiProtocolUIView {
 }
 
-final class PigeonApiUIView: PigeonApiProtocolUIView  {
+final class PigeonApiUIView: PigeonApiProtocolUIView {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateUIView
   ///An implementation of [NSObject] used to access callback methods
@@ -1216,12 +1276,17 @@ final class PigeonApiUIView: PigeonApiProtocolUIView  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateUIView) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateUIView
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of UIView and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: UIView, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: UIView, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -1234,11 +1299,13 @@ final class PigeonApiUIView: PigeonApiProtocolUIView  {
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String = "dev.flutter.pigeon.interactive_media_ads.UIView.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -1255,39 +1322,6 @@ final class PigeonApiUIView: PigeonApiProtocolUIView  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import UIKit
-
-
-/// ProxyApi implementation for [UIView].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ViewProxyAPIDelegate : PigeonApiDelegateUIView {
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import UIKit
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class ViewProxyApiTests: XCTestCase {
-}
-*/
-
 protocol PigeonApiDelegateUIViewController {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiUIViewController) throws -> UIViewController
   /// Retrieves the view that the controller manages.
@@ -1301,10 +1335,12 @@ protocol PigeonApiDelegateUIViewController {
 
 protocol PigeonApiProtocolUIViewController {
   /// Notifies the view controller that its view was added to a view hierarchy.
-  func viewDidAppear(pigeonInstance pigeonInstanceArg: UIViewController, animated animatedArg: Bool, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func viewDidAppear(
+    pigeonInstance pigeonInstanceArg: UIViewController, animated animatedArg: Bool,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 
-final class PigeonApiUIViewController: PigeonApiProtocolUIViewController  {
+final class PigeonApiUIViewController: PigeonApiProtocolUIViewController {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateUIViewController
   ///An implementation of [NSObject] used to access callback methods
@@ -1312,25 +1348,33 @@ final class PigeonApiUIViewController: PigeonApiProtocolUIViewController  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateUIViewController) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateUIViewController
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiUIViewController?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiUIViewController?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.UIViewController.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.UIViewController.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -1339,14 +1383,18 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       pigeonDefaultConstructorChannel.setMessageHandler(nil)
     }
-    let viewChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.UIViewController.view", binaryMessenger: binaryMessenger, codec: codec)
+    let viewChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.UIViewController.view",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       viewChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! UIViewController
         let pigeonIdentifierArg = args[1] as! Int64
         do {
-          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(try api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: pigeonInstanceArg), withIdentifier: pigeonIdentifierArg)
+          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+            try api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: pigeonInstanceArg),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -1358,7 +1406,9 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of UIViewController and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: UIViewController, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: UIViewController, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -1371,11 +1421,14 @@ withIdentifier: pigeonIdentifierArg)
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.UIViewController.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.UIViewController.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -1392,7 +1445,10 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
   /// Notifies the view controller that its view was added to a view hierarchy.
-  func viewDidAppear(pigeonInstance pigeonInstanceArg: UIViewController, animated animatedArg: Bool, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func viewDidAppear(
+    pigeonInstance pigeonInstanceArg: UIViewController, animated animatedArg: Bool,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -1403,8 +1459,10 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.UIViewController.viewDidAppear"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.UIViewController.viewDidAppear"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, animatedArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -1422,111 +1480,18 @@ withIdentifier: pigeonIdentifierArg)
   }
 
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import UIKit
-
-/// Implementation of `UIViewController` that calls to Dart in callback methods.
-class ViewControllerImpl: UIViewController {
-  let api: PigeonApiProtocolUIViewController
-
-  init(api: PigeonApiProtocolUIViewController) {
-    self.api = api
-  }
-
-  func fixMe() {
-    api.viewDidAppear(pigeonInstance: self, animated: animated) {  _ in }
-  }
-}
-
-/// ProxyApi implementation for [UIViewController].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ViewControllerProxyAPIDelegate : PigeonApiDelegateUIViewController {
-  func pigeon_defaultConstructor(pigeonApi: PigeonApiUIViewController) throws -> UIViewController {
-    return UIViewControllerImpl(api: pigeonApi)
-  }
-
-  func view(pigeonApi: PigeonApiUIViewController, pigeon_instance: UIViewController): UIView {
-    return pigeon_instance.view
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import UIKit
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class ViewControllerProxyApiTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewController(registrar)
-
-    let instance = try? api.pigeonDefaultConstructor(pigeonApi: api )
-    XCTAssertNotNil(instance)
-  }
-
-  func testView() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewController(registrar)
-
-    let instance = TestViewController()
-    let value = try? api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.view)
-  }
-
-  func testViewDidAppear() {
-    let api = TestViewControllerApi()
-    let instance = ViewControllerImpl(api: api)
-    let animated = true
-    instance.viewDidAppear(animated: animated)
-
-    XCTAssertEqual(api.viewDidAppearArgs, [animated])
-  }
-
-}
-class TestViewController: UIViewController {
-  private var viewTestValue = TestView
-
-  override var view: UIView {
-    return viewTestValue
-  }
-
-}
-class TestViewControllerApi: PigeonApiProtocolUIViewController {
-  var viewDidAppearArgs: [AnyHashable?]? = nil
-
-  func viewDidAppear(animated: Bool) throws {
-    viewDidAppearArgs = [animatedArg]
-  }
-}
-*/
-
 protocol PigeonApiDelegateIMAContentPlayhead {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAContentPlayhead) throws -> IMAContentPlayhead
   /// Reflects the current playback time in seconds for the content.
-  func setCurrentTime(pigeonApi: PigeonApiIMAContentPlayhead, pigeonInstance: IMAContentPlayhead, timeInterval: Double) throws
+  func setCurrentTime(
+    pigeonApi: PigeonApiIMAContentPlayhead, pigeonInstance: IMAContentPlayhead, timeInterval: Double
+  ) throws
 }
 
 protocol PigeonApiProtocolIMAContentPlayhead {
 }
 
-final class PigeonApiIMAContentPlayhead: PigeonApiProtocolIMAContentPlayhead  {
+final class PigeonApiIMAContentPlayhead: PigeonApiProtocolIMAContentPlayhead {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAContentPlayhead
   ///An implementation of [NSObject] used to access callback methods
@@ -1534,25 +1499,33 @@ final class PigeonApiIMAContentPlayhead: PigeonApiProtocolIMAContentPlayhead  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMAContentPlayhead) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAContentPlayhead
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAContentPlayhead?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAContentPlayhead?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAContentPlayhead.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAContentPlayhead.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -1561,14 +1534,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       pigeonDefaultConstructorChannel.setMessageHandler(nil)
     }
-    let setCurrentTimeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAContentPlayhead.setCurrentTime", binaryMessenger: binaryMessenger, codec: codec)
+    let setCurrentTimeChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAContentPlayhead.setCurrentTime",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setCurrentTimeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! IMAContentPlayhead
         let timeIntervalArg = args[1] as! Double
         do {
-          try api.pigeonDelegate.setCurrentTime(pigeonApi: api, pigeonInstance: pigeonInstanceArg, timeInterval: timeIntervalArg)
+          try api.pigeonDelegate.setCurrentTime(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, timeInterval: timeIntervalArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -1580,7 +1556,9 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of IMAContentPlayhead and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMAContentPlayhead, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMAContentPlayhead, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -1593,11 +1571,14 @@ withIdentifier: pigeonIdentifierArg)
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAContentPlayhead.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAContentPlayhead.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -1614,90 +1595,26 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for [IMAContentPlayhead].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ContentPlayheadProxyAPIDelegate : PigeonApiDelegateIMAContentPlayhead {
-  func pigeon_defaultConstructor(pigeonApi: PigeonApiIMAContentPlayhead) throws -> IMAContentPlayhead {
-    return IMAContentPlayhead()
-  }
-
-  func setCurrentTime(pigeonApi: PigeonApiIMAContentPlayhead, pigeonInstance: IMAContentPlayhead, timeInterval: Double) throws {
-    pigeonInstance.setCurrentTime(timeInterval: timeInterval)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class ContentPlayheadProxyApiTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAContentPlayhead(registrar)
-
-    let instance = try? api.pigeonDefaultConstructor(pigeonApi: api )
-    XCTAssertNotNil(instance)
-  }
-
-  func testSetCurrentTime() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAContentPlayhead(registrar)
-
-    let instance = TestContentPlayhead()
-    let timeInterval = 1.0
-    api.pigeonDelegate.setCurrentTime(pigeonApi: api, pigeonInstance: instance, timeInterval: timeInterval)
-
-    XCTAssertEqual(instance.setCurrentTimeArgs, [timeInterval])
-  }
-
-}
-class TestContentPlayhead: IMAContentPlayhead {
-  var setCurrentTimeArgs: [AnyHashable?]? = nil
-
-
-  override func setCurrentTime() {
-    setCurrentTimeArgs = [timeInterval]
-  }
-}
-*/
-
 protocol PigeonApiDelegateIMAAdsLoader {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsLoader, settings: IMASettings?) throws -> IMAAdsLoader
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsLoader, settings: IMASettings?) throws
+    -> IMAAdsLoader
   /// Signal to the SDK that the content has completed.
   func contentComplete(pigeonApi: PigeonApiIMAAdsLoader, pigeonInstance: IMAAdsLoader) throws
   /// Request ads from the ad server.
-  func requestAds(pigeonApi: PigeonApiIMAAdsLoader, pigeonInstance: IMAAdsLoader, request: IMAAdsRequest) throws
+  func requestAds(
+    pigeonApi: PigeonApiIMAAdsLoader, pigeonInstance: IMAAdsLoader, request: IMAAdsRequest) throws
   /// Delegate that receives `IMAAdsLoaderDelegate` callbacks.
   ///
   /// Note that this sets to a `weak` property in Swift.
-  func setDelegate(pigeonApi: PigeonApiIMAAdsLoader, pigeonInstance: IMAAdsLoader, delegate: IMAAdsLoaderDelegate?) throws
+  func setDelegate(
+    pigeonApi: PigeonApiIMAAdsLoader, pigeonInstance: IMAAdsLoader, delegate: IMAAdsLoaderDelegate?)
+    throws
 }
 
 protocol PigeonApiProtocolIMAAdsLoader {
 }
 
-final class PigeonApiIMAAdsLoader: PigeonApiProtocolIMAAdsLoader  {
+final class PigeonApiIMAAdsLoader: PigeonApiProtocolIMAAdsLoader {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdsLoader
   ///An implementation of [NSObject] used to access callback methods
@@ -1705,17 +1622,25 @@ final class PigeonApiIMAAdsLoader: PigeonApiProtocolIMAAdsLoader  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMAAdsLoader) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAAdsLoader
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAAdsLoader?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAAdsLoader?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoader.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoader.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1723,8 +1648,8 @@ final class PigeonApiIMAAdsLoader: PigeonApiProtocolIMAAdsLoader  {
         let settingsArg: IMASettings? = nilOrValue(args[1])
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, settings: settingsArg),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, settings: settingsArg),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -1733,7 +1658,9 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       pigeonDefaultConstructorChannel.setMessageHandler(nil)
     }
-    let contentCompleteChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoader.contentComplete", binaryMessenger: binaryMessenger, codec: codec)
+    let contentCompleteChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoader.contentComplete",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       contentCompleteChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1748,14 +1675,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       contentCompleteChannel.setMessageHandler(nil)
     }
-    let requestAdsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoader.requestAds", binaryMessenger: binaryMessenger, codec: codec)
+    let requestAdsChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoader.requestAds",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       requestAdsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! IMAAdsLoader
         let requestArg = args[1] as! IMAAdsRequest
         do {
-          try api.pigeonDelegate.requestAds(pigeonApi: api, pigeonInstance: pigeonInstanceArg, request: requestArg)
+          try api.pigeonDelegate.requestAds(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, request: requestArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -1764,14 +1694,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       requestAdsChannel.setMessageHandler(nil)
     }
-    let setDelegateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoader.setDelegate", binaryMessenger: binaryMessenger, codec: codec)
+    let setDelegateChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoader.setDelegate",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setDelegateChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! IMAAdsLoader
         let delegateArg: IMAAdsLoaderDelegate? = nilOrValue(args[1])
         do {
-          try api.pigeonDelegate.setDelegate(pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
+          try api.pigeonDelegate.setDelegate(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -1783,7 +1716,9 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of IMAAdsLoader and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMAAdsLoader, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMAAdsLoader, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -1796,11 +1731,14 @@ withIdentifier: pigeonIdentifierArg)
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoader.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoader.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -1817,118 +1755,13 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for [IMAAdsLoader].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class AdsLoaderProxyAPIDelegate : PigeonApiDelegateIMAAdsLoader {
-  func pigeon_defaultConstructor(pigeonApi: PigeonApiIMAAdsLoader, settings: IMASettings?) throws -> IMAAdsLoader {
-    return IMAAdsLoader(,settings: settings)
-  }
-
-  func contentComplete(pigeonApi: PigeonApiIMAAdsLoader, pigeonInstance: IMAAdsLoader) throws {
-    pigeonInstance.contentComplete()
-  }
-
-  func requestAds(pigeonApi: PigeonApiIMAAdsLoader, pigeonInstance: IMAAdsLoader, request: IMAAdsRequest) throws {
-    pigeonInstance.requestAds(request: request)
-  }
-
-  func setDelegate(pigeonApi: PigeonApiIMAAdsLoader, pigeonInstance: IMAAdsLoader, delegate: IMAAdsLoaderDelegate?) throws {
-    pigeonInstance.setDelegate(delegate: delegate)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class AdsLoaderProxyApiTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsLoader(registrar)
-
-    let instance = try? api.pigeonDefaultConstructor(pigeonApi: api, settings: TestSettings)
-    XCTAssertNotNil(instance)
-  }
-
-  func testContentComplete() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsLoader(registrar)
-
-    let instance = TestAdsLoader()
-    api.pigeonDelegate.contentComplete(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.contentCompleteCalled)
-  }
-
-  func testRequestAds() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsLoader(registrar)
-
-    let instance = TestAdsLoader()
-    let request = TestAdsRequest
-    api.pigeonDelegate.requestAds(pigeonApi: api, pigeonInstance: instance, request: request)
-
-    XCTAssertEqual(instance.requestAdsArgs, [request])
-  }
-
-  func testSetDelegate() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsLoader(registrar)
-
-    let instance = TestAdsLoader()
-    let delegate = TestAdsLoaderDelegate
-    api.pigeonDelegate.setDelegate(pigeonApi: api, pigeonInstance: instance, delegate: delegate)
-
-    XCTAssertEqual(instance.setDelegateArgs, [delegate])
-  }
-
-}
-class TestAdsLoader: IMAAdsLoader {
-  var contentCompleteCalled = false
-  var requestAdsArgs: [AnyHashable?]? = nil
-  var setDelegateArgs: [AnyHashable?]? = nil
-
-
-  override func contentComplete() {
-    contentCompleteCalled = true
-  }
-  override func requestAds() {
-    requestAdsArgs = [request]
-  }
-  override func setDelegate() {
-    setDelegateArgs = [delegate]
-  }
-}
-*/
-
 open class PigeonApiDelegateIMASettings {
 }
 
 protocol PigeonApiProtocolIMASettings {
 }
 
-final class PigeonApiIMASettings: PigeonApiProtocolIMASettings  {
+final class PigeonApiIMASettings: PigeonApiProtocolIMASettings {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMASettings
   ///An implementation of [NSObject] used to access callback methods
@@ -1936,12 +1769,17 @@ final class PigeonApiIMASettings: PigeonApiProtocolIMASettings  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMASettings) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMASettings
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of IMASettings and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMASettings, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMASettings, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -1954,11 +1792,14 @@ final class PigeonApiIMASettings: PigeonApiProtocolIMASettings  {
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMASettings.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMASettings.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -1975,49 +1816,19 @@ final class PigeonApiIMASettings: PigeonApiProtocolIMASettings  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for [IMASettings].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class SettingsProxyAPIDelegate : PigeonApiDelegateIMASettings {
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class SettingsProxyApiTests: XCTestCase {
-}
-*/
-
 protocol PigeonApiDelegateIMAAdsRequest {
   /// Initializes an ads request instance with the given ad tag URL and ad
   /// display container.
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsRequest, adTagUrl: String, adDisplayContainer: IMAAdDisplayContainer, contentPlayhead: IMAContentPlayhead?) throws -> IMAAdsRequest
+  func pigeonDefaultConstructor(
+    pigeonApi: PigeonApiIMAAdsRequest, adTagUrl: String, adDisplayContainer: IMAAdDisplayContainer,
+    contentPlayhead: IMAContentPlayhead?
+  ) throws -> IMAAdsRequest
 }
 
 protocol PigeonApiProtocolIMAAdsRequest {
 }
 
-final class PigeonApiIMAAdsRequest: PigeonApiProtocolIMAAdsRequest  {
+final class PigeonApiIMAAdsRequest: PigeonApiProtocolIMAAdsRequest {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdsRequest
   ///An implementation of [NSObject] used to access callback methods
@@ -2025,17 +1836,25 @@ final class PigeonApiIMAAdsRequest: PigeonApiProtocolIMAAdsRequest  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMAAdsRequest) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAAdsRequest
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAAdsRequest?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAAdsRequest?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -2045,8 +1864,10 @@ final class PigeonApiIMAAdsRequest: PigeonApiProtocolIMAAdsRequest  {
         let contentPlayheadArg: IMAContentPlayhead? = nilOrValue(args[3])
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, adTagUrl: adTagUrlArg, adDisplayContainer: adDisplayContainerArg, contentPlayhead: contentPlayheadArg),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(
+              pigeonApi: api, adTagUrl: adTagUrlArg, adDisplayContainer: adDisplayContainerArg,
+              contentPlayhead: contentPlayheadArg),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -2058,7 +1879,9 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of IMAAdsRequest and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMAAdsRequest, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMAAdsRequest, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -2071,11 +1894,14 @@ withIdentifier: pigeonIdentifierArg)
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -2092,63 +1918,25 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import GoogleInteractiveMediaAds
-
-
-/// ProxyApi implementation for [IMAAdsRequest].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class AdsRequestProxyAPIDelegate : PigeonApiDelegateIMAAdsRequest {
-  func pigeon_defaultConstructor(pigeonApi: PigeonApiIMAAdsRequest, adTagUrl: String, adDisplayContainer: IMAAdDisplayContainer, contentPlayhead: IMAContentPlayhead?) throws -> IMAAdsRequest {
-    return IMAAdsRequest(,adTagUrl: adTagUrl, adDisplayContainer: adDisplayContainer, contentPlayhead: contentPlayhead)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import GoogleInteractiveMediaAds
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class AdsRequestProxyApiTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
-
-    let instance = try? api.pigeonDefaultConstructor(pigeonApi: api, adTagUrl: "myString", adDisplayContainer: TestAdDisplayContainer, contentPlayhead: TestContentPlayhead)
-    XCTAssertNotNil(instance)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateIMAAdsLoaderDelegate {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsLoaderDelegate) throws -> IMAAdsLoaderDelegate
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsLoaderDelegate) throws
+    -> IMAAdsLoaderDelegate
 }
 
 protocol PigeonApiProtocolIMAAdsLoaderDelegate {
   /// Called when ads are successfully loaded from the ad servers by the loader.
-  func adLoaderLoadedWith(pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader, adsLoadedData adsLoadedDataArg: IMAAdsLoadedData, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func adLoaderLoadedWith(
+    pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader,
+    adsLoadedData adsLoadedDataArg: IMAAdsLoadedData,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Error reported by the ads loader when loading or requesting an ad fails.
-  func adsLoaderFailedWithErrorData(pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader, adErrorData adErrorDataArg: IMAAdLoadingErrorData, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func adsLoaderFailedWithErrorData(
+    pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader,
+    adErrorData adErrorDataArg: IMAAdLoadingErrorData,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 
-final class PigeonApiIMAAdsLoaderDelegate: PigeonApiProtocolIMAAdsLoaderDelegate  {
+final class PigeonApiIMAAdsLoaderDelegate: PigeonApiProtocolIMAAdsLoaderDelegate {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdsLoaderDelegate
   ///An implementation of [NSObject] used to access callback methods
@@ -2156,25 +1944,34 @@ final class PigeonApiIMAAdsLoaderDelegate: PigeonApiProtocolIMAAdsLoaderDelegate
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMAAdsLoaderDelegate) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAAdsLoaderDelegate
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAAdsLoaderDelegate?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAAdsLoaderDelegate?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoaderDelegate.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoaderDelegate.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -2186,7 +1983,9 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of IMAAdsLoaderDelegate and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMAAdsLoaderDelegate, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMAAdsLoaderDelegate, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -2199,10 +1998,16 @@ withIdentifier: pigeonIdentifierArg)
       completion(.success(Void()))
       return
     }
-    print("Error: Attempting to create a new Dart instance of IMAAdsLoaderDelegate, but the class has a nonnull callback method.")
+    print(
+      "Error: Attempting to create a new Dart instance of IMAAdsLoaderDelegate, but the class has a nonnull callback method."
+    )
   }
   /// Called when ads are successfully loaded from the ad servers by the loader.
-  func adLoaderLoadedWith(pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader, adsLoadedData adsLoadedDataArg: IMAAdsLoadedData, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func adLoaderLoadedWith(
+    pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader,
+    adsLoadedData adsLoadedDataArg: IMAAdsLoadedData,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -2213,8 +2018,10 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoaderDelegate.adLoaderLoadedWith"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoaderDelegate.adLoaderLoadedWith"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, loaderArg, adsLoadedDataArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -2232,7 +2039,11 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Error reported by the ads loader when loading or requesting an ad fails.
-  func adsLoaderFailedWithErrorData(pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader, adErrorData adErrorDataArg: IMAAdLoadingErrorData, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func adsLoaderFailedWithErrorData(
+    pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader,
+    adErrorData adErrorDataArg: IMAAdLoadingErrorData,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -2243,8 +2054,10 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoaderDelegate.adsLoaderFailedWithErrorData"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoaderDelegate.adsLoaderFailedWithErrorData"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, loaderArg, adErrorDataArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -2262,109 +2075,18 @@ withIdentifier: pigeonIdentifierArg)
   }
 
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-/// Implementation of `IMAAdsLoaderDelegate` that calls to Dart in callback methods.
-class AdsLoaderDelegateImpl: IMAAdsLoaderDelegate {
-  let api: PigeonApiProtocolIMAAdsLoaderDelegate
-
-  init(api: PigeonApiProtocolIMAAdsLoaderDelegate) {
-    self.api = api
-  }
-
-  func fixMe() {
-    api.adLoaderLoadedWith(pigeonInstance: self, loader: loader, adsLoadedData: adsLoadedData) {  _ in }
-  }
-
-  func fixMe() {
-    api.adsLoaderFailedWithErrorData(pigeonInstance: self, loader: loader, adErrorData: adErrorData) {  _ in }
-  }
-}
-
-/// ProxyApi implementation for [IMAAdsLoaderDelegate].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class AdsLoaderDelegateProxyAPIDelegate : PigeonApiDelegateIMAAdsLoaderDelegate {
-  func pigeon_defaultConstructor(pigeonApi: PigeonApiIMAAdsLoaderDelegate) throws -> IMAAdsLoaderDelegate {
-    return IMAAdsLoaderDelegateImpl(api: pigeonApi)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class AdsLoaderDelegateProxyApiTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsLoaderDelegate(registrar)
-
-    let instance = try? api.pigeonDefaultConstructor(pigeonApi: api )
-    XCTAssertNotNil(instance)
-  }
-
-  func testAdLoaderLoadedWith() {
-    let api = TestAdsLoaderDelegateApi()
-    let instance = AdsLoaderDelegateImpl(api: api)
-    let loader = TestAdsLoader
-    let adsLoadedData = TestAdsLoadedData
-    instance.adLoaderLoadedWith(loader: loader, adsLoadedData: adsLoadedData)
-
-    XCTAssertEqual(api.adLoaderLoadedWithArgs, [loader, adsLoadedData])
-  }
-
-  func testAdsLoaderFailedWithErrorData() {
-    let api = TestAdsLoaderDelegateApi()
-    let instance = AdsLoaderDelegateImpl(api: api)
-    let loader = TestAdsLoader
-    let adErrorData = TestAdLoadingErrorData
-    instance.adsLoaderFailedWithErrorData(loader: loader, adErrorData: adErrorData)
-
-    XCTAssertEqual(api.adsLoaderFailedWithErrorDataArgs, [loader, adErrorData])
-  }
-
-}
-class TestAdsLoaderDelegateApi: PigeonApiProtocolIMAAdsLoaderDelegate {
-  var adLoaderLoadedWithArgs: [AnyHashable?]? = nil
-  var adsLoaderFailedWithErrorDataArgs: [AnyHashable?]? = nil
-
-  func adLoaderLoadedWith(loader: IMAAdsLoader, adsLoadedData: IMAAdsLoadedData) throws {
-    adLoaderLoadedWithArgs = [loaderArg, adsLoadedDataArg]
-  }
-  func adsLoaderFailedWithErrorData(loader: IMAAdsLoader, adErrorData: IMAAdLoadingErrorData) throws {
-    adsLoaderFailedWithErrorDataArgs = [loaderArg, adErrorDataArg]
-  }
-}
-*/
-
 protocol PigeonApiDelegateIMAAdsLoadedData {
   /// The ads manager instance created by the ads loader.
   ///
   /// Will be null when using dynamic ad insertion.
-  func adsManager(pigeonApi: PigeonApiIMAAdsLoadedData, pigeonInstance: IMAAdsLoadedData) throws -> IMAAdsManager?
+  func adsManager(pigeonApi: PigeonApiIMAAdsLoadedData, pigeonInstance: IMAAdsLoadedData) throws
+    -> IMAAdsManager?
 }
 
 protocol PigeonApiProtocolIMAAdsLoadedData {
 }
 
-final class PigeonApiIMAAdsLoadedData: PigeonApiProtocolIMAAdsLoadedData  {
+final class PigeonApiIMAAdsLoadedData: PigeonApiProtocolIMAAdsLoadedData {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdsLoadedData
   ///An implementation of [NSObject] used to access callback methods
@@ -2372,12 +2094,17 @@ final class PigeonApiIMAAdsLoadedData: PigeonApiProtocolIMAAdsLoadedData  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMAAdsLoadedData) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAAdsLoadedData
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of IMAAdsLoadedData and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMAAdsLoadedData, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMAAdsLoadedData, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -2390,12 +2117,16 @@ final class PigeonApiIMAAdsLoadedData: PigeonApiProtocolIMAAdsLoadedData  {
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
-    let adsManagerArg = try! pigeonDelegate.adsManager(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
+    let adsManagerArg = try! pigeonDelegate.adsManager(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoadedData.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdsLoadedData.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg, adsManagerArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -2412,62 +2143,16 @@ final class PigeonApiIMAAdsLoadedData: PigeonApiProtocolIMAAdsLoadedData  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for [IMAAdsLoadedData].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class AdsLoadedDataProxyAPIDelegate : PigeonApiDelegateIMAAdsLoadedData {
-  func adsManager(pigeonApi: PigeonApiIMAAdsLoadedData, pigeonInstance: IMAAdsLoadedData) throws -> IMAAdsManager? {
-    return pigeon_instance.adsManager
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class AdsLoadedDataProxyApiTests: XCTestCase {
-  func testAdsManager() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsLoadedData(registrar)
-
-    let instance = TestAdsLoadedData()
-    let value = try? api.pigeonDelegate.adsManager(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.adsManager)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateIMAAdLoadingErrorData {
   /// The ad error that occurred while loading the ad.
-  func adError(pigeonApi: PigeonApiIMAAdLoadingErrorData, pigeonInstance: IMAAdLoadingErrorData) throws -> IMAAdError
+  func adError(pigeonApi: PigeonApiIMAAdLoadingErrorData, pigeonInstance: IMAAdLoadingErrorData)
+    throws -> IMAAdError
 }
 
 protocol PigeonApiProtocolIMAAdLoadingErrorData {
 }
 
-final class PigeonApiIMAAdLoadingErrorData: PigeonApiProtocolIMAAdLoadingErrorData  {
+final class PigeonApiIMAAdLoadingErrorData: PigeonApiProtocolIMAAdLoadingErrorData {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdLoadingErrorData
   ///An implementation of [NSObject] used to access callback methods
@@ -2475,12 +2160,17 @@ final class PigeonApiIMAAdLoadingErrorData: PigeonApiProtocolIMAAdLoadingErrorDa
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMAAdLoadingErrorData) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAAdLoadingErrorData
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of IMAAdLoadingErrorData and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMAAdLoadingErrorData, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMAAdLoadingErrorData, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -2493,12 +2183,15 @@ final class PigeonApiIMAAdLoadingErrorData: PigeonApiProtocolIMAAdLoadingErrorDa
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let adErrorArg = try! pigeonDelegate.adError(pigeonApi: self, pigeonInstance: pigeonInstance)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdLoadingErrorData.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdLoadingErrorData.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg, adErrorArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -2515,53 +2208,6 @@ final class PigeonApiIMAAdLoadingErrorData: PigeonApiProtocolIMAAdLoadingErrorDa
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for [IMAAdLoadingErrorData].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class AdLoadingErrorDataProxyAPIDelegate : PigeonApiDelegateIMAAdLoadingErrorData {
-  func adError(pigeonApi: PigeonApiIMAAdLoadingErrorData, pigeonInstance: IMAAdLoadingErrorData) throws -> IMAAdError {
-    return pigeon_instance.adError
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class AdLoadingErrorDataProxyApiTests: XCTestCase {
-  func testAdError() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdLoadingErrorData(registrar)
-
-    let instance = TestAdLoadingErrorData()
-    let value = try? api.pigeonDelegate.adError(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.adError)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateIMAAdError {
   /// The type of error that occurred during ad loading or ad playing.
   func type(pigeonApi: PigeonApiIMAAdError, pigeonInstance: IMAAdError) throws -> AdErrorType
@@ -2574,7 +2220,7 @@ protocol PigeonApiDelegateIMAAdError {
 protocol PigeonApiProtocolIMAAdError {
 }
 
-final class PigeonApiIMAAdError: PigeonApiProtocolIMAAdError  {
+final class PigeonApiIMAAdError: PigeonApiProtocolIMAAdError {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdError
   ///An implementation of [NSObject] used to access callback methods
@@ -2582,12 +2228,17 @@ final class PigeonApiIMAAdError: PigeonApiProtocolIMAAdError  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMAAdError) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAAdError
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of IMAAdError and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMAAdError, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMAAdError, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -2600,14 +2251,17 @@ final class PigeonApiIMAAdError: PigeonApiProtocolIMAAdError  {
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let typeArg = try! pigeonDelegate.type(pigeonApi: self, pigeonInstance: pigeonInstance)
     let codeArg = try! pigeonDelegate.code(pigeonApi: self, pigeonInstance: pigeonInstance)
     let messageArg = try! pigeonDelegate.message(pigeonApi: self, pigeonInstance: pigeonInstance)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdError.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdError.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg, typeArg, codeArg, messageArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -2624,146 +2278,15 @@ final class PigeonApiIMAAdError: PigeonApiProtocolIMAAdError  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for [IMAAdError].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class AdErrorProxyAPIDelegate : PigeonApiDelegateIMAAdError {
-  func type(pigeonApi: PigeonApiIMAAdError, pigeonInstance: IMAAdError) throws -> AdErrorType {
-    switch pigeon_instance.type {
-      case .loadingFailed
-        return .loadingFailed
-            case .adPlayingFailed
-        return .adPlayingFailed
-            @unknown default:
-        return .unknown
-      
-    }
-  }
-
-  func code(pigeonApi: PigeonApiIMAAdError, pigeonInstance: IMAAdError) throws -> AdErrorCode {
-    switch pigeon_instance.code {
-      case .adslotNotVisible
-        return .adslotNotVisible
-            case .apiError
-        return .apiError
-            case .companionAdLoadingFailed
-        return .companionAdLoadingFailed
-            case .contentPlayheadMissing
-        return .contentPlayheadMissing
-            case .failedLoadingAd
-        return .failedLoadingAd
-            case .failedToRequestAds
-        return .failedToRequestAds
-            case .invalidArguments
-        return .invalidArguments
-            case .osRuntimeTooOld
-        return .osRuntimeTooOld
-            case .playlistMalformedResponse
-        return .playlistMalformedResponse
-            case .requiredListenersNotAdded
-        return .requiredListenersNotAdded
-            case .streamInitializationFailed
-        return .streamInitializationFailed
-            case .unknownError
-        return .unknownError
-            case .vastAssetNotFound
-        return .vastAssetNotFound
-            case .vastEmptyResponse
-        return .vastEmptyResponse
-            case .vastInvalidUrl
-        return .vastInvalidUrl
-            case .vastLinearAssetMismatch
-        return .vastLinearAssetMismatch
-            case .vastLoadTimeout
-        return .vastLoadTimeout
-            case .vastMalformedResponse
-        return .vastMalformedResponse
-            case .vastMediaLoadTimeout
-        return .vastMediaLoadTimeout
-            case .vastTooManyRedirects
-        return .vastTooManyRedirects
-            case .vastTraffickingError
-        return .vastTraffickingError
-            case .videoElementUsed
-        return .videoElementUsed
-            case .videoElementRequired
-        return .videoElementRequired
-            case .videoPlayError
-        return .videoPlayError
-            @unknown default:
-        return .unknown
-      
-    }
-  }
-
-  func message(pigeonApi: PigeonApiIMAAdError, pigeonInstance: IMAAdError) throws -> String? {
-    return pigeon_instance.message
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class AdErrorProxyApiTests: XCTestCase {
-  func testType() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdError(registrar)
-
-    let instance = TestAdError()
-    let value = try? api.pigeonDelegate.type(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.type)
-  }
-
-  func testCode() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdError(registrar)
-
-    let instance = TestAdError()
-    let value = try? api.pigeonDelegate.code(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.code)
-  }
-
-  func testMessage() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdError(registrar)
-
-    let instance = TestAdError()
-    let value = try? api.pigeonDelegate.message(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.message)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateIMAAdsManager {
   /// The `IMAAdsManagerDelegate` to notify with events during ad playback.
-  func setDelegate(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager, delegate: IMAAdsManagerDelegate?) throws
+  func setDelegate(
+    pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager,
+    delegate: IMAAdsManagerDelegate?) throws
   /// Initializes and loads the ad.
-  func initialize(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager, adsRenderingSettings: IMAAdsRenderingSettings?) throws
+  func initialize(
+    pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager,
+    adsRenderingSettings: IMAAdsRenderingSettings?) throws
   /// Starts advertisement playback.
   func start(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws
   /// Pauses advertisement.
@@ -2782,7 +2305,7 @@ protocol PigeonApiDelegateIMAAdsManager {
 protocol PigeonApiProtocolIMAAdsManager {
 }
 
-final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager  {
+final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdsManager
   ///An implementation of [NSObject] used to access callback methods
@@ -2790,24 +2313,33 @@ final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMAAdsManager) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAAdsManager
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAAdsManager?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAAdsManager?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let setDelegateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.setDelegate", binaryMessenger: binaryMessenger, codec: codec)
+    let setDelegateChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.setDelegate",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setDelegateChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! IMAAdsManager
         let delegateArg: IMAAdsManagerDelegate? = nilOrValue(args[1])
         do {
-          try api.pigeonDelegate.setDelegate(pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
+          try api.pigeonDelegate.setDelegate(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -2816,14 +2348,18 @@ final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager  {
     } else {
       setDelegateChannel.setMessageHandler(nil)
     }
-    let initializeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.initialize", binaryMessenger: binaryMessenger, codec: codec)
+    let initializeChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.initialize",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       initializeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! IMAAdsManager
         let adsRenderingSettingsArg: IMAAdsRenderingSettings? = nilOrValue(args[1])
         do {
-          try api.pigeonDelegate.initialize(pigeonApi: api, pigeonInstance: pigeonInstanceArg, adsRenderingSettings: adsRenderingSettingsArg)
+          try api.pigeonDelegate.initialize(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg,
+            adsRenderingSettings: adsRenderingSettingsArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -2832,7 +2368,9 @@ final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager  {
     } else {
       initializeChannel.setMessageHandler(nil)
     }
-    let startChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.start", binaryMessenger: binaryMessenger, codec: codec)
+    let startChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.start",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       startChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -2847,7 +2385,9 @@ final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager  {
     } else {
       startChannel.setMessageHandler(nil)
     }
-    let pauseChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.pause", binaryMessenger: binaryMessenger, codec: codec)
+    let pauseChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.pause",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pauseChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -2862,7 +2402,9 @@ final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager  {
     } else {
       pauseChannel.setMessageHandler(nil)
     }
-    let resumeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.resume", binaryMessenger: binaryMessenger, codec: codec)
+    let resumeChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.resume",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       resumeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -2877,7 +2419,9 @@ final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager  {
     } else {
       resumeChannel.setMessageHandler(nil)
     }
-    let skipChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.skip", binaryMessenger: binaryMessenger, codec: codec)
+    let skipChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.skip",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       skipChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -2892,7 +2436,9 @@ final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager  {
     } else {
       skipChannel.setMessageHandler(nil)
     }
-    let discardAdBreakChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.discardAdBreak", binaryMessenger: binaryMessenger, codec: codec)
+    let discardAdBreakChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.discardAdBreak",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       discardAdBreakChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -2907,7 +2453,9 @@ final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager  {
     } else {
       discardAdBreakChannel.setMessageHandler(nil)
     }
-    let destroyChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.destroy", binaryMessenger: binaryMessenger, codec: codec)
+    let destroyChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.destroy",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       destroyChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -2925,7 +2473,9 @@ final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager  {
   }
 
   ///Creates a Dart instance of IMAAdsManager and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMAAdsManager, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMAAdsManager, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -2938,11 +2488,14 @@ final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager  {
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -2959,205 +2512,35 @@ final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for [IMAAdsManager].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class AdsManagerProxyAPIDelegate : PigeonApiDelegateIMAAdsManager {
-  func setDelegate(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager, delegate: IMAAdsManagerDelegate?) throws {
-    pigeonInstance.setDelegate(delegate: delegate)
-  }
-
-  func initialize(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager, adsRenderingSettings: IMAAdsRenderingSettings?) throws {
-    pigeonInstance.initialize(adsRenderingSettings: adsRenderingSettings)
-  }
-
-  func start(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws {
-    pigeonInstance.start()
-  }
-
-  func pause(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws {
-    pigeonInstance.pause()
-  }
-
-  func resume(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws {
-    pigeonInstance.resume()
-  }
-
-  func skip(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws {
-    pigeonInstance.skip()
-  }
-
-  func discardAdBreak(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws {
-    pigeonInstance.discardAdBreak()
-  }
-
-  func destroy(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws {
-    pigeonInstance.destroy()
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class AdsManagerProxyApiTests: XCTestCase {
-  func testSetDelegate() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
-
-    let instance = TestAdsManager()
-    let delegate = TestAdsManagerDelegate
-    api.pigeonDelegate.setDelegate(pigeonApi: api, pigeonInstance: instance, delegate: delegate)
-
-    XCTAssertEqual(instance.setDelegateArgs, [delegate])
-  }
-
-  func testInitialize() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
-
-    let instance = TestAdsManager()
-    let adsRenderingSettings = TestAdsRenderingSettings
-    api.pigeonDelegate.initialize(pigeonApi: api, pigeonInstance: instance, adsRenderingSettings: adsRenderingSettings)
-
-    XCTAssertEqual(instance.initializeArgs, [adsRenderingSettings])
-  }
-
-  func testStart() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
-
-    let instance = TestAdsManager()
-    api.pigeonDelegate.start(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.startCalled)
-  }
-
-  func testPause() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
-
-    let instance = TestAdsManager()
-    api.pigeonDelegate.pause(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.pauseCalled)
-  }
-
-  func testResume() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
-
-    let instance = TestAdsManager()
-    api.pigeonDelegate.resume(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.resumeCalled)
-  }
-
-  func testSkip() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
-
-    let instance = TestAdsManager()
-    api.pigeonDelegate.skip(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.skipCalled)
-  }
-
-  func testDiscardAdBreak() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
-
-    let instance = TestAdsManager()
-    api.pigeonDelegate.discardAdBreak(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.discardAdBreakCalled)
-  }
-
-  func testDestroy() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
-
-    let instance = TestAdsManager()
-    api.pigeonDelegate.destroy(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.destroyCalled)
-  }
-
-}
-class TestAdsManager: IMAAdsManager {
-  var setDelegateArgs: [AnyHashable?]? = nil
-  var initializeArgs: [AnyHashable?]? = nil
-  var startCalled = false
-  var pauseCalled = false
-  var resumeCalled = false
-  var skipCalled = false
-  var discardAdBreakCalled = false
-  var destroyCalled = false
-
-
-  override func setDelegate() {
-    setDelegateArgs = [delegate]
-  }
-  override func initialize() {
-    initializeArgs = [adsRenderingSettings]
-  }
-  override func start() {
-    startCalled = true
-  }
-  override func pause() {
-    pauseCalled = true
-  }
-  override func resume() {
-    resumeCalled = true
-  }
-  override func skip() {
-    skipCalled = true
-  }
-  override func discardAdBreak() {
-    discardAdBreakCalled = true
-  }
-  override func destroy() {
-    destroyCalled = true
-  }
-}
-*/
-
 protocol PigeonApiDelegateIMAAdsManagerDelegate {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsManagerDelegate) throws -> IMAAdsManagerDelegate
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsManagerDelegate) throws
+    -> IMAAdsManagerDelegate
 }
 
 protocol PigeonApiProtocolIMAAdsManagerDelegate {
   /// Called when there is an IMAAdEvent.
-  func didReceiveAdEvent(pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate, adsManager adsManagerArg: IMAAdsManager, event eventArg: IMAAdEvent, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func didReceiveAdEvent(
+    pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate,
+    adsManager adsManagerArg: IMAAdsManager, event eventArg: IMAAdEvent,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Called when there was an error playing the ad.
-  func didReceiveAdError(pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate, adsManager adsManagerArg: IMAAdsManager, error errorArg: IMAAdError, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func didReceiveAdError(
+    pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate,
+    adsManager adsManagerArg: IMAAdsManager, error errorArg: IMAAdError,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Called when an ad is ready to play.
-  func didRequestContentPause(pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate, adsManager adsManagerArg: IMAAdsManager, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func didRequestContentPause(
+    pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate,
+    adsManager adsManagerArg: IMAAdsManager,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Called when an ad has finished or an error occurred during the playback.
-  func didRequestContentResume(pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate, adsManager adsManagerArg: IMAAdsManager, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func didRequestContentResume(
+    pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate,
+    adsManager adsManagerArg: IMAAdsManager,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 
-final class PigeonApiIMAAdsManagerDelegate: PigeonApiProtocolIMAAdsManagerDelegate  {
+final class PigeonApiIMAAdsManagerDelegate: PigeonApiProtocolIMAAdsManagerDelegate {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdsManagerDelegate
   ///An implementation of [NSObject] used to access callback methods
@@ -3165,25 +2548,34 @@ final class PigeonApiIMAAdsManagerDelegate: PigeonApiProtocolIMAAdsManagerDelega
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMAAdsManagerDelegate) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAAdsManagerDelegate
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAAdsManagerDelegate?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAAdsManagerDelegate?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManagerDelegate.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.interactive_media_ads.IMAAdsManagerDelegate.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -3195,7 +2587,9 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of IMAAdsManagerDelegate and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMAAdsManagerDelegate, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMAAdsManagerDelegate, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -3208,10 +2602,16 @@ withIdentifier: pigeonIdentifierArg)
       completion(.success(Void()))
       return
     }
-    print("Error: Attempting to create a new Dart instance of IMAAdsManagerDelegate, but the class has a nonnull callback method.")
+    print(
+      "Error: Attempting to create a new Dart instance of IMAAdsManagerDelegate, but the class has a nonnull callback method."
+    )
   }
   /// Called when there is an IMAAdEvent.
-  func didReceiveAdEvent(pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate, adsManager adsManagerArg: IMAAdsManager, event eventArg: IMAAdEvent, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func didReceiveAdEvent(
+    pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate,
+    adsManager adsManagerArg: IMAAdsManager, event eventArg: IMAAdEvent,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -3222,8 +2622,10 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdsManagerDelegate.didReceiveAdEvent"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdsManagerDelegate.didReceiveAdEvent"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, adsManagerArg, eventArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3241,7 +2643,11 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Called when there was an error playing the ad.
-  func didReceiveAdError(pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate, adsManager adsManagerArg: IMAAdsManager, error errorArg: IMAAdError, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func didReceiveAdError(
+    pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate,
+    adsManager adsManagerArg: IMAAdsManager, error errorArg: IMAAdError,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -3252,8 +2658,10 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdsManagerDelegate.didReceiveAdError"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdsManagerDelegate.didReceiveAdError"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, adsManagerArg, errorArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3271,7 +2679,11 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Called when an ad is ready to play.
-  func didRequestContentPause(pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate, adsManager adsManagerArg: IMAAdsManager, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func didRequestContentPause(
+    pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate,
+    adsManager adsManagerArg: IMAAdsManager,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -3282,8 +2694,10 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdsManagerDelegate.didRequestContentPause"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdsManagerDelegate.didRequestContentPause"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, adsManagerArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3301,7 +2715,11 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Called when an ad has finished or an error occurred during the playback.
-  func didRequestContentResume(pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate, adsManager adsManagerArg: IMAAdsManager, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func didRequestContentResume(
+    pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate,
+    adsManager adsManagerArg: IMAAdsManager,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -3312,8 +2730,10 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdsManagerDelegate.didRequestContentResume"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdsManagerDelegate.didRequestContentResume"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, adsManagerArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3331,132 +2751,6 @@ withIdentifier: pigeonIdentifierArg)
   }
 
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-/// Implementation of `IMAAdsManagerDelegate` that calls to Dart in callback methods.
-class AdsManagerDelegateImpl: IMAAdsManagerDelegate {
-  let api: PigeonApiProtocolIMAAdsManagerDelegate
-
-  init(api: PigeonApiProtocolIMAAdsManagerDelegate) {
-    self.api = api
-  }
-
-  func fixMe() {
-    api.didReceiveAdEvent(pigeonInstance: self, adsManager: adsManager, event: event) {  _ in }
-  }
-
-  func fixMe() {
-    api.didReceiveAdError(pigeonInstance: self, adsManager: adsManager, error: error) {  _ in }
-  }
-
-  func fixMe() {
-    api.didRequestContentPause(pigeonInstance: self, adsManager: adsManager) {  _ in }
-  }
-
-  func fixMe() {
-    api.didRequestContentResume(pigeonInstance: self, adsManager: adsManager) {  _ in }
-  }
-}
-
-/// ProxyApi implementation for [IMAAdsManagerDelegate].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class AdsManagerDelegateProxyAPIDelegate : PigeonApiDelegateIMAAdsManagerDelegate {
-  func pigeon_defaultConstructor(pigeonApi: PigeonApiIMAAdsManagerDelegate) throws -> IMAAdsManagerDelegate {
-    return IMAAdsManagerDelegateImpl(api: pigeonApi)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class AdsManagerDelegateProxyApiTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsManagerDelegate(registrar)
-
-    let instance = try? api.pigeonDefaultConstructor(pigeonApi: api )
-    XCTAssertNotNil(instance)
-  }
-
-  func testDidReceiveAdEvent() {
-    let api = TestAdsManagerDelegateApi()
-    let instance = AdsManagerDelegateImpl(api: api)
-    let adsManager = TestAdsManager
-    let event = TestAdEvent
-    instance.didReceiveAdEvent(adsManager: adsManager, event: event)
-
-    XCTAssertEqual(api.didReceiveAdEventArgs, [adsManager, event])
-  }
-
-  func testDidReceiveAdError() {
-    let api = TestAdsManagerDelegateApi()
-    let instance = AdsManagerDelegateImpl(api: api)
-    let adsManager = TestAdsManager
-    let error = TestAdError
-    instance.didReceiveAdError(adsManager: adsManager, error: error)
-
-    XCTAssertEqual(api.didReceiveAdErrorArgs, [adsManager, error])
-  }
-
-  func testDidRequestContentPause() {
-    let api = TestAdsManagerDelegateApi()
-    let instance = AdsManagerDelegateImpl(api: api)
-    let adsManager = TestAdsManager
-    instance.didRequestContentPause(adsManager: adsManager)
-
-    XCTAssertEqual(api.didRequestContentPauseArgs, [adsManager])
-  }
-
-  func testDidRequestContentResume() {
-    let api = TestAdsManagerDelegateApi()
-    let instance = AdsManagerDelegateImpl(api: api)
-    let adsManager = TestAdsManager
-    instance.didRequestContentResume(adsManager: adsManager)
-
-    XCTAssertEqual(api.didRequestContentResumeArgs, [adsManager])
-  }
-
-}
-class TestAdsManagerDelegateApi: PigeonApiProtocolIMAAdsManagerDelegate {
-  var didReceiveAdEventArgs: [AnyHashable?]? = nil
-  var didReceiveAdErrorArgs: [AnyHashable?]? = nil
-  var didRequestContentPauseArgs: [AnyHashable?]? = nil
-  var didRequestContentResumeArgs: [AnyHashable?]? = nil
-
-  func didReceiveAdEvent(adsManager: IMAAdsManager, event: IMAAdEvent) throws {
-    didReceiveAdEventArgs = [adsManagerArg, eventArg]
-  }
-  func didReceiveAdError(adsManager: IMAAdsManager, error: IMAAdError) throws {
-    didReceiveAdErrorArgs = [adsManagerArg, errorArg]
-  }
-  func didRequestContentPause(adsManager: IMAAdsManager) throws {
-    didRequestContentPauseArgs = [adsManagerArg]
-  }
-  func didRequestContentResume(adsManager: IMAAdsManager) throws {
-    didRequestContentResumeArgs = [adsManagerArg]
-  }
-}
-*/
-
 protocol PigeonApiDelegateIMAAdEvent {
   /// Type of the event.
   func type(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> AdEventType
@@ -3469,7 +2763,7 @@ protocol PigeonApiDelegateIMAAdEvent {
 protocol PigeonApiProtocolIMAAdEvent {
 }
 
-final class PigeonApiIMAAdEvent: PigeonApiProtocolIMAAdEvent  {
+final class PigeonApiIMAAdEvent: PigeonApiProtocolIMAAdEvent {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdEvent
   ///An implementation of [NSObject] used to access callback methods
@@ -3477,12 +2771,17 @@ final class PigeonApiIMAAdEvent: PigeonApiProtocolIMAAdEvent  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMAAdEvent) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAAdEvent
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of IMAAdEvent and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMAAdEvent, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMAAdEvent, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -3495,15 +2794,20 @@ final class PigeonApiIMAAdEvent: PigeonApiProtocolIMAAdEvent  {
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let typeArg = try! pigeonDelegate.type(pigeonApi: self, pigeonInstance: pigeonInstance)
-    let typeStringArg = try! pigeonDelegate.typeString(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let typeStringArg = try! pigeonDelegate.typeString(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
     let adDataArg = try! pigeonDelegate.adData(pigeonApi: self, pigeonInstance: pigeonInstance)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdEvent.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonIdentifierArg, typeArg, typeStringArg, adDataArg] as [Any?]) { response in
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdEvent.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonIdentifierArg, typeArg, typeStringArg, adDataArg] as [Any?]) {
+      response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -3519,163 +2823,51 @@ final class PigeonApiIMAAdEvent: PigeonApiProtocolIMAAdEvent  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for [IMAAdEvent].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class AdEventProxyAPIDelegate : PigeonApiDelegateIMAAdEvent {
-  func type(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> AdEventType {
-    switch pigeon_instance.type {
-      case .adBreakEnded
-        return .adBreakEnded
-            case .adBreakFetchError
-        return .adBreakFetchError
-            case .adBreakReady
-        return .adBreakReady
-            case .adBreakStarted
-        return .adBreakStarted
-            case .adPeriodEnded
-        return .adPeriodEnded
-            case .adPeriodStarted
-        return .adPeriodStarted
-            case .allAdsCompleted
-        return .allAdsCompleted
-            case .clicked
-        return .clicked
-            case .completed
-        return .completed
-            case .cuepointsChanged
-        return .cuepointsChanged
-            case .firstQuartile
-        return .firstQuartile
-            case .iconFallbackImageClosed
-        return .iconFallbackImageClosed
-            case .iconTapped
-        return .iconTapped
-            case .loaded
-        return .loaded
-            case .log
-        return .log
-            case .midpoint
-        return .midpoint
-            case .pause
-        return .pause
-            case .resume
-        return .resume
-            case .skipped
-        return .skipped
-            case .started
-        return .started
-            case .streamLoaded
-        return .streamLoaded
-            case .streamStarted
-        return .streamStarted
-            case .tapped
-        return .tapped
-            case .thirdQuartile
-        return .thirdQuartile
-            @unknown default:
-        return .unknown
-      
-    }
-  }
-
-  func typeString(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> String {
-    return pigeon_instance.typeString
-  }
-
-  func adData(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> [String: Any]? {
-    return pigeon_instance.adData
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class AdEventProxyApiTests: XCTestCase {
-  func testType() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdEvent(registrar)
-
-    let instance = TestAdEvent()
-    let value = try? api.pigeonDelegate.type(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.type)
-  }
-
-  func testTypeString() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdEvent(registrar)
-
-    let instance = TestAdEvent()
-    let value = try? api.pigeonDelegate.typeString(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.typeString)
-  }
-
-  func testAdData() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdEvent(registrar)
-
-    let instance = TestAdEvent()
-    let value = try? api.pigeonDelegate.adData(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.adData)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateIMAAdsRenderingSettings {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsRenderingSettings) throws -> IMAAdsRenderingSettings
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsRenderingSettings) throws
+    -> IMAAdsRenderingSettings
   /// If specified, the SDK will play the media with MIME type on the list.
-  func setMimeTypes(pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings, types: [String]?) throws
+  func setMimeTypes(
+    pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
+    types: [String]?) throws
   /// Maximum recommended bitrate.
   ///
   /// The value is in kbit/s.
-  func setBitrate(pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings, bitrate: Int64) throws
+  func setBitrate(
+    pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
+    bitrate: Int64) throws
   /// Timeout (in seconds) when loading a video ad media file.
   ///
   /// Use -1 for the default of 8 seconds.
-  func setLoadVideoTimeout(pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings, seconds: Double) throws
+  func setLoadVideoTimeout(
+    pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
+    seconds: Double) throws
   /// For VMAP and ad rules playlists, only play ad breaks scheduled after this
   /// time (in seconds).
-  func setPlayAdsAfterTime(pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings, seconds: Double) throws
+  func setPlayAdsAfterTime(
+    pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
+    seconds: Double) throws
   /// Specifies the list of UI elements that should be visible.
-  func setUIElements(pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings, types: [UIElementType]?) throws
+  func setUIElements(
+    pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
+    types: [UIElementType]?) throws
   /// Whether or not the SDK will preload ad media.
   ///
   /// Default is YES.
-  func setEnablePreloading(pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings, enable: Bool) throws
+  func setEnablePreloading(
+    pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
+    enable: Bool) throws
   /// Specifies the optional UIViewController that will be used to open links
   /// in-app.
-  func setLinkOpenerPresentingController(pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings, controller: UIViewController) throws
+  func setLinkOpenerPresentingController(
+    pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
+    controller: UIViewController) throws
 }
 
 protocol PigeonApiProtocolIMAAdsRenderingSettings {
 }
 
-final class PigeonApiIMAAdsRenderingSettings: PigeonApiProtocolIMAAdsRenderingSettings  {
+final class PigeonApiIMAAdsRenderingSettings: PigeonApiProtocolIMAAdsRenderingSettings {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdsRenderingSettings
   ///An implementation of [NSObject] used to access callback methods
@@ -3683,25 +2875,34 @@ final class PigeonApiIMAAdsRenderingSettings: PigeonApiProtocolIMAAdsRenderingSe
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMAAdsRenderingSettings) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAAdsRenderingSettings
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAAdsRenderingSettings?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAAdsRenderingSettings?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -3710,14 +2911,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       pigeonDefaultConstructorChannel.setMessageHandler(nil)
     }
-    let setMimeTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setMimeTypes", binaryMessenger: binaryMessenger, codec: codec)
+    let setMimeTypesChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setMimeTypes",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setMimeTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
         let typesArg: [String]? = nilOrValue(args[1])
         do {
-          try api.pigeonDelegate.setMimeTypes(pigeonApi: api, pigeonInstance: pigeonInstanceArg, types: typesArg)
+          try api.pigeonDelegate.setMimeTypes(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, types: typesArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -3726,14 +2930,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setMimeTypesChannel.setMessageHandler(nil)
     }
-    let setBitrateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setBitrate", binaryMessenger: binaryMessenger, codec: codec)
+    let setBitrateChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setBitrate",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setBitrateChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
         let bitrateArg = args[1] as! Int64
         do {
-          try api.pigeonDelegate.setBitrate(pigeonApi: api, pigeonInstance: pigeonInstanceArg, bitrate: bitrateArg)
+          try api.pigeonDelegate.setBitrate(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, bitrate: bitrateArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -3742,14 +2949,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setBitrateChannel.setMessageHandler(nil)
     }
-    let setLoadVideoTimeoutChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setLoadVideoTimeout", binaryMessenger: binaryMessenger, codec: codec)
+    let setLoadVideoTimeoutChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setLoadVideoTimeout",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setLoadVideoTimeoutChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
         let secondsArg = args[1] as! Double
         do {
-          try api.pigeonDelegate.setLoadVideoTimeout(pigeonApi: api, pigeonInstance: pigeonInstanceArg, seconds: secondsArg)
+          try api.pigeonDelegate.setLoadVideoTimeout(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, seconds: secondsArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -3758,14 +2968,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setLoadVideoTimeoutChannel.setMessageHandler(nil)
     }
-    let setPlayAdsAfterTimeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setPlayAdsAfterTime", binaryMessenger: binaryMessenger, codec: codec)
+    let setPlayAdsAfterTimeChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setPlayAdsAfterTime",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setPlayAdsAfterTimeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
         let secondsArg = args[1] as! Double
         do {
-          try api.pigeonDelegate.setPlayAdsAfterTime(pigeonApi: api, pigeonInstance: pigeonInstanceArg, seconds: secondsArg)
+          try api.pigeonDelegate.setPlayAdsAfterTime(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, seconds: secondsArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -3774,14 +2987,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setPlayAdsAfterTimeChannel.setMessageHandler(nil)
     }
-    let setUIElementsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setUIElements", binaryMessenger: binaryMessenger, codec: codec)
+    let setUIElementsChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setUIElements",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setUIElementsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
         let typesArg: [UIElementType]? = nilOrValue(args[1])
         do {
-          try api.pigeonDelegate.setUIElements(pigeonApi: api, pigeonInstance: pigeonInstanceArg, types: typesArg)
+          try api.pigeonDelegate.setUIElements(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, types: typesArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -3790,14 +3006,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setUIElementsChannel.setMessageHandler(nil)
     }
-    let setEnablePreloadingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setEnablePreloading", binaryMessenger: binaryMessenger, codec: codec)
+    let setEnablePreloadingChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setEnablePreloading",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setEnablePreloadingChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
         let enableArg = args[1] as! Bool
         do {
-          try api.pigeonDelegate.setEnablePreloading(pigeonApi: api, pigeonInstance: pigeonInstanceArg, enable: enableArg)
+          try api.pigeonDelegate.setEnablePreloading(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, enable: enableArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -3806,14 +3025,18 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setEnablePreloadingChannel.setMessageHandler(nil)
     }
-    let setLinkOpenerPresentingControllerChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setLinkOpenerPresentingController", binaryMessenger: binaryMessenger, codec: codec)
+    let setLinkOpenerPresentingControllerChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setLinkOpenerPresentingController",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setLinkOpenerPresentingControllerChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
         let controllerArg = args[1] as! UIViewController
         do {
-          try api.pigeonDelegate.setLinkOpenerPresentingController(pigeonApi: api, pigeonInstance: pigeonInstanceArg, controller: controllerArg)
+          try api.pigeonDelegate.setLinkOpenerPresentingController(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, controller: controllerArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -3825,7 +3048,10 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of IMAAdsRenderingSettings and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMAAdsRenderingSettings, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMAAdsRenderingSettings,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -3838,11 +3064,14 @@ withIdentifier: pigeonIdentifierArg)
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3859,203 +3088,26 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for [IMAAdsRenderingSettings].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class AdsRenderingSettingsProxyAPIDelegate : PigeonApiDelegateIMAAdsRenderingSettings {
-  func pigeon_defaultConstructor(pigeonApi: PigeonApiIMAAdsRenderingSettings) throws -> IMAAdsRenderingSettings {
-    return IMAAdsRenderingSettings()
-  }
-
-  func setMimeTypes(pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings, types: [String]?) throws {
-    pigeonInstance.setMimeTypes(types: types)
-  }
-
-  func setBitrate(pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings, bitrate: Int64) throws {
-    pigeonInstance.setBitrate(bitrate: bitrate)
-  }
-
-  func setLoadVideoTimeout(pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings, seconds: Double) throws {
-    pigeonInstance.setLoadVideoTimeout(seconds: seconds)
-  }
-
-  func setPlayAdsAfterTime(pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings, seconds: Double) throws {
-    pigeonInstance.setPlayAdsAfterTime(seconds: seconds)
-  }
-
-  func setUIElements(pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings, types: [UIElementType]?) throws {
-    pigeonInstance.setUIElements(types: types)
-  }
-
-  func setEnablePreloading(pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings, enable: Bool) throws {
-    pigeonInstance.setEnablePreloading(enable: enable)
-  }
-
-  func setLinkOpenerPresentingController(pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings, controller: UIViewController) throws {
-    pigeonInstance.setLinkOpenerPresentingController(controller: controller)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class AdsRenderingSettingsProxyApiTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
-
-    let instance = try? api.pigeonDefaultConstructor(pigeonApi: api )
-    XCTAssertNotNil(instance)
-  }
-
-  func testSetMimeTypes() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
-
-    let instance = TestAdsRenderingSettings()
-    let types = ["myString"]
-    api.pigeonDelegate.setMimeTypes(pigeonApi: api, pigeonInstance: instance, types: types)
-
-    XCTAssertEqual(instance.setMimeTypesArgs, [types])
-  }
-
-  func testSetBitrate() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
-
-    let instance = TestAdsRenderingSettings()
-    let bitrate = 0
-    api.pigeonDelegate.setBitrate(pigeonApi: api, pigeonInstance: instance, bitrate: bitrate)
-
-    XCTAssertEqual(instance.setBitrateArgs, [bitrate])
-  }
-
-  func testSetLoadVideoTimeout() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
-
-    let instance = TestAdsRenderingSettings()
-    let seconds = 1.0
-    api.pigeonDelegate.setLoadVideoTimeout(pigeonApi: api, pigeonInstance: instance, seconds: seconds)
-
-    XCTAssertEqual(instance.setLoadVideoTimeoutArgs, [seconds])
-  }
-
-  func testSetPlayAdsAfterTime() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
-
-    let instance = TestAdsRenderingSettings()
-    let seconds = 1.0
-    api.pigeonDelegate.setPlayAdsAfterTime(pigeonApi: api, pigeonInstance: instance, seconds: seconds)
-
-    XCTAssertEqual(instance.setPlayAdsAfterTimeArgs, [seconds])
-  }
-
-  func testSetUIElements() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
-
-    let instance = TestAdsRenderingSettings()
-    let types = [.adAttribution]
-    api.pigeonDelegate.setUIElements(pigeonApi: api, pigeonInstance: instance, types: types)
-
-    XCTAssertEqual(instance.setUIElementsArgs, [types])
-  }
-
-  func testSetEnablePreloading() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
-
-    let instance = TestAdsRenderingSettings()
-    let enable = true
-    api.pigeonDelegate.setEnablePreloading(pigeonApi: api, pigeonInstance: instance, enable: enable)
-
-    XCTAssertEqual(instance.setEnablePreloadingArgs, [enable])
-  }
-
-  func testSetLinkOpenerPresentingController() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
-
-    let instance = TestAdsRenderingSettings()
-    let controller = TestViewController
-    api.pigeonDelegate.setLinkOpenerPresentingController(pigeonApi: api, pigeonInstance: instance, controller: controller)
-
-    XCTAssertEqual(instance.setLinkOpenerPresentingControllerArgs, [controller])
-  }
-
-}
-class TestAdsRenderingSettings: IMAAdsRenderingSettings {
-  var setMimeTypesArgs: [AnyHashable?]? = nil
-  var setBitrateArgs: [AnyHashable?]? = nil
-  var setLoadVideoTimeoutArgs: [AnyHashable?]? = nil
-  var setPlayAdsAfterTimeArgs: [AnyHashable?]? = nil
-  var setUIElementsArgs: [AnyHashable?]? = nil
-  var setEnablePreloadingArgs: [AnyHashable?]? = nil
-  var setLinkOpenerPresentingControllerArgs: [AnyHashable?]? = nil
-
-
-  override func setMimeTypes() {
-    setMimeTypesArgs = [types]
-  }
-  override func setBitrate() {
-    setBitrateArgs = [bitrate]
-  }
-  override func setLoadVideoTimeout() {
-    setLoadVideoTimeoutArgs = [seconds]
-  }
-  override func setPlayAdsAfterTime() {
-    setPlayAdsAfterTimeArgs = [seconds]
-  }
-  override func setUIElements() {
-    setUIElementsArgs = [types]
-  }
-  override func setEnablePreloading() {
-    setEnablePreloadingArgs = [enable]
-  }
-  override func setLinkOpenerPresentingController() {
-    setLinkOpenerPresentingControllerArgs = [controller]
-  }
-}
-*/
-
 open class PigeonApiDelegateNSObject {
 }
 
 protocol PigeonApiProtocolNSObject {
 }
 
-final class PigeonApiNSObject: PigeonApiProtocolNSObject  {
+final class PigeonApiNSObject: PigeonApiProtocolNSObject {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateNSObject
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateNSObject) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateNSObject
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of NSObject and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: NSObject, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: NSObject, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -4068,11 +3120,13 @@ final class PigeonApiNSObject: PigeonApiProtocolNSObject  {
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String = "dev.flutter.pigeon.interactive_media_ads.NSObject.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -4089,58 +3143,32 @@ final class PigeonApiNSObject: PigeonApiProtocolNSObject  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for [NSObject].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ObjectProxyAPIDelegate : PigeonApiDelegateNSObject {
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class ObjectProxyApiTests: XCTestCase {
-}
-*/
-
 protocol PigeonApiDelegateIMAFriendlyObstruction {
   /// Initializes a friendly obstruction.
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAFriendlyObstruction, view: UIView, purpose: FriendlyObstructionPurpose, detailedReason: String?) throws -> IMAFriendlyObstruction
+  func pigeonDefaultConstructor(
+    pigeonApi: PigeonApiIMAFriendlyObstruction, view: UIView, purpose: FriendlyObstructionPurpose,
+    detailedReason: String?
+  ) throws -> IMAFriendlyObstruction
   /// The view causing the obstruction.
-  func view(pigeonApi: PigeonApiIMAFriendlyObstruction, pigeonInstance: IMAFriendlyObstruction) throws -> UIView
+  func view(pigeonApi: PigeonApiIMAFriendlyObstruction, pigeonInstance: IMAFriendlyObstruction)
+    throws -> UIView
   /// The purpose for registering the obstruction as friendly.
-  func purpose(pigeonApi: PigeonApiIMAFriendlyObstruction, pigeonInstance: IMAFriendlyObstruction) throws -> FriendlyObstructionPurpose
+  func purpose(pigeonApi: PigeonApiIMAFriendlyObstruction, pigeonInstance: IMAFriendlyObstruction)
+    throws -> FriendlyObstructionPurpose
   /// Optional, detailed reasoning for registering this obstruction as friendly.
   ///
   /// If the detailedReason is not null, it must follow the IAB standard by
   /// being 50 characters or less and only containing characters A-z, 0-9, or
   /// spaces.
-  func detailedReason(pigeonApi: PigeonApiIMAFriendlyObstruction, pigeonInstance: IMAFriendlyObstruction) throws -> String?
+  func detailedReason(
+    pigeonApi: PigeonApiIMAFriendlyObstruction, pigeonInstance: IMAFriendlyObstruction
+  ) throws -> String?
 }
 
 protocol PigeonApiProtocolIMAFriendlyObstruction {
 }
 
-final class PigeonApiIMAFriendlyObstruction: PigeonApiProtocolIMAFriendlyObstruction  {
+final class PigeonApiIMAFriendlyObstruction: PigeonApiProtocolIMAFriendlyObstruction {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAFriendlyObstruction
   ///An implementation of [NSObject] used to access callback methods
@@ -4148,17 +3176,26 @@ final class PigeonApiIMAFriendlyObstruction: PigeonApiProtocolIMAFriendlyObstruc
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMAFriendlyObstruction) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAFriendlyObstruction
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAFriendlyObstruction?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMAFriendlyObstruction?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMAFriendlyObstruction.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.interactive_media_ads.IMAFriendlyObstruction.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -4168,8 +3205,9 @@ final class PigeonApiIMAFriendlyObstruction: PigeonApiProtocolIMAFriendlyObstruc
         let detailedReasonArg: String? = nilOrValue(args[3])
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, view: viewArg, purpose: purposeArg, detailedReason: detailedReasonArg),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(
+              pigeonApi: api, view: viewArg, purpose: purposeArg, detailedReason: detailedReasonArg),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4181,7 +3219,10 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of IMAFriendlyObstruction and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMAFriendlyObstruction, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMAFriendlyObstruction,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -4194,15 +3235,20 @@ withIdentifier: pigeonIdentifierArg)
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let viewArg = try! pigeonDelegate.view(pigeonApi: self, pigeonInstance: pigeonInstance)
     let purposeArg = try! pigeonDelegate.purpose(pigeonApi: self, pigeonInstance: pigeonInstance)
-    let detailedReasonArg = try! pigeonDelegate.detailedReason(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let detailedReasonArg = try! pigeonDelegate.detailedReason(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAFriendlyObstruction.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonIdentifierArg, viewArg, purposeArg, detailedReasonArg] as [Any?]) { response in
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMAFriendlyObstruction.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonIdentifierArg, viewArg, purposeArg, detailedReasonArg] as [Any?]) {
+      response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -4218,110 +3264,13 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import UIKit
-
-
-/// ProxyApi implementation for [IMAFriendlyObstruction].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class FriendlyObstructionProxyAPIDelegate : PigeonApiDelegateIMAFriendlyObstruction {
-  func pigeon_defaultConstructor(pigeonApi: PigeonApiIMAFriendlyObstruction, view: UIView, purpose: FriendlyObstructionPurpose, detailedReason: String?) throws -> IMAFriendlyObstruction {
-    return IMAFriendlyObstruction()
-  }
-
-  func view(pigeonApi: PigeonApiIMAFriendlyObstruction, pigeonInstance: IMAFriendlyObstruction) throws -> UIView {
-    return pigeon_instance.view
-  }
-
-  func purpose(pigeonApi: PigeonApiIMAFriendlyObstruction, pigeonInstance: IMAFriendlyObstruction) throws -> FriendlyObstructionPurpose {
-    switch pigeon_instance.purpose {
-      case .mediaControls
-        return .mediaControls
-            case .closeAd
-        return .closeAd
-            case .notVisible
-        return .notVisible
-            case .other
-        return .other
-            @unknown default:
-        return .unknown
-      
-    }
-  }
-
-  func detailedReason(pigeonApi: PigeonApiIMAFriendlyObstruction, pigeonInstance: IMAFriendlyObstruction) throws -> String? {
-    return pigeon_instance.detailedReason
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import UIKit
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class FriendlyObstructionProxyApiTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
-
-    let instance = try? api.pigeonDefaultConstructor(pigeonApi: api view: TestView, purpose: .mediaControls, detailedReason: "myString")
-    XCTAssertNotNil(instance)
-  }
-
-  func testView() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
-
-    let instance = TestFriendlyObstruction()
-    let value = try? api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.view)
-  }
-
-  func testPurpose() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
-
-    let instance = TestFriendlyObstruction()
-    let value = try? api.pigeonDelegate.purpose(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.purpose)
-  }
-
-  func testDetailedReason() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
-
-    let instance = TestFriendlyObstruction()
-    let value = try? api.pigeonDelegate.detailedReason(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.detailedReason)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateIMACompanionAd {
   /// The value for the resource of this companion.
-  func resourceValue(pigeonApi: PigeonApiIMACompanionAd, pigeonInstance: IMACompanionAd) throws -> String?
+  func resourceValue(pigeonApi: PigeonApiIMACompanionAd, pigeonInstance: IMACompanionAd) throws
+    -> String?
   /// The API needed to execute this ad, or nil if unavailable.
-  func apiFramework(pigeonApi: PigeonApiIMACompanionAd, pigeonInstance: IMACompanionAd) throws -> String?
+  func apiFramework(pigeonApi: PigeonApiIMACompanionAd, pigeonInstance: IMACompanionAd) throws
+    -> String?
   /// The width of the companion in pixels.
   ///
   /// 0 if unavailable.
@@ -4335,7 +3284,7 @@ protocol PigeonApiDelegateIMACompanionAd {
 protocol PigeonApiProtocolIMACompanionAd {
 }
 
-final class PigeonApiIMACompanionAd: PigeonApiProtocolIMACompanionAd  {
+final class PigeonApiIMACompanionAd: PigeonApiProtocolIMACompanionAd {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMACompanionAd
   ///An implementation of [NSObject] used to access callback methods
@@ -4343,12 +3292,17 @@ final class PigeonApiIMACompanionAd: PigeonApiProtocolIMACompanionAd  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateIMACompanionAd) {
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMACompanionAd
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of IMACompanionAd and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: IMACompanionAd, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: IMACompanionAd, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -4361,16 +3315,23 @@ final class PigeonApiIMACompanionAd: PigeonApiProtocolIMACompanionAd  {
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
-    let resourceValueArg = try! pigeonDelegate.resourceValue(pigeonApi: self, pigeonInstance: pigeonInstance)
-    let apiFrameworkArg = try! pigeonDelegate.apiFramework(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
+    let resourceValueArg = try! pigeonDelegate.resourceValue(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
+    let apiFrameworkArg = try! pigeonDelegate.apiFramework(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
     let widthArg = try! pigeonDelegate.width(pigeonApi: self, pigeonInstance: pigeonInstance)
     let heightArg = try! pigeonDelegate.height(pigeonApi: self, pigeonInstance: pigeonInstance)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMACompanionAd.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonIdentifierArg, resourceValueArg, apiFrameworkArg, widthArg, heightArg] as [Any?]) { response in
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMACompanionAd.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(
+      [pigeonIdentifierArg, resourceValueArg, apiFrameworkArg, widthArg, heightArg] as [Any?]
+    ) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -4386,92 +3347,3 @@ final class PigeonApiIMACompanionAd: PigeonApiProtocolIMACompanionAd  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for [IMACompanionAd].
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class CompanionAdProxyAPIDelegate : PigeonApiDelegateIMACompanionAd {
-  func resourceValue(pigeonApi: PigeonApiIMACompanionAd, pigeonInstance: IMACompanionAd) throws -> String? {
-    return pigeon_instance.resourceValue
-  }
-
-  func apiFramework(pigeonApi: PigeonApiIMACompanionAd, pigeonInstance: IMACompanionAd) throws -> String? {
-    return pigeon_instance.apiFramework
-  }
-
-  func width(pigeonApi: PigeonApiIMACompanionAd, pigeonInstance: IMACompanionAd) throws -> Int64 {
-    return pigeon_instance.width
-  }
-
-  func height(pigeonApi: PigeonApiIMACompanionAd, pigeonInstance: IMACompanionAd) throws -> Int64 {
-    return pigeon_instance.height
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import interactive_media_ads
-
-class CompanionAdProxyApiTests: XCTestCase {
-  func testResourceValue() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMACompanionAd(registrar)
-
-    let instance = TestCompanionAd()
-    let value = try? api.pigeonDelegate.resourceValue(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.resourceValue)
-  }
-
-  func testApiFramework() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMACompanionAd(registrar)
-
-    let instance = TestCompanionAd()
-    let value = try? api.pigeonDelegate.apiFramework(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.apiFramework)
-  }
-
-  func testWidth() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMACompanionAd(registrar)
-
-    let instance = TestCompanionAd()
-    let value = try? api.pigeonDelegate.width(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.width)
-  }
-
-  func testHeight() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMACompanionAd(registrar)
-
-    let instance = TestCompanionAd()
-    let value = try? api.pigeonDelegate.height(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.height)
-  }
-
-}
-*/
-
