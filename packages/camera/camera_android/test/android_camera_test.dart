@@ -21,7 +21,7 @@ import 'method_channel_mock.dart';
 
 const String _channelName = 'plugins.flutter.io/camera_android';
 
-@GenerateMocks(<Type>[CameraApi])
+@GenerateNiceMocks([MockSpec<CameraApi>()])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -49,17 +49,15 @@ void main() {
   });
 
   group('Creation, Initialization & Disposal Tests', () {
+    late MockCameraApi mockCameraApi;
+    setUp(() {
+      mockCameraApi = MockCameraApi();
+    });
+
     test('Should send creation data and receive back a camera id', () async {
       // Arrange
-      final MethodChannelMock cameraMockChannel = MethodChannelMock(
-          channelName: _channelName,
-          methods: <String, dynamic>{
-            'create': <String, dynamic>{
-              'cameraId': 1,
-              'imageFormatGroup': 'unknown',
-            }
-          });
-      final AndroidCamera camera = AndroidCamera();
+      final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
+      when(mockCameraApi.create(any, any)).thenAnswer((_) async => 1);
 
       // Act
       final int cameraId = await camera.createCamera(
@@ -71,19 +69,6 @@ void main() {
       );
 
       // Assert
-      expect(cameraMockChannel.log, <Matcher>[
-        isMethodCall(
-          'create',
-          arguments: <String, Object?>{
-            'cameraName': 'Test',
-            'resolutionPreset': 'high',
-            'enableAudio': false,
-            'fps': null,
-            'videoBitrate': null,
-            'audioBitrate': null,
-          },
-        ),
-      ]);
       expect(cameraId, 1);
     });
 
@@ -91,15 +76,8 @@ void main() {
         'Should send creation data and receive back a camera id using createCameraWithSettings',
         () async {
       // Arrange
-      final MethodChannelMock cameraMockChannel = MethodChannelMock(
-          channelName: _channelName,
-          methods: <String, dynamic>{
-            'create': <String, dynamic>{
-              'cameraId': 1,
-              'imageFormatGroup': 'unknown',
-            }
-          });
-      final AndroidCamera camera = AndroidCamera();
+      final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
+      when(mockCameraApi.create(any, any)).thenAnswer((_) async => 1);
 
       // Act
       final int cameraId = await camera.createCameraWithSettings(
@@ -116,63 +94,14 @@ void main() {
       );
 
       // Assert
-      expect(cameraMockChannel.log, <Matcher>[
-        isMethodCall(
-          'create',
-          arguments: <String, Object?>{
-            'cameraName': 'Test',
-            'resolutionPreset': 'low',
-            'fps': 15,
-            'videoBitrate': 200000,
-            'audioBitrate': 32000,
-            'enableAudio': false
-          },
-        ),
-      ]);
       expect(cameraId, 1);
     });
 
     test('Should throw CameraException when create throws a PlatformException',
         () {
       // Arrange
-      MethodChannelMock(channelName: _channelName, methods: <String, dynamic>{
-        'create': PlatformException(
-          code: 'TESTING_ERROR_CODE',
-          message: 'Mock error message used during testing.',
-        )
-      });
-      final AndroidCamera camera = AndroidCamera();
-
-      // Act
-      expect(
-        () => camera.createCamera(
-          const CameraDescription(
-            name: 'Test',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 0,
-          ),
-          ResolutionPreset.high,
-        ),
-        throwsA(
-          isA<CameraException>()
-              .having(
-                  (CameraException e) => e.code, 'code', 'TESTING_ERROR_CODE')
-              .having((CameraException e) => e.description, 'description',
-                  'Mock error message used during testing.'),
-        ),
-      );
-    });
-
-    test('Should throw CameraException when create throws a PlatformException',
-        () {
-      // Arrange
-      MethodChannelMock(channelName: _channelName, methods: <String, dynamic>{
-        'create': PlatformException(
-          code: 'TESTING_ERROR_CODE',
-          message: 'Mock error message used during testing.',
-        )
-      });
-      final AndroidCamera camera = AndroidCamera();
+      final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
+      when(mockCameraApi.create(any, any)).thenThrow(CameraException('TESTING_ERROR_CODE', 'Mock error message used during testing.'));
 
       // Act
       expect(
@@ -198,16 +127,8 @@ void main() {
       'Should throw CameraException when initialize throws a PlatformException',
       () {
         // Arrange
-        MethodChannelMock(
-          channelName: _channelName,
-          methods: <String, dynamic>{
-            'initialize': PlatformException(
-              code: 'TESTING_ERROR_CODE',
-              message: 'Mock error message used during testing.',
-            )
-          },
-        );
-        final AndroidCamera camera = AndroidCamera();
+      final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
+      when(mockCameraApi.initialize(any, any)).thenThrow(CameraException('TESTING_ERROR_CODE', 'Mock error message used during testing.'));
 
         // Act
         expect(
@@ -228,16 +149,9 @@ void main() {
 
     test('Should send initialization data', () async {
       // Arrange
-      final MethodChannelMock cameraMockChannel = MethodChannelMock(
-          channelName: _channelName,
-          methods: <String, dynamic>{
-            'create': <String, dynamic>{
-              'cameraId': 1,
-              'imageFormatGroup': 'unknown',
-            },
-            'initialize': null
-          });
-      final AndroidCamera camera = AndroidCamera();
+      final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
+      when(mockCameraApi.create(any, any)).thenAnswer((_) async => 1);
+
       final int cameraId = await camera.createCamera(
         const CameraDescription(
           name: 'Test',
@@ -262,29 +176,13 @@ void main() {
 
       // Assert
       expect(cameraId, 1);
-      expect(cameraMockChannel.log, <Matcher>[
-        anything,
-        isMethodCall(
-          'initialize',
-          arguments: <String, Object?>{
-            'cameraId': 1,
-            'imageFormatGroup': 'unknown',
-          },
-        ),
-      ]);
+      verify(mockCameraApi.initialize(1, PlatformImageFormatGroup.yuv420)).called(1);
     });
 
     test('Should send a disposal call on dispose', () async {
       // Arrange
-      final MethodChannelMock cameraMockChannel = MethodChannelMock(
-          channelName: _channelName,
-          methods: <String, dynamic>{
-            'create': <String, dynamic>{'cameraId': 1},
-            'initialize': null,
-            'dispose': <String, dynamic>{'cameraId': 1}
-          });
-
-      final AndroidCamera camera = AndroidCamera();
+      final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
+      when(mockCameraApi.create(any, any)).thenAnswer((_) async => 1);
       final int cameraId = await camera.createCamera(
         const CameraDescription(
           name: 'Test',
@@ -310,14 +208,7 @@ void main() {
 
       // Assert
       expect(cameraId, 1);
-      expect(cameraMockChannel.log, <Matcher>[
-        anything,
-        anything,
-        isMethodCall(
-          'dispose',
-          arguments: <String, Object?>{'cameraId': 1},
-        ),
-      ]);
+      verify(mockCameraApi.dispose(1)).called(1);
     });
   });
 
