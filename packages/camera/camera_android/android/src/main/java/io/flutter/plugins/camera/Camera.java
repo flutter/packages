@@ -66,7 +66,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
@@ -80,16 +79,6 @@ class Camera
     implements CameraCaptureCallback.CameraCaptureStateListener,
         ImageReader.OnImageAvailableListener {
   private static final String TAG = "Camera";
-
-  private static final HashMap<String, Integer> supportedImageFormats;
-
-  // Current supported outputs.
-  static {
-    supportedImageFormats = new HashMap<>();
-    supportedImageFormats.put("yuv420", ImageFormat.YUV_420_888);
-    supportedImageFormats.put("jpeg", ImageFormat.JPEG);
-    supportedImageFormats.put("nv21", ImageFormat.NV21);
-  }
 
   /**
    * Holds all of the camera features/settings and will be used to update the request builder when
