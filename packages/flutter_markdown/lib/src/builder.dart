@@ -156,7 +156,7 @@ class MarkdownBuilder implements md.NodeVisitor {
   final MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment;
 
   /// Collection of custom block tags to be used building block widgets.
-  final List<String>? customBlockTags;
+  final List<String> customBlockTags;
 
   /// Called when the user changes selection when [selectable] is set to true.
   final MarkdownOnSelectionChangedCallback? onSelectionChanged;
@@ -182,7 +182,7 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   bool _isBlockTag(String? tag) =>
       _kBlockTags.contains(tag) ||
-      (customBlockTags ?? <String>[]).contains(tag);
+      customBlockTags.contains(tag);
 
   /// Returns widgets that display the given Markdown nodes.
   ///
