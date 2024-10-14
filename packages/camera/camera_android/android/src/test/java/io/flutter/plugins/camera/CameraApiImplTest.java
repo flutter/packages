@@ -19,16 +19,16 @@ import io.flutter.view.TextureRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MethodCallHandlerImplTest {
+public class CameraApiImplTest {
 
-  MethodCallHandlerImpl handler;
+  CameraApiImpl handler;
   Messages.VoidResult mockResult;
   Camera mockCamera;
 
   @Before
   public void setUp() {
     handler =
-        new MethodCallHandlerImpl(
+        new CameraApiImpl(
             mock(Activity.class),
             mock(BinaryMessenger.class),
             mock(CameraPermissions.class),
@@ -41,7 +41,7 @@ public class MethodCallHandlerImplTest {
 
   @Test
   public void shouldNotImplementLifecycleObserverInterface() {
-    Class<MethodCallHandlerImpl> methodCallHandlerClass = MethodCallHandlerImpl.class;
+    Class<CameraApiImpl> methodCallHandlerClass = CameraApiImpl.class;
 
     assertFalse(LifecycleObserver.class.isAssignableFrom(methodCallHandlerClass));
   }

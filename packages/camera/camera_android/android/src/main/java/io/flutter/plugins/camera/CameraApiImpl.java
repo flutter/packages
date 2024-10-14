@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-final class MethodCallHandlerImpl implements Messages.CameraApi {
+final class CameraApiImpl implements Messages.CameraApi {
   private final Activity activity;
   private final BinaryMessenger messenger;
   private final CameraPermissions cameraPermissions;
@@ -35,7 +35,7 @@ final class MethodCallHandlerImpl implements Messages.CameraApi {
   private final EventChannel imageStreamChannel;
   @VisibleForTesting @Nullable Camera camera;
 
-  MethodCallHandlerImpl(
+  CameraApiImpl(
       Activity activity,
       BinaryMessenger messenger,
       CameraPermissions cameraPermissions,

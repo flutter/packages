@@ -24,7 +24,7 @@ public final class CameraPlugin implements FlutterPlugin, ActivityAware {
 
   private static final String TAG = "CameraPlugin";
   private @Nullable FlutterPluginBinding flutterPluginBinding;
-  private @Nullable MethodCallHandlerImpl methodCallHandler;
+  private @Nullable CameraApiImpl methodCallHandler;
 
   /**
    * Initialize this within the {@code #configureFlutterEngine} of a Flutter activity or fragment.
@@ -77,7 +77,7 @@ public final class CameraPlugin implements FlutterPlugin, ActivityAware {
       PermissionsRegistry permissionsRegistry,
       TextureRegistry textureRegistry) {
     methodCallHandler =
-        new MethodCallHandlerImpl(
+        new CameraApiImpl(
             activity, messenger, new CameraPermissions(), permissionsRegistry, textureRegistry);
   }
 }
