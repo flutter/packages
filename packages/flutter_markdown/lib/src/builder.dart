@@ -33,6 +33,8 @@ final List<String> _kBlockTags = <String>[
 
 const List<String> _kListTags = <String>['ul', 'ol'];
 
+bool _isBlockTag(String? tag) => _kBlockTags.contains(tag);
+
 bool _isListTag(String tag) => _kListTags.contains(tag);
 
 class _BlockElement {
@@ -109,7 +111,6 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.builders,
     required this.paddingBuilders,
     required this.listItemCrossAxisAlignment,
-    required this.customBlockTags,
     this.fitContent = false,
     this.onSelectionChanged,
     this.onTapText,
@@ -155,9 +156,6 @@ class MarkdownBuilder implements md.NodeVisitor {
   /// does not allow for intrinsic height measurements.
   final MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment;
 
-  /// Collection of custom block tags to be used building block widgets.
-  final List<String> customBlockTags;
-
   /// Called when the user changes selection when [selectable] is set to true.
   final MarkdownOnSelectionChangedCallback? onSelectionChanged;
 
@@ -179,10 +177,6 @@ class MarkdownBuilder implements md.NodeVisitor {
   String? _currentBlockTag;
   String? _lastVisitedTag;
   bool _isInBlockquote = false;
-
-  bool _isBlockTag(String? tag) =>
-      _kBlockTags.contains(tag) ||
-      customBlockTags.contains(tag);
 
   /// Returns widgets that display the given Markdown nodes.
   ///
@@ -391,16 +385,18 @@ class MarkdownBuilder implements md.NodeVisitor {
       final _BlockElement current = _blocks.removeLast();
       Widget child;
 
-      if (current.children.isNotEmpty) {
-        child = Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: fitContent
-              ? CrossAxisAlignment.start
-              : CrossAxisAlignment.stretch,
-          children: current.children,
-        );
-      } else {
-        child = const SizedBox();
+      Widget defaultChild() {
+        if (current.children.isNotEmpty) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: fitContent
+                ? CrossAxisAlignment.start
+                : CrossAxisAlignment.stretch,
+            children: current.children,
+          );
+        } else {
+          return const SizedBox();
+        }
       }
 
       if (builders.containsKey(tag)) {
@@ -411,9 +407,9 @@ class MarkdownBuilder implements md.NodeVisitor {
           styleSheet.styles[tag],
           _inlines.isNotEmpty ? _inlines.last.style : null,
         );
-        if (builderChild != null) {
-          child = builderChild;
-        }
+        child = builderChild ?? defaultChild();
+      } else {
+        child = defaultChild();
       }
 
       if (_isListTag(tag)) {

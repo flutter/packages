@@ -1,7 +1,7 @@
 ## 0.7.5
 
-* Added the ability to extend the list of allowed customizable block tags with the
-  `customBlockTags` attribute on `MarkdownBuilder`.
+* Makes it so that custom blocks are not limited to being a Column or
+  SizedBox.
 
 ## 0.7.4
 

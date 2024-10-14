@@ -217,7 +217,6 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.onTapLink,
     this.onTapText,
     this.imageDirectory,
-    this.customBlockTags,
     this.blockSyntaxes,
     this.inlineSyntaxes,
     this.extensionSet,
@@ -269,9 +268,6 @@ abstract class MarkdownWidget extends StatefulWidget {
 
   /// Collection of custom block syntax types to be used parsing the Markdown data.
   final List<md.BlockSyntax>? blockSyntaxes;
-
-  /// Collection of custom block tags to be used building block widgets.
-  final List<String>? customBlockTags;
 
   /// Collection of custom inline syntax types to be used parsing the Markdown data.
   final List<md.InlineSyntax>? inlineSyntaxes;
@@ -397,7 +393,6 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       imageBuilder: widget.imageBuilder,
       checkboxBuilder: widget.checkboxBuilder,
       bulletBuilder: widget.bulletBuilder,
-      customBlockTags: widget.customBlockTags,
       builders: widget.builders,
       paddingBuilders: widget.paddingBuilders,
       fitContent: widget.fitContent,
@@ -469,7 +464,6 @@ class MarkdownBody extends MarkdownWidget {
     super.onTapLink,
     super.onTapText,
     super.imageDirectory,
-    super.customBlockTags,
     super.blockSyntaxes,
     super.inlineSyntaxes,
     super.extensionSet,
@@ -525,7 +519,6 @@ class Markdown extends MarkdownWidget {
     super.onTapLink,
     super.onTapText,
     super.imageDirectory,
-    super.customBlockTags,
     super.blockSyntaxes,
     super.inlineSyntaxes,
     super.extensionSet,
