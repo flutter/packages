@@ -473,7 +473,7 @@ final class ObjectTranslatorTest: XCTestCase {
 
   func testSKErrorConvertToPigeon() throws {
     let error = NSError(domain: SKErrorDomain, code: 3, userInfo: ["key": 42])
-    let msg = SKErrorMessage.make(
+    let msg = FIASKErrorMessage.make(
       withCode: 3, domain: SKErrorDomain, userInfo: ["key": 42] as [String: Any])
     let skerror = try XCTUnwrap(FIAObjectTranslator.convertSKError(toPigeon: error))
 
@@ -507,7 +507,7 @@ final class ObjectTranslatorTest: XCTestCase {
     let unwrappedMsg = try XCTUnwrap(msg)
     let unwrappedTimeStamp = try XCTUnwrap(unwrappedMsg.transactionTimeStamp)
 
-    XCTAssertEqual(unwrappedMsg.transactionState, SKPaymentTransactionStateMessage.purchasing)
+    XCTAssertEqual(unwrappedMsg.transactionState, FIASKPaymentTransactionStateMessage.purchasing)
     XCTAssertEqual(
       paymentTransaction.transactionDate,
       Date(timeIntervalSince1970: TimeInterval(truncating: unwrappedTimeStamp)))
@@ -537,13 +537,13 @@ final class ObjectTranslatorTest: XCTestCase {
     XCTAssertEqual(localeMsg.currencySymbol, "\u{00a4}")
 
     let subPeriod = try XCTUnwrap(productMsg.subscriptionPeriod)
-    XCTAssertEqual(subPeriod.unit, SKSubscriptionPeriodUnitMessage.day)
+    XCTAssertEqual(subPeriod.unit, FIASKSubscriptionPeriodUnitMessage.day)
     XCTAssertEqual(subPeriod.numberOfUnits, 0)
 
     let introDiscount = try XCTUnwrap(productMsg.introductoryPrice)
     XCTAssertEqual(introDiscount.price, "1")
     XCTAssertEqual(introDiscount.numberOfPeriods, 1)
-    XCTAssertEqual(introDiscount.paymentMode, SKProductDiscountPaymentModeMessage.payUpFront)
+    XCTAssertEqual(introDiscount.paymentMode, FIASKProductDiscountPaymentModeMessage.payUpFront)
 
     let discounts = try XCTUnwrap(productMsg.discounts)
     XCTAssertEqual(discounts.count, 1)

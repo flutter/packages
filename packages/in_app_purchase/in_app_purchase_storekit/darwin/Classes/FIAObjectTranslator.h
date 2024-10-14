@@ -57,33 +57,33 @@ NS_ASSUME_NONNULL_BEGIN
                                                   withError:(NSString *_Nullable *_Nullable)error
     API_AVAILABLE(ios(12.2));
 
-+ (nullable SKPaymentTransactionMessage *)convertTransactionToPigeon:
++ (nullable FIASKPaymentTransactionMessage *)convertTransactionToPigeon:
     (nullable SKPaymentTransaction *)transaction;
 
-+ (nullable SKStorefrontMessage *)convertStorefrontToPigeon:(nullable SKStorefront *)storefront
++ (nullable FIASKStorefrontMessage *)convertStorefrontToPigeon:(nullable SKStorefront *)storefront
     API_AVAILABLE(ios(13.0));
 
-+ (nullable SKPaymentDiscountMessage *)convertPaymentDiscountToPigeon:
++ (nullable FIASKPaymentDiscountMessage *)convertPaymentDiscountToPigeon:
     (nullable SKPaymentDiscount *)discount API_AVAILABLE(ios(12.2));
 
-+ (nullable SKPaymentMessage *)convertPaymentToPigeon:(nullable SKPayment *)payment
++ (nullable FIASKPaymentMessage *)convertPaymentToPigeon:(nullable SKPayment *)payment
     API_AVAILABLE(ios(12.2));
 
-+ (nullable SKErrorMessage *)convertSKErrorToPigeon:(nullable NSError *)error;
++ (nullable FIASKErrorMessage *)convertSKErrorToPigeon:(nullable NSError *)error;
 
-+ (nullable SKProductsResponseMessage *)convertProductsResponseToPigeon:
++ (nullable FIASKProductsResponseMessage *)convertProductsResponseToPigeon:
     (nullable SKProductsResponse *)payment;
 
-+ (nullable SKProductMessage *)convertProductToPigeon:(nullable SKProduct *)product
++ (nullable FIASKProductMessage *)convertProductToPigeon:(nullable SKProduct *)product
     API_AVAILABLE(ios(12.2));
 
-+ (nullable SKProductDiscountMessage *)convertProductDiscountToPigeon:
++ (nullable FIASKProductDiscountMessage *)convertProductDiscountToPigeon:
     (nullable SKProductDiscount *)productDiscount API_AVAILABLE(ios(12.2));
 
-+ (nullable SKPriceLocaleMessage *)convertNSLocaleToPigeon:(nullable NSLocale *)locale
++ (nullable FIASKPriceLocaleMessage *)convertNSLocaleToPigeon:(nullable NSLocale *)locale
     API_AVAILABLE(ios(12.2));
 
-+ (nullable SKProductSubscriptionPeriodMessage *)convertSKProductSubscriptionPeriodToPigeon:
++ (nullable FIASKProductSubscriptionPeriodMessage *)convertSKProductSubscriptionPeriodToPigeon:
     (nullable SKProductSubscriptionPeriod *)period API_AVAILABLE(ios(12.2));
 @end
 

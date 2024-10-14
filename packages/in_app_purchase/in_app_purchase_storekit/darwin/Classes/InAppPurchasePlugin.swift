@@ -11,7 +11,7 @@ import StoreKit
   import FlutterMacOS
 #endif
 
-public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
+public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
   private let receiptManager: FIAPReceiptManager
   private var productsCache: NSMutableDictionary = [:]
   private var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
@@ -40,7 +40,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     let instance = InAppPurchasePlugin(registrar: registrar)
     registrar.addMethodCallDelegate(instance, channel: channel)
     registrar.addApplicationDelegate(instance)
-    SetUpInAppPurchaseAPI(messenger, instance)
+    SetUpFIAInAppPurchaseAPI(messenger, instance)
     if #available(iOS 15.0, macOS 12.0, *) {
       InAppPurchase2APISetup.setUp(binaryMessenger: messenger, api: instance)
     }
@@ -104,7 +104,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   }
 
   public func transactionsWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
-    -> [SKPaymentTransactionMessage]?
+    -> [FIASKPaymentTransactionMessage]?
   {
     return getPaymentQueueHandler()
       .getUnfinishedTransactions()
@@ -114,7 +114,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   }
 
   public func storefrontWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
-    -> SKStorefrontMessage?
+    -> FIASKStorefrontMessage?
   {
     if #available(iOS 13.0, *), let storefront = getPaymentQueueHandler().storefront {
       return FIAObjectTranslator.convertStorefront(toPigeon: storefront)
@@ -124,7 +124,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
 
   public func startProductRequestProductIdentifiers(
     _ productIdentifiers: [String],
-    completion: @escaping (SKProductsResponseMessage?, FlutterError?) -> Void
+    completion: @escaping (FIASKProductsResponseMessage?, FlutterError?) -> Void
   ) {
     let request = getProductRequest(withIdentifiers: Set(productIdentifiers))
     let handler = handlerFactory(request)

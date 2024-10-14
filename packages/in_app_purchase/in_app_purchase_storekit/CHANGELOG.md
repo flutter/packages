@@ -1,3 +1,7 @@
+## 0.3.18+2
+
+* Updates Pigeon for non-nullable collection type support.
+
 ## 0.3.18+1
 
 * Adds support for StoreKit2's `canMakePayments` and `products` 

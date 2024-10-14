@@ -22,7 +22,7 @@ void main() {
   late InAppPurchaseStoreKitPlatform iapStoreKitPlatform;
 
   setUpAll(() {
-    TestInAppPurchaseApi.setup(fakeStoreKitPlatform);
+    TestInAppPurchaseApi.setUp(fakeStoreKitPlatform);
   });
 
   setUp(() {
