@@ -968,89 +968,97 @@ public class Messages {
     @NonNull
     List<PlatformCameraDescription> getAvailableCameras();
     /** Creates a new camera with the given name and settings and returns its ID. */
-    @NonNull
-    Long create(@NonNull String cameraName, @NonNull PlatformMediaSettings mediaSettings);
+    void create(
+        @NonNull String cameraName,
+        @NonNull PlatformMediaSettings mediaSettings,
+        @NonNull Result<Long> result);
     /** Initializes the camera with the given ID for the given image format. */
-    void initialize(@NonNull Long cameraId, @NonNull PlatformImageFormatGroup imageFormat);
+    void initialize(
+        @NonNull Long cameraId,
+        @NonNull PlatformImageFormatGroup imageFormat,
+        @NonNull VoidResult result);
     /** Disposes of the camera with the given ID. */
-    void dispose(@NonNull Long cameraId);
+    void dispose(@NonNull Long cameraId, @NonNull VoidResult result);
     /** Locks the camera with the given ID to the given orientation. */
     void lockCaptureOrientation(
-        @NonNull Long cameraId, @NonNull PlatformDeviceOrientation orientation);
+        @NonNull Long cameraId,
+        @NonNull PlatformDeviceOrientation orientation,
+        @NonNull VoidResult result);
     /** Unlocks the orientation for the camera with the given ID. */
-    void unlockCaptureOrientation(@NonNull Long cameraId);
+    void unlockCaptureOrientation(@NonNull Long cameraId, @NonNull VoidResult result);
     /** Takes a picture on the camera with the given ID and returns a path to the resulting file. */
-    @NonNull
-    String takePicture(@NonNull Long cameraId);
+    void takePicture(@NonNull Long cameraId, @NonNull Result<String> result);
     /** Handles any necessary preprocessing before beginning video recording. */
-    void prepareForVideoRecording();
+    void prepareForVideoRecording(@NonNull VoidResult result);
     /** Starts recording a video on the camera with the given ID. */
-    void startVideoRecording(@NonNull Long cameraId, @NonNull Boolean enableStream);
+    void startVideoRecording(
+        @NonNull Long cameraId, @NonNull Boolean enableStream, @NonNull VoidResult result);
     /**
      * Ends video recording on the camera with the given ID and returns the path to the resulting
      * file.
      */
-    @NonNull
-    String stopVideoRecording(@NonNull Long cameraId);
+    void stopVideoRecording(@NonNull Long cameraId, @NonNull Result<String> result);
     /** Pauses video recording on the camera with the given ID. */
-    void pauseVideoRecording(@NonNull Long cameraId);
+    void pauseVideoRecording(@NonNull Long cameraId, @NonNull VoidResult result);
     /** Resumes previously paused video recording on the camera with the given ID. */
-    void resumeVideoRecording(@NonNull Long cameraId);
+    void resumeVideoRecording(@NonNull Long cameraId, @NonNull VoidResult result);
     /** Begins streaming frames from the camera. */
-    void startImageStream();
+    void startImageStream(@NonNull VoidResult result);
     /** Stops streaming frames from the camera. */
-    void stopImageStream();
+    void stopImageStream(@NonNull VoidResult result);
     /** Sets the flash mode of the camera with the given ID. */
-    void setFlashMode(@NonNull Long cameraId, @NonNull PlatformFlashMode flashMode);
+    void setFlashMode(
+        @NonNull Long cameraId, @NonNull PlatformFlashMode flashMode, @NonNull VoidResult result);
     /** Sets the exposure mode of the camera with the given ID. */
-    void setExposureMode(@NonNull Long cameraId, @NonNull PlatformExposureMode exposureMode);
+    void setExposureMode(
+        @NonNull Long cameraId,
+        @NonNull PlatformExposureMode exposureMode,
+        @NonNull VoidResult result);
     /**
      * Sets the exposure point of the camera with the given ID.
      *
      * <p>A null value resets to the default exposure point.
      */
-    void setExposurePoint(@NonNull Long cameraId, @Nullable PlatformPoint point);
+    void setExposurePoint(
+        @NonNull Long cameraId, @Nullable PlatformPoint point, @NonNull VoidResult result);
     /** Returns the minimum exposure offset of the camera with the given ID. */
-    @NonNull
-    Double getMinExposureOffset(@NonNull Long cameraId);
+    void getMinExposureOffset(@NonNull Long cameraId, @NonNull Result<Double> result);
     /** Returns the maximum exposure offset of the camera with the given ID. */
-    @NonNull
-    Double getMaxExposureOffset(@NonNull Long cameraId);
+    void getMaxExposureOffset(@NonNull Long cameraId, @NonNull Result<Double> result);
     /** Returns the exposure step size of the camera with the given ID. */
-    @NonNull
-    Double getExposureOffsetStepSize(@NonNull Long cameraId);
+    void getExposureOffsetStepSize(@NonNull Long cameraId, @NonNull Result<Double> result);
     /**
      * Sets the exposure offset of the camera with the given ID and returns the actual exposure
      * offset.
      */
-    @NonNull
-    Double setExposureOffset(@NonNull Long cameraId, @NonNull Double offset);
+    void setExposureOffset(
+        @NonNull Long cameraId, @NonNull Double offset, @NonNull Result<Double> result);
     /** Sets the focus mode of the camera with the given ID. */
-    void setFocusMode(@NonNull Long cameraId, @NonNull PlatformFocusMode focusMode);
+    void setFocusMode(
+        @NonNull Long cameraId, @NonNull PlatformFocusMode focusMode, @NonNull VoidResult result);
     /**
      * Sets the focus point of the camera with the given ID.
      *
      * <p>A null value resets to the default focus point.
      */
-    void setFocusPoint(@NonNull Long cameraId, @Nullable PlatformPoint point);
+    void setFocusPoint(
+        @NonNull Long cameraId, @Nullable PlatformPoint point, @NonNull VoidResult result);
     /** Returns the maximum zoom level of the camera with the given ID. */
-    @NonNull
-    Double getMaxZoomLevel(@NonNull Long cameraId);
+    void getMaxZoomLevel(@NonNull Long cameraId, @NonNull Result<Double> result);
     /** Returns the minimum zoom level of the camera with the given ID. */
-    @NonNull
-    Double getMinZoomLevel(@NonNull Long cameraId);
+    void getMinZoomLevel(@NonNull Long cameraId, @NonNull Result<Double> result);
     /** Sets the zoom level of the camera with the given ID. */
-    void setZoomLevel(@NonNull Long cameraId, @NonNull Double zoom);
+    void setZoomLevel(@NonNull Long cameraId, @NonNull Double zoom, @NonNull VoidResult result);
     /** Pauses streaming of preview frames. */
-    void pausePreview(@NonNull Long cameraId);
+    void pausePreview(@NonNull Long cameraId, @NonNull VoidResult result);
     /** Resumes previously paused streaming of preview frames. */
-    void resumePreview(@NonNull Long cameraId);
+    void resumePreview(@NonNull Long cameraId, @NonNull VoidResult result);
     /**
      * Changes the camera while recording video.
      *
      * <p>This should be called only while video recording is active.
      */
-    void setDescriptionWhileRecording(@NonNull String description);
+    void setDescriptionWhileRecording(@NonNull String description, @NonNull VoidResult result);
 
     /** The codec used by CameraApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -1102,13 +1110,20 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String cameraNameArg = (String) args.get(0);
                 PlatformMediaSettings mediaSettingsArg = (PlatformMediaSettings) args.get(1);
-                try {
-                  Long output = api.create(cameraNameArg, mediaSettingsArg);
-                  wrapped.add(0, output);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                Result<Long> resultCallback =
+                    new Result<Long>() {
+                      public void success(Long result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.create(cameraNameArg, mediaSettingsArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1127,13 +1142,20 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
                 PlatformImageFormatGroup imageFormatArg = (PlatformImageFormatGroup) args.get(1);
-                try {
-                  api.initialize(cameraIdArg, imageFormatArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.initialize(cameraIdArg, imageFormatArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1151,13 +1173,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
-                try {
-                  api.dispose(cameraIdArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.dispose(cameraIdArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1177,13 +1206,20 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
                 PlatformDeviceOrientation orientationArg = (PlatformDeviceOrientation) args.get(1);
-                try {
-                  api.lockCaptureOrientation(cameraIdArg, orientationArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.lockCaptureOrientation(cameraIdArg, orientationArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1202,13 +1238,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
-                try {
-                  api.unlockCaptureOrientation(cameraIdArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.unlockCaptureOrientation(cameraIdArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1226,13 +1269,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
-                try {
-                  String output = api.takePicture(cameraIdArg);
-                  wrapped.add(0, output);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                Result<String> resultCallback =
+                    new Result<String>() {
+                      public void success(String result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.takePicture(cameraIdArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1249,13 +1299,20 @@ public class Messages {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
-                try {
-                  api.prepareForVideoRecording();
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.prepareForVideoRecording(resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1275,13 +1332,20 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
                 Boolean enableStreamArg = (Boolean) args.get(1);
-                try {
-                  api.startVideoRecording(cameraIdArg, enableStreamArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.startVideoRecording(cameraIdArg, enableStreamArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1300,13 +1364,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
-                try {
-                  String output = api.stopVideoRecording(cameraIdArg);
-                  wrapped.add(0, output);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                Result<String> resultCallback =
+                    new Result<String>() {
+                      public void success(String result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.stopVideoRecording(cameraIdArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1325,13 +1396,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
-                try {
-                  api.pauseVideoRecording(cameraIdArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.pauseVideoRecording(cameraIdArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1350,13 +1428,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
-                try {
-                  api.resumeVideoRecording(cameraIdArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.resumeVideoRecording(cameraIdArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1373,13 +1458,20 @@ public class Messages {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
-                try {
-                  api.startImageStream();
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.startImageStream(resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1396,13 +1488,20 @@ public class Messages {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
-                try {
-                  api.stopImageStream();
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.stopImageStream(resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1421,13 +1520,20 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
                 PlatformFlashMode flashModeArg = (PlatformFlashMode) args.get(1);
-                try {
-                  api.setFlashMode(cameraIdArg, flashModeArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setFlashMode(cameraIdArg, flashModeArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1447,13 +1553,20 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
                 PlatformExposureMode exposureModeArg = (PlatformExposureMode) args.get(1);
-                try {
-                  api.setExposureMode(cameraIdArg, exposureModeArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setExposureMode(cameraIdArg, exposureModeArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1473,13 +1586,20 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
                 PlatformPoint pointArg = (PlatformPoint) args.get(1);
-                try {
-                  api.setExposurePoint(cameraIdArg, pointArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setExposurePoint(cameraIdArg, pointArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1498,13 +1618,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
-                try {
-                  Double output = api.getMinExposureOffset(cameraIdArg);
-                  wrapped.add(0, output);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                Result<Double> resultCallback =
+                    new Result<Double>() {
+                      public void success(Double result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.getMinExposureOffset(cameraIdArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1523,13 +1650,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
-                try {
-                  Double output = api.getMaxExposureOffset(cameraIdArg);
-                  wrapped.add(0, output);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                Result<Double> resultCallback =
+                    new Result<Double>() {
+                      public void success(Double result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.getMaxExposureOffset(cameraIdArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1548,13 +1682,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
-                try {
-                  Double output = api.getExposureOffsetStepSize(cameraIdArg);
-                  wrapped.add(0, output);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                Result<Double> resultCallback =
+                    new Result<Double>() {
+                      public void success(Double result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.getExposureOffsetStepSize(cameraIdArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1574,13 +1715,20 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
                 Double offsetArg = (Double) args.get(1);
-                try {
-                  Double output = api.setExposureOffset(cameraIdArg, offsetArg);
-                  wrapped.add(0, output);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                Result<Double> resultCallback =
+                    new Result<Double>() {
+                      public void success(Double result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setExposureOffset(cameraIdArg, offsetArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1599,13 +1747,20 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
                 PlatformFocusMode focusModeArg = (PlatformFocusMode) args.get(1);
-                try {
-                  api.setFocusMode(cameraIdArg, focusModeArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setFocusMode(cameraIdArg, focusModeArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1624,13 +1779,20 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
                 PlatformPoint pointArg = (PlatformPoint) args.get(1);
-                try {
-                  api.setFocusPoint(cameraIdArg, pointArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setFocusPoint(cameraIdArg, pointArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1649,13 +1811,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
-                try {
-                  Double output = api.getMaxZoomLevel(cameraIdArg);
-                  wrapped.add(0, output);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                Result<Double> resultCallback =
+                    new Result<Double>() {
+                      public void success(Double result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.getMaxZoomLevel(cameraIdArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1674,13 +1843,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
-                try {
-                  Double output = api.getMinZoomLevel(cameraIdArg);
-                  wrapped.add(0, output);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                Result<Double> resultCallback =
+                    new Result<Double>() {
+                      public void success(Double result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.getMinZoomLevel(cameraIdArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1699,13 +1875,20 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
                 Double zoomArg = (Double) args.get(1);
-                try {
-                  api.setZoomLevel(cameraIdArg, zoomArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setZoomLevel(cameraIdArg, zoomArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1723,13 +1906,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
-                try {
-                  api.pausePreview(cameraIdArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.pausePreview(cameraIdArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1747,13 +1937,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long cameraIdArg = (Long) args.get(0);
-                try {
-                  api.resumePreview(cameraIdArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.resumePreview(cameraIdArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1772,13 +1969,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String descriptionArg = (String) args.get(0);
-                try {
-                  api.setDescriptionWhileRecording(descriptionArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setDescriptionWhileRecording(descriptionArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

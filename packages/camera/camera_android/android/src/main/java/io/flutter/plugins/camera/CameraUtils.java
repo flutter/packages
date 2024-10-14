@@ -6,14 +6,19 @@ package io.flutter.plugins.camera;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
+import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugins.camera.features.autofocus.FocusMode;
 import io.flutter.plugins.camera.features.exposurelock.ExposureMode;
+import io.flutter.plugins.camera.features.flash.FlashMode;
+import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -169,6 +174,22 @@ public final class CameraUtils {
     return Messages.PlatformDeviceOrientation.PORTRAIT_UP;
   }
 
+  @NonNull
+  public static PlatformChannel.DeviceOrientation orientationFromPigeon(
+      Messages.PlatformDeviceOrientation orientation) {
+    switch (orientation) {
+      case PORTRAIT_UP:
+        return PlatformChannel.DeviceOrientation.PORTRAIT_UP;
+      case PORTRAIT_DOWN:
+        return PlatformChannel.DeviceOrientation.PORTRAIT_DOWN;
+      case LANDSCAPE_LEFT:
+        return PlatformChannel.DeviceOrientation.LANDSCAPE_LEFT;
+      case LANDSCAPE_RIGHT:
+        return PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT;
+    }
+    return PlatformChannel.DeviceOrientation.PORTRAIT_UP;
+  }
+
   /**
    * Converts a FocusMode from the autofocus package to a PlatformFocusMode from Pigeon.
    *
@@ -184,6 +205,17 @@ public final class CameraUtils {
         return Messages.PlatformFocusMode.LOCKED;
     }
     return Messages.PlatformFocusMode.AUTO;
+  }
+
+  @Nullable
+  public static FocusMode focusModeFromPigeon(@NonNull Messages.PlatformFocusMode focusMode) {
+    switch (focusMode) {
+      case AUTO:
+        return FocusMode.auto;
+      case LOCKED:
+        return FocusMode.locked;
+    }
+    return null;
   }
 
   /**
@@ -202,5 +234,80 @@ public final class CameraUtils {
         return Messages.PlatformExposureMode.LOCKED;
     }
     return Messages.PlatformExposureMode.AUTO;
+  }
+
+  @Nullable
+  public static ExposureMode exposureModeFromPigeon(Messages.PlatformExposureMode mode) {
+    switch (mode) {
+      case AUTO:
+        return ExposureMode.auto;
+      case LOCKED:
+        return ExposureMode.locked;
+    }
+    return null;
+  }
+
+  /**
+   * Converts a PlatformResolutionPreset from Pigeon to a ResolutionPreset from the resolution
+   * package.
+   *
+   * @param preset A PlatformResolutionPreset.
+   * @return The corresponding ResolutionPreset.
+   */
+  @NonNull
+  public static ResolutionPreset resolutionPresetFromPigeon(
+      Messages.PlatformResolutionPreset preset) {
+    switch (preset) {
+      case LOW:
+        return ResolutionPreset.low;
+      case MEDIUM:
+        return ResolutionPreset.medium;
+      case HIGH:
+        return ResolutionPreset.high;
+      case VERY_HIGH:
+        return ResolutionPreset.veryHigh;
+      case ULTRA_HIGH:
+        return ResolutionPreset.ultraHigh;
+      case MAX:
+        return ResolutionPreset.max;
+    }
+    return ResolutionPreset.high;
+  }
+
+  /**
+   * Converts a PlatformImageFormatGroup from Pigeon to an Integer representing an image format.
+   *
+   * @param format A PlatformImageFormatGroup.
+   * @return The corresponding integer code. Defaults to YUV_420_888.
+   */
+  @NonNull
+  public static Integer imageFormatGroupFromPigeon(Messages.PlatformImageFormatGroup format) {
+    switch (format) {
+      case YUV420:
+        return ImageFormat.YUV_420_888;
+      case JPEG:
+        return ImageFormat.JPEG;
+      case NV21:
+        return ImageFormat.NV21;
+    }
+    Log.w(
+        "CameraUtils",
+        "The selected imageFormatGroup is not supported by Android. Defaulting to yuv420");
+    return ImageFormat.YUV_420_888;
+  }
+
+  @Nullable
+  public static FlashMode flashModeFromPigeon(Messages.PlatformFlashMode mode) {
+    switch (mode) {
+      case AUTO:
+        return FlashMode.auto;
+      case OFF:
+        return FlashMode.off;
+      case ALWAYS:
+        return FlashMode.always;
+      case TORCH:
+        return FlashMode.torch;
+    }
+    return null;
   }
 }

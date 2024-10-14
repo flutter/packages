@@ -14,9 +14,6 @@ import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugins.camera.CameraPermissions.PermissionsRegistry;
 import io.flutter.plugins.camera.features.CameraFeatureFactoryImpl;
 import io.flutter.plugins.camera.features.Point;
@@ -26,18 +23,15 @@ import io.flutter.plugins.camera.features.flash.FlashMode;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.view.TextureRegistry;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler, Messages.CameraApi {
+final class MethodCallHandlerImpl implements Messages.CameraApi {
   private final Activity activity;
   private final BinaryMessenger messenger;
   private final CameraPermissions cameraPermissions;
   private final PermissionsRegistry permissionsRegistry;
   private final TextureRegistry textureRegistry;
-  private final MethodChannel methodChannel;
   private final EventChannel imageStreamChannel;
   @VisibleForTesting @Nullable Camera camera;
 
@@ -53,342 +47,17 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler, Me
     this.permissionsRegistry = permissionsAdder;
     this.textureRegistry = textureRegistry;
 
-    methodChannel = new MethodChannel(messenger, "plugins.flutter.io/camera_android");
     imageStreamChannel =
         new EventChannel(messenger, "plugins.flutter.io/camera_android/imageStream");
-    methodChannel.setMethodCallHandler(this);
     Messages.CameraApi.setUp(messenger, this);
   }
 
-  @Override
-  public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
-    switch (call.method) {
-      case "create":
-        {
-          if (camera != null) {
-            camera.close();
-          }
-
-          cameraPermissions.requestPermissions(
-              activity,
-              permissionsRegistry,
-              call.argument("enableAudio"),
-              (String errCode, String errDesc) -> {
-                if (errCode == null) {
-                  try {
-                    instantiateCamera(call, result);
-                  } catch (Exception e) {
-                    handleException(e, result);
-                  }
-                } else {
-                  result.error(errCode, errDesc, null);
-                }
-              });
-          break;
-        }
-      case "initialize":
-        {
-          if (camera != null) {
-            try {
-              camera.open(call.argument("imageFormatGroup"));
-              result.success(null);
-            } catch (Exception e) {
-              handleException(e, result);
-            }
-          } else {
-            result.error(
-                "cameraNotFound",
-                "Camera not found. Please call the 'create' method before calling 'initialize'.",
-                null);
-          }
-          break;
-        }
-      case "takePicture":
-        {
-          camera.takePicture(result);
-          break;
-        }
-      case "prepareForVideoRecording":
-        {
-          // This optimization is not required for Android.
-          result.success(null);
-          break;
-        }
-      case "startVideoRecording":
-        {
-          camera.startVideoRecording(
-              result,
-              Objects.equals(call.argument("enableStream"), true) ? imageStreamChannel : null);
-          break;
-        }
-      case "stopVideoRecording":
-        {
-          camera.stopVideoRecording(result);
-          break;
-        }
-      case "pauseVideoRecording":
-        {
-          camera.pauseVideoRecording(result);
-          break;
-        }
-      case "resumeVideoRecording":
-        {
-          camera.resumeVideoRecording(result);
-          break;
-        }
-      case "setFlashMode":
-        {
-          String modeStr = call.argument("mode");
-          FlashMode mode = FlashMode.getValueForString(modeStr);
-          if (mode == null) {
-            result.error("setFlashModeFailed", "Unknown flash mode " + modeStr, null);
-            return;
-          }
-          try {
-            camera.setFlashMode(result, mode);
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "setExposureMode":
-        {
-          String modeStr = call.argument("mode");
-          ExposureMode mode = ExposureMode.getValueForString(modeStr);
-          if (mode == null) {
-            result.error("setExposureModeFailed", "Unknown exposure mode " + modeStr, null);
-            return;
-          }
-          try {
-            camera.setExposureMode(result, mode);
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "setExposurePoint":
-        {
-          Boolean reset = call.argument("reset");
-          Double x = null;
-          Double y = null;
-          if (reset == null || !reset) {
-            x = call.argument("x");
-            y = call.argument("y");
-          }
-          try {
-            camera.setExposurePoint(result, new Point(x, y));
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "getMinExposureOffset":
-        {
-          try {
-            result.success(camera.getMinExposureOffset());
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "getMaxExposureOffset":
-        {
-          try {
-            result.success(camera.getMaxExposureOffset());
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "getExposureOffsetStepSize":
-        {
-          try {
-            result.success(camera.getExposureOffsetStepSize());
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "setExposureOffset":
-        {
-          try {
-            camera.setExposureOffset(result, call.argument("offset"));
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "setFocusMode":
-        {
-          String modeStr = call.argument("mode");
-          FocusMode mode = FocusMode.getValueForString(modeStr);
-          if (mode == null) {
-            result.error("setFocusModeFailed", "Unknown focus mode " + modeStr, null);
-            return;
-          }
-          try {
-            camera.setFocusMode(result, mode);
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "setFocusPoint":
-        {
-          Boolean reset = call.argument("reset");
-          Double x = null;
-          Double y = null;
-          if (reset == null || !reset) {
-            x = call.argument("x");
-            y = call.argument("y");
-          }
-          try {
-            camera.setFocusPoint(result, new Point(x, y));
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "startImageStream":
-        {
-          try {
-            camera.startPreviewWithImageStream(imageStreamChannel);
-            result.success(null);
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "stopImageStream":
-        {
-          try {
-            camera.startPreview();
-            result.success(null);
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "getMaxZoomLevel":
-        {
-          assert camera != null;
-
-          try {
-            float maxZoomLevel = camera.getMaxZoomLevel();
-            result.success(maxZoomLevel);
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "getMinZoomLevel":
-        {
-          assert camera != null;
-
-          try {
-            float minZoomLevel = camera.getMinZoomLevel();
-            result.success(minZoomLevel);
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "setZoomLevel":
-        {
-          assert camera != null;
-
-          Double zoom = call.argument("zoom");
-
-          if (zoom == null) {
-            result.error(
-                "ZOOM_ERROR", "setZoomLevel is called without specifying a zoom level.", null);
-            return;
-          }
-
-          try {
-            camera.setZoomLevel(result, zoom.floatValue());
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "lockCaptureOrientation":
-        {
-          PlatformChannel.DeviceOrientation orientation =
-              CameraUtils.deserializeDeviceOrientation(call.argument("orientation"));
-
-          try {
-            camera.lockCaptureOrientation(orientation);
-            result.success(null);
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "unlockCaptureOrientation":
-        {
-          try {
-            camera.unlockCaptureOrientation();
-            result.success(null);
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "pausePreview":
-        {
-          try {
-            camera.pausePreview();
-            result.success(null);
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "resumePreview":
-        {
-          camera.resumePreview();
-          result.success(null);
-          break;
-        }
-      case "setDescriptionWhileRecording":
-        {
-          try {
-            String cameraName = call.argument("cameraName");
-            CameraProperties cameraProperties =
-                new CameraPropertiesImpl(cameraName, CameraUtils.getCameraManager(activity));
-            camera.setDescriptionWhileRecording(result, cameraProperties);
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-      case "dispose":
-        {
-          if (camera != null) {
-            camera.dispose();
-          }
-          result.success(null);
-          break;
-        }
-      default:
-        result.notImplemented();
-        break;
-    }
-  }
-
   void stopListening() {
-    methodChannel.setMethodCallHandler(null);
+    Messages.CameraApi.setUp(messenger, null);
   }
 
-  private void instantiateCamera(MethodCall call, Result result) throws CameraAccessException {
-    String cameraName = call.argument("cameraName");
-    String preset = call.argument("resolutionPreset");
-    boolean enableAudio = call.argument("enableAudio");
-    Integer fps = call.argument("fps");
-    Integer videoBitrate = call.argument("videoBitrate");
-    Integer audioBitrate = call.argument("audioBitrate");
-
+  private Long instantiateCamera(String cameraName, Messages.PlatformMediaSettings settings)
+      throws CameraAccessException {
     TextureRegistry.SurfaceTextureEntry flutterSurfaceTexture =
         textureRegistry.createSurfaceTexture();
     long cameraId = flutterSurfaceTexture.id();
@@ -399,7 +68,13 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler, Me
             new Messages.CameraEventApi(messenger, String.valueOf(cameraId)));
     CameraProperties cameraProperties =
         new CameraPropertiesImpl(cameraName, CameraUtils.getCameraManager(activity));
-    ResolutionPreset resolutionPreset = ResolutionPreset.valueOf(preset);
+    Integer fps = (settings.getFps() == null) ? null : settings.getFps().intValue();
+    Integer videoBitrate =
+        (settings.getVideoBitrate() == null) ? null : settings.getVideoBitrate().intValue();
+    Integer audioBitrate =
+        (settings.getAudioBitrate() == null) ? null : settings.getAudioBitrate().intValue();
+    ResolutionPreset resolutionPreset =
+        CameraUtils.resolutionPresetFromPigeon(settings.getResolutionPreset());
 
     camera =
         new Camera(
@@ -409,20 +84,28 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler, Me
             dartMessenger,
             cameraProperties,
             new Camera.VideoCaptureSettings(
-                resolutionPreset, enableAudio, fps, videoBitrate, audioBitrate));
+                resolutionPreset, settings.getEnableAudio(), fps, videoBitrate, audioBitrate));
 
-    Map<String, Object> reply = new HashMap<>();
-    reply.put("cameraId", flutterSurfaceTexture.id());
-    result.success(reply);
+    return flutterSurfaceTexture.id();
   }
 
   // We move catching CameraAccessException out of onMethodCall because it causes a crash
   // on plugin registration for sdks incompatible with Camera2 (< 21). We want this plugin to
   // to be able to compile with <21 sdks for apps that want the camera and support earlier version.
   @SuppressWarnings("ConstantConditions")
-  private void handleException(Exception exception, Result result) {
+  private <T> void handleException(Exception exception, Messages.Result<T> result) {
     if (exception instanceof CameraAccessException) {
-      result.error("CameraAccess", exception.getMessage(), null);
+      result.error(exception);
+      return;
+    }
+
+    // CameraAccessException can not be cast to a RuntimeException.
+    throw (RuntimeException) exception;
+  }
+
+  private <T> void handleException(Exception exception, Messages.VoidResult result) {
+    if (exception instanceof CameraAccessException) {
+      result.error(exception);
       return;
     }
 
@@ -441,5 +124,357 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler, Me
     } catch (CameraAccessException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @Override
+  public void create(
+      @NonNull String cameraName,
+      @NonNull Messages.PlatformMediaSettings settings,
+      @NonNull Messages.Result<Long> result) {
+    if (camera != null) {
+      camera.close();
+    }
+
+    cameraPermissions.requestPermissions(
+        activity,
+        permissionsRegistry,
+        settings.getEnableAudio(),
+        (String errCode, String errDesc) -> {
+          if (errCode == null) {
+            try {
+              result.success(instantiateCamera(cameraName, settings));
+            } catch (Exception e) {
+              handleException(e, result);
+            }
+          } else {
+            result.error(new Messages.FlutterError(errCode, errDesc, null));
+          }
+        });
+  }
+
+  @Override
+  public void initialize(
+      @NonNull Long cameraId,
+      @NonNull Messages.PlatformImageFormatGroup imageFormat,
+      @NonNull Messages.VoidResult result) {
+    if (camera != null) {
+      try {
+        camera.open(CameraUtils.imageFormatGroupFromPigeon(imageFormat));
+        result.success();
+      } catch (Exception e) {
+        handleException(e, result);
+      }
+    } else {
+      result.error(
+          new Messages.FlutterError(
+              "cameraNotFound",
+              "Camera not found. Please call the 'create' method before calling 'initialize'.",
+              null));
+    }
+  }
+
+  @Override
+  public void takePicture(@NonNull Long cameraId, @NonNull Messages.Result<String> result) {
+    camera.takePicture(result);
+  }
+
+  @Override
+  public void prepareForVideoRecording(@NonNull Messages.VoidResult result) {
+    // This optimization is not required for Android.
+    result.success();
+  }
+
+  @Override
+  public void startVideoRecording(
+      @NonNull Long cameraId, @NonNull Boolean enableStream, @NonNull Messages.VoidResult result) {
+    camera.startVideoRecording(
+        result, Objects.equals(enableStream, true) ? imageStreamChannel : null);
+  }
+
+  @Override
+  public void stopVideoRecording(@NonNull Long cameraId, @NonNull Messages.Result<String> result) {
+    camera.stopVideoRecording(result);
+  }
+
+  @Override
+  public void pauseVideoRecording(@NonNull Long cameraId, @NonNull Messages.VoidResult result) {
+    camera.pauseVideoRecording(result);
+  }
+
+  @Override
+  public void resumeVideoRecording(@NonNull Long cameraId, @NonNull Messages.VoidResult result) {
+    camera.resumeVideoRecording(result);
+  }
+
+  @Override
+  public void setFlashMode(
+      @NonNull Long cameraId,
+      @NonNull Messages.PlatformFlashMode flashMode,
+      @NonNull Messages.VoidResult result) {
+    FlashMode mode = CameraUtils.flashModeFromPigeon(flashMode);
+    if (mode == null) {
+      result.error(
+          new Messages.FlutterError(
+              "setFlashModeFailed", "Unknown flash mode " + mode.name(), null));
+      return;
+    }
+    try {
+      camera.setFlashMode(result, mode);
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void setExposureMode(
+      @NonNull Long cameraId,
+      @NonNull Messages.PlatformExposureMode exposureMode,
+      @NonNull Messages.VoidResult result) {
+    ExposureMode mode = CameraUtils.exposureModeFromPigeon(exposureMode);
+    if (mode == null) {
+      result.error(
+          new Messages.FlutterError(
+              "setExposureModeFailed", "Unknown exposure mode " + mode.name(), null));
+      return;
+    }
+    try {
+      camera.setExposureMode(result, mode);
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void setExposurePoint(
+      @NonNull Long cameraId,
+      @Nullable Messages.PlatformPoint point,
+      @NonNull Messages.VoidResult result) {
+
+    Double x = null;
+    Double y = null;
+    if (point != null) {
+      x = point.getX();
+      y = point.getY();
+    }
+    try {
+      camera.setExposurePoint(result, new Point(x, y));
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void getMinExposureOffset(
+      @NonNull Long cameraId, @NonNull Messages.Result<Double> result) {
+
+    try {
+      result.success(camera.getMinExposureOffset());
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void getMaxExposureOffset(
+      @NonNull Long cameraId, @NonNull Messages.Result<Double> result) {
+
+    try {
+      result.success(camera.getMaxExposureOffset());
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void getExposureOffsetStepSize(
+      @NonNull Long cameraId, @NonNull Messages.Result<Double> result) {
+
+    try {
+      result.success(camera.getExposureOffsetStepSize());
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void setExposureOffset(
+      @NonNull Long cameraId, @NonNull Double offset, @NonNull Messages.Result<Double> result) {
+
+    try {
+      camera.setExposureOffset(result, offset);
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void setFocusMode(
+      @NonNull Long cameraId,
+      @NonNull Messages.PlatformFocusMode focusMode,
+      @NonNull Messages.VoidResult result) {
+    FocusMode mode = CameraUtils.focusModeFromPigeon(focusMode);
+    if (mode == null) {
+      result.error(
+          new Messages.FlutterError(
+              "setFocusModeFailed", "Unknown focus mode " + mode.name(), null));
+      return;
+    }
+    try {
+      camera.setFocusMode(result, mode);
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void setFocusPoint(
+      @NonNull Long cameraId,
+      @Nullable Messages.PlatformPoint point,
+      @NonNull Messages.VoidResult result) {
+    Double x = null;
+    Double y = null;
+    if (point != null) {
+      x = point.getX();
+      y = point.getY();
+    }
+    try {
+      camera.setFocusPoint(result, new Point(x, y));
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void startImageStream(@NonNull Messages.VoidResult result) {
+
+    try {
+      camera.startPreviewWithImageStream(imageStreamChannel);
+      result.success();
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void stopImageStream(@NonNull Messages.VoidResult result) {
+
+    try {
+      camera.startPreview();
+      result.success();
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void getMaxZoomLevel(@NonNull Long cameraId, @NonNull Messages.Result<Double> result) {
+
+    assert camera != null;
+
+    try {
+      float maxZoomLevel = camera.getMaxZoomLevel();
+      result.success((double) maxZoomLevel);
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void getMinZoomLevel(@NonNull Long cameraId, @NonNull Messages.Result<Double> result) {
+
+    assert camera != null;
+
+    try {
+      float minZoomLevel = camera.getMinZoomLevel();
+      result.success((double) minZoomLevel);
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void setZoomLevel(
+      @NonNull Long cameraId, @NonNull Double zoom, @NonNull Messages.VoidResult result) {
+
+    assert camera != null;
+
+    try {
+      camera.setZoomLevel(result, zoom.floatValue());
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void lockCaptureOrientation(
+      @NonNull Long cameraId,
+      @NonNull Messages.PlatformDeviceOrientation platformOrientation,
+      @NonNull Messages.VoidResult result) {
+
+    PlatformChannel.DeviceOrientation orientation =
+        CameraUtils.orientationFromPigeon(platformOrientation);
+
+    try {
+      camera.lockCaptureOrientation(orientation);
+      result.success();
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void unlockCaptureOrientation(
+      @NonNull Long cameraId, @NonNull Messages.VoidResult result) {
+
+    try {
+      camera.unlockCaptureOrientation();
+      result.success();
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void pausePreview(@NonNull Long cameraId, @NonNull Messages.VoidResult result) {
+
+    try {
+      camera.pausePreview();
+      result.success();
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void resumePreview(@NonNull Long cameraId, @NonNull Messages.VoidResult result) {
+
+    try {
+      camera.resumePreview();
+      result.success();
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void setDescriptionWhileRecording(
+      @NonNull String cameraName, @NonNull Messages.VoidResult result) {
+
+    try {
+      CameraProperties cameraProperties =
+          new CameraPropertiesImpl(cameraName, CameraUtils.getCameraManager(activity));
+      camera.setDescriptionWhileRecording(result, cameraProperties);
+    } catch (Exception e) {
+      handleException(e, result);
+    }
+  }
+
+  @Override
+  public void dispose(@NonNull Long cameraId, @NonNull Messages.VoidResult result) {
+
+    if (camera != null) {
+      camera.dispose();
+    }
+    result.success();
   }
 }

@@ -39,8 +39,6 @@ import androidx.annotation.VisibleForTesting;
 import io.flutter.BuildConfig;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugin.common.EventChannel;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugins.camera.features.CameraFeature;
 import io.flutter.plugins.camera.features.CameraFeatureFactory;
 import io.flutter.plugins.camera.features.CameraFeatures;
@@ -99,7 +97,7 @@ class Camera
    */
   CameraFeatures cameraFeatures;
 
-  private String imageFormatGroup;
+  private int imageFormatGroup;
 
   /**
    * Takes an input/output surface and orients the recording correctly. This is needed because
@@ -148,7 +146,7 @@ class Camera
   /** Holds the last known capture properties */
   private CameraCaptureProperties captureProps;
 
-  MethodChannel.Result flutterResult;
+  Messages.Result<String> flutterResult;
 
   /** A CameraDeviceWrapper implementation that forwards calls to a CameraDevice. */
   private class DefaultCameraDeviceWrapper implements CameraDeviceWrapper {
@@ -340,7 +338,7 @@ class Camera
   }
 
   @SuppressLint("MissingPermission")
-  public void open(String imageFormatGroup) throws CameraAccessException {
+  public void open(Integer imageFormatGroup) throws CameraAccessException {
     this.imageFormatGroup = imageFormatGroup;
     final ResolutionFeature resolutionFeature = cameraFeatures.getResolution();
 
@@ -363,17 +361,11 @@ class Camera
             ImageFormat.JPEG,
             1);
 
-    // For image streaming, use the provided image format or fall back to YUV420.
-    Integer imageFormat = supportedImageFormats.get(imageFormatGroup);
-    if (imageFormat == null) {
-      Log.w(TAG, "The selected imageFormatGroup is not supported by Android. Defaulting to yuv420");
-      imageFormat = ImageFormat.YUV_420_888;
-    }
     imageStreamReader =
         new ImageStreamReader(
             resolutionFeature.getPreviewSize().getWidth(),
             resolutionFeature.getPreviewSize().getHeight(),
-            imageFormat,
+            this.imageFormatGroup,
             1);
 
     // Open the camera.
@@ -618,10 +610,12 @@ class Camera
         CameraDevice.TEMPLATE_RECORD, successCallback, surfaces.toArray(new Surface[0]));
   }
 
-  public void takePicture(@NonNull final Result result) {
+  public void takePicture(@NonNull final Messages.Result<String> result) {
     // Only take one picture at a time.
     if (cameraCaptureCallback.getCameraState() != CameraState.STATE_PREVIEW) {
-      result.error("captureAlreadyActive", "Picture is currently already being captured", null);
+      result.error(
+          new Messages.FlutterError(
+              "captureAlreadyActive", "Picture is currently already being captured", null));
       return;
     }
 
@@ -826,7 +820,7 @@ class Camera
   }
 
   public void startVideoRecording(
-      @NonNull Result result, @Nullable EventChannel imageStreamChannel) {
+      @NonNull Messages.VoidResult result, @Nullable EventChannel imageStreamChannel) {
     prepareRecording(result);
 
     if (imageStreamChannel != null) {
@@ -836,11 +830,11 @@ class Camera
     recordingVideo = true;
     try {
       startCapture(true, imageStreamChannel != null);
-      result.success(null);
+      result.success();
     } catch (CameraAccessException e) {
       recordingVideo = false;
       captureFile = null;
-      result.error("videoRecordingFailed", e.getMessage(), null);
+      result.error(new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null));
     }
   }
 
@@ -851,9 +845,9 @@ class Camera
     }
   }
 
-  public void stopVideoRecording(@NonNull final Result result) {
+  public void stopVideoRecording(@NonNull final Messages.Result<String> result) {
     if (!recordingVideo) {
-      result.success(null);
+      result.success("");
       return;
     }
     // Re-create autofocus feature so it's using continuous capture focus mode now.
@@ -871,16 +865,16 @@ class Camera
     try {
       startPreview();
     } catch (CameraAccessException | IllegalStateException | InterruptedException e) {
-      result.error("videoRecordingFailed", e.getMessage(), null);
+      result.error(new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null));
       return;
     }
     result.success(captureFile.getAbsolutePath());
     captureFile = null;
   }
 
-  public void pauseVideoRecording(@NonNull final Result result) {
+  public void pauseVideoRecording(@NonNull final Messages.VoidResult result) {
     if (!recordingVideo) {
-      result.success(null);
+      result.success();
       return;
     }
 
@@ -888,20 +882,22 @@ class Camera
       if (SdkCapabilityChecker.supportsVideoPause()) {
         mediaRecorder.pause();
       } else {
-        result.error("videoRecordingFailed", "pauseVideoRecording requires Android API +24.", null);
+        result.error(
+            new Messages.FlutterError(
+                "videoRecordingFailed", "pauseVideoRecording requires Android API +24.", null));
         return;
       }
     } catch (IllegalStateException e) {
-      result.error("videoRecordingFailed", e.getMessage(), null);
+      result.error(new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null));
       return;
     }
 
-    result.success(null);
+    result.success();
   }
 
-  public void resumeVideoRecording(@NonNull final Result result) {
+  public void resumeVideoRecording(@NonNull final Messages.VoidResult result) {
     if (!recordingVideo) {
-      result.success(null);
+      result.success();
       return;
     }
 
@@ -910,15 +906,16 @@ class Camera
         mediaRecorder.resume();
       } else {
         result.error(
-            "videoRecordingFailed", "resumeVideoRecording requires Android API +24.", null);
+            new Messages.FlutterError(
+                "videoRecordingFailed", "resumeVideoRecording requires Android API +24.", null));
         return;
       }
     } catch (IllegalStateException e) {
-      result.error("videoRecordingFailed", e.getMessage(), null);
+      result.error(new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null));
       return;
     }
 
-    result.success(null);
+    result.success();
   }
 
   /**
@@ -927,15 +924,18 @@ class Camera
    * @param result Flutter result.
    * @param newMode new mode.
    */
-  public void setFlashMode(@NonNull final Result result, @NonNull FlashMode newMode) {
+  public void setFlashMode(@NonNull final Messages.VoidResult result, @NonNull FlashMode newMode) {
     // Save the new flash mode setting.
     final FlashFeature flashFeature = cameraFeatures.getFlash();
     flashFeature.setValue(newMode);
     flashFeature.updateBuilder(previewRequestBuilder);
 
     refreshPreviewCaptureSession(
-        () -> result.success(null),
-        (code, message) -> result.error("setFlashModeFailed", "Could not set flash mode.", null));
+        result::success,
+        (code, message) ->
+            result.error(
+                new Messages.FlutterError(
+                    "setFlashModeFailed", "Could not set flash mode.", null)));
   }
 
   /**
@@ -944,15 +944,18 @@ class Camera
    * @param result Flutter result.
    * @param newMode new mode.
    */
-  public void setExposureMode(@NonNull final Result result, @NonNull ExposureMode newMode) {
+  public void setExposureMode(
+      @NonNull final Messages.VoidResult result, @NonNull ExposureMode newMode) {
     final ExposureLockFeature exposureLockFeature = cameraFeatures.getExposureLock();
     exposureLockFeature.setValue(newMode);
     exposureLockFeature.updateBuilder(previewRequestBuilder);
 
     refreshPreviewCaptureSession(
-        () -> result.success(null),
+        result::success,
         (code, message) ->
-            result.error("setExposureModeFailed", "Could not set exposure mode.", null));
+            result.error(
+                new Messages.FlutterError(
+                    "setExposureModeFailed", "Could not set exposure mode.", null)));
   }
 
   /**
@@ -961,15 +964,17 @@ class Camera
    * @param result Flutter result.
    * @param point The exposure point.
    */
-  public void setExposurePoint(@NonNull final Result result, @Nullable Point point) {
+  public void setExposurePoint(@NonNull final Messages.VoidResult result, @Nullable Point point) {
     final ExposurePointFeature exposurePointFeature = cameraFeatures.getExposurePoint();
     exposurePointFeature.setValue(point);
     exposurePointFeature.updateBuilder(previewRequestBuilder);
 
     refreshPreviewCaptureSession(
-        () -> result.success(null),
+        result::success,
         (code, message) ->
-            result.error("setExposurePointFailed", "Could not set exposure point.", null));
+            result.error(
+                new Messages.FlutterError(
+                    "setExposurePointFailed", "Could not set exposure point.", null)));
   }
 
   /** Return the max exposure offset value supported by the camera to dart. */
@@ -993,7 +998,7 @@ class Camera
    * @param result Flutter result.
    * @param newMode New mode.
    */
-  public void setFocusMode(final Result result, @NonNull FocusMode newMode) {
+  public void setFocusMode(final Messages.VoidResult result, @NonNull FocusMode newMode) {
     final AutoFocusFeature autoFocusFeature = cameraFeatures.getAutoFocus();
     autoFocusFeature.setValue(newMode);
     autoFocusFeature.updateBuilder(previewRequestBuilder);
@@ -1022,7 +1027,8 @@ class Camera
           } catch (CameraAccessException e) {
             if (result != null) {
               result.error(
-                  "setFocusModeFailed", "Error setting focus mode: " + e.getMessage(), null);
+                  new Messages.FlutterError(
+                      "setFocusModeFailed", "Error setting focus mode: " + e.getMessage(), null));
             }
             return;
           }
@@ -1035,7 +1041,7 @@ class Camera
     }
 
     if (result != null) {
-      result.success(null);
+      result.success();
     }
   }
 
@@ -1045,14 +1051,17 @@ class Camera
    * @param result Flutter result.
    * @param point the new coordinates.
    */
-  public void setFocusPoint(@NonNull final Result result, @Nullable Point point) {
+  public void setFocusPoint(@NonNull final Messages.VoidResult result, @Nullable Point point) {
     final FocusPointFeature focusPointFeature = cameraFeatures.getFocusPoint();
     focusPointFeature.setValue(point);
     focusPointFeature.updateBuilder(previewRequestBuilder);
 
     refreshPreviewCaptureSession(
-        () -> result.success(null),
-        (code, message) -> result.error("setFocusPointFailed", "Could not set focus point.", null));
+        result::success,
+        (code, message) ->
+            result.error(
+                new Messages.FlutterError(
+                    "setFocusPointFailed", "Could not set focus point.", null)));
 
     this.setFocusMode(null, cameraFeatures.getAutoFocus().getValue());
   }
@@ -1064,7 +1073,7 @@ class Camera
    * @param result flutter result.
    * @param offset new value.
    */
-  public void setExposureOffset(@NonNull final Result result, double offset) {
+  public void setExposureOffset(@NonNull final Messages.Result<Double> result, double offset) {
     final ExposureOffsetFeature exposureOffsetFeature = cameraFeatures.getExposureOffset();
     exposureOffsetFeature.setValue(offset);
     exposureOffsetFeature.updateBuilder(previewRequestBuilder);
@@ -1072,7 +1081,9 @@ class Camera
     refreshPreviewCaptureSession(
         () -> result.success(exposureOffsetFeature.getValue()),
         (code, message) ->
-            result.error("setExposureOffsetFailed", "Could not set exposure offset.", null));
+            result.error(
+                new Messages.FlutterError(
+                    "setExposureOffsetFailed", "Could not set exposure offset.", null)));
   }
 
   public float getMaxZoomLevel() {
@@ -1103,7 +1114,8 @@ class Camera
    * @param result Flutter result.
    * @param zoom new value.
    */
-  public void setZoomLevel(@NonNull final Result result, float zoom) throws CameraAccessException {
+  public void setZoomLevel(@NonNull final Messages.VoidResult result, float zoom)
+      throws CameraAccessException {
     final ZoomLevelFeature zoomLevel = cameraFeatures.getZoomLevel();
     float maxZoom = zoomLevel.getMaximumZoomLevel();
     float minZoom = zoomLevel.getMinimumZoomLevel();
@@ -1115,7 +1127,7 @@ class Camera
               "Zoom level out of bounds (zoom level should be between %f and %f).",
               minZoom,
               maxZoom);
-      result.error("ZOOM_ERROR", errorMessage, null);
+      result.error(new Messages.FlutterError("ZOOM_ERROR", errorMessage, null));
       return;
     }
 
@@ -1123,8 +1135,11 @@ class Camera
     zoomLevel.updateBuilder(previewRequestBuilder);
 
     refreshPreviewCaptureSession(
-        () -> result.success(null),
-        (code, message) -> result.error("setZoomLevelFailed", "Could not set zoom level.", null));
+        result::success,
+        (code, message) ->
+            result.error(
+                new Messages.FlutterError(
+                    "setZoomLevelFailed", "Could not set zoom level.", null)));
   }
 
   /**
@@ -1231,12 +1246,12 @@ class Camera
             captureFile,
             new ImageSaver.Callback() {
               @Override
-              public void onComplete(String absolutePath) {
+              public void onComplete(@NonNull String absolutePath) {
                 dartMessenger.finish(flutterResult, absolutePath);
               }
 
               @Override
-              public void onError(String errorCode, String errorMessage) {
+              public void onError(@NonNull String errorCode, @NonNull String errorMessage) {
                 dartMessenger.error(flutterResult, errorCode, errorMessage, null);
               }
             }));
@@ -1244,12 +1259,12 @@ class Camera
   }
 
   @VisibleForTesting
-  void prepareRecording(@NonNull Result result) {
+  void prepareRecording(@NonNull Messages.VoidResult result) {
     final File outputDir = applicationContext.getCacheDir();
     try {
       captureFile = File.createTempFile("REC", ".mp4", outputDir);
     } catch (IOException | SecurityException e) {
-      result.error("cannotCreateFile", e.getMessage(), null);
+      result.error(new Messages.FlutterError("cannotCreateFile", e.getMessage(), null));
       return;
     }
     try {
@@ -1257,7 +1272,7 @@ class Camera
     } catch (IOException e) {
       recordingVideo = false;
       captureFile = null;
-      result.error("videoRecordingFailed", e.getMessage(), null);
+      result.error(new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null));
       return;
     }
     // Re-create autofocus feature so it's using video focus mode now.
@@ -1360,19 +1375,22 @@ class Camera
   }
 
   public void setDescriptionWhileRecording(
-      @NonNull final Result result, CameraProperties properties) {
+      @NonNull final Messages.VoidResult result, CameraProperties properties) {
 
     if (!recordingVideo) {
-      result.error("setDescriptionWhileRecordingFailed", "Device was not recording", null);
+      result.error(
+          new Messages.FlutterError(
+              "setDescriptionWhileRecordingFailed", "Device was not recording", null));
       return;
     }
 
     // See VideoRenderer.java; support for this EGL extension is required to switch camera while recording.
     if (!SdkCapabilityChecker.supportsEglRecordableAndroid()) {
       result.error(
-          "setDescriptionWhileRecordingFailed",
-          "Device does not support switching the camera while recording",
-          null);
+          new Messages.FlutterError(
+              "setDescriptionWhileRecordingFailed",
+              "Device does not support switching the camera while recording",
+              null));
       return;
     }
 
@@ -1391,9 +1409,10 @@ class Camera
     try {
       open(imageFormatGroup);
     } catch (CameraAccessException e) {
-      result.error("setDescriptionWhileRecordingFailed", e.getMessage(), null);
+      result.error(
+          new Messages.FlutterError("setDescriptionWhileRecordingFailed", e.getMessage(), null));
     }
-    result.success(null);
+    result.success();
   }
 
   public void dispose() {
