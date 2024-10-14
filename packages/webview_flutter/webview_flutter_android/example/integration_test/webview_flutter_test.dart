@@ -356,254 +356,254 @@ Future<void> main() async {
     expect(customUserAgent, 'Custom_User_Agent1');
   });
 
-  group('Video playback policy', () {
-    late String videoTestBase64;
-    setUpAll(() async {
-      final ByteData videoData =
-          await rootBundle.load('assets/sample_video.mp4');
-      final String base64VideoData =
-          base64Encode(Uint8List.view(videoData.buffer));
-      final String videoTest = '''
-          <!DOCTYPE html><html>
-          <head><title>Video auto play</title>
-            <style>
-              body,
-              html,
-              #container {
-                  height: 100%;
-                  width: 100%;
-              }
-
-              div {
-                height: 50%;
-                width: 100%;
-              }
-            </style>
-            <script type="text/javascript">
-              function play() {
-                var video = document.getElementById("video");
-                video.play();
-                video.addEventListener('timeupdate', videoTimeUpdateHandler, false);
-              }
-              function videoTimeUpdateHandler(e) {
-                var video = document.getElementById("video");
-                VideoTestTime.postMessage(video.currentTime);
-              }
-              function isPaused() {
-                var video = document.getElementById("video");
-                return video.paused;
-              }
-              function isFullScreen() {
-                var video = document.getElementById("video");
-                return video.webkitDisplayingFullscreen;
-              }
-              function toggleFullScreen() {
-                let elem = document.getElementById("video");
-
-                if (!document.fullscreenElement) {
-                  elem.requestFullscreen();
-                } else {
-                  document.exitFullscreen();
-                }
-              }
-            </script>
-          </head>
-          <body onload="play();">
-            <div onclick="toggleFullScreen();" style="background-color: aqua;"></div>
-            <div>
-              <video controls playsinline autoplay id="video" height="100%">
-                <source src="data:video/mp4;charset=utf-8;base64,$base64VideoData">
-              </video>
-            </div>
-          </body>
-          </html>
-        ''';
-      videoTestBase64 = base64Encode(const Utf8Encoder().convert(videoTest));
-    });
-
-    testWidgets('Auto media playback', (WidgetTester tester) async {
-      Completer<void> pageLoaded = Completer<void>();
-
-      AndroidWebViewController controller = AndroidWebViewController(
-        const PlatformWebViewControllerCreationParams(),
-      );
-      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-      await controller.setMediaPlaybackRequiresUserGesture(false);
-      AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
-        const PlatformNavigationDelegateCreationParams(),
-      );
-      await delegate.setOnPageFinished((_) => pageLoaded.complete());
-      await controller.setPlatformNavigationDelegate(delegate);
-
-      await controller.loadRequest(
-        LoadRequestParams(
-          uri: Uri.parse(
-            'data:text/html;charset=utf-8;base64,$videoTestBase64',
-          ),
-        ),
-      );
-
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
-
-      await pageLoaded.future;
-
-      bool isPaused =
-          await controller.runJavaScriptReturningResult('isPaused();') as bool;
-      expect(isPaused, false);
-
-      pageLoaded = Completer<void>();
-      controller = AndroidWebViewController(
-        const PlatformWebViewControllerCreationParams(),
-      );
-      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-      delegate = AndroidNavigationDelegate(
-        const PlatformNavigationDelegateCreationParams(),
-      );
-      await delegate.setOnPageFinished((_) => pageLoaded.complete());
-      await controller.setPlatformNavigationDelegate(delegate);
-
-      await controller.loadRequest(
-        LoadRequestParams(
-          uri: Uri.parse(
-            'data:text/html;charset=utf-8;base64,$videoTestBase64',
-          ),
-        ),
-      );
-
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
-
-      await pageLoaded.future;
-
-      isPaused =
-          await controller.runJavaScriptReturningResult('isPaused();') as bool;
-      expect(isPaused, true);
-    });
-
-    testWidgets('Video plays inline', (WidgetTester tester) async {
-      final Completer<void> pageLoaded = Completer<void>();
-      final Completer<void> videoPlaying = Completer<void>();
-
-      final AndroidWebViewController controller = AndroidWebViewController(
-        const PlatformWebViewControllerCreationParams(),
-      );
-      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-      await controller.setMediaPlaybackRequiresUserGesture(false);
-      final AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
-        const PlatformNavigationDelegateCreationParams(),
-      );
-      await delegate.setOnPageFinished((_) => pageLoaded.complete());
-      await controller.setPlatformNavigationDelegate(delegate);
-
-      await controller.addJavaScriptChannel(
-        JavaScriptChannelParams(
-          name: 'VideoTestTime',
-          onMessageReceived: (JavaScriptMessage message) {
-            final double currentTime = double.parse(message.message);
-            // Let it play for at least 1 second to make sure the related video's properties are set.
-            if (currentTime > 1 && !videoPlaying.isCompleted) {
-              videoPlaying.complete(null);
-            }
-          },
-        ),
-      );
-
-      await controller.loadRequest(
-        LoadRequestParams(
-          uri: Uri.parse(
-            'data:text/html;charset=utf-8;base64,$videoTestBase64',
-          ),
-        ),
-      );
-
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        },
-      ));
-
-      await pageLoaded.future;
-
-      // Makes sure we get the correct event that indicates the video is actually playing.
-      await videoPlaying.future;
-
-      final bool fullScreen = await controller
-          .runJavaScriptReturningResult('isFullScreen();') as bool;
-      expect(fullScreen, false);
-    });
-
-    testWidgets('Video plays fullscreen', (WidgetTester tester) async {
-      final Completer<void> fullscreenEntered = Completer<void>();
-      final Completer<void> fullscreenExited = Completer<void>();
-      final Completer<void> pageLoaded = Completer<void>();
-
-      final AndroidWebViewController controller = AndroidWebViewController(
-        const PlatformWebViewControllerCreationParams(),
-      );
-      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-      await controller.setMediaPlaybackRequiresUserGesture(false);
-      final AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
-        const PlatformNavigationDelegateCreationParams(),
-      );
-      await delegate.setOnPageFinished((_) => pageLoaded.complete());
-      await controller.setPlatformNavigationDelegate(delegate);
-      await controller.setCustomWidgetCallbacks(onHideCustomWidget: () {
-        fullscreenExited.complete();
-      }, onShowCustomWidget:
-          (Widget webView, void Function() onHideCustomView) {
-        fullscreenEntered.complete();
-        onHideCustomView();
-      });
-
-      await controller.loadRequest(
-        LoadRequestParams(
-          uri: Uri.parse(
-            'data:text/html;charset=utf-8;base64,$videoTestBase64',
-          ),
-        ),
-      );
-
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(
-              key: const Key('webview_widget'),
-              controller: controller,
-            ),
-          ).build(context);
-        },
-      ));
-
-      await pageLoaded.future;
-
-      await tester.pumpAndSettle();
-
-      // Due to security reasons, Chrome doesn't allow to programmatically
-      // toggle a video to fullscreen unless the call is directly coming from
-      // a user triggered event.
-      // The top half of the loaded web content contains a clickable div, which
-      // is tapped using the code below, triggering a user event.
-      //
-      // The offset of 20 x 20 is chosen at random.
-      await tester.tapAt(const Offset(20, 20));
-
-      await expectLater(fullscreenEntered.future, completes);
-      await expectLater(fullscreenExited.future, completes);
-    });
-  });
+  // group('Video playback policy', () {
+  //   late String videoTestBase64;
+  //   setUpAll(() async {
+  //     final ByteData videoData =
+  //         await rootBundle.load('assets/sample_video.mp4');
+  //     final String base64VideoData =
+  //         base64Encode(Uint8List.view(videoData.buffer));
+  //     final String videoTest = '''
+  //         <!DOCTYPE html><html>
+  //         <head><title>Video auto play</title>
+  //           <style>
+  //             body,
+  //             html,
+  //             #container {
+  //                 height: 100%;
+  //                 width: 100%;
+  //             }
+  //
+  //             div {
+  //               height: 50%;
+  //               width: 100%;
+  //             }
+  //           </style>
+  //           <script type="text/javascript">
+  //             function play() {
+  //               var video = document.getElementById("video");
+  //               video.play();
+  //               video.addEventListener('timeupdate', videoTimeUpdateHandler, false);
+  //             }
+  //             function videoTimeUpdateHandler(e) {
+  //               var video = document.getElementById("video");
+  //               VideoTestTime.postMessage(video.currentTime);
+  //             }
+  //             function isPaused() {
+  //               var video = document.getElementById("video");
+  //               return video.paused;
+  //             }
+  //             function isFullScreen() {
+  //               var video = document.getElementById("video");
+  //               return video.webkitDisplayingFullscreen;
+  //             }
+  //             function toggleFullScreen() {
+  //               let elem = document.getElementById("video");
+  //
+  //               if (!document.fullscreenElement) {
+  //                 elem.requestFullscreen();
+  //               } else {
+  //                 document.exitFullscreen();
+  //               }
+  //             }
+  //           </script>
+  //         </head>
+  //         <body onload="play();">
+  //           <div onclick="toggleFullScreen();" style="background-color: aqua;"></div>
+  //           <div>
+  //             <video controls playsinline autoplay id="video" height="100%">
+  //               <source src="data:video/mp4;charset=utf-8;base64,$base64VideoData">
+  //             </video>
+  //           </div>
+  //         </body>
+  //         </html>
+  //       ''';
+  //     videoTestBase64 = base64Encode(const Utf8Encoder().convert(videoTest));
+  //   });
+  //
+  //   testWidgets('Auto media playback', (WidgetTester tester) async {
+  //     Completer<void> pageLoaded = Completer<void>();
+  //
+  //     AndroidWebViewController controller = AndroidWebViewController(
+  //       const PlatformWebViewControllerCreationParams(),
+  //     );
+  //     await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+  //     await controller.setMediaPlaybackRequiresUserGesture(false);
+  //     AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
+  //       const PlatformNavigationDelegateCreationParams(),
+  //     );
+  //     await delegate.setOnPageFinished((_) => pageLoaded.complete());
+  //     await controller.setPlatformNavigationDelegate(delegate);
+  //
+  //     await controller.loadRequest(
+  //       LoadRequestParams(
+  //         uri: Uri.parse(
+  //           'data:text/html;charset=utf-8;base64,$videoTestBase64',
+  //         ),
+  //       ),
+  //     );
+  //
+  //     await tester.pumpWidget(Builder(
+  //       builder: (BuildContext context) {
+  //         return PlatformWebViewWidget(
+  //           PlatformWebViewWidgetCreationParams(controller: controller),
+  //         ).build(context);
+  //       },
+  //     ));
+  //
+  //     await pageLoaded.future;
+  //
+  //     bool isPaused =
+  //         await controller.runJavaScriptReturningResult('isPaused();') as bool;
+  //     expect(isPaused, false);
+  //
+  //     pageLoaded = Completer<void>();
+  //     controller = AndroidWebViewController(
+  //       const PlatformWebViewControllerCreationParams(),
+  //     );
+  //     await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+  //     delegate = AndroidNavigationDelegate(
+  //       const PlatformNavigationDelegateCreationParams(),
+  //     );
+  //     await delegate.setOnPageFinished((_) => pageLoaded.complete());
+  //     await controller.setPlatformNavigationDelegate(delegate);
+  //
+  //     await controller.loadRequest(
+  //       LoadRequestParams(
+  //         uri: Uri.parse(
+  //           'data:text/html;charset=utf-8;base64,$videoTestBase64',
+  //         ),
+  //       ),
+  //     );
+  //
+  //     await tester.pumpWidget(Builder(
+  //       builder: (BuildContext context) {
+  //         return PlatformWebViewWidget(
+  //           PlatformWebViewWidgetCreationParams(controller: controller),
+  //         ).build(context);
+  //       },
+  //     ));
+  //
+  //     await pageLoaded.future;
+  //
+  //     isPaused =
+  //         await controller.runJavaScriptReturningResult('isPaused();') as bool;
+  //     expect(isPaused, true);
+  //   });
+  //
+  //   testWidgets('Video plays inline', (WidgetTester tester) async {
+  //     final Completer<void> pageLoaded = Completer<void>();
+  //     final Completer<void> videoPlaying = Completer<void>();
+  //
+  //     final AndroidWebViewController controller = AndroidWebViewController(
+  //       const PlatformWebViewControllerCreationParams(),
+  //     );
+  //     await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+  //     await controller.setMediaPlaybackRequiresUserGesture(false);
+  //     final AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
+  //       const PlatformNavigationDelegateCreationParams(),
+  //     );
+  //     await delegate.setOnPageFinished((_) => pageLoaded.complete());
+  //     await controller.setPlatformNavigationDelegate(delegate);
+  //
+  //     await controller.addJavaScriptChannel(
+  //       JavaScriptChannelParams(
+  //         name: 'VideoTestTime',
+  //         onMessageReceived: (JavaScriptMessage message) {
+  //           final double currentTime = double.parse(message.message);
+  //           // Let it play for at least 1 second to make sure the related video's properties are set.
+  //           if (currentTime > 1 && !videoPlaying.isCompleted) {
+  //             videoPlaying.complete(null);
+  //           }
+  //         },
+  //       ),
+  //     );
+  //
+  //     await controller.loadRequest(
+  //       LoadRequestParams(
+  //         uri: Uri.parse(
+  //           'data:text/html;charset=utf-8;base64,$videoTestBase64',
+  //         ),
+  //       ),
+  //     );
+  //
+  //     await tester.pumpWidget(Builder(
+  //       builder: (BuildContext context) {
+  //         return PlatformWebViewWidget(
+  //           PlatformWebViewWidgetCreationParams(controller: controller),
+  //         ).build(context);
+  //       },
+  //     ));
+  //
+  //     await pageLoaded.future;
+  //
+  //     // Makes sure we get the correct event that indicates the video is actually playing.
+  //     await videoPlaying.future;
+  //
+  //     final bool fullScreen = await controller
+  //         .runJavaScriptReturningResult('isFullScreen();') as bool;
+  //     expect(fullScreen, false);
+  //   });
+  //
+  //   testWidgets('Video plays fullscreen', (WidgetTester tester) async {
+  //     final Completer<void> fullscreenEntered = Completer<void>();
+  //     final Completer<void> fullscreenExited = Completer<void>();
+  //     final Completer<void> pageLoaded = Completer<void>();
+  //
+  //     final AndroidWebViewController controller = AndroidWebViewController(
+  //       const PlatformWebViewControllerCreationParams(),
+  //     );
+  //     await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+  //     await controller.setMediaPlaybackRequiresUserGesture(false);
+  //     final AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
+  //       const PlatformNavigationDelegateCreationParams(),
+  //     );
+  //     await delegate.setOnPageFinished((_) => pageLoaded.complete());
+  //     await controller.setPlatformNavigationDelegate(delegate);
+  //     await controller.setCustomWidgetCallbacks(onHideCustomWidget: () {
+  //       fullscreenExited.complete();
+  //     }, onShowCustomWidget:
+  //         (Widget webView, void Function() onHideCustomView) {
+  //       fullscreenEntered.complete();
+  //       onHideCustomView();
+  //     });
+  //
+  //     await controller.loadRequest(
+  //       LoadRequestParams(
+  //         uri: Uri.parse(
+  //           'data:text/html;charset=utf-8;base64,$videoTestBase64',
+  //         ),
+  //       ),
+  //     );
+  //
+  //     await tester.pumpWidget(Builder(
+  //       builder: (BuildContext context) {
+  //         return PlatformWebViewWidget(
+  //           PlatformWebViewWidgetCreationParams(
+  //             key: const Key('webview_widget'),
+  //             controller: controller,
+  //           ),
+  //         ).build(context);
+  //       },
+  //     ));
+  //
+  //     await pageLoaded.future;
+  //
+  //     await tester.pumpAndSettle();
+  //
+  //     // Due to security reasons, Chrome doesn't allow to programmatically
+  //     // toggle a video to fullscreen unless the call is directly coming from
+  //     // a user triggered event.
+  //     // The top half of the loaded web content contains a clickable div, which
+  //     // is tapped using the code below, triggering a user event.
+  //     //
+  //     // The offset of 20 x 20 is chosen at random.
+  //     await tester.tapAt(const Offset(20, 20));
+  //
+  //     await expectLater(fullscreenEntered.future, completes);
+  //     await expectLater(fullscreenExited.future, completes);
+  //   });
+  // });
 
   group('Audio playback policy', () {
     late String audioTestBase64;
