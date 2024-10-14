@@ -1,6 +1,6 @@
 ## 0.10.9+14
 
-* Converts native to dart platform class to Pigeon.
+* Converts native to Dart platform calls to Pigeon.
 
 ## 0.10.9+13
 

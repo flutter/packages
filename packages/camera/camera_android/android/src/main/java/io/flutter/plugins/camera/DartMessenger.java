@@ -47,14 +47,7 @@ public class DartMessenger {
     handler.post(
         () ->
             globalEventApi.deviceOrientationChanged(
-                CameraUtils.orientationToPigeon(orientation),
-                new Messages.VoidResult() {
-                  @Override
-                  public void success() {}
-
-                  @Override
-                  public void error(@NonNull Throwable error) {}
-                }));
+                CameraUtils.orientationToPigeon(orientation), new NoOpVoidResult()));
   }
 
   /**
@@ -94,27 +87,12 @@ public class DartMessenger {
                     .setExposureMode(CameraUtils.exposureModeToPigeon(exposureMode))
                     .setFocusMode(CameraUtils.focusModeToPigeon(focusMode))
                     .build(),
-                new Messages.VoidResult() {
-                  @Override
-                  public void success() {}
-
-                  @Override
-                  public void error(@NonNull Throwable error) {}
-                }));
+                new NoOpVoidResult()));
   }
 
   /** Sends a message to the Flutter client informing that the camera is closing. */
   void sendCameraClosingEvent() {
-    handler.post(
-        () ->
-            eventApi.closed(
-                new Messages.VoidResult() {
-                  @Override
-                  public void success() {}
-
-                  @Override
-                  public void error(@NonNull Throwable error) {}
-                }));
+    handler.post(() -> eventApi.closed(new NoOpVoidResult()));
   }
 
   /**
@@ -124,17 +102,8 @@ public class DartMessenger {
    * @param description contains details regarding the error that occurred.
    */
   void sendCameraErrorEvent(@Nullable String description) {
-    handler.post(
-        () ->
-            eventApi.error(
-                description,
-                new Messages.VoidResult() {
-                  @Override
-                  public void success() {}
-
-                  @Override
-                  public void error(@NonNull Throwable error) {}
-                }));
+    String errorMessage = (description == null) ? "" : description;
+    handler.post(() -> eventApi.error(errorMessage, new NoOpVoidResult()));
   }
 
   /**
