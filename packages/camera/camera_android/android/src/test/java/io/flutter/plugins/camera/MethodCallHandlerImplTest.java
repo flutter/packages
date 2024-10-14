@@ -5,6 +5,7 @@
 package io.flutter.plugins.camera;
 
 import static org.junit.Assert.assertFalse;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -61,7 +62,7 @@ public class MethodCallHandlerImplTest {
 
     handler.pausePreview(1L, mockResult);
 
-    verify(mockResult, times(1)).error(new Messages.FlutterError("CameraAccess", null, null));
+    verify(mockResult, times(1)).error(any(CameraAccessException.class));
   }
 
   @Test

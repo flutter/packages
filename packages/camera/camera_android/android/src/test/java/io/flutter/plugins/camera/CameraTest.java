@@ -58,12 +58,34 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+
+class FlutterErrorMatcher implements ArgumentMatcher<Messages.FlutterError> {
+
+  FlutterErrorMatcher(String code, String message, Object details) {
+    this.code = code;
+    this.message = message;
+    this.details = details;
+  }
+
+  final String code;
+  final String message;
+  final Object details;
+
+  @Override
+  public boolean matches(Messages.FlutterError argument) {
+    return Objects.equals(code, argument.code)
+        && Objects.equals(message, argument.getMessage())
+        && Objects.equals(details, argument.details);
+  }
+}
 
 class FakeCameraDeviceWrapper implements CameraDeviceWrapper {
   final List<CaptureRequest.Builder> captureRequests;
@@ -358,8 +380,9 @@ public class CameraTest {
     verify(mockResult, never()).success();
     verify(mockResult, times(1))
         .error(
-            new Messages.FlutterError(
-                "setExposureModeFailed", "Could not set exposure mode.", null));
+            argThat(
+                new FlutterErrorMatcher(
+                    "setExposureModeFailed", "Could not set exposure mode.", null)));
   }
 
   @Test
@@ -405,8 +428,9 @@ public class CameraTest {
     verify(mockResult, never()).success();
     verify(mockResult, times(1))
         .error(
-            new Messages.FlutterError(
-                "setExposurePointFailed", "Could not set exposure point.", null));
+            argThat(
+                new FlutterErrorMatcher(
+                    "setExposurePointFailed", "Could not set exposure point.", null)));
   }
 
   @Test
@@ -447,7 +471,9 @@ public class CameraTest {
 
     verify(mockResult, never()).success();
     verify(mockResult, times(1))
-        .error(new Messages.FlutterError("setFlashModeFailed", "Could not set flash mode.", null));
+        .error(
+            argThat(
+                new FlutterErrorMatcher("setFlashModeFailed", "Could not set flash mode.", null)));
   }
 
   @Test
@@ -502,7 +528,9 @@ public class CameraTest {
     verify(mockResult, never()).success();
     verify(mockResult, times(1))
         .error(
-            new Messages.FlutterError("setFocusPointFailed", "Could not set focus point.", null));
+            argThat(
+                new FlutterErrorMatcher(
+                    "setFocusPointFailed", "Could not set focus point.", null)));
   }
 
   @Test
@@ -557,7 +585,9 @@ public class CameraTest {
 
     verify(mockResult, never()).success();
     verify(mockResult, times(1))
-        .error(new Messages.FlutterError("setZoomLevelFailed", "Could not set zoom level.", null));
+        .error(
+            argThat(
+                new FlutterErrorMatcher("setZoomLevelFailed", "Could not set zoom level.", null)));
   }
 
   @Test
@@ -596,8 +626,11 @@ public class CameraTest {
 
     verify(mockResult, times(1))
         .error(
-            new Messages.FlutterError(
-                "videoRecordingFailed", "pauseVideoRecording requires Android API +24.", null));
+            argThat(
+                new FlutterErrorMatcher(
+                    "videoRecordingFailed",
+                    "pauseVideoRecording requires Android API +24.",
+                    null)));
     verify(mockResult, never()).success();
   }
 
@@ -618,7 +651,8 @@ public class CameraTest {
     camera.pauseVideoRecording(mockResult);
 
     verify(mockResult, times(1))
-        .error(new Messages.FlutterError("videoRecordingFailed", "Test error message", null));
+        .error(
+            argThat(new FlutterErrorMatcher("videoRecordingFailed", "Test error message", null)));
     verify(mockResult, never()).success();
   }
 
@@ -663,10 +697,11 @@ public class CameraTest {
 
     verify(mockResult, times(1))
         .error(
-            new Messages.FlutterError(
-                "setDescriptionWhileRecordingFailed",
-                "Device does not support switching the camera while recording",
-                null));
+            argThat(
+                new FlutterErrorMatcher(
+                    "setDescriptionWhileRecordingFailed",
+                    "Device does not support switching the camera while recording",
+                    null)));
   }
 
   @Test
@@ -802,8 +837,9 @@ public class CameraTest {
 
     verify(mockResult, times(1))
         .error(
-            new Messages.FlutterError(
-                "setDescriptionWhileRecordingFailed", "Device was not recording", null));
+            argThat(
+                new FlutterErrorMatcher(
+                    "setDescriptionWhileRecordingFailed", "Device was not recording", null)));
     verify(mockResult, never()).success();
   }
 
@@ -819,8 +855,11 @@ public class CameraTest {
 
     verify(mockResult, times(1))
         .error(
-            new Messages.FlutterError(
-                "videoRecordingFailed", "resumeVideoRecording requires Android API +24.", null));
+            argThat(
+                new FlutterErrorMatcher(
+                    "videoRecordingFailed",
+                    "resumeVideoRecording requires Android API +24.",
+                    null)));
     verify(mockResult, never()).success();
   }
 
@@ -841,7 +880,8 @@ public class CameraTest {
     camera.resumeVideoRecording(mockResult);
 
     verify(mockResult, times(1))
-        .error(new Messages.FlutterError("videoRecordingFailed", "Test error message", null));
+        .error(
+            argThat(new FlutterErrorMatcher("videoRecordingFailed", "Test error message", null)));
     verify(mockResult, never()).success();
   }
 
@@ -968,14 +1008,16 @@ public class CameraTest {
     verify(mockResult, never()).success();
     verify(mockResult, times(1))
         .error(
-            new Messages.FlutterError(
-                "setFocusModeFailed", "Error setting focus mode: null", null));
+            argThat(
+                new FlutterErrorMatcher(
+                    "setFocusModeFailed", "Error setting focus mode: null", null)));
   }
 
   @Test
   public void setExposureOffset_shouldUpdateExposureOffsetFeature() {
     ExposureOffsetFeature mockExposureOffsetFeature =
         mockCameraFeatureFactory.createExposureOffsetFeature(mockCameraProperties);
+    @SuppressWarnings("unchecked")
     Messages.Result<Double> mockResult = mock(Messages.Result.class);
 
     when(mockExposureOffsetFeature.getValue()).thenReturn(1.0);
@@ -991,6 +1033,7 @@ public class CameraTest {
   public void setExposureOffset_shouldAndUpdateBuilder() {
     ExposureOffsetFeature mockExposureOffsetFeature =
         mockCameraFeatureFactory.createExposureOffsetFeature(mockCameraProperties);
+    @SuppressWarnings("unchecked")
     Messages.Result<Double> mockResult = mock(Messages.Result.class);
 
     camera.setExposureOffset(mockResult, 1.0);
@@ -1001,6 +1044,7 @@ public class CameraTest {
   @Test
   public void setExposureOffset_shouldCallErrorOnResultOnCameraAccessException()
       throws CameraAccessException {
+    @SuppressWarnings("unchecked")
     Messages.Result<Double> mockResult = mock(Messages.Result.class);
     when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
         .thenThrow(new CameraAccessException(0, ""));
@@ -1010,8 +1054,9 @@ public class CameraTest {
     verify(mockResult, never()).success(any());
     verify(mockResult, times(1))
         .error(
-            new Messages.FlutterError(
-                "setExposureOffsetFailed", "Could not set exposure offset.", null));
+            argThat(
+                new FlutterErrorMatcher(
+                    "setExposureOffsetFailed", "Could not set exposure offset.", null)));
   }
 
   @Test

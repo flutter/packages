@@ -103,7 +103,7 @@ final class MethodCallHandlerImpl implements Messages.CameraApi {
     throw (RuntimeException) exception;
   }
 
-  private <T> void handleException(Exception exception, Messages.VoidResult result) {
+  private void handleException(Exception exception, Messages.VoidResult result) {
     if (exception instanceof CameraAccessException) {
       result.error(exception);
       return;
