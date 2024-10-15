@@ -818,7 +818,6 @@ class Camera
     recordingVideo = true;
     try {
       startCapture(true, imageStreamChannel != null);
-      return;
     } catch (CameraAccessException e) {
       recordingVideo = false;
       captureFile = null;
@@ -1083,8 +1082,7 @@ class Camera
    * @param result Flutter result.
    * @param zoom new value.
    */
-  public void setZoomLevel(@NonNull final Messages.VoidResult result, float zoom)
-      throws CameraAccessException {
+  public void setZoomLevel(@NonNull final Messages.VoidResult result, float zoom) {
     final ZoomLevelFeature zoomLevel = cameraFeatures.getZoomLevel();
     float maxZoom = zoomLevel.getMaximumZoomLevel();
     float minZoom = zoomLevel.getMinimumZoomLevel();

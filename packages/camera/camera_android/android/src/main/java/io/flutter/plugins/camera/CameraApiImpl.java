@@ -182,6 +182,7 @@ final class CameraApiImpl implements Messages.CameraApi {
     camera.startVideoRecording(Objects.equals(enableStream, true) ? imageStreamChannel : null);
   }
 
+  @NonNull
   @Override
   public String stopVideoRecording(@NonNull Long cameraId) {
     return camera.stopVideoRecording();
@@ -358,12 +359,7 @@ final class CameraApiImpl implements Messages.CameraApi {
       @NonNull Long cameraId, @NonNull Double zoom, @NonNull Messages.VoidResult result) {
 
     assert camera != null;
-
-    try {
       camera.setZoomLevel(result, zoom.floatValue());
-    } catch (Exception e) {
-      handleException(e, result);
-    }
   }
 
   @Override

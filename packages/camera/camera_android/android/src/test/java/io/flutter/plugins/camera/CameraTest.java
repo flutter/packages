@@ -7,6 +7,7 @@ package io.flutter.plugins.camera;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -597,45 +598,28 @@ public class CameraTest {
   @Test
   public void pauseVideoRecording_shouldSendNullResultWhenNotRecording() {
     camera.recordingVideo = false;
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
 
-    camera.pauseVideoRecording(mockResult);
-
-    verify(mockResult, times(1)).success();
-    verify(mockResult, never()).error(any());
+    camera.pauseVideoRecording();
   }
 
   @Test
   public void pauseVideoRecording_shouldCallPauseWhenRecordingAndOnAPIN() {
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     camera.mediaRecorder = mockMediaRecorder;
     camera.recordingVideo = true;
     SdkCapabilityChecker.SDK_VERSION = 24;
 
-    camera.pauseVideoRecording(mockResult);
+    camera.pauseVideoRecording();
 
     verify(mockMediaRecorder, times(1)).pause();
-    verify(mockResult, times(1)).success();
-    verify(mockResult, never()).error(any());
   }
 
   @Test
   public void pauseVideoRecording_shouldSendVideoRecordingFailedErrorWhenVersionCodeSmallerThenN() {
     camera.recordingVideo = true;
     SdkCapabilityChecker.SDK_VERSION = 23;
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
 
-    camera.pauseVideoRecording(mockResult);
-
-    verify(mockResult, times(1))
-        .error(
-            argThat(
-                new FlutterErrorMatcher(
-                    "videoRecordingFailed",
-                    "pauseVideoRecording requires Android API +24.",
-                    null)));
-    verify(mockResult, never()).success();
+    assertThrows(Messages.FlutterError.class, camera::pauseVideoRecording);
   }
 
   @Test
@@ -650,45 +634,30 @@ public class CameraTest {
 
     doThrow(expectedException).when(mockMediaRecorder).pause();
 
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
-
-    camera.pauseVideoRecording(mockResult);
-
-    verify(mockResult, times(1))
-        .error(
-            argThat(new FlutterErrorMatcher("videoRecordingFailed", "Test error message", null)));
-    verify(mockResult, never()).success();
+    assertThrows(Messages.FlutterError.class, camera::pauseVideoRecording);
   }
 
   @Test
   public void resumeVideoRecording_shouldSendNullResultWhenNotRecording() {
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     camera.recordingVideo = false;
 
-    camera.resumeVideoRecording(mockResult);
-
-    verify(mockResult, times(1)).success();
-    verify(mockResult, never()).error(any());
+    camera.resumeVideoRecording();
   }
 
   @Test
   public void resumeVideoRecording_shouldCallPauseWhenRecordingAndOnAPIN() {
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     camera.mediaRecorder = mockMediaRecorder;
     camera.recordingVideo = true;
     SdkCapabilityChecker.SDK_VERSION = 24;
 
-    camera.resumeVideoRecording(mockResult);
+    camera.resumeVideoRecording();
 
     verify(mockMediaRecorder, times(1)).resume();
-    verify(mockResult, times(1)).success();
-    verify(mockResult, never()).error(any());
   }
 
   @Test
   public void setDescriptionWhileRecording_errorsWhenUnsupported() {
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     VideoRenderer mockVideoRenderer = mock(VideoRenderer.class);
     camera.mediaRecorder = mockMediaRecorder;
@@ -697,20 +666,11 @@ public class CameraTest {
     SdkCapabilityChecker.SDK_VERSION = Build.VERSION_CODES.LOLLIPOP;
 
     final CameraProperties newCameraProperties = mock(CameraProperties.class);
-    camera.setDescriptionWhileRecording(mockResult, newCameraProperties);
-
-    verify(mockResult, times(1))
-        .error(
-            argThat(
-                new FlutterErrorMatcher(
-                    "setDescriptionWhileRecordingFailed",
-                    "Device does not support switching the camera while recording",
-                    null)));
+    assertThrows(Messages.FlutterError.class, () -> camera.setDescriptionWhileRecording(newCameraProperties));
   }
 
   @Test
   public void setDescriptionWhileRecording_succeedsWhenSupported() {
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     VideoRenderer mockVideoRenderer = mock(VideoRenderer.class);
     camera.mediaRecorder = mockMediaRecorder;
@@ -719,10 +679,7 @@ public class CameraTest {
     SdkCapabilityChecker.SDK_VERSION = Build.VERSION_CODES.O;
 
     final CameraProperties newCameraProperties = mock(CameraProperties.class);
-    camera.setDescriptionWhileRecording(mockResult, newCameraProperties);
-
-    verify(mockResult, times(1)).success();
-    verify(mockResult, never()).error(any());
+    camera.setDescriptionWhileRecording(newCameraProperties);
   }
 
   @Test
@@ -834,17 +791,9 @@ public class CameraTest {
 
   @Test
   public void setDescriptionWhileRecording_shouldErrorWhenNotRecording() {
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     camera.recordingVideo = false;
     final CameraProperties newCameraProperties = mock(CameraProperties.class);
-    camera.setDescriptionWhileRecording(mockResult, newCameraProperties);
-
-    verify(mockResult, times(1))
-        .error(
-            argThat(
-                new FlutterErrorMatcher(
-                    "setDescriptionWhileRecordingFailed", "Device was not recording", null)));
-    verify(mockResult, never()).success();
+    assertThrows(Messages.FlutterError.class, () -> camera.setDescriptionWhileRecording(newCameraProperties));
   }
 
   @Test
@@ -853,18 +802,7 @@ public class CameraTest {
     camera.recordingVideo = true;
     SdkCapabilityChecker.SDK_VERSION = 23;
 
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
-
-    camera.resumeVideoRecording(mockResult);
-
-    verify(mockResult, times(1))
-        .error(
-            argThat(
-                new FlutterErrorMatcher(
-                    "videoRecordingFailed",
-                    "resumeVideoRecording requires Android API +24.",
-                    null)));
-    verify(mockResult, never()).success();
+    assertThrows(Messages.FlutterError.class, camera::resumeVideoRecording);
   }
 
   @Test
@@ -879,43 +817,32 @@ public class CameraTest {
 
     doThrow(expectedException).when(mockMediaRecorder).resume();
 
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
-
-    camera.resumeVideoRecording(mockResult);
-
-    verify(mockResult, times(1))
-        .error(
-            argThat(new FlutterErrorMatcher("videoRecordingFailed", "Test error message", null)));
-    verify(mockResult, never()).success();
+    assertThrows(Messages.FlutterError.class, camera::resumeVideoRecording);
   }
 
   @Test
   public void setFocusMode_shouldUpdateAutoFocusFeature() {
     AutoFocusFeature mockAutoFocusFeature =
         mockCameraFeatureFactory.createAutoFocusFeature(mockCameraProperties, false);
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
 
-    camera.setFocusMode(mockResult, FocusMode.auto);
+    camera.setFocusMode(FocusMode.auto);
 
     verify(mockAutoFocusFeature, times(1)).setValue(FocusMode.auto);
-    verify(mockResult, never()).error(any());
-    verify(mockResult, times(1)).success();
   }
 
   @Test
   public void setFocusMode_shouldUpdateBuilder() {
     AutoFocusFeature mockAutoFocusFeature =
         mockCameraFeatureFactory.createAutoFocusFeature(mockCameraProperties, false);
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
 
-    camera.setFocusMode(mockResult, FocusMode.auto);
+    camera.setFocusMode(FocusMode.auto);
 
     verify(mockAutoFocusFeature, times(1)).updateBuilder(any());
   }
 
   @Test
   public void setFocusMode_shouldUnlockAutoFocusForAutoMode() {
-    camera.setFocusMode(mock(Messages.VoidResult.class), FocusMode.auto);
+    camera.setFocusMode(FocusMode.auto);
     verify(mockPreviewRequestBuilder, times(1))
         .set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
     verify(mockPreviewRequestBuilder, times(1))
@@ -925,7 +852,7 @@ public class CameraTest {
   @Test
   public void setFocusMode_shouldSkipUnlockAutoFocusWhenNullCaptureSession() {
     camera.captureSession = null;
-    camera.setFocusMode(mock(Messages.VoidResult.class), FocusMode.auto);
+    camera.setFocusMode(FocusMode.auto);
     verify(mockPreviewRequestBuilder, never())
         .set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
     verify(mockPreviewRequestBuilder, never())
@@ -937,7 +864,7 @@ public class CameraTest {
       throws CameraAccessException {
     when(mockCaptureSession.capture(any(), any(), any()))
         .thenThrow(new CameraAccessException(0, ""));
-    camera.setFocusMode(mock(Messages.VoidResult.class), FocusMode.auto);
+    camera.setFocusMode(FocusMode.auto);
     verify(mockDartMessenger, times(1)).sendCameraErrorEvent(any());
   }
 
@@ -956,16 +883,15 @@ public class CameraTest {
     cameraSpy.pictureImageReader = mockPictureImageReader;
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
     cameraSpy.cameraDevice = fakeCamera;
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
 
     TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = cameraSpy.flutterTexture;
     ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
-    doNothing().when(cameraSpy).prepareRecording(mockResult);
+    doNothing().when(cameraSpy).prepareRecording();
 
-    cameraSpy.startVideoRecording(mockResult, null);
+    cameraSpy.startVideoRecording(null);
     verify(mockMediaRecorder, times(1))
         .getSurface(); // stream pulled from media recorder's surface.
     verify(
@@ -976,7 +902,7 @@ public class CameraTest {
 
   @Test
   public void setFocusMode_shouldLockAutoFocusForLockedMode() throws CameraAccessException {
-    camera.setFocusMode(mock(Messages.VoidResult.class), FocusMode.locked);
+    camera.setFocusMode(FocusMode.locked);
     verify(mockPreviewRequestBuilder, times(1))
         .set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
     verify(mockCaptureSession, times(1)).capture(any(), any(), any());
@@ -986,7 +912,7 @@ public class CameraTest {
   @Test
   public void setFocusMode_shouldSkipLockAutoFocusWhenNullCaptureSession() {
     camera.captureSession = null;
-    camera.setFocusMode(mock(Messages.VoidResult.class), FocusMode.locked);
+    camera.setFocusMode(FocusMode.locked);
     verify(mockPreviewRequestBuilder, never())
         .set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_START);
   }
@@ -996,25 +922,17 @@ public class CameraTest {
       throws CameraAccessException {
     when(mockCaptureSession.capture(any(), any(), any()))
         .thenThrow(new CameraAccessException(0, ""));
-    camera.setFocusMode(mock(Messages.VoidResult.class), FocusMode.locked);
+    camera.setFocusMode(FocusMode.locked);
     verify(mockDartMessenger, times(1)).sendCameraErrorEvent(any());
   }
 
   @Test
   public void setFocusMode_shouldCallErrorOnResultOnCameraAccessException()
       throws CameraAccessException {
-    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
         .thenThrow(new CameraAccessException(0, ""));
 
-    camera.setFocusMode(mockResult, FocusMode.locked);
-
-    verify(mockResult, never()).success();
-    verify(mockResult, times(1))
-        .error(
-            argThat(
-                new FlutterErrorMatcher(
-                    "setFocusModeFailed", "Error setting focus mode: null", null)));
+    assertThrows(Messages.FlutterError.class, () -> camera.setFocusMode(FocusMode.locked));
   }
 
   @Test
@@ -1322,7 +1240,6 @@ public class CameraTest {
           new FakeCameraDeviceWrapper(mockRequestBuilders, mockCaptureSession);
 
       camera.cameraDevice = fakeCamera;
-      Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
 
       TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
 
@@ -1334,7 +1251,7 @@ public class CameraTest {
       assertNotNull(resolutionFeature);
       when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
 
-      camera.startVideoRecording(mockResult, null);
+      camera.startVideoRecording(null);
 
       //region Check that FPS parameter affects AE range at which the camera captures frames.
       assertEquals(camera.cameraFeatures.getFpsRange().getValue().getLower(), Integer.valueOf(fps));
