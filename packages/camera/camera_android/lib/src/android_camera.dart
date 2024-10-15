@@ -194,9 +194,9 @@ class AndroidCamera extends CameraPlatform {
     return XFile(path);
   }
 
+  // This optimization is unnecessary on Android.
   @override
-  Future<void> prepareForVideoRecording() =>
-      _hostApi.prepareForVideoRecording();
+  Future<void> prepareForVideoRecording() async {}
 
   @override
   Future<void> startVideoRecording(int cameraId,

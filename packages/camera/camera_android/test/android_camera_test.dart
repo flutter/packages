@@ -440,15 +440,6 @@ void main() {
       expect(file.path, '/test/path.jpg');
     });
 
-    test('Should prepare for video recording', () async {
-      // Arrange
-      // Act
-      await camera.prepareForVideoRecording();
-
-      // Assert
-      verify(mockCameraApi.prepareForVideoRecording()).called(1);
-    });
-
     test('Should start recording a video', () async {
       // Arrange
       // Act
