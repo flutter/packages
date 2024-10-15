@@ -705,14 +705,14 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return textureId;
 }
 
-// this same function is also in camera_avfoundation
-// do not overwrite PlayAndRecord with Playback which causes inability to record
-// audio, do not overwrite all options, only change category if it is considered
-// as upgrade which means it can only enable ability to play in silent mode or
-// ability to record audio but never disables it, that could affect other plugins
-// which depend on this global state, only change category or options if there is
-// change to prevent unnecessary lags and silence
-// https://github.com/flutter/flutter/issues/131553
+// This function, although slightly modified, is also in camera_avfoundation.
+// Both need to do the same thing and run on the same thread.
+// Do not overwrite PlayAndRecord with Playback which causes inability to record
+// audio, do not overwrite all options.
+// Only change category if it is considered an upgrade which means it can only enable
+// ability to play in silent mode or ability to record audio but never disables it,
+// that could affect other plugins which depend on this global state. Only change
+// category or options if there is change to prevent unnecessary lags and silence.
 #if TARGET_OS_IOS
 static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory,
                                         AVAudioSessionCategoryOptions options,
@@ -723,13 +723,13 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
       [NSSet setWithObjects:AVAudioSessionCategoryRecord, AVAudioSessionCategoryPlayAndRecord, nil];
   NSSet *requiredCategories =
       [NSSet setWithObjects:requestedCategory, AVAudioSession.sharedInstance.category, nil];
-  BOOL needPlay = [requiredCategories intersectsSet:playCategories];
-  BOOL needRecord = [requiredCategories intersectsSet:recordCategories];
-  if (needPlay && needRecord) {
+  BOOL requiresPlay = [requiredCategories intersectsSet:playCategories];
+  BOOL requiresRecord = [requiredCategories intersectsSet:recordCategories];
+  if (requiresPlay && requiresRecord) {
     requestedCategory = AVAudioSessionCategoryPlayAndRecord;
-  } else if (needPlay) {
+  } else if (requiresPlay) {
     requestedCategory = AVAudioSessionCategoryPlayback;
-  } else if (needRecord) {
+  } else if (requiresRecord) {
     requestedCategory = AVAudioSessionCategoryRecord;
   }
   options = (AVAudioSession.sharedInstance.categoryOptions & ~clearOptions) | options;

@@ -1314,14 +1314,14 @@ NSString *const errorMethod = @"error";
   return YES;
 }
 
-// this same function is also in video_player_avfoundation
-// configure application wide audio session manually to prevent overwriting
-// flag MixWithOthers by capture session, only change category if it is considered
-// as upgrade which means it can only enable ability to play in silent mode or
-// ability to record audio but never disables it, that could affect other plugins
-// which depend on this global state, only change category or options if there is
-// change to prevent unnecessary lags and silence
-// https://github.com/flutter/flutter/issues/131553
+// This function, although slightly modified, is also in video_player_avfoundation.
+// Both need to do the same thing and run on the same thread.
+// Configure application wide audio session manually to prevent overwriting flag
+// MixWithOthers by capture session.
+// Only change category if it is considered an upgrade which means it can only enable
+// ability to play in silent mode or ability to record audio but never disables it,
+// that could affect other plugins which depend on this global state. Only change
+// category or options if there is change to prevent unnecessary lags and silence.
 static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory,
                                         AVAudioSessionCategoryOptions options) {
   NSSet *playCategories = [NSSet
@@ -1330,13 +1330,13 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
       [NSSet setWithObjects:AVAudioSessionCategoryRecord, AVAudioSessionCategoryPlayAndRecord, nil];
   NSSet *requiredCategories =
       [NSSet setWithObjects:requestedCategory, AVAudioSession.sharedInstance.category, nil];
-  BOOL needPlay = [requiredCategories intersectsSet:playCategories];
-  BOOL needRecord = [requiredCategories intersectsSet:recordCategories];
-  if (needPlay && needRecord) {
+  BOOL requiresPlay = [requiredCategories intersectsSet:playCategories];
+  BOOL requiresRecord = [requiredCategories intersectsSet:recordCategories];
+  if (requiresPlay && requiresRecord) {
     requestedCategory = AVAudioSessionCategoryPlayAndRecord;
-  } else if (needPlay) {
+  } else if (requiresPlay) {
     requestedCategory = AVAudioSessionCategoryPlayback;
-  } else if (needRecord) {
+  } else if (requiresRecord) {
     requestedCategory = AVAudioSessionCategoryRecord;
   }
   options = AVAudioSession.sharedInstance.categoryOptions | options;

@@ -1,6 +1,6 @@
-## 0.9.17+4
+## 0.9.17+5
 
-* Fixes overwriting flag MixWithOthers set by video_player.
+* Fixes changing global audio session category to be collision free.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.9.17+3
