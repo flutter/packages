@@ -13,9 +13,9 @@ class SslError {
   /// Creates a [SslError].
   const SslError({
     required this.errorType,
-    required this.certificate,
-    required this.host,
+    required this.sslCertificate,
     required this.scheme,
+    required this.host,
     required this.port,
   });
 
@@ -23,13 +23,13 @@ class SslError {
   final SslErrorType? errorType;
 
   /// The SSL certificate
-  final SslCertificate certificate;
-
-  ///The host of the url requesting trust
-  final String host;
+  final SslCertificate sslCertificate;
 
   ///The scheme of the url requesting trust
   final String scheme;
+
+  ///The host of the url requesting trust
+  final String host;
 
   /// The port of the url requesting trust
   final int port;
