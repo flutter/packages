@@ -137,8 +137,12 @@ To update a wrapper for a platform, follow the steps:
 
 ##### 2. Make changes that match the native SDK
 
-* [Android SDK]
-* [iOS SDK]
+* Android:
+    - [Android SDK]
+    - Pigeon file to update: `pigeons/interactive_media_ads_android.dart`
+* iOS:
+    - [iOS SDK]
+    - Pigeon file to update: `pigeons/interactive_media_ads_ios.dart`
 
 ##### 3. Run the code generator from the terminal
 
