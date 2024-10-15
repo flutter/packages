@@ -41,6 +41,38 @@ void main() {
       verify(mockAdsManager.start());
     });
 
+    test('discardAdBreak', () {
+      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
+      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+      adsManager.discardAdBreak();
+
+      verify(mockAdsManager.discardAdBreak());
+    });
+
+    test('pause', () {
+      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
+      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+      adsManager.pause();
+
+      verify(mockAdsManager.pause());
+    });
+
+    test('skip', () {
+      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
+      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+      adsManager.skip();
+
+      verify(mockAdsManager.skip());
+    });
+
+    test('resume', () {
+      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
+      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+      adsManager.resume();
+
+      verify(mockAdsManager.resume());
+    });
+
     test('setAdsManagerDelegate', () {
       final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
       final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);

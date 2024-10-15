@@ -313,7 +313,6 @@ String _pluginPlatformSection(
         ]);
       default:
         assert(false, 'Unrecognized platform: $platform');
-        break;
     }
     entry = '${lines.join('\n')}\n';
   }

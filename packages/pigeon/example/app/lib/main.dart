@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<bool> sendMessage(String messageText) {
     final MessageData message = MessageData(
       code: Code.one,
-      data: <String?, String?>{'header': 'this is a header'},
+      data: <String, String>{'header': 'this is a header'},
       description: 'uri text',
     );
     try {

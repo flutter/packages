@@ -48,7 +48,7 @@ class MessageData {
 
   Code code;
 
-  Map<String?, String?> data;
+  Map<String, String> data;
 
   Object encode() {
     return <Object?>[
@@ -65,7 +65,7 @@ class MessageData {
       name: result[0] as String?,
       description: result[1] as String?,
       code: result[2]! as Code,
-      data: (result[3] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+      data: (result[3] as Map<Object?, Object?>?)!.cast<String, String>(),
     );
   }
 }
@@ -74,7 +74,10 @@ class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is Code) {
+    if (value is int) {
+      buffer.putUint8(4);
+      buffer.putInt64(value);
+    } else if (value is Code) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
     } else if (value is MessageData) {

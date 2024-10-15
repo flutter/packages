@@ -550,7 +550,7 @@ class SKProductWrapper {
     return SKProductWrapper(
         productIdentifier: msg.productIdentifier,
         localizedTitle: msg.localizedTitle,
-        localizedDescription: msg.localizedDescription,
+        localizedDescription: msg.localizedDescription ?? '',
         priceLocale: SKPriceLocaleWrapper.convertFromPigeon(msg.priceLocale),
         price: msg.price,
         subscriptionGroupIdentifier: msg.subscriptionGroupIdentifier,

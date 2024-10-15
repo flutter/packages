@@ -1,6 +1,10 @@
-## NEXT
+## 3.16.0
 
-* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Supports NTLM for authentication.
+
+## 3.15.0
+
+* Adds macOS support.
 
 ## 3.14.0
 
@@ -92,7 +96,7 @@
 
 * Introduces `NSError.toString` for better diagnostics.
 
-## 3.6.2 
+## 3.6.2
 
 * Fixes unawaited_futures violations.
 

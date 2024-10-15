@@ -59,8 +59,7 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
     let documentPicker =
       documentPickerViewControllerOverride
       ?? UIDocumentPickerViewController(
-        // See comment in messages.dart for why this is safe.
-        documentTypes: config.utis as! [String],
+        documentTypes: config.utis,
         in: .import)
     documentPicker.allowsMultipleSelection = config.allowMultiSelection
     documentPicker.delegate = completionBridge

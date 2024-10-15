@@ -38,11 +38,11 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('dislays correct item of config based on screen width',
+  testWidgets('displays correct item of config based on screen width',
       (WidgetTester tester) async {
     await updateScreen(300, tester);
     expect(smallBody, findsOneWidget);
-    expect(sBody, findsNothing);
+    expect(body, findsNothing);
     expect(mediumLargeBody, findsNothing);
     expect(largeBody, findsNothing);
     expect(extraLargeBody, findsNothing);
@@ -60,7 +60,7 @@ void main() {
 
     await updateScreen(800, tester);
     expect(smallBody, findsNothing);
-    expect(sBody, findsOneWidget);
+    expect(body, findsOneWidget);
     expect(mediumLargeBody, findsNothing);
     expect(largeBody, findsNothing);
     expect(extraLargeBody, findsNothing);
@@ -78,7 +78,7 @@ void main() {
 
     await updateScreen(1100, tester);
     expect(smallBody, findsNothing);
-    expect(sBody, findsNothing);
+    expect(body, findsNothing);
     expect(mediumLargeBody, findsOneWidget);
     expect(largeBody, findsNothing);
     expect(extraLargeBody, findsNothing);
@@ -96,7 +96,7 @@ void main() {
 
     await updateScreen(1400, tester);
     expect(smallBody, findsNothing);
-    expect(sBody, findsNothing);
+    expect(body, findsNothing);
     expect(mediumLargeBody, findsNothing);
     expect(largeBody, findsOneWidget);
     expect(extraLargeBody, findsNothing);
@@ -114,7 +114,7 @@ void main() {
 
     await updateScreen(1800, tester);
     expect(smallBody, findsNothing);
-    expect(sBody, findsNothing);
+    expect(body, findsNothing);
     expect(mediumLargeBody, findsNothing);
     expect(largeBody, findsNothing);
     expect(extraLargeBody, findsOneWidget);
