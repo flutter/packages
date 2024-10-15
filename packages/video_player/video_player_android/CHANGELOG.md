@@ -1,3 +1,7 @@
+## 2.7.13
+
+* Removes SSL workaround for API 19, which is no longer supported.
+
 ## 2.7.12
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/156451) where
