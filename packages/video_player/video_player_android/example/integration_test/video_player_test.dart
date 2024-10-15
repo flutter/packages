@@ -69,13 +69,14 @@ void main() {
     await player.dispose(textureId);
   });
 
-  testWidgets('can seek', (_) async {
+  testWidgets('can seek', (WidgetTester tester) async {
     final int textureId = (await player.create(DataSource(
       sourceType: DataSourceType.asset,
       asset: _videoAssetKey,
     )))!;
 
     await player.seekTo(textureId, const Duration(seconds: 3));
+    await tester.pumpAndSettle(_playDuration);
 
     expect(
       await player.getPosition(textureId),
