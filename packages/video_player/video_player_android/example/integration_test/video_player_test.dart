@@ -84,6 +84,23 @@ void main() {
     await player.dispose(textureId);
   });
 
+  testWidgets('can pause', (WidgetTester tester) async {
+    final int textureId = (await player.create(DataSource(
+      sourceType: DataSourceType.asset,
+      asset: _videoAssetKey,
+    )))!;
+
+    await player.play(textureId);
+    await tester.pumpAndSettle(_playDuration);
+
+    await player.pause(textureId);
+    final Duration pausedDuration = await player.getPosition(textureId);
+    await tester.pumpAndSettle(_playDuration);
+
+    expect(await player.getPosition(textureId), pausedDuration);
+    await player.dispose(textureId);
+  });
+
   testWidgets('can play a video from a file', (WidgetTester tester) async {
     final Directory directory = await getTemporaryDirectory();
     final File file = File('${directory.path}/video.mp4');
