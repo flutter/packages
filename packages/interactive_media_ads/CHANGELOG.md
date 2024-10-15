@@ -1,3 +1,7 @@
+## 0.2.2+13
+
+* Adds internal wrapper for Android native `Ad`.
+
 ## 0.2.2+11
 
 * Adds internal wrapper for Android native `UniversalAdId`.
