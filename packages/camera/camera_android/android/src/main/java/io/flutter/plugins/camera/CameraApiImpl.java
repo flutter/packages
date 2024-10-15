@@ -155,21 +155,19 @@ final class CameraApiImpl implements Messages.CameraApi {
   @Override
   public void initialize(
       @NonNull Long cameraId,
-      @NonNull Messages.PlatformImageFormatGroup imageFormat,
-      @NonNull Messages.VoidResult result) {
+      @NonNull Messages.PlatformImageFormatGroup imageFormat) {
     if (camera != null) {
       try {
         camera.open(CameraUtils.imageFormatGroupFromPigeon(imageFormat));
-        result.success();
-      } catch (Exception e) {
-        handleException(e, result);
+      } catch (CameraAccessException e) {
+        throw new Messages.FlutterError("CameraAccessException", e.getMessage(), null);
       }
     } else {
-      result.error(
+      throw
           new Messages.FlutterError(
               "cameraNotFound",
               "Camera not found. Please call the 'create' method before calling 'initialize'.",
-              null));
+              null);
     }
   }
 
@@ -180,24 +178,23 @@ final class CameraApiImpl implements Messages.CameraApi {
 
   @Override
   public void startVideoRecording(
-      @NonNull Long cameraId, @NonNull Boolean enableStream, @NonNull Messages.VoidResult result) {
-    camera.startVideoRecording(
-        result, Objects.equals(enableStream, true) ? imageStreamChannel : null);
+      @NonNull Long cameraId, @NonNull Boolean enableStream) {
+    camera.startVideoRecording(Objects.equals(enableStream, true) ? imageStreamChannel : null);
   }
 
   @Override
-  public void stopVideoRecording(@NonNull Long cameraId, @NonNull Messages.Result<String> result) {
-    camera.stopVideoRecording(result);
+  public String stopVideoRecording(@NonNull Long cameraId) {
+    return camera.stopVideoRecording();
   }
 
   @Override
-  public void pauseVideoRecording(@NonNull Long cameraId, @NonNull Messages.VoidResult result) {
-    camera.pauseVideoRecording(result);
+  public void pauseVideoRecording(@NonNull Long cameraId) {
+    camera.pauseVideoRecording();
   }
 
   @Override
-  public void resumeVideoRecording(@NonNull Long cameraId, @NonNull Messages.VoidResult result) {
-    camera.resumeVideoRecording(result);
+  public void resumeVideoRecording(@NonNull Long cameraId) {
+    camera.resumeVideoRecording();
   }
 
   @Override
@@ -209,7 +206,7 @@ final class CameraApiImpl implements Messages.CameraApi {
     if (mode == null) {
       result.error(
           new Messages.FlutterError(
-              "setFlashModeFailed", "Unknown flash mode " + mode.name(), null));
+              "setFlashModeFailed", "Unknown flash mode " + flashMode.name(), null));
       return;
     }
     try {
@@ -257,37 +254,25 @@ final class CameraApiImpl implements Messages.CameraApi {
     }
   }
 
+  @NonNull
   @Override
-  public void getMinExposureOffset(
-      @NonNull Long cameraId, @NonNull Messages.Result<Double> result) {
-
-    try {
-      result.success(camera.getMinExposureOffset());
-    } catch (Exception e) {
-      handleException(e, result);
-    }
+  public Double getMinExposureOffset(
+      @NonNull Long cameraId) {
+      return camera.getMinExposureOffset();
   }
 
+  @NonNull
   @Override
-  public void getMaxExposureOffset(
-      @NonNull Long cameraId, @NonNull Messages.Result<Double> result) {
-
-    try {
-      result.success(camera.getMaxExposureOffset());
-    } catch (Exception e) {
-      handleException(e, result);
-    }
+  public Double getMaxExposureOffset(
+      @NonNull Long cameraId) {
+      return camera.getMaxExposureOffset();
   }
 
+  @NonNull
   @Override
-  public void getExposureOffsetStepSize(
-      @NonNull Long cameraId, @NonNull Messages.Result<Double> result) {
-
-    try {
-      result.success(camera.getExposureOffsetStepSize());
-    } catch (Exception e) {
-      handleException(e, result);
-    }
+  public Double getExposureOffsetStepSize(
+      @NonNull Long cameraId) {
+      return camera.getExposureOffsetStepSize();
   }
 
   @Override
@@ -304,20 +289,14 @@ final class CameraApiImpl implements Messages.CameraApi {
   @Override
   public void setFocusMode(
       @NonNull Long cameraId,
-      @NonNull Messages.PlatformFocusMode focusMode,
-      @NonNull Messages.VoidResult result) {
+      @NonNull Messages.PlatformFocusMode focusMode) {
     FocusMode mode = CameraUtils.focusModeFromPigeon(focusMode);
     if (mode == null) {
-      result.error(
+      throw
           new Messages.FlutterError(
-              "setFocusModeFailed", "Unknown focus mode " + mode.name(), null));
-      return;
+              "setFocusModeFailed", "Unknown focus mode " + mode.name(), null);
     }
-    try {
-      camera.setFocusMode(result, mode);
-    } catch (Exception e) {
-      handleException(e, result);
-    }
+      camera.setFocusMode(mode);
   }
 
   @Override
@@ -339,51 +318,39 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void startImageStream(@NonNull Messages.VoidResult result) {
+  public void startImageStream() {
 
     try {
       camera.startPreviewWithImageStream(imageStreamChannel);
-      result.success();
-    } catch (Exception e) {
-      handleException(e, result);
+    } catch (CameraAccessException e) {
+      throw new Messages.FlutterError("CameraAccessException", e.getMessage(), null);
     }
   }
 
   @Override
-  public void stopImageStream(@NonNull Messages.VoidResult result) {
-
+  public void stopImageStream() {
     try {
       camera.startPreview();
-      result.success();
     } catch (Exception e) {
-      handleException(e, result);
+      throw new Messages.FlutterError(e.getClass().getName(), e.getMessage(), null);
     }
   }
 
+  @NonNull
   @Override
-  public void getMaxZoomLevel(@NonNull Long cameraId, @NonNull Messages.Result<Double> result) {
+  public Double getMaxZoomLevel(@NonNull Long cameraId) {
 
     assert camera != null;
 
-    try {
-      float maxZoomLevel = camera.getMaxZoomLevel();
-      result.success((double) maxZoomLevel);
-    } catch (Exception e) {
-      handleException(e, result);
-    }
+      return (double) camera.getMaxZoomLevel();
   }
 
+  @NonNull
   @Override
-  public void getMinZoomLevel(@NonNull Long cameraId, @NonNull Messages.Result<Double> result) {
+  public Double getMinZoomLevel(@NonNull Long cameraId) {
 
     assert camera != null;
-
-    try {
-      float minZoomLevel = camera.getMinZoomLevel();
-      result.success((double) minZoomLevel);
-    } catch (Exception e) {
-      handleException(e, result);
-    }
+    return (double) camera.getMinZoomLevel();
   }
 
   @Override
@@ -402,73 +369,59 @@ final class CameraApiImpl implements Messages.CameraApi {
   @Override
   public void lockCaptureOrientation(
       @NonNull Long cameraId,
-      @NonNull Messages.PlatformDeviceOrientation platformOrientation,
-      @NonNull Messages.VoidResult result) {
+      @NonNull Messages.PlatformDeviceOrientation platformOrientation) {
 
     PlatformChannel.DeviceOrientation orientation =
         CameraUtils.orientationFromPigeon(platformOrientation);
 
-    try {
       camera.lockCaptureOrientation(orientation);
-      result.success();
-    } catch (Exception e) {
-      handleException(e, result);
-    }
   }
 
   @Override
   public void unlockCaptureOrientation(
-      @NonNull Long cameraId, @NonNull Messages.VoidResult result) {
+      @NonNull Long cameraId) {
 
-    try {
       camera.unlockCaptureOrientation();
-      result.success();
-    } catch (Exception e) {
-      handleException(e, result);
-    }
   }
 
   @Override
-  public void pausePreview(@NonNull Long cameraId, @NonNull Messages.VoidResult result) {
+  public void pausePreview(@NonNull Long cameraId) {
 
     try {
       camera.pausePreview();
-      result.success();
-    } catch (Exception e) {
-      handleException(e, result);
+    } catch (CameraAccessException e) {
+      throw new Messages.FlutterError("CameraAccessException", e.getMessage(), null);
     }
   }
 
   @Override
-  public void resumePreview(@NonNull Long cameraId, @NonNull Messages.VoidResult result) {
+  public void resumePreview(@NonNull Long cameraId) {
 
     try {
       camera.resumePreview();
-      result.success();
     } catch (Exception e) {
-      handleException(e, result);
+      throw new Messages.FlutterError("CameraAccessException", e.getMessage(), null);
     }
   }
 
   @Override
   public void setDescriptionWhileRecording(
-      @NonNull String cameraName, @NonNull Messages.VoidResult result) {
+      @NonNull String cameraName) {
 
     try {
       CameraProperties cameraProperties =
           new CameraPropertiesImpl(cameraName, CameraUtils.getCameraManager(activity));
-      camera.setDescriptionWhileRecording(result, cameraProperties);
+      camera.setDescriptionWhileRecording(cameraProperties);
     } catch (Exception e) {
-      handleException(e, result);
+      throw new Messages.FlutterError("CameraAccessException", e.getMessage(), null);
     }
   }
 
   @Override
-  public void dispose(@NonNull Long cameraId, @NonNull Messages.VoidResult result) {
+  public void dispose(@NonNull Long cameraId) {
 
     if (camera != null) {
       camera.dispose();
     }
-    result.success();
   }
 }

@@ -808,9 +808,8 @@ class Camera
             dartMessenger.error(flutterResult, errorCode, errorMessage, null));
   }
 
-  public void startVideoRecording(
-      @NonNull Messages.VoidResult result, @Nullable EventChannel imageStreamChannel) {
-    prepareRecording(result);
+  public void startVideoRecording(@Nullable EventChannel imageStreamChannel) {
+    prepareRecording();
 
     if (imageStreamChannel != null) {
       setStreamHandler(imageStreamChannel);
@@ -819,11 +818,11 @@ class Camera
     recordingVideo = true;
     try {
       startCapture(true, imageStreamChannel != null);
-      result.success();
+      return;
     } catch (CameraAccessException e) {
       recordingVideo = false;
       captureFile = null;
-      result.error(new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null));
+      throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
     }
   }
 
@@ -834,10 +833,9 @@ class Camera
     }
   }
 
-  public void stopVideoRecording(@NonNull final Messages.Result<String> result) {
+  public String stopVideoRecording() {
     if (!recordingVideo) {
-      result.success("");
-      return;
+      return "";
     }
     // Re-create autofocus feature so it's using continuous capture focus mode now.
     cameraFeatures.setAutoFocus(
@@ -854,16 +852,15 @@ class Camera
     try {
       startPreview();
     } catch (CameraAccessException | IllegalStateException | InterruptedException e) {
-      result.error(new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null));
-      return;
+      throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
     }
-    result.success(captureFile.getAbsolutePath());
+    String path = captureFile.getAbsolutePath();
     captureFile = null;
+    return path;
   }
 
-  public void pauseVideoRecording(@NonNull final Messages.VoidResult result) {
+  public void pauseVideoRecording() {
     if (!recordingVideo) {
-      result.success();
       return;
     }
 
@@ -871,22 +868,17 @@ class Camera
       if (SdkCapabilityChecker.supportsVideoPause()) {
         mediaRecorder.pause();
       } else {
-        result.error(
+        throw
             new Messages.FlutterError(
-                "videoRecordingFailed", "pauseVideoRecording requires Android API +24.", null));
-        return;
+                "videoRecordingFailed", "pauseVideoRecording requires Android API +24.", null);
       }
     } catch (IllegalStateException e) {
-      result.error(new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null));
-      return;
+      throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
     }
-
-    result.success();
   }
 
-  public void resumeVideoRecording(@NonNull final Messages.VoidResult result) {
+  public void resumeVideoRecording() {
     if (!recordingVideo) {
-      result.success();
       return;
     }
 
@@ -894,17 +886,13 @@ class Camera
       if (SdkCapabilityChecker.supportsVideoPause()) {
         mediaRecorder.resume();
       } else {
-        result.error(
+        throw
             new Messages.FlutterError(
-                "videoRecordingFailed", "resumeVideoRecording requires Android API +24.", null));
-        return;
+                "videoRecordingFailed", "resumeVideoRecording requires Android API +24.", null);
       }
     } catch (IllegalStateException e) {
-      result.error(new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null));
-      return;
+      throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
     }
-
-    result.success();
   }
 
   /**
@@ -984,10 +972,9 @@ class Camera
   /**
    * Sets new focus mode from dart.
    *
-   * @param result Flutter result.
    * @param newMode New mode.
    */
-  public void setFocusMode(final Messages.VoidResult result, @NonNull FocusMode newMode) {
+  public void setFocusMode(@NonNull FocusMode newMode) {
     final AutoFocusFeature autoFocusFeature = cameraFeatures.getAutoFocus();
     autoFocusFeature.setValue(newMode);
     autoFocusFeature.updateBuilder(previewRequestBuilder);
@@ -1014,12 +1001,9 @@ class Camera
             captureSession.setRepeatingRequest(
                 previewRequestBuilder.build(), null, backgroundHandler);
           } catch (CameraAccessException e) {
-            if (result != null) {
-              result.error(
+              throw
                   new Messages.FlutterError(
-                      "setFocusModeFailed", "Error setting focus mode: " + e.getMessage(), null));
-            }
-            return;
+                      "setFocusModeFailed", "Error setting focus mode: " + e.getMessage(), null);
           }
           break;
         case auto:
@@ -1027,10 +1011,6 @@ class Camera
           unlockAutoFocus();
           break;
       }
-    }
-
-    if (result != null) {
-      result.success();
     }
   }
 
@@ -1052,7 +1032,7 @@ class Camera
                 new Messages.FlutterError(
                     "setFocusPointFailed", "Could not set focus point.", null)));
 
-    this.setFocusMode(null, cameraFeatures.getAutoFocus().getValue());
+    this.setFocusMode(cameraFeatures.getAutoFocus().getValue());
   }
 
   /**
@@ -1248,21 +1228,19 @@ class Camera
   }
 
   @VisibleForTesting
-  void prepareRecording(@NonNull Messages.VoidResult result) {
+  void prepareRecording() {
     final File outputDir = applicationContext.getCacheDir();
     try {
       captureFile = File.createTempFile("REC", ".mp4", outputDir);
     } catch (IOException | SecurityException e) {
-      result.error(new Messages.FlutterError("cannotCreateFile", e.getMessage(), null));
-      return;
+      throw new Messages.FlutterError("cannotCreateFile", e.getMessage(), null);
     }
     try {
       prepareMediaRecorder(captureFile.getAbsolutePath());
     } catch (IOException e) {
       recordingVideo = false;
       captureFile = null;
-      result.error(new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null));
-      return;
+      throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
     }
     // Re-create autofocus feature so it's using video focus mode now.
     cameraFeatures.setAutoFocus(
@@ -1363,24 +1341,21 @@ class Camera
             videoRendererUncaughtExceptionHandler);
   }
 
-  public void setDescriptionWhileRecording(
-      @NonNull final Messages.VoidResult result, CameraProperties properties) {
+  public void setDescriptionWhileRecording(CameraProperties properties) {
 
     if (!recordingVideo) {
-      result.error(
+      throw
           new Messages.FlutterError(
-              "setDescriptionWhileRecordingFailed", "Device was not recording", null));
-      return;
+              "setDescriptionWhileRecordingFailed", "Device was not recording", null);
     }
 
     // See VideoRenderer.java; support for this EGL extension is required to switch camera while recording.
     if (!SdkCapabilityChecker.supportsEglRecordableAndroid()) {
-      result.error(
+      throw
           new Messages.FlutterError(
               "setDescriptionWhileRecordingFailed",
               "Device does not support switching the camera while recording",
-              null));
-      return;
+              null);
     }
 
     stopAndReleaseCamera();
@@ -1398,10 +1373,9 @@ class Camera
     try {
       open(imageFormatGroup);
     } catch (CameraAccessException e) {
-      result.error(
-          new Messages.FlutterError("setDescriptionWhileRecordingFailed", e.getMessage(), null));
+      throw
+          new Messages.FlutterError("setDescriptionWhileRecordingFailed", e.getMessage(), null);
     }
-    result.success();
   }
 
   public void dispose() {
