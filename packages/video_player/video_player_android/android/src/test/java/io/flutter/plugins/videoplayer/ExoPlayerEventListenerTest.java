@@ -33,7 +33,7 @@ import org.robolectric.RobolectricTestRunner;
  * ({@link VideoPlayerCallbacks} and/or interface with the player instance as expected.
  */
 @RunWith(RobolectricTestRunner.class)
-public final class ExoPlayerEventListenerTests {
+public final class ExoPlayerEventListenerTest {
   @Mock private ExoPlayer mockExoPlayer;
   @Mock private VideoPlayerCallbacks mockCallbacks;
   private ExoPlayerEventListener eventListener;
@@ -46,7 +46,8 @@ public final class ExoPlayerEventListenerTests {
   }
 
   @Test
-  public void onPlaybackStateChangedReadySendInitialized() {
+  @Config(sdk = 21)
+  public void onPlaybackStateChangedReadySendInitialized_belowAndroid21() {
     VideoSize size = new VideoSize(800, 400, 0, 0);
     when(mockExoPlayer.getVideoSize()).thenReturn(size);
     when(mockExoPlayer.getDuration()).thenReturn(10L);
@@ -56,7 +57,19 @@ public final class ExoPlayerEventListenerTests {
   }
 
   @Test
-  public void onPlaybackStateChangedReadyInPortraitMode90DegreesSwapWidthAndHeight() {
+  @Config(sdk = 22)
+  public void onPlaybackStateChangedReadySendInitialized_aboveAndroid21() {
+    int rotationCorrection = 90;
+    Format mockFormat = new Format.Builder().setRotationDegrees(rotationCorrection);
+    when(mockExoPlayer.getVideoFormat()).thenReturn(mockFormat);
+
+    eventListener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockCallbacks).onInitialized(800, 400, 10L, rotationCorrection);
+  }
+
+  @Test
+  @Config(sdk = 21)
+  public void onPlaybackStateChangedReadyInPortraitMode90DegreesSwapWidthAndHeight_belowAndroid21() {
     VideoSize size = new VideoSize(800, 400, 90, 0);
     when(mockExoPlayer.getVideoSize()).thenReturn(size);
     when(mockExoPlayer.getDuration()).thenReturn(10L);
@@ -66,7 +79,16 @@ public final class ExoPlayerEventListenerTests {
   }
 
   @Test
-  public void onPlaybackStateChangedReadyInPortraitMode270DegreesSwapWidthAndHeight() {
+  @Config(sdk = 21)
+  public void onPlaybackStateChangedReadyInPortraitMode90DegreesSwapWidthAndHeight_aboveAndroid21() {
+    int rotationCorrection = 90;
+    Format mockFormat = new Format.Builder().setRotationDegrees(rotationCorrection);
+    when(mockExoPlayer.getVideoFormat()).thenReturn(mockFormat);
+  }
+
+  @Test
+  @Config(sdk = 21)
+  public void onPlaybackStateChangedReadyInPortraitMode270DegreesSwapWidthAndHeight_belowAndroid21() {
     VideoSize size = new VideoSize(800, 400, 270, 0);
     when(mockExoPlayer.getVideoSize()).thenReturn(size);
     when(mockExoPlayer.getDuration()).thenReturn(10L);
@@ -76,7 +98,8 @@ public final class ExoPlayerEventListenerTests {
   }
 
   @Test
-  public void onPlaybackStateChangedReadyFlipped180DegreesInformEventHandler() {
+  @Config(sdk = 21)
+  public void onPlaybackStateChangedReadyFlipped180DegreesInformEventHandler_belowAndroid21() {
     VideoSize size = new VideoSize(800, 400, 180, 0);
     when(mockExoPlayer.getVideoSize()).thenReturn(size);
     when(mockExoPlayer.getDuration()).thenReturn(10L);
