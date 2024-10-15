@@ -133,20 +133,16 @@ abstract class CameraApi {
   int create(String cameraName, PlatformMediaSettings mediaSettings);
 
   /// Initializes the camera with the given ID for the given image format.
-  @async
   void initialize(int cameraId, PlatformImageFormatGroup imageFormat);
 
   /// Disposes of the camera with the given ID.
-  @async
   void dispose(int cameraId);
 
   /// Locks the camera with the given ID to the given orientation.
-  @async
   void lockCaptureOrientation(
       int cameraId, PlatformDeviceOrientation orientation);
 
   /// Unlocks the orientation for the camera with the given ID.
-  @async
   void unlockCaptureOrientation(int cameraId);
 
   /// Takes a picture on the camera with the given ID and returns a path to the
@@ -154,33 +150,23 @@ abstract class CameraApi {
   @async
   String takePicture(int cameraId);
 
-  /// Handles any necessary preprocessing before beginning video recording.
-  @async
-  void prepareForVideoRecording();
-
   /// Starts recording a video on the camera with the given ID.
-  @async
   void startVideoRecording(int cameraId, bool enableStream);
 
   /// Ends video recording on the camera with the given ID and returns the path
   /// to the resulting file.
-  @async
   String stopVideoRecording(int cameraId);
 
   /// Pauses video recording on the camera with the given ID.
-  @async
   void pauseVideoRecording(int cameraId);
 
   /// Resumes previously paused video recording on the camera with the given ID.
-  @async
   void resumeVideoRecording(int cameraId);
 
   /// Begins streaming frames from the camera.
-  @async
   void startImageStream();
 
   /// Stops streaming frames from the camera.
-  @async
   void stopImageStream();
 
   /// Sets the flash mode of the camera with the given ID.
@@ -198,15 +184,12 @@ abstract class CameraApi {
   void setExposurePoint(int cameraId, PlatformPoint? point);
 
   /// Returns the minimum exposure offset of the camera with the given ID.
-  @async
   double getMinExposureOffset(int cameraId);
 
   /// Returns the maximum exposure offset of the camera with the given ID.
-  @async
   double getMaxExposureOffset(int cameraId);
 
   /// Returns the exposure step size of the camera with the given ID.
-  @async
   double getExposureOffsetStepSize(int cameraId);
 
   /// Sets the exposure offset of the camera with the given ID and returns the
@@ -215,7 +198,6 @@ abstract class CameraApi {
   double setExposureOffset(int cameraId, double offset);
 
   /// Sets the focus mode of the camera with the given ID.
-  @async
   void setFocusMode(int cameraId, PlatformFocusMode focusMode);
 
   /// Sets the focus point of the camera with the given ID.
@@ -225,11 +207,9 @@ abstract class CameraApi {
   void setFocusPoint(int cameraId, PlatformPoint? point);
 
   /// Returns the maximum zoom level of the camera with the given ID.
-  @async
   double getMaxZoomLevel(int cameraId);
 
   /// Returns the minimum zoom level of the camera with the given ID.
-  @async
   double getMinZoomLevel(int cameraId);
 
   /// Sets the zoom level of the camera with the given ID.
@@ -237,17 +217,14 @@ abstract class CameraApi {
   void setZoomLevel(int cameraId, double zoom);
 
   /// Pauses streaming of preview frames.
-  @async
   void pausePreview(int cameraId);
 
   /// Resumes previously paused streaming of preview frames.
-  @async
   void resumePreview(int cameraId);
 
   /// Changes the camera while recording video.
   ///
   /// This should be called only while video recording is active.
-  @async
   void setDescriptionWhileRecording(String description);
 }
 

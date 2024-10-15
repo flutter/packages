@@ -179,12 +179,6 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void prepareForVideoRecording(@NonNull Messages.VoidResult result) {
-    // This optimization is not required for Android.
-    result.success();
-  }
-
-  @Override
   public void startVideoRecording(
       @NonNull Long cameraId, @NonNull Boolean enableStream, @NonNull Messages.VoidResult result) {
     camera.startVideoRecording(
