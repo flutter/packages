@@ -67,6 +67,10 @@ import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+/**
+ * As Pigeon-generated class, including FlutterError, do not implement equality, this helper class
+ * simplifies matching arguments passed to Result/VoidResult.error in unit tests.
+ */
 class FlutterErrorMatcher implements ArgumentMatcher<Messages.FlutterError> {
 
   FlutterErrorMatcher(String code, String message, Object details) {
