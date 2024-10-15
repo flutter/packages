@@ -448,58 +448,31 @@ enum SslErrorTypeData {
   invalid,
 }
 
-/// Defines the parameters of an SSL certificate
-class SslCertificateData {
-  /// Creates a [SslCertificateData].
-  const SslCertificateData({
-    required this.issuedBy,
-    required this.issuedTo,
-    required this.validNotAfterIso8601Date,
-    required this.validNotBeforeIso8601Date,
-    required this.x509CertificateDer,
-  });
-
-  /// The identity that the certificate is issued by
-  final String? issuedBy;
-
-  /// The identity that the certificate is issued to
-  final String? issuedTo;
-
-  /// The date that must not be passed for the certificate to be valid
-  final String? validNotAfterIso8601Date;
-
-  /// The date that must be passed for the certificate to be valid
-  final String? validNotBeforeIso8601Date;
-
-  /// The x509Certificate DER associated with the SSL error
-  final Uint8List? x509CertificateDer;
-}
-
 /// Defines the parameters of a SSL error
 class SslErrorData {
   /// Creates a [SslErrorData].
   const SslErrorData({
     required this.errorTypeData,
-    required this.certificateData,
-    required this.host,
     required this.protocol,
+    required this.host,
     required this.port,
+    required this.x509CertificateDer,
   });
 
   /// The type of SSL error
   final SslErrorTypeData errorTypeData;
 
-  /// The certificate associated with the error
-  final SslCertificateData certificateData;
+  ///The protocol of the url requesting trust
+  final String protocol;
 
   ///The host of the url requesting trust
   final String host;
 
-  ///The protocol of the url requesting trust
-  final String protocol;
-
   /// The port of the url requesting trust
   final int port;
+
+  /// The x509Certificate DER associated with the SSL error
+  final Uint8List? x509CertificateDer;
 }
 
 /// Mirror of WKWebsiteDataStore.
@@ -1071,15 +1044,15 @@ abstract class NSUrlProtectionSpaceFlutterApi {
 
   /// Create a new Dart instance and add it to the `InstanceManager`.
   @ObjCSelector(
-    'createWithIdentifier:protocol:host:port:sslErrorType:sslCertificate:',
+    'createWithIdentifier:sslErrorType:x509CertificateDer:protocol:host:port:',
   )
   void createWithServerTrust(
     int identifier,
+    SslErrorTypeData? sslErrorType,
+    Uint8List? x509CertificateDer,
     String? protocol,
     String? host,
     int port,
-    SslErrorTypeData? sslErrorType,
-    SslCertificateData sslCertificate,
   );
 }
 

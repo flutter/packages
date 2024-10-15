@@ -473,10 +473,10 @@ class NSUrlProtectionSpace extends NSObject {
     this.port,
     this.realm,
     this.sslErrorType,
-    this.sslCertificate,
+    this.x509CertificateDer,
     super.binaryMessenger,
     super.instanceManager,
-  })  : assert((sslErrorType == null && sslCertificate == null) ||
+  })  : assert((sslErrorType == null && x509CertificateDer == null) ||
             authenticationMethod == NSUrlAuthenticationMethod.serverTrust),
         super.detached();
 
@@ -498,21 +498,8 @@ class NSUrlProtectionSpace extends NSObject {
   /// The SSL error type (only applicable if the authentication method is server trust)
   final SslErrorType? sslErrorType;
 
-  /// The SSL certificate (only applicable if the authentication method is server trust)
-  final SslCertificate? sslCertificate;
-
-  @override
-  NSUrlProtectionSpace copy() {
-    return NSUrlProtectionSpace.detached(
-      protocol: protocol,
-      host: host,
-      port: port,
-      realm: realm,
-      authenticationMethod: authenticationMethod,
-      sslErrorType: sslErrorType,
-      sslCertificate: sslCertificate?.copy(),
-    );
-  }
+  /// The SSL certificate DER (only applicable if the authentication method is server trust)
+  final Uint8List? x509CertificateDer;
 }
 
 /// The authentication method used by the receiver.

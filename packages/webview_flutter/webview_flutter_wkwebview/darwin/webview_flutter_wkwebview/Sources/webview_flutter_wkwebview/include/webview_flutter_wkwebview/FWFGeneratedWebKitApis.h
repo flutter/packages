@@ -363,7 +363,6 @@ typedef NS_ENUM(NSUInteger, FWFSslErrorTypeData) {
 @class FWFNSHttpCookieData;
 @class FWFObjectOrIdentifier;
 @class FWFAuthenticationChallengeResponse;
-@class FWFSslCertificateData;
 
 @interface FWFNSKeyValueObservingOptionsEnumData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
@@ -579,25 +578,6 @@ typedef NS_ENUM(NSUInteger, FWFSslErrorTypeData) {
     credentialIdentifier:(nullable NSNumber *)credentialIdentifier;
 @property(nonatomic, assign) FWFNSUrlSessionAuthChallengeDisposition disposition;
 @property(nonatomic, strong, nullable) NSNumber * credentialIdentifier;
-@end
-
-/// Defines the parameters of an SSL certificate
-@interface FWFSslCertificateData : NSObject
-+ (instancetype)makeWithIssuedBy:(nullable NSString *)issuedBy
-    issuedTo:(nullable NSString *)issuedTo
-    validNotAfterIso8601Date:(nullable NSString *)validNotAfterIso8601Date
-    validNotBeforeIso8601Date:(nullable NSString *)validNotBeforeIso8601Date
-    x509CertificateDer:(nullable FlutterStandardTypedData *)x509CertificateDer;
-/// The identity that the certificate is issued by
-@property(nonatomic, copy, nullable) NSString * issuedBy;
-/// The identity that the certificate is issued to
-@property(nonatomic, copy, nullable) NSString * issuedTo;
-/// The date that must not be passed for the certificate to be valid
-@property(nonatomic, copy, nullable) NSString * validNotAfterIso8601Date;
-/// The date that must be passed for the certificate to be valid
-@property(nonatomic, copy, nullable) NSString * validNotBeforeIso8601Date;
-/// The x509Certificate DER associated with the SSL error
-@property(nonatomic, strong, nullable) FlutterStandardTypedData * x509CertificateDer;
 @end
 
 /// The codec used by FWFWKWebsiteDataStoreHostApi.
@@ -986,7 +966,7 @@ NSObject<FlutterMessageCodec> *FWFNSUrlProtectionSpaceFlutterApiGetCodec(void);
 /// Create a new Dart instance and add it to the `InstanceManager`.
 - (void)createWithIdentifier:(NSInteger)identifier host:(nullable NSString *)host realm:(nullable NSString *)realm authenticationMethod:(nullable NSString *)authenticationMethod completion:(void (^)(FlutterError *_Nullable))completion;
 /// Create a new Dart instance and add it to the `InstanceManager`.
-- (void)createWithIdentifier:(NSInteger)identifier protocol:(nullable NSString *)protocol host:(nullable NSString *)host port:(NSInteger)port sslErrorType:(nullable FWFSslErrorTypeDataBox *)sslErrorTypeBoxed sslCertificate:(FWFSslCertificateData *)sslCertificate completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)createWithIdentifier:(NSInteger)identifier sslErrorType:(nullable FWFSslErrorTypeDataBox *)sslErrorTypeBoxed x509CertificateDer:(nullable FlutterStandardTypedData *)x509CertificateDer protocol:(nullable NSString *)protocol host:(nullable NSString *)host port:(NSInteger)port completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFNSUrlAuthenticationChallengeFlutterApi.

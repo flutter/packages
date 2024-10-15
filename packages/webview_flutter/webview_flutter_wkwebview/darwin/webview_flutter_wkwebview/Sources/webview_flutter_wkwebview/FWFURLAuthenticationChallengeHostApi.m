@@ -53,18 +53,13 @@
     NSData* certificateDer = (NSData*)CFBridgingRelease(SecCertificateCopyData(certificate));
     FlutterStandardTypedData* flutterTypedData = [FlutterStandardTypedData typedDataWithBytes:certificateDer];
     
-    FWFSslCertificateData* sslCertificateData = [FWFSslCertificateData makeWithIssuedBy:NULL
-                                                                                       issuedTo:NULL
-                                                                                       validNotAfterIso8601Date:NULL
-                                                                                       validNotBeforeIso8601Date:NULL
-                                                                                       x509CertificateDer:flutterTypedData];
-    
     [protectionSpaceApi createWithInstance:protectionSpace
+                         sslErrorTypeBoxed:sslErrorTypeDataBox
+                       x509CertificateDer:flutterTypedData
+                                  protocol:protectionSpace.protocol
                                       host:protectionSpace.host
-                                     protocol:protectionSpace.protocol
                                       port: protectionSpace.port
-                              sslErrorTypeBoxed:sslErrorTypeDataBox
-                            sslCertificate:sslCertificateData completion:^(FlutterError *error) {
+                                completion:^(FlutterError *error) {
       NSAssert(!error, @"%@", error);
     }];
   } else {

@@ -63,22 +63,6 @@ extension _SslErrorTypeDataConverter on SslErrorTypeData {
   }
 }
 
-extension _SslCertificateDataConverter on SslCertificateData {
-  SslCertificate toSslCertificate() {
-    return SslCertificate(
-      issuedBy: issuedBy,
-      issuedTo: issuedTo,
-      validNotAfterDate: validNotAfterIso8601Date == null
-          ? DateTime.parse(validNotAfterIso8601Date!)
-          : null,
-      validNotBeforeDate: validNotBeforeIso8601Date == null
-          ? DateTime.parse(validNotBeforeIso8601Date!)
-          : null,
-      x509CertificateDer: x509CertificateDer,
-    );
-  }
-}
-
 /// Handles initialization of Flutter APIs for the Foundation library.
 class FoundationFlutterApis {
   /// Constructs a [FoundationFlutterApis].
@@ -388,11 +372,11 @@ class NSUrlProtectionSpaceFlutterApiImpl
   @override
   void createWithServerTrust(
     int identifier,
+    SslErrorTypeData? sslErrorType,
+    Uint8List? x509CertificateDer,
     String? protocol,
     String? host,
     int port,
-    SslErrorTypeData? sslErrorType,
-    SslCertificateData sslCertificate,
   ) {
     instanceManager.addHostCreatedInstance(
       NSUrlProtectionSpace.detached(
@@ -401,7 +385,7 @@ class NSUrlProtectionSpaceFlutterApiImpl
         port: port,
         authenticationMethod: NSUrlAuthenticationMethod.serverTrust,
         sslErrorType: sslErrorType?.toSslErrorType(),
-        sslCertificate: sslCertificate.toSslCertificate(),
+        x509CertificateDer: x509CertificateDer,
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
       ),

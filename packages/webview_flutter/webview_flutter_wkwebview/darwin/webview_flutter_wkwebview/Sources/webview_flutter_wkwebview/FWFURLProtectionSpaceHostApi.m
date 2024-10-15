@@ -35,19 +35,19 @@
 }
 
 - (void)createWithInstance:(NSURLProtectionSpace *)instance
-                      host:(nullable NSString *)host
-                      protocol:(nullable NSString *)protocol
-                      port:(NSInteger)port
                       sslErrorTypeBoxed:(nullable FWFSslErrorTypeDataBox *) sslErrorTypeBoxed
-                      sslCertificate:(FWFSslCertificateData *) sslCertificate
+        x509CertificateDer:(FlutterStandardTypedData *) x509CertificateDer
+                  protocol:(nullable NSString *)protocol
+                  host:(nullable NSString *)host
+                  port:(NSInteger)port
                 completion:(void (^)(FlutterError *_Nullable))completion {
   if (![self.instanceManager containsInstance:instance]) {
     [self.api createWithIdentifier:[self.instanceManager addHostCreatedInstance:instance]
-                              host:host
                           protocol:protocol
+                             host:host
                               port:port
-                          sslErrorType:sslErrorTypeBoxed
-                    sslCertificate:sslCertificate
+                      sslErrorType:sslErrorTypeBoxed
+        x509CertificateDer:x509CertificateDer
                         completion:completion];
   }
 }

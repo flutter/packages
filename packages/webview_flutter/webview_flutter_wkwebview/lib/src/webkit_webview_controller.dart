@@ -1186,11 +1186,18 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           if (callback != null) {
             callback(
               SslError(
-                errorType: challenge.protectionSpace.sslErrorType,
-                certificate: challenge.protectionSpace.sslCertificate!,
                 host: challenge.protectionSpace.host!,
                 scheme: challenge.protectionSpace.protocol!,
                 port: challenge.protectionSpace.port!,
+                errorType: challenge.protectionSpace.sslErrorType,
+                sslCertificate: SslCertificate(
+                  issuedBy: null,
+                  issuedTo: null,
+                  validNotAfterDate: null,
+                  validNotBeforeDate: null,
+                  x509CertificateDer:
+                      challenge.protectionSpace.x509CertificateDer,
+                ),
               ),
             );
             return;

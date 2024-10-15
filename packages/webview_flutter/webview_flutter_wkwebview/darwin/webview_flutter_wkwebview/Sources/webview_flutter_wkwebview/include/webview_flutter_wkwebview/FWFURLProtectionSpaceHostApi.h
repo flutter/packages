@@ -31,11 +31,11 @@ NS_ASSUME_NONNULL_BEGIN
                 completion:(void (^)(FlutterError *_Nullable))completion;
 /// Sends a message to Dart to create a new Dart instance and add it to the `InstanceManager`.
 - (void)createWithInstance:(NSURLProtectionSpace *)instance
-                      host:(nullable NSString *)host
-                      protocol:(nullable NSString *)protocol
-                      port:(NSInteger)port
                       sslErrorTypeBoxed:(nullable FWFSslErrorTypeDataBox *) sslErrorTypeBoxed
-                      sslCertificate:(FWFSslCertificateData *) sslCertificate
+                      x509CertificateDer:(nullable FlutterStandardTypedData *) x509CertificateDer
+                      protocol:(nullable NSString *)protocol
+                      host:(nullable NSString *)host
+                      port:(NSInteger)port
                 completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 

@@ -828,53 +828,6 @@ class AuthenticationChallengeResponse {
   }
 }
 
-/// Defines the parameters of an SSL certificate
-class SslCertificateData {
-  SslCertificateData({
-    this.issuedBy,
-    this.issuedTo,
-    this.validNotAfterIso8601Date,
-    this.validNotBeforeIso8601Date,
-    this.x509CertificateDer,
-  });
-
-  /// The identity that the certificate is issued by
-  String? issuedBy;
-
-  /// The identity that the certificate is issued to
-  String? issuedTo;
-
-  /// The date that must not be passed for the certificate to be valid
-  String? validNotAfterIso8601Date;
-
-  /// The date that must be passed for the certificate to be valid
-  String? validNotBeforeIso8601Date;
-
-  /// The x509Certificate DER associated with the SSL error
-  Uint8List? x509CertificateDer;
-
-  Object encode() {
-    return <Object?>[
-      issuedBy,
-      issuedTo,
-      validNotAfterIso8601Date,
-      validNotBeforeIso8601Date,
-      x509CertificateDer,
-    ];
-  }
-
-  static SslCertificateData decode(Object result) {
-    result as List<Object?>;
-    return SslCertificateData(
-      issuedBy: result[0] as String?,
-      issuedTo: result[1] as String?,
-      validNotAfterIso8601Date: result[2] as String?,
-      validNotBeforeIso8601Date: result[3] as String?,
-      x509CertificateDer: result[4] as Uint8List?,
-    );
-  }
-}
-
 class _WKWebsiteDataStoreHostApiCodec extends StandardMessageCodec {
   const _WKWebsiteDataStoreHostApiCodec();
   @override
@@ -2318,44 +2271,41 @@ class _WKWebViewHostApiCodec extends StandardMessageCodec {
     } else if (value is ObjectOrIdentifier) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is SslCertificateData) {
+    } else if (value is WKAudiovisualMediaTypeEnumData) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is WKAudiovisualMediaTypeEnumData) {
+    } else if (value is WKFrameInfoData) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is WKFrameInfoData) {
+    } else if (value is WKMediaCaptureTypeData) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is WKMediaCaptureTypeData) {
+    } else if (value is WKNavigationActionData) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionData) {
+    } else if (value is WKNavigationActionPolicyEnumData) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionPolicyEnumData) {
+    } else if (value is WKNavigationResponseData) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationResponseData) {
+    } else if (value is WKPermissionDecisionData) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else if (value is WKPermissionDecisionData) {
+    } else if (value is WKScriptMessageData) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    } else if (value is WKScriptMessageData) {
+    } else if (value is WKSecurityOriginData) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    } else if (value is WKSecurityOriginData) {
+    } else if (value is WKUserScriptData) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptData) {
+    } else if (value is WKUserScriptInjectionTimeEnumData) {
       buffer.putUint8(147);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptInjectionTimeEnumData) {
-      buffer.putUint8(148);
-      writeValue(buffer, value.encode());
     } else if (value is WKWebsiteDataTypeEnumData) {
-      buffer.putUint8(149);
+      buffer.putUint8(148);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2384,30 +2334,28 @@ class _WKWebViewHostApiCodec extends StandardMessageCodec {
       case 136: 
         return ObjectOrIdentifier.decode(readValue(buffer)!);
       case 137: 
-        return SslCertificateData.decode(readValue(buffer)!);
-      case 138: 
         return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
-      case 139: 
+      case 138: 
         return WKFrameInfoData.decode(readValue(buffer)!);
-      case 140: 
+      case 139: 
         return WKMediaCaptureTypeData.decode(readValue(buffer)!);
-      case 141: 
+      case 140: 
         return WKNavigationActionData.decode(readValue(buffer)!);
-      case 142: 
+      case 141: 
         return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
-      case 143: 
+      case 142: 
         return WKNavigationResponseData.decode(readValue(buffer)!);
-      case 144: 
+      case 143: 
         return WKPermissionDecisionData.decode(readValue(buffer)!);
-      case 145: 
+      case 144: 
         return WKScriptMessageData.decode(readValue(buffer)!);
-      case 146: 
+      case 145: 
         return WKSecurityOriginData.decode(readValue(buffer)!);
-      case 147: 
+      case 146: 
         return WKUserScriptData.decode(readValue(buffer)!);
-      case 148: 
+      case 147: 
         return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
-      case 149: 
+      case 148: 
         return WKWebsiteDataTypeEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -3474,29 +3422,6 @@ class NSUrlCredentialHostApi {
   }
 }
 
-class _NSUrlProtectionSpaceFlutterApiCodec extends StandardMessageCodec {
-  const _NSUrlProtectionSpaceFlutterApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is SslCertificateData) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128: 
-        return SslCertificateData.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 /// Flutter API for `NSUrlProtectionSpace`.
 ///
 /// This class may handle instantiating and adding Dart instances that are
@@ -3505,13 +3430,13 @@ class _NSUrlProtectionSpaceFlutterApiCodec extends StandardMessageCodec {
 ///
 /// See https://developer.apple.com/documentation/foundation/nsurlprotectionspace?language=objc.
 abstract class NSUrlProtectionSpaceFlutterApi {
-  static const MessageCodec<Object?> pigeonChannelCodec = _NSUrlProtectionSpaceFlutterApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = StandardMessageCodec();
 
   /// Create a new Dart instance and add it to the `InstanceManager`.
   void create(int identifier, String? host, String? realm, String? authenticationMethod);
 
   /// Create a new Dart instance and add it to the `InstanceManager`.
-  void createWithServerTrust(int identifier, String? protocol, String? host, int port, SslErrorTypeData? sslErrorType, SslCertificateData sslCertificate);
+  void createWithServerTrust(int identifier, SslErrorTypeData? sslErrorType, Uint8List? x509CertificateDer, String? protocol, String? host, int port);
 
   static void setUp(NSUrlProtectionSpaceFlutterApi? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
@@ -3557,17 +3482,15 @@ abstract class NSUrlProtectionSpaceFlutterApi {
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlProtectionSpaceFlutterApi.createWithServerTrust was null, expected non-null int.');
-          final String? arg_protocol = (args[1] as String?);
-          final String? arg_host = (args[2] as String?);
-          final int? arg_port = (args[3] as int?);
+          final SslErrorTypeData? arg_sslErrorType = args[1] == null ? null : SslErrorTypeData.values[args[1]! as int];
+          final Uint8List? arg_x509CertificateDer = (args[2] as Uint8List?);
+          final String? arg_protocol = (args[3] as String?);
+          final String? arg_host = (args[4] as String?);
+          final int? arg_port = (args[5] as int?);
           assert(arg_port != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlProtectionSpaceFlutterApi.createWithServerTrust was null, expected non-null int.');
-          final SslErrorTypeData? arg_sslErrorType = args[4] == null ? null : SslErrorTypeData.values[args[4]! as int];
-          final SslCertificateData? arg_sslCertificate = (args[5] as SslCertificateData?);
-          assert(arg_sslCertificate != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlProtectionSpaceFlutterApi.createWithServerTrust was null, expected non-null SslCertificateData.');
           try {
-            api.createWithServerTrust(arg_identifier!, arg_protocol, arg_host, arg_port!, arg_sslErrorType, arg_sslCertificate!);
+            api.createWithServerTrust(arg_identifier!, arg_sslErrorType, arg_x509CertificateDer, arg_protocol, arg_host, arg_port!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

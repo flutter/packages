@@ -352,12 +352,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
-@interface FWFSslCertificateData ()
-+ (FWFSslCertificateData *)fromList:(NSArray *)list;
-+ (nullable FWFSslCertificateData *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
-@end
-
 @implementation FWFNSKeyValueObservingOptionsEnumData
 + (instancetype)makeWithValue:(FWFNSKeyValueObservingOptionsEnum)value {
   FWFNSKeyValueObservingOptionsEnumData* pigeonResult = [[FWFNSKeyValueObservingOptionsEnumData alloc] init];
@@ -863,43 +857,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return @[
     @(self.disposition),
     self.credentialIdentifier ?: [NSNull null],
-  ];
-}
-@end
-
-@implementation FWFSslCertificateData
-+ (instancetype)makeWithIssuedBy:(nullable NSString *)issuedBy
-    issuedTo:(nullable NSString *)issuedTo
-    validNotAfterIso8601Date:(nullable NSString *)validNotAfterIso8601Date
-    validNotBeforeIso8601Date:(nullable NSString *)validNotBeforeIso8601Date
-    x509CertificateDer:(nullable FlutterStandardTypedData *)x509CertificateDer {
-  FWFSslCertificateData* pigeonResult = [[FWFSslCertificateData alloc] init];
-  pigeonResult.issuedBy = issuedBy;
-  pigeonResult.issuedTo = issuedTo;
-  pigeonResult.validNotAfterIso8601Date = validNotAfterIso8601Date;
-  pigeonResult.validNotBeforeIso8601Date = validNotBeforeIso8601Date;
-  pigeonResult.x509CertificateDer = x509CertificateDer;
-  return pigeonResult;
-}
-+ (FWFSslCertificateData *)fromList:(NSArray *)list {
-  FWFSslCertificateData *pigeonResult = [[FWFSslCertificateData alloc] init];
-  pigeonResult.issuedBy = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.issuedTo = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.validNotAfterIso8601Date = GetNullableObjectAtIndex(list, 2);
-  pigeonResult.validNotBeforeIso8601Date = GetNullableObjectAtIndex(list, 3);
-  pigeonResult.x509CertificateDer = GetNullableObjectAtIndex(list, 4);
-  return pigeonResult;
-}
-+ (nullable FWFSslCertificateData *)nullableFromList:(NSArray *)list {
-  return (list) ? [FWFSslCertificateData fromList:list] : nil;
-}
-- (NSArray *)toList {
-  return @[
-    self.issuedBy ?: [NSNull null],
-    self.issuedTo ?: [NSNull null],
-    self.validNotAfterIso8601Date ?: [NSNull null],
-    self.validNotBeforeIso8601Date ?: [NSNull null],
-    self.x509CertificateDer ?: [NSNull null],
   ];
 }
 @end
@@ -2272,30 +2229,28 @@ NSObject<FlutterMessageCodec> *FWFNSObjectFlutterApiGetCodec(void) {
     case 136: 
       return [FWFObjectOrIdentifier fromList:[self readValue]];
     case 137: 
-      return [FWFSslCertificateData fromList:[self readValue]];
-    case 138: 
       return [FWFWKAudiovisualMediaTypeEnumData fromList:[self readValue]];
-    case 139: 
+    case 138: 
       return [FWFWKFrameInfoData fromList:[self readValue]];
-    case 140: 
+    case 139: 
       return [FWFWKMediaCaptureTypeData fromList:[self readValue]];
-    case 141: 
+    case 140: 
       return [FWFWKNavigationActionData fromList:[self readValue]];
-    case 142: 
+    case 141: 
       return [FWFWKNavigationActionPolicyEnumData fromList:[self readValue]];
-    case 143: 
+    case 142: 
       return [FWFWKNavigationResponseData fromList:[self readValue]];
-    case 144: 
+    case 143: 
       return [FWFWKPermissionDecisionData fromList:[self readValue]];
-    case 145: 
+    case 144: 
       return [FWFWKScriptMessageData fromList:[self readValue]];
-    case 146: 
+    case 145: 
       return [FWFWKSecurityOriginData fromList:[self readValue]];
-    case 147: 
+    case 146: 
       return [FWFWKUserScriptData fromList:[self readValue]];
-    case 148: 
+    case 147: 
       return [FWFWKUserScriptInjectionTimeEnumData fromList:[self readValue]];
-    case 149: 
+    case 148: 
       return [FWFWKWebsiteDataTypeEnumData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -2334,44 +2289,41 @@ NSObject<FlutterMessageCodec> *FWFNSObjectFlutterApiGetCodec(void) {
   } else if ([value isKindOfClass:[FWFObjectOrIdentifier class]]) {
     [self writeByte:136];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFSslCertificateData class]]) {
+  } else if ([value isKindOfClass:[FWFWKAudiovisualMediaTypeEnumData class]]) {
     [self writeByte:137];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKAudiovisualMediaTypeEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFWKFrameInfoData class]]) {
     [self writeByte:138];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKFrameInfoData class]]) {
+  } else if ([value isKindOfClass:[FWFWKMediaCaptureTypeData class]]) {
     [self writeByte:139];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKMediaCaptureTypeData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationActionData class]]) {
     [self writeByte:140];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationActionData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationActionPolicyEnumData class]]) {
     [self writeByte:141];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationActionPolicyEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationResponseData class]]) {
     [self writeByte:142];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationResponseData class]]) {
+  } else if ([value isKindOfClass:[FWFWKPermissionDecisionData class]]) {
     [self writeByte:143];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKPermissionDecisionData class]]) {
+  } else if ([value isKindOfClass:[FWFWKScriptMessageData class]]) {
     [self writeByte:144];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKScriptMessageData class]]) {
+  } else if ([value isKindOfClass:[FWFWKSecurityOriginData class]]) {
     [self writeByte:145];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKSecurityOriginData class]]) {
+  } else if ([value isKindOfClass:[FWFWKUserScriptData class]]) {
     [self writeByte:146];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKUserScriptData class]]) {
+  } else if ([value isKindOfClass:[FWFWKUserScriptInjectionTimeEnumData class]]) {
     [self writeByte:147];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKUserScriptInjectionTimeEnumData class]]) {
-    [self writeByte:148];
-    [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FWFWKWebsiteDataTypeEnumData class]]) {
-    [self writeByte:149];
+    [self writeByte:148];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -3311,50 +3263,9 @@ void SetUpFWFNSUrlCredentialHostApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
 }
-@interface FWFNSUrlProtectionSpaceFlutterApiCodecReader : FlutterStandardReader
-@end
-@implementation FWFNSUrlProtectionSpaceFlutterApiCodecReader
-- (nullable id)readValueOfType:(UInt8)type {
-  switch (type) {
-    case 128: 
-      return [FWFSslCertificateData fromList:[self readValue]];
-    default:
-      return [super readValueOfType:type];
-  }
-}
-@end
-
-@interface FWFNSUrlProtectionSpaceFlutterApiCodecWriter : FlutterStandardWriter
-@end
-@implementation FWFNSUrlProtectionSpaceFlutterApiCodecWriter
-- (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FWFSslCertificateData class]]) {
-    [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else {
-    [super writeValue:value];
-  }
-}
-@end
-
-@interface FWFNSUrlProtectionSpaceFlutterApiCodecReaderWriter : FlutterStandardReaderWriter
-@end
-@implementation FWFNSUrlProtectionSpaceFlutterApiCodecReaderWriter
-- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[FWFNSUrlProtectionSpaceFlutterApiCodecWriter alloc] initWithData:data];
-}
-- (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[FWFNSUrlProtectionSpaceFlutterApiCodecReader alloc] initWithData:data];
-}
-@end
-
 NSObject<FlutterMessageCodec> *FWFNSUrlProtectionSpaceFlutterApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
-  static dispatch_once_t sPred = 0;
-  dispatch_once(&sPred, ^{
-    FWFNSUrlProtectionSpaceFlutterApiCodecReaderWriter *readerWriter = [[FWFNSUrlProtectionSpaceFlutterApiCodecReaderWriter alloc] init];
-    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
-  });
+  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
   return sSharedObject;
 }
 
@@ -3395,14 +3306,14 @@ NSObject<FlutterMessageCodec> *FWFNSUrlProtectionSpaceFlutterApiGetCodec(void) {
     } 
   }];
 }
-- (void)createWithIdentifier:(NSInteger)arg_identifier protocol:(nullable NSString *)arg_protocol host:(nullable NSString *)arg_host port:(NSInteger)arg_port sslErrorType:(nullable FWFSslErrorTypeDataBox *)arg_sslErrorType sslCertificate:(FWFSslCertificateData *)arg_sslCertificate completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)createWithIdentifier:(NSInteger)arg_identifier sslErrorType:(nullable FWFSslErrorTypeDataBox *)arg_sslErrorType x509CertificateDer:(nullable FlutterStandardTypedData *)arg_x509CertificateDer protocol:(nullable NSString *)arg_protocol host:(nullable NSString *)arg_host port:(NSInteger)arg_port completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlProtectionSpaceFlutterApi.createWithServerTrust", _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
     [FlutterBasicMessageChannel
       messageChannelWithName:channelName
       binaryMessenger:self.binaryMessenger
       codec:FWFNSUrlProtectionSpaceFlutterApiGetCodec()];
-  [channel sendMessage:@[@(arg_identifier), arg_protocol ?: [NSNull null], arg_host ?: [NSNull null], @(arg_port), arg_sslErrorType == nil ? [NSNull null] : [NSNumber numberWithInteger:arg_sslErrorType.value], arg_sslCertificate ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+  [channel sendMessage:@[@(arg_identifier), arg_sslErrorType == nil ? [NSNull null] : [NSNumber numberWithInteger:arg_sslErrorType.value], arg_x509CertificateDer ?: [NSNull null], arg_protocol ?: [NSNull null], arg_host ?: [NSNull null], @(arg_port)] reply:^(NSArray<id> *reply) {
     if (reply != nil) {
       if (reply.count > 1) {
         completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
