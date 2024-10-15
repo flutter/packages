@@ -666,7 +666,9 @@ public class CameraTest {
     SdkCapabilityChecker.SDK_VERSION = Build.VERSION_CODES.LOLLIPOP;
 
     final CameraProperties newCameraProperties = mock(CameraProperties.class);
-    assertThrows(Messages.FlutterError.class, () -> camera.setDescriptionWhileRecording(newCameraProperties));
+    assertThrows(
+        Messages.FlutterError.class,
+        () -> camera.setDescriptionWhileRecording(newCameraProperties));
   }
 
   @Test
@@ -793,7 +795,9 @@ public class CameraTest {
   public void setDescriptionWhileRecording_shouldErrorWhenNotRecording() {
     camera.recordingVideo = false;
     final CameraProperties newCameraProperties = mock(CameraProperties.class);
-    assertThrows(Messages.FlutterError.class, () -> camera.setDescriptionWhileRecording(newCameraProperties));
+    assertThrows(
+        Messages.FlutterError.class,
+        () -> camera.setDescriptionWhileRecording(newCameraProperties));
   }
 
   @Test

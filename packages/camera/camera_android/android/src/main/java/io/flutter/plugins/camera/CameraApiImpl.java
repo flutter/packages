@@ -154,8 +154,7 @@ final class CameraApiImpl implements Messages.CameraApi {
 
   @Override
   public void initialize(
-      @NonNull Long cameraId,
-      @NonNull Messages.PlatformImageFormatGroup imageFormat) {
+      @NonNull Long cameraId, @NonNull Messages.PlatformImageFormatGroup imageFormat) {
     if (camera != null) {
       try {
         camera.open(CameraUtils.imageFormatGroupFromPigeon(imageFormat));
@@ -163,11 +162,10 @@ final class CameraApiImpl implements Messages.CameraApi {
         throw new Messages.FlutterError("CameraAccessException", e.getMessage(), null);
       }
     } else {
-      throw
-          new Messages.FlutterError(
-              "cameraNotFound",
-              "Camera not found. Please call the 'create' method before calling 'initialize'.",
-              null);
+      throw new Messages.FlutterError(
+          "cameraNotFound",
+          "Camera not found. Please call the 'create' method before calling 'initialize'.",
+          null);
     }
   }
 
@@ -177,8 +175,7 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void startVideoRecording(
-      @NonNull Long cameraId, @NonNull Boolean enableStream) {
+  public void startVideoRecording(@NonNull Long cameraId, @NonNull Boolean enableStream) {
     camera.startVideoRecording(Objects.equals(enableStream, true) ? imageStreamChannel : null);
   }
 
@@ -257,23 +254,20 @@ final class CameraApiImpl implements Messages.CameraApi {
 
   @NonNull
   @Override
-  public Double getMinExposureOffset(
-      @NonNull Long cameraId) {
-      return camera.getMinExposureOffset();
+  public Double getMinExposureOffset(@NonNull Long cameraId) {
+    return camera.getMinExposureOffset();
   }
 
   @NonNull
   @Override
-  public Double getMaxExposureOffset(
-      @NonNull Long cameraId) {
-      return camera.getMaxExposureOffset();
+  public Double getMaxExposureOffset(@NonNull Long cameraId) {
+    return camera.getMaxExposureOffset();
   }
 
   @NonNull
   @Override
-  public Double getExposureOffsetStepSize(
-      @NonNull Long cameraId) {
-      return camera.getExposureOffsetStepSize();
+  public Double getExposureOffsetStepSize(@NonNull Long cameraId) {
+    return camera.getExposureOffsetStepSize();
   }
 
   @Override
@@ -288,16 +282,13 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void setFocusMode(
-      @NonNull Long cameraId,
-      @NonNull Messages.PlatformFocusMode focusMode) {
+  public void setFocusMode(@NonNull Long cameraId, @NonNull Messages.PlatformFocusMode focusMode) {
     FocusMode mode = CameraUtils.focusModeFromPigeon(focusMode);
     if (mode == null) {
-      throw
-          new Messages.FlutterError(
-              "setFocusModeFailed", "Unknown focus mode " + mode.name(), null);
+      throw new Messages.FlutterError(
+          "setFocusModeFailed", "Unknown focus mode " + mode.name(), null);
     }
-      camera.setFocusMode(mode);
+    camera.setFocusMode(mode);
   }
 
   @Override
@@ -343,7 +334,7 @@ final class CameraApiImpl implements Messages.CameraApi {
 
     assert camera != null;
 
-      return (double) camera.getMaxZoomLevel();
+    return (double) camera.getMaxZoomLevel();
   }
 
   @NonNull
@@ -359,25 +350,23 @@ final class CameraApiImpl implements Messages.CameraApi {
       @NonNull Long cameraId, @NonNull Double zoom, @NonNull Messages.VoidResult result) {
 
     assert camera != null;
-      camera.setZoomLevel(result, zoom.floatValue());
+    camera.setZoomLevel(result, zoom.floatValue());
   }
 
   @Override
   public void lockCaptureOrientation(
-      @NonNull Long cameraId,
-      @NonNull Messages.PlatformDeviceOrientation platformOrientation) {
+      @NonNull Long cameraId, @NonNull Messages.PlatformDeviceOrientation platformOrientation) {
 
     PlatformChannel.DeviceOrientation orientation =
         CameraUtils.orientationFromPigeon(platformOrientation);
 
-      camera.lockCaptureOrientation(orientation);
+    camera.lockCaptureOrientation(orientation);
   }
 
   @Override
-  public void unlockCaptureOrientation(
-      @NonNull Long cameraId) {
+  public void unlockCaptureOrientation(@NonNull Long cameraId) {
 
-      camera.unlockCaptureOrientation();
+    camera.unlockCaptureOrientation();
   }
 
   @Override
@@ -401,8 +390,7 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void setDescriptionWhileRecording(
-      @NonNull String cameraName) {
+  public void setDescriptionWhileRecording(@NonNull String cameraName) {
 
     try {
       CameraProperties cameraProperties =

@@ -867,9 +867,8 @@ class Camera
       if (SdkCapabilityChecker.supportsVideoPause()) {
         mediaRecorder.pause();
       } else {
-        throw
-            new Messages.FlutterError(
-                "videoRecordingFailed", "pauseVideoRecording requires Android API +24.", null);
+        throw new Messages.FlutterError(
+            "videoRecordingFailed", "pauseVideoRecording requires Android API +24.", null);
       }
     } catch (IllegalStateException e) {
       throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
@@ -885,9 +884,8 @@ class Camera
       if (SdkCapabilityChecker.supportsVideoPause()) {
         mediaRecorder.resume();
       } else {
-        throw
-            new Messages.FlutterError(
-                "videoRecordingFailed", "resumeVideoRecording requires Android API +24.", null);
+        throw new Messages.FlutterError(
+            "videoRecordingFailed", "resumeVideoRecording requires Android API +24.", null);
       }
     } catch (IllegalStateException e) {
       throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
@@ -1000,9 +998,8 @@ class Camera
             captureSession.setRepeatingRequest(
                 previewRequestBuilder.build(), null, backgroundHandler);
           } catch (CameraAccessException e) {
-              throw
-                  new Messages.FlutterError(
-                      "setFocusModeFailed", "Error setting focus mode: " + e.getMessage(), null);
+            throw new Messages.FlutterError(
+                "setFocusModeFailed", "Error setting focus mode: " + e.getMessage(), null);
           }
           break;
         case auto:
@@ -1342,18 +1339,16 @@ class Camera
   public void setDescriptionWhileRecording(CameraProperties properties) {
 
     if (!recordingVideo) {
-      throw
-          new Messages.FlutterError(
-              "setDescriptionWhileRecordingFailed", "Device was not recording", null);
+      throw new Messages.FlutterError(
+          "setDescriptionWhileRecordingFailed", "Device was not recording", null);
     }
 
     // See VideoRenderer.java; support for this EGL extension is required to switch camera while recording.
     if (!SdkCapabilityChecker.supportsEglRecordableAndroid()) {
-      throw
-          new Messages.FlutterError(
-              "setDescriptionWhileRecordingFailed",
-              "Device does not support switching the camera while recording",
-              null);
+      throw new Messages.FlutterError(
+          "setDescriptionWhileRecordingFailed",
+          "Device does not support switching the camera while recording",
+          null);
     }
 
     stopAndReleaseCamera();
@@ -1371,8 +1366,7 @@ class Camera
     try {
       open(imageFormatGroup);
     } catch (CameraAccessException e) {
-      throw
-          new Messages.FlutterError("setDescriptionWhileRecordingFailed", e.getMessage(), null);
+      throw new Messages.FlutterError("setDescriptionWhileRecordingFailed", e.getMessage(), null);
     }
   }
 
