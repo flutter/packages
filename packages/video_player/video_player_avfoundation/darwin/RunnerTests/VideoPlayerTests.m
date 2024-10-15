@@ -530,6 +530,22 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   XCTAssertEqualWithAccuracy([videoInitialization[@"duration"] intValue], 4000, 200);
 }
 
+- (void)testAudioOnlyHLSControls {
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"TestAudioOnlyHLSControls"];
+
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+
+  NSDictionary<NSString *, id> *videoInitialization =
+      [self testPlugin:videoPlayerPlugin
+                   uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/"
+                       @"bee_audio_only.m3u8"];
+  XCTAssertEqualObjects(videoInitialization[@"height"], @0);
+  XCTAssertEqualObjects(videoInitialization[@"width"], @0);
+  XCTAssertEqualWithAccuracy([videoInitialization[@"duration"] intValue], 4000, 200);
+}
+
 #if TARGET_OS_IOS
 - (void)testTransformFix {
   [self validateTransformFixForOrientation:UIImageOrientationUp];
