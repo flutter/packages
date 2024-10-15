@@ -22,7 +22,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   image_picker_platform_interface: ^2.9.0
-  mime: ^1.0.4
+  mime: ^2.0.0
   web: ">=0.5.1 <2.0.0"
 
 dev_dependencies:
