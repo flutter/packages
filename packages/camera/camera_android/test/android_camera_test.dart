@@ -17,11 +17,8 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'android_camera_test.mocks.dart';
-import 'method_channel_mock.dart';
 
-const String _channelName = 'plugins.flutter.io/camera_android';
-
-@GenerateNiceMocks([MockSpec<CameraApi>()])
+@GenerateNiceMocks(<MockSpec<dynamic>>[MockSpec<CameraApi>()])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -218,15 +215,10 @@ void main() {
   group('Event Tests', () {
     late AndroidCamera camera;
     late int cameraId;
+    late MockCameraApi mockCameraApi;
     setUp(() async {
-      MethodChannelMock(
-        channelName: _channelName,
-        methods: <String, dynamic>{
-          'create': <String, dynamic>{'cameraId': 1},
-          'initialize': null
-        },
-      );
-      camera = AndroidCamera();
+      mockCameraApi = MockCameraApi();
+      camera = AndroidCamera(hostApi: mockCameraApi);
       cameraId = await camera.createCamera(
         const CameraDescription(
           name: 'Test',
@@ -356,13 +348,6 @@ void main() {
     late MockCameraApi mockCameraApi;
 
     setUp(() async {
-      MethodChannelMock(
-        channelName: _channelName,
-        methods: <String, dynamic>{
-          'create': <String, dynamic>{'cameraId': 1},
-          'initialize': null
-        },
-      );
       mockCameraApi = MockCameraApi();
       camera = AndroidCamera(hostApi: mockCameraApi);
       cameraId = await camera.createCamera(
