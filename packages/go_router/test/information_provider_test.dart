@@ -82,6 +82,7 @@ void main() {
               initialLocation: initialRoute,
               initialExtra: null,
               routerNeglect: true);
+      addTearDown(provider.dispose);
       provider.addListener(expectAsync0(() {}));
       provider.go(newRoute);
       provider.routerReportsNewRouteInformation(
@@ -98,6 +99,7 @@ void main() {
       late final GoRouteInformationProvider provider =
           GoRouteInformationProvider(
               initialLocation: initialRoute, initialExtra: null);
+      addTearDown(provider.dispose);
       provider.addListener(expectAsync0(() {}));
       provider.go(newRoute);
       provider.routerReportsNewRouteInformation(
