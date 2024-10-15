@@ -1,3 +1,7 @@
+## 22.5.0
+
+* [swift] Adds implementation for `@ProxyApi`.
+
 ## 22.4.2
 
 * Updates `README.md` to replace the deprecated `flutter pub run pigeon` command with `dart run pigeon`.

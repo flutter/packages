@@ -1,6 +1,10 @@
-## 2.13.1
+## 2.13.2
 
 * Fixes map objects (markers, polygons, polylines, circles, and tiles) being added with the wrong properties
+
+## 2.13.1
+
+* Updates Pigeon for non-nullable collection type support.
 
 ## 2.13.0
 
@@ -47,10 +51,10 @@
 
 * Updates the minimum allowed verison of the Google Maps SDK to 8.4, for privacy
   manifest support.
-  * This means that applications using this package can no longer support
-    iOS 13 or 14, as the versions of the Google Maps SDK that support those
-    versions do not have privacy manifests, so cannot be used in published
-    applications once the new App Store enforcement of manifests takes effect.
+    * This means that applications using this package can no longer support
+      iOS 13 or 14, as the versions of the Google Maps SDK that support those
+      versions do not have privacy manifests, so cannot be used in published
+      applications once the new App Store enforcement of manifests takes effect.
 * Includes the Google Maps SDK's [GoogleMapsPrivacy bundle](https://developers.google.com/maps/documentation/ios-sdk/config#add-apple-privacy-manifest-file)
   manifest entries direct in the plugin, so that package clients do not need to
   manually add that privacy bundle to the application build.

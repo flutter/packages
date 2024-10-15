@@ -38,15 +38,33 @@ void main() {
           'landscapeLeft');
     });
 
-    test('deserializeDeviceOrientation() should deserialize correctly', () {
-      expect(deserializeDeviceOrientation('portraitUp'),
+    test('deviceOrientationFromPlatform() should convert correctly', () {
+      expect(
+          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitUp),
           DeviceOrientation.portraitUp);
-      expect(deserializeDeviceOrientation('portraitDown'),
+      expect(
+          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitDown),
           DeviceOrientation.portraitDown);
-      expect(deserializeDeviceOrientation('landscapeRight'),
+      expect(
+          deviceOrientationFromPlatform(
+              PlatformDeviceOrientation.landscapeRight),
           DeviceOrientation.landscapeRight);
-      expect(deserializeDeviceOrientation('landscapeLeft'),
+      expect(
+          deviceOrientationFromPlatform(
+              PlatformDeviceOrientation.landscapeLeft),
           DeviceOrientation.landscapeLeft);
+    });
+
+    test('exposureModeFromPlatform() should convert correctly', () {
+      expect(exposureModeFromPlatform(PlatformExposureMode.auto),
+          ExposureMode.auto);
+      expect(exposureModeFromPlatform(PlatformExposureMode.locked),
+          ExposureMode.locked);
+    });
+
+    test('focusModeFromPlatform() should convert correctly', () {
+      expect(focusModeFromPlatform(PlatformFocusMode.auto), FocusMode.auto);
+      expect(focusModeFromPlatform(PlatformFocusMode.locked), FocusMode.locked);
     });
   });
 }
