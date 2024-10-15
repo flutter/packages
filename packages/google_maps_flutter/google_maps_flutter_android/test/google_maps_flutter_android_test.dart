@@ -408,20 +408,25 @@ void main() {
       expect(toChange.length, 1);
       final List<Object?>? encoded = toChange.first?.encode() as List<Object?>?;
       expect(encoded?[0], object2new.alpha);
-      final PlatformOffset? offset = encoded?[1] as PlatformOffset?;
-      expect(offset?.dx, object2new.anchor.dx);
-      expect(offset?.dy, object2new.anchor.dy);
-      expect(encoded?.getRange(2, 6).toList(), <Object?>[
+      final PlatformDoublePair? offset = encoded?[1] as PlatformDoublePair?;
+      expect(offset?.x, object2new.anchor.dx);
+      expect(offset?.y, object2new.anchor.dy);
+      expect(encoded?.getRange(2, 5).toList(), <Object?>[
         object2new.consumeTapEvents,
         object2new.draggable,
         object2new.flat,
-        object2new.icon.toJson(),
       ]);
+      expect(
+          (encoded?[5] as PlatformBitmap?)?.bitmap.runtimeType,
+          GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(
+                  object2new.icon)
+              .bitmap
+              .runtimeType);
       final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
       expect(window?.title, object2new.infoWindow.title);
       expect(window?.snippet, object2new.infoWindow.snippet);
-      expect(window?.anchor.dx, object2new.infoWindow.anchor.dx);
-      expect(window?.anchor.dy, object2new.infoWindow.anchor.dy);
+      expect(window?.anchor.x, object2new.infoWindow.anchor.dx);
+      expect(window?.anchor.y, object2new.infoWindow.anchor.dy);
       final PlatformLatLng? latLng = encoded?[7] as PlatformLatLng?;
       expect(latLng?.latitude, object2new.position.latitude);
       expect(latLng?.longitude, object2new.position.longitude);
@@ -438,20 +443,25 @@ void main() {
       expect(toAdd.length, 1);
       final List<Object?>? encoded = toAdd.first?.encode() as List<Object?>?;
       expect(encoded?[0], object3.alpha);
-      final PlatformOffset? offset = encoded?[1] as PlatformOffset?;
-      expect(offset?.dx, object3.anchor.dx);
-      expect(offset?.dy, object3.anchor.dy);
-      expect(encoded?.getRange(2, 6).toList(), <Object?>[
+      final PlatformDoublePair? offset = encoded?[1] as PlatformDoublePair?;
+      expect(offset?.x, object3.anchor.dx);
+      expect(offset?.y, object3.anchor.dy);
+      expect(encoded?.getRange(2, 5).toList(), <Object?>[
         object3.consumeTapEvents,
         object3.draggable,
         object3.flat,
-        object3.icon.toJson(),
       ]);
+      expect(
+          (encoded?[5] as PlatformBitmap?)?.bitmap.runtimeType,
+          GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(
+                  object3.icon)
+              .bitmap
+              .runtimeType);
       final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
       expect(window?.title, object3.infoWindow.title);
       expect(window?.snippet, object3.infoWindow.snippet);
-      expect(window?.anchor.dx, object3.infoWindow.anchor.dx);
-      expect(window?.anchor.dy, object3.infoWindow.anchor.dy);
+      expect(window?.anchor.x, object3.infoWindow.anchor.dx);
+      expect(window?.anchor.y, object3.infoWindow.anchor.dy);
       final PlatformLatLng? latLng = encoded?[7] as PlatformLatLng?;
       expect(latLng?.latitude, object3.position.latitude);
       expect(latLng?.longitude, object3.position.longitude);
@@ -578,10 +588,18 @@ void main() {
         expect(pattern?.encode(),
             platformPatternItemFromPatternItem(expected.patterns[i]).encode());
       }
-      expect(actual.startCap.encode(),
-          platformCapFromCap(expected.startCap).encode());
-      expect(
-          actual.endCap.encode(), platformCapFromCap(expected.endCap).encode());
+      final PlatformCap expectedStartCap =
+          GoogleMapsFlutterAndroid.platformCapFromCap(expected.startCap);
+      final PlatformCap expectedEndCap =
+          GoogleMapsFlutterAndroid.platformCapFromCap(expected.endCap);
+      expect(actual.startCap.type, expectedStartCap.type);
+      expect(actual.startCap.refWidth, expectedStartCap.refWidth);
+      expect(actual.startCap.bitmapDescriptor?.bitmap.runtimeType,
+          expectedStartCap.bitmapDescriptor?.bitmap.runtimeType);
+      expect(actual.endCap.type, expectedEndCap.type);
+      expect(actual.endCap.refWidth, expectedEndCap.refWidth);
+      expect(actual.endCap.bitmapDescriptor?.bitmap.runtimeType,
+          expectedEndCap.bitmapDescriptor?.bitmap.runtimeType);
     }
 
     // Object one should be removed.
@@ -898,8 +916,8 @@ void main() {
     final PlatformCameraUpdateZoomBy typedUpdate =
         passedUpdate.cameraUpdate as PlatformCameraUpdateZoomBy;
     update as CameraUpdateZoomBy;
-    expect(typedUpdate.focus?.dx, update.focus?.dx);
-    expect(typedUpdate.focus?.dy, update.focus?.dy);
+    expect(typedUpdate.focus?.x, update.focus?.dx);
+    expect(typedUpdate.focus?.y, update.focus?.dy);
     expect(typedUpdate.amount, update.amount);
   });
 
@@ -950,6 +968,75 @@ void main() {
     final PlatformCameraUpdateZoom typedUpdate =
         passedUpdate.cameraUpdate as PlatformCameraUpdateZoom;
     expect(typedUpdate.out, true);
+  });
+
+  test('MapBitmapScaling to PlatformMapBitmapScaling', () {
+    expect(
+        GoogleMapsFlutterAndroid.platformMapBitmapScalingFromScaling(
+            MapBitmapScaling.auto),
+        PlatformMapBitmapScaling.auto);
+    expect(
+        GoogleMapsFlutterAndroid.platformMapBitmapScalingFromScaling(
+            MapBitmapScaling.none),
+        PlatformMapBitmapScaling.none);
+  });
+
+  test('DefaultMarker bitmap to PlatformBitmap', () {
+    final BitmapDescriptor bitmap = BitmapDescriptor.defaultMarkerWithHue(10.0);
+    final PlatformBitmap platformBitmap =
+        GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap);
+    expect(platformBitmap.bitmap, isA<PlatformBitmapDefaultMarker>());
+    final PlatformBitmapDefaultMarker typedBitmap =
+        platformBitmap.bitmap as PlatformBitmapDefaultMarker;
+    expect(typedBitmap.hue, 10.0);
+  });
+
+  test('BytesMapBitmap bitmap to PlatformBitmap', () {
+    final Uint8List data = Uint8List.fromList(<int>[1, 2, 3, 4]);
+    final BytesMapBitmap bitmap = BitmapDescriptor.bytes(data,
+        imagePixelRatio: 2.0, width: 100.0, height: 200.0);
+    final PlatformBitmap platformBitmap =
+        GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap);
+    expect(platformBitmap.bitmap, isA<PlatformBitmapBytesMap>());
+    final PlatformBitmapBytesMap typedBitmap =
+        platformBitmap.bitmap as PlatformBitmapBytesMap;
+    expect(typedBitmap.byteData, data);
+    expect(typedBitmap.bitmapScaling, PlatformMapBitmapScaling.auto);
+    expect(typedBitmap.imagePixelRatio, 2.0);
+    expect(typedBitmap.width, 100.0);
+    expect(typedBitmap.height, 200.0);
+  });
+
+  test('AssetMapBitmap bitmap to PlatformBitmap', () {
+    const String assetName = 'fake_asset_name';
+    final AssetMapBitmap bitmap = AssetMapBitmap(assetName,
+        imagePixelRatio: 2.0, width: 100.0, height: 200.0);
+    final PlatformBitmap platformBitmap =
+        GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap);
+    expect(platformBitmap.bitmap, isA<PlatformBitmapAssetMap>());
+    final PlatformBitmapAssetMap typedBitmap =
+        platformBitmap.bitmap as PlatformBitmapAssetMap;
+    expect(typedBitmap.assetName, assetName);
+    expect(typedBitmap.bitmapScaling, PlatformMapBitmapScaling.auto);
+    expect(typedBitmap.imagePixelRatio, 2.0);
+    expect(typedBitmap.width, 100.0);
+    expect(typedBitmap.height, 200.0);
+  });
+
+  test('Cap to PlatformCap', () {
+    expect(GoogleMapsFlutterAndroid.platformCapFromCap(Cap.buttCap).encode(),
+        PlatformCap(type: PlatformCapType.buttCap).encode());
+    expect(GoogleMapsFlutterAndroid.platformCapFromCap(Cap.roundCap).encode(),
+        PlatformCap(type: PlatformCapType.roundCap).encode());
+    expect(GoogleMapsFlutterAndroid.platformCapFromCap(Cap.squareCap).encode(),
+        PlatformCap(type: PlatformCapType.squareCap).encode());
+
+    const BitmapDescriptor bitmap = BitmapDescriptor.defaultMarker;
+    const CustomCap customCap = CustomCap(bitmap, refWidth: 15.0);
+    final PlatformCap platformCap =
+        GoogleMapsFlutterAndroid.platformCapFromCap(customCap);
+    expect(platformCap.type, PlatformCapType.customCap);
+    expect(customCap.refWidth, 15.0);
   });
 
   testWidgets('Use PlatformViewLink when using surface view',

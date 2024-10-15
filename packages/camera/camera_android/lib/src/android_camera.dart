@@ -29,8 +29,6 @@ class AndroidCamera extends CameraPlatform {
     CameraPlatform.instance = AndroidCamera();
   }
 
-  final Map<int, MethodChannel> _channels = <int, MethodChannel>{};
-
   final CameraApi _hostApi;
 
   /// The name of the channel that device events from the platform side are
@@ -50,20 +48,15 @@ class AndroidCamera extends CameraPlatform {
   final StreamController<CameraEvent> cameraEventStreamController =
       StreamController<CameraEvent>.broadcast();
 
-  /// The controller we need to broadcast the different events coming
-  /// from handleMethodCall, specific to general device events.
-  ///
-  /// It is a `broadcast` because multiple controllers will connect to
-  /// different stream views of this Controller.
-  late final StreamController<DeviceEvent> _deviceEventStreamController =
-      _createDeviceEventStreamController();
+  /// Handler for device-level callbacks from the native side.
+  @visibleForTesting
+  late final HostDeviceMessageHandler hostHandler = HostDeviceMessageHandler();
 
-  StreamController<DeviceEvent> _createDeviceEventStreamController() {
-    // Set up the method handler lazily.
-    const MethodChannel channel = MethodChannel(deviceEventChannelName);
-    channel.setMethodCallHandler(_handleDeviceMethodCall);
-    return StreamController<DeviceEvent>.broadcast();
-  }
+  /// Map of camera IDs to camera-level callback handlers listening to their
+  /// respective platform channels.
+  @visibleForTesting
+  final Map<int, HostCameraMessageHandler> hostCameraHandlers =
+      <int, HostCameraMessageHandler>{};
 
   // The stream to receive frames from the native code.
   StreamSubscription<dynamic>? _platformImageStreamSubscription;
@@ -138,13 +131,8 @@ class AndroidCamera extends CameraPlatform {
     int cameraId, {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
   }) {
-    _channels.putIfAbsent(cameraId, () {
-      final MethodChannel channel =
-          MethodChannel('plugins.flutter.io/camera_android/camera$cameraId');
-      channel.setMethodCallHandler(
-          (MethodCall call) => handleCameraMethodCall(call, cameraId));
-      return channel;
-    });
+    hostCameraHandlers.putIfAbsent(cameraId,
+        () => HostCameraMessageHandler(cameraId, cameraEventStreamController));
 
     final Completer<void> completer = Completer<void>();
 
@@ -180,11 +168,9 @@ class AndroidCamera extends CameraPlatform {
 
   @override
   Future<void> dispose(int cameraId) async {
-    if (_channels.containsKey(cameraId)) {
-      final MethodChannel? cameraChannel = _channels[cameraId];
-      cameraChannel?.setMethodCallHandler(null);
-      _channels.remove(cameraId);
-    }
+    final HostCameraMessageHandler? handler =
+        hostCameraHandlers.remove(cameraId);
+    handler?.dispose();
 
     await _channel.invokeMethod<void>(
       'dispose',
@@ -219,7 +205,7 @@ class AndroidCamera extends CameraPlatform {
 
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
-    return _deviceEventStreamController.stream
+    return hostHandler.deviceEventStreamController.stream
         .whereType<DeviceOrientationChangedEvent>();
   }
 
@@ -585,64 +571,63 @@ class AndroidCamera extends CameraPlatform {
     // ignore: dead_code
     return 'max';
   }
+}
 
-  /// Converts messages received from the native platform into device events.
-  Future<dynamic> _handleDeviceMethodCall(MethodCall call) async {
-    switch (call.method) {
-      case 'orientation_changed':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        _deviceEventStreamController.add(DeviceOrientationChangedEvent(
-            deserializeDeviceOrientation(arguments['orientation']! as String)));
-      default:
-        throw MissingPluginException();
-    }
+/// Handles callbacks from the platform host that are not camera-specific.
+@visibleForTesting
+class HostDeviceMessageHandler implements CameraGlobalEventApi {
+  /// Creates a new handler and registers it to listen to the global event platform channel.
+  HostDeviceMessageHandler() {
+    CameraGlobalEventApi.setUp(this);
   }
 
-  /// Converts messages received from the native platform into camera events.
-  ///
-  /// This is only exposed for test purposes. It shouldn't be used by clients of
-  /// the plugin as it may break or change at any time.
-  @visibleForTesting
-  Future<dynamic> handleCameraMethodCall(MethodCall call, int cameraId) async {
-    switch (call.method) {
-      case 'initialized':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(CameraInitializedEvent(
-          cameraId,
-          arguments['previewWidth']! as double,
-          arguments['previewHeight']! as double,
-          deserializeExposureMode(arguments['exposureMode']! as String),
-          arguments['exposurePointSupported']! as bool,
-          deserializeFocusMode(arguments['focusMode']! as String),
-          arguments['focusPointSupported']! as bool,
-        ));
-      case 'resolution_changed':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(CameraResolutionChangedEvent(
-          cameraId,
-          arguments['captureWidth']! as double,
-          arguments['captureHeight']! as double,
-        ));
-      case 'camera_closing':
-        cameraEventStreamController.add(CameraClosingEvent(
-          cameraId,
-        ));
-      case 'error':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(CameraErrorEvent(
-          cameraId,
-          arguments['description']! as String,
-        ));
-      default:
-        throw MissingPluginException();
-    }
+  /// The controller that broadcasts device events coming from the host platform.
+  final StreamController<DeviceEvent> deviceEventStreamController =
+      StreamController<DeviceEvent>.broadcast();
+  @override
+  void deviceOrientationChanged(PlatformDeviceOrientation orientation) {
+    deviceEventStreamController.add(DeviceOrientationChangedEvent(
+        deviceOrientationFromPlatform(orientation)));
+  }
+}
+
+/// Handles camera-specific callbacks from the platform host.
+@visibleForTesting
+class HostCameraMessageHandler implements CameraEventApi {
+  /// Creates a new handler and registers it to listen to its camera's platform channel.
+  HostCameraMessageHandler(this.cameraId, this.cameraEventStreamController) {
+    CameraEventApi.setUp(this, messageChannelSuffix: '$cameraId');
   }
 
-  /// Returns the arguments of [call] as typed string-keyed Map.
-  ///
-  /// This does not do any type validation, so is only safe to call if the
-  /// arguments are known to be a map.
-  Map<String, Object?> _getArgumentDictionary(MethodCall call) {
-    return (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
+  /// Removes this handler from its platform channel.
+  void dispose() {
+    CameraEventApi.setUp(null, messageChannelSuffix: '$cameraId');
+  }
+
+  /// The ID of the camera for which this handler listens for events.
+  final int cameraId;
+
+  /// The controller which broadcasts camera events from the host platform.
+  final StreamController<CameraEvent> cameraEventStreamController;
+  @override
+  void error(String message) {
+    cameraEventStreamController.add(CameraErrorEvent(cameraId, message));
+  }
+
+  @override
+  void initialized(PlatformCameraState initialState) {
+    cameraEventStreamController.add(CameraInitializedEvent(
+        cameraId,
+        initialState.previewSize.width,
+        initialState.previewSize.height,
+        exposureModeFromPlatform(initialState.exposureMode),
+        initialState.exposurePointSupported,
+        focusModeFromPlatform(initialState.focusMode),
+        initialState.focusPointSupported));
+  }
+
+  @override
+  void closed() {
+    cameraEventStreamController.add(CameraClosingEvent(cameraId));
   }
 }
