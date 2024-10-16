@@ -282,20 +282,23 @@
                                                     SecTrustSetExceptions(serverTrust, exceptions);
                                                     NSURLCredential* credential = [NSURLCredential credentialForTrust: serverTrust];
                                                   dispatch_async(dispatch_get_main_queue(), ^{
+                                                    NSLog(@"yay2");
+                                                    NSLog(@"%@", [NSThread currentThread]);
                                                     completionHandler(disposition, credential);
+                                                    NSLog(@"yay3");
                                                   });
                                                 });
                                                 return;
                                             }
 
-                                              NSURLCredential *credential =
-                                                      response.credentialIdentifier != nil
-                                                      ? (NSURLCredential *)[self.navigationDelegateAPI
-                                                              .instanceManager
-                                                              instanceForIdentifier:
-                                                                      response.credentialIdentifier
-                                                                              .longValue]
-                                              : nil;
+                                            NSURLCredential *credential =
+                                                    response.credentialIdentifier != nil
+                                                    ? (NSURLCredential *)[self.navigationDelegateAPI
+                                                            .instanceManager
+                                                            instanceForIdentifier:
+                                                                    response.credentialIdentifier
+                                                                            .longValue]
+                                            : nil;
 
                                             completionHandler(disposition, credential);
                                           } else {
