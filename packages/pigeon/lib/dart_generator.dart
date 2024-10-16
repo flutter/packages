@@ -2168,11 +2168,11 @@ String _addGenericTypes(TypeDeclaration type) {
   final List<TypeDeclaration> typeArguments = type.typeArguments;
   switch (type.baseName) {
     case 'List':
-      return (typeArguments.isEmpty)
+      return typeArguments.isEmpty
           ? 'List<Object?>'
           : 'List<${_flattenTypeArguments(typeArguments)}>';
     case 'Map':
-      return (typeArguments.isEmpty)
+      return typeArguments.isEmpty
           ? 'Map<Object?, Object?>'
           : 'Map<${_flattenTypeArguments(typeArguments)}>';
     default:
