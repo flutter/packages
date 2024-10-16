@@ -64,18 +64,22 @@
                                     completion:^(FlutterError *error) {
           NSAssert(!error, @"%@", error);
         }];
+        [self.api createWithIdentifier:[self.instanceManager addHostCreatedInstance:instance]
+             protectionSpaceIdentifier:[self.instanceManager
+                                           identifierWithStrongReferenceForInstance:protectionSpace]
+                            completion:completion];
       });
     });
-  } else {
-    [protectionSpaceApi createWithInstance:protectionSpace
-                                      host:protectionSpace.host
-                                     realm:protectionSpace.realm
-                      authenticationMethod:protectionSpace.authenticationMethod
-                                completion:^(FlutterError *error) {
-                                  NSAssert(!error, @"%@", error);
-                                }];
+    return;
   }
-
+  
+  [protectionSpaceApi createWithInstance:protectionSpace
+                                    host:protectionSpace.host
+                                   realm:protectionSpace.realm
+                    authenticationMethod:protectionSpace.authenticationMethod
+                              completion:^(FlutterError *error) {
+                                NSAssert(!error, @"%@", error);
+                              }];
   [self.api createWithIdentifier:[self.instanceManager addHostCreatedInstance:instance]
        protectionSpaceIdentifier:[self.instanceManager
                                      identifierWithStrongReferenceForInstance:protectionSpace]
