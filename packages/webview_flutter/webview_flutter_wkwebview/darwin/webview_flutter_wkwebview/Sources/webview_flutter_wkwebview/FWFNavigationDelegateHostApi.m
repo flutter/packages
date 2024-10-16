@@ -277,8 +277,8 @@
 
                                             if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust) {
                                                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                                                    SecTrust* serverTrust = challenge.protectionSpace.serverTrust;
-                                                    CFData* exceptions = SecTrustCopyExceptions(serverTrust);
+                                                    SecTrustRef serverTrust = challenge.protectionSpace.serverTrust;
+                                                    CFDataRef exceptions = SecTrustCopyExceptions(serverTrust);
                                                     SecTrustSetExceptions(serverTrust, exceptions);
                                                     NSURLCredential* credential = [NSURLCredential credentialForTrust: serverTrust];
                                                     completionHandler(disposition, credential);
