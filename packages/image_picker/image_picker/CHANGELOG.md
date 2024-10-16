@@ -1,7 +1,3 @@
-## 1.1.3
-
-* Extends the `mime` package version constraint from `^1.0.4` to `>=1.0.4 <3.0.0`.
-
 ## 1.1.2
 
 * Adds comment for the limit parameter.
