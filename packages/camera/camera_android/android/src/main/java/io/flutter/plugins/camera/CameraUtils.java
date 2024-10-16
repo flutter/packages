@@ -11,9 +11,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
-import android.util.Log;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugins.camera.features.autofocus.FocusMode;
 import io.flutter.plugins.camera.features.exposurelock.ExposureMode;
@@ -140,7 +138,7 @@ public final class CameraUtils {
       case LANDSCAPE_RIGHT:
         return PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT;
     }
-    return PlatformChannel.DeviceOrientation.PORTRAIT_UP;
+    throw new IllegalStateException("Unreachable code");
   }
 
   /**
@@ -166,7 +164,7 @@ public final class CameraUtils {
    * @param focusMode A PlatformFocusMode.
    * @return The corresponding FocusMode.
    */
-  @Nullable
+  @NonNull
   public static FocusMode focusModeFromPigeon(@NonNull Messages.PlatformFocusMode focusMode) {
     switch (focusMode) {
       case AUTO:
@@ -174,7 +172,7 @@ public final class CameraUtils {
       case LOCKED:
         return FocusMode.locked;
     }
-    return null;
+    throw new IllegalStateException("Unreachable code");
   }
 
   /**
@@ -201,7 +199,7 @@ public final class CameraUtils {
    * @param mode A PlatformExposureMode.
    * @return The corresponding ExposureMode.
    */
-  @Nullable
+  @NonNull
   public static ExposureMode exposureModeFromPigeon(@NonNull Messages.PlatformExposureMode mode) {
     switch (mode) {
       case AUTO:
@@ -209,7 +207,7 @@ public final class CameraUtils {
       case LOCKED:
         return ExposureMode.locked;
     }
-    return null;
+    throw new IllegalStateException("Unreachable code");
   }
 
   /**
@@ -236,7 +234,7 @@ public final class CameraUtils {
       case MAX:
         return ResolutionPreset.max;
     }
-    return ResolutionPreset.high;
+    throw new IllegalStateException("Unreachable code");
   }
 
   /**
@@ -256,10 +254,7 @@ public final class CameraUtils {
       case NV21:
         return ImageFormat.NV21;
     }
-    Log.w(
-        "CameraUtils",
-        "The selected imageFormatGroup is not supported by Android. Defaulting to yuv420");
-    return ImageFormat.YUV_420_888;
+    throw new IllegalStateException("Unreachable code");
   }
 
   /**
@@ -268,7 +263,7 @@ public final class CameraUtils {
    * @param mode A PlatformFlashMode.
    * @return The corresponding FlashMode.
    */
-  @Nullable
+  @NonNull
   public static FlashMode flashModeFromPigeon(@NonNull Messages.PlatformFlashMode mode) {
     switch (mode) {
       case AUTO:
@@ -280,6 +275,6 @@ public final class CameraUtils {
       case TORCH:
         return FlashMode.torch;
     }
-    return null;
+    throw new IllegalStateException("Unreachable code");
   }
 }
