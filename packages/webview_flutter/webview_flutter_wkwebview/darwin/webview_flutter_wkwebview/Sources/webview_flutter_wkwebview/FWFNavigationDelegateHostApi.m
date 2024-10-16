@@ -284,10 +284,12 @@
                                                     CFDataRef exceptions = SecTrustCopyExceptions(serverTrust);
                                                     SecTrustSetExceptions(serverTrust, exceptions);
                                                     NSURLCredential* credential = [NSURLCredential credentialForTrust: serverTrust];
-                                                  NSLog(@"yay5");
-                                                  NSLog(@"%@", [NSThread currentThread]);
-                                                  completionHandler(disposition, credential);
-                                                  NSLog(@"yay6");
+                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                    NSLog(@"yay5");
+                                                    NSLog(@"%@", [NSThread currentThread]);
+                                                    completionHandler(disposition, nil);
+                                                    NSLog(@"yay6");
+                                                  });
                                                 });
                                                 return;
                                             }
