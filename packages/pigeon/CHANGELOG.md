@@ -1,6 +1,6 @@
 ## 22.5.1
 
-* Removes unnecessary parenthesis.
+* Removes unnecessary parentheses.
 
 ## 22.5.0
 
@@ -221,8 +221,6 @@
     `myGeneratedClass.aBoolProperty = @NO` can silently set `aBoolProperty` to
     `YES`. Any data class or Flutter API interactions involving `bool`s should
     be carefully audited by hand when updating.
-
-
 
 ## 12.0.1
 
