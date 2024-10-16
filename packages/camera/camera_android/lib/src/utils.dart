@@ -11,13 +11,12 @@ import 'messages.g.dart';
 
 /// Converts a [PlatformCameraLensDirection] to [CameraLensDirection].
 CameraLensDirection cameraLensDirectionFromPlatform(
-    PlatformCameraLensDirection direction) {
-  return switch (direction) {
-    PlatformCameraLensDirection.front => CameraLensDirection.front,
-    PlatformCameraLensDirection.back => CameraLensDirection.back,
-    PlatformCameraLensDirection.external => CameraLensDirection.external,
-  };
-}
+        PlatformCameraLensDirection direction) =>
+    switch (direction) {
+      PlatformCameraLensDirection.front => CameraLensDirection.front,
+      PlatformCameraLensDirection.back => CameraLensDirection.back,
+      PlatformCameraLensDirection.external => CameraLensDirection.external,
+    };
 
 /// Converts a [PlatformDeviceOrientation] to [DeviceOrientation].
 DeviceOrientation deviceOrientationFromPlatform(
@@ -33,15 +32,22 @@ DeviceOrientation deviceOrientationFromPlatform(
 
 /// Converts a [DeviceOrientation] to [PlatformDeviceOrientation].
 PlatformDeviceOrientation deviceOrientationToPlatform(
-        DeviceOrientation orientation) =>
-    switch (orientation) {
-      DeviceOrientation.portraitUp => PlatformDeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown => PlatformDeviceOrientation.portraitDown,
-      DeviceOrientation.landscapeLeft =>
-        PlatformDeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight =>
-        PlatformDeviceOrientation.landscapeRight,
-    };
+    DeviceOrientation orientation) {
+  switch (orientation) {
+    case DeviceOrientation.portraitUp:
+      return PlatformDeviceOrientation.portraitUp;
+    case DeviceOrientation.portraitDown:
+      return PlatformDeviceOrientation.portraitDown;
+    case DeviceOrientation.landscapeLeft:
+      return PlatformDeviceOrientation.landscapeLeft;
+    case DeviceOrientation.landscapeRight:
+      return PlatformDeviceOrientation.landscapeRight;
+  }
+  // This enum is defined outside of this package. This fall-through case
+  // ensures that the code does not break if a new value is ever added.
+  // ignore: dead_code
+  return PlatformDeviceOrientation.portraitUp;
+}
 
 /// Converts a [PlatformExposureMode] to [ExposureMode].
 ExposureMode exposureModeFromPlatform(PlatformExposureMode exposureMode) =>
@@ -51,11 +57,18 @@ ExposureMode exposureModeFromPlatform(PlatformExposureMode exposureMode) =>
     };
 
 /// Converts a [ExposureMode] to [PlatformExposureMode].
-PlatformExposureMode exposureModeToPlatform(ExposureMode exposureMode) =>
-    switch (exposureMode) {
-      ExposureMode.auto => PlatformExposureMode.auto,
-      ExposureMode.locked => PlatformExposureMode.locked,
-    };
+PlatformExposureMode exposureModeToPlatform(ExposureMode exposureMode) {
+  switch (exposureMode) {
+    case ExposureMode.auto:
+      return PlatformExposureMode.auto;
+    case ExposureMode.locked:
+      return PlatformExposureMode.locked;
+  }
+  // This enum is defined outside of this package. This fall-through case
+  // ensures that the code does not break if a new value is ever added.
+  // ignore: dead_code
+  return PlatformExposureMode.auto;
+}
 
 /// Converts a [PlatformFocusMode] to [FocusMode].
 FocusMode focusModeFromPlatform(PlatformFocusMode focusMode) =>
@@ -65,11 +78,18 @@ FocusMode focusModeFromPlatform(PlatformFocusMode focusMode) =>
     };
 
 /// Converts a [FocusMode] to [PlatformFocusMode].
-PlatformFocusMode focusModeToPlatform(FocusMode focusMode) =>
-    switch (focusMode) {
-      FocusMode.auto => PlatformFocusMode.auto,
-      FocusMode.locked => PlatformFocusMode.locked,
-    };
+PlatformFocusMode focusModeToPlatform(FocusMode focusMode) {
+  switch (focusMode) {
+    case FocusMode.auto:
+      return PlatformFocusMode.auto;
+    case FocusMode.locked:
+      return PlatformFocusMode.locked;
+  }
+  // This enum is defined outside of this package. This fall-through case
+  // ensures that the code does not break if a new value is ever added.
+  // ignore: dead_code
+  return PlatformFocusMode.auto;
+}
 
 /// Converts a [ResolutionPreset] to [PlatformResolutionPreset].
 PlatformResolutionPreset resolutionPresetToPlatform(ResolutionPreset? preset) =>
@@ -80,7 +100,7 @@ PlatformResolutionPreset resolutionPresetToPlatform(ResolutionPreset? preset) =>
       ResolutionPreset.veryHigh => PlatformResolutionPreset.veryHigh,
       ResolutionPreset.ultraHigh => PlatformResolutionPreset.ultraHigh,
       ResolutionPreset.max => PlatformResolutionPreset.max,
-      null => PlatformResolutionPreset.high,
+      _ => PlatformResolutionPreset.high,
     };
 
 /// Converts a [MediaSettings] to [PlatformMediaSettings].
@@ -97,22 +117,42 @@ PlatformMediaSettings mediaSettingsToPlatform(MediaSettings? settings) =>
 ///
 /// [ImageFormatGroup.unknown] and [ImageFormatGroup.bgra8888] default to
 /// [PlatformImageFormatGroup.yuv420], which is the default on Android.
-PlatformImageFormatGroup imageFormatGroupToPlatform(ImageFormatGroup format) =>
-    switch (format) {
-      ImageFormatGroup.unknown => PlatformImageFormatGroup.yuv420,
-      ImageFormatGroup.yuv420 => PlatformImageFormatGroup.yuv420,
-      ImageFormatGroup.bgra8888 => PlatformImageFormatGroup.yuv420,
-      ImageFormatGroup.jpeg => PlatformImageFormatGroup.jpeg,
-      ImageFormatGroup.nv21 => PlatformImageFormatGroup.nv21,
-    };
+PlatformImageFormatGroup imageFormatGroupToPlatform(ImageFormatGroup format) {
+  switch (format) {
+    case ImageFormatGroup.unknown:
+      return PlatformImageFormatGroup.yuv420;
+    case ImageFormatGroup.yuv420:
+      return PlatformImageFormatGroup.yuv420;
+    case ImageFormatGroup.bgra8888:
+      return PlatformImageFormatGroup.yuv420;
+    case ImageFormatGroup.jpeg:
+      return PlatformImageFormatGroup.jpeg;
+    case ImageFormatGroup.nv21:
+      return PlatformImageFormatGroup.nv21;
+  }
+  // This enum is defined outside of this package. This fall-through case
+  // ensures that the code does not break if a new value is ever added.
+  // ignore: dead_code
+  return PlatformImageFormatGroup.yuv420;
+}
 
 /// Converts a [FlashMode] to [PlatformFlashMode].
-PlatformFlashMode flashModeToPlatform(FlashMode mode) => switch (mode) {
-      FlashMode.auto => PlatformFlashMode.auto,
-      FlashMode.off => PlatformFlashMode.off,
-      FlashMode.always => PlatformFlashMode.always,
-      FlashMode.torch => PlatformFlashMode.torch,
-    };
+PlatformFlashMode flashModeToPlatform(FlashMode mode) {
+  switch (mode) {
+    case FlashMode.auto:
+      return PlatformFlashMode.auto;
+    case FlashMode.off:
+      return PlatformFlashMode.off;
+    case FlashMode.always:
+      return PlatformFlashMode.always;
+    case FlashMode.torch:
+      return PlatformFlashMode.torch;
+  }
+  // This enum is defined outside of this package. This fall-through case
+  // ensures that the code does not break if a new value is ever added.
+  // ignore: dead_code
+  return PlatformFlashMode.auto;
+}
 
 /// Converts a [Point<double>] to [PlatformPoint].
 ///

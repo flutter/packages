@@ -295,28 +295,22 @@ class AndroidCamera extends CameraPlatform {
 
   @override
   Future<double> getMinExposureOffset(int cameraId) async {
-    final double minExposureOffset = await _hostApi.getMinExposureOffset();
-    return minExposureOffset;
+    return _hostApi.getMinExposureOffset();
   }
 
   @override
   Future<double> getMaxExposureOffset(int cameraId) async {
-    final double maxExposureOffset = await _hostApi.getMaxExposureOffset();
-    return maxExposureOffset;
+    return _hostApi.getMaxExposureOffset();
   }
 
   @override
   Future<double> getExposureOffsetStepSize(int cameraId) async {
-    final double stepSize = await _hostApi.getExposureOffsetStepSize();
-
-    return stepSize;
+    return _hostApi.getExposureOffsetStepSize();
   }
 
   @override
   Future<double> setExposureOffset(int cameraId, double offset) async {
-    final double appliedOffset = await _hostApi.setExposureOffset(offset);
-
-    return appliedOffset;
+    return _hostApi.setExposureOffset(offset);
   }
 
   @override
@@ -333,14 +327,12 @@ class AndroidCamera extends CameraPlatform {
 
   @override
   Future<double> getMaxZoomLevel(int cameraId) async {
-    final double maxZoomLevel = await _hostApi.getMaxZoomLevel();
-    return maxZoomLevel;
+    return _hostApi.getMaxZoomLevel();
   }
 
   @override
   Future<double> getMinZoomLevel(int cameraId) async {
-    final double minZoomLevel = await _hostApi.getMinZoomLevel();
-    return minZoomLevel;
+    return _hostApi.getMinZoomLevel();
   }
 
   @override

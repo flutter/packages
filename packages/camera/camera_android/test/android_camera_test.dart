@@ -54,7 +54,11 @@ void main() {
     test('Should send creation data and receive back a camera id', () async {
       // Arrange
       final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
-      when(mockCameraApi.create(any, any)).thenAnswer((_) async => 1);
+      when(mockCameraApi.create(
+          'Test',
+          argThat(predicate((PlatformMediaSettings settings) =>
+              settings.resolutionPreset == PlatformResolutionPreset.high &&
+              !settings.enableAudio)))).thenAnswer((_) async => 1);
 
       // Act
       final int cameraId = await camera.createCamera(
@@ -74,7 +78,14 @@ void main() {
         () async {
       // Arrange
       final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
-      when(mockCameraApi.create(any, any)).thenAnswer((_) async => 1);
+      when(mockCameraApi.create(
+          'Test',
+          argThat(predicate((PlatformMediaSettings settings) =>
+              settings.resolutionPreset == PlatformResolutionPreset.low &&
+              !settings.enableAudio &&
+              settings.fps == 15 &&
+              settings.videoBitrate == 200000 &&
+              settings.audioBitrate == 32000)))).thenAnswer((_) async => 1);
 
       // Act
       final int cameraId = await camera.createCameraWithSettings(
@@ -98,7 +109,11 @@ void main() {
         () {
       // Arrange
       final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
-      when(mockCameraApi.create(any, any)).thenThrow(CameraException(
+      when(mockCameraApi.create(
+          'Test',
+          argThat(predicate((PlatformMediaSettings settings) =>
+              settings.resolutionPreset == PlatformResolutionPreset.high &&
+              !settings.enableAudio)))).thenThrow(CameraException(
           'TESTING_ERROR_CODE', 'Mock error message used during testing.'));
 
       // Act
@@ -126,8 +141,9 @@ void main() {
       () {
         // Arrange
         final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
-        when(mockCameraApi.initialize(any)).thenThrow(CameraException(
-            'TESTING_ERROR_CODE', 'Mock error message used during testing.'));
+        when(mockCameraApi.initialize(PlatformImageFormatGroup.yuv420))
+            .thenThrow(CameraException('TESTING_ERROR_CODE',
+                'Mock error message used during testing.'));
 
         // Act
         expect(
@@ -149,7 +165,11 @@ void main() {
     test('Should send initialization data', () async {
       // Arrange
       final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
-      when(mockCameraApi.create(any, any)).thenAnswer((_) async => 1);
+      when(mockCameraApi.create(
+          'Test',
+          argThat(predicate((PlatformMediaSettings settings) =>
+              settings.resolutionPreset == PlatformResolutionPreset.high &&
+              !settings.enableAudio)))).thenAnswer((_) async => 1);
 
       final int cameraId = await camera.createCamera(
         const CameraDescription(
@@ -182,7 +202,11 @@ void main() {
     test('Should send a disposal call on dispose', () async {
       // Arrange
       final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
-      when(mockCameraApi.create(any, any)).thenAnswer((_) async => 1);
+      when(mockCameraApi.create(
+          'Test',
+          argThat(predicate((PlatformMediaSettings settings) =>
+              settings.resolutionPreset == PlatformResolutionPreset.high &&
+              !settings.enableAudio)))).thenAnswer((_) async => 1);
       final int cameraId = await camera.createCamera(
         const CameraDescription(
           name: 'Test',
@@ -540,11 +564,13 @@ void main() {
     test('Should set the exposure point', () async {
       // Arrange
       // Act
-      await camera.setExposurePoint(cameraId, const Point<double>(0.5, 0.5));
+      await camera.setExposurePoint(cameraId, const Point<double>(0.4, 0.5));
       await camera.setExposurePoint(cameraId, null);
 
       // Assert
-      verify(mockCameraApi.setExposurePoint(argThat(isNotNull))).called(1);
+      verify(mockCameraApi.setExposurePoint(argThat(predicate(
+              (PlatformPoint point) => point.x == 0.4 && point.y == 0.5))))
+          .called(1);
       verify(mockCameraApi.setExposurePoint(null)).called(1);
     });
 
