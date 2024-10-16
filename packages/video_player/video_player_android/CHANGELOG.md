@@ -1,3 +1,24 @@
+## 2.7.13
+
+* When `AndroidVideoPlayer` attempts to operate on a `textureId` that is not
+  active (i.e. it was previously disposed or never created), the resulting
+  platform exception is more informative than a "NullPointerException".
+
+## 2.7.12
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/156451) where
+  additional harmless but annoying warnings in the form of native stack traces
+  would be printed when the app was backgrounded. There may be additional
+  warnings that are not yet fixed, but this should address the
+  most common case.
+
+## 2.7.11
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/156158) where a
+  harmless but annoying warning in the form of a native stack trace would be
+  printed when a previously disposed video player received a trim memory event
+  (i.e. by backgrounding).
+
 ## 2.7.10
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/156158) where

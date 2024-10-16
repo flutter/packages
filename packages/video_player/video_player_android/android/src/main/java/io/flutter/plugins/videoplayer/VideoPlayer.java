@@ -97,7 +97,8 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
   public void onSurfaceDestroyed() {
-    exoPlayer.stop();
+    // Intentionally do not call pause/stop here, because the surface has already been released
+    // at this point (see https://github.com/flutter/flutter/issues/156451).
     savedStateDuring = ExoPlayerState.save(exoPlayer);
     exoPlayer.release();
   }
@@ -162,5 +163,9 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
   void dispose() {
     exoPlayer.release();
     surfaceProducer.release();
+
+    // TODO(matanlurey): Remove when embedder no longer calls-back once released.
+    // https://github.com/flutter/flutter/issues/156434.
+    surfaceProducer.setCallback(null);
   }
 }

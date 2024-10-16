@@ -137,9 +137,8 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   }) async {
     return (await _inspectorProvider(mapId)!
             .getClusters(clusterManagerId.value))
-        // See comment in messages.dart for why the force unwrap is okay.
-        .map((PlatformCluster? cluster) =>
-            GoogleMapsFlutterIOS.clusterFromPlatformCluster(cluster!))
+        .map((PlatformCluster cluster) =>
+            GoogleMapsFlutterIOS.clusterFromPlatformCluster(cluster))
         .toList();
   }
 }

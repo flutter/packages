@@ -47,6 +47,7 @@
 - mockito
 - path
 - platform
+- pub_semver
 - shelf
 - shelf_static
 - source_gen

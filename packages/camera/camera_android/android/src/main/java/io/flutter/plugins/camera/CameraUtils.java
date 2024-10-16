@@ -12,10 +12,10 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
+import io.flutter.plugins.camera.features.autofocus.FocusMode;
+import io.flutter.plugins.camera.features.exposurelock.ExposureMode;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /** Provides various utilities for camera. */
 public final class CameraUtils {
@@ -86,6 +86,27 @@ public final class CameraUtils {
   }
 
   /**
+   * Converts a raw integer to a PlatformCameraLensDirection enum.
+   *
+   * @param lensDirection One of CameraMetadata.LENS_FACING_FRONT, LENS_FACING_BACK, or
+   *     LENS_FACING_EXTERNAL.
+   * @return One of Messages.PlatformCameraLensDirection.FRONT, BACK, or EXTERNAL.
+   */
+  static Messages.PlatformCameraLensDirection lensDirectionFromInteger(int lensDirection) {
+    switch (lensDirection) {
+      case CameraMetadata.LENS_FACING_FRONT:
+        return Messages.PlatformCameraLensDirection.FRONT;
+      case CameraMetadata.LENS_FACING_BACK:
+        return Messages.PlatformCameraLensDirection.BACK;
+      case CameraMetadata.LENS_FACING_EXTERNAL:
+        return Messages.PlatformCameraLensDirection.EXTERNAL;
+    }
+    // CameraMetadata is defined in the Android API. In the event that a new value is added, a
+    // default fallback value of FRONT is returned.
+    return Messages.PlatformCameraLensDirection.FRONT;
+  }
+
+  /**
    * Gets all the available cameras for the device.
    *
    * @param activity The current Android activity.
@@ -93,11 +114,11 @@ public final class CameraUtils {
    * @throws CameraAccessException when the camera could not be accessed.
    */
   @NonNull
-  public static List<Map<String, Object>> getAvailableCameras(@NonNull Activity activity)
-      throws CameraAccessException {
+  public static List<Messages.PlatformCameraDescription> getAvailableCameras(
+      @NonNull Activity activity) throws CameraAccessException {
     CameraManager cameraManager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
     String[] cameraNames = cameraManager.getCameraIdList();
-    List<Map<String, Object>> cameras = new ArrayList<>();
+    List<Messages.PlatformCameraDescription> cameras = new ArrayList<>();
     for (String cameraName : cameraNames) {
       int cameraId;
       try {
@@ -109,26 +130,77 @@ public final class CameraUtils {
         continue;
       }
 
-      HashMap<String, Object> details = new HashMap<>();
       CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraName);
-      details.put("name", cameraName);
       int sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-      details.put("sensorOrientation", sensorOrientation);
 
       int lensFacing = characteristics.get(CameraCharacteristics.LENS_FACING);
-      switch (lensFacing) {
-        case CameraMetadata.LENS_FACING_FRONT:
-          details.put("lensFacing", "front");
-          break;
-        case CameraMetadata.LENS_FACING_BACK:
-          details.put("lensFacing", "back");
-          break;
-        case CameraMetadata.LENS_FACING_EXTERNAL:
-          details.put("lensFacing", "external");
-          break;
-      }
+      Messages.PlatformCameraLensDirection lensDirection = lensDirectionFromInteger(lensFacing);
+      Messages.PlatformCameraDescription details =
+          new Messages.PlatformCameraDescription.Builder()
+              .setName(cameraName)
+              .setSensorOrientation((long) sensorOrientation)
+              .setLensDirection(lensDirection)
+              .build();
       cameras.add(details);
     }
     return cameras;
+  }
+
+  /**
+   * Converts a DeviceOrientation from the systemchannels package to a PlatformDeviceOrientation
+   * from Pigeon.
+   *
+   * @param orientation A DeviceOrientation.
+   * @return The corresponding PlatformDeviceOrientation.
+   */
+  @NonNull
+  public static Messages.PlatformDeviceOrientation orientationToPigeon(
+      @NonNull PlatformChannel.DeviceOrientation orientation) {
+    switch (orientation) {
+      case PORTRAIT_UP:
+        return Messages.PlatformDeviceOrientation.PORTRAIT_UP;
+      case PORTRAIT_DOWN:
+        return Messages.PlatformDeviceOrientation.PORTRAIT_DOWN;
+      case LANDSCAPE_LEFT:
+        return Messages.PlatformDeviceOrientation.LANDSCAPE_LEFT;
+      case LANDSCAPE_RIGHT:
+        return Messages.PlatformDeviceOrientation.LANDSCAPE_RIGHT;
+    }
+    return Messages.PlatformDeviceOrientation.PORTRAIT_UP;
+  }
+
+  /**
+   * Converts a FocusMode from the autofocus package to a PlatformFocusMode from Pigeon.
+   *
+   * @param focusMode A FocusMode.
+   * @return The corresponding PlatformFocusMode.
+   */
+  @NonNull
+  public static Messages.PlatformFocusMode focusModeToPigeon(@NonNull FocusMode focusMode) {
+    switch (focusMode) {
+      case auto:
+        return Messages.PlatformFocusMode.AUTO;
+      case locked:
+        return Messages.PlatformFocusMode.LOCKED;
+    }
+    return Messages.PlatformFocusMode.AUTO;
+  }
+
+  /**
+   * Converts an ExposureMode from the exposurelock package to a PlatformExposureMode from Pigeon.
+   *
+   * @param exposureMode An ExposureMode.
+   * @return The corresponding PlatformExposureMode.
+   */
+  @NonNull
+  public static Messages.PlatformExposureMode exposureModeToPigeon(
+      @NonNull ExposureMode exposureMode) {
+    switch (exposureMode) {
+      case auto:
+        return Messages.PlatformExposureMode.AUTO;
+      case locked:
+        return Messages.PlatformExposureMode.LOCKED;
+    }
+    return Messages.PlatformExposureMode.AUTO;
   }
 }
