@@ -44,7 +44,7 @@ Adsense().adUnit(
 Make sure to replace `your_ad_client_id` and `your_ad_slot_id` with the relevant values
 
 ### Failed to load resource: the server responded with a status of 403
-1. When happening in **testing/staging** environment it is likely related to the fact that ads are only filled when requested from an authorized domain. If you are testing locally, you can specify additional run arguments in IDE my editing `Run/Debug Configuration` or by passing them directly to `flutter run` command:  
+1. When happening in **testing/staging** environment it is likely related to the fact that ads are only filled when requested from an authorized domain. If you are testing locally, you can specify additional run arguments in IDE by editing `Run/Debug Configuration` or by passing them directly to `flutter run` command:  
     `--web-port=8080`  
     `--web-hostname=your-domain.com`
 2. When happening in **production** it might be that your domain was not yet approved or was disapproved. Login to your AdSense account to check your domain approval status
