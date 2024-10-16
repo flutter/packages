@@ -52,7 +52,7 @@ final class CameraApiImpl implements Messages.CameraApi {
     Messages.CameraApi.setUp(messenger, this);
   }
 
-  void stopListening() {
+  void tearDownMessageHandler() {
     Messages.CameraApi.setUp(messenger, null);
   }
 
