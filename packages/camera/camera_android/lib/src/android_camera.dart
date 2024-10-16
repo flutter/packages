@@ -125,8 +125,7 @@ class AndroidCamera extends CameraPlatform {
     }));
 
     try {
-      await _hostApi.initialize(
-          cameraId, imageFormatGroupToPlatform(imageFormatGroup));
+      await _hostApi.initialize(imageFormatGroupToPlatform(imageFormatGroup));
     } on PlatformException catch (e, s) {
       completer.completeError(CameraException(e.code, e.message), s);
     }
@@ -140,7 +139,7 @@ class AndroidCamera extends CameraPlatform {
         hostCameraHandlers.remove(cameraId);
     handler?.dispose();
 
-    await _hostApi.dispose(cameraId);
+    await _hostApi.dispose();
   }
 
   @override
@@ -179,18 +178,17 @@ class AndroidCamera extends CameraPlatform {
     int cameraId,
     DeviceOrientation orientation,
   ) async {
-    await _hostApi.lockCaptureOrientation(
-        cameraId, deviceOrientationToPlatform(orientation));
+    await _hostApi.lockCaptureOrientation(deviceOrientationToPlatform(orientation));
   }
 
   @override
   Future<void> unlockCaptureOrientation(int cameraId) async {
-    await _hostApi.unlockCaptureOrientation(cameraId);
+    await _hostApi.unlockCaptureOrientation();
   }
 
   @override
   Future<XFile> takePicture(int cameraId) async {
-    final String path = await _hostApi.takePicture(cameraId);
+    final String path = await _hostApi.takePicture();
     return XFile(path);
   }
 
@@ -207,8 +205,7 @@ class AndroidCamera extends CameraPlatform {
 
   @override
   Future<void> startVideoCapturing(VideoCaptureOptions options) async {
-    await _hostApi.startVideoRecording(
-        options.cameraId, options.streamCallback != null);
+    await _hostApi.startVideoRecording(options.streamCallback != null);
 
     if (options.streamCallback != null) {
       _installStreamController().stream.listen(options.streamCallback);
@@ -218,17 +215,17 @@ class AndroidCamera extends CameraPlatform {
 
   @override
   Future<XFile> stopVideoRecording(int cameraId) async {
-    final String path = await _hostApi.stopVideoRecording(cameraId);
+    final String path = await _hostApi.stopVideoRecording();
     return XFile(path);
   }
 
   @override
   Future<void> pauseVideoRecording(int cameraId) =>
-      _hostApi.pauseVideoRecording(cameraId);
+      _hostApi.pauseVideoRecording();
 
   @override
   Future<void> resumeVideoRecording(int cameraId) =>
-      _hostApi.resumeVideoRecording(cameraId);
+      _hostApi.resumeVideoRecording();
 
   @override
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
@@ -281,37 +278,37 @@ class AndroidCamera extends CameraPlatform {
 
   @override
   Future<void> setFlashMode(int cameraId, FlashMode mode) =>
-      _hostApi.setFlashMode(cameraId, flashModeToPlatform(mode));
+      _hostApi.setFlashMode(flashModeToPlatform(mode));
 
   @override
   Future<void> setExposureMode(int cameraId, ExposureMode mode) =>
-      _hostApi.setExposureMode(cameraId, exposureModeToPlatform(mode));
+      _hostApi.setExposureMode(exposureModeToPlatform(mode));
 
   @override
   Future<void> setExposurePoint(int cameraId, Point<double>? point) {
     assert(point == null || point.x >= 0 && point.x <= 1);
     assert(point == null || point.y >= 0 && point.y <= 1);
 
-    return _hostApi.setExposurePoint(cameraId, pointToPlatform(point));
+    return _hostApi.setExposurePoint(pointToPlatform(point));
   }
 
   @override
   Future<double> getMinExposureOffset(int cameraId) async {
     final double minExposureOffset =
-        await _hostApi.getMinExposureOffset(cameraId);
+        await _hostApi.getMinExposureOffset();
     return minExposureOffset;
   }
 
   @override
   Future<double> getMaxExposureOffset(int cameraId) async {
     final double maxExposureOffset =
-        await _hostApi.getMaxExposureOffset(cameraId);
+        await _hostApi.getMaxExposureOffset();
     return maxExposureOffset;
   }
 
   @override
   Future<double> getExposureOffsetStepSize(int cameraId) async {
-    final double stepSize = await _hostApi.getExposureOffsetStepSize(cameraId);
+    final double stepSize = await _hostApi.getExposureOffsetStepSize();
 
     return stepSize;
   }
@@ -319,39 +316,39 @@ class AndroidCamera extends CameraPlatform {
   @override
   Future<double> setExposureOffset(int cameraId, double offset) async {
     final double appliedOffset =
-        await _hostApi.setExposureOffset(cameraId, offset);
+        await _hostApi.setExposureOffset(offset);
 
     return appliedOffset;
   }
 
   @override
   Future<void> setFocusMode(int cameraId, FocusMode mode) =>
-      _hostApi.setFocusMode(cameraId, focusModeToPlatform(mode));
+      _hostApi.setFocusMode(focusModeToPlatform(mode));
 
   @override
   Future<void> setFocusPoint(int cameraId, Point<double>? point) {
     assert(point == null || point.x >= 0 && point.x <= 1);
     assert(point == null || point.y >= 0 && point.y <= 1);
 
-    return _hostApi.setFocusPoint(cameraId, pointToPlatform(point));
+    return _hostApi.setFocusPoint(pointToPlatform(point));
   }
 
   @override
   Future<double> getMaxZoomLevel(int cameraId) async {
-    final double maxZoomLevel = await _hostApi.getMaxZoomLevel(cameraId);
+    final double maxZoomLevel = await _hostApi.getMaxZoomLevel();
     return maxZoomLevel;
   }
 
   @override
   Future<double> getMinZoomLevel(int cameraId) async {
-    final double minZoomLevel = await _hostApi.getMinZoomLevel(cameraId);
+    final double minZoomLevel = await _hostApi.getMinZoomLevel();
     return minZoomLevel;
   }
 
   @override
   Future<void> setZoomLevel(int cameraId, double zoom) async {
     try {
-      await _hostApi.setZoomLevel(cameraId, zoom);
+      await _hostApi.setZoomLevel(zoom);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -359,12 +356,12 @@ class AndroidCamera extends CameraPlatform {
 
   @override
   Future<void> pausePreview(int cameraId) async {
-    await _hostApi.pausePreview(cameraId);
+    await _hostApi.pausePreview();
   }
 
   @override
   Future<void> resumePreview(int cameraId) async {
-    await _hostApi.resumePreview(cameraId);
+    await _hostApi.resumePreview();
   }
 
   @override

@@ -133,35 +133,34 @@ abstract class CameraApi {
   int create(String cameraName, PlatformMediaSettings mediaSettings);
 
   /// Initializes the camera with the given ID for the given image format.
-  void initialize(int cameraId, PlatformImageFormatGroup imageFormat);
+  void initialize(PlatformImageFormatGroup imageFormat);
 
   /// Disposes of the camera with the given ID.
-  void dispose(int cameraId);
+  void dispose();
 
   /// Locks the camera with the given ID to the given orientation.
-  void lockCaptureOrientation(
-      int cameraId, PlatformDeviceOrientation orientation);
+  void lockCaptureOrientation(PlatformDeviceOrientation orientation);
 
   /// Unlocks the orientation for the camera with the given ID.
-  void unlockCaptureOrientation(int cameraId);
+  void unlockCaptureOrientation();
 
   /// Takes a picture on the camera with the given ID and returns a path to the
   /// resulting file.
   @async
-  String takePicture(int cameraId);
+  String takePicture();
 
   /// Starts recording a video on the camera with the given ID.
-  void startVideoRecording(int cameraId, bool enableStream);
+  void startVideoRecording(bool enableStream);
 
   /// Ends video recording on the camera with the given ID and returns the path
   /// to the resulting file.
-  String stopVideoRecording(int cameraId);
+  String stopVideoRecording();
 
   /// Pauses video recording on the camera with the given ID.
-  void pauseVideoRecording(int cameraId);
+  void pauseVideoRecording();
 
   /// Resumes previously paused video recording on the camera with the given ID.
-  void resumeVideoRecording(int cameraId);
+  void resumeVideoRecording();
 
   /// Begins streaming frames from the camera.
   void startImageStream();
@@ -171,56 +170,56 @@ abstract class CameraApi {
 
   /// Sets the flash mode of the camera with the given ID.
   @async
-  void setFlashMode(int cameraId, PlatformFlashMode flashMode);
+  void setFlashMode(PlatformFlashMode flashMode);
 
   /// Sets the exposure mode of the camera with the given ID.
   @async
-  void setExposureMode(int cameraId, PlatformExposureMode exposureMode);
+  void setExposureMode(PlatformExposureMode exposureMode);
 
   /// Sets the exposure point of the camera with the given ID.
   ///
   /// A null value resets to the default exposure point.
   @async
-  void setExposurePoint(int cameraId, PlatformPoint? point);
+  void setExposurePoint(PlatformPoint? point);
 
   /// Returns the minimum exposure offset of the camera with the given ID.
-  double getMinExposureOffset(int cameraId);
+  double getMinExposureOffset();
 
   /// Returns the maximum exposure offset of the camera with the given ID.
-  double getMaxExposureOffset(int cameraId);
+  double getMaxExposureOffset();
 
   /// Returns the exposure step size of the camera with the given ID.
-  double getExposureOffsetStepSize(int cameraId);
+  double getExposureOffsetStepSize();
 
   /// Sets the exposure offset of the camera with the given ID and returns the
   /// actual exposure offset.
   @async
-  double setExposureOffset(int cameraId, double offset);
+  double setExposureOffset(double offset);
 
   /// Sets the focus mode of the camera with the given ID.
-  void setFocusMode(int cameraId, PlatformFocusMode focusMode);
+  void setFocusMode(PlatformFocusMode focusMode);
 
   /// Sets the focus point of the camera with the given ID.
   ///
   /// A null value resets to the default focus point.
   @async
-  void setFocusPoint(int cameraId, PlatformPoint? point);
+  void setFocusPoint(PlatformPoint? point);
 
   /// Returns the maximum zoom level of the camera with the given ID.
-  double getMaxZoomLevel(int cameraId);
+  double getMaxZoomLevel();
 
   /// Returns the minimum zoom level of the camera with the given ID.
-  double getMinZoomLevel(int cameraId);
+  double getMinZoomLevel();
 
   /// Sets the zoom level of the camera with the given ID.
   @async
-  void setZoomLevel(int cameraId, double zoom);
+  void setZoomLevel(double zoom);
 
   /// Pauses streaming of preview frames.
-  void pausePreview(int cameraId);
+  void pausePreview();
 
   /// Resumes previously paused streaming of preview frames.
-  void resumePreview(int cameraId);
+  void resumePreview();
 
   /// Changes the camera while recording video.
   ///

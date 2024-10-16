@@ -153,8 +153,7 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void initialize(
-      @NonNull Long cameraId, @NonNull Messages.PlatformImageFormatGroup imageFormat) {
+  public void initialize(@NonNull Messages.PlatformImageFormatGroup imageFormat) {
     if (camera != null) {
       try {
         camera.open(CameraUtils.imageFormatGroupFromPigeon(imageFormat));
@@ -170,34 +169,33 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void takePicture(@NonNull Long cameraId, @NonNull Messages.Result<String> result) {
+  public void takePicture(@NonNull Messages.Result<String> result) {
     camera.takePicture(result);
   }
 
   @Override
-  public void startVideoRecording(@NonNull Long cameraId, @NonNull Boolean enableStream) {
+  public void startVideoRecording(@NonNull Boolean enableStream) {
     camera.startVideoRecording(Objects.equals(enableStream, true) ? imageStreamChannel : null);
   }
 
   @NonNull
   @Override
-  public String stopVideoRecording(@NonNull Long cameraId) {
+  public String stopVideoRecording() {
     return camera.stopVideoRecording();
   }
 
   @Override
-  public void pauseVideoRecording(@NonNull Long cameraId) {
+  public void pauseVideoRecording() {
     camera.pauseVideoRecording();
   }
 
   @Override
-  public void resumeVideoRecording(@NonNull Long cameraId) {
+  public void resumeVideoRecording() {
     camera.resumeVideoRecording();
   }
 
   @Override
   public void setFlashMode(
-      @NonNull Long cameraId,
       @NonNull Messages.PlatformFlashMode flashMode,
       @NonNull Messages.VoidResult result) {
     FlashMode mode = CameraUtils.flashModeFromPigeon(flashMode);
@@ -216,7 +214,6 @@ final class CameraApiImpl implements Messages.CameraApi {
 
   @Override
   public void setExposureMode(
-      @NonNull Long cameraId,
       @NonNull Messages.PlatformExposureMode exposureMode,
       @NonNull Messages.VoidResult result) {
     ExposureMode mode = CameraUtils.exposureModeFromPigeon(exposureMode);
@@ -235,7 +232,6 @@ final class CameraApiImpl implements Messages.CameraApi {
 
   @Override
   public void setExposurePoint(
-      @NonNull Long cameraId,
       @Nullable Messages.PlatformPoint point,
       @NonNull Messages.VoidResult result) {
 
@@ -254,25 +250,24 @@ final class CameraApiImpl implements Messages.CameraApi {
 
   @NonNull
   @Override
-  public Double getMinExposureOffset(@NonNull Long cameraId) {
+  public Double getMinExposureOffset() {
     return camera.getMinExposureOffset();
   }
 
   @NonNull
   @Override
-  public Double getMaxExposureOffset(@NonNull Long cameraId) {
+  public Double getMaxExposureOffset() {
     return camera.getMaxExposureOffset();
   }
 
   @NonNull
   @Override
-  public Double getExposureOffsetStepSize(@NonNull Long cameraId) {
+  public Double getExposureOffsetStepSize() {
     return camera.getExposureOffsetStepSize();
   }
 
   @Override
-  public void setExposureOffset(
-      @NonNull Long cameraId, @NonNull Double offset, @NonNull Messages.Result<Double> result) {
+  public void setExposureOffset(@NonNull Double offset, @NonNull Messages.Result<Double> result) {
 
     try {
       camera.setExposureOffset(result, offset);
@@ -282,7 +277,7 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void setFocusMode(@NonNull Long cameraId, @NonNull Messages.PlatformFocusMode focusMode) {
+  public void setFocusMode(@NonNull Messages.PlatformFocusMode focusMode) {
     FocusMode mode = CameraUtils.focusModeFromPigeon(focusMode);
     if (mode == null) {
       throw new Messages.FlutterError(
@@ -293,7 +288,6 @@ final class CameraApiImpl implements Messages.CameraApi {
 
   @Override
   public void setFocusPoint(
-      @NonNull Long cameraId,
       @Nullable Messages.PlatformPoint point,
       @NonNull Messages.VoidResult result) {
     Double x = null;
@@ -330,7 +324,7 @@ final class CameraApiImpl implements Messages.CameraApi {
 
   @NonNull
   @Override
-  public Double getMaxZoomLevel(@NonNull Long cameraId) {
+  public Double getMaxZoomLevel() {
 
     assert camera != null;
 
@@ -339,23 +333,21 @@ final class CameraApiImpl implements Messages.CameraApi {
 
   @NonNull
   @Override
-  public Double getMinZoomLevel(@NonNull Long cameraId) {
+  public Double getMinZoomLevel() {
 
     assert camera != null;
     return (double) camera.getMinZoomLevel();
   }
 
   @Override
-  public void setZoomLevel(
-      @NonNull Long cameraId, @NonNull Double zoom, @NonNull Messages.VoidResult result) {
+  public void setZoomLevel(@NonNull Double zoom, @NonNull Messages.VoidResult result) {
 
     assert camera != null;
     camera.setZoomLevel(result, zoom.floatValue());
   }
 
   @Override
-  public void lockCaptureOrientation(
-      @NonNull Long cameraId, @NonNull Messages.PlatformDeviceOrientation platformOrientation) {
+  public void lockCaptureOrientation(@NonNull Messages.PlatformDeviceOrientation platformOrientation) {
 
     PlatformChannel.DeviceOrientation orientation =
         CameraUtils.orientationFromPigeon(platformOrientation);
@@ -364,13 +356,13 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void unlockCaptureOrientation(@NonNull Long cameraId) {
+  public void unlockCaptureOrientation() {
 
     camera.unlockCaptureOrientation();
   }
 
   @Override
-  public void pausePreview(@NonNull Long cameraId) {
+  public void pausePreview() {
 
     try {
       camera.pausePreview();
@@ -380,7 +372,7 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void resumePreview(@NonNull Long cameraId) {
+  public void resumePreview() {
 
     try {
       camera.resumePreview();
@@ -402,7 +394,7 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void dispose(@NonNull Long cameraId) {
+  public void dispose() {
 
     if (camera != null) {
       camera.dispose();

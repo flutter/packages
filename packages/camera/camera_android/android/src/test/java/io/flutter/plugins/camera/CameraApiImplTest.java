@@ -49,7 +49,7 @@ public class CameraApiImplTest {
   @Test
   public void onMethodCall_pausePreview_shouldPausePreviewAndSendSuccessResult()
       throws CameraAccessException {
-    handler.pausePreview(1L);
+    handler.pausePreview();
 
     verify(mockCamera, times(1)).pausePreview();
   }
@@ -59,12 +59,12 @@ public class CameraApiImplTest {
       throws CameraAccessException {
     doThrow(new CameraAccessException(0)).when(mockCamera).pausePreview();
 
-    assertThrows(Messages.FlutterError.class, () -> handler.pausePreview(1L));
+    assertThrows(Messages.FlutterError.class, () -> handler.pausePreview());
   }
 
   @Test
   public void onMethodCall_resumePreview_shouldResumePreviewAndSendSuccessResult() {
-    handler.resumePreview(1L);
+    handler.resumePreview();
 
     verify(mockCamera, times(1)).resumePreview();
   }

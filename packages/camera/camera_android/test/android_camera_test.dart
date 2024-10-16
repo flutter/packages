@@ -126,7 +126,7 @@ void main() {
       () {
         // Arrange
         final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
-        when(mockCameraApi.initialize(any, any)).thenThrow(CameraException(
+        when(mockCameraApi.initialize(any)).thenThrow(CameraException(
             'TESTING_ERROR_CODE', 'Mock error message used during testing.'));
 
         // Act
@@ -175,7 +175,7 @@ void main() {
 
       // Assert
       expect(cameraId, 1);
-      verify(mockCameraApi.initialize(1, PlatformImageFormatGroup.yuv420))
+      verify(mockCameraApi.initialize(PlatformImageFormatGroup.yuv420))
           .called(1);
     });
 
@@ -208,7 +208,7 @@ void main() {
 
       // Assert
       expect(cameraId, 1);
-      verify(mockCameraApi.dispose(1)).called(1);
+      verify(mockCameraApi.dispose()).called(1);
     });
   });
 
@@ -430,7 +430,7 @@ void main() {
 
     test('Should take a picture and return an XFile instance', () async {
       // Arrange
-      when(mockCameraApi.takePicture(cameraId))
+      when(mockCameraApi.takePicture())
           .thenAnswer((_) async => '/test/path.jpg');
 
       // Act
@@ -446,7 +446,7 @@ void main() {
       await camera.startVideoRecording(cameraId);
 
       // Assert
-      verify(mockCameraApi.startVideoRecording(cameraId, false)).called(1);
+      verify(mockCameraApi.startVideoRecording(false)).called(1);
     });
 
     test(
@@ -460,12 +460,12 @@ void main() {
       );
 
       // Assert
-      verify(mockCameraApi.startVideoRecording(cameraId, true)).called(1);
+      verify(mockCameraApi.startVideoRecording(true)).called(1);
     });
 
     test('Should stop a video recording and return the file', () async {
       // Arrange
-      when(mockCameraApi.stopVideoRecording(cameraId))
+      when(mockCameraApi.stopVideoRecording())
           .thenAnswer((_) async => '/test/path.mp4');
 
       // Act
@@ -481,7 +481,7 @@ void main() {
       await camera.pauseVideoRecording(cameraId);
 
       // Assert
-      verify(mockCameraApi.pauseVideoRecording(cameraId)).called(1);
+      verify(mockCameraApi.pauseVideoRecording()).called(1);
     });
 
     test('Should resume a video recording', () async {
@@ -490,7 +490,7 @@ void main() {
       await camera.resumeVideoRecording(cameraId);
 
       // Assert
-      verify(mockCameraApi.resumeVideoRecording(cameraId)).called(1);
+      verify(mockCameraApi.resumeVideoRecording()).called(1);
     });
 
     test('Should set the description while recording', () async {
@@ -518,13 +518,13 @@ void main() {
       await camera.setFlashMode(cameraId, FlashMode.off);
 
       // Assert
-      verify(mockCameraApi.setFlashMode(cameraId, PlatformFlashMode.torch))
+      verify(mockCameraApi.setFlashMode(PlatformFlashMode.torch))
           .called(1);
-      verify(mockCameraApi.setFlashMode(cameraId, PlatformFlashMode.always))
+      verify(mockCameraApi.setFlashMode(PlatformFlashMode.always))
           .called(1);
-      verify(mockCameraApi.setFlashMode(cameraId, PlatformFlashMode.auto))
+      verify(mockCameraApi.setFlashMode(PlatformFlashMode.auto))
           .called(1);
-      verify(mockCameraApi.setFlashMode(cameraId, PlatformFlashMode.off))
+      verify(mockCameraApi.setFlashMode(PlatformFlashMode.off))
           .called(1);
     });
 
@@ -535,10 +535,10 @@ void main() {
       await camera.setExposureMode(cameraId, ExposureMode.locked);
 
       // Assert
-      verify(mockCameraApi.setExposureMode(cameraId, PlatformExposureMode.auto))
+      verify(mockCameraApi.setExposureMode(PlatformExposureMode.auto))
           .called(1);
       verify(mockCameraApi.setExposureMode(
-              cameraId, PlatformExposureMode.locked))
+              PlatformExposureMode.locked))
           .called(1);
     });
 
@@ -549,14 +549,14 @@ void main() {
       await camera.setExposurePoint(cameraId, null);
 
       // Assert
-      verify(mockCameraApi.setExposurePoint(cameraId, argThat(isNotNull)))
+      verify(mockCameraApi.setExposurePoint(argThat(isNotNull)))
           .called(1);
-      verify(mockCameraApi.setExposurePoint(cameraId, null)).called(1);
+      verify(mockCameraApi.setExposurePoint(null)).called(1);
     });
 
     test('Should get the min exposure offset', () async {
       // Arrange
-      when(mockCameraApi.getMinExposureOffset(cameraId))
+      when(mockCameraApi.getMinExposureOffset())
           .thenAnswer((_) async => 2.0);
 
       // Act
@@ -569,7 +569,7 @@ void main() {
 
     test('Should get the max exposure offset', () async {
       // Arrange
-      when(mockCameraApi.getMaxExposureOffset(cameraId))
+      when(mockCameraApi.getMaxExposureOffset())
           .thenAnswer((_) async => 2.0);
 
       // Act
@@ -582,7 +582,7 @@ void main() {
 
     test('Should get the exposure offset step size', () async {
       // Arrange
-      when(mockCameraApi.getExposureOffsetStepSize(cameraId))
+      when(mockCameraApi.getExposureOffsetStepSize())
           .thenAnswer((_) async => 0.25);
 
       // Act
@@ -594,7 +594,7 @@ void main() {
 
     test('Should set the exposure offset', () async {
       // Arrange
-      when(mockCameraApi.setExposureOffset(cameraId, 0.5))
+      when(mockCameraApi.setExposureOffset(0.5))
           .thenAnswer((_) async => 0.6);
 
       // Act
@@ -611,9 +611,9 @@ void main() {
       await camera.setFocusMode(cameraId, FocusMode.locked);
 
       // Assert
-      verify(mockCameraApi.setFocusMode(cameraId, PlatformFocusMode.auto))
+      verify(mockCameraApi.setFocusMode(PlatformFocusMode.auto))
           .called(1);
-      verify(mockCameraApi.setFocusMode(cameraId, PlatformFocusMode.locked))
+      verify(mockCameraApi.setFocusMode(PlatformFocusMode.locked))
           .called(1);
     });
 
@@ -628,7 +628,7 @@ void main() {
 
     test('Should get the max zoom level', () async {
       // Arrange
-      when(mockCameraApi.getMaxZoomLevel(cameraId))
+      when(mockCameraApi.getMaxZoomLevel())
           .thenAnswer((_) async => 10.0);
 
       // Act
@@ -640,7 +640,7 @@ void main() {
 
     test('Should get the min zoom level', () async {
       // Arrange
-      when(mockCameraApi.getMinZoomLevel(cameraId))
+      when(mockCameraApi.getMinZoomLevel())
           .thenAnswer((_) async => 1.0);
 
       // Act
@@ -656,13 +656,13 @@ void main() {
       await camera.setZoomLevel(cameraId, 2.0);
 
       // Assert
-      verify(mockCameraApi.setZoomLevel(cameraId, 2.0)).called(1);
+      verify(mockCameraApi.setZoomLevel(2.0)).called(1);
     });
 
     test('Should throw CameraException when illegal zoom level is supplied',
         () async {
       // Arrange
-      when(mockCameraApi.setZoomLevel(cameraId, -1.0)).thenThrow(
+      when(mockCameraApi.setZoomLevel(-1.0)).thenThrow(
           PlatformException(code: 'ZOOM_ERROR', message: 'Illegal zoom error'));
 
       // Act & assert
@@ -682,7 +682,7 @@ void main() {
 
       // Assert
       verify(mockCameraApi.lockCaptureOrientation(
-              cameraId, PlatformDeviceOrientation.portraitUp))
+               PlatformDeviceOrientation.portraitUp))
           .called(1);
     });
 
@@ -692,7 +692,7 @@ void main() {
       await camera.unlockCaptureOrientation(cameraId);
 
       // Assert
-      verify(mockCameraApi.unlockCaptureOrientation(cameraId)).called(1);
+      verify(mockCameraApi.unlockCaptureOrientation()).called(1);
     });
 
     test('Should pause the camera preview', () async {
@@ -701,7 +701,7 @@ void main() {
       await camera.pausePreview(cameraId);
 
       // Assert
-      verify(mockCameraApi.pausePreview(cameraId)).called(1);
+      verify(mockCameraApi.pausePreview()).called(1);
     });
 
     test('Should resume the camera preview', () async {
@@ -710,7 +710,7 @@ void main() {
       await camera.resumePreview(cameraId);
 
       // Assert
-      verify(mockCameraApi.resumePreview(cameraId)).called(1);
+      verify(mockCameraApi.resumePreview()).called(1);
     });
 
     test('Should start streaming', () async {
