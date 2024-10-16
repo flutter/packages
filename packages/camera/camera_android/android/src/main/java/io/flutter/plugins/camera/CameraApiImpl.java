@@ -196,8 +196,7 @@ final class CameraApiImpl implements Messages.CameraApi {
 
   @Override
   public void setFlashMode(
-      @NonNull Messages.PlatformFlashMode flashMode,
-      @NonNull Messages.VoidResult result) {
+      @NonNull Messages.PlatformFlashMode flashMode, @NonNull Messages.VoidResult result) {
     FlashMode mode = CameraUtils.flashModeFromPigeon(flashMode);
     if (mode == null) {
       result.error(
@@ -214,8 +213,7 @@ final class CameraApiImpl implements Messages.CameraApi {
 
   @Override
   public void setExposureMode(
-      @NonNull Messages.PlatformExposureMode exposureMode,
-      @NonNull Messages.VoidResult result) {
+      @NonNull Messages.PlatformExposureMode exposureMode, @NonNull Messages.VoidResult result) {
     ExposureMode mode = CameraUtils.exposureModeFromPigeon(exposureMode);
     if (mode == null) {
       result.error(
@@ -232,8 +230,7 @@ final class CameraApiImpl implements Messages.CameraApi {
 
   @Override
   public void setExposurePoint(
-      @Nullable Messages.PlatformPoint point,
-      @NonNull Messages.VoidResult result) {
+      @Nullable Messages.PlatformPoint point, @NonNull Messages.VoidResult result) {
 
     Double x = null;
     Double y = null;
@@ -288,8 +285,7 @@ final class CameraApiImpl implements Messages.CameraApi {
 
   @Override
   public void setFocusPoint(
-      @Nullable Messages.PlatformPoint point,
-      @NonNull Messages.VoidResult result) {
+      @Nullable Messages.PlatformPoint point, @NonNull Messages.VoidResult result) {
     Double x = null;
     Double y = null;
     if (point != null) {
@@ -347,7 +343,8 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void lockCaptureOrientation(@NonNull Messages.PlatformDeviceOrientation platformOrientation) {
+  public void lockCaptureOrientation(
+      @NonNull Messages.PlatformDeviceOrientation platformOrientation) {
 
     PlatformChannel.DeviceOrientation orientation =
         CameraUtils.orientationFromPigeon(platformOrientation);

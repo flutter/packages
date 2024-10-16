@@ -518,14 +518,10 @@ void main() {
       await camera.setFlashMode(cameraId, FlashMode.off);
 
       // Assert
-      verify(mockCameraApi.setFlashMode(PlatformFlashMode.torch))
-          .called(1);
-      verify(mockCameraApi.setFlashMode(PlatformFlashMode.always))
-          .called(1);
-      verify(mockCameraApi.setFlashMode(PlatformFlashMode.auto))
-          .called(1);
-      verify(mockCameraApi.setFlashMode(PlatformFlashMode.off))
-          .called(1);
+      verify(mockCameraApi.setFlashMode(PlatformFlashMode.torch)).called(1);
+      verify(mockCameraApi.setFlashMode(PlatformFlashMode.always)).called(1);
+      verify(mockCameraApi.setFlashMode(PlatformFlashMode.auto)).called(1);
+      verify(mockCameraApi.setFlashMode(PlatformFlashMode.off)).called(1);
     });
 
     test('Should set the exposure mode', () async {
@@ -537,8 +533,7 @@ void main() {
       // Assert
       verify(mockCameraApi.setExposureMode(PlatformExposureMode.auto))
           .called(1);
-      verify(mockCameraApi.setExposureMode(
-              PlatformExposureMode.locked))
+      verify(mockCameraApi.setExposureMode(PlatformExposureMode.locked))
           .called(1);
     });
 
@@ -549,15 +544,13 @@ void main() {
       await camera.setExposurePoint(cameraId, null);
 
       // Assert
-      verify(mockCameraApi.setExposurePoint(argThat(isNotNull)))
-          .called(1);
+      verify(mockCameraApi.setExposurePoint(argThat(isNotNull))).called(1);
       verify(mockCameraApi.setExposurePoint(null)).called(1);
     });
 
     test('Should get the min exposure offset', () async {
       // Arrange
-      when(mockCameraApi.getMinExposureOffset())
-          .thenAnswer((_) async => 2.0);
+      when(mockCameraApi.getMinExposureOffset()).thenAnswer((_) async => 2.0);
 
       // Act
       final double minExposureOffset =
@@ -569,8 +562,7 @@ void main() {
 
     test('Should get the max exposure offset', () async {
       // Arrange
-      when(mockCameraApi.getMaxExposureOffset())
-          .thenAnswer((_) async => 2.0);
+      when(mockCameraApi.getMaxExposureOffset()).thenAnswer((_) async => 2.0);
 
       // Act
       final double maxExposureOffset =
@@ -594,8 +586,7 @@ void main() {
 
     test('Should set the exposure offset', () async {
       // Arrange
-      when(mockCameraApi.setExposureOffset(0.5))
-          .thenAnswer((_) async => 0.6);
+      when(mockCameraApi.setExposureOffset(0.5)).thenAnswer((_) async => 0.6);
 
       // Act
       final double actualOffset = await camera.setExposureOffset(cameraId, 0.5);
@@ -611,10 +602,8 @@ void main() {
       await camera.setFocusMode(cameraId, FocusMode.locked);
 
       // Assert
-      verify(mockCameraApi.setFocusMode(PlatformFocusMode.auto))
-          .called(1);
-      verify(mockCameraApi.setFocusMode(PlatformFocusMode.locked))
-          .called(1);
+      verify(mockCameraApi.setFocusMode(PlatformFocusMode.auto)).called(1);
+      verify(mockCameraApi.setFocusMode(PlatformFocusMode.locked)).called(1);
     });
 
     test('Should build a texture widget as preview widget', () async {
@@ -628,8 +617,7 @@ void main() {
 
     test('Should get the max zoom level', () async {
       // Arrange
-      when(mockCameraApi.getMaxZoomLevel())
-          .thenAnswer((_) async => 10.0);
+      when(mockCameraApi.getMaxZoomLevel()).thenAnswer((_) async => 10.0);
 
       // Act
       final double maxZoomLevel = await camera.getMaxZoomLevel(cameraId);
@@ -640,8 +628,7 @@ void main() {
 
     test('Should get the min zoom level', () async {
       // Arrange
-      when(mockCameraApi.getMinZoomLevel())
-          .thenAnswer((_) async => 1.0);
+      when(mockCameraApi.getMinZoomLevel()).thenAnswer((_) async => 1.0);
 
       // Act
       final double maxZoomLevel = await camera.getMinZoomLevel(cameraId);
@@ -681,8 +668,8 @@ void main() {
           cameraId, DeviceOrientation.portraitUp);
 
       // Assert
-      verify(mockCameraApi.lockCaptureOrientation(
-               PlatformDeviceOrientation.portraitUp))
+      verify(mockCameraApi
+              .lockCaptureOrientation(PlatformDeviceOrientation.portraitUp))
           .called(1);
     });
 

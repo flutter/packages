@@ -178,7 +178,8 @@ class AndroidCamera extends CameraPlatform {
     int cameraId,
     DeviceOrientation orientation,
   ) async {
-    await _hostApi.lockCaptureOrientation(deviceOrientationToPlatform(orientation));
+    await _hostApi
+        .lockCaptureOrientation(deviceOrientationToPlatform(orientation));
   }
 
   @override
@@ -294,15 +295,13 @@ class AndroidCamera extends CameraPlatform {
 
   @override
   Future<double> getMinExposureOffset(int cameraId) async {
-    final double minExposureOffset =
-        await _hostApi.getMinExposureOffset();
+    final double minExposureOffset = await _hostApi.getMinExposureOffset();
     return minExposureOffset;
   }
 
   @override
   Future<double> getMaxExposureOffset(int cameraId) async {
-    final double maxExposureOffset =
-        await _hostApi.getMaxExposureOffset();
+    final double maxExposureOffset = await _hostApi.getMaxExposureOffset();
     return maxExposureOffset;
   }
 
@@ -315,8 +314,7 @@ class AndroidCamera extends CameraPlatform {
 
   @override
   Future<double> setExposureOffset(int cameraId, double offset) async {
-    final double appliedOffset =
-        await _hostApi.setExposureOffset(offset);
+    final double appliedOffset = await _hostApi.setExposureOffset(offset);
 
     return appliedOffset;
   }
