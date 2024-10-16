@@ -91,6 +91,8 @@ final class CameraApiImpl implements Messages.CameraApi {
   // to be able to compile with <21 sdks for apps that want the camera and support earlier version.
   @SuppressWarnings("ConstantConditions")
   private <T> void handleException(Exception exception, Messages.Result<T> result) {
+    // TODO(schectman): Reevaluate how we handle exceptions here. See
+    // https://github.com/flutter/flutter/issues/157021
     if (exception instanceof CameraAccessException) {
       result.error(exception);
       return;
@@ -101,6 +103,8 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   private void handleException(Exception exception, Messages.VoidResult result) {
+    // TODO(schectman): Reevaluate how we handle exceptions here. See
+    // https://github.com/flutter/flutter/issues/157021
     if (exception instanceof CameraAccessException) {
       result.error(exception);
       return;
