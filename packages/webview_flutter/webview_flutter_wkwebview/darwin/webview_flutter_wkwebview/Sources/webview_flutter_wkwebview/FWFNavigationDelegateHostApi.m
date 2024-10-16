@@ -144,7 +144,8 @@
                    protectionSpace:challenge.protectionSpace
                         completion:^(FlutterError *error) {
                             NSAssert(!error, @"%@", error);
-    
+                            NSLog(@"yay7");
+                            NSLog(@"%@", [NSThread currentThread]);
                             [self didReceiveAuthenticationChallengeForDelegateWithIdentifier:[self
                                             identifierForDelegate:instance]
                                             webViewIdentifier:webViewIdentifier
