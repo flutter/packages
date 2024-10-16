@@ -53,7 +53,7 @@ final class ExoPlayerEventListener implements Player.Listener {
     int width = videoSize.width;
     int height = videoSize.height;
     if (width != 0 && height != 0) {
-      int reportedRotationCorrection;
+      int reportedRotationCorrection = 0;
 
       if (Build.VERSION.SDK_INT <= 21) {
         // On API 21 and below, Exoplayer may not internally handle rotation correction
@@ -61,20 +61,27 @@ final class ExoPlayerEventListener implements Player.Listener {
         // fix the case of upside-down playback.
         reportedRotationCorrection = videoSize.unappliedRotationDegrees;
         rotationCorrection = getRotationCorrectionFromUnappliedRotation(reportedRotationCorrection);
+      } else if (Build.VERSION.SDK_INT < 29) {
+        // When the SurfaceTexture backend for Impeller is used, the preview should already
+        // be correctly rotated.
+        rotationCorrection = 0;
       } else {
         // Above API 21, Exoplayer handles the VideoSize.unappliedRotationDegrees
         // correction internally. However, the video's Format also provides a rotation
-        // correction that may be used to correct the rotation, so we try to use that.
+        // correction that may be used to correct the rotation, so we try to use that
+        // to correct the video rotation when the ImageReader backend for Impeller is used.
         rotationCorrection = getRotationCorrectionFromFormat(exoPlayer);
         reportedRotationCorrection = rotationCorrection;
       }
 
-      // Switch the width/height if video was taken in portrait mode.
+      // Switch the width/height if video was taken in portrait mode and a rotation
+      // correction was detected.
       if (reportedRotationCorrection == 90 || reportedRotationCorrection == 270) {
         width = videoSize.height;
         height = videoSize.width;
       }
     }
+
     events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection);
   }
 
