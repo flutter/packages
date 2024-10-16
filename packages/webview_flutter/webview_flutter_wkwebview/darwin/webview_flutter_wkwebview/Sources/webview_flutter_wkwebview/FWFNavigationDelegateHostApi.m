@@ -144,14 +144,14 @@
                    protectionSpace:challenge.protectionSpace
                         completion:^(FlutterError *error) {
                             NSAssert(!error, @"%@", error);
+    
+                            [self didReceiveAuthenticationChallengeForDelegateWithIdentifier:[self
+                                            identifierForDelegate:instance]
+                                            webViewIdentifier:webViewIdentifier
+                                            challengeIdentifier:[self.instanceManager
+                                                    identifierWithStrongReferenceForInstance:challenge]
+                                            completion:completion];
                         }];
-
-  [self didReceiveAuthenticationChallengeForDelegateWithIdentifier:[self
-                  identifierForDelegate:instance]
-                  webViewIdentifier:webViewIdentifier
-                  challengeIdentifier:[self.instanceManager
-                          identifierWithStrongReferenceForInstance:challenge]
-                  completion:completion];
 }
 @end
 
