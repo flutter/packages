@@ -596,7 +596,7 @@ public class CameraTest {
   }
 
   @Test
-  public void pauseVideoRecording_shouldSendNullResultWhenNotRecording() {
+  public void pauseVideoRecording_shouldNotThrowWhenNotRecording() {
     camera.recordingVideo = false;
 
     camera.pauseVideoRecording();
@@ -638,7 +638,7 @@ public class CameraTest {
   }
 
   @Test
-  public void resumeVideoRecording_shouldSendNullResultWhenNotRecording() {
+  public void resumeVideoRecording_shouldNotThrowWhenNotRecording() {
     camera.recordingVideo = false;
 
     camera.resumeVideoRecording();
