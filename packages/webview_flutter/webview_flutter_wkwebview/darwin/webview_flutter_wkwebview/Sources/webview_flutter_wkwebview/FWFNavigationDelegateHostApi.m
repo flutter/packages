@@ -275,14 +275,26 @@
                                                 FWFNativeNSURLSessionAuthChallengeDispositionFromFWFNSUrlSessionAuthChallengeDisposition(
                                                     response.disposition);
 
-                                            NSURLCredential *credential =
-                                                response.credentialIdentifier != nil
-                                                    ? (NSURLCredential *)[self.navigationDelegateAPI
-                                                                              .instanceManager
-                                                          instanceForIdentifier:
-                                                              response.credentialIdentifier
-                                                                  .longValue]
-                                                    : nil;
+
+                                            if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust) {
+                                                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                                                    SecTrust* serverTrust = challenge.protectionSpace.serverTrust;
+                                                    CFData* exceptions = SecTrustCopyExceptions(serverTrust);
+                                                    SecTrustSetExceptions(serverTrust, exceptions);
+                                                    NSURLCredential* credential = [NSURLCredential credentialForTrust: serverTrust];
+                                                    completionHandler(disposition, credential);
+                                                });
+                                                return;
+                                            }
+
+                                              NSURLCredential *credential =
+                                                      response.credentialIdentifier != nil
+                                                      ? (NSURLCredential *)[self.navigationDelegateAPI
+                                                              .instanceManager
+                                                              instanceForIdentifier:
+                                                                      response.credentialIdentifier
+                                                                              .longValue]
+                                              : nil;
 
                                             completionHandler(disposition, credential);
                                           } else {
