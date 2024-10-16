@@ -29,6 +29,8 @@
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		F219F1992CC04B0F00142FC2 /* StoreKit2TranslatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F219F1982CC04B0F00142FC2 /* StoreKit2TranslatorTests.swift */; };
 		F219F19A2CC04B0F00142FC2 /* InAppPurchaseStoreKit2PluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F219F1972CC04B0F00142FC2 /* InAppPurchaseStoreKit2PluginTests.swift */; };
+		F219F19D2CC056C100142FC2 /* StoreKitTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2D1274A2CB5DB61005FA2E5 /* StoreKitTest.framework */; };
+		F219F1A12CC0586700142FC2 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F219F1A02CC0586700142FC2 /* StoreKit.framework */; };
 		F24C45E42C409D87000C6C72 /* InAppPurchasePluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24C45E32C409D87000C6C72 /* InAppPurchasePluginTests.swift */; };
 		F27694092C4724B200277144 /* ProductRequestHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694082C4724B200277144 /* ProductRequestHandlerTests.swift */; };
 		F27694132C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694122C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift */; };
@@ -96,6 +98,7 @@
 		B537BC9F2D936311267ABC65 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F219F1972CC04B0F00142FC2 /* InAppPurchaseStoreKit2PluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InAppPurchaseStoreKit2PluginTests.swift; path = ../../shared/RunnerTests/InAppPurchaseStoreKit2PluginTests.swift; sourceTree = "<group>"; };
 		F219F1982CC04B0F00142FC2 /* StoreKit2TranslatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StoreKit2TranslatorTests.swift; path = ../../shared/RunnerTests/StoreKit2TranslatorTests.swift; sourceTree = "<group>"; };
+		F219F1A02CC0586700142FC2 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		F24C45E32C409D87000C6C72 /* InAppPurchasePluginTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InAppPurchasePluginTests.swift; path = ../../shared/RunnerTests/InAppPurchasePluginTests.swift; sourceTree = "<group>"; };
 		F27694082C4724B200277144 /* ProductRequestHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProductRequestHandlerTests.swift; path = ../../shared/RunnerTests/ProductRequestHandlerTests.swift; sourceTree = "<group>"; };
 		F27694122C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FIAPPaymentQueueDeleteTests.swift; path = ../../shared/RunnerTests/FIAPPaymentQueueDeleteTests.swift; sourceTree = "<group>"; };
@@ -126,7 +129,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F219F1A12CC0586700142FC2 /* StoreKit.framework in Frameworks */,
 				F8270DE1AEF80A8CF2C45688 /* Pods_RunnerTests.framework in Frameworks */,
+				F219F19D2CC056C100142FC2 /* StoreKitTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,6 +154,7 @@
 		0B83E9AD591375BF30FD1CA9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F219F1A02CC0586700142FC2 /* StoreKit.framework */,
 				F2D1274A2CB5DB61005FA2E5 /* StoreKitTest.framework */,
 				AEB2EC182EA43F26A351EE3E /* Pods_Runner.framework */,
 				045C0F7D19875EDA98DF0B7F /* Pods_RunnerTests.framework */,
