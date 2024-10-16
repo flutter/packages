@@ -39,29 +39,33 @@
                                                            instanceManager:self.instanceManager];
   
   if (protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust) {
-    SecTrustRef serverTrust = protectionSpace.serverTrust;
-    
-    SecTrustResultType result;
-    SecTrustEvaluate(serverTrust, &result);
-    FWFSslErrorTypeData sslErrorTypeData = FWFSslErrorTypeDataFromSecTrustResult(result);
-    FWFSslErrorTypeDataBox* sslErrorTypeDataBox = NULL;
-    if (sslErrorTypeData != -1) {
-      sslErrorTypeDataBox = [[FWFSslErrorTypeDataBox alloc] initWithValue: sslErrorTypeData];
-    }
-    
-    SecCertificateRef certificate = SecTrustGetCertificateAtIndex(serverTrust, 0);
-    NSData* certificateDer = (NSData*)CFBridgingRelease(SecCertificateCopyData(certificate));
-    FlutterStandardTypedData* flutterTypedData = [FlutterStandardTypedData typedDataWithBytes:certificateDer];
-    
-    [protectionSpaceApi createWithInstance:protectionSpace
-                         sslErrorTypeBoxed:sslErrorTypeDataBox
-                       x509CertificateDer:flutterTypedData
-                                  protocol:protectionSpace.protocol
-                                      host:protectionSpace.host
-                                      port: protectionSpace.port
-                                completion:^(FlutterError *error) {
-      NSAssert(!error, @"%@", error);
-    }];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+      SecTrustRef serverTrust = protectionSpace.serverTrust;
+      
+      SecTrustResultType result;
+      SecTrustEvaluate(serverTrust, &result);
+      FWFSslErrorTypeData sslErrorTypeData = FWFSslErrorTypeDataFromSecTrustResult(result);
+      FWFSslErrorTypeDataBox* sslErrorTypeDataBox = NULL;
+      if (sslErrorTypeData != -1) {
+        sslErrorTypeDataBox = [[FWFSslErrorTypeDataBox alloc] initWithValue: sslErrorTypeData];
+      }
+      
+      SecCertificateRef certificate = SecTrustGetCertificateAtIndex(serverTrust, 0);
+      NSData* certificateDer = (NSData*)CFBridgingRelease(SecCertificateCopyData(certificate));
+      FlutterStandardTypedData* flutterTypedData = [FlutterStandardTypedData typedDataWithBytes:certificateDer];
+      
+      dispatch_async(dispatch_get_main_queue(), ^{
+        [protectionSpaceApi createWithInstance:protectionSpace
+                             sslErrorTypeBoxed:sslErrorTypeDataBox
+                           x509CertificateDer:flutterTypedData
+                                      protocol:protectionSpace.protocol
+                                          host:protectionSpace.host
+                                          port: protectionSpace.port
+                                    completion:^(FlutterError *error) {
+          NSAssert(!error, @"%@", error);
+        }];
+      });
+    });
   } else {
     [protectionSpaceApi createWithInstance:protectionSpace
                                       host:protectionSpace.host
