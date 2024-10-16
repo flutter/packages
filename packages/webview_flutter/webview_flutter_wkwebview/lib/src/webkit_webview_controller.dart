@@ -1145,7 +1145,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           NSUrlSessionAuthChallengeDisposition disposition,
           NSUrlCredential? credential,
         ) completionHandler,
-      ) {
+      ) async {
         if (challenge.protectionSpace.authenticationMethod ==
             NSUrlAuthenticationMethod.httpBasic) {
           final void Function(HttpAuthRequest)? callback =
@@ -1184,7 +1184,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           final FutureOr<SslErrorDecision> Function(SslError)? callback =
               weakThis.target?._onSslError;
           if (callback != null) {
-            callback(
+            final sslErrorDecision = await callback(
               SslError(
                 host: challenge.protectionSpace.host!,
                 scheme: challenge.protectionSpace.protocol!,
@@ -1200,6 +1200,19 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                 ),
               ),
             );
+
+            if (sslErrorDecision == SslErrorDecision.proceed) {
+              completionHandler(
+                NSUrlSessionAuthChallengeDisposition.useCredential,
+                null,
+              );
+            } else if (sslErrorDecision == SslErrorDecision.cancel) {
+              completionHandler(
+                NSUrlSessionAuthChallengeDisposition
+                    .cancelAuthenticationChallenge,
+                null,
+              );
+            }
             return;
           }
         }
