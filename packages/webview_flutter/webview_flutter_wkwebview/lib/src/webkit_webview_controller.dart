@@ -1190,7 +1190,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                 scheme: challenge.protectionSpace.protocol!,
                 port: challenge.protectionSpace.port!,
                 errorType: challenge.protectionSpace.sslErrorType,
-                sslCertificate: SslCertificate(
+                certificate: SslCertificate(
                   issuedBy: null,
                   issuedTo: null,
                   validNotAfterDate: null,
