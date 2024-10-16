@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import androidx.media3.common.Format;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
 import androidx.media3.common.VideoSize;
@@ -24,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 /**
  * Unit tests for {@link ExoPlayerEventListener}.
@@ -58,18 +60,24 @@ public final class ExoPlayerEventListenerTest {
 
   @Test
   @Config(sdk = 22)
-  public void onPlaybackStateChangedReadySendInitialized_aboveAndroid21() {
+  public void
+      onPlaybackStateChangedReadySendInitializedWithRotationCorrectionAndWidthAndHeightSwap_aboveAndroid21() {
+    VideoSize size = new VideoSize(800, 400, 0, 0);
     int rotationCorrection = 90;
-    Format mockFormat = new Format.Builder().setRotationDegrees(rotationCorrection);
-    when(mockExoPlayer.getVideoFormat()).thenReturn(mockFormat);
+    Format videoFormat = new Format.Builder().setRotationDegrees(rotationCorrection).build();
+
+    when(mockExoPlayer.getVideoSize()).thenReturn(size);
+    when(mockExoPlayer.getDuration()).thenReturn(10L);
+    when(mockExoPlayer.getVideoFormat()).thenReturn(videoFormat);
 
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
-    verify(mockCallbacks).onInitialized(800, 400, 10L, rotationCorrection);
+    verify(mockCallbacks).onInitialized(400, 800, 10L, rotationCorrection);
   }
 
   @Test
   @Config(sdk = 21)
-  public void onPlaybackStateChangedReadyInPortraitMode90DegreesSwapWidthAndHeight_belowAndroid21() {
+  public void
+      onPlaybackStateChangedReadyInPortraitMode90DegreesSwapWidthAndHeight_belowAndroid21() {
     VideoSize size = new VideoSize(800, 400, 90, 0);
     when(mockExoPlayer.getVideoSize()).thenReturn(size);
     when(mockExoPlayer.getDuration()).thenReturn(10L);
@@ -79,22 +87,47 @@ public final class ExoPlayerEventListenerTest {
   }
 
   @Test
-  @Config(sdk = 21)
-  public void onPlaybackStateChangedReadyInPortraitMode90DegreesSwapWidthAndHeight_aboveAndroid21() {
+  @Config(sdk = 22)
+  public void
+      onPlaybackStateChangedReadyInPortraitMode90DegreesSwapWidthAndHeight_aboveAndroid21() {
+    VideoSize size = new VideoSize(800, 400, 0, 0);
     int rotationCorrection = 90;
-    Format mockFormat = new Format.Builder().setRotationDegrees(rotationCorrection);
-    when(mockExoPlayer.getVideoFormat()).thenReturn(mockFormat);
+    Format videoFormat = new Format.Builder().setRotationDegrees(rotationCorrection).build();
+
+    when(mockExoPlayer.getVideoSize()).thenReturn(size);
+    when(mockExoPlayer.getDuration()).thenReturn(10L);
+    when(mockExoPlayer.getVideoFormat()).thenReturn(videoFormat);
+
+    eventListener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockCallbacks).onInitialized(400, 800, 10L, 90);
   }
 
   @Test
   @Config(sdk = 21)
-  public void onPlaybackStateChangedReadyInPortraitMode270DegreesSwapWidthAndHeight_belowAndroid21() {
+  public void
+      onPlaybackStateChangedReadyInPortraitMode270DegreesSwapWidthAndHeight_belowAndroid21() {
     VideoSize size = new VideoSize(800, 400, 270, 0);
     when(mockExoPlayer.getVideoSize()).thenReturn(size);
     when(mockExoPlayer.getDuration()).thenReturn(10L);
 
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
     verify(mockCallbacks).onInitialized(400, 800, 10L, 0);
+  }
+
+  @Test
+  @Config(sdk = 22)
+  public void
+      onPlaybackStateChangedReadyInPortraitMode270DegreesSwapWidthAndHeight_aboveAndroid21() {
+    VideoSize size = new VideoSize(800, 400, 0, 0);
+    int rotationCorrection = 270;
+    Format videoFormat = new Format.Builder().setRotationDegrees(rotationCorrection).build();
+
+    when(mockExoPlayer.getVideoSize()).thenReturn(size);
+    when(mockExoPlayer.getDuration()).thenReturn(10L);
+    when(mockExoPlayer.getVideoFormat()).thenReturn(videoFormat);
+
+    eventListener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockCallbacks).onInitialized(400, 800, 10L, 270);
   }
 
   @Test
