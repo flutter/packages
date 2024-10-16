@@ -133,28 +133,27 @@
                                       completion:
                                           (void (^)(FWFAuthenticationChallengeResponse *_Nullable,
                                                     FlutterError *_Nullable))completion {
-  NSInteger webViewIdentifier =
-      [self.instanceManager identifierWithStrongReferenceForInstance:webView];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSInteger webViewIdentifier =
+                [self.instanceManager identifierWithStrongReferenceForInstance:webView];
 
-  FWFURLAuthenticationChallengeFlutterApiImpl *challengeApi =
-      [[FWFURLAuthenticationChallengeFlutterApiImpl alloc]
-          initWithBinaryMessenger:self.binaryMessenger
-                  instanceManager:self.instanceManager];
-  [challengeApi createWithInstance:challenge
-                   protectionSpace:challenge.protectionSpace
-                        completion:^(FlutterError *error) {
-                          NSAssert(!error, @"%@", error);
-                        }];
+        FWFURLAuthenticationChallengeFlutterApiImpl *challengeApi =
+                [[FWFURLAuthenticationChallengeFlutterApiImpl alloc]
+                        initWithBinaryMessenger:self.binaryMessenger
+                                instanceManager:self.instanceManager];
+        [challengeApi createWithInstance:challenge
+                         protectionSpace:challenge.protectionSpace
+                              completion:^(FlutterError *error) {
+                                  NSAssert(!error, @"%@", error);
+                              }];
 
-  [self
-      didReceiveAuthenticationChallengeForDelegateWithIdentifier:[self
-                                                                     identifierForDelegate:instance]
-                                               webViewIdentifier:webViewIdentifier
-                                             challengeIdentifier:
-                                                 [self.instanceManager
-                                                     identifierWithStrongReferenceForInstance:
-                                                         challenge]
-                                                      completion:completion];
+        [self didReceiveAuthenticationChallengeForDelegateWithIdentifier:[self
+                        identifierForDelegate:instance]
+                        webViewIdentifier:webViewIdentifier
+                        challengeIdentifier:[self.instanceManager
+                                identifierWithStrongReferenceForInstance:challenge]
+                        completion:completion];
+    });
 }
 @end
 
