@@ -1,3 +1,9 @@
+## 2.7.14
+
+* Changes the rotation correction calculation for Android API 21+ to use
+  that which is reported by the video's format instead of the unapplied
+  rotation degrees that Exoplayer does not report on Android API 21+.
+
 ## 2.7.13
 
 * When `AndroidVideoPlayer` attempts to operate on a `textureId` that is not

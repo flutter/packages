@@ -44,7 +44,6 @@ final class ExoPlayerEventListener implements Player.Listener {
 
   @SuppressWarnings("SuspiciousNameCombination")
   private void sendInitialized() {
-    System.out.println("Hello???");
     if (isInitialized) {
       return;
     }
@@ -76,7 +75,6 @@ final class ExoPlayerEventListener implements Player.Listener {
         height = videoSize.width;
       }
     }
-
     events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection);
   }
 
