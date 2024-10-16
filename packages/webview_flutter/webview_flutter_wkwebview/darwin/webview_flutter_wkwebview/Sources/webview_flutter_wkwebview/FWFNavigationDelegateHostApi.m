@@ -260,6 +260,8 @@
     didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
                     completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition,
                                                 NSURLCredential *_Nullable))completionHandler {
+  NSLog(@"yay");
+  NSLog(@"%@", [NSThread currentThread]);
   [self.navigationDelegateAPI
       didReceiveAuthenticationChallengeForDelegate:self
                                            webView:webView
@@ -274,19 +276,17 @@
 
 
                                             if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust) {
-                                                NSLog(@"yay");
+                                                NSLog(@"yay4");
                                                 NSLog(@"%@", [NSThread currentThread]);
                                                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                                                     SecTrustRef serverTrust = challenge.protectionSpace.serverTrust;
                                                     CFDataRef exceptions = SecTrustCopyExceptions(serverTrust);
                                                     SecTrustSetExceptions(serverTrust, exceptions);
                                                     NSURLCredential* credential = [NSURLCredential credentialForTrust: serverTrust];
-                                                  dispatch_async(dispatch_get_main_queue(), ^{
-                                                    NSLog(@"yay2");
-                                                    NSLog(@"%@", [NSThread currentThread]);
-                                                    completionHandler(disposition, credential);
-                                                    NSLog(@"yay3");
-                                                  });
+                                                  NSLog(@"yay5");
+                                                  NSLog(@"%@", [NSThread currentThread]);
+                                                  completionHandler(disposition, credential);
+                                                  NSLog(@"yay6");
                                                 });
                                                 return;
                                             }

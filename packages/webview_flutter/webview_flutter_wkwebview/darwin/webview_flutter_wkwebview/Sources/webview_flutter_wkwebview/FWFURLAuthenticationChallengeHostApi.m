@@ -55,7 +55,7 @@
       FlutterStandardTypedData* flutterTypedData = [FlutterStandardTypedData typedDataWithBytes:certificateDer];
       
       dispatch_async(dispatch_get_main_queue(), ^{
-        NSLog(@"yay4");
+        NSLog(@"yay2");
         NSLog(@"%@", [NSThread currentThread]);
         [protectionSpaceApi createWithInstance:protectionSpace
                              sslErrorTypeBoxed:sslErrorTypeDataBox
@@ -70,7 +70,7 @@
              protectionSpaceIdentifier:[self.instanceManager
                                            identifierWithStrongReferenceForInstance:protectionSpace]
                             completion:completion];
-        NSLog(@"yay5");
+        NSLog(@"yay3");
       });
     });
     return;
