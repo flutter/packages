@@ -27,8 +27,6 @@
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
-		F219F1992CC04B0F00142FC2 /* StoreKit2TranslatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F219F1982CC04B0F00142FC2 /* StoreKit2TranslatorTests.swift */; };
-		F219F19A2CC04B0F00142FC2 /* InAppPurchaseStoreKit2PluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F219F1972CC04B0F00142FC2 /* InAppPurchaseStoreKit2PluginTests.swift */; };
 		F219F19D2CC056C100142FC2 /* StoreKitTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2D1274A2CB5DB61005FA2E5 /* StoreKitTest.framework */; };
 		F219F1A12CC0586700142FC2 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F219F1A02CC0586700142FC2 /* StoreKit.framework */; };
 		F24C45E42C409D87000C6C72 /* InAppPurchasePluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24C45E32C409D87000C6C72 /* InAppPurchasePluginTests.swift */; };
@@ -96,8 +94,6 @@
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		AEB2EC182EA43F26A351EE3E /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B537BC9F2D936311267ABC65 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
-		F219F1972CC04B0F00142FC2 /* InAppPurchaseStoreKit2PluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InAppPurchaseStoreKit2PluginTests.swift; path = ../../shared/RunnerTests/InAppPurchaseStoreKit2PluginTests.swift; sourceTree = "<group>"; };
-		F219F1982CC04B0F00142FC2 /* StoreKit2TranslatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StoreKit2TranslatorTests.swift; path = ../../shared/RunnerTests/StoreKit2TranslatorTests.swift; sourceTree = "<group>"; };
 		F219F1A02CC0586700142FC2 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		F24C45E32C409D87000C6C72 /* InAppPurchasePluginTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InAppPurchasePluginTests.swift; path = ../../shared/RunnerTests/InAppPurchasePluginTests.swift; sourceTree = "<group>"; };
 		F27694082C4724B200277144 /* ProductRequestHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProductRequestHandlerTests.swift; path = ../../shared/RunnerTests/ProductRequestHandlerTests.swift; sourceTree = "<group>"; };
@@ -232,8 +228,6 @@
 		F700DD0328E652A10004836B /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				F219F1972CC04B0F00142FC2 /* InAppPurchaseStoreKit2PluginTests.swift */,
-				F219F1982CC04B0F00142FC2 /* StoreKit2TranslatorTests.swift */,
 				F2D527252C583C1C00C137C7 /* TranslatorTests.swift */,
 				F2D5271D2C50645600C137C7 /* PaymentQueueTests.swift */,
 				F27694182C49DBE800277144 /* FIATransactionCacheTests.swift */,
@@ -485,8 +479,6 @@
 				F24C45E42C409D87000C6C72 /* InAppPurchasePluginTests.swift in Sources */,
 				F79BDC1C2905FC3200E3999D /* Stubs.m in Sources */,
 				F27694092C4724B200277144 /* ProductRequestHandlerTests.swift in Sources */,
-				F219F1992CC04B0F00142FC2 /* StoreKit2TranslatorTests.swift in Sources */,
-				F219F19A2CC04B0F00142FC2 /* InAppPurchaseStoreKit2PluginTests.swift in Sources */,
 				F2C3A7412BD9D33D000D35F2 /* Stubs.swift in Sources */,
 				F2D527262C583C1C00C137C7 /* TranslatorTests.swift in Sources */,
 				F27694192C49DBE800277144 /* FIATransactionCacheTests.swift in Sources */,
