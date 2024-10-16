@@ -1,3 +1,9 @@
+## 2.7.13
+
+* When `AndroidVideoPlayer` attempts to operate on a `textureId` that is not
+  active (i.e. it was previously disposed or never created), the resulting
+  platform exception is more informative than a "NullPointerException".
+
 ## 2.7.12
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/156451) where

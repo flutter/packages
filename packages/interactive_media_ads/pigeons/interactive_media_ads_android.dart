@@ -894,3 +894,23 @@ abstract class CompanionAd {
   /// 0 if unavailable.
   late final int width;
 }
+
+/// This object exposes information about the universal ad ID.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/UniversalAdId.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.UniversalAdId',
+  ),
+)
+abstract class UniversalAdId {
+  /// Returns the ad ID registry associated with the ad ID value.
+  ///
+  /// Returns "unknown" if the registry is not known.
+  late final String adIdRegistry;
+
+  /// Returns the universal ad ID value.
+  ///
+  /// Returns "unknown" if the value is not known.
+  late final String adIdValue;
+}
