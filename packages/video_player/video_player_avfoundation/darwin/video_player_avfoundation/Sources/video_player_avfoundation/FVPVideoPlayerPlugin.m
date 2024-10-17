@@ -406,10 +406,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
   // Prefer more detailed error information from tracks loading.
   NSError *error;
-  if ([self.player.currentItem.asset statusOfValueForKey:@"tracks" error:&error] != AVKeyValueStatusFailed) {
+  if ([self.player.currentItem.asset statusOfValueForKey:@"tracks"
+                                                   error:&error] != AVKeyValueStatusFailed) {
     error = self.player.currentItem.error;
   }
-  __block NSMutableOrderedSet<NSString*> *details = [NSMutableOrderedSet orderedSetWithObject:@"Failed to load video"];
+  __block NSMutableOrderedSet<NSString*> *details =
+      [NSMutableOrderedSet orderedSetWithObject:@"Failed to load video"];
   void (^add)(NSString *) = ^(NSString *detail) {
     if (detail != nil) {
       [details addObject:detail];
