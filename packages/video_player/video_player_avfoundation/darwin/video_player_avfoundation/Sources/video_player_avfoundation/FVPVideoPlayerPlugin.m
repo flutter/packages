@@ -345,13 +345,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     AVPlayerItem *item = (AVPlayerItem *)object;
     switch (item.status) {
       case AVPlayerItemStatusFailed:
-        if (_eventSink != nil) {
-          _eventSink([FlutterError
-              errorWithCode:@"VideoError"
-                    message:[@"Failed to load video: "
-                                stringByAppendingString:[item.error localizedDescription]]
-                    details:nil]);
-        }
+        [self sendFailedToLoadVideoEvent];
         break;
       case AVPlayerItemStatusUnknown:
         break;
@@ -404,6 +398,32 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // If the texture is still waiting for an expected frame, the display link needs to keep
   // running until it arrives regardless of the play/pause state.
   _displayLink.running = _isPlaying || self.waitingForFrame;
+}
+
+- (void)sendFailedToLoadVideoEvent {
+  if (_eventSink == nil) {
+    return;
+  }
+  // Prefer more detailed error information from tracks loading.
+  NSError *error;
+  if ([self.player.currentItem.asset statusOfValueForKey:@"tracks"
+                                                   error:&error] != AVKeyValueStatusFailed) {
+    error = self.player.currentItem.error;
+  }
+  __block NSMutableOrderedSet<NSString *> *details =
+      [NSMutableOrderedSet orderedSetWithObject:@"Failed to load video"];
+  void (^add)(NSString *) = ^(NSString *detail) {
+    if (detail != nil) {
+      [details addObject:detail];
+    }
+  };
+  NSError *underlyingError = error.userInfo[NSUnderlyingErrorKey];
+  add(error.localizedDescription);
+  add(error.localizedFailureReason);
+  add(underlyingError.localizedDescription);
+  add(underlyingError.localizedFailureReason);
+  NSString *message = [details.array componentsJoinedByString:@": "];
+  _eventSink([FlutterError errorWithCode:@"VideoError" message:message details:nil]);
 }
 
 - (void)setupEventSinkIfReadyToPlay {
@@ -587,6 +607,13 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // This line ensures the 'initialized' event is sent when the event
   // 'AVPlayerItemStatusReadyToPlay' fires before _eventSink is set (this function
   // onListenWithArguments is called)
+  // and also send error in similar case with 'AVPlayerItemStatusFailed'
+  // https://github.com/flutter/flutter/issues/151475
+  // https://github.com/flutter/flutter/issues/147707
+  if (self.player.currentItem.status == AVPlayerItemStatusFailed) {
+    [self sendFailedToLoadVideoEvent];
+    return nil;
+  }
   [self setupEventSinkIfReadyToPlay];
   return nil;
 }
