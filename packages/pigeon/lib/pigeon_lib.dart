@@ -745,6 +745,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
           : null,
       errorClassName: swiftOptions.errorClassName,
+      includeErrorClass: swiftOptions.includeErrorClass,
     ));
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
