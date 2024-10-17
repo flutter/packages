@@ -9,24 +9,25 @@ import 'package:flutter/widgets.dart';
 // ignore: implementation_imports
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
-import '../android_webview.dart' as android_webview;
+import '../android_webkit.g.dart' as android_webview;
+import '../android_webkit_constants.dart';
 import '../weak_reference_utils.dart';
 import 'webview_android_cookie_manager.dart';
 
 /// Creates a [Widget] with a [android_webview.WebView].
 class WebViewAndroidWidget extends StatefulWidget {
   /// Constructs a [WebViewAndroidWidget].
-  const WebViewAndroidWidget({
+  WebViewAndroidWidget({
     super.key,
     required this.creationParams,
     required this.callbacksHandler,
     required this.javascriptChannelRegistry,
     required this.onBuildWidget,
     @visibleForTesting this.webViewProxy = const WebViewProxy(),
-    @visibleForTesting
-    this.flutterAssetManager = const android_webview.FlutterAssetManager(),
+    @visibleForTesting android_webview.FlutterAssetManager? flutterAssetManager,
     @visibleForTesting this.webStorage,
-  });
+  }) : flutterAssetManager =
+            flutterAssetManager ?? android_webview.FlutterAssetManager.instance;
 
   /// Initial parameters used to setup the WebView.
   final CreationParams creationParams;
@@ -88,10 +89,11 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
     required this.callbacksHandler,
     required this.javascriptChannelRegistry,
     @visibleForTesting this.webViewProxy = const WebViewProxy(),
-    @visibleForTesting
-    this.flutterAssetManager = const android_webview.FlutterAssetManager(),
+    @visibleForTesting android_webview.FlutterAssetManager? flutterAssetManager,
     @visibleForTesting android_webview.WebStorage? webStorage,
   })  : webStorage = webStorage ?? android_webview.WebStorage.instance,
+        flutterAssetManager =
+            flutterAssetManager ?? android_webview.FlutterAssetManager.instance,
         assert(creationParams.webSettings?.hasNavigationDelegate != null),
         super(callbacksHandler) {
     webView = webViewProxy.createWebView();
@@ -123,14 +125,14 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
     onPageStarted: withWeakReferenceTo(this, (
       WeakReference<WebViewAndroidPlatformController> weakReference,
     ) {
-      return (_, String url) {
+      return (_, __, String url) {
         weakReference.target?.callbacksHandler.onPageStarted(url);
       };
     }),
     onPageFinished: withWeakReferenceTo(this, (
       WeakReference<WebViewAndroidPlatformController> weakReference,
     ) {
-      return (_, String url) {
+      return (_, __, String url) {
         weakReference.target?.callbacksHandler.onPageFinished(url);
       };
     }),
@@ -139,6 +141,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
     ) {
       return (
         _,
+        __,
         int errorCode,
         String description,
         String failingUrl,
@@ -157,6 +160,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
     ) {
       return (
         _,
+        __,
         android_webview.WebResourceRequest request,
         android_webview.WebResourceError error,
       ) {
@@ -174,7 +178,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
     urlLoading: withWeakReferenceTo(this, (
       WeakReference<WebViewAndroidPlatformController> weakReference,
     ) {
-      return (_, String url) {
+      return (_, __, String url) {
         weakReference.target?._handleNavigationRequest(
           url: url,
           isForMainFrame: true,
@@ -184,7 +188,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
     requestLoading: withWeakReferenceTo(this, (
       WeakReference<WebViewAndroidPlatformController> weakReference,
     ) {
-      return (_, android_webview.WebResourceRequest request) {
+      return (_, __, android_webview.WebResourceRequest request) {
         weakReference.target?._handleNavigationRequest(
           url: request.url,
           isForMainFrame: request.isForMainFrame,
@@ -223,6 +227,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
       this,
       (WeakReference<WebViewAndroidPlatformController> weakReference) {
         return (
+          _,
           String url,
           String userAgent,
           String contentDisposition,
@@ -245,7 +250,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
           onProgressChanged: withWeakReferenceTo(
     this,
     (WeakReference<WebViewAndroidPlatformController> weakReference) {
-      return (_, int progress) {
+      return (_, __, int progress) {
         final WebViewAndroidPlatformController? controller =
             weakReference.target;
         if (controller != null && controller._hasProgressTracking) {
@@ -264,11 +269,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
 
   @override
   Future<void> loadHtmlString(String html, {String? baseUrl}) {
-    return webView.loadDataWithBaseUrl(
-      baseUrl: baseUrl,
-      data: html,
-      mimeType: 'text/html',
-    );
+    return webView.loadDataWithBaseUrl(baseUrl, html, 'text/html', null, null);
   }
 
   @override
@@ -404,7 +405,9 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
         (String channelName) {
           final WebViewAndroidJavaScriptChannel javaScriptChannel =
               WebViewAndroidJavaScriptChannel(
-                  channelName, javascriptChannelRegistry);
+            channelName: channelName,
+            javascriptChannelRegistry: javascriptChannelRegistry,
+          );
           _javaScriptChannels[channelName] = javaScriptChannel;
           return webView.addJavaScriptChannel(javaScriptChannel);
         },
@@ -423,10 +426,8 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
         },
       ).map<Future<void>>(
         (String channelName) {
-          final WebViewAndroidJavaScriptChannel javaScriptChannel =
-              _javaScriptChannels[channelName]!;
           _javaScriptChannels.remove(channelName);
-          return webView.removeJavaScriptChannel(javaScriptChannel);
+          return webView.removeJavaScriptChannel(channelName);
         },
       ),
     );
@@ -442,10 +443,10 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
   Future<void> scrollBy(int x, int y) => webView.scrollBy(x, y);
 
   @override
-  Future<int> getScrollX() => webView.getScrollX();
+  Future<int> getScrollX() async => (await webView.getScrollPosition()).x;
 
   @override
-  Future<int> getScrollY() => webView.getScrollY();
+  Future<int> getScrollY() async => (await webView.getScrollPosition()).y;
 
   void _setCreationParams(CreationParams creationParams) {
     final WebSettings? webSettings = creationParams.webSettings;
@@ -465,7 +466,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
 
     final Color? backgroundColor = creationParams.backgroundColor;
     if (backgroundColor != null) {
-      webView.setBackgroundColor(backgroundColor);
+      webView.setBackgroundColor(backgroundColor.value);
     }
 
     addJavascriptChannels(creationParams.javascriptChannelNames);
@@ -514,37 +515,37 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
 
   static WebResourceErrorType _errorCodeToErrorType(int errorCode) {
     switch (errorCode) {
-      case android_webview.WebViewClient.errorAuthentication:
+      case WebViewClientConstants.errorAuthentication:
         return WebResourceErrorType.authentication;
-      case android_webview.WebViewClient.errorBadUrl:
+      case WebViewClientConstants.errorBadUrl:
         return WebResourceErrorType.badUrl;
-      case android_webview.WebViewClient.errorConnect:
+      case WebViewClientConstants.errorConnect:
         return WebResourceErrorType.connect;
-      case android_webview.WebViewClient.errorFailedSslHandshake:
+      case WebViewClientConstants.errorFailedSslHandshake:
         return WebResourceErrorType.failedSslHandshake;
-      case android_webview.WebViewClient.errorFile:
+      case WebViewClientConstants.errorFile:
         return WebResourceErrorType.file;
-      case android_webview.WebViewClient.errorFileNotFound:
+      case WebViewClientConstants.errorFileNotFound:
         return WebResourceErrorType.fileNotFound;
-      case android_webview.WebViewClient.errorHostLookup:
+      case WebViewClientConstants.errorHostLookup:
         return WebResourceErrorType.hostLookup;
-      case android_webview.WebViewClient.errorIO:
+      case WebViewClientConstants.errorIO:
         return WebResourceErrorType.io;
-      case android_webview.WebViewClient.errorProxyAuthentication:
+      case WebViewClientConstants.errorProxyAuthentication:
         return WebResourceErrorType.proxyAuthentication;
-      case android_webview.WebViewClient.errorRedirectLoop:
+      case WebViewClientConstants.errorRedirectLoop:
         return WebResourceErrorType.redirectLoop;
-      case android_webview.WebViewClient.errorTimeout:
+      case WebViewClientConstants.errorTimeout:
         return WebResourceErrorType.timeout;
-      case android_webview.WebViewClient.errorTooManyRequests:
+      case WebViewClientConstants.errorTooManyRequests:
         return WebResourceErrorType.tooManyRequests;
-      case android_webview.WebViewClient.errorUnknown:
+      case WebViewClientConstants.errorUnknown:
         return WebResourceErrorType.unknown;
-      case android_webview.WebViewClient.errorUnsafeResource:
+      case WebViewClientConstants.errorUnsafeResource:
         return WebResourceErrorType.unsafeResource;
-      case android_webview.WebViewClient.errorUnsupportedAuthScheme:
+      case WebViewClientConstants.errorUnsupportedAuthScheme:
         return WebResourceErrorType.unsupportedAuthScheme;
-      case android_webview.WebViewClient.errorUnsupportedScheme:
+      case WebViewClientConstants.errorUnsupportedScheme:
         return WebResourceErrorType.unsupportedScheme;
     }
 
@@ -582,14 +583,14 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
 class WebViewAndroidJavaScriptChannel
     extends android_webview.JavaScriptChannel {
   /// Creates a [WebViewAndroidJavaScriptChannel].
-  WebViewAndroidJavaScriptChannel(
-    super.channelName,
-    this.javascriptChannelRegistry,
-  ) : super(
+  WebViewAndroidJavaScriptChannel({
+    required super.channelName,
+    required this.javascriptChannelRegistry,
+  }) : super(
           postMessage: withWeakReferenceTo(
             javascriptChannelRegistry,
             (WeakReference<JavascriptChannelRegistry> weakReference) {
-              return (String message) {
+              return (_, String message) {
                 weakReference.target?.onJavascriptChannelMessage(
                   channelName,
                   message,
@@ -618,23 +619,39 @@ class WebViewProxy {
 
   /// Constructs a [android_webview.WebViewClient].
   android_webview.WebViewClient createWebViewClient({
-    void Function(android_webview.WebView webView, String url)? onPageStarted,
-    void Function(android_webview.WebView webView, String url)? onPageFinished,
     void Function(
+      android_webview.WebViewClient,
+      android_webview.WebView webView,
+      String url,
+    )? onPageStarted,
+    void Function(
+      android_webview.WebViewClient,
+      android_webview.WebView webView,
+      String url,
+    )? onPageFinished,
+    void Function(
+      android_webview.WebViewClient,
       android_webview.WebView webView,
       android_webview.WebResourceRequest request,
       android_webview.WebResourceError error,
     )? onReceivedRequestError,
     void Function(
+      android_webview.WebViewClient,
       android_webview.WebView webView,
       int errorCode,
       String description,
       String failingUrl,
     )? onReceivedError,
-    void Function(android_webview.WebView webView,
-            android_webview.WebResourceRequest request)?
-        requestLoading,
-    void Function(android_webview.WebView webView, String url)? urlLoading,
+    void Function(
+      android_webview.WebViewClient,
+      android_webview.WebView webView,
+      android_webview.WebResourceRequest request,
+    )? requestLoading,
+    void Function(
+      android_webview.WebViewClient,
+      android_webview.WebView webView,
+      String url,
+    )? urlLoading,
   }) {
     return android_webview.WebViewClient(
       onPageStarted: onPageStarted,

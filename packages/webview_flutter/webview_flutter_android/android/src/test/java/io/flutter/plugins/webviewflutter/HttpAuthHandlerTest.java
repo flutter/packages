@@ -4,73 +4,45 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import android.webkit.HttpAuthHandler;
-import io.flutter.plugin.common.BinaryMessenger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class HttpAuthHandlerTest {
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-  @Mock HttpAuthHandler mockAuthHandler;
-
-  @Mock BinaryMessenger mockBinaryMessenger;
-
-  InstanceManager instanceManager;
-
-  @Before
-  public void setUp() {
-    instanceManager = InstanceManager.create(identifier -> {});
-  }
-
-  @After
-  public void tearDown() {
-    instanceManager.stopFinalizationListener();
-  }
-
   @Test
   public void proceed() {
-    final HttpAuthHandlerHostApiImpl hostApi =
-        new HttpAuthHandlerHostApiImpl(mockBinaryMessenger, instanceManager);
-    final long instanceIdentifier = 65L;
-    final String username = "username";
-    final String password = "password";
-    instanceManager.addDartCreatedInstance(mockAuthHandler, instanceIdentifier);
+    final PigeonApiHttpAuthHandler api = new TestProxyApiRegistrar().getPigeonApiHttpAuthHandler();
 
-    hostApi.proceed(instanceIdentifier, username, password);
+    final HttpAuthHandler instance = mock(HttpAuthHandler.class);
+    final String username = "myString";
+    final String password = "myString1";
+    api.proceed(instance, username, password);
 
-    verify(mockAuthHandler).proceed(eq(username), eq(password));
+    verify(instance).proceed(username, password);
   }
 
   @Test
   public void cancel() {
-    final HttpAuthHandlerHostApiImpl hostApi =
-        new HttpAuthHandlerHostApiImpl(mockBinaryMessenger, instanceManager);
-    final long instanceIdentifier = 65L;
-    instanceManager.addDartCreatedInstance(mockAuthHandler, instanceIdentifier);
+    final PigeonApiHttpAuthHandler api = new TestProxyApiRegistrar().getPigeonApiHttpAuthHandler();
 
-    hostApi.cancel(instanceIdentifier);
+    final HttpAuthHandler instance = mock(HttpAuthHandler.class);
+    api.cancel(instance);
 
-    verify(mockAuthHandler).cancel();
+    verify(instance).cancel();
   }
 
   @Test
   public void useHttpAuthUsernamePassword() {
-    final HttpAuthHandlerHostApiImpl hostApi =
-        new HttpAuthHandlerHostApiImpl(mockBinaryMessenger, instanceManager);
-    final long instanceIdentifier = 65L;
-    instanceManager.addDartCreatedInstance(mockAuthHandler, instanceIdentifier);
+    final PigeonApiHttpAuthHandler api = new TestProxyApiRegistrar().getPigeonApiHttpAuthHandler();
 
-    hostApi.useHttpAuthUsernamePassword(instanceIdentifier);
+    final HttpAuthHandler instance = mock(HttpAuthHandler.class);
+    final Boolean value = true;
+    when(instance.useHttpAuthUsernamePassword()).thenReturn(value);
 
-    verify(mockAuthHandler).useHttpAuthUsernamePassword();
+    assertEquals(value, api.useHttpAuthUsernamePassword(instance));
   }
 }

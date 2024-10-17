@@ -2,6 +2,7 @@ group 'io.flutter.plugins.webviewflutter'
 version '1.0-SNAPSHOT'
 
 buildscript {
+    ext.kotlin_version = '1.7.10'
     repositories {
         google()
         mavenCentral()
@@ -9,6 +10,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:8.0.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -20,10 +22,15 @@ rootProject.allprojects {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     namespace 'io.flutter.plugins.webviewflutter'
     compileSdk 34
+
+    kotlinOptions {
+        jvmTarget = '11'
+    }
 
     defaultConfig {
         minSdkVersion 21
