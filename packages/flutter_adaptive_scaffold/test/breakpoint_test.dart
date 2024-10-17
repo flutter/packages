@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_adaptive_scaffold/src/breakpoints.dart';
+import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'simulated_layout.dart';
 
@@ -517,6 +517,23 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('Breakpoints.smallMobile')), findsOneWidget);
       expect(find.byKey(const Key('Breakpoints.mediumMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.smallDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.medium')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.mediumLargeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLargeDesktop')),
+          findsNothing);
+      expect(find.byKey(const Key('Breakpoints.large')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.extraLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeMobile')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeDesktop')), findsNothing);
     });
 
     testWidgets(
@@ -526,7 +543,24 @@ void main() {
           SimulatedLayout.smallLandscapeMediumPortrait.slot(tester));
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('Breakpoints.smallMobile')), findsNothing);
-      expect(find.byKey(const Key('Breakpoints.mediumMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumMobile')), findsOneWidget);
+      expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.smallDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.medium')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.mediumLargeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLargeDesktop')),
+          findsNothing);
+      expect(find.byKey(const Key('Breakpoints.large')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.extraLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeMobile')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeDesktop')), findsNothing);
     });
 
     testWidgets(
@@ -537,6 +571,22 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('Breakpoints.smallMobile')), findsOneWidget);
       expect(find.byKey(const Key('Breakpoints.largeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.smallDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.medium')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.mediumLargeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLargeDesktop')),
+          findsNothing);
+      expect(find.byKey(const Key('Breakpoints.large')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.extraLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeMobile')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeDesktop')), findsNothing);
     });
 
     testWidgets(
@@ -547,6 +597,48 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('Breakpoints.smallMobile')), findsNothing);
       expect(find.byKey(const Key('Breakpoints.largeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.smallDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.medium')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLarge')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLargeMobile')),
+          findsOneWidget);
+      expect(find.byKey(const Key('Breakpoints.mediumLargeDesktop')),
+          findsNothing);
+      expect(find.byKey(const Key('Breakpoints.large')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.extraLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeMobile')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeDesktop')), findsNothing);
+    });
+
+    testWidgets(
+        'Layout for mediumLargeLandscapeMediumPortrait shows correct slot configuration',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+          SimulatedLayout.mediumLargeLandscapeMediumPortrait.slot(tester));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('Breakpoints.smallMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeMobile')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.smallDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.medium')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLarge')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumLargeMobile')),
+          findsOneWidget);
+      expect(find.byKey(const Key('Breakpoints.mediumLargeDesktop')),
+          findsNothing);
+      expect(find.byKey(const Key('Breakpoints.large')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.largeDesktop')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.extraLarge')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeMobile')), findsNothing);
+      expect(
+          find.byKey(const Key('Breakpoints.extraLargeDesktop')), findsNothing);
     });
   });
 
@@ -672,6 +764,360 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
       expect(find.byKey(const Key('Breakpoints.mediumAndUp')), findsOneWidget);
+    });
+
+    testWidgets(
+        'slotAndUp shows correct slot for mediumLargeLandscapeMediumPortrait layout',
+        (WidgetTester tester) async {
+      // mediumLargeLandscapeMediumPortrait layout should show the mediumAndUp slot.
+      await tester.pumpWidget(
+          SimulatedLayout.mediumLargeLandscapeMediumPortrait.slotAndUp(tester));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('Breakpoints.small')), findsNothing);
+      expect(find.byKey(const Key('Breakpoints.mediumAndUp')), findsOneWidget);
+    });
+  });
+
+  // Test for `spacing`.
+  group('spacing property', () {
+    testWidgets('returns kMaterialCompactSpacing for small breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.small.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.smallMobile'))))
+              .spacing,
+          kMaterialCompactSpacing);
+    });
+
+    testWidgets('returns kMaterialMediumAndUpSpacing for medium breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.medium.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.mediumMobile'))))
+              .spacing,
+          kMaterialMediumAndUpSpacing);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets(
+        'returns kMaterialMediumAndUpSpacing for mediumLarge breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.mediumLarge.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester.element(
+                  find.byKey(const Key('Breakpoints.mediumLargeMobile'))))
+              .spacing,
+          kMaterialMediumAndUpSpacing);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns kMaterialMediumAndUpSpacing for large breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.large.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.largeMobile'))))
+              .spacing,
+          kMaterialMediumAndUpSpacing);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns kMaterialMediumAndUpSpacing for extraLarge breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.extraLarge.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester.element(
+                  find.byKey(const Key('Breakpoints.extraLargeMobile'))))
+              .spacing,
+          kMaterialMediumAndUpSpacing);
+    }, variant: TargetPlatformVariant.mobile());
+  });
+
+  // Test for `margin`.
+  group('margin property', () {
+    testWidgets('returns kMaterialCompactMargin for small breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.small.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.smallMobile'))))
+              .margin,
+          kMaterialCompactMargin);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns kMaterialMediumAndUpMargin for medium breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.medium.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.mediumMobile'))))
+              .margin,
+          kMaterialMediumAndUpMargin);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns kMaterialMediumAndUpMargin for mediumLarge breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.mediumLarge.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester.element(
+                  find.byKey(const Key('Breakpoints.mediumLargeMobile'))))
+              .margin,
+          kMaterialMediumAndUpMargin);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns kMaterialMediumAndUpMargin for large breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.large.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.largeMobile'))))
+              .margin,
+          kMaterialMediumAndUpMargin);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns kMaterialMediumAndUpMargin for extraLarge breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.extraLarge.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester.element(
+                  find.byKey(const Key('Breakpoints.extraLargeMobile'))))
+              .margin,
+          kMaterialMediumAndUpMargin);
+    }, variant: TargetPlatformVariant.mobile());
+  });
+
+  // Test for `padding`.
+  group('padding property', () {
+    testWidgets('returns kMaterialPadding for small breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.small.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.smallMobile'))))
+              .padding,
+          kMaterialPadding);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns kMaterialPadding * 2 for medium breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.medium.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.mediumMobile'))))
+              .padding,
+          kMaterialPadding * 2);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns kMaterialPadding * 3 for mediumLarge breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.mediumLarge.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester.element(
+                  find.byKey(const Key('Breakpoints.mediumLargeMobile'))))
+              .padding,
+          kMaterialPadding * 3);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns kMaterialPadding * 4 for large breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.large.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.largeMobile'))))
+              .padding,
+          kMaterialPadding * 4);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns kMaterialPadding * 5 for extraLarge breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.extraLarge.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester.element(
+                  find.byKey(const Key('Breakpoints.extraLargeMobile'))))
+              .padding,
+          kMaterialPadding * 5);
+    }, variant: TargetPlatformVariant.mobile());
+  });
+
+  // Test for `recommendedPanes`.
+  group('recommendedPanes property', () {
+    testWidgets('returns 1 for small breakpoint', (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.small.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.smallMobile'))))
+              .recommendedPanes,
+          1);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns 1 for medium breakpoint', (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.medium.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.mediumMobile'))))
+              .recommendedPanes,
+          1);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns 2 for mediumLarge breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.mediumLarge.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester.element(
+                  find.byKey(const Key('Breakpoints.mediumLargeMobile'))))
+              .recommendedPanes,
+          2);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns 2 for large breakpoint', (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.large.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.largeMobile'))))
+              .recommendedPanes,
+          2);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns 2 for extraLarge breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.extraLarge.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester.element(
+                  find.byKey(const Key('Breakpoints.extraLargeMobile'))))
+              .recommendedPanes,
+          2);
+    }, variant: TargetPlatformVariant.mobile());
+  });
+
+  // Test for `maxPanes`.
+  group('maxPanes property', () {
+    testWidgets('returns 1 for small breakpoint', (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.small.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.smallMobile'))))
+              .maxPanes,
+          1);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns 2 for medium breakpoint', (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.medium.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.mediumMobile'))))
+              .maxPanes,
+          2);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns 2 for mediumLarge breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.mediumLarge.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester.element(
+                  find.byKey(const Key('Breakpoints.mediumLargeMobile'))))
+              .maxPanes,
+          2);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns 2 for large breakpoint', (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.large.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester
+                  .element(find.byKey(const Key('Breakpoints.largeMobile'))))
+              .maxPanes,
+          2);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('returns 3 for extraLarge breakpoint',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.extraLarge.slot(tester));
+      await tester.pumpAndSettle();
+      expect(
+          Breakpoint.activeBreakpointOf(tester.element(
+                  find.byKey(const Key('Breakpoints.extraLargeMobile'))))
+              .maxPanes,
+          3);
+    }, variant: TargetPlatformVariant.mobile());
+  });
+
+  group('Breakpoint method tests', () {
+    testWidgets('isMobile returns true on mobile platforms',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.medium.scaffold(tester));
+      await tester.pumpAndSettle();
+
+      expect(Breakpoint.isMobile(tester.element(find.byType(TestScaffold))),
+          isTrue);
+
+      expect(Breakpoint.isDesktop(tester.element(find.byType(TestScaffold))),
+          isFalse);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('isDesktop returns true on desktop platforms',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(SimulatedLayout.medium.scaffold(tester));
+      await tester.pumpAndSettle();
+
+      expect(Breakpoint.isDesktop(tester.element(find.byType(TestScaffold))),
+          isTrue);
+
+      expect(Breakpoint.isMobile(tester.element(find.byType(TestScaffold))),
+          isFalse);
+    }, variant: TargetPlatformVariant.desktop());
+
+    test('Breakpoint comparison operators work correctly', () {
+      const Breakpoint small = Breakpoints.small;
+      const Breakpoint medium = Breakpoints.medium;
+      const Breakpoint large = Breakpoints.large;
+
+      expect(small < medium, isTrue);
+      expect(large > medium, isTrue);
+      expect(small <= Breakpoints.small, isTrue);
+      expect(large >= medium, isTrue);
+    });
+
+    test('Breakpoint equality and hashCode', () {
+      const Breakpoint small1 = Breakpoints.small;
+      const Breakpoint small2 = Breakpoints.small;
+      const Breakpoint medium = Breakpoints.medium;
+
+      expect(small1 == small2, isTrue);
+      expect(small1 == medium, isFalse);
+      expect(small1.hashCode == small2.hashCode, isTrue);
+      expect(small1.hashCode == medium.hashCode, isFalse);
+    });
+
+    test('Breakpoint between method works correctly', () {
+      const Breakpoint small = Breakpoints.small;
+      const Breakpoint medium = Breakpoints.medium;
+      const Breakpoint large = Breakpoints.large;
+
+      expect(medium.between(small, large), isTrue);
+      expect(small.between(medium, large), isFalse);
+      expect(large.between(small, medium), isFalse);
     });
   });
 }

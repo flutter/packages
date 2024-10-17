@@ -83,14 +83,14 @@ struct MessageData {
   var name: String? = nil
   var description: String? = nil
   var code: Code
-  var data: [String?: String?]
+  var data: [String: String]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> MessageData? {
     let name: String? = nilOrValue(pigeonVar_list[0])
     let description: String? = nilOrValue(pigeonVar_list[1])
     let code = pigeonVar_list[2] as! Code
-    let data = pigeonVar_list[3] as! [String?: String?]
+    let data = pigeonVar_list[3] as! [String: String]
 
     return MessageData(
       name: name,
@@ -113,7 +113,7 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 129:
-      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
         return Code(rawValue: enumResultAsInt)
       }
@@ -191,8 +191,8 @@ class ExampleHostApiSetup {
     if let api = api {
       addChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
-        let bArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)
+        let aArg = args[0] as! Int64
+        let bArg = args[1] as! Int64
         do {
           let result = try api.add(aArg, to: bArg)
           reply(wrapResult(result))

@@ -1,3 +1,7 @@
+## 4.10.0
+
+* Updates minimum supported `webview_flutter_android` from 3.16.0 to 4.0.0.
+
 ## 4.9.0
 
 * Adds endorsed macOS support.

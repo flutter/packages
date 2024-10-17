@@ -808,7 +808,8 @@ Future<void> main() async {
     });
   },
       // Scroll position is currently not implemented for macOS.
-      skip: Platform.isMacOS);
+      // Flakes on iOS: https://github.com/flutter/flutter/issues/154826
+      skip: Platform.isMacOS || Platform.isIOS);
 
   group('NavigationDelegate', () {
     const String blankPage = '<!DOCTYPE html><head></head><body></body></html>';

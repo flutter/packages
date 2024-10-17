@@ -1,3 +1,7 @@
+## 0.3.18+1
+
+* Adds support for StoreKit2's `canMakePayments` and `products` 
+
 ## 0.3.18
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.

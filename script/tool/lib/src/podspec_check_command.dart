@@ -95,7 +95,8 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       }
     }
 
-    if (pluginSupportsPlatform(platformIOS, package) &&
+    if ((pluginSupportsPlatform(platformIOS, package) ||
+            pluginSupportsPlatform(platformMacOS, package)) &&
         !podspecs.any(_hasPrivacyManifest)) {
       printError('No PrivacyInfo.xcprivacy file specified. Please ensure that '
           'a privacy manifest is included in the build using '

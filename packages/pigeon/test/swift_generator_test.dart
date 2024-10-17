@@ -122,7 +122,7 @@ void main() {
     expect(
         code,
         contains(
-            'let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)'));
+            'let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)'));
     expect(code, contains('return Foo(rawValue: enumResultAsInt)'));
     expect(code, contains('let fooArg = args[0] as! Foo'));
     expect(code, isNot(contains('if (')));
@@ -1006,14 +1006,8 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('func add(x: Int64, y: Int64) throws -> Int64'));
     expect(code, contains('let args = message as! [Any?]'));
-    expect(
-        code,
-        contains(
-            'let xArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)'));
-    expect(
-        code,
-        contains(
-            'let yArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)'));
+    expect(code, contains('let xArg = args[0] as! Int64'));
+    expect(code, contains('let yArg = args[1] as! Int64'));
     expect(code, contains('let result = try api.add(x: xArg, y: yArg)'));
     expect(code, contains('reply(wrapResult(result))'));
   });
@@ -1049,10 +1043,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('let channel = FlutterBasicMessageChannel'));
-    expect(
-        code,
-        contains(
-            'let result = listResponse[0] is Int64 ? listResponse[0] as! Int64 : Int64(listResponse[0] as! Int32)'));
+    expect(code, contains('let result = listResponse[0] as! Int64'));
     expect(code, contains('completion(.success(result))'));
     expect(
         code,
@@ -1157,10 +1148,7 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(
-        code,
-        contains(
-            'let fooArg: Int64? = isNullish(args[0]) ? nil : (args[0] is Int64? ? args[0] as! Int64? : Int64(args[0] as! Int32))'));
+    expect(code, contains('let fooArg: Int64? = nilOrValue(args[0])'));
   });
 
   test('nullable argument flutter', () {

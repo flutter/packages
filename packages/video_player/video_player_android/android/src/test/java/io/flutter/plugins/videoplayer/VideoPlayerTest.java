@@ -13,6 +13,7 @@ import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
+import androidx.media3.common.VideoSize;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.view.TextureRegistry;
 import org.junit.Before;
@@ -21,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -48,6 +50,7 @@ public final class VideoPlayerTest {
   @Mock private ExoPlayer mockExoPlayer;
   @Captor private ArgumentCaptor<AudioAttributes> attributesCaptor;
   @Captor private ArgumentCaptor<TextureRegistry.SurfaceProducer.Callback> callbackCaptor;
+  @Captor private ArgumentCaptor<Player.Listener> listenerCaptor;
 
   @Rule public MockitoRule initRule = MockitoJUnit.rule();
 
@@ -187,7 +190,7 @@ public final class VideoPlayerTest {
 
     // Create a new mock exo player so that we get a new instance.
     mockExoPlayer = mock(ExoPlayer.class);
-    producerLifecycle.onSurfaceCreated();
+    simulateSurfaceCreation(producerLifecycle);
 
     verify(mockExoPlayer).seekTo(10L);
     verify(mockExoPlayer).setRepeatMode(Player.REPEAT_MODE_ALL);
@@ -198,11 +201,112 @@ public final class VideoPlayerTest {
   }
 
   @Test
-  public void disposeReleasesTextureAndPlayer() {
+  public void onSurfaceProducerDestroyedDoesNotStopOrPauseVideo() {
     VideoPlayer videoPlayer = createVideoPlayer();
+
+    verify(mockProducer).setCallback(callbackCaptor.capture());
+    TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
+    producerLifecycle.onSurfaceDestroyed();
+
+    verify(mockExoPlayer, never()).stop();
+    verify(mockExoPlayer, never()).pause();
+    verify(mockExoPlayer, never()).setPlayWhenReady(anyBoolean());
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void onDisposeSurfaceProducerCallbackIsDisconnected() {
+    // Regression test for https://github.com/flutter/flutter/issues/156158.
+    VideoPlayer videoPlayer = createVideoPlayer();
+    verify(mockProducer).setCallback(any());
+
+    videoPlayer.dispose();
+    verify(mockProducer).setCallback(null);
+  }
+
+  @Test
+  public void onInitializedCalledWhenVideoPlayerInitiallyCreated() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    // Pretend we have a video, and capture the registered event listener.
+    when(mockExoPlayer.getVideoSize()).thenReturn(new VideoSize(300, 200));
+    verify(mockExoPlayer).addListener(listenerCaptor.capture());
+    Player.Listener listener = listenerCaptor.getValue();
+
+    // Trigger an event that would trigger onInitialized.
+    listener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockEvents).onInitialized(anyInt(), anyInt(), anyLong(), anyInt());
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void onSurfaceCreatedDoesNotSendInitializeEventAgain() {
+    // The VideoPlayer contract assumes that the event "initialized" is sent exactly once
+    // (duplicate events cause an error to be thrown at the shared Dart layer). This test verifies
+    // that the onInitialized event is sent exactly once per player.
+    //
+    // Regression test for https://github.com/flutter/flutter/issues/154602.
+    VideoPlayer videoPlayer = createVideoPlayer();
+    when(mockExoPlayer.getVideoSize()).thenReturn(new VideoSize(300, 200));
+
+    // Capture the lifecycle events so we can simulate onSurfaceCreated/Destroyed.
+    verify(mockProducer).setCallback(callbackCaptor.capture());
+    TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
+
+    // Trigger destroyed/created.
+    producerLifecycle.onSurfaceDestroyed();
+    simulateSurfaceCreation(producerLifecycle);
+
+    // Initial listener, and the new one from the resume.
+    verify(mockExoPlayer, times(2)).addListener(listenerCaptor.capture());
+    Player.Listener listener = listenerCaptor.getValue();
+
+    // Now trigger that same event, which would happen in the case of a background/resume.
+    listener.onPlaybackStateChanged(Player.STATE_READY);
+
+    // Was not called because it was a result of a background/resume.
+    verify(mockEvents, never()).onInitialized(anyInt(), anyInt(), anyLong(), anyInt());
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void onSurfaceCreatedWithoutDestroyDoesNotRecreate() {
+    // Initially create the video player, which creates the initial surface.
+    VideoPlayer videoPlayer = createVideoPlayer();
+    verify(mockProducer).getSurface();
+
+    // Capture the lifecycle events so we can simulate onSurfaceCreated/Destroyed.
+    verify(mockProducer).setCallback(callbackCaptor.capture());
+    TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
+
+    // Calling onSurfaceCreated does not do anything, since the surface was never destroyed.
+    simulateSurfaceCreation(producerLifecycle);
+    verifyNoMoreInteractions(mockProducer);
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void disposeReleasesExoPlayerBeforeTexture() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
     videoPlayer.dispose();
 
-    verify(mockProducer).release();
-    verify(mockExoPlayer).release();
+    // Regression test for https://github.com/flutter/flutter/issues/156158.
+    // The player must be destroyed before the surface it is writing to.
+    InOrder inOrder = inOrder(mockExoPlayer, mockProducer);
+    inOrder.verify(mockExoPlayer).release();
+    inOrder.verify(mockProducer).release();
+  }
+
+  // TODO(matanlurey): Replace with inline calls to onSurfaceAvailable once
+  // available on stable; see https://github.com/flutter/flutter/issues/155131.
+  // This separate method only exists to scope the suppression.
+  @SuppressWarnings({"deprecation", "removal"})
+  void simulateSurfaceCreation(TextureRegistry.SurfaceProducer.Callback producerLifecycle) {
+    producerLifecycle.onSurfaceCreated();
   }
 }
