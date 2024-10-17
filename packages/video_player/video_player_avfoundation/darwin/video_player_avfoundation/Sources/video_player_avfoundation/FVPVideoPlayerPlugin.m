@@ -7,6 +7,7 @@
 
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
+#import <stdatomic.h>
 
 #import "./include/video_player_avfoundation/AVAssetTrackUtils.h"
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
@@ -21,8 +22,10 @@
 @property(nonatomic, weak, readonly) NSObject<FlutterTextureRegistry> *registry;
 // The output that this updater is managing.
 @property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
-// The last time that has been validated as avaliable according to hasNewPixelBufferForItemTime:.
-@property(nonatomic, assign) CMTime lastKnownAvailableTime;
+// The display link that drives frameUpdater.
+@property(nonatomic) FVPDisplayLink *displayLink;
+// The time interval between screen refresh updates.
+@property(nonatomic) _Atomic CFTimeInterval duration;
 @end
 
 @implementation FVPFrameUpdater
@@ -30,17 +33,18 @@
   NSAssert(self, @"super init cannot be nil");
   if (self == nil) return nil;
   _registry = registry;
-  _lastKnownAvailableTime = kCMTimeInvalid;
   return self;
 }
 
 - (void)displayLinkFired {
-  // Only report a new frame if one is actually available.
-  CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
-  if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
-    _lastKnownAvailableTime = outputItemTime;
-    [_registry textureFrameAvailable:_textureId];
-  }
+  // Display link duration is in an undefined state until displayLinkFired is called at least once
+  // so it should not be used directly.
+  atomic_store_explicit(&_duration, _displayLink.duration, memory_order_relaxed);
+  [_registry textureFrameAvailable:_textureId];
+}
+
+- (CFTimeInterval)duration {
+  return atomic_load_explicit(&_duration, memory_order_relaxed);
 }
 @end
 
@@ -88,6 +92,10 @@
 @property(nonatomic) FVPFrameUpdater *frameUpdater;
 // The display link that drives frameUpdater.
 @property(nonatomic) FVPDisplayLink *displayLink;
+// Latest copied pixel buffer.
+@property(nonatomic) CVPixelBufferRef latestPixelBuffer;
+// The time that represents when the next frame displays.
+@property(nonatomic) CFTimeInterval targetTime;
 // Whether a new frame needs to be provided to the engine regardless of the current play/pause state
 // (e.g., after a seek while paused). If YES, the display link should continue to run until the next
 // frame is successfully provided.
@@ -135,6 +143,7 @@ static void *rateContext = &rateContext;
 }
 
 - (void)dealloc {
+  CVBufferRelease(_latestPixelBuffer);
   if (!_disposed) {
     [self removeKeyValueObservers];
   }
@@ -234,9 +243,14 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
   videoComposition.renderSize = CGSizeMake(width, height);
 
-  // TODO(@recastrodiaz): should we use videoTrack.nominalFrameRate ?
-  // Currently set at a constant 30 FPS
-  videoComposition.frameDuration = CMTimeMake(1, 30);
+  videoComposition.sourceTrackIDForFrameTiming = videoTrack.trackID;
+  if (CMTIME_IS_VALID(videoTrack.minFrameDuration)) {
+    videoComposition.frameDuration = videoTrack.minFrameDuration;
+  } else {
+    NSLog(@"Warning: videoTrack.minFrameDuration for input video is invalid, please report this to "
+          @"https://github.com/flutter/flutter/issues with input video attached.");
+    videoComposition.frameDuration = CMTimeMake(1, 120);
+  }
 
   return videoComposition;
 }
@@ -283,6 +297,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                         error:nil] == AVKeyValueStatusLoaded) {
             // Rotate the video by using a videoComposition and the preferredTransform
             self->_preferredTransform = FVPGetStandardizedTransformForTrack(videoTrack);
+            // Do not use video composition when it is not needed.
+            if (CGAffineTransformIsIdentity(self->_preferredTransform)) {
+              return;
+            }
             // Note:
             // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
             // Video composition can only be used with file-based media and is not supported for
@@ -319,6 +337,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   };
   _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
   frameUpdater.videoOutput = _videoOutput;
+  frameUpdater.displayLink = _displayLink;
 
   [self addObserversForItem:item player:_player];
 
@@ -358,7 +377,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       case AVPlayerItemStatusReadyToPlay:
         [item addOutput:_videoOutput];
         [self setupEventSinkIfReadyToPlay];
-        [self updatePlayingState];
         break;
     }
   } else if (context == presentationSizeContext || context == durationContext) {
@@ -368,7 +386,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       // its presentation size or duration. When these properties are finally set, re-check if
       // all required properties and instantiate the event sink if it is not already set up.
       [self setupEventSinkIfReadyToPlay];
-      [self updatePlayingState];
     }
   } else if (context == playbackLikelyToKeepUpContext) {
     [self updatePlayingState];
@@ -447,6 +464,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     }
 
     _isInitialized = YES;
+    [self updatePlayingState];
+
     _eventSink(@{
       @"event" : @"initialized",
       @"duration" : @(duration),
@@ -543,16 +562,25 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (CVPixelBufferRef)copyPixelBuffer {
+  // Ensure video sampling at regular intervals. This function is not called at exact time intervals
+  // so CACurrentMediaTime returns irregular timestamps which causes missed video frames. The range
+  // outside of which targetTime is reset should be narrow enough to make possible lag as small as
+  // possible and at the same time wide enough to avoid too frequent resets which would lead to
+  // irregular sampling. Ideally there would be a targetTimestamp of display link used by flutter
+  // engine (FlutterTexture can provide timestamp and duration or timestamp and targetTimestamp).
+  CFTimeInterval currentTime = CACurrentMediaTime();
+  if (fabs(self.targetTime - currentTime) > self.frameUpdater.duration / 2) {
+    self.targetTime = currentTime;
+  }
+  self.targetTime += self.frameUpdater.duration;
+
   CVPixelBufferRef buffer = NULL;
-  CMTime outputItemTime = [_videoOutput itemTimeForHostTime:CACurrentMediaTime()];
-  if ([_videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
-    buffer = [_videoOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
-  } else {
-    // If the current time isn't available yet, use the time that was checked when informing the
-    // engine that a frame was available (if any).
-    CMTime lastAvailableTime = self.frameUpdater.lastKnownAvailableTime;
-    if (CMTIME_IS_VALID(lastAvailableTime)) {
-      buffer = [_videoOutput copyPixelBufferForItemTime:lastAvailableTime itemTimeForDisplay:NULL];
+  CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:self.targetTime];
+  if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
+    buffer = [self.videoOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
+    if (buffer) {
+      CVBufferRelease(self.latestPixelBuffer);
+      self.latestPixelBuffer = buffer;
     }
   }
 
@@ -565,7 +593,19 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     }
   }
 
-  return buffer;
+  // Calling textureFrameAvailable only from within displayLinkFired would require a non-trivial
+  // solution to minimize missed video frames due to race between displayLinkFired, copyPixelBuffer
+  // and place where is _textureFrameAvailable reset to false in the flutter engine. Ideally
+  // FlutterTexture would support mode of operation where the copyPixelBuffer is called always or
+  // some other alternative, instead of on demand by calling textureFrameAvailable.
+  if (self.displayLink.running) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [self.frameUpdater.registry textureFrameAvailable:self.frameUpdater.textureId];
+    });
+  }
+
+  // Better to avoid returning NULL as it is unspecified what should be displayed in such a case.
+  return CVBufferRetain(self.latestPixelBuffer);
 }
 
 - (void)onTextureUnregistered:(NSObject<FlutterTexture> *)texture {
