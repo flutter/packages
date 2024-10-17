@@ -86,7 +86,6 @@ enum ConsoleMessageLevel {
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'android.webkit.WebResourceRequest',
-    minAndroidApi: 21,
   ),
 )
 abstract class WebResourceRequest {
@@ -690,7 +689,6 @@ abstract class WebStorage {
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'android.webkit.WebChromeClient.FileChooserParams',
-    minAndroidApi: 21,
   ),
 )
 abstract class FileChooserParams {
@@ -714,7 +712,6 @@ abstract class FileChooserParams {
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'android.webkit.PermissionRequest',
-    minAndroidApi: 21,
   ),
 )
 abstract class PermissionRequest {
