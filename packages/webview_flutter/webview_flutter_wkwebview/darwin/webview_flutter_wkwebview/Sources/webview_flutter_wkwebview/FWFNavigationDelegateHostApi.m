@@ -309,6 +309,14 @@
     return;
   }
   
+//  - (void)didReceiveAuthenticationChallengeForDelegate:(FWFNavigationDelegate *)instance
+//                                           webView:(WKWebView *)webView
+//                                         challenge:(NSURLAuthenticationChallenge *)challenge
+//                                        sslErrorTypeDataBoxed:(FWFSslErrorTypeDataBox *_Nullable)sslErrorTypeDataBoxed
+//                                    x509CertificateDer:(FlutterStandardTypedData *_Nullable)x509CertificateDer
+//                                        completion: (void (^)(FWFAuthenticationChallengeResponse *_Nullable, FlutterError *_Nullable))completion;
+  
+  
   [self.navigationDelegateAPI didReceiveAuthenticationChallengeForDelegate:self webView:webView challenge:challenge sslErrorTypeDataBoxed:nil x509CertificateDer:nil completion:^(FWFAuthenticationChallengeResponse *response, FlutterError *error) {
         NSAssert(!error, @"%@", error);
         if (!error) {

@@ -17,26 +17,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Implementation of WKNavigationDelegate for FWFNavigationDelegateHostApiImpl.
-@interface FWFNavigationDelegate : FWFObject <WKNavigationDelegate>
-@property(readonly, nonnull, nonatomic) FWFNavigationDelegateFlutterApiImpl *navigationDelegateAPI;
-
-- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
-                        instanceManager:(FWFInstanceManager *)instanceManager;
-@end
-
 /// Flutter api implementation for WKNavigationDelegate.
 ///
 /// Handles making callbacks to Dart for a WKNavigationDelegate.
 @interface FWFNavigationDelegateFlutterApiImpl : FWFWKNavigationDelegateFlutterApi
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
                         instanceManager:(FWFInstanceManager *)instanceManager;
-- (void)didReceiveAuthenticationChallengeForDelegate:(FWFNavigationDelegate *)instance
-                                         webView:(WKWebView *)webView
-                                       challenge:(NSURLAuthenticationChallenge *)challenge
-                                      sslErrorTypeDataBoxed:(FWFSslErrorTypeDataBox *_Nullable)sslErrorTypeDataBoxed
-                                  x509CertificateDer:(FlutterStandardTypedData *_Nullable)x509CertificateDer
-                                      completion: (void (^)(FWFAuthenticationChallengeResponse *_Nullable, FlutterError *_Nullable))completion;
+@end
+
+/// Implementation of WKNavigationDelegate for FWFNavigationDelegateHostApiImpl.
+@interface FWFNavigationDelegate : FWFObject <WKNavigationDelegate>
+@property(readonly, nonnull, nonatomic) FWFNavigationDelegateFlutterApiImpl *navigationDelegateAPI;
+
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
+                        instanceManager:(FWFInstanceManager *)instanceManager;
 @end
 
 /// Host api implementation for WKNavigationDelegate.
