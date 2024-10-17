@@ -1,3 +1,40 @@
+## 0.3.1
+
+* Use improved MediaQuery methods.
+
+## 0.3.0
+
+* Adds `inDuration`, `outDuration`, `inCurve`, and `outCurve` parameters for 
+configuring additional `SlotLayoutConfig` animation behavior.
+* **BREAKING CHANGES**:
+  * Removes `duration` parameter from `SlotLayoutConfig`.
+
+## 0.2.6
+
+* Add new sample for using AdaptiveScaffold with GoRouter.
+
+## 0.2.5
+
+* Fix breakpoint not being active in certain cases like foldables.
+
+## 0.2.4
+
+* Compare breakpoints to each other using operators.
+
+## 0.2.3
+
+* Update the spacing and margins to the latest material m3 specs.
+* Add `margin`, `spacing`, `padding`, `recommendedPanes` and `maxPanes` with their Material value to `Breakpoint`.
+
+## 0.2.2
+
+* Fix a bug where landscape would not show body when using `andUp`.
+
+## 0.2.1
+
+* Add `Breakpoint.activeBreakpointOf(context)` to find the currently active breakpoint.
+* Don't check for height on Desktop platforms.
+
 ## 0.2.0
 
 * Add breakpoints for mediumLarge and extraLarge.

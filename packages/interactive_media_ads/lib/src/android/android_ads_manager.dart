@@ -49,6 +49,26 @@ class AndroidAdsManager extends PlatformAdsManager {
     return _manager.start();
   }
 
+  @override
+  Future<void> discardAdBreak() {
+    return _manager.discardAdBreak();
+  }
+
+  @override
+  Future<void> pause() {
+    return _manager.pause();
+  }
+
+  @override
+  Future<void> resume() {
+    return _manager.resume();
+  }
+
+  @override
+  Future<void> skip() {
+    return _manager.skip();
+  }
+
   // This value is created in a static method because the callback methods for
   // any wrapped classes must not reference the encapsulating object. This is to
   // prevent a circular reference that prevents garbage collection.

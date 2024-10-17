@@ -1,6 +1,31 @@
-## NEXT
+## 14.3.0
 
-* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+- Added missing implementation for the routerNeglect parameter in GoRouter.
+
+## 14.2.9
+
+- Relaxes route path requirements. Both root and child routes can now start with or without '/'.
+
+## 14.2.8
+
+- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView. 
+
+## 14.2.7
+
+- Fixes issue so that the parseRouteInformationWithContext can handle non-http Uris.
+
+## 14.2.6
+
+- Fixes replace and pushReplacement uri when only one route match in current route match list.
+
+## 14.2.5
+
+- Fixes an issue where android back button pops pages in the wrong order.
+
+## 14.2.4
+
+- Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+- Fix GoRouter configuration in `upgrading.md`
 
 ## 14.2.3
 

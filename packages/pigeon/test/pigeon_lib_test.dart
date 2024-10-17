@@ -161,6 +161,10 @@ class Output1 {
   String? output;
 }
 
+class Unused {
+  String? field;
+}
+
 @HostApi()
 abstract class Api1 {
   Output1 doit(Input1 input);
@@ -169,7 +173,7 @@ abstract class Api1 {
     final ParseResults parseResult = parseSource(code);
     expect(parseResult.errors.length, equals(0));
     final Root root = parseResult.root;
-    expect(root.classes.length, equals(2));
+    expect(root.classes.length, equals(3));
     expect(root.apis.length, equals(1));
     expect(root.apis[0].name, equals('Api1'));
     expect(root.apis[0].methods.length, equals(1));
@@ -181,15 +185,19 @@ abstract class Api1 {
 
     Class? input;
     Class? output;
+    Class? unused;
     for (final Class classDefinition in root.classes) {
       if (classDefinition.name == 'Input1') {
         input = classDefinition;
       } else if (classDefinition.name == 'Output1') {
         output = classDefinition;
+      } else if (classDefinition.name == 'Unused') {
+        unused = classDefinition;
       }
     }
     expect(input, isNotNull);
     expect(output, isNotNull);
+    expect(unused, isNotNull);
 
     expect(input?.fields.length, equals(1));
     expect(input?.fields[0].name, equals('input'));
@@ -200,6 +208,11 @@ abstract class Api1 {
     expect(output?.fields[0].name, equals('output'));
     expect(output?.fields[0].type.baseName, equals('String'));
     expect(output?.fields[0].type.isNullable, isTrue);
+
+    expect(unused?.fields.length, equals(1));
+    expect(unused?.fields[0].name, equals('field'));
+    expect(unused?.fields[0].type.baseName, equals('String'));
+    expect(unused?.fields[0].type.isNullable, isTrue);
   });
 
   test('invalid datatype', () {
@@ -729,25 +742,6 @@ abstract class Api {
     expect(field.type.typeArguments.length, 1);
     expect(field.type.typeArguments[0].baseName, 'List');
     expect(field.type.typeArguments[0].typeArguments[0].baseName, 'int');
-  });
-
-  test('error nonnull type argument', () {
-    const String code = '''
-class Foo {
-  List<int> list;
-}
-
-@HostApi()
-abstract class Api {
-  void doit(Foo foo);
-}
-''';
-    final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(1));
-    expect(parseResult.errors[0].message,
-        contains('Generic type parameters must be nullable'));
-    expect(parseResult.errors[0].message, contains('"list"'));
-    expect(parseResult.errors[0].lineNumber, 2);
   });
 
   test('enums argument host', () {

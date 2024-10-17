@@ -124,7 +124,12 @@ static FlutterError *getFlutterError(NSError *error) {
                                                        FlutterError *_Nullable))completion {
   [self.signIn restorePreviousSignInWithCompletion:^(GIDGoogleUser *_Nullable user,
                                                      NSError *_Nullable error) {
-    [self didSignInForUser:user withServerAuthCode:nil completion:completion error:error];
+    if (user != nil) {
+      [self didSignInForUser:user withServerAuthCode:nil completion:completion];
+    } else {
+      // Forward all errors and let Dart side decide how to handle.
+      completion(nil, getFlutterError(error));
+    }
   }];
 }
 
@@ -152,17 +157,14 @@ static FlutterError *getFlutterError(NSError *error) {
     [self signInWithHint:nil
         additionalScopes:self.requestedScopes.allObjects
               completion:^(GIDSignInResult *_Nullable signInResult, NSError *_Nullable error) {
-                GIDGoogleUser *user;
-                NSString *serverAuthCode;
                 if (signInResult) {
-                  user = signInResult.user;
-                  serverAuthCode = signInResult.serverAuthCode;
+                  [self didSignInForUser:signInResult.user
+                      withServerAuthCode:signInResult.serverAuthCode
+                              completion:completion];
+                } else {
+                  // Forward all errors and let Dart side decide how to handle.
+                  completion(nil, getFlutterError(error));
                 }
-
-                [self didSignInForUser:user
-                    withServerAuthCode:serverAuthCode
-                            completion:completion
-                                 error:error];
               }];
   } @catch (NSException *e) {
     completion(nil, [FlutterError errorWithCode:@"google_sign_in" message:e.reason details:e.name]);
@@ -291,30 +293,21 @@ static FlutterError *getFlutterError(NSError *error) {
 
 - (void)didSignInForUser:(GIDGoogleUser *)user
       withServerAuthCode:(NSString *_Nullable)serverAuthCode
-              completion:(nonnull void (^)(FSIUserData *_Nullable,
-                                           FlutterError *_Nullable))completion
-                   error:(NSError *)error {
-  if (error != nil) {
-    // Forward all errors and let Dart side decide how to handle.
-    completion(nil, getFlutterError(error));
-  } else {
-    NSURL *photoUrl;
-    if (user.profile.hasImage) {
-      // Placeholder that will be replaced by on the Dart side based on screen size.
-      photoUrl = [user.profile imageURLWithDimension:1337];
-    }
-    NSString *idToken;
-    if (user.idToken) {
-      idToken = user.idToken.tokenString;
-    }
-    completion([FSIUserData makeWithDisplayName:user.profile.name
-                                          email:user.profile.email
-                                         userId:user.userID
-                                       photoUrl:[photoUrl absoluteString]
-                                 serverAuthCode:serverAuthCode
-                                        idToken:idToken],
-               nil);
+              completion:
+                  (nonnull void (^)(FSIUserData *_Nullable, FlutterError *_Nullable))completion {
+  NSURL *photoUrl;
+  if (user.profile.hasImage) {
+    // Placeholder that will be replaced by on the Dart side based on screen size.
+    photoUrl = [user.profile imageURLWithDimension:1337];
   }
+
+  completion([FSIUserData makeWithDisplayName:user.profile.name
+                                        email:user.profile.email
+                                       userId:user.userID
+                                     photoUrl:photoUrl.absoluteString
+                               serverAuthCode:serverAuthCode
+                                      idToken:user.idToken.tokenString],
+             nil);
 }
 
 #if TARGET_OS_IOS

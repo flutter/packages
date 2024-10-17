@@ -40,7 +40,7 @@ class MessageData {
   String? name;
   String? description;
   Code code;
-  Map<String?, String?> data;
+  Map<String, String> data;
 }
 
 @HostApi()

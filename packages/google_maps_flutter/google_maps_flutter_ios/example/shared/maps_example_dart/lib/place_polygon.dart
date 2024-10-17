@@ -226,7 +226,7 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
                         TextButton(
                           onPressed: (selectedId == null)
                               ? null
-                              : ((polygons[selectedId]!.holes.isNotEmpty)
+                              : (polygons[selectedId]!.holes.isNotEmpty
                                   ? null
                                   : () => _addHoles(selectedId)),
                           child: const Text('add holes'),
@@ -234,7 +234,7 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
                         TextButton(
                           onPressed: (selectedId == null)
                               ? null
-                              : ((polygons[selectedId]!.holes.isEmpty)
+                              : (polygons[selectedId]!.holes.isEmpty
                                   ? null
                                   : () => _removeHoles(selectedId)),
                           child: const Text('remove holes'),

@@ -68,28 +68,31 @@ void main() {
       expect(find.byType(DummyScreen), findsOneWidget);
     });
 
+    testWidgets('pushReplacement and replace when only one matches',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(name: '1', path: '/', builder: dummy),
+        GoRoute(name: '2', path: '/a', builder: dummy),
+        GoRoute(name: '3', path: '/b', builder: dummy),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      expect(router.routerDelegate.currentConfiguration.uri.path, '/');
+
+      router.replace<void>('/a');
+      await tester.pumpAndSettle();
+      // When the imperative match is the only match in the route match list,
+      // it should update the uri.
+      expect(router.routerDelegate.currentConfiguration.uri.path, '/a');
+
+      router.pushReplacement<void>('/b');
+      await tester.pumpAndSettle();
+      expect(router.routerDelegate.currentConfiguration.uri.path, '/b');
+    });
+
     test('empty path', () {
       expect(() {
         GoRoute(path: '');
-      }, throwsA(isAssertionError));
-    });
-
-    test('leading / on sub-route', () {
-      expect(() {
-        GoRouter(
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/',
-              builder: dummy,
-              routes: <GoRoute>[
-                GoRoute(
-                  path: '/foo',
-                  builder: dummy,
-                ),
-              ],
-            ),
-          ],
-        );
       }, throwsA(isAssertionError));
     });
 
@@ -109,16 +112,6 @@ void main() {
             ),
           ],
         );
-      }, throwsA(isAssertionError));
-    });
-
-    testWidgets('lack of leading / on top-level route',
-        (WidgetTester tester) async {
-      await expectLater(() async {
-        final List<GoRoute> routes = <GoRoute>[
-          GoRoute(path: 'foo', builder: dummy),
-        ];
-        await createRouter(routes, tester);
       }, throwsA(isAssertionError));
     });
 
@@ -396,6 +389,67 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(dialog), findsNothing);
       expect(find.byKey(settings), findsOneWidget);
+    });
+
+    testWidgets('android back button pop in correct order',
+        (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/141906.
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+            path: '/',
+            builder: (_, __) => const Text('home'),
+            routes: <RouteBase>[
+              ShellRoute(
+                builder: (
+                  BuildContext context,
+                  GoRouterState state,
+                  Widget child,
+                ) {
+                  return Column(
+                    children: <Widget>[
+                      const Text('shell'),
+                      child,
+                    ],
+                  );
+                },
+                routes: <GoRoute>[
+                  GoRoute(
+                    path: 'page',
+                    builder: (BuildContext context, __) {
+                      return TextButton(
+                        onPressed: () {
+                          Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute<void>(
+                                builder: (BuildContext context) {
+                              return const Text('pageless');
+                            }),
+                          );
+                        },
+                        child: const Text('page'),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ]),
+      ];
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/page');
+      expect(find.text('shell'), findsOneWidget);
+      expect(find.text('page'), findsOneWidget);
+
+      await tester.tap(find.text('page'));
+      await tester.pumpAndSettle();
+      expect(find.text('shell'), findsNothing);
+      expect(find.text('page'), findsNothing);
+      expect(find.text('pageless'), findsOneWidget);
+
+      final bool result = await router.routerDelegate.popRoute();
+      expect(result, isTrue);
+      await tester.pumpAndSettle();
+      expect(find.text('shell'), findsOneWidget);
+      expect(find.text('page'), findsOneWidget);
+      expect(find.text('pageless'), findsNothing);
     });
 
     testWidgets('can correctly pop stacks of repeated pages',
@@ -5418,6 +5472,94 @@ void main() {
         routerConfig: router,
       ),
     );
+  });
+
+  testWidgets('should allow route paths without leading /',
+      (WidgetTester tester) async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/', // root cannot be empty (existing assert)
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
+        routes: <RouteBase>[
+          GoRoute(
+            path: 'child-route',
+            builder: (BuildContext context, GoRouterState state) =>
+                const Text('/child-route'),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'grand-child-route',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('/grand-child-route'),
+              ),
+              GoRoute(
+                path: 'redirected-grand-child-route',
+                redirect: (BuildContext context, GoRouterState state) =>
+                    '/child-route',
+              ),
+            ],
+          )
+        ],
+      ),
+    ];
+
+    final GoRouter router = await createRouter(routes, tester,
+        initialLocation: '/child-route/grand-child-route');
+    RouteMatchList matches = router.routerDelegate.currentConfiguration;
+    expect(matches.matches, hasLength(3));
+    expect(matches.uri.toString(), '/child-route/grand-child-route');
+    expect(find.text('/grand-child-route'), findsOneWidget);
+
+    router.go('/child-route/redirected-grand-child-route');
+    await tester.pumpAndSettle();
+    matches = router.routerDelegate.currentConfiguration;
+    expect(matches.matches, hasLength(2));
+    expect(matches.uri.toString(), '/child-route');
+    expect(find.text('/child-route'), findsOneWidget);
+  });
+
+  testWidgets('should allow route paths with leading /',
+      (WidgetTester tester) async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/child-route',
+            builder: (BuildContext context, GoRouterState state) =>
+                const Text('/child-route'),
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/grand-child-route',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('/grand-child-route'),
+              ),
+              GoRoute(
+                path: '/redirected-grand-child-route',
+                redirect: (BuildContext context, GoRouterState state) =>
+                    '/child-route',
+              ),
+            ],
+          )
+        ],
+      ),
+    ];
+
+    final GoRouter router = await createRouter(routes, tester,
+        initialLocation: '/child-route/grand-child-route');
+    RouteMatchList matches = router.routerDelegate.currentConfiguration;
+    expect(matches.matches, hasLength(3));
+    expect(matches.uri.toString(), '/child-route/grand-child-route');
+    expect(find.text('/grand-child-route'), findsOneWidget);
+
+    router.go('/child-route/redirected-grand-child-route');
+    await tester.pumpAndSettle();
+    matches = router.routerDelegate.currentConfiguration;
+    expect(matches.matches, hasLength(2));
+    expect(matches.uri.toString(), '/child-route');
+    expect(find.text('/child-route'), findsOneWidget);
   });
 }
 

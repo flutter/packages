@@ -85,9 +85,7 @@ class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
   Future<Map<String, Object>> getAllWithParameters(
       GetAllParameters parameters) async {
     final PreferencesFilter filter = parameters.filter;
-    final Map<String?, Object?> data =
-        await _api.getAll(filter.prefix, filter.allowList?.toList());
-    return data.cast<String, Object>();
+    return _api.getAll(filter.prefix, filter.allowList?.toList());
   }
 
   @override

@@ -322,7 +322,7 @@ class SKProductMessage {
   SKProductMessage({
     required this.productIdentifier,
     required this.localizedTitle,
-    required this.localizedDescription,
+    this.localizedDescription,
     required this.priceLocale,
     this.subscriptionGroupIdentifier,
     required this.price,
@@ -335,7 +335,7 @@ class SKProductMessage {
 
   String localizedTitle;
 
-  String localizedDescription;
+  String? localizedDescription;
 
   SKPriceLocaleMessage priceLocale;
 
@@ -368,7 +368,7 @@ class SKProductMessage {
     return SKProductMessage(
       productIdentifier: result[0]! as String,
       localizedTitle: result[1]! as String,
-      localizedDescription: result[2]! as String,
+      localizedDescription: result[2] as String?,
       priceLocale: SKPriceLocaleMessage.decode(result[3]! as List<Object?>),
       subscriptionGroupIdentifier: result[4] as String?,
       price: result[5]! as String,

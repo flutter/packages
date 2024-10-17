@@ -32,8 +32,6 @@ ProductDetailsResponseWrapper productDetailsResponseWrapperFromPlatform(
   return ProductDetailsResponseWrapper(
       billingResult: resultWrapperFromPlatform(response.billingResult),
       productDetailsList: response.productDetails
-          // See TODOs in messages.dart for why casting away nullability is safe.
-          .map((PlatformProductDetails? p) => p!)
           .map(productDetailsWrapperFromPlatform)
           .toList());
 }
@@ -50,9 +48,7 @@ ProductDetailsWrapper productDetailsWrapperFromPlatform(
     oneTimePurchaseOfferDetails: oneTimePurchaseOfferDetailsWrapperFromPlatform(
         product.oneTimePurchaseOfferDetails),
     subscriptionOfferDetails: product.subscriptionOfferDetails
-        // See comment in messages.dart for why casting away nullability is safe.
-        ?.map((PlatformSubscriptionOfferDetails? o) => o!)
-        .map(subscriptionOfferDetailsWrapperFromPlatform)
+        ?.map(subscriptionOfferDetailsWrapperFromPlatform)
         .toList(),
   );
 }
@@ -77,8 +73,6 @@ PurchasesHistoryResult purchaseHistoryResultFromPlatform(
   return PurchasesHistoryResult(
     billingResult: resultWrapperFromPlatform(response.billingResult),
     purchaseHistoryRecordList: response.purchases
-        // See comment in messages.dart for why casting away nullability is safe.
-        .map((PlatformPurchaseHistoryRecord? r) => r!)
         .map(purchaseHistoryRecordWrapperFromPlatform)
         .toList(),
   );
@@ -91,8 +85,7 @@ PurchaseHistoryRecordWrapper purchaseHistoryRecordWrapperFromPlatform(
     purchaseTime: record.purchaseTime,
     purchaseToken: record.purchaseToken,
     signature: record.signature,
-    // See comment in messages.dart for why casting away nullability is safe.
-    products: record.products.map((String? s) => s!).toList(),
+    products: record.products,
     originalJson: record.originalJson,
     developerPayload: record.developerPayload,
   );
@@ -104,11 +97,7 @@ PurchasesResultWrapper purchasesResultWrapperFromPlatform(
     {bool forceOkResponseCode = false}) {
   return PurchasesResultWrapper(
     billingResult: resultWrapperFromPlatform(response.billingResult),
-    purchasesList: response.purchases
-        // See TODOs in messages.dart for why casting away nullability is safe.
-        .map((PlatformPurchase? p) => p!)
-        .map(purchaseWrapperFromPlatform)
-        .toList(),
+    purchasesList: response.purchases.map(purchaseWrapperFromPlatform).toList(),
     responseCode: forceOkResponseCode
         ? BillingResponse.ok
         : const BillingResponseConverter()
@@ -185,8 +174,7 @@ PurchaseWrapper purchaseWrapperFromPlatform(PlatformPurchase purchase) {
     purchaseTime: purchase.purchaseTime,
     purchaseToken: purchase.purchaseToken,
     signature: purchase.signature,
-    // See comment in messages.dart for why casting away nullability is safe.
-    products: purchase.products.map((String? s) => s!).toList(),
+    products: purchase.products,
     isAutoRenewing: purchase.isAutoRenewing,
     originalJson: purchase.originalJson,
     isAcknowledged: purchase.isAcknowledged,
@@ -223,14 +211,10 @@ SubscriptionOfferDetailsWrapper subscriptionOfferDetailsWrapperFromPlatform(
   return SubscriptionOfferDetailsWrapper(
     basePlanId: offer.basePlanId,
     offerId: offer.offerId,
-    // See comment in messages.dart for why casting away nullability is safe.
-    offerTags: offer.offerTags.map((String? s) => s!).toList(),
+    offerTags: offer.offerTags,
     offerIdToken: offer.offerToken,
-    pricingPhases: offer.pricingPhases
-        // See comment in messages.dart for why casting away nullability is safe.
-        .map((PlatformPricingPhase? p) => p!)
-        .map(pricingPhaseWrapperFromPlatform)
-        .toList(),
+    pricingPhases:
+        offer.pricingPhases.map(pricingPhaseWrapperFromPlatform).toList(),
   );
 }
 
@@ -240,11 +224,8 @@ UserChoiceDetailsWrapper userChoiceDetailsFromPlatform(
   return UserChoiceDetailsWrapper(
     originalExternalTransactionId: details.originalExternalTransactionId ?? '',
     externalTransactionToken: details.externalTransactionToken,
-    products: details.products
-        // See comment in messages.dart for why casting away nullability is safe.
-        .map((PlatformUserChoiceProduct? p) => p!)
-        .map(userChoiceDetailsProductFromPlatform)
-        .toList(),
+    products:
+        details.products.map(userChoiceDetailsProductFromPlatform).toList(),
   );
 }
 

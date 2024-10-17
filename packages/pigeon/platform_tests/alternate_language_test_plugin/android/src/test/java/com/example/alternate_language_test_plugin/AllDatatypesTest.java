@@ -15,6 +15,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 
 public class AllDatatypesTest {
@@ -67,19 +69,27 @@ public class AllDatatypesTest {
     assertTrue(
         floatArraysEqual(
             firstTypes.getANullableFloatArray(), secondTypes.getANullableFloatArray()));
-    assertArrayEquals(
-        firstTypes.getNullableMapWithObject().values().toArray(),
-        secondTypes.getNullableMapWithObject().values().toArray());
     assertEquals(firstTypes.getANullableObject(), secondTypes.getANullableObject());
     assertArrayEquals(firstTypes.getList().toArray(), secondTypes.getList().toArray());
     assertArrayEquals(firstTypes.getStringList().toArray(), secondTypes.getStringList().toArray());
     assertArrayEquals(firstTypes.getBoolList().toArray(), secondTypes.getBoolList().toArray());
     assertArrayEquals(firstTypes.getDoubleList().toArray(), secondTypes.getDoubleList().toArray());
     assertArrayEquals(firstTypes.getIntList().toArray(), secondTypes.getIntList().toArray());
+    assertArrayEquals(firstTypes.getListList().toArray(), secondTypes.getListList().toArray());
     assertArrayEquals(
         firstTypes.getMap().keySet().toArray(), secondTypes.getMap().keySet().toArray());
     assertArrayEquals(
         firstTypes.getMap().values().toArray(), secondTypes.getMap().values().toArray());
+    assertArrayEquals(
+        firstTypes.getStringMap().keySet().toArray(),
+        secondTypes.getStringMap().keySet().toArray());
+    assertArrayEquals(
+        firstTypes.getStringMap().values().toArray(),
+        secondTypes.getStringMap().values().toArray());
+    assertArrayEquals(
+        firstTypes.getIntMap().keySet().toArray(), secondTypes.getIntMap().keySet().toArray());
+    assertArrayEquals(
+        firstTypes.getIntMap().values().toArray(), secondTypes.getIntMap().values().toArray());
 
     // Also check that the implementation of equality works.
     assertEquals(firstTypes, secondTypes);
@@ -120,13 +130,15 @@ public class AllDatatypesTest {
             assertNull(everything.getANullable4ByteArray());
             assertNull(everything.getANullable8ByteArray());
             assertNull(everything.getANullableFloatArray());
-            assertNull(everything.getNullableMapWithObject());
             assertNull(everything.getList());
             assertNull(everything.getDoubleList());
             assertNull(everything.getIntList());
             assertNull(everything.getStringList());
             assertNull(everything.getBoolList());
+            assertNull(everything.getListList());
             assertNull(everything.getMap());
+            assertNull(everything.getStringMap());
+            assertNull(everything.getIntMap());
           }
 
           public void error(Throwable error) {
@@ -136,14 +148,8 @@ public class AllDatatypesTest {
     assertTrue(didCall[0]);
   }
 
-  private static HashMap<Object, Object> makeMap(String key, Integer value) {
-    HashMap<Object, Object> result = new HashMap<Object, Object>();
-    result.put(key, value);
-    return result;
-  }
-
-  private static HashMap<String, Object> makeStringMap(String key, Integer value) {
-    HashMap<String, Object> result = new HashMap<String, Object>();
+  private static <K, J> HashMap<K, J> makeMap(K key, J value) {
+    HashMap<K, J> result = new HashMap<K, J>();
     result.put(key, value);
     return result;
   }
@@ -163,7 +169,15 @@ public class AllDatatypesTest {
   @Test
   public void hasValues() {
     // Not inline due to warnings about an ambiguous varargs call when inline.
-    final Object[] genericList = new Boolean[] {true, false};
+    final List<Object> genericList = Arrays.asList(new Object[] {"hello", 1, true, false, null});
+    final List<List<Object>> listList = new ArrayList<>(Arrays.asList());
+    final List<Map<Object, Object>> mapList = new ArrayList<>(Arrays.asList());
+    final Map<Long, List<Object>> listMap = new HashMap<Long, List<Object>>();
+    final Map<Long, Map<Object, Object>> mapMap = new HashMap<Long, Map<Object, Object>>();
+    listList.add(genericList);
+    mapList.add(makeMap("hello", 1234));
+    listMap.put(1L, genericList);
+    mapMap.put(1L, makeMap("hello", 1234));
     AllTypes allEverything =
         new AllTypes.Builder()
             .setABool(false)
@@ -178,12 +192,24 @@ public class AllDatatypesTest {
             .setAnEnum(CoreTests.AnEnum.ONE)
             .setAnotherEnum(CoreTests.AnotherEnum.JUST_IN_CASE)
             .setAnObject(0)
+            .setList(genericList)
             .setBoolList(Arrays.asList(new Boolean[] {true, false}))
             .setDoubleList(Arrays.asList(new Double[] {0.5, 0.25, 1.5, 1.25}))
             .setIntList(Arrays.asList(new Long[] {1l, 2l, 3l, 4l}))
-            .setList(Arrays.asList(genericList))
             .setStringList(Arrays.asList(new String[] {"string", "another one"}))
+            .setObjectList(genericList)
+            .setEnumList(
+                Arrays.asList(
+                    new CoreTests.AnEnum[] {CoreTests.AnEnum.ONE, CoreTests.AnEnum.FORTY_TWO}))
+            .setListList(listList)
+            .setMapList(mapList)
             .setMap(makeMap("hello", 1234))
+            .setIntMap(makeMap(1L, 0L))
+            .setStringMap(makeMap("hello", "you"))
+            .setObjectMap(makeMap("E", 4321))
+            .setEnumMap(makeMap(CoreTests.AnEnum.ONE, CoreTests.AnEnum.FOUR_HUNDRED_TWENTY_TWO))
+            .setListMap(listMap)
+            .setMapMap(mapMap)
             .build();
 
     AllNullableTypes everything =
@@ -196,14 +222,16 @@ public class AllDatatypesTest {
             .setANullable4ByteArray(new int[] {1, 2, 3, 4})
             .setANullable8ByteArray(new long[] {1, 2, 3, 4})
             .setANullableFloatArray(new double[] {0.5, 0.25, 1.5, 1.25})
-            .setNullableMapWithObject(makeStringMap("hello", 1234))
             .setANullableObject(0)
+            .setList(Arrays.asList(genericList))
             .setBoolList(Arrays.asList(new Boolean[] {true, false}))
             .setDoubleList(Arrays.asList(new Double[] {0.5, 0.25, 1.5, 1.25}))
             .setIntList(Arrays.asList(new Long[] {1l, 2l, 3l, 4l}))
-            .setList(Arrays.asList(genericList))
             .setStringList(Arrays.asList(new String[] {"string", "another one"}))
+            .setListList(listList)
             .setMap(makeMap("hello", 1234))
+            .setStringMap(makeMap("hello", "you"))
+            .setIntMap(makeMap(2L, -2L))
             .build();
 
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
@@ -237,18 +265,5 @@ public class AllDatatypesTest {
           }
         });
     assertTrue(didCall[0]);
-  }
-
-  @Test
-  public void integerToLong() {
-    AllNullableTypes everything = new AllNullableTypes();
-    everything.setANullableInt(123L);
-    ArrayList<Object> list = everything.toList();
-    assertNotNull(list);
-    assertNull(list.get(0));
-    assertNotNull(list.get(1));
-    list.set(1, 123);
-    AllNullableTypes readEverything = AllNullableTypes.fromList(list);
-    assertEquals(readEverything.getANullableInt(), everything.getANullableInt());
   }
 }

@@ -66,9 +66,9 @@ void main() {
   group('getEnrolledBiometrics', () {
     test('translates values', () async {
       when(api.getEnrolledBiometrics())
-          .thenAnswer((_) async => <AuthClassificationWrapper>[
-                AuthClassificationWrapper(value: AuthClassification.weak),
-                AuthClassificationWrapper(value: AuthClassification.strong),
+          .thenAnswer((_) async => <AuthClassification>[
+                AuthClassification.weak,
+                AuthClassification.strong,
               ]);
 
       final List<BiometricType> result = await plugin.getEnrolledBiometrics();
@@ -81,7 +81,7 @@ void main() {
 
     test('handles empty', () async {
       when(api.getEnrolledBiometrics())
-          .thenAnswer((_) async => <AuthClassificationWrapper>[]);
+          .thenAnswer((_) async => <AuthClassification>[]);
 
       final List<BiometricType> result = await plugin.getEnrolledBiometrics();
 

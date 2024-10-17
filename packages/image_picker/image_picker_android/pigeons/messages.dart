@@ -89,44 +89,32 @@ class CacheRetrievalResult {
   final CacheRetrievalError? error;
 
   /// The results from the last selection, if any.
-  ///
-  /// Elements must not be null, by convention. See
-  /// https://github.com/flutter/flutter/issues/97848
-  final List<String?> paths;
+  final List<String> paths;
 }
 
 @HostApi(dartHostTestHandler: 'TestHostImagePickerApi')
 abstract class ImagePickerApi {
   /// Selects images and returns their paths.
-  ///
-  /// Elements must not be null, by convention. See
-  /// https://github.com/flutter/flutter/issues/97848
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   @async
-  List<String?> pickImages(
+  List<String> pickImages(
     SourceSpecification source,
     ImageSelectionOptions options,
     GeneralOptions generalOptions,
   );
 
   /// Selects video and returns their paths.
-  ///
-  /// Elements must not be null, by convention. See
-  /// https://github.com/flutter/flutter/issues/97848
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   @async
-  List<String?> pickVideos(
+  List<String> pickVideos(
     SourceSpecification source,
     VideoSelectionOptions options,
     GeneralOptions generalOptions,
   );
 
   /// Selects images and videos and returns their paths.
-  ///
-  /// Elements must not be null, by convention. See
-  /// https://github.com/flutter/flutter/issues/97848
   @async
-  List<String?> pickMedia(
+  List<String> pickMedia(
     MediaSelectionOptions mediaSelectionOptions,
     GeneralOptions generalOptions,
   );
