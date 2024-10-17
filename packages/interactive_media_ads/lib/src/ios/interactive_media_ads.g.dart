@@ -171,6 +171,8 @@ class PigeonInstanceManager {
         pigeon_instanceManager: instanceManager);
     IMAFriendlyObstruction.pigeon_setUpMessageHandlers(
         pigeon_instanceManager: instanceManager);
+    IMACompanionAd.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -3342,7 +3344,7 @@ class NSObject extends PigeonInternalProxyApiBaseClass {
 /// purposes.
 ///
 /// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Classes/IMAFriendlyObstruction.html.
-class IMAFriendlyObstruction extends PigeonInternalProxyApiBaseClass {
+class IMAFriendlyObstruction extends NSObject {
   /// Initializes a friendly obstruction.
   IMAFriendlyObstruction({
     super.pigeon_binaryMessenger,
@@ -3350,7 +3352,7 @@ class IMAFriendlyObstruction extends PigeonInternalProxyApiBaseClass {
     required this.view,
     required this.purpose,
     this.detailedReason,
-  }) {
+  }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -3397,7 +3399,7 @@ class IMAFriendlyObstruction extends PigeonInternalProxyApiBaseClass {
     required this.view,
     required this.purpose,
     this.detailedReason,
-  });
+  }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec
       _pigeonVar_codecIMAFriendlyObstruction =
@@ -3489,6 +3491,120 @@ class IMAFriendlyObstruction extends PigeonInternalProxyApiBaseClass {
       view: view,
       purpose: purpose,
       detailedReason: detailedReason,
+    );
+  }
+}
+
+/// An object that holds data corresponding to the companion ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMACompanionAd.
+class IMACompanionAd extends NSObject {
+  /// Constructs [IMACompanionAd] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  IMACompanionAd.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    this.resourceValue,
+    this.apiFramework,
+    required this.width,
+    required this.height,
+  }) : super.pigeon_detached();
+
+  /// The value for the resource of this companion.
+  final String? resourceValue;
+
+  /// The API needed to execute this ad, or nil if unavailable.
+  final String? apiFramework;
+
+  /// The width of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  final int width;
+
+  /// The height of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  final int height;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    IMACompanionAd Function(
+      String? resourceValue,
+      String? apiFramework,
+      int width,
+      int height,
+    )? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.IMACompanionAd.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMACompanionAd.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMACompanionAd.pigeon_newInstance was null, expected non-null int.');
+          final String? arg_resourceValue = (args[1] as String?);
+          final String? arg_apiFramework = (args[2] as String?);
+          final int? arg_width = (args[3] as int?);
+          assert(arg_width != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMACompanionAd.pigeon_newInstance was null, expected non-null int.');
+          final int? arg_height = (args[4] as int?);
+          assert(arg_height != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMACompanionAd.pigeon_newInstance was null, expected non-null int.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call(arg_resourceValue, arg_apiFramework,
+                      arg_width!, arg_height!) ??
+                  IMACompanionAd.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    resourceValue: arg_resourceValue,
+                    apiFramework: arg_apiFramework,
+                    width: arg_width!,
+                    height: arg_height!,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  IMACompanionAd pigeon_copy() {
+    return IMACompanionAd.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      resourceValue: resourceValue,
+      apiFramework: apiFramework,
+      width: width,
+      height: height,
     );
   }
 }

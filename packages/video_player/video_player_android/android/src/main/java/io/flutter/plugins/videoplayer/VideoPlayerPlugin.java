@@ -140,34 +140,50 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     return new TextureMessage.Builder().setTextureId(handle.id()).build();
   }
 
+  @NonNull
+  private VideoPlayer getPlayer(long textureId) {
+    VideoPlayer player = videoPlayers.get(textureId);
+
+    // Avoid a very ugly un-debuggable NPE that results in returning a null player.
+    if (player == null) {
+      String message = "No player found with textureId <" + textureId + ">";
+      if (videoPlayers.size() == 0) {
+        message += " and no active players created by the plugin.";
+      }
+      throw new IllegalStateException(message);
+    }
+
+    return player;
+  }
+
   public void dispose(@NonNull TextureMessage arg) {
-    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    VideoPlayer player = getPlayer(arg.getTextureId());
     player.dispose();
     videoPlayers.remove(arg.getTextureId());
   }
 
   public void setLooping(@NonNull LoopingMessage arg) {
-    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    VideoPlayer player = getPlayer(arg.getTextureId());
     player.setLooping(arg.getIsLooping());
   }
 
   public void setVolume(@NonNull VolumeMessage arg) {
-    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    VideoPlayer player = getPlayer(arg.getTextureId());
     player.setVolume(arg.getVolume());
   }
 
   public void setPlaybackSpeed(@NonNull PlaybackSpeedMessage arg) {
-    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    VideoPlayer player = getPlayer(arg.getTextureId());
     player.setPlaybackSpeed(arg.getSpeed());
   }
 
   public void play(@NonNull TextureMessage arg) {
-    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    VideoPlayer player = getPlayer(arg.getTextureId());
     player.play();
   }
 
   public @NonNull PositionMessage position(@NonNull TextureMessage arg) {
-    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    VideoPlayer player = getPlayer(arg.getTextureId());
     PositionMessage result =
         new PositionMessage.Builder()
             .setPosition(player.getPosition())
@@ -178,12 +194,12 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   public void seekTo(@NonNull PositionMessage arg) {
-    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    VideoPlayer player = getPlayer(arg.getTextureId());
     player.seekTo(arg.getPosition().intValue());
   }
 
   public void pause(@NonNull TextureMessage arg) {
-    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    VideoPlayer player = getPlayer(arg.getTextureId());
     player.pause();
   }
 
