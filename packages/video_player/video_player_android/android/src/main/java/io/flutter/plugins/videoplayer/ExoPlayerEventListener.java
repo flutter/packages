@@ -100,6 +100,8 @@ final class ExoPlayerEventListener implements Player.Listener {
   }
 
   @OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
+  // The annotation is used to enable using a Format to determine the rotation
+  // correction.
   private int getRotationCorrectionFromFormat(ExoPlayer exoPlayer) {
     Format videoFormat = Objects.requireNonNull(exoPlayer.getVideoFormat());
     return videoFormat.rotationDegrees;
