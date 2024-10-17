@@ -195,6 +195,8 @@ class PigeonInstanceManager {
         pigeon_instanceManager: instanceManager);
     CompanionAd.pigeon_setUpMessageHandlers(
         pigeon_instanceManager: instanceManager);
+    UniversalAdId.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -5777,6 +5779,103 @@ class CompanionAd extends PigeonInternalProxyApiBaseClass {
       height: height,
       resourceValue: resourceValue,
       width: width,
+    );
+  }
+}
+
+/// This object exposes information about the universal ad ID.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/UniversalAdId.html.
+class UniversalAdId extends PigeonInternalProxyApiBaseClass {
+  /// Constructs [UniversalAdId] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  UniversalAdId.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.adIdRegistry,
+    required this.adIdValue,
+  });
+
+  /// Returns the ad ID registry associated with the ad ID value.
+  ///
+  /// Returns "unknown" if the registry is not known.
+  final String adIdRegistry;
+
+  /// Returns the universal ad ID value.
+  ///
+  /// Returns "unknown" if the value is not known.
+  final String adIdValue;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    UniversalAdId Function(
+      String adIdRegistry,
+      String adIdValue,
+    )? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.UniversalAdId.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.UniversalAdId.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.UniversalAdId.pigeon_newInstance was null, expected non-null int.');
+          final String? arg_adIdRegistry = (args[1] as String?);
+          assert(arg_adIdRegistry != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.UniversalAdId.pigeon_newInstance was null, expected non-null String.');
+          final String? arg_adIdValue = (args[2] as String?);
+          assert(arg_adIdValue != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.UniversalAdId.pigeon_newInstance was null, expected non-null String.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call(arg_adIdRegistry!, arg_adIdValue!) ??
+                  UniversalAdId.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    adIdRegistry: arg_adIdRegistry!,
+                    adIdValue: arg_adIdValue!,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  UniversalAdId pigeon_copy() {
+    return UniversalAdId.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      adIdRegistry: adIdRegistry,
+      adIdValue: adIdValue,
     );
   }
 }

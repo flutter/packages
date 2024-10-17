@@ -1,6 +1,12 @@
-## 2.7.13
+## 2.7.14
 
 * Removes SSL workaround for API 19, which is no longer supported.
+* 
+## 2.7.13
+
+* When `AndroidVideoPlayer` attempts to operate on a `textureId` that is not
+  active (i.e. it was previously disposed or never created), the resulting
+  platform exception is more informative than a "NullPointerException".
 
 ## 2.7.12
 
