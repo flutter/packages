@@ -449,6 +449,14 @@ protocol InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
   /// `IMACompanionAd` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiIMACompanionAd(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
     -> PigeonApiIMACompanionAd
+  /// An implementation of [PigeonApiIMACompanionAdSlot] used to add a new Dart instance of
+  /// `IMACompanionAdSlot` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiIMACompanionAdSlot(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMACompanionAdSlot
+  /// An implementation of [PigeonApiIMACompanionDelegate] used to add a new Dart instance of
+  /// `IMACompanionDelegate` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiIMACompanionDelegate(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMACompanionDelegate
 }
 
 extension InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
@@ -536,6 +544,10 @@ open class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar {
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsRenderingSettings(self))
     PigeonApiIMAFriendlyObstruction.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAFriendlyObstruction(self))
+    PigeonApiIMACompanionAdSlot.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMACompanionAdSlot(self))
+    PigeonApiIMACompanionDelegate.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMACompanionDelegate(self))
   }
   func tearDown() {
     InteractiveMediaAdsLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
@@ -551,6 +563,8 @@ open class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar {
     PigeonApiIMAAdsRenderingSettings.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: nil)
     PigeonApiIMAFriendlyObstruction.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiIMACompanionAdSlot.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiIMACompanionDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
   }
 }
 private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
@@ -789,6 +803,29 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         pigeonRegistrar.apiDelegate.pigeonApiIMACompanionAd(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
+        return
+      }
+
+      if let instance = value as? IMACompanionAdSlot {
+        pigeonRegistrar.apiDelegate.pigeonApiIMACompanionAdSlot(pigeonRegistrar).pigeonNewInstance(
+          pigeonInstance: instance
+        ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
+        return
+      }
+
+      if let instance = value as? IMACompanionDelegate {
+        pigeonRegistrar.apiDelegate.pigeonApiIMACompanionDelegate(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
           pigeonRegistrar.instanceManager.identifierWithStrongReference(
@@ -3346,4 +3383,329 @@ final class PigeonApiIMACompanionAd: PigeonApiProtocolIMACompanionAd {
       }
     }
   }
+}
+protocol PigeonApiDelegateIMACompanionAdSlot {
+  /// Initializes an instance of a IMACompanionAdSlot with fluid size.
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMACompanionAdSlot, view: UIView) throws
+    -> IMACompanionAdSlot
+  /// Initializes an instance of a IMACompanionAdSlot with design ad width and
+  /// height.
+  ///
+  /// `width` and `height` are in pixels.
+  func size(pigeonApi: PigeonApiIMACompanionAdSlot, view: UIView, width: Int64, height: Int64)
+    throws -> IMACompanionAdSlot
+  /// The view the companion will be rendered in.
+  ///
+  /// Display this view in your application before video ad starts.
+  func view(pigeonApi: PigeonApiIMACompanionAdSlot, pigeonInstance: IMACompanionAdSlot) throws
+    -> UIView
+  /// The IMACompanionDelegate for receiving events from the companion ad slot.
+  ///
+  /// This instance only creates a weak reference to the delegate, so the Dart
+  /// instance should create an explicit reference to receive callbacks.
+  func setDelegate(
+    pigeonApi: PigeonApiIMACompanionAdSlot, pigeonInstance: IMACompanionAdSlot,
+    delegate: IMACompanionDelegate?) throws
+}
+
+protocol PigeonApiProtocolIMACompanionAdSlot {
+}
+
+final class PigeonApiIMACompanionAdSlot: PigeonApiProtocolIMACompanionAdSlot {
+  unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  let pigeonDelegate: PigeonApiDelegateIMACompanionAdSlot
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMACompanionAdSlot
+  ) {
+    self.pigeonRegistrar = pigeonRegistrar
+    self.pigeonDelegate = delegate
+  }
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMACompanionAdSlot?
+  ) {
+    let codec: FlutterStandardMessageCodec =
+      api != nil
+      ? FlutterStandardMessageCodec(
+        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
+      : FlutterStandardMessageCodec.sharedInstance()
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMACompanionAdSlot.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonIdentifierArg = args[0] as! Int64
+        let viewArg = args[1] as! UIView
+        do {
+          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, view: viewArg),
+            withIdentifier: pigeonIdentifierArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      pigeonDefaultConstructorChannel.setMessageHandler(nil)
+    }
+    let sizeChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMACompanionAdSlot.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      sizeChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonIdentifierArg = args[0] as! Int64
+        let viewArg = args[1] as! UIView
+        let widthArg = args[2] as! Int64
+        let heightArg = args[3] as! Int64
+        do {
+          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+            try api.pigeonDelegate.size(
+              pigeonApi: api, view: viewArg, width: widthArg, height: heightArg),
+            withIdentifier: pigeonIdentifierArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      sizeChannel.setMessageHandler(nil)
+    }
+    let setDelegateChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMACompanionAdSlot.setDelegate",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setDelegateChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! IMACompanionAdSlot
+        let delegateArg: IMACompanionDelegate? = nilOrValue(args[1])
+        do {
+          try api.pigeonDelegate.setDelegate(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setDelegateChannel.setMessageHandler(nil)
+    }
+  }
+
+  ///Creates a Dart instance of IMACompanionAdSlot and attaches it to [pigeonInstance].
+  func pigeonNewInstance(
+    pigeonInstance: IMACompanionAdSlot, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
+    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+      completion(.success(Void()))
+      return
+    }
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
+    let viewArg = try! pigeonDelegate.view(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMACompanionAdSlot.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonIdentifierArg, viewArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+}
+protocol PigeonApiDelegateIMACompanionDelegate {
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMACompanionDelegate) throws
+    -> IMACompanionDelegate
+}
+
+protocol PigeonApiProtocolIMACompanionDelegate {
+  /// Called when the slot is either filled or not filled.
+  func companionAdSlotFilled(
+    pigeonInstance pigeonInstanceArg: IMACompanionDelegate, slot slotArg: IMACompanionAdSlot,
+    filled filledArg: Bool, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  /// Called when the slot is clicked on by the user and will successfully
+  /// navigate away.
+  func companionSlotWasClicked(
+    pigeonInstance pigeonInstanceArg: IMACompanionDelegate, slot slotArg: IMACompanionAdSlot,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
+}
+
+final class PigeonApiIMACompanionDelegate: PigeonApiProtocolIMACompanionDelegate {
+  unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  let pigeonDelegate: PigeonApiDelegateIMACompanionDelegate
+  ///An implementation of [NSObject] used to access callback methods
+  var pigeonApiNSObject: PigeonApiNSObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
+  }
+
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMACompanionDelegate
+  ) {
+    self.pigeonRegistrar = pigeonRegistrar
+    self.pigeonDelegate = delegate
+  }
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiIMACompanionDelegate?
+  ) {
+    let codec: FlutterStandardMessageCodec =
+      api != nil
+      ? FlutterStandardMessageCodec(
+        readerWriter: InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
+      : FlutterStandardMessageCodec.sharedInstance()
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.interactive_media_ads.IMACompanionDelegate.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonIdentifierArg = args[0] as! Int64
+        do {
+          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+            withIdentifier: pigeonIdentifierArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      pigeonDefaultConstructorChannel.setMessageHandler(nil)
+    }
+  }
+
+  ///Creates a Dart instance of IMACompanionDelegate and attaches it to [pigeonInstance].
+  func pigeonNewInstance(
+    pigeonInstance: IMACompanionDelegate, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
+    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+      completion(.success(Void()))
+      return
+    }
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMACompanionDelegate.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+  /// Called when the slot is either filled or not filled.
+  func companionAdSlotFilled(
+    pigeonInstance pigeonInstanceArg: IMACompanionDelegate, slot slotArg: IMACompanionAdSlot,
+    filled filledArg: Bool, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMACompanionDelegate.companionAdSlotFilled"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonInstanceArg, slotArg, filledArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+
+  /// Called when the slot is clicked on by the user and will successfully
+  /// navigate away.
+  func companionSlotWasClicked(
+    pigeonInstance pigeonInstanceArg: IMACompanionDelegate, slot slotArg: IMACompanionAdSlot,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMACompanionDelegate.companionSlotWasClicked"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonInstanceArg, slotArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+
 }
