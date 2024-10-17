@@ -90,6 +90,54 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FLTEventChannelDataBase ()
++ (FLTEventChannelDataBase *)fromList:(NSArray<id> *)list;
++ (nullable FLTEventChannelDataBase *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FLTIntEvent ()
++ (FLTIntEvent *)fromList:(NSArray<id> *)list;
++ (nullable FLTIntEvent *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FLTStringEvent ()
++ (FLTStringEvent *)fromList:(NSArray<id> *)list;
++ (nullable FLTStringEvent *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FLTBoolEvent ()
++ (FLTBoolEvent *)fromList:(NSArray<id> *)list;
++ (nullable FLTBoolEvent *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FLTDoubleEvent ()
++ (FLTDoubleEvent *)fromList:(NSArray<id> *)list;
++ (nullable FLTDoubleEvent *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FLTObjectsEvent ()
++ (FLTObjectsEvent *)fromList:(NSArray<id> *)list;
++ (nullable FLTObjectsEvent *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FLTEnumEvent ()
++ (FLTEnumEvent *)fromList:(NSArray<id> *)list;
++ (nullable FLTEnumEvent *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FLTClassEvent ()
++ (FLTClassEvent *)fromList:(NSArray<id> *)list;
++ (nullable FLTClassEvent *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @interface FLTTestMessage ()
 + (FLTTestMessage *)fromList:(NSArray<id> *)list;
 + (nullable FLTTestMessage *)nullableFromList:(NSArray<id> *)list;
@@ -513,6 +561,171 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FLTEventChannelDataBase
++ (instancetype)makeWith {
+  FLTEventChannelDataBase *pigeonResult = [[FLTEventChannelDataBase alloc] init];
+  return pigeonResult;
+}
++ (FLTEventChannelDataBase *)fromList:(NSArray<id> *)list {
+  FLTEventChannelDataBase *pigeonResult = [[FLTEventChannelDataBase alloc] init];
+  return pigeonResult;
+}
++ (nullable FLTEventChannelDataBase *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTEventChannelDataBase fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[];
+}
+@end
+
+@implementation FLTIntEvent
++ (instancetype)makeWithValue:(NSInteger)value {
+  FLTIntEvent *pigeonResult = [[FLTIntEvent alloc] init];
+  pigeonResult.value = value;
+  return pigeonResult;
+}
++ (FLTIntEvent *)fromList:(NSArray<id> *)list {
+  FLTIntEvent *pigeonResult = [[FLTIntEvent alloc] init];
+  pigeonResult.value = [GetNullableObjectAtIndex(list, 0) integerValue];
+  return pigeonResult;
+}
++ (nullable FLTIntEvent *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTIntEvent fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.value),
+  ];
+}
+@end
+
+@implementation FLTStringEvent
++ (instancetype)makeWithValue:(NSString *)value {
+  FLTStringEvent *pigeonResult = [[FLTStringEvent alloc] init];
+  pigeonResult.value = value;
+  return pigeonResult;
+}
++ (FLTStringEvent *)fromList:(NSArray<id> *)list {
+  FLTStringEvent *pigeonResult = [[FLTStringEvent alloc] init];
+  pigeonResult.value = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable FLTStringEvent *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTStringEvent fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.value ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation FLTBoolEvent
++ (instancetype)makeWithValue:(BOOL)value {
+  FLTBoolEvent *pigeonResult = [[FLTBoolEvent alloc] init];
+  pigeonResult.value = value;
+  return pigeonResult;
+}
++ (FLTBoolEvent *)fromList:(NSArray<id> *)list {
+  FLTBoolEvent *pigeonResult = [[FLTBoolEvent alloc] init];
+  pigeonResult.value = [GetNullableObjectAtIndex(list, 0) boolValue];
+  return pigeonResult;
+}
++ (nullable FLTBoolEvent *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTBoolEvent fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.value),
+  ];
+}
+@end
+
+@implementation FLTDoubleEvent
++ (instancetype)makeWithValue:(double)value {
+  FLTDoubleEvent *pigeonResult = [[FLTDoubleEvent alloc] init];
+  pigeonResult.value = value;
+  return pigeonResult;
+}
++ (FLTDoubleEvent *)fromList:(NSArray<id> *)list {
+  FLTDoubleEvent *pigeonResult = [[FLTDoubleEvent alloc] init];
+  pigeonResult.value = [GetNullableObjectAtIndex(list, 0) doubleValue];
+  return pigeonResult;
+}
++ (nullable FLTDoubleEvent *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTDoubleEvent fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.value),
+  ];
+}
+@end
+
+@implementation FLTObjectsEvent
++ (instancetype)makeWithValue:(id)value {
+  FLTObjectsEvent *pigeonResult = [[FLTObjectsEvent alloc] init];
+  pigeonResult.value = value;
+  return pigeonResult;
+}
++ (FLTObjectsEvent *)fromList:(NSArray<id> *)list {
+  FLTObjectsEvent *pigeonResult = [[FLTObjectsEvent alloc] init];
+  pigeonResult.value = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable FLTObjectsEvent *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTObjectsEvent fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.value ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation FLTEnumEvent
++ (instancetype)makeWithValue:(FLTAnEnum)value {
+  FLTEnumEvent *pigeonResult = [[FLTEnumEvent alloc] init];
+  pigeonResult.value = value;
+  return pigeonResult;
+}
++ (FLTEnumEvent *)fromList:(NSArray<id> *)list {
+  FLTEnumEvent *pigeonResult = [[FLTEnumEvent alloc] init];
+  FLTAnEnumBox *boxedFLTAnEnum = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.value = boxedFLTAnEnum.value;
+  return pigeonResult;
+}
++ (nullable FLTEnumEvent *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTEnumEvent fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    [[FLTAnEnumBox alloc] initWithValue:self.value],
+  ];
+}
+@end
+
+@implementation FLTClassEvent
++ (instancetype)makeWithValue:(FLTAllNullableTypes *)value {
+  FLTClassEvent *pigeonResult = [[FLTClassEvent alloc] init];
+  pigeonResult.value = value;
+  return pigeonResult;
+}
++ (FLTClassEvent *)fromList:(NSArray<id> *)list {
+  FLTClassEvent *pigeonResult = [[FLTClassEvent alloc] init];
+  pigeonResult.value = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable FLTClassEvent *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTClassEvent fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.value ?: [NSNull null],
+  ];
+}
+@end
+
 @implementation FLTTestMessage
 + (instancetype)makeWithTestList:(nullable NSArray<id> *)testList {
   FLTTestMessage *pigeonResult = [[FLTTestMessage alloc] init];
@@ -561,6 +774,20 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 135:
       return [FLTAllClassesWrapper fromList:[self readValue]];
     case 136:
+      return [FLTIntEvent fromList:[self readValue]];
+    case 137:
+      return [FLTStringEvent fromList:[self readValue]];
+    case 138:
+      return [FLTBoolEvent fromList:[self readValue]];
+    case 139:
+      return [FLTDoubleEvent fromList:[self readValue]];
+    case 140:
+      return [FLTObjectsEvent fromList:[self readValue]];
+    case 141:
+      return [FLTEnumEvent fromList:[self readValue]];
+    case 142:
+      return [FLTClassEvent fromList:[self readValue]];
+    case 143:
       return [FLTTestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -595,8 +822,29 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+  } else if ([value isKindOfClass:[FLTIntEvent class]]) {
     [self writeByte:136];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTStringEvent class]]) {
+    [self writeByte:137];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTBoolEvent class]]) {
+    [self writeByte:138];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTDoubleEvent class]]) {
+    [self writeByte:139];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTObjectsEvent class]]) {
+    [self writeByte:140];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTEnumEvent class]]) {
+    [self writeByte:141];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTClassEvent class]]) {
+    [self writeByte:142];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+    [self writeByte:143];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];

@@ -695,7 +695,7 @@ if (self.wrapped == nil) {
   }) {
     const String codecName = 'PigeonCodec';
     final List<EnumeratedType> enumeratedTypes =
-        getEnumeratedTypes(root).toList();
+        getEnumeratedTypes(root, excludeSealedClasses: true).toList();
     final String readerWriterName =
         '${generatorOptions.prefix}${toUpperCamelCase(generatorOptions.fileSpecificClassNameComponent ?? '')}${codecName}ReaderWriter';
     final String readerName =

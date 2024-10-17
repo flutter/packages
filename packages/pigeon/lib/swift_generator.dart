@@ -132,13 +132,13 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final String codecName = _getCodecName(generatorOptions);
+    final String codecName = _getMessageCodecName(generatorOptions);
     final String readerWriterName = '${codecName}ReaderWriter';
     final String readerName = '${codecName}Reader';
     final String writerName = '${codecName}Writer';
 
     final List<EnumeratedType> enumeratedTypes =
-        getEnumeratedTypes(root).toList();
+        getEnumeratedTypes(root, excludeSealedClasses: true).toList();
 
     void writeDecodeLogic(EnumeratedType customType) {
       indent.writeln('case ${customType.enumeration}:');
@@ -260,6 +260,11 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
           'static let shared = $codecName(readerWriter: $readerWriterName())');
     });
     indent.newln();
+    if (root.containsEventChannel) {
+      indent.writeln(
+          'var ${_getMethodCodecVarName(generatorOptions)} = FlutterStandardMethodCodec(readerWriter: $readerWriterName());');
+      indent.newln();
+    }
   }
 
   void _writeDataClassSignature(
@@ -268,10 +273,17 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     bool private = false,
   }) {
     final String privateString = private ? 'private ' : '';
+    final String extendsString = classDefinition.superClass != null
+        ? ': ${classDefinition.superClass!.name}'
+        : '';
     if (classDefinition.isSwiftClass) {
-      indent.write('${privateString}class ${classDefinition.name} ');
+      indent.write(
+          '${privateString}class ${classDefinition.name}$extendsString ');
+    } else if (classDefinition.isSealed) {
+      indent.write('protocol ${classDefinition.name} ');
     } else {
-      indent.write('${privateString}struct ${classDefinition.name} ');
+      indent.write(
+          '${privateString}struct ${classDefinition.name}$extendsString ');
     }
 
     indent.addScoped('{', '', () {
@@ -289,7 +301,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         _writeClassField(indent, field, addNil: !classDefinition.isSwiftClass);
         indent.newln();
       }
-    });
+    }, addTrailingNewline: false);
   }
 
   void _writeCodecOverflowUtilities(
@@ -372,15 +384,22 @@ if (wrapped == nil) {
     Class classDefinition, {
     required String dartPackageName,
   }) {
-    const List<String> generatedComments = <String>[
+    final List<String> generatedComments = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
     ];
+    if (classDefinition.isSealed) {
+      generatedComments.add(
+          ' This class should not be extended by any user class outside of the generated file.');
+    }
     indent.newln();
     addDocumentationComments(
         indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
     _writeDataClassSignature(indent, classDefinition);
     indent.writeScoped('', '}', () {
+      if (classDefinition.isSealed) {
+        return;
+      }
       indent.newln();
       writeClassDecode(
         generatorOptions,
@@ -567,7 +586,7 @@ if (wrapped == nil) {
         indent.writeln(
             r'self.messageChannelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""');
       });
-      final String codecName = _getCodecName(generatorOptions);
+      final String codecName = _getMessageCodecName(generatorOptions);
       indent.write('var codec: $codecName ');
       indent.addScoped('{', '}', () {
         indent.writeln('return $codecName.shared');
@@ -632,7 +651,7 @@ if (wrapped == nil) {
     indent.write('class ${apiName}Setup ');
     indent.addScoped('{', '}', () {
       indent.writeln(
-          'static var codec: FlutterStandardMessageCodec { ${_getCodecName(generatorOptions)}.shared }');
+          'static var codec: FlutterStandardMessageCodec { ${_getMessageCodecName(generatorOptions)}.shared }');
       indent.writeln(
           '$_docCommentPrefix Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.');
       indent.write(
@@ -850,12 +869,12 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           static func register(with messenger: FlutterBinaryMessenger, 
                               instanceName: String = "",
                               wrapper: ${toUpperCamelCase(func.name)}StreamHandler) {
-            var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts"
+            var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.${func.name}"
             if !instanceName.isEmpty {
               channelName += ".\\(instanceName)"
             }
             let streamHandler = PigeonStreamHandler<${_swiftTypeForDartType(func.returnType)}>(wrapper: wrapper)
-            let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger)
+            let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: ${_getMethodCodecVarName(generatorOptions)})
             channel.setStreamHandler(streamHandler)
           }
         }
@@ -1080,8 +1099,13 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 }
 
 /// Calculates the name of the codec that will be generated for [api].
-String _getCodecName(SwiftOptions options) {
-  return '${options.fileSpecificClassNameComponent}PigeonCodec';
+String _getMessageCodecName(SwiftOptions options) {
+  return '${options.fileSpecificClassNameComponent ?? ''}PigeonCodec';
+}
+
+/// Calculates the name of the codec that will be generated for [api].
+String _getMethodCodecVarName(SwiftOptions options) {
+  return '${toLowerCamelCase(options.fileSpecificClassNameComponent ?? '')}PigeonMethodCodec';
 }
 
 String _getErrorClassName(SwiftOptions generatorOptions) {

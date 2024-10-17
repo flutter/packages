@@ -552,6 +552,145 @@ struct AllClassesWrapper {
   }
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+/// This class should not be extended by any user class outside of the generated file.
+protocol EventChannelDataBase {
+
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct IntEvent: EventChannelDataBase {
+  var value: Int64
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> IntEvent? {
+    let value = pigeonVar_list[0] as! Int64
+
+    return IntEvent(
+      value: value
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      value
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct StringEvent: EventChannelDataBase {
+  var value: String
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> StringEvent? {
+    let value = pigeonVar_list[0] as! String
+
+    return StringEvent(
+      value: value
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      value
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct BoolEvent: EventChannelDataBase {
+  var value: Bool
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> BoolEvent? {
+    let value = pigeonVar_list[0] as! Bool
+
+    return BoolEvent(
+      value: value
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      value
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct DoubleEvent: EventChannelDataBase {
+  var value: Double
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> DoubleEvent? {
+    let value = pigeonVar_list[0] as! Double
+
+    return DoubleEvent(
+      value: value
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      value
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct ObjectsEvent: EventChannelDataBase {
+  var value: Any
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> ObjectsEvent? {
+    let value = pigeonVar_list[0]!
+
+    return ObjectsEvent(
+      value: value
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      value
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct EnumEvent: EventChannelDataBase {
+  var value: AnEnum
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> EnumEvent? {
+    let value = pigeonVar_list[0] as! AnEnum
+
+    return EnumEvent(
+      value: value
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      value
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct ClassEvent: EventChannelDataBase {
+  var value: AllNullableTypes
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> ClassEvent? {
+    let value = pigeonVar_list[0] as! AllNullableTypes
+
+    return ClassEvent(
+      value: value
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      value
+    ]
+  }
+}
+
 /// A data class containing a List, used in unit tests.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
@@ -599,6 +738,20 @@ private class CoreTestsPigeonCodecReader: FlutterStandardReader {
     case 135:
       return AllClassesWrapper.fromList(self.readValue() as! [Any?])
     case 136:
+      return IntEvent.fromList(self.readValue() as! [Any?])
+    case 137:
+      return StringEvent.fromList(self.readValue() as! [Any?])
+    case 138:
+      return BoolEvent.fromList(self.readValue() as! [Any?])
+    case 139:
+      return DoubleEvent.fromList(self.readValue() as! [Any?])
+    case 140:
+      return ObjectsEvent.fromList(self.readValue() as! [Any?])
+    case 141:
+      return EnumEvent.fromList(self.readValue() as! [Any?])
+    case 142:
+      return ClassEvent.fromList(self.readValue() as! [Any?])
+    case 143:
       return TestMessage.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -629,8 +782,29 @@ private class CoreTestsPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? AllClassesWrapper {
       super.writeByte(135)
       super.writeValue(value.toList())
-    } else if let value = value as? TestMessage {
+    } else if let value = value as? IntEvent {
       super.writeByte(136)
+      super.writeValue(value.toList())
+    } else if let value = value as? StringEvent {
+      super.writeByte(137)
+      super.writeValue(value.toList())
+    } else if let value = value as? BoolEvent {
+      super.writeByte(138)
+      super.writeValue(value.toList())
+    } else if let value = value as? DoubleEvent {
+      super.writeByte(139)
+      super.writeValue(value.toList())
+    } else if let value = value as? ObjectsEvent {
+      super.writeByte(140)
+      super.writeValue(value.toList())
+    } else if let value = value as? EnumEvent {
+      super.writeByte(141)
+      super.writeValue(value.toList())
+    } else if let value = value as? ClassEvent {
+      super.writeByte(142)
+      super.writeValue(value.toList())
+    } else if let value = value as? TestMessage {
+      super.writeByte(143)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -651,6 +825,9 @@ private class CoreTestsPigeonCodecReaderWriter: FlutterStandardReaderWriter {
 class CoreTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = CoreTestsPigeonCodec(readerWriter: CoreTestsPigeonCodecReaderWriter())
 }
+
+var coreTestsPigeonMethodCodec = FlutterStandardMethodCodec(
+  readerWriter: CoreTestsPigeonCodecReaderWriter())
 
 private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
   private let wrapper: PigeonEventChannelWrapper<ReturnType>
@@ -712,7 +889,25 @@ class StreamIntsStreamHandler: PigeonEventChannelWrapper<Int64> {
       channelName += ".\(instanceName)"
     }
     let streamHandler = PigeonStreamHandler<Int64>(wrapper: wrapper)
-    let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger)
+    let channel = FlutterEventChannel(
+      name: channelName, binaryMessenger: messenger, codec: coreTestsPigeonMethodCodec)
+    channel.setStreamHandler(streamHandler)
+  }
+}
+
+class StreamEventsStreamHandler: PigeonEventChannelWrapper<EventChannelDataBase> {
+  static func register(
+    with messenger: FlutterBinaryMessenger,
+    instanceName: String = "",
+    wrapper: StreamEventsStreamHandler
+  ) {
+    var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamEvents"
+    if !instanceName.isEmpty {
+      channelName += ".\(instanceName)"
+    }
+    let streamHandler = PigeonStreamHandler<EventChannelDataBase>(wrapper: wrapper)
+    let channel = FlutterEventChannel(
+      name: channelName, binaryMessenger: messenger, codec: coreTestsPigeonMethodCodec)
     channel.setStreamHandler(streamHandler)
   }
 }

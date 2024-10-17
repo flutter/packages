@@ -605,7 +605,10 @@ enum CustomTypes {
 
 /// Return the enumerated types that must exist in the codec
 /// where the enumeration should be the key used in the buffer.
-Iterable<EnumeratedType> getEnumeratedTypes(Root root) sync* {
+Iterable<EnumeratedType> getEnumeratedTypes(
+  Root root, {
+  bool excludeSealedClasses = false,
+}) sync* {
   int index = 0;
 
   for (final Enum customEnum in root.enums) {
@@ -619,13 +622,15 @@ Iterable<EnumeratedType> getEnumeratedTypes(Root root) sync* {
   }
 
   for (final Class customClass in root.classes) {
-    yield EnumeratedType(
-      customClass.name,
-      index + minimumCodecFieldKey,
-      CustomTypes.customClass,
-      associatedClass: customClass,
-    );
-    index += 1;
+    if (!excludeSealedClasses || !customClass.isSealed) {
+      yield EnumeratedType(
+        customClass.name,
+        index + minimumCodecFieldKey,
+        CustomTypes.customClass,
+        associatedClass: customClass,
+      );
+      index += 1;
+    }
   }
 }
 
@@ -795,6 +800,23 @@ class OutputFileOptions<T> {
 String toUpperCamelCase(String text) {
   final RegExp separatorPattern = RegExp(r'[ _-]');
   return text.split(separatorPattern).map((String word) {
+    return word.isEmpty
+        ? ''
+        : word.substring(0, 1).toUpperCase() + word.substring(1);
+  }).join();
+}
+
+/// Converts strings to Upper Camel Case.
+String toLowerCamelCase(String text) {
+  final RegExp separatorPattern = RegExp(r'[ _-]');
+  bool firstWord = true;
+  return text.split(separatorPattern).map((String word) {
+    if (firstWord) {
+      firstWord = false;
+      return word.isEmpty
+          ? ''
+          : word.substring(0, 1).toLowerCase() + word.substring(1);
+    }
     return word.isEmpty
         ? ''
         : word.substring(0, 1).toUpperCase() + word.substring(1);

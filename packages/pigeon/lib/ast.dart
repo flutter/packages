@@ -689,6 +689,9 @@ class Class extends Node {
   Class({
     required this.name,
     required this.fields,
+    this.superClassName,
+    this.superClass,
+    this.isSealed = false,
     this.isReferenced = true,
     this.isSwiftClass = false,
     this.documentationComments = const <String>[],
@@ -699,6 +702,20 @@ class Class extends Node {
 
   /// All the fields contained in the class.
   List<NamedType> fields;
+
+  /// Name of parent class, will be empty when there is no super class.
+  String? superClassName;
+
+  /// The definition of the parent class.
+  Class? superClass;
+
+  /// List of class definitions of children.
+  ///
+  /// This is only meant to be used by sealed classes used in Event Channel methods.
+  List<Class> children = <Class>[];
+
+  /// Whether the class is sealed.
+  bool isSealed;
 
   /// Whether the class is referenced in any API.
   bool isReferenced;
@@ -781,6 +798,10 @@ class Root extends Node {
     required this.classes,
     required this.apis,
     required this.enums,
+    this.containsHostApi = false,
+    this.containsFlutterApi = false,
+    this.containsProxyApi = false,
+    this.containsEventChannel = false,
   });
 
   /// Factory function for generating an empty root, usually used when early errors are encountered.
@@ -797,10 +818,33 @@ class Root extends Node {
   /// All of the enums contained in the AST.
   List<Enum> enums;
 
+  /// Whether the root has any Host API definitions.
+  bool containsHostApi;
+
+  /// Whether the root has any Flutter API definitions.
+  bool containsFlutterApi;
+
+  /// Whether the root has any Proxy API definitions.
+  bool containsProxyApi;
+
+  /// Whether the root has any Event Channel definitions.
+  bool containsEventChannel;
+
   /// Returns true if the number of custom types would exceed the available enumerations
   /// on the standard codec.
   bool get requiresOverflowClass =>
-      classes.length + enums.length >= totalCustomCodecKeysAllowed;
+      classes.length - _numberOfSealedClasses() + enums.length >=
+      totalCustomCodecKeysAllowed;
+
+  int _numberOfSealedClasses() {
+    int count = 0;
+    for (final Class klass in classes) {
+      if (klass.isSealed) {
+        count++;
+      }
+    }
+    return count;
+  }
 
   @override
   String toString() {

@@ -540,6 +540,155 @@ class AllClassesWrapper {
   }
 }
 
+sealed class EventChannelDataBase {}
+
+class IntEvent extends EventChannelDataBase {
+  IntEvent({
+    required this.value,
+  });
+
+  int value;
+
+  Object encode() {
+    return <Object?>[
+      value,
+    ];
+  }
+
+  static IntEvent decode(Object result) {
+    result as List<Object?>;
+    return IntEvent(
+      value: result[0]! as int,
+    );
+  }
+}
+
+class StringEvent extends EventChannelDataBase {
+  StringEvent({
+    required this.value,
+  });
+
+  String value;
+
+  Object encode() {
+    return <Object?>[
+      value,
+    ];
+  }
+
+  static StringEvent decode(Object result) {
+    result as List<Object?>;
+    return StringEvent(
+      value: result[0]! as String,
+    );
+  }
+}
+
+class BoolEvent extends EventChannelDataBase {
+  BoolEvent({
+    required this.value,
+  });
+
+  bool value;
+
+  Object encode() {
+    return <Object?>[
+      value,
+    ];
+  }
+
+  static BoolEvent decode(Object result) {
+    result as List<Object?>;
+    return BoolEvent(
+      value: result[0]! as bool,
+    );
+  }
+}
+
+class DoubleEvent extends EventChannelDataBase {
+  DoubleEvent({
+    required this.value,
+  });
+
+  double value;
+
+  Object encode() {
+    return <Object?>[
+      value,
+    ];
+  }
+
+  static DoubleEvent decode(Object result) {
+    result as List<Object?>;
+    return DoubleEvent(
+      value: result[0]! as double,
+    );
+  }
+}
+
+class ObjectsEvent extends EventChannelDataBase {
+  ObjectsEvent({
+    required this.value,
+  });
+
+  Object value;
+
+  Object encode() {
+    return <Object?>[
+      value,
+    ];
+  }
+
+  static ObjectsEvent decode(Object result) {
+    result as List<Object?>;
+    return ObjectsEvent(
+      value: result[0]!,
+    );
+  }
+}
+
+class EnumEvent extends EventChannelDataBase {
+  EnumEvent({
+    required this.value,
+  });
+
+  AnEnum value;
+
+  Object encode() {
+    return <Object?>[
+      value,
+    ];
+  }
+
+  static EnumEvent decode(Object result) {
+    result as List<Object?>;
+    return EnumEvent(
+      value: result[0]! as AnEnum,
+    );
+  }
+}
+
+class ClassEvent extends EventChannelDataBase {
+  ClassEvent({
+    required this.value,
+  });
+
+  AllNullableTypes value;
+
+  Object encode() {
+    return <Object?>[
+      value,
+    ];
+  }
+
+  static ClassEvent decode(Object result) {
+    result as List<Object?>;
+    return ClassEvent(
+      value: result[0]! as AllNullableTypes,
+    );
+  }
+}
+
 /// A data class containing a List, used in unit tests.
 class TestMessage {
   TestMessage({
@@ -590,8 +739,29 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is AllClassesWrapper) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
+    } else if (value is IntEvent) {
       buffer.putUint8(136);
+      writeValue(buffer, value.encode());
+    } else if (value is StringEvent) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    } else if (value is BoolEvent) {
+      buffer.putUint8(138);
+      writeValue(buffer, value.encode());
+    } else if (value is DoubleEvent) {
+      buffer.putUint8(139);
+      writeValue(buffer, value.encode());
+    } else if (value is ObjectsEvent) {
+      buffer.putUint8(140);
+      writeValue(buffer, value.encode());
+    } else if (value is EnumEvent) {
+      buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    } else if (value is ClassEvent) {
+      buffer.putUint8(142);
+      writeValue(buffer, value.encode());
+    } else if (value is TestMessage) {
+      buffer.putUint8(143);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -618,6 +788,20 @@ class _PigeonCodec extends StandardMessageCodec {
       case 135:
         return AllClassesWrapper.decode(readValue(buffer)!);
       case 136:
+        return IntEvent.decode(readValue(buffer)!);
+      case 137:
+        return StringEvent.decode(readValue(buffer)!);
+      case 138:
+        return BoolEvent.decode(readValue(buffer)!);
+      case 139:
+        return DoubleEvent.decode(readValue(buffer)!);
+      case 140:
+        return ObjectsEvent.decode(readValue(buffer)!);
+      case 141:
+        return EnumEvent.decode(readValue(buffer)!);
+      case 142:
+        return ClassEvent.decode(readValue(buffer)!);
+      case 143:
         return TestMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -625,14 +809,30 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
+const StandardMethodCodec pigeonMethodCodec =
+    StandardMethodCodec(_PigeonCodec());
+
 Stream<int> streamInts({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
   const EventChannel streamIntsChannel = EventChannel(
-      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts');
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts',
+      pigeonMethodCodec);
   return streamIntsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as int;
+  });
+}
+
+Stream<EventChannelDataBase> streamEvents({String instanceName = ''}) {
+  if (instanceName.isNotEmpty) {
+    instanceName = '.$instanceName';
+  }
+  const EventChannel streamEventsChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamEvents',
+      pigeonMethodCodec);
+  return streamEventsChannel.receiveBroadcastStream().map((dynamic event) {
+    return event as EventChannelDataBase;
   });
 }
 

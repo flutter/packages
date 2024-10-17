@@ -948,7 +948,8 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     final String codecClassName = _getClassName(module, _codecBaseName);
     final String codecMethodPrefix = _getMethodPrefix(module, _codecBaseName);
 
-    final Iterable<EnumeratedType> customTypes = getEnumeratedTypes(root);
+    final Iterable<EnumeratedType> customTypes =
+        getEnumeratedTypes(root, excludeSealedClasses: true);
 
     indent.newln();
     _writeDeclareFinalType(indent, module, _codecBaseName,
@@ -2008,7 +2009,7 @@ String _referenceValue(String module, TypeDeclaration type, String variableName,
 }
 
 int _getTypeEnumeration(Root root, TypeDeclaration type) {
-  return getEnumeratedTypes(root)
+  return getEnumeratedTypes(root, excludeSealedClasses: true)
       .firstWhere((EnumeratedType t) =>
           (type.isClass && t.associatedClass == type.associatedClass) ||
           (type.isEnum && t.associatedEnum == type.associatedEnum))

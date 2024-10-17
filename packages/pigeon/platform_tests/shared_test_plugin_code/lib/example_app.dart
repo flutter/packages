@@ -65,11 +65,38 @@ class _ExampleAppState extends State<ExampleApp> {
               const Text(
                 'Counter :',
               ),
-              StreamBuilder<int>(
-                stream: streamInts(),
-                builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+              StreamBuilder<EventChannelDataBase>(
+                stream: streamEvents(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<EventChannelDataBase> snapshot) {
                   if (snapshot.hasData) {
-                    numsSoFar += '${snapshot.data}, ';
+                    print(snapshot.data);
+                    String newString = '';
+                    switch (snapshot.data) {
+                      case null:
+                        newString = 'null, ';
+                      case IntEvent():
+                        newString = '${(snapshot.data! as IntEvent).value}, ';
+                      case StringEvent():
+                        newString =
+                            '${(snapshot.data! as StringEvent).value}, ';
+                      case BoolEvent():
+                        newString = '${(snapshot.data! as BoolEvent).value}, ';
+                      case DoubleEvent():
+                        newString =
+                            '${(snapshot.data! as DoubleEvent).value}, ';
+                      case ObjectsEvent():
+                        newString =
+                            '${(snapshot.data! as ObjectsEvent).value}, ';
+                      case EnumEvent():
+                        newString = '${(snapshot.data! as EnumEvent).value}, ';
+                      case ClassEvent():
+                        newString = '${(snapshot.data! as ClassEvent).value}, ';
+                      default:
+                        newString = '${snapshot.data}, ';
+                    }
+
+                    numsSoFar += newString;
                     return Text(numsSoFar);
                   } else {
                     return const CircularProgressIndicator();

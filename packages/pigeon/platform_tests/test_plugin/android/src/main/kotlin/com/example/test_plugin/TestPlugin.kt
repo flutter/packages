@@ -29,6 +29,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     proxyApiRegistrar = ProxyApiRegistrar(binding.binaryMessenger)
     proxyApiRegistrar!!.setUp()
 
+    StreamEventsStreamHandler.register(binding.binaryMessenger, SendClass)
     StreamIntsStreamHandler.register(binding.binaryMessenger, SendInts)
   }
 
@@ -743,12 +744,44 @@ object SendInts : StreamIntsStreamHandler() {
         object : Runnable {
           override fun run() {
             handler.post {
-              count++
               sink.success(count)
+              count++
             }
             handler.postDelayed(this, 1000)
             if (count >= 5) {
               sink.endOfStream()
+            }
+          }
+        }
+    handler.postDelayed(r, 1000)
+  }
+}
+
+object SendClass : StreamEventsStreamHandler() {
+  val handler = Handler(Looper.getMainLooper())
+  val eventList =
+      listOf(
+          IntEvent(1),
+          StringEvent("string"),
+          BoolEvent(false),
+          DoubleEvent(3.14),
+          ObjectsEvent(true),
+          EnumEvent(AnEnum.FORTY_TWO),
+          ClassEvent(AllNullableTypes(aNullableInt = 0)))
+
+  override fun onListen(p0: Any?, sink: PigeonEventSink<EventChannelDataBase>) {
+    var count: Int = 0
+    val r: Runnable =
+        object : Runnable {
+          override fun run() {
+            if (count >= eventList.size) {
+              sink.endOfStream()
+            } else {
+              handler.post {
+                sink.success(eventList[count])
+                count++
+              }
+              handler.postDelayed(this, 1000)
             }
           }
         }

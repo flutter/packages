@@ -2328,6 +2328,514 @@ public class CoreTests {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class EventChannelDataBase {
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      EventChannelDataBase that = (EventChannelDataBase) o;
+      return;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public static final class Builder {
+
+      public @NonNull EventChannelDataBase build() {
+        EventChannelDataBase pigeonReturn = new EventChannelDataBase();
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(0);
+      return toListResult;
+    }
+
+    static @NonNull EventChannelDataBase fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      EventChannelDataBase pigeonResult = new EventChannelDataBase();
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class IntEvent {
+    private @NonNull Long value;
+
+    public @NonNull Long getValue() {
+      return value;
+    }
+
+    public void setValue(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"value\" is null.");
+      }
+      this.value = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    IntEvent() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      IntEvent that = (IntEvent) o;
+      return value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(value);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Long value;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setValue(@NonNull Long setterArg) {
+        this.value = setterArg;
+        return this;
+      }
+
+      public @NonNull IntEvent build() {
+        IntEvent pigeonReturn = new IntEvent();
+        pigeonReturn.setValue(value);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(1);
+      toListResult.add(value);
+      return toListResult;
+    }
+
+    static @NonNull IntEvent fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      IntEvent pigeonResult = new IntEvent();
+      Object value = pigeonVar_list.get(0);
+      pigeonResult.setValue((Long) value);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class StringEvent {
+    private @NonNull String value;
+
+    public @NonNull String getValue() {
+      return value;
+    }
+
+    public void setValue(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"value\" is null.");
+      }
+      this.value = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    StringEvent() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      StringEvent that = (StringEvent) o;
+      return value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(value);
+    }
+
+    public static final class Builder {
+
+      private @Nullable String value;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setValue(@NonNull String setterArg) {
+        this.value = setterArg;
+        return this;
+      }
+
+      public @NonNull StringEvent build() {
+        StringEvent pigeonReturn = new StringEvent();
+        pigeonReturn.setValue(value);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(1);
+      toListResult.add(value);
+      return toListResult;
+    }
+
+    static @NonNull StringEvent fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      StringEvent pigeonResult = new StringEvent();
+      Object value = pigeonVar_list.get(0);
+      pigeonResult.setValue((String) value);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class BoolEvent {
+    private @NonNull Boolean value;
+
+    public @NonNull Boolean getValue() {
+      return value;
+    }
+
+    public void setValue(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"value\" is null.");
+      }
+      this.value = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    BoolEvent() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      BoolEvent that = (BoolEvent) o;
+      return value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(value);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Boolean value;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setValue(@NonNull Boolean setterArg) {
+        this.value = setterArg;
+        return this;
+      }
+
+      public @NonNull BoolEvent build() {
+        BoolEvent pigeonReturn = new BoolEvent();
+        pigeonReturn.setValue(value);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(1);
+      toListResult.add(value);
+      return toListResult;
+    }
+
+    static @NonNull BoolEvent fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      BoolEvent pigeonResult = new BoolEvent();
+      Object value = pigeonVar_list.get(0);
+      pigeonResult.setValue((Boolean) value);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class DoubleEvent {
+    private @NonNull Double value;
+
+    public @NonNull Double getValue() {
+      return value;
+    }
+
+    public void setValue(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"value\" is null.");
+      }
+      this.value = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    DoubleEvent() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      DoubleEvent that = (DoubleEvent) o;
+      return value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(value);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Double value;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setValue(@NonNull Double setterArg) {
+        this.value = setterArg;
+        return this;
+      }
+
+      public @NonNull DoubleEvent build() {
+        DoubleEvent pigeonReturn = new DoubleEvent();
+        pigeonReturn.setValue(value);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(1);
+      toListResult.add(value);
+      return toListResult;
+    }
+
+    static @NonNull DoubleEvent fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      DoubleEvent pigeonResult = new DoubleEvent();
+      Object value = pigeonVar_list.get(0);
+      pigeonResult.setValue((Double) value);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class ObjectsEvent {
+    private @NonNull Object value;
+
+    public @NonNull Object getValue() {
+      return value;
+    }
+
+    public void setValue(@NonNull Object setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"value\" is null.");
+      }
+      this.value = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    ObjectsEvent() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      ObjectsEvent that = (ObjectsEvent) o;
+      return value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(value);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Object value;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setValue(@NonNull Object setterArg) {
+        this.value = setterArg;
+        return this;
+      }
+
+      public @NonNull ObjectsEvent build() {
+        ObjectsEvent pigeonReturn = new ObjectsEvent();
+        pigeonReturn.setValue(value);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(1);
+      toListResult.add(value);
+      return toListResult;
+    }
+
+    static @NonNull ObjectsEvent fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      ObjectsEvent pigeonResult = new ObjectsEvent();
+      Object value = pigeonVar_list.get(0);
+      pigeonResult.setValue(value);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class EnumEvent {
+    private @NonNull AnEnum value;
+
+    public @NonNull AnEnum getValue() {
+      return value;
+    }
+
+    public void setValue(@NonNull AnEnum setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"value\" is null.");
+      }
+      this.value = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    EnumEvent() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      EnumEvent that = (EnumEvent) o;
+      return value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(value);
+    }
+
+    public static final class Builder {
+
+      private @Nullable AnEnum value;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setValue(@NonNull AnEnum setterArg) {
+        this.value = setterArg;
+        return this;
+      }
+
+      public @NonNull EnumEvent build() {
+        EnumEvent pigeonReturn = new EnumEvent();
+        pigeonReturn.setValue(value);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(1);
+      toListResult.add(value);
+      return toListResult;
+    }
+
+    static @NonNull EnumEvent fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      EnumEvent pigeonResult = new EnumEvent();
+      Object value = pigeonVar_list.get(0);
+      pigeonResult.setValue((AnEnum) value);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class ClassEvent {
+    private @NonNull AllNullableTypes value;
+
+    public @NonNull AllNullableTypes getValue() {
+      return value;
+    }
+
+    public void setValue(@NonNull AllNullableTypes setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"value\" is null.");
+      }
+      this.value = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    ClassEvent() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      ClassEvent that = (ClassEvent) o;
+      return value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(value);
+    }
+
+    public static final class Builder {
+
+      private @Nullable AllNullableTypes value;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setValue(@NonNull AllNullableTypes setterArg) {
+        this.value = setterArg;
+        return this;
+      }
+
+      public @NonNull ClassEvent build() {
+        ClassEvent pigeonReturn = new ClassEvent();
+        pigeonReturn.setValue(value);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(1);
+      toListResult.add(value);
+      return toListResult;
+    }
+
+    static @NonNull ClassEvent fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      ClassEvent pigeonResult = new ClassEvent();
+      Object value = pigeonVar_list.get(0);
+      pigeonResult.setValue((AllNullableTypes) value);
+      return pigeonResult;
+    }
+  }
+
   /**
    * A data class containing a List, used in unit tests.
    *
@@ -2422,6 +2930,20 @@ public class CoreTests {
         case (byte) 135:
           return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
+          return IntEvent.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 137:
+          return StringEvent.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 138:
+          return BoolEvent.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 139:
+          return DoubleEvent.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 140:
+          return ObjectsEvent.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 141:
+          return EnumEvent.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 142:
+          return ClassEvent.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 143:
           return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -2451,8 +2973,29 @@ public class CoreTests {
       } else if (value instanceof AllClassesWrapper) {
         stream.write(135);
         writeValue(stream, ((AllClassesWrapper) value).toList());
-      } else if (value instanceof TestMessage) {
+      } else if (value instanceof IntEvent) {
         stream.write(136);
+        writeValue(stream, ((IntEvent) value).toList());
+      } else if (value instanceof StringEvent) {
+        stream.write(137);
+        writeValue(stream, ((StringEvent) value).toList());
+      } else if (value instanceof BoolEvent) {
+        stream.write(138);
+        writeValue(stream, ((BoolEvent) value).toList());
+      } else if (value instanceof DoubleEvent) {
+        stream.write(139);
+        writeValue(stream, ((DoubleEvent) value).toList());
+      } else if (value instanceof ObjectsEvent) {
+        stream.write(140);
+        writeValue(stream, ((ObjectsEvent) value).toList());
+      } else if (value instanceof EnumEvent) {
+        stream.write(141);
+        writeValue(stream, ((EnumEvent) value).toList());
+      } else if (value instanceof ClassEvent) {
+        stream.write(142);
+        writeValue(stream, ((ClassEvent) value).toList());
+      } else if (value instanceof TestMessage) {
+        stream.write(143);
         writeValue(stream, ((TestMessage) value).toList());
       } else {
         super.writeValue(stream, value);

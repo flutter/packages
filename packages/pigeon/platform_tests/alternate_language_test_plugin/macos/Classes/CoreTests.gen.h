@@ -43,6 +43,14 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @class FLTAllNullableTypes;
 @class FLTAllNullableTypesWithoutRecursion;
 @class FLTAllClassesWrapper;
+@class FLTEventChannelDataBase;
+@class FLTIntEvent;
+@class FLTStringEvent;
+@class FLTBoolEvent;
+@class FLTDoubleEvent;
+@class FLTObjectsEvent;
+@class FLTEnumEvent;
+@class FLTClassEvent;
 @class FLTTestMessage;
 
 @interface FLTUnusedClass : NSObject
@@ -244,6 +252,58 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy) NSDictionary<NSNumber *, FLTAllTypes *> *classMap;
 @property(nonatomic, copy, nullable)
     NSDictionary<NSNumber *, FLTAllNullableTypesWithoutRecursion *> *nullableClassMap;
+@end
+
+@interface FLTEventChannelDataBase : NSObject
+@end
+
+@interface FLTIntEvent : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithValue:(NSInteger)value;
+@property(nonatomic, assign) NSInteger value;
+@end
+
+@interface FLTStringEvent : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithValue:(NSString *)value;
+@property(nonatomic, copy) NSString *value;
+@end
+
+@interface FLTBoolEvent : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithValue:(BOOL)value;
+@property(nonatomic, assign) BOOL value;
+@end
+
+@interface FLTDoubleEvent : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithValue:(double)value;
+@property(nonatomic, assign) double value;
+@end
+
+@interface FLTObjectsEvent : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithValue:(id)value;
+@property(nonatomic, strong) id value;
+@end
+
+@interface FLTEnumEvent : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithValue:(FLTAnEnum)value;
+@property(nonatomic, assign) FLTAnEnum value;
+@end
+
+@interface FLTClassEvent : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithValue:(FLTAllNullableTypes *)value;
+@property(nonatomic, strong) FLTAllNullableTypes *value;
 @end
 
 /// A data class containing a List, used in unit tests.

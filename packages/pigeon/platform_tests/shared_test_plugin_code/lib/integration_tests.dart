@@ -2606,20 +2606,51 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   });
 
   /// Event Channels
+
+  const List<TargetGenerator> eventChannelSupported = <TargetGenerator>[
+    TargetGenerator.kotlin,
+    TargetGenerator.swift
+  ];
   testWidgets('event channel sends continuous ints', (_) async {
-    print('start');
-    final Stream<int> ints = streamInts();
-    print('stream');
-    await Future<dynamic>.delayed(const Duration(seconds: 5));
-    print('delay');
-    final List<int> listInts = await ints.toList();
-    expect(listInts.contains(1), true);
-    expect(listInts.contains(2), true);
-    expect(listInts.contains(3), true);
-    expect(listInts.contains(4), true);
-    expect(listInts.contains(6), false);
-    print('after tests');
-  });
+    final Stream<int> events = streamInts();
+    final List<int> listEvents = await events.toList();
+    for (final int value in listEvents) {
+      expect(listEvents[value], value);
+    }
+  }, skip: eventChannelSupported.contains(targetGenerator));
+
+  testWidgets('event channel handles extended sealed classes', (_) async {
+    final Stream<EventChannelDataBase> events = streamEvents();
+    final List<EventChannelDataBase> listEvents = await events.toList();
+
+    for (final (int index, EventChannelDataBase event) in listEvents.indexed) {
+      switch (event) {
+        case IntEvent():
+          expect(index, 0);
+          expect(event.value, 1);
+        case StringEvent():
+          expect(index, 1);
+          expect(event.value, 'string');
+        case BoolEvent():
+          expect(index, 2);
+          expect(event.value, false);
+        case DoubleEvent():
+          expect(index, 3);
+          expect(event.value, 3.14);
+        case ObjectsEvent():
+          expect(index, 4);
+          expect(event.value, true);
+        case EnumEvent():
+          expect(index, 5);
+          expect(event.value, AnEnum.fortyTwo);
+        case ClassEvent():
+          expect(index, 6);
+          expect(event.value.aNullableInt, 0);
+        default:
+          fail('Unexpected type passed as event: $event');
+      }
+    }
+  }, skip: eventChannelSupported.contains(targetGenerator));
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {

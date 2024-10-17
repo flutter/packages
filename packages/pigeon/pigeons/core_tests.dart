@@ -253,9 +253,47 @@ class AllClassesWrapper {
   Map<int?, AllNullableTypesWithoutRecursion?>? nullableClassMap;
 }
 
+sealed class EventChannelDataBase {}
+
+class IntEvent extends EventChannelDataBase {
+  IntEvent(this.value);
+  final int value;
+}
+
+class StringEvent extends EventChannelDataBase {
+  StringEvent(this.value);
+  final String value;
+}
+
+class BoolEvent extends EventChannelDataBase {
+  BoolEvent(this.value);
+  final bool value;
+}
+
+class DoubleEvent extends EventChannelDataBase {
+  DoubleEvent(this.value);
+  final double value;
+}
+
+class ObjectsEvent extends EventChannelDataBase {
+  ObjectsEvent(this.value);
+  final Object value;
+}
+
+class EnumEvent extends EventChannelDataBase {
+  EnumEvent(this.value);
+  final AnEnum value;
+}
+
+class ClassEvent extends EventChannelDataBase {
+  ClassEvent(this.value);
+  final AllNullableTypes value;
+}
+
 @EventChannelApi()
 abstract class EventChannelCoreApi {
   int streamInts();
+  EventChannelDataBase streamEvents();
 }
 
 /// The core interface that each host language plugin must implement in

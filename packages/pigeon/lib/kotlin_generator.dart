@@ -30,6 +30,9 @@ const DocumentCommentSpecification _docCommentSpec =
 
 String _codecName = 'PigeonCodec';
 
+/// Name of field used for host API codec.
+const String _pigeonMethodChannelCodec = 'PigeonMethodCodec';
+
 const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
 /// Options that control how Kotlin code will be generated.
@@ -149,6 +152,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
     indent.writeln('import io.flutter.plugin.common.EventChannel');
     indent.writeln('import io.flutter.plugin.common.MessageCodec');
+    indent.writeln('import io.flutter.plugin.common.StandardMethodCodec');
     indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
     indent.writeln('import java.io.ByteArrayOutputStream');
     indent.writeln('import java.nio.ByteBuffer');
@@ -198,14 +202,21 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Class classDefinition, {
     required String dartPackageName,
   }) {
-    const List<String> generatedMessages = <String>[
+    final List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
     ];
+    if (classDefinition.isSealed) {
+      generatedMessages.add(
+          ' This class should not be extended by any user class outside of the generated file.');
+    }
     indent.newln();
     addDocumentationComments(
         indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
     _writeDataClassSignature(indent, classDefinition);
+    if (classDefinition.isSealed) {
+      return;
+    }
     indent.addScoped(' {', '}', () {
       writeClassDecode(
         generatorOptions,
@@ -229,9 +240,16 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Class classDefinition, {
     bool private = false,
   }) {
-    indent.write(
-        '${private ? 'private ' : ''}data class ${classDefinition.name} ');
-    indent.addScoped('(', ')', () {
+    final String privateString = private ? 'private ' : '';
+    final String classType = classDefinition.isSealed ? 'sealed' : 'data';
+    final String inheritance = classDefinition.superClass != null
+        ? ' : ${classDefinition.superClassName}()'
+        : '';
+    indent.write('$privateString$classType class ${classDefinition.name} ');
+    if (classDefinition.isSealed) {
+      return;
+    }
+    indent.addScoped('(', ')$inheritance', () {
       for (final NamedType element
           in getFieldsInSerializationOrder(classDefinition)) {
         _writeClassField(indent, element);
@@ -335,7 +353,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     required String dartPackageName,
   }) {
     final List<EnumeratedType> enumeratedTypes =
-        getEnumeratedTypes(root).toList();
+        getEnumeratedTypes(root, excludeSealedClasses: true).toList();
 
     void writeEncodeLogic(EnumeratedType customType) {
       final String encodeString =
@@ -428,6 +446,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       });
     });
     indent.newln();
+    if (root.containsEventChannel) {
+      indent.writeln(
+          'val ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec = StandardMethodCodec(${generatorOptions.fileSpecificClassNameComponent}$_codecName());');
+      indent.newln();
+    }
   }
 
   void _writeCodecOverflowUtilities(
@@ -1036,14 +1059,6 @@ if (wrapped == null) {
     for (final Method func in api.methods) {
       indent.format('''
         abstract class ${toUpperCamelCase(func.name)}StreamHandler : PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
-          fun deregister(instanceName: String = "") {
-            var channelName: String = "${makeChannelName(api, func, dartPackageName)}"
-            if (instanceName.isNotEmpty()) {
-              channelName += ".\$instanceName"
-            }
-            EventChannel(null, channelName).setStreamHandler(null)
-          }
-
           companion object {
             fun register(messenger: BinaryMessenger, wrapper: ${toUpperCamelCase(func.name)}StreamHandler, instanceName: String = "") {
               var channelName: String = "${makeChannelName(api, func, dartPackageName)}"
@@ -1051,7 +1066,7 @@ if (wrapped == null) {
                 channelName += ".\$instanceName"
               }
               val streamHandler = PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(wrapper)
-              EventChannel(messenger, channelName).setStreamHandler(streamHandler)
+              EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec).setStreamHandler(streamHandler)
             }
           }
         }

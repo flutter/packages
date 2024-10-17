@@ -27,9 +27,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     flutterSmallApiTwo = FlutterSmallApi(
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
 
-    let sendInts = SendInts()
-    StreamIntsStreamHandler.register(with: binaryMessenger, wrapper: sendInts)
-
+    StreamIntsStreamHandler.register(with: binaryMessenger, wrapper: SendInts())
+    StreamEventsStreamHandler.register(with: binaryMessenger, wrapper: SendEvents())
   }
 
   // MARK: HostIntegrationCoreApi implementation
@@ -1007,10 +1006,40 @@ class SendInts: StreamIntsStreamHandler {
     if !timerActive {
       timerActive = true
       Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-        count += 1
         sink.success(count)
+        count += 1
         if count >= 5 {
           sink.endOfStream()
+        }
+      }
+    }
+  }
+}
+
+class SendEvents: StreamEventsStreamHandler {
+  var timerActive = false
+  var eventList: [EventChannelDataBase] =
+    [
+      IntEvent(value: 1),
+      StringEvent(value: "string"),
+      BoolEvent(value: false),
+      DoubleEvent(value: 3.14),
+      ObjectsEvent(value: true),
+      EnumEvent(value: AnEnum.fortyTwo),
+      ClassEvent(value: AllNullableTypes(aNullableInt: 0)),
+    ]
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<EventChannelDataBase>)
+  {
+    var count = 0
+    if !timerActive {
+      timerActive = true
+      Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+        if count >= self.eventList.count {
+          sink.endOfStream()
+        } else {
+          sink.success(self.eventList[count])
+          count += 1
         }
       }
     }
