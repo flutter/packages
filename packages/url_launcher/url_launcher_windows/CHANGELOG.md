@@ -1,7 +1,7 @@
 ## 3.1.3
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
-* Fix handling of file: URLs that contain UTF-8 encoded paths.
+* Fixes handling of `file:` URLs that contain UTF-8 encoded paths.
 
 ## 3.1.2
 
