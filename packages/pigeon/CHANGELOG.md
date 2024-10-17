@@ -1,7 +1,3 @@
-## 22.5.1
-
-* Removes unnecessary parentheses.
-
 ## 22.5.0
 
 * [swift] Adds implementation for `@ProxyApi`.
