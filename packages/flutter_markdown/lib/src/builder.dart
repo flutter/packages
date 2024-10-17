@@ -385,16 +385,31 @@ class MarkdownBuilder implements md.NodeVisitor {
       final _BlockElement current = _blocks.removeLast();
       Widget child;
 
-      if (current.children.isNotEmpty) {
-        child = Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: fitContent
-              ? CrossAxisAlignment.start
-              : CrossAxisAlignment.stretch,
-          children: current.children,
+      Widget defaultChild() {
+        if (current.children.isNotEmpty) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: fitContent
+                ? CrossAxisAlignment.start
+                : CrossAxisAlignment.stretch,
+            children: current.children,
+          );
+        } else {
+          return const SizedBox();
+        }
+      }
+
+      if (builders.containsKey(tag)) {
+        final Widget? builderChild =
+            builders[tag]!.visitElementAfterWithContext(
+          delegate.context,
+          element,
+          styleSheet.styles[tag],
+          _inlines.isNotEmpty ? _inlines.last.style : null,
         );
+        child = builderChild ?? defaultChild();
       } else {
-        child = const SizedBox();
+        child = defaultChild();
       }
 
       if (_isListTag(tag)) {
