@@ -4,11 +4,9 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import android.os.Build;
 import android.webkit.WebChromeClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import java.util.Arrays;
 import java.util.List;
 
