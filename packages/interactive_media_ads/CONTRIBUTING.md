@@ -135,7 +135,7 @@ To update a wrapper for a platform, follow the steps:
 * Android: Run `flutter build apk --debug` in `example/`.
 * iOS: Run `flutter build ios --simulator` in `example/`
 
-##### 2. Make changes that match the native SDK
+##### 2. Make changes to the respective pigeon file that matches the native SDK
 
 * Android:
     - [Android SDK]
