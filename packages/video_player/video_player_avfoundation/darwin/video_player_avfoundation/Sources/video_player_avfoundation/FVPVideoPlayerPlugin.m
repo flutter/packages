@@ -410,7 +410,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                                    error:&error] != AVKeyValueStatusFailed) {
     error = self.player.currentItem.error;
   }
-  __block NSMutableOrderedSet<NSString*> *details =
+  __block NSMutableOrderedSet<NSString *> *details =
       [NSMutableOrderedSet orderedSetWithObject:@"Failed to load video"];
   void (^add)(NSString *) = ^(NSString *detail) {
     if (detail != nil) {
