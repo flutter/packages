@@ -396,7 +396,10 @@ class Camera
                     cameraFeatures.getFocusPoint().checkIsSupported());
               }
             } catch (Exception e) {
-              String message = (e.getMessage() == null) ? e.getClass().getName() : e.getMessage();
+              String message =
+                  (e.getMessage() == null)
+                      ? (e.getClass().getName() + " occurred while opening camera.")
+                      : e.getMessage();
               if (BuildConfig.DEBUG) {
                 Log.i(TAG, "open | onOpened error: " + message);
               }
@@ -793,7 +796,10 @@ class Camera
     try {
       captureSession.capture(previewRequestBuilder.build(), null, backgroundHandler);
     } catch (CameraAccessException e) {
-      String message = (e.getMessage() == null) ? "CameraAccessException" : e.getMessage();
+      String message =
+          (e.getMessage() == null)
+              ? "CameraAccessException occurred while locking autofocus."
+              : e.getMessage();
       dartMessenger.sendCameraErrorEvent(message);
     }
   }
@@ -817,7 +823,10 @@ class Camera
 
       captureSession.capture(previewRequestBuilder.build(), null, backgroundHandler);
     } catch (CameraAccessException e) {
-      String message = (e.getMessage() == null) ? "CameraAccessException" : e.getMessage();
+      String message =
+          (e.getMessage() == null)
+              ? "CameraAccessException occurred while unlocking autofocus."
+              : e.getMessage();
       dartMessenger.sendCameraErrorEvent(message);
       return;
     }
