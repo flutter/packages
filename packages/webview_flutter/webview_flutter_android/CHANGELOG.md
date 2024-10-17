@@ -1,6 +1,11 @@
-## 3.16.10
+## 4.0.1
 
 * Updates internal API wrapper to use `ProxyApi`s.
+
+## 4.0.0
+
+* Bumps androidx.webkit:webkit from 1.12.0 to 1.12.1.
+* **Breaking Change** Bumps Android `minSdkVersion` from 19 to 21.
 
 ## 3.16.9
 

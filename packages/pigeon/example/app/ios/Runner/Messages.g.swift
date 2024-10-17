@@ -83,14 +83,14 @@ struct MessageData {
   var name: String? = nil
   var description: String? = nil
   var code: Code
-  var data: [String?: String?]
+  var data: [String: String]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> MessageData? {
     let name: String? = nilOrValue(pigeonVar_list[0])
     let description: String? = nilOrValue(pigeonVar_list[1])
     let code = pigeonVar_list[2] as! Code
-    let data = pigeonVar_list[3] as! [String?: String?]
+    let data = pigeonVar_list[3] as! [String: String]
 
     return MessageData(
       name: name,

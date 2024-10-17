@@ -4,8 +4,6 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.view.KeyEvent;
@@ -164,7 +162,6 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
           .runOnMainThread(() -> api.onPageFinished(this, view, url, reply -> null));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onReceivedHttpError(
         @NonNull WebView view,
@@ -175,10 +172,6 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
               () -> api.onReceivedHttpError(this, view, request, response, reply -> null));
     }
 
-    // This method is only called when the WebViewFeature.RECEIVE_WEB_RESOURCE_ERROR feature is
-    // enabled. The deprecated method is called when a device doesn't support this.
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @SuppressLint("RequiresFeature")
     @Override
     public void onReceivedError(
         @NonNull WebView view,
@@ -204,7 +197,6 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
                       this, view, (long) errorCode, description, failingUrl, reply -> null));
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean shouldOverrideUrlLoading(
         @NonNull WebView view, @NonNull WebResourceRequest request) {
@@ -216,7 +208,6 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
       return request.isForMainFrame() && returnValueForShouldOverrideUrlLoading;
     }
 
-    // Legacy codepath for < Lollipop; newer versions use the variant above.
     @SuppressWarnings("deprecation")
     @Override
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {

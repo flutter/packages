@@ -814,6 +814,74 @@ void main() {
       expect(find.text('dos'), findsNothing);
       expect(find.text('tres'), findsNothing);
     });
+
+    testWidgets(
+        'TreeViewNode should close all child nodes when collapsed, once the animation is completed',
+        (WidgetTester tester) async {
+      final TreeViewController controller = TreeViewController();
+      final List<TreeViewNode<String>> tree = <TreeViewNode<String>>[
+        TreeViewNode<String>(
+          'First',
+          expanded: true,
+          children: <TreeViewNode<String>>[
+            TreeViewNode<String>(
+              'alpha',
+              expanded: true,
+              children: <TreeViewNode<String>>[
+                TreeViewNode<String>('uno'),
+                TreeViewNode<String>('dos'),
+                TreeViewNode<String>('tres'),
+              ],
+            ),
+            TreeViewNode<String>('beta'),
+            TreeViewNode<String>('kappa'),
+          ],
+        ),
+      ];
+
+      await tester.pumpWidget(MaterialApp(
+        home: TreeView<String>(
+          tree: tree,
+          controller: controller,
+          toggleAnimationStyle: AnimationStyle(
+            curve: Curves.easeInOut,
+            duration: const Duration(milliseconds: 200),
+          ),
+          treeNodeBuilder: (
+            BuildContext context,
+            TreeViewNode<Object?> node,
+            AnimationStyle animationStyle,
+          ) {
+            final Widget child = GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () => controller.toggleNode(node),
+              child: TreeView.defaultTreeNodeBuilder(
+                context,
+                node,
+                animationStyle,
+              ),
+            );
+
+            return child;
+          },
+        ),
+      ));
+
+      expect(find.text('alpha'), findsOneWidget);
+      expect(find.text('uno'), findsOneWidget);
+      expect(find.text('dos'), findsOneWidget);
+      expect(find.text('tres'), findsOneWidget);
+
+      // Using runAsync to handle collapse and animations properly.
+      await tester.runAsync(() async {
+        await tester.tap(find.text('alpha'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('uno'), findsNothing);
+        expect(find.text('dos'), findsNothing);
+        expect(find.text('tres'), findsNothing);
+      });
+    });
   });
 
   group('TreeViewport', () {

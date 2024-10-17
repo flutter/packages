@@ -17,7 +17,6 @@ import java.util.List;
  * <p>This class may handle instantiating and adding native object instances that are attached to a
  * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class PermissionRequestProxyApi extends PigeonApiPermissionRequest {
   /** Constructs a {@link PermissionRequestProxyApi}. */
   public PermissionRequestProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

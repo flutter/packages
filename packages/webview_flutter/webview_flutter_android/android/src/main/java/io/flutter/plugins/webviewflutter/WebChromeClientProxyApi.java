@@ -75,7 +75,6 @@ public class WebChromeClientProxyApi extends PigeonApiWebChromeClient {
       api.onGeolocationPermissionsHidePrompt(this, reply -> null);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressWarnings("LambdaLast")
     @Override
     public boolean onShowFileChooser(
@@ -112,7 +111,6 @@ public class WebChromeClientProxyApi extends PigeonApiWebChromeClient {
       return currentReturnValueForOnShowFileChooser;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onPermissionRequest(@NonNull PermissionRequest request) {
       api.onPermissionRequest(this, request, reply -> null);

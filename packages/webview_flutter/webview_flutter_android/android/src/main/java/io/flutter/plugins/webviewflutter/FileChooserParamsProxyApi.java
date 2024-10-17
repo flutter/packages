@@ -18,7 +18,6 @@ import java.util.List;
  * <p>Passes arguments of callbacks methods from a {@link
  * android.webkit.WebChromeClient.FileChooserParams} to Dart.
  */
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class FileChooserParamsProxyApi extends PigeonApiFileChooserParams {
   /** Creates a Flutter api that sends messages to Dart. */
   public FileChooserParamsProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

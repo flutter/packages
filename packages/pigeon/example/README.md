@@ -62,7 +62,7 @@ class MessageData {
   String? name;
   String? description;
   Code code;
-  Map<String?, String?> data;
+  Map<String, String> data;
 }
 
 @HostApi()
@@ -103,7 +103,7 @@ Future<int> add(int a, int b) async {
 Future<bool> sendMessage(String messageText) {
   final MessageData message = MessageData(
     code: Code.one,
-    data: <String?, String?>{'header': 'this is a header'},
+    data: <String, String>{'header': 'this is a header'},
     description: 'uri text',
   );
   try {
