@@ -19,7 +19,7 @@
                               circleId:(NSString *)circleIdentifier
                                mapView:(GMSMapView *)mapView
                                options:(NSDictionary *)options {
-  GMSCircle* circle = [GMSCircle circleWithPosition:position radius:radius];
+  GMSCircle *circle = [GMSCircle circleWithPosition:position radius:radius];
   return [self initWithCircle:circle circleId:circleIdentifier mapView:mapView options:options];
 }
 

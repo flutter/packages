@@ -9,4 +9,3 @@
                      identifier:(NSString *)identifier
                         mapView:(GMSMapView *)mapView;
 @end
-

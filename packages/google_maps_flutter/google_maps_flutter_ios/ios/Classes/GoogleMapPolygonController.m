@@ -17,7 +17,7 @@
 - (instancetype)initWithPath:(GMSMutablePath *)path
                   identifier:(NSString *)identifier
                      mapView:(GMSMapView *)mapView {
-  GMSPolygon* polygon = [GMSPolygon polygonWithPath:path];
+  GMSPolygon *polygon = [GMSPolygon polygonWithPath:path];
   return [self initWithPolygon:polygon identifier:identifier mapView:mapView];
 }
 

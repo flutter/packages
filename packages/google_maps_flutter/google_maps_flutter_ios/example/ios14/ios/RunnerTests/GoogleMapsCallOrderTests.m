@@ -83,8 +83,8 @@
   NSString *identifier = @"TestMarker";
   FLTGoogleMapMarkerController *controller =
       [[FLTGoogleMapMarkerController alloc] initWithMarker:marker
-                                                markerIdentifier:identifier
-                                  clusterManagerIdentifier: nil
+                                          markerIdentifier:identifier
+                                  clusterManagerIdentifier:nil
                                                    mapView:mapView];
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   CGFloat screenScale = mapView.traitCollection.displayScale;
