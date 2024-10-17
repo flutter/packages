@@ -117,6 +117,7 @@ Future<int> generateTestPigeons(
           ? null
           : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
+      swiftIncludeErrorClass: input != 'core_tests',
       // Linux
       gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)
           ? null
@@ -212,6 +213,7 @@ Future<int> runPigeon({
   String? kotlinPackage,
   String? kotlinErrorClassName,
   bool kotlinIncludeErrorClass = true,
+  bool swiftIncludeErrorClass = true,
   String? swiftOut,
   String? swiftErrorClassName,
   String? cppHeaderOut,
@@ -272,6 +274,7 @@ Future<int> runPigeon({
       swiftOut: swiftOut,
       swiftOptions: SwiftOptions(
         errorClassName: swiftErrorClassName,
+        includeErrorClass: swiftIncludeErrorClass,
       ),
       basePath: basePath,
       dartPackageName: dartPackageName,
