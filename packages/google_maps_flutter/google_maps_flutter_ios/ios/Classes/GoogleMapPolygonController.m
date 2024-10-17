@@ -17,13 +17,8 @@
 - (instancetype)initWithPath:(GMSMutablePath *)path
                   identifier:(NSString *)identifier
                      mapView:(GMSMapView *)mapView {
-  self = [super init];
-  if (self) {
-    _polygon = [GMSPolygon polygonWithPath:path];
-    _mapView = mapView;
-    _polygon.userData = @[ identifier ];
-  }
-  return self;
+  GMSPolygon* polygon = [GMSPolygon polygonWithPath:path];
+  return [self initWithPolygon:polygon identifier:identifier mapView:mapView];
 }
 
 - (instancetype)initWithPolygon:(GMSPolygon *)polygon

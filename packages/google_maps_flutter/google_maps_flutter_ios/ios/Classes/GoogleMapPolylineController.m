@@ -17,13 +17,8 @@
 - (instancetype)initWithPath:(GMSMutablePath *)path
                   identifier:(NSString *)identifier
                      mapView:(GMSMapView *)mapView {
-  self = [super init];
-  if (self) {
-    _polyline = [GMSPolyline polylineWithPath:path];
-    _mapView = mapView;
-    _polyline.userData = @[ identifier ];
-  }
-  return self;
+  GMSPolyline *polyline = [GMSPolyline polylineWithPath:path];
+  return [self initWithPolyline:polyline identifier:identifier mapView:mapView];
 }
 
 - (instancetype)initWithPolyline:(GMSPolyline *)polyline

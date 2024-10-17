@@ -16,8 +16,6 @@
 #import "PartiallyMockedPolyline.h"
 #import "PartiallyMockedTileLayer.h"
 
-#import "GoogleMapCircleController_Test.h"
-
 @interface GoogleMapsCallOrderTests : XCTestCase
 @end
 
