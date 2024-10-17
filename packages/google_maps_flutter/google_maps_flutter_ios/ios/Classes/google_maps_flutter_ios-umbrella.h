@@ -8,6 +8,8 @@
 #import <google_maps_flutter_ios/FLTGoogleMapJSONConversions.h>
 #import <google_maps_flutter_ios/FLTGoogleMapTileOverlayController.h>
 #import <google_maps_flutter_ios/FLTGoogleMapsPlugin.h>
+#import <google_maps_flutter_ios/GoogleMapCircleController_Test.h>
+#import <google_maps_flutter_ios/GoogleMapPolygonController_Test.h>
 #import <google_maps_flutter_ios/GoogleMapPolylineController_Test.h>
 
 FOUNDATION_EXPORT double google_maps_flutterVersionNumber;

@@ -143,13 +143,16 @@
   if (rotation) {
     [self setRotation:[rotation doubleValue]];
   }
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
-    [self setVisible:[visible boolValue]];
-  }
   NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
   if (zIndex) {
     [self setZIndex:[zIndex intValue]];
+  }
+
+  // Setting the visibility adds the marker to the map.
+  // Therefore, it should be done after the other properties are set.
+  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
+  if (visible) {
+    [self setVisible:[visible boolValue]];
   }
 }
 
