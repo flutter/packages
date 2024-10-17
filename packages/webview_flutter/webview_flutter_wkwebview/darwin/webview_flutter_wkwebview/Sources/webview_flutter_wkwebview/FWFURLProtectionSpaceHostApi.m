@@ -43,7 +43,7 @@
                 completion:(void (^)(FlutterError *_Nullable))completion {
   if (![self.instanceManager containsInstance:instance]) {
     [self.api createWithIdentifier:[self.instanceManager addHostCreatedInstance:instance]
-            sslErrorType:sslErrorTypeDataBoxed
+            sslErrorTypeData:sslErrorTypeDataBoxed
       x509CertificateDer:x509CertificateDer
                           protocol:protocol
                              host:host
