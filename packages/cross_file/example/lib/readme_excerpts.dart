@@ -5,11 +5,12 @@
 // ignore_for_file: avoid_print
 
 import 'package:cross_file/cross_file.dart';
+import 'package:cross_file/native/factory.dart';
 
 /// Demonstrate instantiating an XFile for the README.
 Future<XFile> instantiateXFile() async {
   // #docregion Instantiate
-  final XFile file = XFile('assets/hello.txt');
+  final XFile file = XFileFactory.fromPath('assets/hello.txt');
 
   print('File information:');
   print('- Path: ${file.path}');
