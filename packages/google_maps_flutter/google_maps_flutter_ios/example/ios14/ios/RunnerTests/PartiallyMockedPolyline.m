@@ -59,7 +59,7 @@
 - (void)setMap:(GMSMapView *)map {
   super.map = map;
 
-  if (self.didSetMap || map == nil || map == (id)[NSNull null]) {
+  if (self.didSetMap || map == nil) {
     return;
   }
 

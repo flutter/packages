@@ -16,6 +16,8 @@
 #import "PartiallyMockedPolyline.h"
 #import "PartiallyMockedTileLayer.h"
 
+#import "GoogleMapCircleController_Test.h"
+
 @interface GoogleMapsCallOrderTests : XCTestCase
 @end
 
@@ -83,7 +85,8 @@
   NSString *identifier = @"TestMarker";
   FLTGoogleMapMarkerController *controller =
       [[FLTGoogleMapMarkerController alloc] initWithMarker:marker
-                                                identifier:identifier
+                                                markerIdentifier:identifier
+                                  clusterManagerIdentifier: nil
                                                    mapView:mapView];
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   CGFloat screenScale = mapView.traitCollection.displayScale;

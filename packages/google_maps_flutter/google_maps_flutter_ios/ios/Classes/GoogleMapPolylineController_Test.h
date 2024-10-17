@@ -10,6 +10,10 @@
 /// Polyline instance the controller is attached to
 @property(strong, nonatomic) GMSPolyline *polyline;
 
+- (instancetype)initWithPolyline:(GMSPolyline *)polyline
+                      identifier:(NSString *)identifier
+                         mapView:(GMSMapView *)mapView;
+
 @end
 
 /// Internal APIs explosed for unit testing

@@ -19,14 +19,8 @@
                               circleId:(NSString *)circleIdentifier
                                mapView:(GMSMapView *)mapView
                                options:(NSDictionary *)options {
-  self = [super init];
-  if (self) {
-    _circle = [GMSCircle circleWithPosition:position radius:radius];
-    _mapView = mapView;
-    _circle.userData = @[ circleIdentifier ];
-    [self interpretCircleOptions:options];
-  }
-  return self;
+  GMSCircle* circle = [GMSCircle circleWithPosition:position radius:radius];
+  return [self initWithCircle:circle circleId:circleIdentifier mapView:mapView options:options];
 }
 
 - (instancetype)initWithCircle:(GMSCircle *)circle

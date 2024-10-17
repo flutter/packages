@@ -1,6 +1,6 @@
 ## 2.13.2
 
-* Fixes map objects (markers, polygons, polylines, circles, and tiles) being added with the wrong properties
+* Fixes map objects (markers, polygons, polylines, circles, and tiles) being added with the wrong properties.
 
 ## 2.13.1
 
