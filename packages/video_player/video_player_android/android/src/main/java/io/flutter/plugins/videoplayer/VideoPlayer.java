@@ -85,9 +85,11 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
   }
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
+  // TODO(matanlurey): https://github.com/flutter/flutter/issues/155131.
+  @SuppressWarnings({"deprecation", "removal"})
   public void onSurfaceCreated() {
-    exoPlayer = createVideoPlayer();
     if (savedStateDuring != null) {
+      exoPlayer = createVideoPlayer();
       savedStateDuring.restore(exoPlayer);
       savedStateDuring = null;
     }
@@ -95,7 +97,8 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
   public void onSurfaceDestroyed() {
-    exoPlayer.stop();
+    // Intentionally do not call pause/stop here, because the surface has already been released
+    // at this point (see https://github.com/flutter/flutter/issues/156451).
     savedStateDuring = ExoPlayerState.save(exoPlayer);
     exoPlayer.release();
   }
@@ -106,7 +109,9 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
     exoPlayer.prepare();
 
     exoPlayer.setVideoSurface(surfaceProducer.getSurface());
-    exoPlayer.addListener(new ExoPlayerEventListener(exoPlayer, videoPlayerEvents));
+
+    boolean wasInitialized = savedStateDuring != null;
+    exoPlayer.addListener(new ExoPlayerEventListener(exoPlayer, videoPlayerEvents, wasInitialized));
     setAudioAttributes(exoPlayer, options.mixWithOthers);
 
     return exoPlayer;
@@ -156,7 +161,11 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
   }
 
   void dispose() {
-    surfaceProducer.release();
     exoPlayer.release();
+    surfaceProducer.release();
+
+    // TODO(matanlurey): Remove when embedder no longer calls-back once released.
+    // https://github.com/flutter/flutter/issues/156434.
+    surfaceProducer.setCallback(null);
   }
 }

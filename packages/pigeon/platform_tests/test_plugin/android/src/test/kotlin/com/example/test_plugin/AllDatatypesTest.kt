@@ -66,9 +66,12 @@ internal class AllDatatypesTest {
     assertEquals(firstTypes.intList, secondTypes.intList)
     assertEquals(firstTypes.stringList, secondTypes.stringList)
     assertEquals(firstTypes.listList, secondTypes.listList)
+    assertEquals(firstTypes.mapList, secondTypes.mapList)
     assertEquals(firstTypes.map, secondTypes.map)
     assertEquals(firstTypes.stringMap, secondTypes.stringMap)
     assertEquals(firstTypes.intMap, secondTypes.intMap)
+    assertEquals(firstTypes.listMap, secondTypes.listMap)
+    assertEquals(firstTypes.mapMap, secondTypes.mapMap)
   }
 
   @Test
@@ -118,10 +121,15 @@ internal class AllDatatypesTest {
             boolList = listOf(true, false),
             intList = listOf(1, 2),
             doubleList = listOf(1.1, 2.2),
+            objectList = listOf(1, 2, 3),
             listList = listOf(stringList, stringList.toList()),
+            mapList = listOf(mapOf("hello" to 1234), mapOf("hello" to 1234)),
             map = mapOf("hello" to 1234),
             stringMap = mapOf("hello" to "you"),
-            intMap = mapOf(1L to 0L))
+            intMap = mapOf(1L to 0L),
+            objectMap = mapOf("hello" to 1234),
+            listMap = mapOf(1L to stringList),
+            mapMap = mapOf(1L to mapOf()))
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = FlutterIntegrationCoreApi(binaryMessenger)
 

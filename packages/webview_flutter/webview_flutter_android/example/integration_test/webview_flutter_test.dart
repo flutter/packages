@@ -867,7 +867,7 @@ Future<void> main() async {
       await delegate.setOnPageFinished((_) => pageLoaded.complete());
       await delegate
           .setOnNavigationRequest((NavigationRequest navigationRequest) {
-        return (navigationRequest.url.contains('youtube.com'))
+        return navigationRequest.url.contains('youtube.com')
             ? NavigationDecision.prevent
             : NavigationDecision.navigate;
       });
@@ -1059,7 +1059,7 @@ Future<void> main() async {
       await delegate.setOnPageFinished((_) => pageLoaded.complete());
       await delegate
           .setOnNavigationRequest((NavigationRequest navigationRequest) {
-        return (navigationRequest.url.contains('youtube.com'))
+        return navigationRequest.url.contains('youtube.com')
             ? NavigationDecision.prevent
             : NavigationDecision.navigate;
       });

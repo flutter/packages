@@ -4,10 +4,8 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import android.os.Build;
 import android.webkit.WebChromeClient;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.Arrays;
 
@@ -17,7 +15,6 @@ import java.util.Arrays;
  * <p>Passes arguments of callbacks methods from a {@link
  * android.webkit.WebChromeClient.FileChooserParams} to Dart.
  */
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class FileChooserParamsFlutterApiImpl
     extends GeneratedAndroidWebView.FileChooserParamsFlutterApi {
   private final InstanceManager instanceManager;

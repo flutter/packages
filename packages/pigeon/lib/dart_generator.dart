@@ -350,52 +350,49 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     indent.write('class $_pigeonMessageCodec extends StandardMessageCodec');
     indent.addScoped(' {', '}', () {
       indent.writeln('const $_pigeonMessageCodec();');
-      if (enumeratedTypes.isNotEmpty) {
-        indent.writeln('@override');
-        indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
+      indent.writeln('@override');
+      indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
+      indent.addScoped('{', '}', () {
+        indent.writeScoped('if (value is int) {', '}', () {
+          indent.writeln('buffer.putUint8(4);');
+          indent.writeln('buffer.putInt64(value);');
+        }, addTrailingNewline: false);
+        int offset = 0;
+        enumerate(enumeratedTypes,
+            (int index, final EnumeratedType customType) {
+          if (customType.associatedClass?.isSealed ?? false) {
+            offset += 1;
+            return;
+          }
+          writeEncodeLogic(customType, offset);
+        });
+        indent.addScoped(' else {', '}', () {
+          indent.writeln('super.writeValue(buffer, value);');
+        });
+      });
+      indent.newln();
+      indent.writeln('@override');
+      indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
+      indent.addScoped('{', '}', () {
+        indent.write('switch (type) ');
         indent.addScoped('{', '}', () {
-          indent.writeScoped('if (value is int) {', '}', () {
-            indent.writeln('buffer.putUint8(4);');
-            indent.writeln('buffer.putInt64(value);');
-          }, addTrailingNewline: false);
           int offset = 0;
-          enumerate(enumeratedTypes,
-              (int index, final EnumeratedType customType) {
+          for (final EnumeratedType customType in enumeratedTypes) {
             if (customType.associatedClass?.isSealed ?? false) {
-              offset += 1;
-              return;
+              offset++;
+            } else if (customType.enumeration - offset < maximumCodecFieldKey) {
+              writeDecodeLogic(customType, offset);
             }
-            writeEncodeLogic(customType, offset);
-          });
-          indent.addScoped(' else {', '}', () {
-            indent.writeln('super.writeValue(buffer, value);');
-          });
-        });
-        indent.newln();
-        indent.writeln('@override');
-        indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
-        indent.addScoped('{', '}', () {
-          indent.write('switch (type) ');
-          indent.addScoped('{', '}', () {
-            int offset = 0;
-            for (final EnumeratedType customType in enumeratedTypes) {
-              if (customType.associatedClass?.isSealed ?? false) {
-                offset++;
-              } else if (customType.enumeration - offset <
-                  maximumCodecFieldKey) {
-                writeDecodeLogic(customType, offset);
-              }
-            }
-            if (root.requiresOverflowClass) {
-              writeDecodeLogic(overflowClass, 0);
-            }
-            indent.writeln('default:');
-            indent.nest(1, () {
-              indent.writeln('return super.readValueOfType(type, buffer);');
-            });
+          }
+          if (root.requiresOverflowClass) {
+            writeDecodeLogic(overflowClass, 0);
+          }
+          indent.writeln('default:');
+          indent.nest(1, () {
+            indent.writeln('return super.readValueOfType(type, buffer);');
           });
         });
-      }
+      });
     });
     if (root.containsEventChannel) {
       indent.newln();
@@ -2220,8 +2217,8 @@ String _getMethodParameterSignature(
 String _flattenTypeArguments(List<TypeDeclaration> args) {
   return args
       .map<String>((TypeDeclaration arg) => arg.typeArguments.isEmpty
-          ? '${arg.baseName}?'
-          : '${arg.baseName}<${_flattenTypeArguments(arg.typeArguments)}>?')
+          ? '${arg.baseName}${arg.isNullable ? '?' : ''}'
+          : '${arg.baseName}<${_flattenTypeArguments(arg.typeArguments)}>${arg.isNullable ? '?' : ''}')
       .join(', ');
 }
 
@@ -2231,11 +2228,11 @@ String _addGenericTypes(TypeDeclaration type) {
   final List<TypeDeclaration> typeArguments = type.typeArguments;
   switch (type.baseName) {
     case 'List':
-      return (typeArguments.isEmpty)
+      return typeArguments.isEmpty
           ? 'List<Object?>'
           : 'List<${_flattenTypeArguments(typeArguments)}>';
     case 'Map':
-      return (typeArguments.isEmpty)
+      return typeArguments.isEmpty
           ? 'Map<Object?, Object?>'
           : 'Map<${_flattenTypeArguments(typeArguments)}>';
     default:

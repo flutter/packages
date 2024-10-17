@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/android/android_ad_display_container.dart';
 import 'package:interactive_media_ads/src/android/android_ads_loader.dart';
+import 'package:interactive_media_ads/src/android/android_content_progress_provider.dart';
 import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
     as ima;
 import 'package:interactive_media_ads/src/android/interactive_media_ads_proxy.dart';
@@ -94,6 +95,8 @@ void main() {
 
       final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
         instanceImaSdkFactory: () => mockSdkFactory,
+        newContentProgressProvider: () =>
+            ima.ContentProgressProvider.pigeon_detached(),
       );
 
       final AndroidAdsLoader adsLoader = AndroidAdsLoader(
@@ -105,10 +108,22 @@ void main() {
         ),
       );
 
-      await adsLoader.requestAds(AdsRequest(adTagUrl: 'url'));
+      final AndroidContentProgressProvider progressProvider =
+          AndroidContentProgressProvider(
+        AndroidContentProgressProviderCreationParams(proxy: proxy),
+      );
+      await adsLoader.requestAds(
+        PlatformAdsRequest(
+          adTagUrl: 'url',
+          contentProgressProvider: progressProvider,
+        ),
+      );
 
       verifyInOrder(<Future<void>>[
         mockAdsRequest.setAdTagUrl('url'),
+        mockAdsRequest.setContentProgressProvider(
+          progressProvider.progressProvider,
+        ),
         mockAdsLoader.requestAds(mockAdsRequest),
       ]);
     });

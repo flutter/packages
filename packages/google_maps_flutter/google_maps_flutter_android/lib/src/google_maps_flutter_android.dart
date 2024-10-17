@@ -681,8 +681,12 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         latitude: latLng.latitude, longitude: latLng.longitude);
   }
 
-  static PlatformOffset _platformOffsetFromOffset(Offset offset) {
-    return PlatformOffset(dx: offset.dx, dy: offset.dy);
+  static PlatformDoublePair _platformPairFromOffset(Offset offset) {
+    return PlatformDoublePair(x: offset.dx, y: offset.dy);
+  }
+
+  static PlatformDoublePair _platformPairFromSize(Size size) {
+    return PlatformDoublePair(x: size.width, y: size.height);
   }
 
   static ScreenCoordinate _screenCoordinateFromPlatformPoint(
@@ -724,17 +728,17 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     return PlatformInfoWindow(
         title: window.title,
         snippet: window.snippet,
-        anchor: _platformOffsetFromOffset(window.anchor));
+        anchor: _platformPairFromOffset(window.anchor));
   }
 
   static PlatformMarker _platformMarkerFromMarker(Marker marker) {
     return PlatformMarker(
       alpha: marker.alpha,
-      anchor: _platformOffsetFromOffset(marker.anchor),
+      anchor: _platformPairFromOffset(marker.anchor),
       consumeTapEvents: marker.consumeTapEvents,
       draggable: marker.draggable,
       flat: marker.flat,
-      icon: marker.icon.toJson(),
+      icon: platformBitmapFromBitmapDescriptor(marker.icon),
       infoWindow: _platformInfoWindowFromInfoWindow(marker.infoWindow),
       position: _platformLatLngFromLatLng(marker.position),
       rotation: marker.rotation,
@@ -769,15 +773,14 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   static PlatformPolyline _platformPolylineFromPolyline(Polyline polyline) {
     final List<PlatformLatLng?> points =
         polyline.points.map(_platformLatLngFromLatLng).toList();
-    final List<Object?> pattern = polyline.patterns.map((PatternItem item) {
-      return item.toJson();
-    }).toList();
+    final List<PlatformPatternItem?> pattern =
+        polyline.patterns.map(platformPatternItemFromPatternItem).toList();
     return PlatformPolyline(
       polylineId: polyline.polylineId.value,
       consumesTapEvents: polyline.consumeTapEvents,
       color: polyline.color.value,
-      startCap: polyline.startCap.toJson(),
-      endCap: polyline.endCap.toJson(),
+      startCap: platformCapFromCap(polyline.startCap),
+      endCap: platformCapFromCap(polyline.endCap),
       geodesic: polyline.geodesic,
       visible: polyline.visible,
       width: polyline.width,
@@ -837,7 +840,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
                 amount: update.amount,
                 focus: update.focus == null
                     ? null
-                    : _platformOffsetFromOffset(update.focus!)));
+                    : _platformPairFromOffset(update.focus!)));
       case CameraUpdateType.zoomIn:
         update as CameraUpdateZoomIn;
         return PlatformCameraUpdate(
@@ -851,6 +854,96 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         return PlatformCameraUpdate(
             cameraUpdate:
                 PlatformCameraUpdateScrollBy(dx: update.dx, dy: update.dy));
+    }
+  }
+
+  /// Convert [MapBitmapScaling] from platform interface to [PlatformMapBitmapScaling] Pigeon.
+  @visibleForTesting
+  static PlatformMapBitmapScaling platformMapBitmapScalingFromScaling(
+      MapBitmapScaling scaling) {
+    switch (scaling) {
+      case MapBitmapScaling.auto:
+        return PlatformMapBitmapScaling.auto;
+      case MapBitmapScaling.none:
+        return PlatformMapBitmapScaling.none;
+    }
+
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return PlatformMapBitmapScaling.auto;
+  }
+
+  /// Convert [BitmapDescriptor] from platform interface to [PlatformBitmap] pigeon.
+  @visibleForTesting
+  static PlatformBitmap platformBitmapFromBitmapDescriptor(
+      BitmapDescriptor bitmap) {
+    switch (bitmap) {
+      case final DefaultMarker marker:
+        return PlatformBitmap(
+            bitmap: PlatformBitmapDefaultMarker(hue: marker.hue?.toDouble()));
+      case final BytesBitmap bytes:
+        return PlatformBitmap(
+            bitmap: PlatformBitmapBytes(
+                byteData: bytes.byteData,
+                size: (bytes.size == null)
+                    ? null
+                    : _platformPairFromSize(bytes.size!)));
+      case final AssetBitmap asset:
+        return PlatformBitmap(
+            bitmap: PlatformBitmapAsset(name: asset.name, pkg: asset.package));
+      case final AssetImageBitmap asset:
+        return PlatformBitmap(
+            bitmap: PlatformBitmapAssetImage(
+                name: asset.name,
+                scale: asset.scale,
+                size: (asset.size == null)
+                    ? null
+                    : _platformPairFromSize(asset.size!)));
+      case final AssetMapBitmap asset:
+        return PlatformBitmap(
+            bitmap: PlatformBitmapAssetMap(
+                assetName: asset.assetName,
+                bitmapScaling:
+                    platformMapBitmapScalingFromScaling(asset.bitmapScaling),
+                imagePixelRatio: asset.imagePixelRatio,
+                width: asset.width,
+                height: asset.height));
+      case final BytesMapBitmap bytes:
+        return PlatformBitmap(
+            bitmap: PlatformBitmapBytesMap(
+                byteData: bytes.byteData,
+                bitmapScaling:
+                    platformMapBitmapScalingFromScaling(bytes.bitmapScaling),
+                imagePixelRatio: bytes.imagePixelRatio,
+                width: bytes.width,
+                height: bytes.height));
+      default:
+        throw ArgumentError(
+            'Unrecognized type of bitmap ${bitmap.runtimeType}', 'bitmap');
+    }
+  }
+
+  /// Convert [Cap] from platform interface to [PlatformCap] pigeon.
+  @visibleForTesting
+  static PlatformCap platformCapFromCap(Cap cap) {
+    switch (cap.type) {
+      case CapType.butt:
+        return PlatformCap(type: PlatformCapType.buttCap);
+      case CapType.square:
+        return PlatformCap(type: PlatformCapType.squareCap);
+      case CapType.round:
+        return PlatformCap(type: PlatformCapType.roundCap);
+      case CapType.custom:
+        cap as CustomCap;
+        return PlatformCap(
+            type: PlatformCapType.customCap,
+            bitmapDescriptor:
+                platformBitmapFromBitmapDescriptor(cap.bitmapDescriptor),
+            refWidth: cap.refWidth);
     }
   }
 }
@@ -1218,6 +1311,32 @@ PlatformJointType platformJointTypeFromJointType(JointType jointType) {
   // switch as needing an update.
   // ignore: dead_code
   return PlatformJointType.mitered;
+}
+
+/// Converts a PatternItem to Pigeon's PlatformPatternItem for PlatformPolyline
+/// pattern member.
+@visibleForTesting
+PlatformPatternItem platformPatternItemFromPatternItem(PatternItem item) {
+  switch (item.type) {
+    case PatternItemType.dot:
+      return PlatformPatternItem(type: PlatformPatternItemType.dot);
+    case PatternItemType.dash:
+      final double length = (item as VariableLengthPatternItem).length;
+      return PlatformPatternItem(
+          type: PlatformPatternItemType.dash, length: length);
+    case PatternItemType.gap:
+      final double length = (item as VariableLengthPatternItem).length;
+      return PlatformPatternItem(
+          type: PlatformPatternItemType.gap, length: length);
+  }
+
+  // The enum comes from a different package, which could get a new value at
+  // any time, so provide a fallback that ensures this won't break when used
+  // with a version that contains new values. This is deliberately outside
+  // the switch rather than a `default` so that the linter will flag the
+  // switch as needing an update.
+  // ignore: dead_code
+  return PlatformPatternItem(type: PlatformPatternItemType.dot);
 }
 
 /// Update specification for a set of [TileOverlay]s.
