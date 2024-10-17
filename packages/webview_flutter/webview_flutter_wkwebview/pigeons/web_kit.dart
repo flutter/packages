@@ -1044,11 +1044,11 @@ abstract class NSUrlProtectionSpaceFlutterApi {
 
   /// Create a new Dart instance and add it to the `InstanceManager`.
   @ObjCSelector(
-    'createWithIdentifier:sslErrorType:x509CertificateDer:protocol:host:port:',
+    'createWithIdentifier:sslErrorTypeData:x509CertificateDer:protocol:host:port:',
   )
   void createWithServerTrust(
     int identifier,
-    SslErrorTypeData? sslErrorType,
+    SslErrorTypeData? sslErrorTypeData,
     Uint8List? x509CertificateDer,
     String? protocol,
     String? host,

@@ -23,6 +23,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FWFNavigationDelegateFlutterApiImpl : FWFWKNavigationDelegateFlutterApi
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
                         instanceManager:(FWFInstanceManager *)instanceManager;
+- (void)didReceiveAuthenticationChallengeForDelegate:(FWFNavigationDelegate *)instance
+                                         webView:(WKWebView *)webView
+                                       challenge:(NSURLAuthenticationChallenge *)challenge
+                                      sslErrorTypeDataBoxed:(FWFSslErrorTypeDataBox *_Nullable)sslErrorTypeDataBoxed
+                                  x509CertificateDer:(FlutterStandardTypedData *_Nullable)x509CertificateDer
+                                      completion: (void (^)(FWFAuthenticationChallengeResponse *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 /// Implementation of WKNavigationDelegate for FWFNavigationDelegateHostApiImpl.

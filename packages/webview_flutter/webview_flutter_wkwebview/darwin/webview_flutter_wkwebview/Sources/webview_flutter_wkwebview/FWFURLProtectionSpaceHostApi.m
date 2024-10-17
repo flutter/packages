@@ -35,7 +35,7 @@
 }
 
 - (void)createWithInstance:(NSURLProtectionSpace *)instance
-                      sslErrorTypeBoxed:(nullable FWFSslErrorTypeDataBox *) sslErrorTypeBoxed
+                      sslErrorTypeDataBoxed:(nullable FWFSslErrorTypeDataBox *) sslErrorTypeDataBoxed
         x509CertificateDer:(FlutterStandardTypedData *) x509CertificateDer
                   protocol:(nullable NSString *)protocol
                   host:(nullable NSString *)host
@@ -43,7 +43,7 @@
                 completion:(void (^)(FlutterError *_Nullable))completion {
   if (![self.instanceManager containsInstance:instance]) {
     [self.api createWithIdentifier:[self.instanceManager addHostCreatedInstance:instance]
-            sslErrorType:sslErrorTypeBoxed
+            sslErrorType:sslErrorTypeDataBoxed
       x509CertificateDer:x509CertificateDer
                           protocol:protocol
                              host:host

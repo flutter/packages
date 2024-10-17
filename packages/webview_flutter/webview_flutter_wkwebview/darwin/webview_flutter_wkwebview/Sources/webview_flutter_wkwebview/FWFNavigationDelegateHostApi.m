@@ -130,9 +130,9 @@
     didReceiveAuthenticationChallengeForDelegate:(FWFNavigationDelegate *)instance
                                          webView:(WKWebView *)webView
                                        challenge:(NSURLAuthenticationChallenge *)challenge
-                                      completion:
-                                          (void (^)(FWFAuthenticationChallengeResponse *_Nullable,
-                                                    FlutterError *_Nullable))completion {
+                                      sslErrorTypeDataBoxed:(FWFSslErrorTypeDataBox *_Nullable)sslErrorTypeDataBoxed
+                                      x509CertificateDer:(FlutterStandardTypedData *_Nullable)x509CertificateDer
+                                      completion: (void (^)(FWFAuthenticationChallengeResponse *_Nullable, FlutterError *_Nullable))completion {
   NSInteger webViewIdentifier =
           [self.instanceManager identifierWithStrongReferenceForInstance:webView];
 
@@ -142,18 +142,15 @@
                           instanceManager:self.instanceManager];
   [challengeApi createWithInstance:challenge
                    protectionSpace:challenge.protectionSpace
+                  sslErrorTypeDataBoxed:sslErrorTypeDataBoxed
+                  x509CertificateDer:x509CertificateDer
                         completion:^(FlutterError *error) {
                             NSAssert(!error, @"%@", error);
-                            NSLog(@"yay7");
-                            NSLog(@"%@", [NSThread currentThread]);
-                            [self didReceiveAuthenticationChallengeForDelegateWithIdentifier:[self
-                                            identifierForDelegate:instance]
-                                            webViewIdentifier:webViewIdentifier
-                                            challengeIdentifier:[self.instanceManager
-                                                    identifierWithStrongReferenceForInstance:challenge]
-                                            completion:completion];
                         }];
+  
+  [self didReceiveAuthenticationChallengeForDelegateWithIdentifier:[self identifierForDelegate:instance] webViewIdentifier:webViewIdentifier challengeIdentifier:[self.instanceManager identifierWithStrongReferenceForInstance:challenge] completion:completion];
 }
+
 @end
 
 @implementation FWFNavigationDelegate
@@ -261,55 +258,73 @@
     didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
                     completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition,
                                                 NSURLCredential *_Nullable))completionHandler {
-  NSLog(@"yay");
-  NSLog(@"%@", [NSThread currentThread]);
-  [self.navigationDelegateAPI
-      didReceiveAuthenticationChallengeForDelegate:self
-                                           webView:webView
-                                         challenge:challenge
-                                        completion:^(FWFAuthenticationChallengeResponse *response,
-                                                     FlutterError *error) {
-                                          NSAssert(!error, @"%@", error);
-                                          if (!error) {
-                                            NSURLSessionAuthChallengeDisposition disposition =
-                                                FWFNativeNSURLSessionAuthChallengeDispositionFromFWFNSUrlSessionAuthChallengeDisposition(
-                                                    response.disposition);
+  if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+      SecTrustRef serverTrust = challenge.protectionSpace.serverTrust;
+      
+      bool isTrusted = SecTrustEvaluateWithError(serverTrust, nil);
+      if (isTrusted) {
+        NSURLSessionAuthChallengeDisposition disposition = FWFNativeNSURLSessionAuthChallengeDispositionFromFWFNSUrlSessionAuthChallengeDisposition(NSURLSessionAuthChallengeUseCredential);
+        
+        CFDataRef exceptions = SecTrustCopyExceptions(serverTrust);
+        SecTrustSetExceptions(serverTrust, exceptions);
+        NSURLCredential* credential = [NSURLCredential credentialForTrust: serverTrust];
+        
+        completionHandler(disposition, credential);
+        return;
+      }
+    
+      
+      SecTrustResultType result;
+      SecTrustGetTrustResult(serverTrust, &result);
+      
+      FWFSslErrorTypeData sslErrorTypeData = FWFSslErrorTypeDataFromSecTrustResult(result);
+      FWFSslErrorTypeDataBox* sslErrorTypeDataBoxed = NULL;
+      if (sslErrorTypeData != -1) {
+        sslErrorTypeDataBoxed = [[FWFSslErrorTypeDataBox alloc] initWithValue: sslErrorTypeData];
+      }
+      
+      SecCertificateRef certificate = SecTrustGetCertificateAtIndex(serverTrust, 0);
+      NSData* certificateDer = (NSData*)CFBridgingRelease(SecCertificateCopyData(certificate));
+      FlutterStandardTypedData* flutterTypedData = [FlutterStandardTypedData typedDataWithBytes:certificateDer];
+      
+      dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationDelegateAPI didReceiveAuthenticationChallengeForDelegate:self webView:webView challenge:challenge sslErrorTypeDataBoxed:sslErrorTypeDataBoxed x509CertificateDer:flutterTypedData completion:^(FWFAuthenticationChallengeResponse *response, FlutterError *error) {
+              NSAssert(!error, @"%@", error);
+              if (!error) {
+                NSURLSessionAuthChallengeDisposition disposition = FWFNativeNSURLSessionAuthChallengeDispositionFromFWFNSUrlSessionAuthChallengeDisposition(response.disposition);
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    CFDataRef exceptions = SecTrustCopyExceptions(serverTrust);
+                    SecTrustSetExceptions(serverTrust, exceptions);
+                    NSURLCredential* credential = [NSURLCredential credentialForTrust: serverTrust];
+                    completionHandler(disposition, credential);
+                });
+              } else {
+                completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
+              }
+            }
+          ];
+      });
+    });
+    return;
+  }
+  
+  [self.navigationDelegateAPI didReceiveAuthenticationChallengeForDelegate:self webView:webView challenge:challenge sslErrorTypeDataBoxed:nil x509CertificateDer:nil completion:^(FWFAuthenticationChallengeResponse *response, FlutterError *error) {
+        NSAssert(!error, @"%@", error);
+        if (!error) {
+          NSURLSessionAuthChallengeDisposition disposition = FWFNativeNSURLSessionAuthChallengeDispositionFromFWFNSUrlSessionAuthChallengeDisposition(response.disposition);
+          NSURLCredential *credential = response.credentialIdentifier != nil ? (NSURLCredential *)[
+              self.navigationDelegateAPI.instanceManager instanceForIdentifier:response.credentialIdentifier.longValue
+            ] : nil;
 
-
-                                            if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust) {
-                                                NSLog(@"yay4");
-                                                NSLog(@"%@", [NSThread currentThread]);
-                                                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                                                    SecTrustRef serverTrust = challenge.protectionSpace.serverTrust;
-                                                    CFDataRef exceptions = SecTrustCopyExceptions(serverTrust);
-                                                    SecTrustSetExceptions(serverTrust, exceptions);
-                                                    NSURLCredential* credential = [NSURLCredential credentialForTrust: serverTrust];
-                                                  dispatch_async(dispatch_get_main_queue(), ^{
-                                                    NSLog(@"yay5");
-                                                    NSLog(@"%@", [NSThread currentThread]);
-                                                    completionHandler(disposition, nil);
-                                                    NSLog(@"yay6");
-                                                  });
-                                                });
-                                                return;
-                                            }
-
-                                            NSURLCredential *credential =
-                                                    response.credentialIdentifier != nil
-                                                    ? (NSURLCredential *)[self.navigationDelegateAPI
-                                                            .instanceManager
-                                                            instanceForIdentifier:
-                                                                    response.credentialIdentifier
-                                                                            .longValue]
-                                            : nil;
-
-                                            completionHandler(disposition, credential);
-                                          } else {
-                                            completionHandler(
-                                                NSURLSessionAuthChallengeCancelAuthenticationChallenge,
-                                                nil);
-                                          }
-                                        }];
+          completionHandler(disposition, credential);
+        } else {
+          completionHandler(
+              NSURLSessionAuthChallengeCancelAuthenticationChallenge,
+              nil);
+        }
+      }
+  ];
 }
 @end
 

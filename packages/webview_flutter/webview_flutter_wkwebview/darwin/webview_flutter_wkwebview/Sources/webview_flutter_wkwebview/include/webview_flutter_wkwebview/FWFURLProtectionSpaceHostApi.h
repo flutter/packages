@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
                 completion:(void (^)(FlutterError *_Nullable))completion;
 /// Sends a message to Dart to create a new Dart instance and add it to the `InstanceManager`.
 - (void)createWithInstance:(NSURLProtectionSpace *)instance
-                      sslErrorTypeBoxed:(nullable FWFSslErrorTypeDataBox *) sslErrorTypeBoxed
+                      sslErrorTypeDataBoxed:(nullable FWFSslErrorTypeDataBox *) sslErrorTypeDataBoxed
                       x509CertificateDer:(nullable FlutterStandardTypedData *) x509CertificateDer
                       protocol:(nullable NSString *)protocol
                       host:(nullable NSString *)host

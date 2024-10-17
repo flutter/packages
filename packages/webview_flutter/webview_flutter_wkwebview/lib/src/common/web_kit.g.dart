@@ -3436,7 +3436,7 @@ abstract class NSUrlProtectionSpaceFlutterApi {
   void create(int identifier, String? host, String? realm, String? authenticationMethod);
 
   /// Create a new Dart instance and add it to the `InstanceManager`.
-  void createWithServerTrust(int identifier, SslErrorTypeData? sslErrorType, Uint8List? x509CertificateDer, String? protocol, String? host, int port);
+  void createWithServerTrust(int identifier, SslErrorTypeData? sslErrorTypeData, Uint8List? x509CertificateDer, String? protocol, String? host, int port);
 
   static void setUp(NSUrlProtectionSpaceFlutterApi? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
@@ -3482,7 +3482,7 @@ abstract class NSUrlProtectionSpaceFlutterApi {
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlProtectionSpaceFlutterApi.createWithServerTrust was null, expected non-null int.');
-          final SslErrorTypeData? arg_sslErrorType = args[1] == null ? null : SslErrorTypeData.values[args[1]! as int];
+          final SslErrorTypeData? arg_sslErrorTypeData = args[1] == null ? null : SslErrorTypeData.values[args[1]! as int];
           final Uint8List? arg_x509CertificateDer = (args[2] as Uint8List?);
           final String? arg_protocol = (args[3] as String?);
           final String? arg_host = (args[4] as String?);
@@ -3490,7 +3490,7 @@ abstract class NSUrlProtectionSpaceFlutterApi {
           assert(arg_port != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlProtectionSpaceFlutterApi.createWithServerTrust was null, expected non-null int.');
           try {
-            api.createWithServerTrust(arg_identifier!, arg_sslErrorType, arg_x509CertificateDer, arg_protocol, arg_host, arg_port!);
+            api.createWithServerTrust(arg_identifier!, arg_sslErrorTypeData, arg_x509CertificateDer, arg_protocol, arg_host, arg_port!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

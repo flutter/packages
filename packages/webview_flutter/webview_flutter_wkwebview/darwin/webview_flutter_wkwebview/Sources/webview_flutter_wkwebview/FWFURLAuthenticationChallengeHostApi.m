@@ -29,6 +29,8 @@
 
 - (void)createWithInstance:(NSURLAuthenticationChallenge *)instance
            protectionSpace:(NSURLProtectionSpace *)protectionSpace
+       sslErrorTypeDataBoxed:(FWFSslErrorTypeDataBox *_Nullable)sslErrorTypeDataBoxed
+          x509CertificateDer:(FlutterStandardTypedData *_Nullable)x509CertificateDer
                 completion:(void (^)(FlutterError *_Nullable))completion {
   if ([self.instanceManager containsInstance:instance]) {
     return;
@@ -39,50 +41,25 @@
                                                            instanceManager:self.instanceManager];
   
   if (protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust) {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-      SecTrustRef serverTrust = protectionSpace.serverTrust;
-      
-      SecTrustResultType result;
-      SecTrustEvaluate(serverTrust, &result);
-      FWFSslErrorTypeData sslErrorTypeData = FWFSslErrorTypeDataFromSecTrustResult(result);
-      FWFSslErrorTypeDataBox* sslErrorTypeDataBox = NULL;
-      if (sslErrorTypeData != -1) {
-        sslErrorTypeDataBox = [[FWFSslErrorTypeDataBox alloc] initWithValue: sslErrorTypeData];
-      }
-      
-      SecCertificateRef certificate = SecTrustGetCertificateAtIndex(serverTrust, 0);
-      NSData* certificateDer = (NSData*)CFBridgingRelease(SecCertificateCopyData(certificate));
-      FlutterStandardTypedData* flutterTypedData = [FlutterStandardTypedData typedDataWithBytes:certificateDer];
-      
-      dispatch_async(dispatch_get_main_queue(), ^{
-        NSLog(@"yay2");
-        NSLog(@"%@", [NSThread currentThread]);
-        [protectionSpaceApi createWithInstance:protectionSpace
-                             sslErrorTypeBoxed:sslErrorTypeDataBox
-                           x509CertificateDer:flutterTypedData
-                                      protocol:protectionSpace.protocol
-                                          host:protectionSpace.host
-                                          port: protectionSpace.port
-                                    completion:^(FlutterError *error) {
-          NSAssert(!error, @"%@", error);
-        }];
-        [self.api createWithIdentifier:[self.instanceManager addHostCreatedInstance:instance]
-             protectionSpaceIdentifier:[self.instanceManager
-                                           identifierWithStrongReferenceForInstance:protectionSpace]
-                            completion:completion];
-        NSLog(@"yay3");
-      });
-    });
-    return;
+    [protectionSpaceApi createWithInstance:protectionSpace
+                         sslErrorTypeDataBoxed:sslErrorTypeDataBoxed
+                       x509CertificateDer:x509CertificateDer
+                                  protocol:protectionSpace.protocol
+                                      host:protectionSpace.host
+                                      port: protectionSpace.port
+                                completion:^(FlutterError *error) {
+      NSAssert(!error, @"%@", error);
+    }];
+  } else {
+    [protectionSpaceApi createWithInstance:protectionSpace
+                                      host:protectionSpace.host
+                                     realm:protectionSpace.realm
+                      authenticationMethod:protectionSpace.authenticationMethod
+                                completion:^(FlutterError *error) {
+                                  NSAssert(!error, @"%@", error);
+                                }];
   }
   
-  [protectionSpaceApi createWithInstance:protectionSpace
-                                    host:protectionSpace.host
-                                   realm:protectionSpace.realm
-                    authenticationMethod:protectionSpace.authenticationMethod
-                              completion:^(FlutterError *error) {
-                                NSAssert(!error, @"%@", error);
-                              }];
   [self.api createWithIdentifier:[self.instanceManager addHostCreatedInstance:instance]
        protectionSpaceIdentifier:[self.instanceManager
                                      identifierWithStrongReferenceForInstance:protectionSpace]
