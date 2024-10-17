@@ -1002,7 +1002,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
     required String dartPackageName,
   }) {
     final List<EnumeratedType> enumeratedTypes =
-        getEnumeratedTypes(root).toList();
+        getEnumeratedTypes(root, excludeSealedClasses: true).toList();
     indent.newln();
     if (root.requiresOverflowClass) {
       _writeCodecOverflowUtilities(

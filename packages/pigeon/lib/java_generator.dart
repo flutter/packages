@@ -458,7 +458,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     required String dartPackageName,
   }) {
     final List<EnumeratedType> enumeratedTypes =
-        getEnumeratedTypes(root).toList();
+        getEnumeratedTypes(root, excludeSealedClasses: true).toList();
 
     void writeEncodeLogic(EnumeratedType customType) {
       final String encodeString =
