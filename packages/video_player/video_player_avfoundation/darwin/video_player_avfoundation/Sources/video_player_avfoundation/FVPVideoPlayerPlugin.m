@@ -345,7 +345,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     AVPlayerItem *item = (AVPlayerItem *)object;
     switch (item.status) {
       case AVPlayerItemStatusFailed:
-        [self sendFailedToLoadVideoEvent:item.error];
+        [self sendFailedToLoadVideoEvent];
         break;
       case AVPlayerItemStatusUnknown:
         break;
@@ -400,14 +400,19 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   _displayLink.running = _isPlaying || self.waitingForFrame;
 }
 
-- (void)sendFailedToLoadVideoEvent:(NSError *)error {
+- (void)sendFailedToLoadVideoEvent {
   if (_eventSink == nil) {
     return;
   }
-  __block NSString *message = @"Failed to load video";
+  // Prefer more detailed error information from tracks loading.
+  NSError *error;
+  if ([self.player.currentItem.asset statusOfValueForKey:@"tracks" error:&error] != AVKeyValueStatusFailed) {
+    error = self.player.currentItem.error;
+  }
+  __block NSMutableOrderedSet<NSString*> *details = [NSMutableOrderedSet orderedSetWithObject:@"Failed to load video"];
   void (^add)(NSString *) = ^(NSString *detail) {
     if (detail != nil) {
-      message = [message stringByAppendingFormat:@": %@", detail];
+      [details addObject:detail];
     }
   };
   NSError *underlyingError = error.userInfo[NSUnderlyingErrorKey];
@@ -415,6 +420,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   add(error.localizedFailureReason);
   add(underlyingError.localizedDescription);
   add(underlyingError.localizedFailureReason);
+  NSString *message = [details.array componentsJoinedByString:@": "];
   _eventSink([FlutterError errorWithCode:@"VideoError" message:message details:nil]);
 }
 
@@ -429,27 +435,13 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     AVAsset *asset = currentItem.asset;
     if ([asset statusOfValueForKey:@"tracks" error:nil] != AVKeyValueStatusLoaded) {
       void (^trackCompletionHandler)(void) = ^{
-        NSError *error;
-        switch ([asset statusOfValueForKey:@"tracks" error:&error]) {
-          case AVKeyValueStatusLoaded:
-            // This completion block will run on an AVFoundation background queue.
-            // Hop back to the main thread to set up event sink.
-            [self performSelector:_cmd
-                         onThread:NSThread.mainThread
-                       withObject:self
-                    waitUntilDone:NO];
-            break;
+        if ([asset statusOfValueForKey:@"tracks" error:nil] != AVKeyValueStatusLoaded) {
           // Cancelled, or something failed.
-          case AVKeyValueStatusFailed: {
-            // if something failed then future should result in error
-            dispatch_async(dispatch_get_main_queue(), ^{
-              [self sendFailedToLoadVideoEvent:error];
-            });
-            break;
-          }
-          default:
-            break;
+          return;
         }
+        // This completion block will run on an AVFoundation background queue.
+        // Hop back to the main thread to set up event sink.
+        [self performSelector:_cmd onThread:NSThread.mainThread withObject:self waitUntilDone:NO];
       };
       [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ]
                            completionHandler:trackCompletionHandler];
@@ -617,7 +609,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // https://github.com/flutter/flutter/issues/151475
   // https://github.com/flutter/flutter/issues/147707
   if (self.player.currentItem.status == AVPlayerItemStatusFailed) {
-    [self sendFailedToLoadVideoEvent:self.player.currentItem.error];
+    [self sendFailedToLoadVideoEvent];
     return nil;
   }
   [self setupEventSinkIfReadyToPlay];
