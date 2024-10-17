@@ -27,8 +27,6 @@
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
-		F219F19D2CC056C100142FC2 /* StoreKitTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2D1274A2CB5DB61005FA2E5 /* StoreKitTest.framework */; };
-		F219F1A12CC0586700142FC2 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F219F1A02CC0586700142FC2 /* StoreKit.framework */; };
 		F24C45E42C409D87000C6C72 /* InAppPurchasePluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24C45E32C409D87000C6C72 /* InAppPurchasePluginTests.swift */; };
 		F27694092C4724B200277144 /* ProductRequestHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694082C4724B200277144 /* ProductRequestHandlerTests.swift */; };
 		F27694132C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694122C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift */; };
@@ -125,9 +123,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F219F1A12CC0586700142FC2 /* StoreKit.framework in Frameworks */,
 				F8270DE1AEF80A8CF2C45688 /* Pods_RunnerTests.framework in Frameworks */,
-				F219F19D2CC056C100142FC2 /* StoreKitTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
