@@ -1,3 +1,7 @@
+## 2.6.3
+
+* Fixes changing global audio session category to be collision free.
+
 ## 2.6.2
 
 * Updates Pigeon for non-nullable collection type support.

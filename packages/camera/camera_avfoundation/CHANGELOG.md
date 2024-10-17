@@ -1,3 +1,7 @@
+## 0.9.17+5
+
+* Fixes changing global audio session category to be collision free.
+
 ## 0.9.17+4
 
 * Updates Pigeon for non-nullable collection type support.
