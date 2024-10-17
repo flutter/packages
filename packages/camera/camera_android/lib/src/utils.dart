@@ -5,18 +5,43 @@
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
 
-/// Parses a string into a corresponding CameraLensDirection.
-CameraLensDirection parseCameraLensDirection(String string) {
-  switch (string) {
-    case 'front':
-      return CameraLensDirection.front;
-    case 'back':
-      return CameraLensDirection.back;
-    case 'external':
-      return CameraLensDirection.external;
-  }
-  throw ArgumentError('Unknown CameraLensDirection value');
+import 'messages.g.dart';
+
+/// Converts a [PlatformCameraLensDirection] to [CameraLensDirection].
+CameraLensDirection cameraLensDirectionFromPlatform(
+    PlatformCameraLensDirection direction) {
+  return switch (direction) {
+    PlatformCameraLensDirection.front => CameraLensDirection.front,
+    PlatformCameraLensDirection.back => CameraLensDirection.back,
+    PlatformCameraLensDirection.external => CameraLensDirection.external,
+  };
 }
+
+/// Converts a [PlatformDeviceOrientation] to [DeviceOrientation].
+DeviceOrientation deviceOrientationFromPlatform(
+        PlatformDeviceOrientation orientation) =>
+    switch (orientation) {
+      PlatformDeviceOrientation.portraitUp => DeviceOrientation.portraitUp,
+      PlatformDeviceOrientation.portraitDown => DeviceOrientation.portraitDown,
+      PlatformDeviceOrientation.landscapeLeft =>
+        DeviceOrientation.landscapeLeft,
+      PlatformDeviceOrientation.landscapeRight =>
+        DeviceOrientation.landscapeRight,
+    };
+
+/// Converts a [PlatformExposureMode] to [ExposureMode].
+ExposureMode exposureModeFromPlatform(PlatformExposureMode exposureMode) =>
+    switch (exposureMode) {
+      PlatformExposureMode.auto => ExposureMode.auto,
+      PlatformExposureMode.locked => ExposureMode.locked,
+    };
+
+/// Converts a [PlatformFocusMode] to [FocusMode].
+FocusMode focusModeFromPlatform(PlatformFocusMode focusMode) =>
+    switch (focusMode) {
+      PlatformFocusMode.auto => FocusMode.auto,
+      PlatformFocusMode.locked => FocusMode.locked,
+    };
 
 /// Returns the device orientation as a String.
 String serializeDeviceOrientation(DeviceOrientation orientation) {
@@ -37,20 +62,4 @@ String serializeDeviceOrientation(DeviceOrientation orientation) {
   // switch as needing an update.
   // ignore: dead_code
   return 'portraitUp';
-}
-
-/// Returns the device orientation for a given String.
-DeviceOrientation deserializeDeviceOrientation(String str) {
-  switch (str) {
-    case 'portraitUp':
-      return DeviceOrientation.portraitUp;
-    case 'portraitDown':
-      return DeviceOrientation.portraitDown;
-    case 'landscapeRight':
-      return DeviceOrientation.landscapeRight;
-    case 'landscapeLeft':
-      return DeviceOrientation.landscapeLeft;
-    default:
-      throw ArgumentError('"$str" is not a valid DeviceOrientation value');
-  }
 }
