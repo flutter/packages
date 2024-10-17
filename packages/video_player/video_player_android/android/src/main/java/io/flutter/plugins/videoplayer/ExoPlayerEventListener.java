@@ -81,7 +81,6 @@ final class ExoPlayerEventListener implements Player.Listener {
         height = videoSize.width;
       }
     }
-
     events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection);
   }
 
