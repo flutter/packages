@@ -1,3 +1,7 @@
+## 3.16.0
+
+* Implement handling for the NSURLAuthenticationMethodServerTrust authentication method
+
 ## 3.15.0
 
 * Adds macOS support.

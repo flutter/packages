@@ -4,31 +4,6 @@
 
 #import "./include/webview_flutter_wkwebview/FWFURLHostApi.h"
 
-//SecTrustRef serverTrust = challenge.protectionSpace.serverTrust;
-//SecCertificateRef certificate = SecTrustGetCertificateAtIndex(serverTrust, 0);
-//
-//SslError
-//        sslErrorType?
-//host - challenge.protectionSpace.host
-//        scheme - challenge.protectionSpace.protocol
-//        port - challenge.protectionSpace.port
-//        sslCertificate
-//issuedBy?
-//issuedTo?
-//validNotAfterIso8601Date?
-//validNotBeforeIso8601Date?
-//X509CertificateDer?
-//
-//
-//
-//
-//NSData* certificateDer = (NSData*)CFBridgingRelease(SecCertificateCopyData(certificate));
-//
-//
-//SecTrustResultType result;
-//SecTrustEvaluate(serverTrust, &result);
-//BOOL certificateIsValid = (result == kSecTrustResultUnspecified || result == kSecTrustResultProceed);
-
 @interface FWFURLHostApiImpl ()
 // BinaryMessenger must be weak to prevent a circular reference with the host API it
 // references.

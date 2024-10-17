@@ -12,11 +12,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   web: ^1.0.0
-  webview_flutter_platform_interface:
-    git:
-      url: https://github.com/Colman/packages.git
-      ref: ssl_error_decision
-      path: packages/webview_flutter/webview_flutter_platform_interface
+  webview_flutter_platform_interface: ^2.0.0
   webview_flutter_web:
     # When depending on this package from a real application you should use:
     #   webview_flutter_web: ^x.y.z
