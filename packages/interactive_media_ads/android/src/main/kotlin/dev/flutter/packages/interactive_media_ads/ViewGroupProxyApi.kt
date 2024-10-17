@@ -18,4 +18,8 @@ class ViewGroupProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   override fun addView(pigeon_instance: ViewGroup, view: View) {
     pigeon_instance.addView(view)
   }
+
+  override fun removeView(pigeon_instance: ViewGroup, view: View) {
+    pigeon_instance.removeView(view)
+  }
 }

@@ -33,6 +33,12 @@ enum TargetGenerator {
   swift,
 }
 
+/// Host languages that support generating Proxy APIs.
+const Set<TargetGenerator> proxyApiSupportedLanguages = <TargetGenerator>{
+  TargetGenerator.kotlin,
+  TargetGenerator.swift,
+};
+
 /// Sets up and runs the integration tests.
 void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -2160,7 +2166,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   });
 
   group('Proxy API Tests', () {
-    if (targetGenerator != TargetGenerator.kotlin) {
+    if (!proxyApiSupportedLanguages.contains(targetGenerator)) {
       return;
     }
 

@@ -873,7 +873,7 @@ Future<void> main() async {
             },
             javascriptMode: JavascriptMode.unrestricted,
             navigationDelegate: (NavigationRequest request) {
-              return (request.url.contains('youtube.com'))
+              return request.url.contains('youtube.com')
                   ? NavigationDecision.prevent
                   : NavigationDecision.navigate;
             },
@@ -1003,7 +1003,7 @@ Future<void> main() async {
             },
             javascriptMode: JavascriptMode.unrestricted,
             navigationDelegate: (NavigationRequest request) {
-              return (request.url.contains('youtube.com'))
+              return request.url.contains('youtube.com')
                   ? NavigationDecision.prevent
                   : NavigationDecision.navigate;
             },

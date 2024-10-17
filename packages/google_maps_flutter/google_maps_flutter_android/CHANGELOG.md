@@ -1,3 +1,12 @@
+## 2.14.10
+
+* Adds 'PlatformBitmap' type.
+* Updates type unsafe implementations.
+
+## 2.14.9
+
+* Adds `PlatformCap` for `PlatformPolyline.startCap` and `endCap`.
+
 ## 2.14.8
 
 * Updates Java compatibility version to 11.

@@ -593,6 +593,7 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         || value is AdErrorType || value is AdErrorCode || value is AdEventType
         || value is KeyValueObservingOptions || value is KeyValueChange
         || value is KeyValueChangeKey || value is FriendlyObstructionPurpose
+        || value is UIElementType
       {
         super.writeValue(value)
         return
@@ -1030,6 +1031,18 @@ enum FriendlyObstructionPurpose: Int {
   case unknown = 4
 }
 
+/// Different UI elements that can be customized.
+///
+/// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Enums/IMAUiElementType.html.
+enum UIElementType: Int {
+  /// Ad attribution UI element.
+  case adAttribution = 0
+  /// Ad countdown element.
+  case countdown = 1
+  /// The element is not recognized by this wrapper.
+  case unknown = 2
+}
+
 private class InteractiveMediaAdsLibraryPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -1075,6 +1088,12 @@ private class InteractiveMediaAdsLibraryPigeonCodecReader: FlutterStandardReader
         return FriendlyObstructionPurpose(rawValue: enumResultAsInt)
       }
       return nil
+    case 136:
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return UIElementType(rawValue: enumResultAsInt)
+      }
+      return nil
     default:
       return super.readValue(ofType: type)
     }
@@ -1103,6 +1122,9 @@ private class InteractiveMediaAdsLibraryPigeonCodecWriter: FlutterStandardWriter
       super.writeValue(value.rawValue)
     } else if let value = value as? FriendlyObstructionPurpose {
       super.writeByte(135)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? UIElementType {
+      super.writeByte(136)
       super.writeValue(value.rawValue)
     } else {
       super.writeValue(value)
@@ -2789,6 +2811,42 @@ final class PigeonApiIMAAdEvent: PigeonApiProtocolIMAAdEvent {
 protocol PigeonApiDelegateIMAAdsRenderingSettings {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsRenderingSettings) throws
     -> IMAAdsRenderingSettings
+  /// If specified, the SDK will play the media with MIME type on the list.
+  func setMimeTypes(
+    pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
+    types: [String]?) throws
+  /// Maximum recommended bitrate.
+  ///
+  /// The value is in kbit/s.
+  func setBitrate(
+    pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
+    bitrate: Int64) throws
+  /// Timeout (in seconds) when loading a video ad media file.
+  ///
+  /// Use -1 for the default of 8 seconds.
+  func setLoadVideoTimeout(
+    pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
+    seconds: Double) throws
+  /// For VMAP and ad rules playlists, only play ad breaks scheduled after this
+  /// time (in seconds).
+  func setPlayAdsAfterTime(
+    pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
+    seconds: Double) throws
+  /// Specifies the list of UI elements that should be visible.
+  func setUIElements(
+    pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
+    types: [UIElementType]?) throws
+  /// Whether or not the SDK will preload ad media.
+  ///
+  /// Default is YES.
+  func setEnablePreloading(
+    pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
+    enable: Bool) throws
+  /// Specifies the optional UIViewController that will be used to open links
+  /// in-app.
+  func setLinkOpenerPresentingController(
+    pigeonApi: PigeonApiIMAAdsRenderingSettings, pigeonInstance: IMAAdsRenderingSettings,
+    controller: UIViewController) throws
 }
 
 protocol PigeonApiProtocolIMAAdsRenderingSettings {
@@ -2837,6 +2895,140 @@ final class PigeonApiIMAAdsRenderingSettings: PigeonApiProtocolIMAAdsRenderingSe
       }
     } else {
       pigeonDefaultConstructorChannel.setMessageHandler(nil)
+    }
+    let setMimeTypesChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setMimeTypes",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setMimeTypesChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
+        let typesArg: [String]? = nilOrValue(args[1])
+        do {
+          try api.pigeonDelegate.setMimeTypes(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, types: typesArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setMimeTypesChannel.setMessageHandler(nil)
+    }
+    let setBitrateChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setBitrate",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setBitrateChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
+        let bitrateArg = args[1] as! Int64
+        do {
+          try api.pigeonDelegate.setBitrate(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, bitrate: bitrateArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setBitrateChannel.setMessageHandler(nil)
+    }
+    let setLoadVideoTimeoutChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setLoadVideoTimeout",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setLoadVideoTimeoutChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
+        let secondsArg = args[1] as! Double
+        do {
+          try api.pigeonDelegate.setLoadVideoTimeout(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, seconds: secondsArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setLoadVideoTimeoutChannel.setMessageHandler(nil)
+    }
+    let setPlayAdsAfterTimeChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setPlayAdsAfterTime",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setPlayAdsAfterTimeChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
+        let secondsArg = args[1] as! Double
+        do {
+          try api.pigeonDelegate.setPlayAdsAfterTime(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, seconds: secondsArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setPlayAdsAfterTimeChannel.setMessageHandler(nil)
+    }
+    let setUIElementsChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setUIElements",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setUIElementsChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
+        let typesArg: [UIElementType]? = nilOrValue(args[1])
+        do {
+          try api.pigeonDelegate.setUIElements(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, types: typesArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setUIElementsChannel.setMessageHandler(nil)
+    }
+    let setEnablePreloadingChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setEnablePreloading",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setEnablePreloadingChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
+        let enableArg = args[1] as! Bool
+        do {
+          try api.pigeonDelegate.setEnablePreloading(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, enable: enableArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setEnablePreloadingChannel.setMessageHandler(nil)
+    }
+    let setLinkOpenerPresentingControllerChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.interactive_media_ads.IMAAdsRenderingSettings.setLinkOpenerPresentingController",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setLinkOpenerPresentingControllerChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! IMAAdsRenderingSettings
+        let controllerArg = args[1] as! UIViewController
+        do {
+          try api.pigeonDelegate.setLinkOpenerPresentingController(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, controller: controllerArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setLinkOpenerPresentingControllerChannel.setMessageHandler(nil)
     }
   }
 
