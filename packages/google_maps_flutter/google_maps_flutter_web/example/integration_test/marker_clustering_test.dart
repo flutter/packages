@@ -54,6 +54,7 @@ void main() {
               widgetConfiguration: const MapWidgetConfiguration(
                 initialCameraPosition: initialCameraPosition,
                 textDirection: TextDirection.ltr,
+                markerType: MarkerType.marker,
               ),
               mapObjects: MapObjects(
                   clusterManagers: clusterManagers, markers: initialMarkers)));
@@ -102,7 +103,7 @@ void main() {
 }
 
 // Repeatedly checks an asynchronous value against a test condition, waiting
-// one frame between each check, returing the value if it passes the predicate
+// one frame between each check, returning the value if it passes the predicate
 // before [maxTries] is reached.
 //
 // Returns null if the predicate is never satisfied.

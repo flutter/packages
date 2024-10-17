@@ -29,6 +29,35 @@ class ClusteringBody extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => ClusteringBodyState();
+
+  /// Map Id to use for the GoogleMap
+  String? get mapId => null;
+
+  /// Create a marker that is later added to a cluster
+  Marker createMarker({
+    required MarkerId markerId,
+    required ClusterManagerId clusterManagerId,
+    required LatLng position,
+    required InfoWindow infoWindow,
+    required VoidCallback onTap,
+  }) {
+    return Marker(
+      markerId: markerId,
+      clusterManagerId: clusterManagerId,
+      position: position,
+      infoWindow: infoWindow,
+      onTap: onTap,
+    );
+  }
+
+  /// Return selected or unselected state of the given [marker]
+  Marker getSelectedMarker(Marker marker, bool isSelected) {
+    return marker.copyWith(
+      iconParam: isSelected
+          ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen)
+          : BitmapDescriptor.defaultMarker,
+    );
+  }
 }
 
 /// State of the clustering page.
@@ -95,16 +124,12 @@ class ClusteringBodyState extends State<ClusteringBody> {
       setState(() {
         final MarkerId? previousMarkerId = selectedMarker;
         if (previousMarkerId != null && markers.containsKey(previousMarkerId)) {
-          final Marker resetOld = markers[previousMarkerId]!
-              .copyWith(iconParam: BitmapDescriptor.defaultMarker);
+          final Marker resetOld =
+              widget.getSelectedMarker(markers[previousMarkerId]!, false);
           markers[previousMarkerId] = resetOld;
         }
         selectedMarker = markerId;
-        final Marker newMarker = tappedMarker.copyWith(
-          iconParam: BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueGreen,
-          ),
-        );
+        final Marker newMarker = widget.getSelectedMarker(tappedMarker, true);
         markers[markerId] = newMarker;
       });
     }
@@ -159,7 +184,7 @@ class ClusteringBodyState extends State<ClusteringBody> {
       final double clusterManagerLongitudeOffset =
           clusterManagerIndex * _clusterManagerLongitudeOffset;
 
-      final Marker marker = Marker(
+      final Marker marker = widget.createMarker(
         clusterManagerId: clusterManager.clusterManagerId,
         markerId: markerId,
         position: LatLng(
@@ -208,6 +233,10 @@ class ClusteringBodyState extends State<ClusteringBody> {
         SizedBox(
           height: 300.0,
           child: ExampleGoogleMap(
+            mapId: widget.mapId,
+            markerType: widget.mapId != null
+                ? MarkerType.advancedMarker
+                : MarkerType.marker,
             onMapCreated: _onMapCreated,
             initialCameraPosition: const CameraPosition(
               target: LatLng(-33.852, 151.25),

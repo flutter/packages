@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 // All the public types exposed by this package.
+export 'advanced_marker.dart';
 export 'bitmap.dart';
 export 'callbacks.dart';
 export 'camera.dart';
@@ -12,6 +13,7 @@ export 'circle_updates.dart';
 export 'cluster.dart';
 export 'cluster_manager.dart';
 export 'cluster_manager_updates.dart';
+export 'glyph.dart';
 export 'heatmap.dart';
 export 'heatmap_updates.dart';
 export 'joint_type.dart';

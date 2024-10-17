@@ -8,6 +8,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 void main() => runApp(const MyApp());
 
@@ -70,3 +71,28 @@ class MapSampleState extends State<MapSample> {
   }
 }
 // #enddocregion MapSample
+
+// #docregion AdvancedMarkersSample
+class AdvancedMarkersSample extends StatelessWidget {
+  const AdvancedMarkersSample({super.key});
+
+  static const CameraPosition _kGooglePlex = CameraPosition(
+    target: LatLng(37.42796133580664, -122.085749655962),
+    zoom: 14.4746,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: GoogleMap(
+        // Set your Map Id
+        mapId: 'my-map-id',
+
+        // Let map know that you're using Advanced Markers
+        markerType: MarkerType.advancedMarker,
+        initialCameraPosition: _kGooglePlex,
+      ),
+    );
+  }
+}
+// #enddocregion AdvancedMarkersSample
