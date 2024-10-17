@@ -1,3 +1,7 @@
+## 2.7.14
+
+* Removes SSL workaround for API 19, which is no longer supported.
+* 
 ## 2.7.13
 
 * When `AndroidVideoPlayer` attempts to operate on a `textureId` that is not
