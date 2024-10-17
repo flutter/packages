@@ -218,8 +218,6 @@
     `YES`. Any data class or Flutter API interactions involving `bool`s should
     be carefully audited by hand when updating.
 
-
-
 ## 12.0.1
 
 * [swift] Adds protocol for Flutter APIs.

@@ -555,6 +555,12 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
    */
   abstract fun getPigeonApiCompanionAd(): PigeonApiCompanionAd
 
+  /**
+   * An implementation of [PigeonApiUniversalAdId] used to add a new Dart instance of
+   * `UniversalAdId` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiUniversalAdId(): PigeonApiUniversalAdId
+
   fun setUp() {
     InteractiveMediaAdsLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
         binaryMessenger, instanceManager)
@@ -697,6 +703,8 @@ private class InteractiveMediaAdsLibraryPigeonProxyApiBaseCodec(
       registrar.getPigeonApiAdProgressInfo().pigeon_newInstance(value) {}
     } else if (value is com.google.ads.interactivemedia.v3.api.CompanionAd) {
       registrar.getPigeonApiCompanionAd().pigeon_newInstance(value) {}
+    } else if (value is com.google.ads.interactivemedia.v3.api.UniversalAdId) {
+      registrar.getPigeonApiUniversalAdId().pigeon_newInstance(value) {}
     }
 
     when {
@@ -4830,5 +4838,70 @@ abstract class PigeonApiCompanionAd(
             callback(Result.failure(createConnectionError(channelName)))
           }
         }
+  }
+}
+/**
+ * This object exposes information about the universal ad ID.
+ *
+ * See
+ * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/UniversalAdId.html.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiUniversalAdId(
+    open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+) {
+  /**
+   * Returns the ad ID registry associated with the ad ID value.
+   *
+   * Returns "unknown" if the registry is not known.
+   */
+  abstract fun adIdRegistry(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.UniversalAdId
+  ): String
+
+  /**
+   * Returns the universal ad ID value.
+   *
+   * Returns "unknown" if the value is not known.
+   */
+  abstract fun adIdValue(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.UniversalAdId
+  ): String
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of UniversalAdId and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.UniversalAdId,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg =
+        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val adIdRegistryArg = adIdRegistry(pigeon_instanceArg)
+    val adIdValueArg = adIdValue(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.interactive_media_ads.UniversalAdId.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg, adIdRegistryArg, adIdValueArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
   }
 }
