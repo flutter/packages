@@ -1,3 +1,7 @@
+## 4.10.0
+
+* Implemented onSslError
+
 ## 4.9.0
 
 * Adds endorsed macOS support.
