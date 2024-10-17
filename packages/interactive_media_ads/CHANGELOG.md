@@ -1,3 +1,7 @@
+## 0.2.2+14
+
+* Adds internal wrapper for iOS native `IMACompanionAd`.
+
 ## 0.2.2+12
 
 * Adds internal wrapper for iOS native `IMACompanionAd`.
