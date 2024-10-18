@@ -1715,4 +1715,3 @@ class SslErrorHandler extends JavaObject {
     return api.proceedFromInstance(this);
   }
 }
-

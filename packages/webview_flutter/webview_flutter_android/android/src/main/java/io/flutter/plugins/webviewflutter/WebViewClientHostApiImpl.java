@@ -119,9 +119,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
 
     @Override
     public void onReceivedSslError(
-        @NonNull WebView view,
-        @NonNull SslErrorHandler handler,
-        @NonNull SslError error) {
+        @NonNull WebView view, @NonNull SslErrorHandler handler, @NonNull SslError error) {
       flutterApi.onReceivedSslError(this, view, handler, error, reply -> {});
     }
 
@@ -230,7 +228,6 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     public void onReceivedSslError(@NonNull WebView view, SslErrorHandler handler, SslError error) {
       flutterApi.onReceivedSslError(this, view, handler, error, reply -> {});
     }
-
 
     @Override
     public void onUnhandledKeyEvent(@NonNull WebView view, @NonNull KeyEvent event) {

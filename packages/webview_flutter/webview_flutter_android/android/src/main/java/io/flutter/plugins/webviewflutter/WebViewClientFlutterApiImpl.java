@@ -20,7 +20,6 @@ import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewClientFlutterApi;
-
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
@@ -88,53 +87,53 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   }
 
   static GeneratedAndroidWebView.SslErrorData createSslErrorData(SslError error) {
-      final SslCertificate certificate = error.getCertificate();
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
-      String notValidNotAfterIso8601Date = sdf.format(certificate.getValidNotAfterDate());
-      String notValidNotBeforeIso8601Date = sdf.format(certificate.getValidNotBeforeDate());
+    final SslCertificate certificate = error.getCertificate();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
+    String notValidNotAfterIso8601Date = sdf.format(certificate.getValidNotAfterDate());
+    String notValidNotBeforeIso8601Date = sdf.format(certificate.getValidNotBeforeDate());
 
-      GeneratedAndroidWebView.SslCertificateData.Builder sslCertificateData =
-              new GeneratedAndroidWebView.SslCertificateData.Builder()
-                      .setIssuedBy(certificate.getIssuedBy().toString())
-                      .setIssuedTo(certificate.getIssuedTo().toString())
-                      .setValidNotAfterIso8601Date(notValidNotAfterIso8601Date)
-                      .setValidNotBeforeIso8601Date(notValidNotBeforeIso8601Date);
+    GeneratedAndroidWebView.SslCertificateData.Builder sslCertificateData =
+        new GeneratedAndroidWebView.SslCertificateData.Builder()
+            .setIssuedBy(certificate.getIssuedBy().toString())
+            .setIssuedTo(certificate.getIssuedTo().toString())
+            .setValidNotAfterIso8601Date(notValidNotAfterIso8601Date)
+            .setValidNotBeforeIso8601Date(notValidNotBeforeIso8601Date);
 
-      if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-          X509Certificate x509Certificate = error.getCertificate().getX509Certificate();
-          if (x509Certificate != null) {
-              try {
-                  byte[] encoded = x509Certificate.getEncoded();
-                  sslCertificateData.setX509CertificateDer(encoded);
-              } catch (CertificateEncodingException e) {
-                  //Do nothing
-              }
-          }
+    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      X509Certificate x509Certificate = error.getCertificate().getX509Certificate();
+      if (x509Certificate != null) {
+        try {
+          byte[] encoded = x509Certificate.getEncoded();
+          sslCertificateData.setX509CertificateDer(encoded);
+        } catch (CertificateEncodingException e) {
+          //Do nothing
+        }
       }
+    }
 
     GeneratedAndroidWebView.SslErrorData.Builder sslErrorData =
-            new GeneratedAndroidWebView.SslErrorData.Builder()
-                    .setErrorTypeData(toSslErrorTypeData(error.getPrimaryError()))
-                    .setCertificateData(sslCertificateData.build())
-                    .setUrl(error.getUrl());
+        new GeneratedAndroidWebView.SslErrorData.Builder()
+            .setErrorTypeData(toSslErrorTypeData(error.getPrimaryError()))
+            .setCertificateData(sslCertificateData.build())
+            .setUrl(error.getUrl());
 
     return sslErrorData.build();
   }
 
- static GeneratedAndroidWebView.SslErrorTypeData toSslErrorTypeData(int error) {
+  static GeneratedAndroidWebView.SslErrorTypeData toSslErrorTypeData(int error) {
     switch (error) {
-        case SslError.SSL_DATE_INVALID:
-            return GeneratedAndroidWebView.SslErrorTypeData.DATE_INVALID;
-        case SslError.SSL_EXPIRED:
-            return GeneratedAndroidWebView.SslErrorTypeData.EXPIRED;
-        case SslError.SSL_IDMISMATCH:
-            return GeneratedAndroidWebView.SslErrorTypeData.ID_MISMATCH;
-        case SslError.SSL_NOTYETVALID:
-            return GeneratedAndroidWebView.SslErrorTypeData.NOT_YET_VALID;
-        case SslError.SSL_UNTRUSTED:
-            return GeneratedAndroidWebView.SslErrorTypeData.UNTRUSTED;
-        default:
-            return GeneratedAndroidWebView.SslErrorTypeData.INVALID;
+      case SslError.SSL_DATE_INVALID:
+        return GeneratedAndroidWebView.SslErrorTypeData.DATE_INVALID;
+      case SslError.SSL_EXPIRED:
+        return GeneratedAndroidWebView.SslErrorTypeData.EXPIRED;
+      case SslError.SSL_IDMISMATCH:
+        return GeneratedAndroidWebView.SslErrorTypeData.ID_MISMATCH;
+      case SslError.SSL_NOTYETVALID:
+        return GeneratedAndroidWebView.SslErrorTypeData.NOT_YET_VALID;
+      case SslError.SSL_UNTRUSTED:
+        return GeneratedAndroidWebView.SslErrorTypeData.UNTRUSTED;
+      default:
+        return GeneratedAndroidWebView.SslErrorTypeData.INVALID;
     }
   }
 
@@ -337,13 +336,13 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
 
   /** Passes arguments from {@link WebViewClient#onReceivedSslError} to Dart. */
   public void onReceivedSslError(
-          @NonNull WebViewClient webViewClient,
-          @NonNull WebView webview,
-          @NonNull SslErrorHandler sslErrorHandler,
-          @NonNull SslError error,
-          @NonNull Reply<Void> callback) {
+      @NonNull WebViewClient webViewClient,
+      @NonNull WebView webview,
+      @NonNull SslErrorHandler sslErrorHandler,
+      @NonNull SslError error,
+      @NonNull Reply<Void> callback) {
     new SslErrorHandlerFlutterApiImpl(binaryMessenger, instanceManager)
-            .create(sslErrorHandler, reply -> {});
+        .create(sslErrorHandler, reply -> {});
 
     onReceivedSslError(
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webViewClient)),
@@ -352,6 +351,7 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         createSslErrorData(error),
         callback);
   }
+
   private long getIdentifierForClient(WebViewClient webViewClient) {
     final Long identifier = instanceManager.getIdentifierForStrongReference(webViewClient);
     if (identifier == null) {

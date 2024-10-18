@@ -119,7 +119,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
     HttpAuthHandlerHostApi.setup(
         binaryMessenger, new HttpAuthHandlerHostApiImpl(binaryMessenger, instanceManager));
     SslErrorHandlerHostApi.setup(
-            binaryMessenger, new SslErrorHandlerHostApiImpl(binaryMessenger, instanceManager));
+        binaryMessenger, new SslErrorHandlerHostApiImpl(binaryMessenger, instanceManager));
   }
 
   @Override

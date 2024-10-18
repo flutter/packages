@@ -510,7 +510,9 @@ class NSUrlProtectionSpace extends NSObject {
       port: port,
       realm: realm,
       sslErrorType: sslErrorType,
-      x509CertificateDer: x509CertificateDer == null ? null : Uint8List.fromList(x509CertificateDer!.toList()),
+      x509CertificateDer: x509CertificateDer == null
+          ? null
+          : Uint8List.fromList(x509CertificateDer!.toList()),
     );
   }
 }

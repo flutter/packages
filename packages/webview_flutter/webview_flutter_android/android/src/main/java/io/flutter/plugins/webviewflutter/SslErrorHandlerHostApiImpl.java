@@ -16,35 +16,35 @@ import java.util.Objects;
  * <p>Handles creating {@link SslErrorHandler}s that intercommunicate with a paired Dart object.
  */
 public class SslErrorHandlerHostApiImpl implements SslErrorHandlerHostApi {
-    // To ease adding additional methods, this value is added prematurely.
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
-    private final BinaryMessenger binaryMessenger;
+  // To ease adding additional methods, this value is added prematurely.
+  @SuppressWarnings({"unused", "FieldCanBeLocal"})
+  private final BinaryMessenger binaryMessenger;
 
-    private final InstanceManager instanceManager;
+  private final InstanceManager instanceManager;
 
-    /**
-     * Constructs a {@link SslErrorHandlerHostApiImpl}.
-     *
-     * @param binaryMessenger used to communicate with Dart over asynchronous messages
-     * @param instanceManager maintains instances stored to communicate with attached Dart objects
-     */
-    public SslErrorHandlerHostApiImpl(
-            @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
-        this.binaryMessenger = binaryMessenger;
-        this.instanceManager = instanceManager;
-    }
+  /**
+   * Constructs a {@link SslErrorHandlerHostApiImpl}.
+   *
+   * @param binaryMessenger used to communicate with Dart over asynchronous messages
+   * @param instanceManager maintains instances stored to communicate with attached Dart objects
+   */
+  public SslErrorHandlerHostApiImpl(
+      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
+    this.binaryMessenger = binaryMessenger;
+    this.instanceManager = instanceManager;
+  }
 
-    @Override
-    public void cancel(@NonNull Long instanceId) {
-        getSslErrorHandlerInstance(instanceId).cancel();
-    }
+  @Override
+  public void cancel(@NonNull Long instanceId) {
+    getSslErrorHandlerInstance(instanceId).cancel();
+  }
 
-    @Override
-    public void proceed(@NonNull Long instanceId) {
-        getSslErrorHandlerInstance(instanceId).proceed();
-    }
+  @Override
+  public void proceed(@NonNull Long instanceId) {
+    getSslErrorHandlerInstance(instanceId).proceed();
+  }
 
-    private SslErrorHandler getSslErrorHandlerInstance(@NonNull Long instanceId) {
-        return Objects.requireNonNull(instanceManager.getInstance(instanceId));
-    }
+  private SslErrorHandler getSslErrorHandlerInstance(@NonNull Long instanceId) {
+    return Objects.requireNonNull(instanceManager.getInstance(instanceId));
+  }
 }
