@@ -144,7 +144,7 @@ Future<int> generateTestPigeons(
       cppSourceOut: skipLanguages.contains(GeneratorLanguage.cpp)
           ? null
           : '$outputBase/windows/pigeon/${input.key}.gen.cpp',
-      cppNamespace: '${input}_pigeontest',
+      cppNamespace: '${input.key}_pigeontest',
       injectOverflowTypes: includeOverflow && input.key == 'core_tests',
     );
     if (generateCode != 0) {

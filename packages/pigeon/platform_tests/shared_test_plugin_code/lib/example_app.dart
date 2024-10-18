@@ -70,7 +70,6 @@ class _ExampleAppState extends State<ExampleApp> {
                 builder: (BuildContext context,
                     AsyncSnapshot<EventChannelDataBase> snapshot) {
                   if (snapshot.hasData) {
-                    print(snapshot.data);
                     String newString = '';
                     switch (snapshot.data) {
                       case null:

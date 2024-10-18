@@ -18,7 +18,7 @@
 #include <optional>
 #include <string>
 
-namespace MapEntry(core_tests : {}) _pigeontest {
+namespace core_tests_pigeontest {
 using flutter::BasicMessageChannel;
 using flutter::CustomEncodableValue;
 using flutter::EncodableList;
@@ -10344,4 +10344,4 @@ void FlutterSmallApi::EchoString(
       });
 }
 
-}  // namespace MapEntry(core_tests:
+}  // namespace core_tests_pigeontest

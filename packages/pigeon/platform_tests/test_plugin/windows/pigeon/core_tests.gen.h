@@ -16,9 +16,9 @@
 #include <optional>
 #include <string>
 
-namespace MapEntry(core_tests : {}) _pigeontest {
+namespace core_tests_pigeontest {
 
-class MapEntry(coreTests : {}) Test;
+class CoreTestsTest;
 
 // Generated class from Pigeon.
 
@@ -97,7 +97,7 @@ class UnusedClass {
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
-  friend class MapEntry(coreTests : {}) Test;
+  friend class CoreTestsTest;
   std::optional<flutter::EncodableValue> a_field_;
 };
 
@@ -226,7 +226,7 @@ class AllTypes {
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
-  friend class MapEntry(coreTests : {}) Test;
+  friend class CoreTestsTest;
   bool a_bool_;
   int64_t an_int_;
   int64_t an_int64_;
@@ -434,7 +434,7 @@ class AllNullableTypes {
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
-  friend class MapEntry(coreTests : {}) Test;
+  friend class CoreTestsTest;
   std::optional<bool> a_nullable_bool_;
   std::optional<int64_t> a_nullable_int_;
   std::optional<int64_t> a_nullable_int64_;
@@ -628,7 +628,7 @@ class AllNullableTypesWithoutRecursion {
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
-  friend class MapEntry(coreTests : {}) Test;
+  friend class CoreTestsTest;
   std::optional<bool> a_nullable_bool_;
   std::optional<int64_t> a_nullable_int_;
   std::optional<int64_t> a_nullable_int64_;
@@ -726,7 +726,7 @@ class AllClassesWrapper {
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
-  friend class MapEntry(coreTests : {}) Test;
+  friend class CoreTestsTest;
   std::unique_ptr<AllNullableTypes> all_nullable_types_;
   std::unique_ptr<AllNullableTypesWithoutRecursion>
       all_nullable_types_without_recursion_;
@@ -761,7 +761,7 @@ class TestMessage {
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
-  friend class MapEntry(coreTests : {}) Test;
+  friend class CoreTestsTest;
   std::optional<flutter::EncodableList> test_list_;
 };
 
@@ -1680,5 +1680,5 @@ class FlutterSmallApi {
   std::string message_channel_suffix_;
 };
 
-}  // namespace MapEntry(core_tests:
+}  // namespace core_tests_pigeontest
 #endif  // PIGEON_CORE_TESTS_GEN_H_
