@@ -91,8 +91,6 @@ class _ExampleAppState extends State<ExampleApp> {
                         newString = '${(snapshot.data! as EnumEvent).value}, ';
                       case ClassEvent():
                         newString = '${(snapshot.data! as ClassEvent).value}, ';
-                      default:
-                        newString = '${snapshot.data}, ';
                     }
 
                     numsSoFar += newString;

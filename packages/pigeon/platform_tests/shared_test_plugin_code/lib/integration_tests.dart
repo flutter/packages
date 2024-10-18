@@ -2888,8 +2888,6 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           expect(event.value.aNullableInt, 0);
           expect(count, 6);
           count++;
-        default:
-          fail('Unexpected type passed as event: $event');
       }
     });
   }, skip: !eventChannelSupported.contains(targetGenerator));
