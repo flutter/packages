@@ -16,9 +16,9 @@
 #include <optional>
 #include <string>
 
-namespace core_tests_pigeontest {
+namespace MapEntry(core_tests : {}) _pigeontest {
 
-class CoreTestsTest;
+class MapEntry(coreTests : {}) Test;
 
 // Generated class from Pigeon.
 
@@ -97,7 +97,7 @@ class UnusedClass {
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
+  friend class MapEntry(coreTests : {}) Test;
   std::optional<flutter::EncodableValue> a_field_;
 };
 
@@ -226,7 +226,7 @@ class AllTypes {
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
+  friend class MapEntry(coreTests : {}) Test;
   bool a_bool_;
   int64_t an_int_;
   int64_t an_int64_;
@@ -428,14 +428,13 @@ class AllNullableTypes {
   static AllNullableTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class AllClassesWrapper;
-  friend class ClassEvent;
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
+  friend class MapEntry(coreTests : {}) Test;
   std::optional<bool> a_nullable_bool_;
   std::optional<int64_t> a_nullable_int_;
   std::optional<int64_t> a_nullable_int64_;
@@ -629,7 +628,7 @@ class AllNullableTypesWithoutRecursion {
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
+  friend class MapEntry(coreTests : {}) Test;
   std::optional<bool> a_nullable_bool_;
   std::optional<int64_t> a_nullable_int_;
   std::optional<int64_t> a_nullable_int64_;
@@ -727,7 +726,7 @@ class AllClassesWrapper {
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
+  friend class MapEntry(coreTests : {}) Test;
   std::unique_ptr<AllNullableTypes> all_nullable_types_;
   std::unique_ptr<AllNullableTypesWithoutRecursion>
       all_nullable_types_without_recursion_;
@@ -736,184 +735,6 @@ class AllClassesWrapper {
   std::optional<flutter::EncodableList> nullable_class_list_;
   flutter::EncodableMap class_map_;
   std::optional<flutter::EncodableMap> nullable_class_map_;
-};
-
-// Generated class from Pigeon that represents data sent in messages.
-class EventChannelDataBase {
- public:
-  // Constructs an object setting all fields.
-  EventChannelDataBase();
-
- private:
-  static EventChannelDataBase FromEncodableList(
-      const flutter::EncodableList& list);
-  flutter::EncodableList ToEncodableList() const;
-  friend class HostIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApi;
-  friend class HostTrivialApi;
-  friend class HostSmallApi;
-  friend class FlutterSmallApi;
-  friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
-};
-
-// Generated class from Pigeon that represents data sent in messages.
-class IntEvent {
- public:
-  // Constructs an object setting all fields.
-  explicit IntEvent(int64_t value);
-
-  int64_t value() const;
-  void set_value(int64_t value_arg);
-
- private:
-  static IntEvent FromEncodableList(const flutter::EncodableList& list);
-  flutter::EncodableList ToEncodableList() const;
-  friend class HostIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApi;
-  friend class HostTrivialApi;
-  friend class HostSmallApi;
-  friend class FlutterSmallApi;
-  friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
-  int64_t value_;
-};
-
-// Generated class from Pigeon that represents data sent in messages.
-class StringEvent {
- public:
-  // Constructs an object setting all fields.
-  explicit StringEvent(const std::string& value);
-
-  const std::string& value() const;
-  void set_value(std::string_view value_arg);
-
- private:
-  static StringEvent FromEncodableList(const flutter::EncodableList& list);
-  flutter::EncodableList ToEncodableList() const;
-  friend class HostIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApi;
-  friend class HostTrivialApi;
-  friend class HostSmallApi;
-  friend class FlutterSmallApi;
-  friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
-  std::string value_;
-};
-
-// Generated class from Pigeon that represents data sent in messages.
-class BoolEvent {
- public:
-  // Constructs an object setting all fields.
-  explicit BoolEvent(bool value);
-
-  bool value() const;
-  void set_value(bool value_arg);
-
- private:
-  static BoolEvent FromEncodableList(const flutter::EncodableList& list);
-  flutter::EncodableList ToEncodableList() const;
-  friend class HostIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApi;
-  friend class HostTrivialApi;
-  friend class HostSmallApi;
-  friend class FlutterSmallApi;
-  friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
-  bool value_;
-};
-
-// Generated class from Pigeon that represents data sent in messages.
-class DoubleEvent {
- public:
-  // Constructs an object setting all fields.
-  explicit DoubleEvent(double value);
-
-  double value() const;
-  void set_value(double value_arg);
-
- private:
-  static DoubleEvent FromEncodableList(const flutter::EncodableList& list);
-  flutter::EncodableList ToEncodableList() const;
-  friend class HostIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApi;
-  friend class HostTrivialApi;
-  friend class HostSmallApi;
-  friend class FlutterSmallApi;
-  friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
-  double value_;
-};
-
-// Generated class from Pigeon that represents data sent in messages.
-class ObjectsEvent {
- public:
-  // Constructs an object setting all fields.
-  explicit ObjectsEvent(const flutter::EncodableValue& value);
-
-  const flutter::EncodableValue& value() const;
-  void set_value(const flutter::EncodableValue& value_arg);
-
- private:
-  static ObjectsEvent FromEncodableList(const flutter::EncodableList& list);
-  flutter::EncodableList ToEncodableList() const;
-  friend class HostIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApi;
-  friend class HostTrivialApi;
-  friend class HostSmallApi;
-  friend class FlutterSmallApi;
-  friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
-  flutter::EncodableValue value_;
-};
-
-// Generated class from Pigeon that represents data sent in messages.
-class EnumEvent {
- public:
-  // Constructs an object setting all fields.
-  explicit EnumEvent(const AnEnum& value);
-
-  const AnEnum& value() const;
-  void set_value(const AnEnum& value_arg);
-
- private:
-  static EnumEvent FromEncodableList(const flutter::EncodableList& list);
-  flutter::EncodableList ToEncodableList() const;
-  friend class HostIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApi;
-  friend class HostTrivialApi;
-  friend class HostSmallApi;
-  friend class FlutterSmallApi;
-  friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
-  AnEnum value_;
-};
-
-// Generated class from Pigeon that represents data sent in messages.
-class ClassEvent {
- public:
-  // Constructs an object setting all fields.
-  explicit ClassEvent(const AllNullableTypes& value);
-
-  ~ClassEvent() = default;
-  ClassEvent(const ClassEvent& other);
-  ClassEvent& operator=(const ClassEvent& other);
-  ClassEvent(ClassEvent&& other) = default;
-  ClassEvent& operator=(ClassEvent&& other) noexcept = default;
-  const AllNullableTypes& value() const;
-  void set_value(const AllNullableTypes& value_arg);
-
- private:
-  static ClassEvent FromEncodableList(const flutter::EncodableList& list);
-  flutter::EncodableList ToEncodableList() const;
-  friend class HostIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApi;
-  friend class HostTrivialApi;
-  friend class HostSmallApi;
-  friend class FlutterSmallApi;
-  friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
-  std::unique_ptr<AllNullableTypes> value_;
 };
 
 // A data class containing a List, used in unit tests.
@@ -940,7 +761,7 @@ class TestMessage {
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
+  friend class MapEntry(coreTests : {}) Test;
   std::optional<flutter::EncodableList> test_list_;
 };
 
@@ -1859,5 +1680,5 @@ class FlutterSmallApi {
   std::string message_channel_suffix_;
 };
 
-}  // namespace core_tests_pigeontest
+}  // namespace MapEntry(core_tests:
 #endif  // PIGEON_CORE_TESTS_GEN_H_

@@ -1224,7 +1224,7 @@ class SendInts: StreamIntsStreamHandler {
     var count: Int64 = 0
     if !timerActive {
       timerActive = true
-      Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+      Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
         sink.success(count)
         count += 1
         if count >= 5 {
@@ -1244,8 +1244,8 @@ class SendEvents: StreamEventsStreamHandler {
       BoolEvent(value: false),
       DoubleEvent(value: 3.14),
       ObjectsEvent(value: true),
-      EnumEvent(value: AnEnum.fortyTwo),
-      ClassEvent(value: AllNullableTypes(aNullableInt: 0)),
+      EnumEvent(value: EventEnum.fortyTwo),
+      ClassEvent(value: EventAllNullableTypes(aNullableInt: 0)),
     ]
 
   override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<EventChannelDataBase>)
@@ -1253,7 +1253,7 @@ class SendEvents: StreamEventsStreamHandler {
     var count = 0
     if !timerActive {
       timerActive = true
-      Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+      Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
         if count >= self.eventList.count {
           sink.endOfStream()
         } else {

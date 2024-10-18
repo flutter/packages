@@ -11,10 +11,8 @@ package com.example.test_plugin
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MessageCodec
 import io.flutter.plugin.common.StandardMessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
@@ -536,123 +534,6 @@ data class AllClassesWrapper(
 }
 
 /**
- * Generated class from Pigeon that represents data sent in messages. This class should not be
- * extended by any user class outside of the generated file.
- */
-sealed class EventChannelDataBase
-/** Generated class from Pigeon that represents data sent in messages. */
-data class IntEvent(val value: Long) : EventChannelDataBase() {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): IntEvent {
-      val value = pigeonVar_list[0] as Long
-      return IntEvent(value)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        value,
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
-data class StringEvent(val value: String) : EventChannelDataBase() {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): StringEvent {
-      val value = pigeonVar_list[0] as String
-      return StringEvent(value)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        value,
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
-data class BoolEvent(val value: Boolean) : EventChannelDataBase() {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): BoolEvent {
-      val value = pigeonVar_list[0] as Boolean
-      return BoolEvent(value)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        value,
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
-data class DoubleEvent(val value: Double) : EventChannelDataBase() {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): DoubleEvent {
-      val value = pigeonVar_list[0] as Double
-      return DoubleEvent(value)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        value,
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
-data class ObjectsEvent(val value: Any) : EventChannelDataBase() {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): ObjectsEvent {
-      val value = pigeonVar_list[0] as Any
-      return ObjectsEvent(value)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        value,
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
-data class EnumEvent(val value: AnEnum) : EventChannelDataBase() {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): EnumEvent {
-      val value = pigeonVar_list[0] as AnEnum
-      return EnumEvent(value)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        value,
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
-data class ClassEvent(val value: AllNullableTypes) : EventChannelDataBase() {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): ClassEvent {
-      val value = pigeonVar_list[0] as AllNullableTypes
-      return ClassEvent(value)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        value,
-    )
-  }
-}
-
-/**
  * A data class containing a List, used in unit tests.
  *
  * Generated class from Pigeon that represents data sent in messages.
@@ -699,27 +580,6 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
         return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
       }
       136.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { IntEvent.fromList(it) }
-      }
-      137.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { StringEvent.fromList(it) }
-      }
-      138.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { BoolEvent.fromList(it) }
-      }
-      139.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { DoubleEvent.fromList(it) }
-      }
-      140.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { ObjectsEvent.fromList(it) }
-      }
-      141.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { EnumEvent.fromList(it) }
-      }
-      142.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { ClassEvent.fromList(it) }
-      }
-      143.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -756,114 +616,11 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
         stream.write(135)
         writeValue(stream, value.toList())
       }
-      is IntEvent -> {
+      is TestMessage -> {
         stream.write(136)
         writeValue(stream, value.toList())
       }
-      is StringEvent -> {
-        stream.write(137)
-        writeValue(stream, value.toList())
-      }
-      is BoolEvent -> {
-        stream.write(138)
-        writeValue(stream, value.toList())
-      }
-      is DoubleEvent -> {
-        stream.write(139)
-        writeValue(stream, value.toList())
-      }
-      is ObjectsEvent -> {
-        stream.write(140)
-        writeValue(stream, value.toList())
-      }
-      is EnumEvent -> {
-        stream.write(141)
-        writeValue(stream, value.toList())
-      }
-      is ClassEvent -> {
-        stream.write(142)
-        writeValue(stream, value.toList())
-      }
-      is TestMessage -> {
-        stream.write(143)
-        writeValue(stream, value.toList())
-      }
       else -> super.writeValue(stream, value)
-    }
-  }
-}
-
-val CoreTestsPigeonMethodCodec = StandardMethodCodec(CoreTestsPigeonCodec())
-
-private class PigeonStreamHandler<T>(val wrapper: PigeonEventChannelWrapper<T>) :
-    EventChannel.StreamHandler {
-  var pigeonSink: PigeonEventSink<T>? = null
-
-  override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
-    pigeonSink = PigeonEventSink<T>(sink)
-    wrapper.onListen(p0, pigeonSink!!)
-  }
-
-  override fun onCancel(p0: Any?) {
-    pigeonSink = null
-    wrapper.onCancel(p0)
-  }
-}
-
-interface PigeonEventChannelWrapper<T> {
-  open fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
-
-  open fun onCancel(p0: Any?) {}
-}
-
-class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
-  fun success(value: T) {
-    sink.success(value)
-  }
-
-  fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
-    sink.error(errorCode, errorMessage, errorDetails)
-  }
-
-  fun endOfStream() {
-    sink.endOfStream()
-  }
-}
-
-abstract class StreamIntsStreamHandler : PigeonEventChannelWrapper<Long> {
-  companion object {
-    fun register(
-        messenger: BinaryMessenger,
-        wrapper: StreamIntsStreamHandler,
-        instanceName: String = ""
-    ) {
-      var channelName: String =
-          "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamInts"
-      if (instanceName.isNotEmpty()) {
-        channelName += ".$instanceName"
-      }
-      val streamHandler = PigeonStreamHandler<Long>(wrapper)
-      EventChannel(messenger, channelName, CoreTestsPigeonMethodCodec)
-          .setStreamHandler(streamHandler)
-    }
-  }
-}
-
-abstract class StreamEventsStreamHandler : PigeonEventChannelWrapper<EventChannelDataBase> {
-  companion object {
-    fun register(
-        messenger: BinaryMessenger,
-        wrapper: StreamEventsStreamHandler,
-        instanceName: String = ""
-    ) {
-      var channelName: String =
-          "dev.flutter.pigeon.pigeon_integration_tests.EventChannelCoreApi.streamEvents"
-      if (instanceName.isNotEmpty()) {
-        channelName += ".$instanceName"
-      }
-      val streamHandler = PigeonStreamHandler<EventChannelDataBase>(wrapper)
-      EventChannel(messenger, channelName, CoreTestsPigeonMethodCodec)
-          .setStreamHandler(streamHandler)
     }
   }
 }

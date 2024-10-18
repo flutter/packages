@@ -904,8 +904,8 @@ object SendClass : StreamEventsStreamHandler() {
           BoolEvent(false),
           DoubleEvent(3.14),
           ObjectsEvent(true),
-          EnumEvent(AnEnum.FORTY_TWO),
-          ClassEvent(AllNullableTypes(aNullableInt = 0)))
+          EnumEvent(EventEnum.FORTY_TWO),
+          ClassEvent(EventAllNullableTypes(aNullableInt = 0)))
 
   override fun onListen(p0: Any?, sink: PigeonEventSink<EventChannelDataBase>) {
     var count: Int = 0
@@ -919,10 +919,10 @@ object SendClass : StreamEventsStreamHandler() {
                 sink.success(eventList[count])
                 count++
               }
-              handler.postDelayed(this, 1000)
+              handler.postDelayed(this, 10)
             }
           }
         }
-    handler.postDelayed(r, 1000)
+    handler.postDelayed(r, 10)
   }
 }

@@ -18,7 +18,7 @@
 #include <optional>
 #include <string>
 
-namespace core_tests_pigeontest {
+namespace MapEntry(core_tests : {}) _pigeontest {
 using flutter::BasicMessageChannel;
 using flutter::CustomEncodableValue;
 using flutter::EncodableList;
@@ -2079,177 +2079,6 @@ AllClassesWrapper AllClassesWrapper::FromEncodableList(
   return decoded;
 }
 
-// EventChannelDataBase
-
-EventChannelDataBase::EventChannelDataBase() {}
-
-EncodableList EventChannelDataBase::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(0);
-  return list;
-}
-
-EventChannelDataBase EventChannelDataBase::FromEncodableList(
-    const EncodableList& list) {
-  EventChannelDataBase decoded;
-  return decoded;
-}
-
-// IntEvent
-
-IntEvent::IntEvent(int64_t value) : value_(value) {}
-
-int64_t IntEvent::value() const { return value_; }
-
-void IntEvent::set_value(int64_t value_arg) { value_ = value_arg; }
-
-EncodableList IntEvent::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(1);
-  list.push_back(EncodableValue(value_));
-  return list;
-}
-
-IntEvent IntEvent::FromEncodableList(const EncodableList& list) {
-  IntEvent decoded(std::get<int64_t>(list[0]));
-  return decoded;
-}
-
-// StringEvent
-
-StringEvent::StringEvent(const std::string& value) : value_(value) {}
-
-const std::string& StringEvent::value() const { return value_; }
-
-void StringEvent::set_value(std::string_view value_arg) { value_ = value_arg; }
-
-EncodableList StringEvent::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(1);
-  list.push_back(EncodableValue(value_));
-  return list;
-}
-
-StringEvent StringEvent::FromEncodableList(const EncodableList& list) {
-  StringEvent decoded(std::get<std::string>(list[0]));
-  return decoded;
-}
-
-// BoolEvent
-
-BoolEvent::BoolEvent(bool value) : value_(value) {}
-
-bool BoolEvent::value() const { return value_; }
-
-void BoolEvent::set_value(bool value_arg) { value_ = value_arg; }
-
-EncodableList BoolEvent::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(1);
-  list.push_back(EncodableValue(value_));
-  return list;
-}
-
-BoolEvent BoolEvent::FromEncodableList(const EncodableList& list) {
-  BoolEvent decoded(std::get<bool>(list[0]));
-  return decoded;
-}
-
-// DoubleEvent
-
-DoubleEvent::DoubleEvent(double value) : value_(value) {}
-
-double DoubleEvent::value() const { return value_; }
-
-void DoubleEvent::set_value(double value_arg) { value_ = value_arg; }
-
-EncodableList DoubleEvent::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(1);
-  list.push_back(EncodableValue(value_));
-  return list;
-}
-
-DoubleEvent DoubleEvent::FromEncodableList(const EncodableList& list) {
-  DoubleEvent decoded(std::get<double>(list[0]));
-  return decoded;
-}
-
-// ObjectsEvent
-
-ObjectsEvent::ObjectsEvent(const EncodableValue& value) : value_(value) {}
-
-const EncodableValue& ObjectsEvent::value() const { return value_; }
-
-void ObjectsEvent::set_value(const EncodableValue& value_arg) {
-  value_ = value_arg;
-}
-
-EncodableList ObjectsEvent::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(1);
-  list.push_back(value_);
-  return list;
-}
-
-ObjectsEvent ObjectsEvent::FromEncodableList(const EncodableList& list) {
-  ObjectsEvent decoded(list[0]);
-  return decoded;
-}
-
-// EnumEvent
-
-EnumEvent::EnumEvent(const AnEnum& value) : value_(value) {}
-
-const AnEnum& EnumEvent::value() const { return value_; }
-
-void EnumEvent::set_value(const AnEnum& value_arg) { value_ = value_arg; }
-
-EncodableList EnumEvent::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(1);
-  list.push_back(CustomEncodableValue(value_));
-  return list;
-}
-
-EnumEvent EnumEvent::FromEncodableList(const EncodableList& list) {
-  EnumEvent decoded(
-      std::any_cast<const AnEnum&>(std::get<CustomEncodableValue>(list[0])));
-  return decoded;
-}
-
-// ClassEvent
-
-ClassEvent::ClassEvent(const AllNullableTypes& value)
-    : value_(std::make_unique<AllNullableTypes>(value)) {}
-
-ClassEvent::ClassEvent(const ClassEvent& other)
-    : value_(std::make_unique<AllNullableTypes>(*other.value_)) {}
-
-ClassEvent& ClassEvent::operator=(const ClassEvent& other) {
-  value_ = std::make_unique<AllNullableTypes>(*other.value_);
-  return *this;
-}
-
-const AllNullableTypes& ClassEvent::value() const { return *value_; }
-
-void ClassEvent::set_value(const AllNullableTypes& value_arg) {
-  value_ = std::make_unique<AllNullableTypes>(value_arg);
-}
-
-EncodableList ClassEvent::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(1);
-  list.push_back(CustomEncodableValue(*value_));
-  return list;
-}
-
-ClassEvent ClassEvent::FromEncodableList(const EncodableList& list) {
-  ClassEvent decoded(std::any_cast<const AllNullableTypes&>(
-      std::get<CustomEncodableValue>(list[0])));
-  return decoded;
-}
-
 // TestMessage
 
 TestMessage::TestMessage() {}
@@ -2331,34 +2160,6 @@ EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
           std::get<EncodableList>(ReadValue(stream))));
     }
     case 136: {
-      return CustomEncodableValue(IntEvent::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    }
-    case 137: {
-      return CustomEncodableValue(StringEvent::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    }
-    case 138: {
-      return CustomEncodableValue(BoolEvent::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    }
-    case 139: {
-      return CustomEncodableValue(DoubleEvent::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    }
-    case 140: {
-      return CustomEncodableValue(ObjectsEvent::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    }
-    case 141: {
-      return CustomEncodableValue(EnumEvent::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    }
-    case 142: {
-      return CustomEncodableValue(ClassEvent::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    }
-    case 143: {
       return CustomEncodableValue(TestMessage::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
@@ -2423,61 +2224,8 @@ void PigeonInternalCodecSerializer::WriteValue(
                  stream);
       return;
     }
-    if (custom_value->type() == typeid(IntEvent)) {
-      stream->WriteByte(136);
-      WriteValue(EncodableValue(
-                     std::any_cast<IntEvent>(*custom_value).ToEncodableList()),
-                 stream);
-      return;
-    }
-    if (custom_value->type() == typeid(StringEvent)) {
-      stream->WriteByte(137);
-      WriteValue(
-          EncodableValue(
-              std::any_cast<StringEvent>(*custom_value).ToEncodableList()),
-          stream);
-      return;
-    }
-    if (custom_value->type() == typeid(BoolEvent)) {
-      stream->WriteByte(138);
-      WriteValue(EncodableValue(
-                     std::any_cast<BoolEvent>(*custom_value).ToEncodableList()),
-                 stream);
-      return;
-    }
-    if (custom_value->type() == typeid(DoubleEvent)) {
-      stream->WriteByte(139);
-      WriteValue(
-          EncodableValue(
-              std::any_cast<DoubleEvent>(*custom_value).ToEncodableList()),
-          stream);
-      return;
-    }
-    if (custom_value->type() == typeid(ObjectsEvent)) {
-      stream->WriteByte(140);
-      WriteValue(
-          EncodableValue(
-              std::any_cast<ObjectsEvent>(*custom_value).ToEncodableList()),
-          stream);
-      return;
-    }
-    if (custom_value->type() == typeid(EnumEvent)) {
-      stream->WriteByte(141);
-      WriteValue(EncodableValue(
-                     std::any_cast<EnumEvent>(*custom_value).ToEncodableList()),
-                 stream);
-      return;
-    }
-    if (custom_value->type() == typeid(ClassEvent)) {
-      stream->WriteByte(142);
-      WriteValue(
-          EncodableValue(
-              std::any_cast<ClassEvent>(*custom_value).ToEncodableList()),
-          stream);
-      return;
-    }
     if (custom_value->type() == typeid(TestMessage)) {
-      stream->WriteByte(143);
+      stream->WriteByte(136);
       WriteValue(
           EncodableValue(
               std::any_cast<TestMessage>(*custom_value).ToEncodableList()),
@@ -10596,4 +10344,4 @@ void FlutterSmallApi::EchoString(
       });
 }
 
-}  // namespace core_tests_pigeontest
+}  // namespace MapEntry(core_tests:

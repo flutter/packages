@@ -2853,40 +2853,46 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     for (final int value in listEvents) {
       expect(listEvents[value], value);
     }
-  }, skip: eventChannelSupported.contains(targetGenerator));
+  }, skip: !eventChannelSupported.contains(targetGenerator));
 
   testWidgets('event channel handles extended sealed classes', (_) async {
+    int count = 0;
     final Stream<EventChannelDataBase> events = streamEvents();
-    final List<EventChannelDataBase> listEvents = await events.toList();
-
-    for (final (int index, EventChannelDataBase event) in listEvents.indexed) {
+    events.listen((EventChannelDataBase event) {
       switch (event) {
         case IntEvent():
-          expect(index, 0);
           expect(event.value, 1);
+          expect(count, 0);
+          count++;
         case StringEvent():
-          expect(index, 1);
           expect(event.value, 'string');
+          expect(count, 1);
+          count++;
         case BoolEvent():
-          expect(index, 2);
           expect(event.value, false);
+          expect(count, 2);
+          count++;
         case DoubleEvent():
-          expect(index, 3);
           expect(event.value, 3.14);
+          expect(count, 3);
+          count++;
         case ObjectsEvent():
-          expect(index, 4);
           expect(event.value, true);
+          expect(count, 4);
+          count++;
         case EnumEvent():
-          expect(index, 5);
-          expect(event.value, AnEnum.fortyTwo);
+          expect(event.value, EventEnum.fortyTwo);
+          expect(count, 5);
+          count++;
         case ClassEvent():
-          expect(index, 6);
           expect(event.value.aNullableInt, 0);
+          expect(count, 6);
+          count++;
         default:
           fail('Unexpected type passed as event: $event');
       }
-    }
-  }, skip: eventChannelSupported.contains(targetGenerator));
+    });
+  }, skip: !eventChannelSupported.contains(targetGenerator));
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {

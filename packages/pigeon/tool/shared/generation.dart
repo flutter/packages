@@ -59,19 +59,29 @@ Future<int> generateTestPigeons(
     {required String baseDir, bool includeOverflow = false}) async {
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
-  const List<String> inputs = <String>[
-    'background_platform_channels',
-    'core_tests',
-    'enum',
-    'flutter_unittests', // Only for Dart unit tests in shared_test_plugin_code
-    'message',
-    'multiple_arity',
-    'non_null_fields',
-    'null_fields',
-    'nullable_returns',
-    'primitive',
-    'proxy_api_tests',
-  ];
+
+  /// A list of all pigeons to be generated along with a list of skipped languages.
+  const Map<String, Set<GeneratorLanguage>> inputs =
+      <String, Set<GeneratorLanguage>>{
+    'background_platform_channels': <GeneratorLanguage>{},
+    'core_tests': <GeneratorLanguage>{},
+    'enum': <GeneratorLanguage>{},
+    'event_channel_tests': <GeneratorLanguage>{
+      GeneratorLanguage.cpp,
+      GeneratorLanguage.gobject,
+      GeneratorLanguage.java,
+      GeneratorLanguage.objc,
+    },
+    'flutter_unittests':
+        <GeneratorLanguage>{}, // Only for Dart unit tests in shared_test_plugin_code
+    'message': <GeneratorLanguage>{},
+    'multiple_arity': <GeneratorLanguage>{},
+    'non_null_fields': <GeneratorLanguage>{},
+    'null_fields': <GeneratorLanguage>{},
+    'nullable_returns': <GeneratorLanguage>{},
+    'primitive': <GeneratorLanguage>{},
+    'proxy_api_tests': <GeneratorLanguage>{},
+  };
 
   final String outputBase = p.join(baseDir, 'platform_tests', 'test_plugin');
   final String alternateOutputBase =
@@ -79,28 +89,30 @@ Future<int> generateTestPigeons(
   final String sharedDartOutputBase =
       p.join(baseDir, 'platform_tests', 'shared_test_plugin_code');
 
-  for (final String input in inputs) {
-    final String pascalCaseName = _snakeToPascalCase(input);
+  for (final MapEntry<String, Set<GeneratorLanguage>> input in inputs.entries) {
+    final String pascalCaseName = _snakeToPascalCase(input.key);
     final Set<GeneratorLanguage> skipLanguages =
-        _unsupportedFiles[input] ?? <GeneratorLanguage>{};
+        _unsupportedFiles[input.key] ?? <GeneratorLanguage>{};
+    skipLanguages.addAll(input.value);
 
     final bool kotlinErrorClassGenerationTestFiles =
-        input == 'core_tests' || input == 'background_platform_channels';
+        input.key == 'core_tests' ||
+            input.key == 'background_platform_channels';
 
     final String kotlinErrorName = kotlinErrorClassGenerationTestFiles
         ? 'FlutterError'
         : '${pascalCaseName}Error';
 
-    final bool swiftErrorUseDefaultErrorName = input == 'core_tests';
+    final bool swiftErrorUseDefaultErrorName = input.key == 'core_tests';
 
     final String? swiftErrorClassName =
         swiftErrorUseDefaultErrorName ? null : '${pascalCaseName}Error';
 
     // Generate the default language test plugin output.
     int generateCode = await runPigeon(
-      input: './pigeons/$input.dart',
-      dartOut: '$sharedDartOutputBase/lib/src/generated/$input.gen.dart',
-      dartTestOut: input == 'message'
+      input: './pigeons/${input.key}.dart',
+      dartOut: '$sharedDartOutputBase/lib/src/generated/${input.key}.gen.dart',
+      dartTestOut: input.key == 'message'
           ? '$sharedDartOutputBase/test/test_message.gen.dart'
           : null,
       dartPackageName: 'pigeon_integration_tests',
@@ -111,7 +123,7 @@ Future<int> generateTestPigeons(
           : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
-      kotlinIncludeErrorClass: input != 'core_tests',
+      kotlinIncludeErrorClass: input.key != 'core_tests',
       // iOS
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
@@ -120,20 +132,20 @@ Future<int> generateTestPigeons(
       // Linux
       gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)
           ? null
-          : '$outputBase/linux/pigeon/$input.gen.h',
+          : '$outputBase/linux/pigeon/${input.key}.gen.h',
       gobjectSourceOut: skipLanguages.contains(GeneratorLanguage.gobject)
           ? null
-          : '$outputBase/linux/pigeon/$input.gen.cc',
+          : '$outputBase/linux/pigeon/${input.key}.gen.cc',
       gobjectModule: '${pascalCaseName}PigeonTest',
       // Windows
       cppHeaderOut: skipLanguages.contains(GeneratorLanguage.cpp)
           ? null
-          : '$outputBase/windows/pigeon/$input.gen.h',
+          : '$outputBase/windows/pigeon/${input.key}.gen.h',
       cppSourceOut: skipLanguages.contains(GeneratorLanguage.cpp)
           ? null
-          : '$outputBase/windows/pigeon/$input.gen.cpp',
+          : '$outputBase/windows/pigeon/${input.key}.gen.cpp',
       cppNamespace: '${input}_pigeontest',
-      injectOverflowTypes: includeOverflow && input == 'core_tests',
+      injectOverflowTypes: includeOverflow && input.key == 'core_tests',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -143,14 +155,14 @@ Future<int> generateTestPigeons(
     // doesn't have a way to output separate macOS and iOS Swift output in a
     // single invocation.
     generateCode = await runPigeon(
-      input: './pigeons/$input.dart',
+      input: './pigeons/${input.key}.dart',
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
-      injectOverflowTypes: includeOverflow && input == 'core_tests',
+      injectOverflowTypes: includeOverflow && input.key == 'core_tests',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -158,14 +170,14 @@ Future<int> generateTestPigeons(
 
     // Generate the alternate language test plugin output.
     generateCode = await runPigeon(
-      input: './pigeons/$input.dart',
+      input: './pigeons/${input.key}.dart',
       // Android
       // This doesn't use the '.gen' suffix since Java has strict file naming
       // rules.
       javaOut: skipLanguages.contains(GeneratorLanguage.java)
           ? null
           : '$alternateOutputBase/android/src/main/java/com/example/'
-              'alternate_language_test_plugin/${_javaFilenameForName(input)}.java',
+              'alternate_language_test_plugin/${_javaFilenameForName(input.key)}.java',
       javaPackage: 'com.example.alternate_language_test_plugin',
       // iOS
       objcHeaderOut: skipLanguages.contains(GeneratorLanguage.objc)
@@ -174,10 +186,10 @@ Future<int> generateTestPigeons(
       objcSourceOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
           : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.m',
-      objcPrefix: input == 'core_tests' ? 'FLT' : '',
+      objcPrefix: input.key == 'core_tests' ? 'FLT' : '',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
-      injectOverflowTypes: includeOverflow && input == 'core_tests',
+      injectOverflowTypes: includeOverflow && input.key == 'core_tests',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -187,17 +199,17 @@ Future<int> generateTestPigeons(
     // doesn't have a way to output separate macOS and iOS Swift output in a
     // single invocation.
     generateCode = await runPigeon(
-      input: './pigeons/$input.dart',
+      input: './pigeons/${input.key}.dart',
       objcHeaderOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
           : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.h',
       objcSourceOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
           : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.m',
-      objcPrefix: input == 'core_tests' ? 'FLT' : '',
+      objcPrefix: input.key == 'core_tests' ? 'FLT' : '',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
-      injectOverflowTypes: includeOverflow && input == 'core_tests',
+      injectOverflowTypes: includeOverflow && input.key == 'core_tests',
     );
     if (generateCode != 0) {
       return generateCode;
