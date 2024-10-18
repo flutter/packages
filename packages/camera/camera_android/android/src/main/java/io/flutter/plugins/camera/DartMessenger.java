@@ -110,7 +110,7 @@ public class DartMessenger {
    *
    * @param payload The payload to send.
    */
-  public void finish(@NonNull MethodChannel.Result result, @Nullable Object payload) {
+  public <T> void finish(@NonNull Messages.Result<T> result, @NonNull T payload) {
     handler.post(() -> result.success(payload));
   }
 
@@ -121,11 +121,12 @@ public class DartMessenger {
    * @param errorMessage error message.
    * @param errorDetails error details.
    */
-  public void error(
-      @NonNull MethodChannel.Result result,
+  public <T> void error(
+      @NonNull Messages.Result<T> result,
       @NonNull String errorCode,
       @Nullable String errorMessage,
       @Nullable Object errorDetails) {
-    handler.post(() -> result.error(errorCode, errorMessage, errorDetails));
+    handler.post(
+        () -> result.error(new Messages.FlutterError(errorCode, errorMessage, errorDetails)));
   }
 }
