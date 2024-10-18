@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -595,6 +596,115 @@ void main() {
 
       verify(mockAuthHandler.cancel());
     });
+
+    test(
+        'onReceivedSslError emits scheme, host, port, sslErrorType, and certificate',
+        () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      SslErrorType? callbackSslErrorType;
+
+      String? callbackIssuedBy;
+      String? callbackIssuedTo;
+      DateTime? callbackValidNotAfterDate;
+      DateTime? callbackValidNotBeforeDate;
+      Uint8List? callbackX509CertificateDer;
+
+      String? callbackScheme;
+      String? callbackHost;
+      int? callbackPort;
+
+      androidNavigationDelegate.setOnSslError((SslError sslError) {
+        callbackSslErrorType = sslError.errorType;
+
+        callbackIssuedBy = sslError.certificate.issuedBy;
+        callbackIssuedTo = sslError.certificate.issuedTo;
+        callbackValidNotAfterDate = sslError.certificate.validNotAfterDate;
+        callbackValidNotBeforeDate = sslError.certificate.validNotBeforeDate;
+        callbackX509CertificateDer = sslError.certificate.x509CertificateDer;
+
+        callbackScheme = sslError.scheme;
+        callbackHost = sslError.host;
+        callbackPort = sslError.port;
+
+        return SslErrorDecision.cancel;
+      });
+
+      const SslErrorType expectedSslErrorType = SslErrorType.idMismatch;
+
+      const String expectedIssuedBy = 'expectedIssuedBy';
+      const String expectedIssuedTo = 'expectedIssuedTo';
+      final DateTime expectedValidNotAfterDate = DateTime.now();
+      final DateTime expectedValidNotBeforeDate = DateTime.now();
+      final Uint8List expectedX509CertificateDer =
+          Uint8List.fromList(<int>[5, 4]);
+      final SslCertificate expectedCertificate = SslCertificate(
+        issuedBy: expectedIssuedBy,
+        issuedTo: expectedIssuedTo,
+        validNotAfterDate: expectedValidNotAfterDate,
+        validNotBeforeDate: expectedValidNotBeforeDate,
+        x509CertificateDer: expectedX509CertificateDer,
+      );
+
+      const String expectedScheme = 'expectedScheme';
+      const String expectedHost = 'expectedHost';
+      const int expectedPort = 5;
+
+      final SslError expectedSslError = SslError(
+        errorType: expectedSslErrorType,
+        certificate: expectedCertificate,
+        scheme: expectedScheme,
+        host: expectedHost,
+        port: expectedPort,
+      );
+
+      final MockSslErrorHandler mockSslErrorHandler = MockSslErrorHandler();
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedSslError!(
+        android_webview.WebView.detached(),
+        mockSslErrorHandler,
+        expectedSslError,
+      );
+
+      expect(callbackSslErrorType, expectedSslErrorType);
+
+      expect(callbackIssuedBy, expectedIssuedBy);
+      expect(callbackIssuedTo, expectedIssuedTo);
+      expect(callbackValidNotAfterDate, expectedValidNotAfterDate);
+      expect(callbackValidNotBeforeDate, expectedValidNotBeforeDate);
+      expect(callbackX509CertificateDer, expectedX509CertificateDer);
+
+      expect(callbackScheme, expectedScheme);
+      expect(callbackHost, expectedHost);
+      expect(callbackPort, expectedPort);
+    });
+
+    test('onReceivedSslError calls cancel by default', () {
+      const SslError sslError = SslError(
+        errorType: SslErrorType.idMismatch,
+        certificate: SslCertificate(
+          issuedBy: null,
+          issuedTo: null,
+          validNotAfterDate: null,
+          validNotBeforeDate: null,
+          x509CertificateDer: null,
+        ),
+        scheme: '',
+        host: '',
+        port: 0,
+      );
+
+      final MockSslErrorHandler mockSslErrorHandler = MockSslErrorHandler();
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedSslError!(
+        android_webview.WebView.detached(),
+        mockSslErrorHandler,
+        sslError,
+      );
+
+      verify(mockSslErrorHandler.cancel());
+    });
   });
 }
 
@@ -619,6 +729,7 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
     super.onReceivedHttpError,
     super.onReceivedError,
     super.onReceivedHttpAuthRequest,
+    super.onReceivedSslError,
     super.onReceivedRequestError,
     super.requestLoading,
     super.urlLoading,

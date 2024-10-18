@@ -399,6 +399,17 @@ class MockAndroidNavigationDelegate extends _i1.Mock
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> setOnSslError(_i3.SslErrorCallback? onSslError) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnSslError,
+          [onSslError],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [AndroidWebViewController].
@@ -463,7 +474,8 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i9.Future<void>);
 
   @override
-  _i9.Future<void> loadRequest(dynamic params) => (super.noSuchMethod(
+  _i9.Future<void> loadRequest(_i3.LoadRequestParams? params) =>
+      (super.noSuchMethod(
         Invocation.method(
           #loadRequest,
           [params],
@@ -1149,7 +1161,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
     void Function(
       _i2.WebView,
       _i2.SslErrorHandler,
-      _i2.SslError,
+      _i3.SslError,
     )? onReceivedSslError,
     void Function(
       _i2.WebView,
@@ -1200,7 +1212,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebView,
             _i2.SslErrorHandler,
-            _i2.SslError,
+            _i3.SslError,
           )? onReceivedSslError,
           void Function(
             _i2.WebView,
@@ -1254,7 +1266,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebView,
             _i2.SslErrorHandler,
-            _i2.SslError,
+            _i3.SslError,
           )? onReceivedSslError,
           void Function(
             _i2.WebView,
@@ -1308,7 +1320,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
         void Function(
           _i2.WebView,
           _i2.SslErrorHandler,
-          _i2.SslError,
+          _i3.SslError,
         )? onReceivedSslError,
         void Function(
           _i2.WebView,
@@ -1468,6 +1480,13 @@ class MockAndroidWebViewWidgetCreationParams extends _i1.Mock
           Invocation.getter(#controller),
         ),
       ) as _i3.PlatformWebViewController);
+
+  @override
+  _i4.TextDirection get layoutDirection => (super.noSuchMethod(
+        Invocation.getter(#layoutDirection),
+        returnValue: _i4.TextDirection.rtl,
+        returnValueForMissingStub: _i4.TextDirection.rtl,
+      ) as _i4.TextDirection);
 
   @override
   Set<_i11.Factory<_i12.OneSequenceGestureRecognizer>> get gestureRecognizers =>
