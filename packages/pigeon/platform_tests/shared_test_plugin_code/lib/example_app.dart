@@ -26,6 +26,7 @@ class ExampleApp extends StatefulWidget {
 class _ExampleAppState extends State<ExampleApp> {
   late final HostIntegrationCoreApi api;
   String status = 'Calling...';
+  String numsSoFar = '';
 
   @override
   void initState() {
@@ -58,7 +59,49 @@ class _ExampleAppState extends State<ExampleApp> {
           title: const Text('Pigeon integration tests'),
         ),
         body: Center(
-          child: Text(status),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'Counter :',
+              ),
+              StreamBuilder<EventChannelDataBase>(
+                stream: streamEvents(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<EventChannelDataBase> snapshot) {
+                  if (snapshot.hasData) {
+                    String newString = '';
+                    switch (snapshot.data) {
+                      case null:
+                        newString = 'null, ';
+                      case IntEvent():
+                        newString = '${(snapshot.data! as IntEvent).value}, ';
+                      case StringEvent():
+                        newString =
+                            '${(snapshot.data! as StringEvent).value}, ';
+                      case BoolEvent():
+                        newString = '${(snapshot.data! as BoolEvent).value}, ';
+                      case DoubleEvent():
+                        newString =
+                            '${(snapshot.data! as DoubleEvent).value}, ';
+                      case ObjectsEvent():
+                        newString =
+                            '${(snapshot.data! as ObjectsEvent).value}, ';
+                      case EnumEvent():
+                        newString = '${(snapshot.data! as EnumEvent).value}, ';
+                      case ClassEvent():
+                        newString = '${(snapshot.data! as ClassEvent).value}, ';
+                    }
+
+                    numsSoFar += newString;
+                    return Text(numsSoFar);
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

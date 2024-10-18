@@ -1,3 +1,8 @@
+## 22.6.0
+
+* [swift] Adds Event Channel support.
+* [kotlin] Adds Event Channel support.
+
 ## 22.5.0
 
 * [swift] Adds implementation for `@ProxyApi`.
