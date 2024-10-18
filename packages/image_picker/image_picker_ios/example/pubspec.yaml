@@ -17,7 +17,7 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
   image_picker_platform_interface: ^2.10.0
-  mime: ^1.0.4
+  mime: ^2.0.0
   video_player: ^2.1.4
 
 dev_dependencies:

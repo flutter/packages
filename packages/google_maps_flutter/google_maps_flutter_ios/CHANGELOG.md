@@ -1,3 +1,7 @@
+## 2.13.1
+
+* Updates Pigeon for non-nullable collection type support.
+
 ## 2.13.0
 
 * Updates map configuration and platform view creation parameters to use Pigeon.

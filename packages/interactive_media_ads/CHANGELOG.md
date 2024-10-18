@@ -1,3 +1,20 @@
+## 0.2.2+12
+
+* Adds internal wrapper for iOS native `IMACompanionAd`.
+
+## 0.2.2+11
+
+* Adds internal wrapper for Android native `UniversalAdId`.
+
+## 0.2.2+10
+
+* Fixes bug where Android would show the last frame of the previous Ad before playing the current
+  one.
+
+## 0.2.2+9
+
+* Adds internal wrapper for Android native `CompanionAd`.
+
 ## 0.2.2+8
 
 * Adds remaining methods for internal wrapper of the iOS native `IMAAdsRenderingSettings`.

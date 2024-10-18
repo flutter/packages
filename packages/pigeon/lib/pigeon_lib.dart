@@ -23,6 +23,7 @@ import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:collection/collection.dart' as collection;
 import 'package:path/path.dart' as path;
+import 'package:pub_semver/pub_semver.dart';
 
 import 'ast.dart';
 import 'ast_generator.dart';
@@ -139,7 +140,7 @@ class FlutterApi {
 /// methods.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
-  const ProxyApi({this.superClass, this.kotlinOptions});
+  const ProxyApi({this.superClass, this.kotlinOptions, this.swiftOptions});
 
   /// The proxy api that is a super class to this one.
   ///
@@ -149,6 +150,10 @@ class ProxyApi {
   /// Note that using this instead of `extends` can cause unexpected conflicts
   /// with inherited method names.
   final Type? superClass;
+
+  /// Options that control how Swift code will be generated for a specific
+  /// ProxyApi.
+  final SwiftProxyApiOptions? swiftOptions;
 
   /// Options that control how Kotlin code will be generated for a specific
   /// ProxyApi.
@@ -1674,6 +1679,40 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           }
         }
 
+        SwiftProxyApiOptions? swiftOptions;
+        final Map<String, Object?>? swiftOptionsMap =
+            annotationMap['swiftOptions'] as Map<String, Object?>?;
+        if (swiftOptionsMap != null) {
+          swiftOptions = SwiftProxyApiOptions(
+            name: swiftOptionsMap['name'] as String?,
+            import: swiftOptionsMap['import'] as String?,
+            minIosApi: swiftOptionsMap['minIosApi'] as String?,
+            minMacosApi: swiftOptionsMap['minMacosApi'] as String?,
+            supportsIos: swiftOptionsMap['supportsIos'] as bool? ?? true,
+            supportsMacos: swiftOptionsMap['supportsMacos'] as bool? ?? true,
+          );
+        }
+
+        void tryParseApiRequirement(String? version) {
+          if (version == null) {
+            return;
+          }
+          try {
+            Version.parse(version);
+          } on FormatException catch (error) {
+            _errors.add(
+              Error(
+                message:
+                    'Could not parse version: ${error.message}. Please use semantic versioning format: "1.2.3".',
+                lineNumber: _calculateLineNumber(source, node.offset),
+              ),
+            );
+          }
+        }
+
+        tryParseApiRequirement(swiftOptions?.minIosApi);
+        tryParseApiRequirement(swiftOptions?.minMacosApi);
+
         KotlinProxyApiOptions? kotlinOptions;
         final Map<String, Object?>? kotlinOptionsMap =
             annotationMap['kotlinOptions'] as Map<String, Object?>?;
@@ -1691,6 +1730,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           fields: <ApiField>[],
           superClass: superClass,
           interfaces: interfaces,
+          swiftOptions: swiftOptions,
           kotlinOptions: kotlinOptions,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
