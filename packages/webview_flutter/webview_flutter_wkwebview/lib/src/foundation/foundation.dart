@@ -500,6 +500,19 @@ class NSUrlProtectionSpace extends NSObject {
 
   /// The SSL certificate DER (only applicable if the authentication method is server trust)
   final Uint8List? x509CertificateDer;
+
+  @override
+  NSUrlProtectionSpace copy() {
+    return NSUrlProtectionSpace.detached(
+      host: host,
+      authenticationMethod: authenticationMethod,
+      protocol: protocol,
+      port: port,
+      realm: realm,
+      sslErrorType: sslErrorType,
+      x509CertificateDer: x509CertificateDer == null ? null : Uint8List.fromList(x509CertificateDer!.toList()),
+    );
+  }
 }
 
 /// The authentication method used by the receiver.
@@ -515,6 +528,9 @@ class NSUrlAuthenticationMethod {
 
   /// Use HTTP digest authentication for this protection space.
   static const String httpDigest = 'NSURLAuthenticationMethodHTTPDigest';
+
+  /// Use NTLM authentication for this protection space.
+  static const String httpNtlm = 'NSURLAuthenticationMethodNTLM';
 
   /// Use HTTP digest authentication for this protection space.
   static const String serverTrust = 'NSURLAuthenticationMethodServerTrust';

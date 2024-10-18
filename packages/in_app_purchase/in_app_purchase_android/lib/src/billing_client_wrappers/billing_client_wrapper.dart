@@ -64,7 +64,7 @@ class BillingClient {
   })  : _hostApi = api ?? InAppPurchaseApi(),
         hostCallbackHandler = HostBillingClientCallbackHandler(
             onPurchasesUpdated, alternativeBillingListener) {
-    InAppPurchaseCallbackApi.setup(hostCallbackHandler);
+    InAppPurchaseCallbackApi.setUp(hostCallbackHandler);
   }
 
   /// Interface for calling host-side code.

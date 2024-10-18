@@ -36,7 +36,7 @@ dev_dependencies:
   http: ">=0.13.0 <2.0.0"
   integration_test:
     sdk: flutter
-  mockito: 5.4.4
+  mockito: ^5.4.4
 
 topics:
   - authentication

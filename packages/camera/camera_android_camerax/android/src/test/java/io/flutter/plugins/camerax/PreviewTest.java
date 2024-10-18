@@ -134,7 +134,7 @@ public class PreviewTest {
     reset(mockSurfaceRequest);
 
     // Verify callback's onSurfaceCreated does not interact with the SurfaceRequest.
-    callback.onSurfaceCreated();
+    simulateSurfaceCreation(callback);
     verifyNoMoreInteractions(mockSurfaceRequest);
   }
 
@@ -261,5 +261,13 @@ public class PreviewTest {
     hostApi.setTargetRotation(instanceIdentifier, Long.valueOf(targetRotation));
 
     verify(mockPreview).setTargetRotation(targetRotation);
+  }
+
+  // TODO(matanlurey): Replace with inline calls to onSurfaceAvailable once
+  // available on stable; see https://github.com/flutter/flutter/issues/155131.
+  // This seperate method only exists to scope the suppression.
+  @SuppressWarnings({"deprecation", "removal"})
+  void simulateSurfaceCreation(TextureRegistry.SurfaceProducer.Callback producerLifecycle) {
+    producerLifecycle.onSurfaceCreated();
   }
 }

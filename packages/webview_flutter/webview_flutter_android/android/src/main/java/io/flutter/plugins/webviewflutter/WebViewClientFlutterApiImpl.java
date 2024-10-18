@@ -59,7 +59,6 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         .build();
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   static GeneratedAndroidWebView.WebResourceRequestData createWebResourceRequestData(
       WebResourceRequest request) {
     final GeneratedAndroidWebView.WebResourceRequestData.Builder requestData =
@@ -79,7 +78,6 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
     return requestData.build();
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   static GeneratedAndroidWebView.WebResourceResponseData createWebResourceResponseData(
       WebResourceResponse response) {
     final GeneratedAndroidWebView.WebResourceResponseData.Builder responseData =
@@ -181,7 +179,6 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   }
 
   /** Passes arguments from {@link WebViewClient#onReceivedHttpError} to Dart. */
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public void onReceivedHttpError(
       @NonNull WebViewClient webViewClient,
       @NonNull WebView webView,
@@ -226,7 +223,6 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
    * Passes arguments from {@link androidx.webkit.WebViewClientCompat#onReceivedError(WebView,
    * WebResourceRequest, WebResourceError)} to Dart.
    */
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public void onReceivedRequestError(
       @NonNull WebViewClient webViewClient,
       @NonNull WebView webView,
@@ -273,7 +269,6 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
    * Passes arguments from {@link WebViewClient#shouldOverrideUrlLoading(WebView,
    * WebResourceRequest)} to Dart.
    */
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public void requestLoading(
       @NonNull WebViewClient webViewClient,
       @NonNull WebView webView,

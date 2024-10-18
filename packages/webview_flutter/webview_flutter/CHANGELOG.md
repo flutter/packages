@@ -1,6 +1,10 @@
+## 4.11.0
+
+* Adds `onSslError` callback to `NavigationDelegate` to catch SSL errors.
+
 ## 4.10.0
 
-* Implemented onSslError
+* Updates minimum supported `webview_flutter_android` from 3.16.0 to 4.0.0.
 
 ## 4.9.0
 

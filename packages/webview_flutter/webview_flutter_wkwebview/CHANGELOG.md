@@ -1,6 +1,10 @@
+## 3.17.0
+
+* Implement handling for the NSURLAuthenticationMethodServerTrust authentication method.
+
 ## 3.16.0
 
-* Implement handling for the NSURLAuthenticationMethodServerTrust authentication method
+* Supports NTLM for authentication.
 
 ## 3.15.0
 
