@@ -18,6 +18,7 @@ packages/flutter_migrate/**                              @stuartmorgan
 packages/flutter_template_images/**                      @stuartmorgan
 packages/go_router/**                                    @chunhtai
 packages/go_router_builder/**                            @chunhtai
+packages/google_adsense/**                               @sokoloff06
 packages/google_identity_services_web/**                 @ditman
 packages/google_maps_flutter/**                          @stuartmorgan
 packages/google_sign_in/**                               @stuartmorgan
