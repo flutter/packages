@@ -1,3 +1,7 @@
+## 2.6.3
+
+* Supports the audio-only HLS (.m3u8) on iOS.
+
 ## 2.6.2
 
 * Updates Pigeon for non-nullable collection type support.
