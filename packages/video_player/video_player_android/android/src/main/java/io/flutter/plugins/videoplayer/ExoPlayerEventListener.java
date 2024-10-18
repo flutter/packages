@@ -20,6 +20,28 @@ final class ExoPlayerEventListener implements Player.Listener {
   private boolean isBuffering = false;
   private boolean isInitialized;
 
+  private enum RotationDegrees {
+    ROTATE_0(0),
+    ROTATE_90(90),
+    ROTATE_180(180),
+    ROTATE_270(270);
+
+    private final int degrees;
+
+    RotationDegrees(int degrees) {
+        this.degrees = degrees;
+    }
+
+    public static RotationDegrees fromDegrees(int degrees) {
+        for (RotationDegrees rotationDegrees : RotationDegrees.values()) {
+            if (rotationDegrees.degrees == degrees) {
+                return rotationDegrees;
+            }
+        }
+        throw new IllegalArgumentException("Invalid rotation degrees specified: " + degrees);
+    }
+}
+
   ExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events) {
     this(exoPlayer, events, false);
   }
@@ -60,16 +82,18 @@ final class ExoPlayerEventListener implements Player.Listener {
         // and reports it through VideoSize.unappliedRotationDegrees. We may apply it to
         // fix the case of upside-down playback.
         reportedRotationCorrection = videoSize.unappliedRotationDegrees;
-        rotationCorrection = getRotationCorrectionFromUnappliedRotation(reportedRotationCorrection);
-      } else if (Build.VERSION.SDK_INT < 29) {
+        rotationCorrection = getRotationCorrectionFromUnappliedRotation(RotationDegrees.fromDegrees(reportedRotationCorrection));
+      }
+      // TODO(camsim99): Replace this with a call to `handlesCropAndRotation` when it is
+      // available in stable. https://github.com/flutter/flutter/issues/157198
+      else if (Build.VERSION.SDK_INT < 29) {
         // When the SurfaceTexture backend for Impeller is used, the preview should already
         // be correctly rotated.
         rotationCorrection = 0;
       } else {
-        // Above API 21, Exoplayer handles the VideoSize.unappliedRotationDegrees
-        // correction internally. However, the video's Format also provides a rotation
-        // correction that may be used to correct the rotation, so we try to use that
-        // to correct the video rotation when the ImageReader backend for Impeller is used.
+        // The video's Format also provides a rotation correction that may be used to
+        // correct the rotation, so we try to use that to correct the video rotation
+        // when the ImageReader backend for Impeller is used.
         rotationCorrection = getRotationCorrectionFromFormat(exoPlayer);
         reportedRotationCorrection = rotationCorrection;
       }
@@ -84,23 +108,24 @@ final class ExoPlayerEventListener implements Player.Listener {
     events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection);
   }
 
-  private int getRotationCorrectionFromUnappliedRotation(int unappliedRotationDegrees) {
+  private int getRotationCorrectionFromUnappliedRotation(RotationDegrees unappliedRotationDegrees) {
     int rotationCorrection = 0;
 
     // Rotating the video with ExoPlayer does not seem to be possible with a Surface,
     // so inform the Flutter code that the widget needs to be rotated to prevent
     // upside-down playback for videos with unappliedRotationDegrees of 180 (other orientations
     // work correctly without correction).
-    if (unappliedRotationDegrees == 180) {
-      rotationCorrection = unappliedRotationDegrees;
+    if (unappliedRotationDegrees == RotationDegrees.ROTATE_180) {
+      rotationCorrection = unappliedRotationDegrees.degrees;
     }
 
     return rotationCorrection;
   }
 
   @OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
-  // The annotation is used to enable using a Format to determine the rotation
-  // correction.
+  // A video's Format and its rotation degrees are unstable because they are not guaranteed
+  // the same implementation across API versions. It is possible that this logic may need
+  // revisiting should the implementation change across versions of the Exoplayer API.
   private int getRotationCorrectionFromFormat(ExoPlayer exoPlayer) {
     Format videoFormat = Objects.requireNonNull(exoPlayer.getVideoFormat());
     return videoFormat.rotationDegrees;
