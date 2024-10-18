@@ -91,7 +91,8 @@ Future<int> generateTestPigeons(
         ? 'FlutterError'
         : '${pascalCaseName}Error';
 
-    final bool swiftErrorUseDefaultErrorName = input == 'core_tests';
+    final bool swiftErrorUseDefaultErrorName =
+        input == 'core_tests' || input == 'background_platform_channels';
 
     final String? swiftErrorClassName =
         swiftErrorUseDefaultErrorName ? null : '${pascalCaseName}Error';
