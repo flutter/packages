@@ -53,10 +53,8 @@ bool _deepEquals(Object? a, Object? b) {
 enum PlatformCameraLensDirection {
   /// Front facing camera (a user looking at the screen is seen by the camera).
   front,
-
   /// Back facing camera (a user looking at the screen is not seen by the camera).
   back,
-
   /// External camera which may not be mounted to the device.
   external,
 }
@@ -481,6 +479,7 @@ class PlatformSize {
   int get hashCode => Object.hashAll(_toList());
 }
 
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -488,7 +487,7 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is PlatformCameraLensDirection) {
+    }    else if (value is PlatformCameraLensDirection) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
     } else if (value is PlatformCameraLensType) {
@@ -645,8 +644,7 @@ class CameraApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!
-          .cast<PlatformCameraDescription>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<PlatformCameraDescription>();
     }
   }
 
@@ -1090,6 +1088,32 @@ class CameraApi {
       <Object?>[point],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Sets the lens position manually to the given value.
+  /// The value should be between 0 and 1.
+  /// 0 means the lens is at the minimum position.
+  /// 1 means the lens is at the maximum position.
+  Future<void> setLensPosition(double position) async {
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.camera_avfoundation.CameraApi.setLensPosition$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[position]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

@@ -58,3 +58,5 @@ gradlew.bat
 .project
 .classpath
 .settings
+packages/camera/camera_avfoundation/example/ios/Runner.xcworkspace/xcshareddata/swiftpm/Package.resolved
+packages/camera/camera_avfoundation/example/ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved

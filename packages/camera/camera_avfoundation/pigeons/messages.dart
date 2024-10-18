@@ -4,14 +4,17 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(
-  PigeonOptions(
-    dartOut: 'lib/src/messages.g.dart',
-    swiftOut:
+@ConfigurePigeon(PigeonOptions(
+  dartOut: 'lib/src/messages.g.dart',
+  swiftOut:
         'ios/camera_avfoundation/Sources/camera_avfoundation/Messages.swift',
-    copyrightHeader: 'pigeons/copyright.txt',
+  objcOptions: ObjcOptions(
+    prefix: 'FCP',
+    headerIncludePath: './include/camera_avfoundation/messages.g.h',
   ),
+  copyrightHeader: 'pigeons/copyright.txt',
 )
+
 // Pigeon version of CameraLensDirection.
 enum PlatformCameraLensDirection {
   /// Front facing camera (a user looking at the screen is seen by the camera).
@@ -281,6 +284,14 @@ abstract class CameraApi {
   @async
   @ObjCSelector('setExposurePoint:')
   void setExposurePoint(PlatformPoint? point);
+
+  /// Sets the lens position manually to the given value.
+  /// The value should be between 0 and 1.
+  /// 0 means the lens is at the minimum position.
+  /// 1 means the lens is at the maximum position.
+  @async
+  @ObjCSelector('setLensPosition:')
+  void setLensPosition(double position);
 
   /// Returns the minimum exposure offset supported by the camera.
   @async

@@ -1,0 +1,16 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "./packages/camera"
+    },
+    {
+      "path": "./packages/camera/camera_avfoundation"
+    }
+  ],
+  "settings": {
+    "editor.quickSuggestions": false
+  }
+}
