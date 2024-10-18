@@ -5,6 +5,7 @@
 package io.flutter.plugins.camera;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -14,35 +15,33 @@ import android.app.Activity;
 import android.hardware.camera2.CameraAccessException;
 import androidx.lifecycle.LifecycleObserver;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.view.TextureRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MethodCallHandlerImplTest {
+public class CameraApiImplTest {
 
-  MethodCallHandlerImpl handler;
-  MethodChannel.Result mockResult;
+  CameraApiImpl handler;
+  Messages.VoidResult mockResult;
   Camera mockCamera;
 
   @Before
   public void setUp() {
     handler =
-        new MethodCallHandlerImpl(
+        new CameraApiImpl(
             mock(Activity.class),
             mock(BinaryMessenger.class),
             mock(CameraPermissions.class),
             mock(CameraPermissions.PermissionsRegistry.class),
             mock(TextureRegistry.class));
-    mockResult = mock(MethodChannel.Result.class);
+    mockResult = mock(Messages.VoidResult.class);
     mockCamera = mock(Camera.class);
     handler.camera = mockCamera;
   }
 
   @Test
   public void shouldNotImplementLifecycleObserverInterface() {
-    Class<MethodCallHandlerImpl> methodCallHandlerClass = MethodCallHandlerImpl.class;
+    Class<CameraApiImpl> methodCallHandlerClass = CameraApiImpl.class;
 
     assertFalse(LifecycleObserver.class.isAssignableFrom(methodCallHandlerClass));
   }
@@ -50,10 +49,9 @@ public class MethodCallHandlerImplTest {
   @Test
   public void onMethodCall_pausePreview_shouldPausePreviewAndSendSuccessResult()
       throws CameraAccessException {
-    handler.onMethodCall(new MethodCall("pausePreview", null), mockResult);
+    handler.pausePreview();
 
     verify(mockCamera, times(1)).pausePreview();
-    verify(mockResult, times(1)).success(null);
   }
 
   @Test
@@ -61,16 +59,13 @@ public class MethodCallHandlerImplTest {
       throws CameraAccessException {
     doThrow(new CameraAccessException(0)).when(mockCamera).pausePreview();
 
-    handler.onMethodCall(new MethodCall("pausePreview", null), mockResult);
-
-    verify(mockResult, times(1)).error("CameraAccess", null, null);
+    assertThrows(Messages.FlutterError.class, () -> handler.pausePreview());
   }
 
   @Test
   public void onMethodCall_resumePreview_shouldResumePreviewAndSendSuccessResult() {
-    handler.onMethodCall(new MethodCall("resumePreview", null), mockResult);
+    handler.resumePreview();
 
     verify(mockCamera, times(1)).resumePreview();
-    verify(mockResult, times(1)).success(null);
   }
 }
