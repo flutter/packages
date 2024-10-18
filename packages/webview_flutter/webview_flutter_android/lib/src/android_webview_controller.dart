@@ -13,6 +13,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 
 import 'android_proxy.dart';
 import 'android_webview.dart' as android_webview;
+import 'android_webview.g.dart';
 import 'android_webview_api_impls.dart';
 import 'instance_manager.dart';
 import 'platform_views_service_proxy.dart';
@@ -1397,6 +1398,13 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           httpAuthHandler.cancel();
         }
       },
+      onReceivedSslError: (
+        android_webview.WebView webView,
+        android_webview.SslErrorHandler sslErrorHandler,
+        SslError sslError,
+      ) {
+        weakThis.target?._handleSslError(sslErrorHandler, sslError);
+      },
     );
 
     _downloadListener = (this.params as AndroidNavigationDelegateCreationParams)
@@ -1455,6 +1463,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
   HttpAuthRequestCallback? _onHttpAuthRequest;
+  SslErrorCallback? _onSslError;
 
   void _handleNavigation(
     String url, {
@@ -1492,6 +1501,35 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
             uri: Uri.parse(url),
             headers: headers,
           ));
+        }
+      });
+    }
+  }
+
+  void _handleSslError(
+    android_webview.SslErrorHandler sslErrorHandler,
+    SslError error,
+  ) {
+    final SslErrorCallback? onSslError = _onSslError;
+
+    if (onSslError == null) {
+      return;
+    }
+
+    final FutureOr<SslErrorDecision> returnValue = onSslError(error);
+
+    if (returnValue is SslErrorDecision) {
+      if (returnValue == SslErrorDecision.proceed) {
+        sslErrorHandler.proceed();
+      } else {
+        sslErrorHandler.cancel();
+      }
+    } else {
+      returnValue.then((SslErrorDecision shouldProceed) {
+        if (shouldProceed == SslErrorDecision.proceed) {
+          sslErrorHandler.proceed();
+        } else {
+          sslErrorHandler.cancel();
         }
       });
     }
@@ -1558,5 +1596,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     HttpAuthRequestCallback onHttpAuthRequest,
   ) async {
     _onHttpAuthRequest = onHttpAuthRequest;
+  }
+
+  @override
+  Future<void> setOnSslError(SslErrorCallback onSslError) async {
+    _onSslError = onSslError;
   }
 }

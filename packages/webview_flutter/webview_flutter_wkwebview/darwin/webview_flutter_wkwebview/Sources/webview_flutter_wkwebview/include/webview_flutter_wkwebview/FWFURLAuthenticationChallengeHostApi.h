@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Sends a message to Dart to create a new Dart instance and add it to the `InstanceManager`.
 - (void)createWithInstance:(NSURLAuthenticationChallenge *)instance
            protectionSpace:(NSURLProtectionSpace *)protectionSpace
+       sslErrorTypeDataBoxed:(FWFSslErrorTypeDataBox *_Nullable)sslErrorTypeDataBoxed
+          x509CertificateDer:(FlutterStandardTypedData *_Nullable)x509CertificateDer
                 completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 

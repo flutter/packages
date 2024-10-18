@@ -5,6 +5,8 @@
 import 'dart:ui';
 
 import 'package:flutter/services.dart' show BinaryMessenger, Uint8List;
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
+    as platform_interface;
 
 import 'android_webview.dart';
 import 'android_webview.g.dart';
@@ -40,6 +42,46 @@ WebResourceError _toWebResourceError(WebResourceErrorData data) {
   );
 }
 
+/// Converts [SslErrorTypeData] to [SslErrorType]
+platform_interface.SslErrorType _toSslErrorType(SslErrorTypeData data) {
+  switch (data) {
+    case SslErrorTypeData.dateInvalid:
+      return platform_interface.SslErrorType.dateInvalid;
+    case SslErrorTypeData.expired:
+      return platform_interface.SslErrorType.expired;
+    case SslErrorTypeData.idMismatch:
+      return platform_interface.SslErrorType.idMismatch;
+    case SslErrorTypeData.notYetValid:
+      return platform_interface.SslErrorType.notYetValid;
+    case SslErrorTypeData.untrusted:
+      return platform_interface.SslErrorType.untrusted;
+    case SslErrorTypeData.invalid:
+      return platform_interface.SslErrorType.otherError;
+  }
+}
+
+/// Converts [SslErrorData] to [SslError]
+platform_interface.SslError _toSslError(SslErrorData data) {
+  final Uri uri = Uri.parse(data.url);
+  return platform_interface.SslError(
+    errorType: _toSslErrorType(data.errorTypeData),
+    certificate: platform_interface.SslCertificate(
+      issuedBy: data.certificateData.issuedBy,
+      issuedTo: data.certificateData.issuedTo,
+      validNotAfterDate: data.certificateData.validNotAfterIso8601Date == null
+          ? DateTime.parse(data.certificateData.validNotAfterIso8601Date!)
+          : null,
+      validNotBeforeDate: data.certificateData.validNotBeforeIso8601Date == null
+          ? DateTime.parse(data.certificateData.validNotBeforeIso8601Date!)
+          : null,
+      x509CertificateDer: data.certificateData.x509CertificateDer,
+    ),
+    host: uri.host,
+    scheme: uri.scheme,
+    port: uri.port,
+  );
+}
+
 /// Handles initialization of Flutter APIs for Android WebView.
 class AndroidWebViewFlutterApis {
   /// Creates a [AndroidWebViewFlutterApis].
@@ -57,6 +99,7 @@ class AndroidWebViewFlutterApis {
     CustomViewCallbackFlutterApiImpl? customViewCallbackFlutterApi,
     ViewFlutterApiImpl? viewFlutterApi,
     HttpAuthHandlerFlutterApiImpl? httpAuthHandlerFlutterApi,
+    SslErrorHandlerFlutterApiImpl? sslErrorHandlerFlutterApi,
   }) {
     this.javaObjectFlutterApi =
         javaObjectFlutterApi ?? JavaObjectFlutterApiImpl();
@@ -81,6 +124,8 @@ class AndroidWebViewFlutterApis {
     this.viewFlutterApi = viewFlutterApi ?? ViewFlutterApiImpl();
     this.httpAuthHandlerFlutterApi =
         httpAuthHandlerFlutterApi ?? HttpAuthHandlerFlutterApiImpl();
+    this.sslErrorHandlerFlutterApi =
+        sslErrorHandlerFlutterApi ?? SslErrorHandlerFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -127,6 +172,9 @@ class AndroidWebViewFlutterApis {
   /// Flutter Api for [HttpAuthHandler].
   late final HttpAuthHandlerFlutterApiImpl httpAuthHandlerFlutterApi;
 
+  /// Flutter Api for [SslErrorHandler].
+  late final SslErrorHandlerFlutterApiImpl sslErrorHandlerFlutterApi;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -143,6 +191,7 @@ class AndroidWebViewFlutterApis {
       CustomViewCallbackFlutterApi.setup(customViewCallbackFlutterApi);
       ViewFlutterApi.setup(viewFlutterApi);
       HttpAuthHandlerFlutterApi.setup(httpAuthHandlerFlutterApi);
+      SslErrorHandlerFlutterApi.setup(sslErrorHandlerFlutterApi);
       _haveBeenSetUp = true;
     }
   }
@@ -898,6 +947,38 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
           webViewInstance!, httpAuthHandlerInstance!, host, realm);
     }
   }
+
+  @override
+  void onReceivedSslError(
+    int instanceId,
+    int webViewInstanceId,
+    int sslErrorHandlerInstanceId,
+    SslErrorData error,
+  ) {
+    final WebViewClient? instance = instanceManager
+        .getInstanceWithWeakReference(instanceId) as WebViewClient?;
+    final WebView? webViewInstance = instanceManager
+        .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
+    final SslErrorHandler? sslErrorHandlerInstance =
+        instanceManager.getInstanceWithWeakReference(sslErrorHandlerInstanceId)
+            as SslErrorHandler?;
+    assert(
+      instance != null,
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
+    );
+    assert(
+      webViewInstance != null,
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
+    );
+    assert(
+      sslErrorHandlerInstance != null,
+      'InstanceManager does not contain a SslErrorHandler with instanceId: $sslErrorHandlerInstanceId',
+    );
+    if (instance!.onReceivedSslError != null) {
+      return instance.onReceivedSslError!(
+          webViewInstance!, sslErrorHandlerInstance!, _toSslError(error));
+    }
+  }
 }
 
 /// Host api implementation for [DownloadListener].
@@ -1588,6 +1669,54 @@ class HttpAuthHandlerFlutterApiImpl extends HttpAuthHandlerFlutterApi {
   void create(int instanceId) {
     instanceManager.addHostCreatedInstance(
       HttpAuthHandler(),
+      instanceId,
+    );
+  }
+}
+
+/// Host api implementation for [SslErrorHandler].
+class SslErrorHandlerHostApiImpl extends SslErrorHandlerHostApi {
+  /// Constructs a [SslErrorHandlerHostApiImpl].
+  SslErrorHandlerHostApiImpl({
+    super.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : _instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager _instanceManager;
+
+  /// Helper method to convert instance ids to objects.
+  Future<void> cancelFromInstance(SslErrorHandler instance) {
+    return cancel(_instanceManager.getIdentifier(instance)!);
+  }
+
+  /// Helper method to convert instance ids to objects.
+  Future<void> proceedFromInstance(SslErrorHandler instance) {
+    return proceed(_instanceManager.getIdentifier(instance)!);
+  }
+}
+
+/// Flutter API implementation for [SslErrorHandler].
+class SslErrorHandlerFlutterApiImpl extends SslErrorHandlerFlutterApi {
+  /// Constructs a [SslErrorHandlerFlutterApiImpl].
+  SslErrorHandlerFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  @override
+  void create(int instanceId) {
+    instanceManager.addHostCreatedInstance(
+      SslErrorHandler(),
       instanceId,
     );
   }

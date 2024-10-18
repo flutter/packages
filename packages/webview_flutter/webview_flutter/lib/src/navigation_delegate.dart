@@ -51,6 +51,7 @@ class NavigationDelegate {
     void Function(UrlChange change)? onUrlChange,
     void Function(HttpAuthRequest request)? onHttpAuthRequest,
     void Function(HttpResponseError error)? onHttpError,
+    FutureOr<SslErrorDecision> Function(SslError request)? onSslError,
   }) : this.fromPlatformCreationParams(
           const PlatformNavigationDelegateCreationParams(),
           onNavigationRequest: onNavigationRequest,
@@ -61,6 +62,7 @@ class NavigationDelegate {
           onUrlChange: onUrlChange,
           onHttpAuthRequest: onHttpAuthRequest,
           onHttpError: onHttpError,
+          onSslError: onSslError,
         );
 
   /// Constructs a [NavigationDelegate] from creation params for a specific
@@ -105,6 +107,7 @@ class NavigationDelegate {
     void Function(UrlChange change)? onUrlChange,
     void Function(HttpAuthRequest request)? onHttpAuthRequest,
     void Function(HttpResponseError error)? onHttpError,
+    FutureOr<SslErrorDecision> Function(SslError request)? onSslError,
   }) : this.fromPlatform(
           PlatformNavigationDelegate(params),
           onNavigationRequest: onNavigationRequest,
@@ -115,6 +118,7 @@ class NavigationDelegate {
           onUrlChange: onUrlChange,
           onHttpAuthRequest: onHttpAuthRequest,
           onHttpError: onHttpError,
+          onSslError: onSslError,
         );
 
   /// Constructs a [NavigationDelegate] from a specific platform implementation.
@@ -130,6 +134,7 @@ class NavigationDelegate {
     void Function(UrlChange change)? onUrlChange,
     HttpAuthRequestCallback? onHttpAuthRequest,
     void Function(HttpResponseError error)? onHttpError,
+    SslErrorCallback? onSslError,
   }) {
     if (onNavigationRequest != null) {
       platform.setOnNavigationRequest(onNavigationRequest!);
@@ -154,6 +159,9 @@ class NavigationDelegate {
     }
     if (onHttpError != null) {
       platform.setOnHttpError(onHttpError);
+    }
+    if (onSslError != null) {
+      platform.setOnSslError(onSslError);
     }
   }
 
