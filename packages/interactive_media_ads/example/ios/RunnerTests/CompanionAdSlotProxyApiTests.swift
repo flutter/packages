@@ -27,8 +27,7 @@ class CompanionAdSlotProxyApiTests: XCTestCase {
     let width = 0
     let height = 1
     let instance = try! api.pigeonDelegate.size(
-      pigeonApi: api, view: UIView(), width: Int64(width), height: Int64(height))
-    XCTAssertNotNil(instance)
+      pigeonApi: api, view: view, width: Int64(width), height: Int64(height))
     XCTAssertEqual(instance.view, view)
     XCTAssertEqual(instance.width, width)
     XCTAssertEqual(instance.height, height)
