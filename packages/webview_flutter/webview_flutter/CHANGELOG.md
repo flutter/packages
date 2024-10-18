@@ -1,6 +1,6 @@
 ## 4.11.0
 
-* Adds `onSslError` callback to `NavigationDelegate` to catch SSL errors.
+* Adds `onSslError` callback to `NavigationDelegate` to handle SSL errors.
 
 ## 4.10.0
 

@@ -1,6 +1,6 @@
 ## 4.1.0
 
-* Implements onReceivedSslError
+* Adds support for `onReceivedSslError` method to the `AndroidWebViewController`.
 
 ## 4.0.0
 
