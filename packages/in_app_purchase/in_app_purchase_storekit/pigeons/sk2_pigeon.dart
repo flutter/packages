@@ -161,7 +161,7 @@ class SK2ErrorMessage {
 
   final int code;
   final String domain;
-  final Map<String?, Object?>? userInfo;
+  final Map<String, Object>? userInfo;
 }
 
 enum SK2ProductPurchaseResultMessage { success, userCancelled, pending }

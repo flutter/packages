@@ -291,11 +291,7 @@ struct SK2ProductPurchaseOptionsMessage {
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SK2ProductPurchaseOptionsMessage? {
     let appAccountToken: String? = nilOrValue(pigeonVar_list[0])
-    let quantity: Int64? =
-      isNullish(pigeonVar_list[1])
-      ? nil
-      : (pigeonVar_list[1] is Int64?
-        ? pigeonVar_list[1] as! Int64? : Int64(pigeonVar_list[1] as! Int32))
+    let quantity: Int64? = nilOrValue(pigeonVar_list[1])
 
     return SK2ProductPurchaseOptionsMessage(
       appAccountToken: appAccountToken,
@@ -323,14 +319,11 @@ struct SK2TransactionMessage {
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SK2TransactionMessage? {
-    let id =
-      pigeonVar_list[0] is Int64 ? pigeonVar_list[0] as! Int64 : Int64(pigeonVar_list[0] as! Int32)
-    let originalId =
-      pigeonVar_list[1] is Int64 ? pigeonVar_list[1] as! Int64 : Int64(pigeonVar_list[1] as! Int32)
+    let id = pigeonVar_list[0] as! Int64
+    let originalId = pigeonVar_list[1] as! Int64
     let productId = pigeonVar_list[2] as! String
     let purchaseDate = pigeonVar_list[3] as! String
-    let purchasedQuantity =
-      pigeonVar_list[4] is Int64 ? pigeonVar_list[4] as! Int64 : Int64(pigeonVar_list[4] as! Int32)
+    let purchasedQuantity = pigeonVar_list[4] as! Int64
     let appAccountToken: String? = nilOrValue(pigeonVar_list[5])
     let restoring = pigeonVar_list[6] as! Bool
     let error: SK2ErrorMessage? = nilOrValue(pigeonVar_list[7])
@@ -364,14 +357,13 @@ struct SK2TransactionMessage {
 struct SK2ErrorMessage {
   var code: Int64
   var domain: String
-  var userInfo: [String?: Any?]? = nil
+  var userInfo: [String: Any]? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SK2ErrorMessage? {
-    let code =
-      pigeonVar_list[0] is Int64 ? pigeonVar_list[0] as! Int64 : Int64(pigeonVar_list[0] as! Int32)
+    let code = pigeonVar_list[0] as! Int64
     let domain = pigeonVar_list[1] as! String
-    let userInfo: [String?: Any?]? = nilOrValue(pigeonVar_list[2])
+    let userInfo: [String: Any]? = nilOrValue(pigeonVar_list[2])
 
     return SK2ErrorMessage(
       code: code,
@@ -416,7 +408,7 @@ private class sk2_pigeonPigeonCodecReader: FlutterStandardReader {
       }
       return nil
     case 133:
-      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
         return SK2ProductPurchaseResultMessage(rawValue: enumResultAsInt)
       }
@@ -608,7 +600,7 @@ class InAppPurchase2APISetup {
     if let api = api {
       finishChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let idArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        let idArg = args[0] as! Int64
         api.finish(id: idArg) { result in
           switch result {
           case .success:

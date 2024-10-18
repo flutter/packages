@@ -124,7 +124,7 @@ abstract class TestInAppPurchase2Api {
   Future<SK2ProductPurchaseResultMessage> purchase(String id,
       {SK2ProductPurchaseOptionsMessage? options});
 
-  Future<List<SK2TransactionMessage?>> transactions();
+  Future<List<SK2TransactionMessage>> transactions();
 
   Future<void> finish(int id);
 
@@ -249,8 +249,7 @@ abstract class TestInAppPurchase2Api {
             .setMockDecodedMessageHandler<Object?>(pigeonVar_channel,
                 (Object? message) async {
           try {
-            final List<SK2TransactionMessage?> output =
-                await api.transactions();
+            final List<SK2TransactionMessage> output = await api.transactions();
             return <Object?>[output];
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

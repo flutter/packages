@@ -361,7 +361,7 @@ class SK2ErrorMessage {
 
   String domain;
 
-  Map<String?, Object?>? userInfo;
+  Map<String, Object>? userInfo;
 
   Object encode() {
     return <Object?>[
@@ -376,7 +376,7 @@ class SK2ErrorMessage {
     return SK2ErrorMessage(
       code: result[0]! as int,
       domain: result[1]! as String,
-      userInfo: (result[2] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
+      userInfo: (result[2] as Map<Object?, Object?>?)?.cast<String, Object>(),
     );
   }
 }
@@ -584,7 +584,7 @@ class InAppPurchase2API {
     }
   }
 
-  Future<List<SK2TransactionMessage?>> transactions() async {
+  Future<List<SK2TransactionMessage>> transactions() async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.transactions$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
@@ -610,7 +610,7 @@ class InAppPurchase2API {
       );
     } else {
       return (pigeonVar_replyList[0] as List<Object?>?)!
-          .cast<SK2TransactionMessage?>();
+          .cast<SK2TransactionMessage>();
     }
   }
 
