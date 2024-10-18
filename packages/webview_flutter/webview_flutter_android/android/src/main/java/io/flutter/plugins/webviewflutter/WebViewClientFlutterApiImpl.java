@@ -132,9 +132,12 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         return GeneratedAndroidWebView.SslErrorTypeData.NOT_YET_VALID;
       case SslError.SSL_UNTRUSTED:
         return GeneratedAndroidWebView.SslErrorTypeData.UNTRUSTED;
-      default:
+      case SslError.SSL_INVALID:
         return GeneratedAndroidWebView.SslErrorTypeData.INVALID;
     }
+
+    throw new IllegalStateException(
+        String.format("Could not find a SslErrorTypeData for SslError value: %d", error));
   }
 
   /**

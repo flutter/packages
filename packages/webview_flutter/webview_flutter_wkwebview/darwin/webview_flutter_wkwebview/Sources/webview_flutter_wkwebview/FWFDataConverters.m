@@ -370,7 +370,7 @@ FWFSslErrorTypeData FWFSslErrorTypeDataFromSecTrustResult(SecTrustResultType res
       return FWFSslErrorTypeDataFatalTrustFailure;
     case kSecTrustResultOtherError:
       return FWFSslErrorTypeDataOtherError;
-    default:
-      return -1;
   }
+
+  return -1;
 }
