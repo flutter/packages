@@ -117,3 +117,4 @@ packages/local_auth/local_auth_windows/**                @cbracken
 packages/path_provider/path_provider_windows/**          @cbracken
 packages/shared_preferences/shared_preferences_windows/** @cbracken
 packages/url_launcher/url_launcher_windows/**            @cbracken
+packages/video_player/video_player_windows/**            @cbracken
