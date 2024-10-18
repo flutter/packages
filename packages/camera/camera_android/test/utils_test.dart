@@ -27,17 +27,6 @@ void main() {
       );
     });
 
-    test('serializeDeviceOrientation() should serialize correctly', () {
-      expect(serializeDeviceOrientation(DeviceOrientation.portraitUp),
-          'portraitUp');
-      expect(serializeDeviceOrientation(DeviceOrientation.portraitDown),
-          'portraitDown');
-      expect(serializeDeviceOrientation(DeviceOrientation.landscapeRight),
-          'landscapeRight');
-      expect(serializeDeviceOrientation(DeviceOrientation.landscapeLeft),
-          'landscapeLeft');
-    });
-
     test('deviceOrientationFromPlatform() should convert correctly', () {
       expect(
           deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitUp),
