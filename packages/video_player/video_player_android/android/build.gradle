@@ -2,6 +2,7 @@ group 'io.flutter.plugins.videoplayer'
 version '1.0-SNAPSHOT'
 
 buildscript {
+    ext.kotlin_version = '1.7.10'
     repositories {
         google()
         mavenCentral()
@@ -9,6 +10,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:8.5.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -20,6 +22,7 @@ rootProject.allprojects {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     namespace 'io.flutter.plugins.videoplayer'
@@ -37,6 +40,14 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
     }
 
     dependencies {
