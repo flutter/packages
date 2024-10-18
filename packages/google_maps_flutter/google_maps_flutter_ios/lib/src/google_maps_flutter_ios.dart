@@ -441,6 +441,11 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return _hostApi(mapId).getLastStyleError();
   }
 
+  @override
+  Future<bool> isAdvancedMarkersAvailable({required int mapId}) {
+    return _hostApi(mapId).isAdvancedMarkersAvailable();
+  }
+
   Widget _buildView(
     int creationId,
     PlatformViewCreatedCallback onPlatformViewCreated, {
@@ -469,6 +474,8 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       initialClusterManagers: mapObjects.clusterManagers
           .map(_platformClusterManagerFromClusterManager)
           .toList(),
+      markerType:
+          _platformMarkerTypeFromMarkerType(widgetConfiguration.markerType),
     );
 
     return UiKitView(
@@ -511,13 +518,16 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     Set<TileOverlay> tileOverlays = const <TileOverlay>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
+    MarkerType markerType = MarkerType.marker,
   }) {
     return _buildView(
       creationId,
       onPlatformViewCreated,
       widgetConfiguration: MapWidgetConfiguration(
-          initialCameraPosition: initialCameraPosition,
-          textDirection: textDirection),
+        initialCameraPosition: initialCameraPosition,
+        textDirection: textDirection,
+        markerType: markerType,
+      ),
       mapObjects: MapObjects(
           markers: markers,
           polygons: polygons,
@@ -540,6 +550,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     Set<TileOverlay> tileOverlays = const <TileOverlay>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
+    MarkerType markerType = MarkerType.marker,
   }) {
     return buildViewWithTextDirection(
       creationId,
@@ -553,6 +564,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       tileOverlays: tileOverlays,
       gestureRecognizers: gestureRecognizers,
       mapOptions: mapOptions,
+      markerType: markerType,
     );
   }
 
@@ -615,6 +627,14 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       ClusterManager clusterManager) {
     return PlatformClusterManager(
         identifier: clusterManager.clusterManagerId.value);
+  }
+
+  static PlatformMarkerType _platformMarkerTypeFromMarkerType(
+      MarkerType markerType) {
+    return switch (markerType) {
+      MarkerType.marker => PlatformMarkerType.marker,
+      MarkerType.advancedMarker => PlatformMarkerType.advancedMarker,
+    };
   }
 }
 
@@ -847,7 +867,7 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
     indoorViewEnabled: config.indoorViewEnabled,
     trafficEnabled: config.trafficEnabled,
     buildingsEnabled: config.buildingsEnabled,
-    cloudMapId: config.cloudMapId,
+    mapId: config.mapId,
     style: config.style,
   );
 }
@@ -885,7 +905,7 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
     indoorViewEnabled: options['indoorEnabled'] as bool?,
     trafficEnabled: options['trafficEnabled'] as bool?,
     buildingsEnabled: options['buildingsEnabled'] as bool?,
-    cloudMapId: options['cloudMapId'] as String?,
+    mapId: options['mapId'] as String?,
     style: options['style'] as String?,
   );
 }

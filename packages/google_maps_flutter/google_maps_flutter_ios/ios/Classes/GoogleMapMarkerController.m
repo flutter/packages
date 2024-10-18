@@ -106,6 +106,13 @@
   self.marker.zIndex = zIndex;
 }
 
+- (void)setCollisionBehavior:(int)collisionBehavior {
+  if ([self.marker isKindOfClass:[GMSAdvancedMarker class]]) {
+    GMSCollisionBehavior collitionBehaviorValue = (GMSCollisionBehavior)collisionBehavior;
+    [(GMSAdvancedMarker *)self.marker setCollisionBehavior:(collitionBehaviorValue)];
+  }
+}
+
 - (void)interpretMarkerOptions:(NSDictionary *)data
                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                    screenScale:(CGFloat)screenScale {
@@ -150,6 +157,10 @@
   NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
   if (zIndex) {
     [self setZIndex:[zIndex intValue]];
+  }
+  NSNumber *collisionBehavior = FGMGetValueOrNilFromDict(data, @"collisionBehavior");
+  if (collisionBehavior) {
+    [self setCollisionBehavior:[collisionBehavior intValue]];
   }
 }
 
@@ -299,9 +310,64 @@
                                      reason:@"Unable to interpret bytes as a valid image."
                                    userInfo:nil];
     }
+  } else if ([iconData.firstObject isEqualToString:@"pinConfig"]) {
+    NSDictionary *byteData = iconData[1];
+    if (![byteData isKindOfClass:[NSDictionary class]]) {
+      NSException *exception = [NSException
+          exceptionWithName:@"InvalidByteDescriptor"
+                     reason:@"Unable to interpret pin config, expected a dictionary as the "
+                            @"second parameter."
+                   userInfo:nil];
+      @throw exception;
+    }
+
+    GMSPinImageOptions *options = [[GMSPinImageOptions alloc] init];
+    NSNumber *backgroundColor = FGMGetValueOrNilFromDict(byteData, @"backgroundColor");
+    if (backgroundColor) {
+      options.backgroundColor = [self UIColorFromRGB:[backgroundColor intValue]];
+    }
+
+    NSNumber *borderColor = FGMGetValueOrNilFromDict(byteData, @"borderColor");
+    if (borderColor) {
+      options.borderColor = [self UIColorFromRGB:[borderColor intValue]];
+    }
+
+    GMSPinImageGlyph *glyph;
+    NSString *glyphText = FGMGetValueOrNilFromDict(byteData, @"glyphText");
+    NSNumber *glyphColor = FGMGetValueOrNilFromDict(byteData, @"glyphColor");
+    NSObject *glyphBitmap = FGMGetValueOrNilFromDict(byteData, @"glyphBitmapDescriptor");
+    if (glyphText) {
+      NSNumber *glyphTextColorInt = FGMGetValueOrNilFromDict(byteData, @"glyphTextColor");
+      UIColor *glyphTextColor = glyphTextColorInt
+                                    ? [self UIColorFromRGB:[glyphTextColorInt intValue]]
+                                    : [UIColor blackColor];
+      glyph = [[GMSPinImageGlyph alloc] initWithText:glyphText textColor:glyphTextColor];
+    } else if (glyphColor) {
+      UIColor *color = [self UIColorFromRGB:[glyphColor intValue]];
+      glyph = [[GMSPinImageGlyph alloc] initWithGlyphColor:color];
+    } else if (glyphBitmap) {
+      NSArray *glyphBitmapArray = (NSArray *)glyphBitmap;
+      UIImage *glyphImage = [self extractIconFromData:glyphBitmapArray
+                                            registrar:registrar
+                                          screenScale:screenScale];
+      glyph = [[GMSPinImageGlyph alloc] initWithImage:glyphImage];
+    }
+
+    if (glyph) {
+      options.glyph = glyph;
+    }
+
+    image = [GMSPinImage pinImageWithOptions:options];
   }
 
   return image;
+}
+
+- (UIColor *)UIColorFromRGB:(NSInteger)rgbValue {
+  return [UIColor colorWithRed:((float)((rgbValue & 0x00FF0000) >> 16)) / 255.0
+                         green:((float)((rgbValue & 0x0000FF00) >> 8)) / 255.0
+                          blue:((float)(rgbValue & 0x000000FF)) / 255.0
+                         alpha:((float)((rgbValue & 0xFF000000) >> 24)) / 255.0];
 }
 
 /// This method is deprecated within the context of `BitmapDescriptor.fromBytes` handling in the
@@ -452,6 +518,7 @@
 @property(weak, nonatomic, nullable) FGMClusterManagersController *clusterManagersController;
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
+@property(nonatomic) FGMPlatformMarkerType markerType;
 
 @end
 
@@ -460,7 +527,8 @@
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler
       clusterManagersController:(nullable FGMClusterManagersController *)clusterManagersController
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                     markerType:(FGMPlatformMarkerType)markerType {
   self = [super init];
   if (self) {
     _callbackHandler = callbackHandler;
@@ -468,6 +536,7 @@
     _clusterManagersController = clusterManagersController;
     _markerIdentifierToController = [[NSMutableDictionary alloc] init];
     _registrar = registrar;
+    _markerType = markerType;
   }
   return self;
 }
@@ -482,7 +551,9 @@
   CLLocationCoordinate2D position = [FLTMarkersController getPosition:markerToAdd];
   NSString *markerIdentifier = markerToAdd[@"markerId"];
   NSString *clusterManagerIdentifier = markerToAdd[@"clusterManagerId"];
-  GMSMarker *marker = [GMSMarker markerWithPosition:position];
+  GMSMarker *marker = (self.markerType == FGMPlatformMarkerTypeAdvancedMarker)
+                          ? [GMSAdvancedMarker markerWithPosition:position]
+                          : [GMSMarker markerWithPosition:position];
   FLTGoogleMapMarkerController *controller =
       [[FLTGoogleMapMarkerController alloc] initWithMarker:marker
                                           markerIdentifier:markerIdentifier

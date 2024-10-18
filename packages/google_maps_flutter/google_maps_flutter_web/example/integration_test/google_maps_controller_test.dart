@@ -35,7 +35,7 @@ gmaps.Map mapShim() => throw UnimplementedError();
   MockSpec<PolylinesController>(
     fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
   ),
-  MockSpec<MarkersController>(
+  MockSpec<MarkersController<dynamic, dynamic>>(
     fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
   ),
   MockSpec<TileOverlaysController>(
@@ -63,8 +63,10 @@ void main() {
         mapId: mapId,
         streamController: stream,
         widgetConfiguration: MapWidgetConfiguration(
-            initialCameraPosition: initialCameraPosition,
-            textDirection: TextDirection.ltr),
+          initialCameraPosition: initialCameraPosition,
+          textDirection: TextDirection.ltr,
+          markerType: MarkerType.marker,
+        ),
         mapObjects: mapObjects,
         mapConfiguration: mapConfiguration,
       );
@@ -408,7 +410,7 @@ void main() {
               mapConfiguration: const MapConfiguration(
             mapType: MapType.satellite,
             zoomControlsEnabled: true,
-            cloudMapId: _kCloudMapId,
+            mapId: _kCloudMapId,
             fortyFiveDegreeImageryEnabled: false,
           ));
           controller.debugSetOverrides(

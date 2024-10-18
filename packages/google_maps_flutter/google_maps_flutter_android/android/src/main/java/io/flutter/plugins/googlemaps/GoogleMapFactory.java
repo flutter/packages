@@ -47,11 +47,11 @@ public class GoogleMapFactory extends PlatformViewFactory {
     builder.setInitialHeatmaps(params.getInitialHeatmaps());
     builder.setInitialTileOverlays(params.getInitialTileOverlays());
 
-    final String cloudMapId = mapConfig.getCloudMapId();
-    if (cloudMapId != null) {
-      builder.setMapId(cloudMapId);
+    final String mapId = mapConfig.getMapId();
+    if (mapId != null) {
+      builder.setMapId(mapId);
     }
 
-    return builder.build(id, context, binaryMessenger, lifecycleProvider);
+    return builder.build(id, context, binaryMessenger, lifecycleProvider, params.getMarkerType());
   }
 }
