@@ -1,4 +1,6 @@
-## NEXT
+## 0.3.3
+
+* Fixes an issue where collapsing nodes in the TreeView didn't work correctly.
 
 ## 0.3.2
 
