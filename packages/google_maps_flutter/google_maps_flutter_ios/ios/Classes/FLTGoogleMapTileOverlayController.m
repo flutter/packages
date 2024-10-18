@@ -59,10 +59,6 @@
   if (!data) {
     return;
   }
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
-    [self setVisible:visible.boolValue];
-  }
 
   NSNumber *transparency = FGMGetValueOrNilFromDict(data, @"transparency");
   if (transparency) {
@@ -82,6 +78,13 @@
   NSNumber *tileSize = FGMGetValueOrNilFromDict(data, @"tileSize");
   if (tileSize) {
     [self setTileSize:tileSize.integerValue];
+  }
+
+  // Setting the visibility adds the tile overlay to the map.
+  // Therefore, it should be done after the other properties are set.
+  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
+  if (visible) {
+    [self setVisible:visible.boolValue];
   }
 }
 
