@@ -69,9 +69,7 @@ class SK2SubscriptionInfoMessage {
   });
 
   /// An array of all the promotional offers configured for this subscription.
-  /// This should be List<SK2SubscriptionOfferMessage> but pigeon doesnt support
-  /// null-safe generics. https://github.com/flutter/flutter/issues/97848
-  final List<SK2SubscriptionOfferMessage?> promotionalOffers;
+  final List<SK2SubscriptionOfferMessage> promotionalOffers;
 
   /// The group identifier for this subscription.
   final String subscriptionGroupID;
@@ -163,7 +161,7 @@ class SK2ErrorMessage {
 
   final int code;
   final String domain;
-  final Map<String?, Object?>? userInfo;
+  final Map<String, Object>? userInfo;
 }
 
 enum SK2ProductPurchaseResultMessage { success, userCancelled, pending }
