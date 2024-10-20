@@ -59,6 +59,29 @@ final GoRouter _router = GoRouter(
           },
         ),
         GoRoute(
+          path: 'scale-animation',
+          pageBuilder: (context, state) {
+            return CustomTransitionPage<void>(
+              key: state.pageKey,
+              child: const ScaleAnimatedScreen(),
+              transitionDuration: const Duration(milliseconds: 500),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                const begin = 0.0;
+                const end = 1.0;
+                const curve = Curves.easeInOut;
+          
+                var tween = Tween<double>(begin: begin, end: end).chain(CurveTween(curve: curve));
+                var scaleAnimation = animation.drive(tween);
+          
+                return ScaleTransition(
+                  scale: scaleAnimation,
+                  child: child,
+                );
+              },
+            );
+          }
+        ),
+        GoRoute(
           path: 'custom-reverse-transition-duration',
           pageBuilder: (BuildContext context, GoRouterState state) {
             return CustomTransitionPage<void>(
@@ -159,6 +182,20 @@ class DetailsScreen extends StatelessWidget {
     );
   }
 }
+
+class ScaleAnimatedScreen extends StatelessWidget {
+  const ScaleAnimatedScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Scale Animation"),),
+      body: Center(
+        child: Text("Scale animation example"),
+      ),
+    );
+  }
+}  
 
 /// The dismissible details screen
 class DismissibleDetails extends StatelessWidget {
