@@ -250,8 +250,11 @@ class Runtime extends ChangeNotifier {
   /// To remove a library, the libraries must be cleared using [clearLibraries]
   /// and then the libraries being retained must be readded.
   void update(LibraryName name, WidgetLibrary library) {
+    final bool isNew = _libraries.containsKey(name);
     _libraries[name] = library;
-    _clearCache();
+    if (!isNew) {
+      _clearCache();
+    }
   }
 
   /// Remove all the libraries and start afresh.
