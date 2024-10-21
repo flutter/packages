@@ -1,3 +1,7 @@
+## 2.7.14
+
+* Updates internal Pigeon API to use newer features.
+
 ## 2.7.13
 
 * When `AndroidVideoPlayer` attempts to operate on a `textureId` that is not
