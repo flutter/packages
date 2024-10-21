@@ -1,0 +1,20 @@
+env:
+  CI_NAME: "CirrusCI"
+  CI_BUILD_NUMBER: $CIRRUS_TASK_ID
+  CI_BUILD_URL: "https://cirrus-ci.com/task/$CIRRUS_TASK_ID"
+  CI_BRANCH: $CIRRUS_BRANCH
+  CI_PULL_REQUEST: $CIRRUS_PR
+  COVERALLS_REPO_TOKEN: ENCRYPTED[818fc7b63ab15e18ff5f9813b9983dba79ffb6a9a21861f7797096c0522e0b7ad07fa0b994f87d8187da8f8f9ce3b8ef]
+
+test_task:
+  container:
+    matrix:
+      - image: cirrusci/flutter:dev
+      - image: cirrusci/flutter:stable
+  pub_cache:
+    folder: ~/.pub-cache
+  analyze_script: flutter analyze .
+  test_script: flutter test --coverage
+  coveralls_script: |
+    dart pub global activate coveralls
+    dart pub global run coveralls coverage/lcov.info

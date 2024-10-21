@@ -1,0 +1,9 @@
+name: path_parsing_example
+publish_to: none
+
+dependencies:
+  path_parsing:
+    path: ../
+
+environment:
+  sdk: '>=2.12.0-0 <3.0.0'
