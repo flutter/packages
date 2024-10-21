@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:path_parsing/path_parsing.dart';
 
 /// A [PathProxy] that dumps Flutter `Path` commands to the console.

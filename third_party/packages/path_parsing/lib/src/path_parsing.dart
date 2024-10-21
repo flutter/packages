@@ -10,7 +10,13 @@
 //   * https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/core/html/parser/html_parser_idioms.h (IsHTMLSpace)
 //   * https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/core/svg/svg_path_parser_test.cc
 
-import 'dart:math' as math show sqrt, max, pi, tan, sin, cos, pow, atan2;
+// TODO(stuartmorgan): Remove public_member_api_docs, adding documentation for
+//  all public members.
+// TODO(stuartmorgan): Remove library_private_types_in_public_api and do a
+//  breaking change to not use _PathOffset in public APIs.
+// ignore_for_file: public_member_api_docs, library_private_types_in_public_api
+
+import 'dart:math' as math show atan2, cos, max, pi, pow, sin, sqrt, tan;
 
 import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math.dart' show Matrix4, radians;
@@ -25,7 +31,7 @@ void writeSvgPathDataToPath(String? svg, PathProxy path) {
 
   final SvgPathStringSource parser = SvgPathStringSource(svg);
   final SvgPathNormalizer normalizer = SvgPathNormalizer();
-  for (PathSegmentData seg in parser.parseSegments()) {
+  for (final PathSegmentData seg in parser.parseSegments()) {
     normalizer.emitSegment(seg, path);
   }
 }
@@ -165,8 +171,10 @@ class SvgPathStringSource {
     // could be the start of an implicit command. The 'close' command does not
     // have any parameters though and hence can't have an implicit
     // 'continuation'.
-    if (!_isNumberStart(lookahead) || _previousCommand == SvgPathSegType.close)
+    if (!_isNumberStart(lookahead) ||
+        _previousCommand == SvgPathSegType.close) {
       return nextCommand;
+    }
     // Implicit continuations of moveto command translate to linetos.
     if (_previousCommand == SvgPathSegType.moveToAbs) {
       return SvgPathSegType.lineToAbs;
@@ -232,8 +240,9 @@ class SvgPathStringSource {
       c = _readCodeUnit();
 
       // There must be a least one digit following the .
-      if (c < AsciiConstants.number0 || c > AsciiConstants.number9)
+      if (c < AsciiConstants.number0 || c > AsciiConstants.number9) {
         throw StateError('There must be at least one digit following the .');
+      }
 
       double frac = 1.0;
       while (AsciiConstants.number0 <= c && c <= AsciiConstants.number9) {
@@ -263,8 +272,9 @@ class SvgPathStringSource {
       }
 
       // There must be an exponent
-      if (c < AsciiConstants.number0 || c > AsciiConstants.number9)
+      if (c < AsciiConstants.number0 || c > AsciiConstants.number9) {
         throw StateError('Missing exponent');
+      }
 
       double exponent = 0.0;
       while (c >= AsciiConstants.number0 && c <= AsciiConstants.number9) {
@@ -310,12 +320,13 @@ class SvgPathStringSource {
     final int flagChar = _string.codeUnitAt(_idx++);
     _skipOptionalSvgSpacesOrDelimiter();
 
-    if (flagChar == AsciiConstants.number0)
+    if (flagChar == AsciiConstants.number0) {
       return false;
-    else if (flagChar == AsciiConstants.number1)
+    } else if (flagChar == AsciiConstants.number1) {
       return true;
-    else
+    } else {
       throw StateError('Invalid flag value');
+    }
   }
 
   bool get hasMoreData => _idx < _length;
@@ -371,25 +382,20 @@ class SvgPathStringSource {
       quad_smooth:
       case SvgPathSegType.smoothQuadToAbs:
         segment.targetPoint = _PathOffset(_parseNumber(), _parseNumber());
-        break;
       case SvgPathSegType.lineToHorizontalRel:
       case SvgPathSegType.lineToHorizontalAbs:
         segment.targetPoint =
             _PathOffset(_parseNumber(), segment.targetPoint.dy);
-        break;
       case SvgPathSegType.lineToVerticalRel:
       case SvgPathSegType.lineToVerticalAbs:
         segment.targetPoint =
             _PathOffset(segment.targetPoint.dx, _parseNumber());
-        break;
       case SvgPathSegType.close:
         _skipOptionalSvgSpaces();
-        break;
       case SvgPathSegType.quadToRel:
       case SvgPathSegType.quadToAbs:
         segment.point1 = _PathOffset(_parseNumber(), _parseNumber());
         segment.targetPoint = _PathOffset(_parseNumber(), _parseNumber());
-        break;
       case SvgPathSegType.arcToRel:
       case SvgPathSegType.arcToAbs:
         segment.point1 = _PathOffset(_parseNumber(), _parseNumber());
@@ -397,7 +403,6 @@ class SvgPathStringSource {
         segment.arcLarge = _parseArcFlag();
         segment.arcSweep = _parseArcFlag();
         segment.targetPoint = _PathOffset(_parseNumber(), _parseNumber());
-        break;
       case SvgPathSegType.unknown:
         throw StateError('Unknown segment command');
     }
@@ -492,7 +497,6 @@ class SvgPathNormalizer {
       case SvgPathSegType.quadToRel:
         normSeg.point1 += _currentPoint;
         normSeg.targetPoint += _currentPoint;
-        break;
       case SvgPathSegType.cubicToRel:
         normSeg.point1 += _currentPoint;
         continue smooth_rel;
@@ -508,19 +512,17 @@ class SvgPathNormalizer {
       arc_rel:
       case SvgPathSegType.arcToRel:
         normSeg.targetPoint += _currentPoint;
-        break;
       case SvgPathSegType.lineToHorizontalAbs:
         normSeg.targetPoint =
             _PathOffset(normSeg.targetPoint.dx, _currentPoint.dy);
-        break;
       case SvgPathSegType.lineToVerticalAbs:
         normSeg.targetPoint =
             _PathOffset(_currentPoint.dx, normSeg.targetPoint.dy);
-        break;
       case SvgPathSegType.close:
         // Reset m_currentPoint for the next path.
         normSeg.targetPoint = _subPathPoint;
-        break;
+      // This switch is intentionally non-exhaustive.
+      // ignore: no_default_cases
       default:
         break;
     }
@@ -533,7 +535,6 @@ class SvgPathNormalizer {
         _subPathPoint = normSeg.targetPoint;
         // normSeg.command = SvgPathSegType.moveToAbs;
         path.moveTo(normSeg.targetPoint.dx, normSeg.targetPoint.dy);
-        break;
       case SvgPathSegType.lineToRel:
       case SvgPathSegType.lineToAbs:
       case SvgPathSegType.lineToHorizontalRel:
@@ -542,11 +543,9 @@ class SvgPathNormalizer {
       case SvgPathSegType.lineToVerticalAbs:
         // normSeg.command = SvgPathSegType.lineToAbs;
         path.lineTo(normSeg.targetPoint.dx, normSeg.targetPoint.dy);
-        break;
       case SvgPathSegType.close:
         // normSeg.command = SvgPathSegType.close;
         path.close();
-        break;
       case SvgPathSegType.smoothCubicToRel:
       case SvgPathSegType.smoothCubicToAbs:
         if (!isCubicCommand(_lastCommand)) {
@@ -571,7 +570,6 @@ class SvgPathNormalizer {
           normSeg.targetPoint.dx,
           normSeg.targetPoint.dy,
         );
-        break;
       case SvgPathSegType.smoothQuadToRel:
       case SvgPathSegType.smoothQuadToAbs:
         if (!isQuadraticCommand(_lastCommand)) {
@@ -602,7 +600,6 @@ class SvgPathNormalizer {
           normSeg.targetPoint.dx,
           normSeg.targetPoint.dy,
         );
-        break;
       case SvgPathSegType.arcToRel:
       case SvgPathSegType.arcToAbs:
         if (!_decomposeArcToCubic(_currentPoint, normSeg, path)) {
@@ -615,7 +612,8 @@ class SvgPathNormalizer {
           //   // emit.
           //   // normSeg.command = SvgPathSegType.arcToAbs;
         }
-        break;
+      // This switch is intentionally non-exhaustive.
+      // ignore: no_default_cases
       default:
         throw StateError('Invalid command type in path');
     }

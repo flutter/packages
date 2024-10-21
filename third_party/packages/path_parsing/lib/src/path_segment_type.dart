@@ -72,6 +72,7 @@ enum SvgPathSegType {
 class AsciiConstants {
   const AsciiConstants._();
 
+  /// Returns the segment type corresponding to the letter constant [lookahead].
   static SvgPathSegType mapLetterToSegmentType(int lookahead) {
     return AsciiConstants.letterToSegmentType[lookahead] ??
         SvgPathSegType.unknown;
@@ -79,7 +80,7 @@ class AsciiConstants {
 
   /// Map to go from ASCII constant to [SvgPathSegType]
   static const Map<int, SvgPathSegType> letterToSegmentType =
-      const <int, SvgPathSegType>{
+      <int, SvgPathSegType>{
     upperZ: SvgPathSegType.close,
     lowerZ: SvgPathSegType.close,
     upperM: SvgPathSegType.moveToAbs,
