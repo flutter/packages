@@ -1,7 +1,16 @@
+## 2.7.15
+
+* Changes the rotation correction calculation for Android API 29+ to use
+  the one that is reported by the video's format instead of the unapplied
+  rotation degrees that Exoplayer does not report on Android API 21+.
+* Changes the rotation correction calculation for Android APIs 21-28 to 0
+  because the Impeller backend used on those API versions correctly rotates
+  the video being played automatically.
+
 ## 2.7.14
 
 * Removes SSL workaround for API 19, which is no longer supported.
-* 
+
 ## 2.7.13
 
 * When `AndroidVideoPlayer` attempts to operate on a `textureId` that is not
