@@ -29,18 +29,22 @@ final class ExoPlayerEventListener implements Player.Listener {
     private final int degrees;
 
     RotationDegrees(int degrees) {
-        this.degrees = degrees;
+      this.degrees = degrees;
     }
 
     public static RotationDegrees fromDegrees(int degrees) {
-        for (RotationDegrees rotationDegrees : RotationDegrees.values()) {
-            if (rotationDegrees.degrees == degrees) {
-                return rotationDegrees;
-            }
+      for (RotationDegrees rotationDegrees : RotationDegrees.values()) {
+        if (rotationDegrees.degrees == degrees) {
+          return rotationDegrees;
         }
-        throw new IllegalArgumentException("Invalid rotation degrees specified: " + degrees);
+      }
+      throw new IllegalArgumentException("Invalid rotation degrees specified: " + degrees);
     }
-}
+
+    public int getDegrees() {
+      return this.degrees;
+    }
+  }
 
   ExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events) {
     this(exoPlayer, events, false);
@@ -75,14 +79,23 @@ final class ExoPlayerEventListener implements Player.Listener {
     int width = videoSize.width;
     int height = videoSize.height;
     if (width != 0 && height != 0) {
-      int reportedRotationCorrection = 0;
+      RotationDegrees reportedRotationCorrection = RotationDegrees.ROTATE_0;
 
       if (Build.VERSION.SDK_INT <= 21) {
         // On API 21 and below, Exoplayer may not internally handle rotation correction
         // and reports it through VideoSize.unappliedRotationDegrees. We may apply it to
         // fix the case of upside-down playback.
-        reportedRotationCorrection = videoSize.unappliedRotationDegrees;
-        rotationCorrection = getRotationCorrectionFromUnappliedRotation(RotationDegrees.fromDegrees(reportedRotationCorrection));
+        try {
+          reportedRotationCorrection =
+              RotationDegrees.fromDegrees(videoSize.unappliedRotationDegrees);
+          rotationCorrection =
+              getRotationCorrectionFromUnappliedRotation(reportedRotationCorrection);
+        } catch (IllegalArgumentException e) {
+          // Unapplied rotation other than 0, 90, 180, 270 reported by VideoSize. Because this is unexpected,
+          // we apply no rotation correction.
+          reportedRotationCorrection = RotationDegrees.ROTATE_0;
+          rotationCorrection = 0;
+        }
       }
       // TODO(camsim99): Replace this with a call to `handlesCropAndRotation` when it is
       // available in stable. https://github.com/flutter/flutter/issues/157198
@@ -95,12 +108,21 @@ final class ExoPlayerEventListener implements Player.Listener {
         // correct the rotation, so we try to use that to correct the video rotation
         // when the ImageReader backend for Impeller is used.
         rotationCorrection = getRotationCorrectionFromFormat(exoPlayer);
-        reportedRotationCorrection = rotationCorrection;
+
+        try {
+          reportedRotationCorrection = RotationDegrees.fromDegrees(rotationCorrection);
+        } catch (IllegalArgumentException e) {
+          // Rotation correction other than 0, 90, 180, 270 reported by Format. Because this is unexpected,
+          // we apply no rotation correction.
+          reportedRotationCorrection = RotationDegrees.ROTATE_0;
+          rotationCorrection = 0;
+        }
       }
 
       // Switch the width/height if video was taken in portrait mode and a rotation
       // correction was detected.
-      if (reportedRotationCorrection == 90 || reportedRotationCorrection == 270) {
+      if (reportedRotationCorrection == RotationDegrees.ROTATE_90
+          || reportedRotationCorrection == RotationDegrees.ROTATE_270) {
         width = videoSize.height;
         height = videoSize.width;
       }
@@ -116,7 +138,7 @@ final class ExoPlayerEventListener implements Player.Listener {
     // upside-down playback for videos with unappliedRotationDegrees of 180 (other orientations
     // work correctly without correction).
     if (unappliedRotationDegrees == RotationDegrees.ROTATE_180) {
-      rotationCorrection = unappliedRotationDegrees.degrees;
+      rotationCorrection = unappliedRotationDegrees.getDegrees();
     }
 
     return rotationCorrection;
