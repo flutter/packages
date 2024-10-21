@@ -44,94 +44,6 @@ class FlutterError(
 ) : Throwable()
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class TextureMessage(val textureId: Long) {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): TextureMessage {
-      val textureId = pigeonVar_list[0] as Long
-      return TextureMessage(textureId)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        textureId,
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
-data class LoopingMessage(val textureId: Long, val isLooping: Boolean) {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): LoopingMessage {
-      val textureId = pigeonVar_list[0] as Long
-      val isLooping = pigeonVar_list[1] as Boolean
-      return LoopingMessage(textureId, isLooping)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        textureId,
-        isLooping,
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
-data class VolumeMessage(val textureId: Long, val volume: Double) {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): VolumeMessage {
-      val textureId = pigeonVar_list[0] as Long
-      val volume = pigeonVar_list[1] as Double
-      return VolumeMessage(textureId, volume)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        textureId,
-        volume,
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
-data class PlaybackSpeedMessage(val textureId: Long, val speed: Double) {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): PlaybackSpeedMessage {
-      val textureId = pigeonVar_list[0] as Long
-      val speed = pigeonVar_list[1] as Double
-      return PlaybackSpeedMessage(textureId, speed)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        textureId,
-        speed,
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
-data class PositionMessage(val textureId: Long, val position: Long) {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): PositionMessage {
-      val textureId = pigeonVar_list[0] as Long
-      val position = pigeonVar_list[1] as Long
-      return PositionMessage(textureId, position)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        textureId,
-        position,
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
 data class CreateMessage(
     val asset: String? = null,
     val uri: String? = null,
@@ -161,45 +73,11 @@ data class CreateMessage(
   }
 }
 
-/** Generated class from Pigeon that represents data sent in messages. */
-data class MixWithOthersMessage(val mixWithOthers: Boolean) {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): MixWithOthersMessage {
-      val mixWithOthers = pigeonVar_list[0] as Boolean
-      return MixWithOthersMessage(mixWithOthers)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        mixWithOthers,
-    )
-  }
-}
-
 private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { TextureMessage.fromList(it) }
-      }
-      130.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { LoopingMessage.fromList(it) }
-      }
-      131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { VolumeMessage.fromList(it) }
-      }
-      132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { PlaybackSpeedMessage.fromList(it) }
-      }
-      133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { PositionMessage.fromList(it) }
-      }
-      134.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { CreateMessage.fromList(it) }
-      }
-      135.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { MixWithOthersMessage.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -207,32 +85,8 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
-      is TextureMessage -> {
-        stream.write(129)
-        writeValue(stream, value.toList())
-      }
-      is LoopingMessage -> {
-        stream.write(130)
-        writeValue(stream, value.toList())
-      }
-      is VolumeMessage -> {
-        stream.write(131)
-        writeValue(stream, value.toList())
-      }
-      is PlaybackSpeedMessage -> {
-        stream.write(132)
-        writeValue(stream, value.toList())
-      }
-      is PositionMessage -> {
-        stream.write(133)
-        writeValue(stream, value.toList())
-      }
       is CreateMessage -> {
-        stream.write(134)
-        writeValue(stream, value.toList())
-      }
-      is MixWithOthersMessage -> {
-        stream.write(135)
+        stream.write(129)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -244,25 +98,25 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
 interface AndroidVideoPlayerApi {
   fun initialize()
 
-  fun create(msg: CreateMessage): TextureMessage
+  fun create(msg: CreateMessage): Long
 
-  fun dispose(msg: TextureMessage)
+  fun dispose(textureId: Long)
 
-  fun setLooping(msg: LoopingMessage)
+  fun setLooping(textureId: Long, looping: Boolean)
 
-  fun setVolume(msg: VolumeMessage)
+  fun setVolume(textureId: Long, volume: Double)
 
-  fun setPlaybackSpeed(msg: PlaybackSpeedMessage)
+  fun setPlaybackSpeed(textureId: Long, speed: Double)
 
-  fun play(msg: TextureMessage)
+  fun play(textureId: Long)
 
-  fun position(msg: TextureMessage): PositionMessage
+  fun position(textureId: Long): Long
 
-  fun seekTo(msg: PositionMessage)
+  fun seekTo(textureId: Long, position: Long)
 
-  fun pause(msg: TextureMessage)
+  fun pause(textureId: Long)
 
-  fun setMixWithOthers(msg: MixWithOthersMessage)
+  fun setMixWithOthers(mixWithOthers: Boolean)
 
   companion object {
     /** The codec used by AndroidVideoPlayerApi. */
@@ -331,10 +185,10 @@ interface AndroidVideoPlayerApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val msgArg = args[0] as TextureMessage
+            val textureIdArg = args[0] as Long
             val wrapped: List<Any?> =
                 try {
-                  api.dispose(msgArg)
+                  api.dispose(textureIdArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
@@ -354,10 +208,11 @@ interface AndroidVideoPlayerApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val msgArg = args[0] as LoopingMessage
+            val textureIdArg = args[0] as Long
+            val loopingArg = args[1] as Boolean
             val wrapped: List<Any?> =
                 try {
-                  api.setLooping(msgArg)
+                  api.setLooping(textureIdArg, loopingArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
@@ -377,10 +232,11 @@ interface AndroidVideoPlayerApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val msgArg = args[0] as VolumeMessage
+            val textureIdArg = args[0] as Long
+            val volumeArg = args[1] as Double
             val wrapped: List<Any?> =
                 try {
-                  api.setVolume(msgArg)
+                  api.setVolume(textureIdArg, volumeArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
@@ -400,10 +256,11 @@ interface AndroidVideoPlayerApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val msgArg = args[0] as PlaybackSpeedMessage
+            val textureIdArg = args[0] as Long
+            val speedArg = args[1] as Double
             val wrapped: List<Any?> =
                 try {
-                  api.setPlaybackSpeed(msgArg)
+                  api.setPlaybackSpeed(textureIdArg, speedArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
@@ -423,10 +280,10 @@ interface AndroidVideoPlayerApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val msgArg = args[0] as TextureMessage
+            val textureIdArg = args[0] as Long
             val wrapped: List<Any?> =
                 try {
-                  api.play(msgArg)
+                  api.play(textureIdArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
@@ -446,10 +303,10 @@ interface AndroidVideoPlayerApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val msgArg = args[0] as TextureMessage
+            val textureIdArg = args[0] as Long
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.position(msgArg))
+                  listOf(api.position(textureIdArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -468,10 +325,11 @@ interface AndroidVideoPlayerApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val msgArg = args[0] as PositionMessage
+            val textureIdArg = args[0] as Long
+            val positionArg = args[1] as Long
             val wrapped: List<Any?> =
                 try {
-                  api.seekTo(msgArg)
+                  api.seekTo(textureIdArg, positionArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
@@ -491,10 +349,10 @@ interface AndroidVideoPlayerApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val msgArg = args[0] as TextureMessage
+            val textureIdArg = args[0] as Long
             val wrapped: List<Any?> =
                 try {
-                  api.pause(msgArg)
+                  api.pause(textureIdArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
@@ -514,10 +372,10 @@ interface AndroidVideoPlayerApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val msgArg = args[0] as MixWithOthersMessage
+            val mixWithOthersArg = args[0] as Boolean
             val wrapped: List<Any?> =
                 try {
-                  api.setMixWithOthers(msgArg)
+                  api.setMixWithOthers(mixWithOthersArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)

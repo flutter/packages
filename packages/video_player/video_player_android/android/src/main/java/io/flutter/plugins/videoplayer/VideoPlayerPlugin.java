@@ -13,14 +13,6 @@ import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
-import io.flutter.plugins.videoplayer.AndroidVideoPlayerApi;
-import io.flutter.plugins.videoplayer.CreateMessage;
-import io.flutter.plugins.videoplayer.LoopingMessage;
-import io.flutter.plugins.videoplayer.MixWithOthersMessage;
-import io.flutter.plugins.videoplayer.PlaybackSpeedMessage;
-import io.flutter.plugins.videoplayer.PositionMessage;
-import io.flutter.plugins.videoplayer.TextureMessage;
-import io.flutter.plugins.videoplayer.VolumeMessage;
 import io.flutter.view.TextureRegistry;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -88,11 +80,13 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     disposeAllPlayers();
   }
 
+  @Override
   public void initialize() {
     disposeAllPlayers();
   }
 
-  public @NonNull TextureMessage create(@NonNull CreateMessage arg) {
+  @Override
+  public long create(@NonNull CreateMessage arg) {
     TextureRegistry.SurfaceProducer handle = flutterState.textureRegistry.createSurfaceProducer();
     EventChannel eventChannel =
         new EventChannel(
@@ -137,7 +131,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
             videoAsset,
             options));
 
-    return new TextureMessage.Builder().setTextureId(handle.id()).build();
+    return handle.id();
   }
 
   @NonNull
@@ -156,56 +150,60 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     return player;
   }
 
-  public void dispose(@NonNull TextureMessage arg) {
-    VideoPlayer player = getPlayer(arg.getTextureId());
+  @Override
+  public void dispose(long textureId) {
+    VideoPlayer player = getPlayer(textureId);
     player.dispose();
-    videoPlayers.remove(arg.getTextureId());
+    videoPlayers.remove(textureId);
   }
 
-  public void setLooping(@NonNull LoopingMessage arg) {
-    VideoPlayer player = getPlayer(arg.getTextureId());
-    player.setLooping(arg.getIsLooping());
+  @Override
+  public void setLooping(long textureId, boolean looping) {
+    VideoPlayer player = getPlayer(textureId);
+    player.setLooping(looping);
   }
 
-  public void setVolume(@NonNull VolumeMessage arg) {
-    VideoPlayer player = getPlayer(arg.getTextureId());
-    player.setVolume(arg.getVolume());
+  @Override
+  public void setVolume(long textureId, double volume) {
+    VideoPlayer player = getPlayer(textureId);
+    player.setVolume(volume);
   }
 
-  public void setPlaybackSpeed(@NonNull PlaybackSpeedMessage arg) {
-    VideoPlayer player = getPlayer(arg.getTextureId());
-    player.setPlaybackSpeed(arg.getSpeed());
+  @Override
+  public void setPlaybackSpeed(long textureId, double speed) {
+    VideoPlayer player = getPlayer(textureId);
+    player.setPlaybackSpeed(speed);
   }
 
-  public void play(@NonNull TextureMessage arg) {
-    VideoPlayer player = getPlayer(arg.getTextureId());
+  @Override
+  public void play(long textureId) {
+    VideoPlayer player = getPlayer(textureId);
     player.play();
   }
 
-  public @NonNull PositionMessage position(@NonNull TextureMessage arg) {
-    VideoPlayer player = getPlayer(arg.getTextureId());
-    PositionMessage result =
-        new PositionMessage.Builder()
-            .setPosition(player.getPosition())
-            .setTextureId(arg.getTextureId())
-            .build();
+  @Override
+  public long position(long textureId) {
+    VideoPlayer player = getPlayer(textureId);
+    long position = player.getPosition();
     player.sendBufferingUpdate();
-    return result;
+    return position;
   }
 
-  public void seekTo(@NonNull PositionMessage arg) {
-    VideoPlayer player = getPlayer(arg.getTextureId());
-    player.seekTo(arg.getPosition().intValue());
+  @Override
+  public void seekTo(long textureId, long position) {
+    VideoPlayer player = getPlayer(textureId);
+    player.seekTo((int) position);
   }
 
-  public void pause(@NonNull TextureMessage arg) {
-    VideoPlayer player = getPlayer(arg.getTextureId());
+  @Override
+  public void pause(long textureId) {
+    VideoPlayer player = getPlayer(textureId);
     player.pause();
   }
 
   @Override
-  public void setMixWithOthers(@NonNull MixWithOthersMessage arg) {
-    options.mixWithOthers = arg.getMixWithOthers();
+  public void setMixWithOthers(boolean mixWithOthers) {
+    options.mixWithOthers = mixWithOthers;
   }
 
   private interface KeyForAssetFn {
@@ -237,11 +235,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     }
 
     void startListening(VideoPlayerPlugin methodCallHandler, BinaryMessenger messenger) {
-      AndroidVideoPlayerApi.setUp(messenger, methodCallHandler);
+      AndroidVideoPlayerApi.Companion.setUp(messenger, methodCallHandler);
     }
 
     void stopListening(BinaryMessenger messenger) {
-      AndroidVideoPlayerApi.setUp(messenger, null);
+      AndroidVideoPlayerApi.Companion.setUp(messenger, null);
     }
   }
 }
