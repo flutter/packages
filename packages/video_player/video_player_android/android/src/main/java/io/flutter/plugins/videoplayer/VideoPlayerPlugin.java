@@ -13,6 +13,8 @@ import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugins.videoplayer.Messages.AndroidVideoPlayerApi;
+import io.flutter.plugins.videoplayer.Messages.CreateMessage;
 import io.flutter.view.TextureRegistry;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -86,7 +88,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   @Override
-  public long create(@NonNull CreateMessage arg) {
+  public @NonNull Long create(@NonNull CreateMessage arg) {
     TextureRegistry.SurfaceProducer handle = flutterState.textureRegistry.createSurfaceProducer();
     EventChannel eventChannel =
         new EventChannel(
@@ -151,38 +153,38 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   @Override
-  public void dispose(long textureId) {
+  public void dispose(@NonNull Long textureId) {
     VideoPlayer player = getPlayer(textureId);
     player.dispose();
     videoPlayers.remove(textureId);
   }
 
   @Override
-  public void setLooping(long textureId, boolean looping) {
+  public void setLooping(@NonNull Long textureId, @NonNull Boolean looping) {
     VideoPlayer player = getPlayer(textureId);
     player.setLooping(looping);
   }
 
   @Override
-  public void setVolume(long textureId, double volume) {
+  public void setVolume(@NonNull Long textureId, @NonNull Double volume) {
     VideoPlayer player = getPlayer(textureId);
     player.setVolume(volume);
   }
 
   @Override
-  public void setPlaybackSpeed(long textureId, double speed) {
+  public void setPlaybackSpeed(@NonNull Long textureId, @NonNull Double speed) {
     VideoPlayer player = getPlayer(textureId);
     player.setPlaybackSpeed(speed);
   }
 
   @Override
-  public void play(long textureId) {
+  public void play(@NonNull Long textureId) {
     VideoPlayer player = getPlayer(textureId);
     player.play();
   }
 
   @Override
-  public long position(long textureId) {
+  public @NonNull Long position(@NonNull Long textureId) {
     VideoPlayer player = getPlayer(textureId);
     long position = player.getPosition();
     player.sendBufferingUpdate();
@@ -190,19 +192,19 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   @Override
-  public void seekTo(long textureId, long position) {
+  public void seekTo(@NonNull Long textureId, @NonNull Long position) {
     VideoPlayer player = getPlayer(textureId);
-    player.seekTo((int) position);
+    player.seekTo(position.intValue());
   }
 
   @Override
-  public void pause(long textureId) {
+  public void pause(@NonNull Long textureId) {
     VideoPlayer player = getPlayer(textureId);
     player.pause();
   }
 
   @Override
-  public void setMixWithOthers(boolean mixWithOthers) {
+  public void setMixWithOthers(@NonNull Boolean mixWithOthers) {
     options.mixWithOthers = mixWithOthers;
   }
 
@@ -235,11 +237,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     }
 
     void startListening(VideoPlayerPlugin methodCallHandler, BinaryMessenger messenger) {
-      AndroidVideoPlayerApi.Companion.setUp(messenger, methodCallHandler);
+      AndroidVideoPlayerApi.setUp(messenger, methodCallHandler);
     }
 
     void stopListening(BinaryMessenger messenger) {
-      AndroidVideoPlayerApi.Companion.setUp(messenger, null);
+      AndroidVideoPlayerApi.setUp(messenger, null);
     }
   }
 }
