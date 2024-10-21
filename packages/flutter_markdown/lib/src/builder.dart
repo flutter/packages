@@ -383,7 +383,6 @@ class MarkdownBuilder implements md.NodeVisitor {
       _addAnonymousBlockIfNeeded();
 
       final _BlockElement current = _blocks.removeLast();
-      Widget child;
 
       Widget defaultChild() {
         if (current.children.isNotEmpty) {
@@ -399,18 +398,13 @@ class MarkdownBuilder implements md.NodeVisitor {
         }
       }
 
-      if (builders.containsKey(tag)) {
-        final Widget? builderChild =
-            builders[tag]!.visitElementAfterWithContext(
-          delegate.context,
-          element,
-          styleSheet.styles[tag],
-          _inlines.isNotEmpty ? _inlines.last.style : null,
-        );
-        child = builderChild ?? defaultChild();
-      } else {
-        child = defaultChild();
-      }
+      Widget child = builders[tag]?.visitElementAfterWithContext(
+            delegate.context,
+            element,
+            styleSheet.styles[tag],
+            _inlines.isNotEmpty ? _inlines.last.style : null,
+          ) ??
+          defaultChild();
 
       if (_isListTag(tag)) {
         assert(_listIndents.isNotEmpty);
