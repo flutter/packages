@@ -203,7 +203,24 @@ class GradleCheckCommand extends PackageLoopingCommand {
   @visibleForTesting
   static String exampleRootSettingsArtifactHubString = '''
 // See $artifactHubDocumentationString for more info.
-pluginManagement {
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin:2.2.1"
+  }
+}
+apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
+''';
+
+  // GP stands for the gradle plugin method of flutter tooling inclusion.
+  @visibleForTesting
+  static String exampleRootSettingsArtifactHubStringGP = '''
+  // See $artifactHubDocumentationString for more info.
+  pluginManagement {
     def flutterSdkPath = {
         def properties = new Properties()
         file("local.properties").withInputStream { properties.load(it) }
@@ -211,9 +228,9 @@ pluginManagement {
         assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
         return flutterSdkPath
     }()
-    
+
     includeBuild("\$flutterSdkPath/packages/flutter_tools/gradle")
-    
+
     repositories {
         google()
         mavenCentral()
@@ -221,10 +238,12 @@ pluginManagement {
     }
 }
 plugins {
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    // ...other plugins
     id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.1"
 }
 include ":app"
-''';
+  ''';
 
   /// Validates that [gradleLines] reads and uses a artifiact hub repository
   /// when ARTIFACT_HUB_REPOSITORY is set.
@@ -234,22 +253,32 @@ include ":app"
       RepositoryPackage example, List<String> gradleLines) {
     final RegExp documentationPresentRegex = RegExp(
         r'github\.com.*flutter.*blob.*Plugins-and-Packages-repository-structure.*gradle-structure');
+    final RegExp artifactRegistryDefinitionRegex = RegExp(
+        r'classpath.*gradle\.plugin\.com\.google\.cloud\.artifactregistry:artifactregistry-gradle-plugin');
     final RegExp artifactRegistryPluginApplyRegex = RegExp(
+        r'apply.*plugin.*com\.google\.cloud\.artifactregistry\.gradle-plugin');
+    final RegExp artifactRegistryPluginApplyRegexGP = RegExp(
         r'id.*com\.google\.cloud\.artifactregistry\.gradle-plugin.*version.*\b\d+\.\d+\.\d+\b');
+
 
     final bool documentationPresent = gradleLines
         .any((String line) => documentationPresentRegex.hasMatch(line));
+    final bool artifactRegistryDefined = gradleLines
+        .any((String line) => artifactRegistryDefinitionRegex.hasMatch(line));
     final bool artifactRegistryPluginApplied = gradleLines
         .any((String line) => artifactRegistryPluginApplyRegex.hasMatch(line));
+    final bool artifactRegistryPluginAppliedGP = gradleLines
+        .any((String line) => artifactRegistryPluginApplyRegexGP.hasMatch(line));
 
-    if (!(documentationPresent &&
-        artifactRegistryPluginApplied)) {
+    final bool validArtifactConfiguration = documentationPresent &&
+        ((artifactRegistryDefined && artifactRegistryPluginApplied) || artifactRegistryPluginAppliedGP);
+
+    if (!validArtifactConfiguration) {
       printError('Failed Artifact Hub validation. Include the following in '
           'example root settings.gradle:\n$exampleRootSettingsArtifactHubString');
     }
 
-    return documentationPresent &&
-        artifactRegistryPluginApplied;
+    return validArtifactConfiguration;
   }
 
   /// Validates the top-level build.gradle for an example app (e.g.,
