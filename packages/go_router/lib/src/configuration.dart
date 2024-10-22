@@ -371,19 +371,14 @@ class RouteConfiguration {
         }
 
         FutureOr<RouteMatchList> processRouteLevelRedirect(
-            Object? routeRedirectLocation) {
+            String? routeRedirectLocation) {
           if (routeRedirectLocation != null &&
               routeRedirectLocation != prevLocation) {
-            final RouteMatchList newMatch;
-            if (routeRedirectLocation is RouteMatchList) {
-              newMatch = routeRedirectLocation;
-            } else {
-              newMatch = _getNewMatches(
-                routeRedirectLocation.toString(),
-                prevMatchList.uri,
-                redirectHistory,
-              );
-            }
+            final RouteMatchList newMatch = _getNewMatches(
+              routeRedirectLocation,
+              prevMatchList.uri,
+              redirectHistory,
+            );
 
             if (newMatch.isError) {
               return newMatch;
@@ -397,18 +392,6 @@ class RouteConfiguration {
           return prevMatchList;
         }
 
-        FutureOr<RouteMatchList> processRouteMatchRedirects(
-            List<RouteMatchBase> routeMatches) {
-          final FutureOr<String?> routeLevelRedirectResult =
-              _getRouteLevelRedirect(context, prevMatchList, routeMatches, 0);
-
-          if (routeLevelRedirectResult is String?) {
-            return processRouteLevelRedirect(routeLevelRedirectResult);
-          }
-          return routeLevelRedirectResult
-              .then<RouteMatchList>(processRouteLevelRedirect);
-        }
-
         final List<RouteMatchBase> routeMatches = <RouteMatchBase>[];
         prevMatchList.visitRouteMatches((RouteMatchBase match) {
           if (match.route.redirect != null) {
@@ -416,29 +399,14 @@ class RouteConfiguration {
           }
           return true;
         });
+        final FutureOr<String?> routeLevelRedirectResult =
+            _getRouteLevelRedirect(context, prevMatchList, routeMatches, 0);
 
-        // Process MatchListRedirectRoutes, if any
-        final FutureOr<RouteMatchList?> routeLevelMatchListRedirectResult =
-            _getRouteLevelMatchListRedirect(
-          context,
-          prevMatchList,
-          routeMatches,
-          0,
-        );
-        if (routeLevelMatchListRedirectResult != null) {
-          if (routeLevelMatchListRedirectResult is RouteMatchList &&
-              routeLevelMatchListRedirectResult.isNotEmpty) {
-            return processRouteLevelRedirect(routeLevelMatchListRedirectResult);
-          } else if (routeLevelMatchListRedirectResult
-              is Future<RouteMatchList?>) {
-            return routeLevelMatchListRedirectResult
-                .then((RouteMatchList? matchList) {
-              return matchList ?? processRouteMatchRedirects(routeMatches);
-            });
-          }
+        if (routeLevelRedirectResult is String?) {
+          return processRouteLevelRedirect(routeLevelRedirectResult);
         }
-
-        return processRouteMatchRedirects(routeMatches);
+        return routeLevelRedirectResult
+            .then<RouteMatchList>(processRouteLevelRedirect);
       }
 
       redirectHistory.add(prevMatchList);
@@ -458,35 +426,6 @@ class RouteConfiguration {
       return processRedirect(prevMatchListFuture);
     }
     return prevMatchListFuture.then<RouteMatchList>(processRedirect);
-  }
-
-  FutureOr<RouteMatchList?> _getRouteLevelMatchListRedirect(
-    BuildContext context,
-    RouteMatchList matchList,
-    List<RouteMatchBase> routeMatches,
-    int currentCheckIndex,
-  ) {
-    if (currentCheckIndex >= routeMatches.length) {
-      return null;
-    }
-    final RouteMatchBase match = routeMatches[currentCheckIndex];
-    FutureOr<RouteMatchList?> processRouteRedirect(
-            RouteMatchList? newLocation) =>
-        newLocation ??
-        _getRouteLevelMatchListRedirect(
-            context, matchList, routeMatches, currentCheckIndex + 1);
-    final RouteBase route = match.route;
-    final FutureOr<RouteMatchList?>? routeRedirectResult =
-        route is MatchListRedirectRoute
-            ? route.matchListRedirect(
-                context,
-                match.buildState(this, matchList),
-              )
-            : null;
-    if (routeRedirectResult is RouteMatchList?) {
-      return processRouteRedirect(routeRedirectResult);
-    }
-    return routeRedirectResult.then<RouteMatchList?>(processRouteRedirect);
   }
 
   FutureOr<String?> _getRouteLevelRedirect(

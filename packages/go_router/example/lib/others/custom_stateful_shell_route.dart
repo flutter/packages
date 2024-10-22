@@ -36,7 +36,6 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     routes: <RouteBase>[
       StatefulShellRoute(
         name: 'rootShell',
-        shellRedirectPath: '/rootShell',
         // This nested StatefulShellRoute demonstrates the use of a custom
         // container for the branch Navigators, using the
         // `navigatorContainerBuilder` parameter. When doing so, the `builder`
@@ -53,7 +52,6 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
         branches: <StatefulShellBranch>[
           // The route branch for the first tab of the bottom navigation bar.
           StatefulShellBranch(
-            name: 'branchA',
             navigatorKey: _tabANavigatorKey,
             routes: <RouteBase>[
               GoRoute(
@@ -78,7 +76,6 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
 
           // The route branch for the third tab of the bottom navigation bar.
           StatefulShellBranch(
-            name: 'branchB',
             navigatorKey: _tabBNavigatorKey,
             // StatefulShellBranch will automatically use the first descendant
             // GoRoute as the initial location of the branch. If another route
@@ -88,7 +85,6 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
             routes: <RouteBase>[
               StatefulShellRoute(
                 name: 'nestedShell',
-                shellRedirectPath: '/nestedShell',
                 navigatorContainerBuilder: (BuildContext context,
                     ShellRouteState state, List<Widget> children) {
                   // Returning a customized container for the branch

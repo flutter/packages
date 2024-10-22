@@ -452,6 +452,7 @@ abstract class ShellRouteBase extends RouteBase {
     required super.parentNavigatorKey,
   }) : super._();
 
+  /// The name of the shell route.
   final String? name;
 
   static void _debugCheckSubRouteParentNavigatorKeys(
@@ -693,29 +694,7 @@ class ShellRoute extends ShellRouteBase {
   }
 }
 
-/// The signature of the match list redirect callback.
-typedef MatchListRedirect = FutureOr<RouteMatchList?> Function(
-    BuildContext context, GoRouterState state);
-
-/// Specialized redirect route for using a [RouteMatchList] as the redirect
-/// target.
-class MatchListRedirectRoute extends GoRoute {
-  /// Constructs a [MatchListRedirectRoute].
-  MatchListRedirectRoute({
-    required super.path,
-    required this.matchListRedirect,
-    GoRouterRedirect? redirect,
-    super.name,
-    super.routes,
-  }) : super(
-            // Always set a redirect function to ensure this route is interpreted as
-            // a redirect.
-            redirect: redirect ??
-                (BuildContext context, GoRouterState state) => null);
-
-  /// The match list redirect callback.
-  final MatchListRedirect matchListRedirect;
-}
+// TODO(tolo): Consider moving StatefulShellRoute to a separate file.
 
 /// A route that displays a UI shell with separate [Navigator]s for its
 /// sub-routes.
@@ -795,7 +774,6 @@ class StatefulShellRoute extends ShellRouteBase {
   /// [navigatorContainerBuilder].
   StatefulShellRoute({
     String? name,
-    String? shellRedirectPath,
     required List<StatefulShellBranch> branches,
     GoRouterRedirect? redirect,
     ShellRouteBuilder? builder,
@@ -806,7 +784,6 @@ class StatefulShellRoute extends ShellRouteBase {
     GlobalKey<StatefulNavigationShellState>? key,
   }) : this._(
           name: name,
-          shellRedirectPath: shellRedirectPath,
           branches: branches,
           redirect: redirect,
           builder: builder,
@@ -829,7 +806,6 @@ class StatefulShellRoute extends ShellRouteBase {
   /// for a complete runnable example using StatefulShellRoute.indexedStack.
   StatefulShellRoute.indexedStack({
     String? name,
-    String? shellRedirectPath,
     required List<StatefulShellBranch> branches,
     GoRouterRedirect? redirect,
     ShellRouteBuilder? builder,
@@ -839,7 +815,6 @@ class StatefulShellRoute extends ShellRouteBase {
     GlobalKey<StatefulNavigationShellState>? key,
   }) : this._(
           name: name,
-          shellRedirectPath: shellRedirectPath,
           branches: branches,
           redirect: redirect,
           builder: builder,
@@ -852,7 +827,6 @@ class StatefulShellRoute extends ShellRouteBase {
 
   StatefulShellRoute._({
     super.name,
-    this.shellRedirectPath,
     required this.branches,
     super.redirect,
     ShellRouteBuilder? builder,
@@ -861,16 +835,13 @@ class StatefulShellRoute extends ShellRouteBase {
     super.parentNavigatorKey,
     this.restorationScopeId,
     required this.key,
-  })  : assert(_debugValidateShellRoutePath(shellRedirectPath)),
-        assert(branches.isNotEmpty),
+  })  : assert(branches.isNotEmpty),
         assert(_debugUniqueNavigatorKeys(branches).length == branches.length,
             'Navigator keys must be unique'),
         assert(_debugValidateParentNavigatorKeys(branches)),
         assert(_debugValidateRestorationScopeIds(restorationScopeId, branches)),
         builder = builder ?? (pageBuilder == null ? _defaultBuilder : null),
-        super._(routes: _routes(shellRedirectPath, key, branches));
-
-  final String? shellRedirectPath;
+        super._(routes: _routes(branches));
 
   /// Restoration ID to save and restore the state of the navigator, including
   /// its history.
@@ -945,10 +916,6 @@ class StatefulShellRoute extends ShellRouteBase {
 
   @override
   GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute) {
-    if (subRoute is MatchListRedirectRoute) {
-      // Since the route is a redirect (to a branch), any branch nav will do
-      return branches.first.navigatorKey;
-    }
     final StatefulShellBranch? branch = branches.firstWhereOrNull(
         (StatefulShellBranch e) => e.routes.contains(subRoute));
     assert(branch != null);
@@ -972,6 +939,10 @@ class StatefulShellRoute extends ShellRouteBase {
       return state.findMatch(Uri.parse(initialLocation));
     }
   }
+
+  static ShellRouteState? stateForKey(
+          GlobalKey<StatefulNavigationShellState> key) =>
+      key.currentState?._routeState;
 
   /// Get the initial location for the branch at the given index.
   ///
@@ -1000,52 +971,8 @@ class StatefulShellRoute extends ShellRouteBase {
         currentIndex: state.navigatorIndex, children: children);
   }
 
-  static List<RouteBase> _routes(
-      String? shellRoutePath,
-      GlobalKey<StatefulNavigationShellState> shellStateKey,
-      List<StatefulShellBranch> branches) {
-    final List<RouteBase> branchRoutes =
-        branches.expand((StatefulShellBranch e) => e.routes).toList();
-    if (shellRoutePath != null) {
-      for (int i = 0; i < branches.length; i++) {
-        final StatefulShellBranch branch = branches[i];
-        branchRoutes.insert(
-          0,
-          MatchListRedirectRoute(
-              path: '$shellRoutePath/$i',
-              matchListRedirect: (_, __) => _restoreState(shellStateKey, i),
-              redirect: (BuildContext context, GoRouterState state) =>
-                  branch._effectiveInitialBranchLocation(state)),
-        );
-        if (branch.name != null) {
-          branchRoutes.insert(
-            0,
-            MatchListRedirectRoute(
-                path: '$shellRoutePath/${branch.name!}',
-                name: branch.name!,
-                matchListRedirect: (_, __) => _restoreState(shellStateKey, i),
-                redirect: (BuildContext context, GoRouterState state) =>
-                    branch._effectiveInitialBranchLocation(state)),
-          );
-        }
-      }
-    }
-    return branchRoutes;
-  }
-
-  static RouteMatchList? _restoreState(
-          GlobalKey<StatefulNavigationShellState> shellStateKey,
-          int branchIndex) =>
-      shellStateKey.currentState?._matchListForBranch(branchIndex);
-
-  static bool _debugValidateShellRoutePath(String? path) {
-    if (path != null) {
-      final List<String> parameters = <String>[];
-      patternToRegExp(path, parameters);
-      assert(parameters.isEmpty);
-    }
-    return true;
-  }
+  static List<RouteBase> _routes(List<StatefulShellBranch> branches) =>
+      branches.expand((StatefulShellBranch e) => e.routes).toList();
 
   static Set<GlobalKey<NavigatorState>> _debugUniqueNavigatorKeys(
           List<StatefulShellBranch> branches) =>
@@ -1107,7 +1034,6 @@ class StatefulShellRoute extends ShellRouteBase {
 class StatefulShellBranch {
   /// Constructs a [StatefulShellBranch].
   StatefulShellBranch({
-    this.name,
     required this.routes,
     GlobalKey<NavigatorState>? navigatorKey,
     this.initialLocation,
@@ -1120,8 +1046,6 @@ class StatefulShellBranch {
       return true;
     }());
   }
-
-  final String? name;
 
   /// The [GlobalKey] to be used by the [Navigator] built for this branch.
   ///
@@ -1214,9 +1138,10 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     with RestorationMixin {
   final Map<Key, Widget> _branchNavigators = <Key, Widget>{};
 
+  ShellRouteState get _routeState => widget._routeState;
+
   /// The associated [StatefulShellRoute].
-  StatefulShellRoute get _route =>
-      widget._routeState.shellRoute as StatefulShellRoute;
+  StatefulShellRoute get _route => _routeState.shellRoute as StatefulShellRoute;
 
   GoRouter get _router => widget._router;
 
@@ -1225,14 +1150,6 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 
   @override
   String? get restorationId => _route.restorationScopeId;
-
-  // TODO: Reset of navigation state has been requested (and was in the original
-  // PR), but possibly this should be done in a separate PR.
-  void resetBranch(int branchIndex) {
-    final StatefulShellBranch branch = _route.branches[branchIndex];
-    _branchNavigators.remove(branch.navigatorKey);
-    _branchLocation(branch, false).value = RouteMatchList.empty;
-  }
 
   /// Generates a derived restoration ID for the branch location property,
   /// falling back to the identity hash code of the branch to ensure an ID is
@@ -1288,10 +1205,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 
   void _updateCurrentBranchStateFromWidget() {
     final StatefulShellBranch branch =
-        _route.branches[widget._routeState.navigatorIndex];
-    final ShellRouteState routeState = widget._routeState;
+        _route.branches[_routeState.navigatorIndex];
     final RouteMatchList currentBranchLocation =
-        _scopedMatchList(routeState.routeMatchList);
+        _scopedMatchList(_routeState.routeMatchList);
 
     final _RestorableRouteMatchList branchLocation =
         _branchLocation(branch, false);
@@ -1344,7 +1260,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
                 _branchNavigators[b.navigatorKey]))
         .toList();
 
-    return widget._containerBuilder(context, widget._routeState, children);
+    return widget._containerBuilder(context, _routeState, children);
   }
 }
 
