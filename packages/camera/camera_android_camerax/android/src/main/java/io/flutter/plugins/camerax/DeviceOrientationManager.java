@@ -18,6 +18,8 @@ import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 
+import android.util.Log;
+
 /**
  * Support class to help to determine the media orientation based on the orientation of the device.
  */
@@ -127,6 +129,21 @@ public class DeviceOrientationManager {
   PlatformChannel.DeviceOrientation getUIOrientation() {
     final int rotation = getDefaultRotation();
     final int orientation = activity.getResources().getConfiguration().orientation;
+    Log.e("CAMILLE 2", Integer.toString(orientation));
+
+    // switch (rotation) {
+    //   case Surface.ROTATION_0:
+
+    //     return PlatformChannel.DeviceOrientation.PORTRAIT_UP;
+    //   case Surface.ROTATION_90:
+    //     return PlatformChannel.DeviceOrientation.LANDSCAPE_LEFT;
+    //   case Surface.ROTATION_180:
+    //     return PlatformChannel.DeviceOrientation.PORTRAIT_DOWN;
+    //   case Surface.ROTATION_270:
+    //     return PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT;
+    //   default:
+    //     return PlatformChannel.DeviceOrientation.PORTRAIT_UP;
+    // }
 
     switch (orientation) {
       case Configuration.ORIENTATION_PORTRAIT:
@@ -160,6 +177,7 @@ public class DeviceOrientationManager {
    *     Surface.ROTATION_270}
    */
   int getDefaultRotation() {
+    Log.e("CAMILLE", Integer.toString(getDisplay().getRotation()));
     return getDisplay().getRotation();
   }
 

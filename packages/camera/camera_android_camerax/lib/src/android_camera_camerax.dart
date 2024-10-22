@@ -409,8 +409,10 @@ class AndroidCameraCameraX extends CameraPlatform {
           .getUiOrientation()
           .then((DeviceOrientation value) => naturalOrientation ??= value),
     ]);
+    currentDeviceOrientation = naturalOrientation;
     _subscriptionForDeviceOrientationChanges = onDeviceOrientationChanged()
         .listen((DeviceOrientationChangedEvent event) {
+          print('CAMILLE: ORIENTATION CHANGED!!!!!');
       currentDeviceOrientation = event.orientation;
     });
 
@@ -873,23 +875,25 @@ class AndroidCameraCameraX extends CameraPlatform {
       DeviceOrientation.portraitDown: 180,
       DeviceOrientation.landscapeLeft: 270,
     };
+        final Map<DeviceOrientation, int> previouslyAppliedRotation =
+        <DeviceOrientation, int>{
+      DeviceOrientation.portraitUp: 0,
+      DeviceOrientation.landscapeRight: 1,
+      DeviceOrientation.portraitDown: 2,
+      DeviceOrientation.landscapeLeft: 3,
+    };
     int naturalDeviceOrientationDegrees =
         degreesForDeviceOrientation[naturalOrientation]!;
+    
+    print('naturalOrientation $naturalOrientation');
+    print('naturalDeviceOrientationDegrees $naturalDeviceOrientationDegrees');
+    print('isPreviewPreTransformed $isPreviewPreTransformed');
+    print(' -degreesForDeviceOrientation[currentDeviceOrientation]! ${ -degreesForDeviceOrientation[currentDeviceOrientation]!}');
 
     if (isPreviewPreTransformed) {
-      // If the camera preview is backed by a SurfaceTexture, the transformation
-      // needed to correctly rotate the preview has already been applied.
-      // However, we may need to correct the camera preview rotation if the
-      // device is naturally landscape-oriented.
-      if (naturalOrientation == DeviceOrientation.landscapeLeft ||
-          naturalOrientation == DeviceOrientation.landscapeRight) {
-        final int quarterTurnsToCorrectForLandscape =
-            (-naturalDeviceOrientationDegrees + 360) ~/ 4;
-        return RotatedBox(
-            quarterTurns: quarterTurnsToCorrectForLandscape,
-            child: cameraPreview);
-      }
-      return cameraPreview;
+      // CAMILLE: here
+    return RotatedBox(
+        quarterTurns:( -degreesForDeviceOrientation[currentDeviceOrientation]! ~/ 90) % 4, child: cameraPreview);    
     }
 
     // Fix for the rotation of the camera preview not backed by a SurfaceTexture
@@ -897,33 +901,36 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     final int signForCameraDirection = cameraIsFrontFacing ? 1 : -1;
 
-    if (signForCameraDirection == 1 &&
-        (currentDeviceOrientation == DeviceOrientation.landscapeLeft ||
-            currentDeviceOrientation == DeviceOrientation.landscapeRight)) {
-      // For front-facing cameras, the image buffer is rotated counterclockwise,
-      // so we determine the rotation needed to correct the camera preview with
-      // respect to the naturalOrientation of the device based on the inverse of
-      // naturalOrientation.
-      naturalDeviceOrientationDegrees += 180;
-    }
+    print('signForCameraDirection $signForCameraDirection');
+    print('currentDeviceOrientation $currentDeviceOrientation');
+
+    // if (signForCameraDirection == 1 &&
+    //     (currentDeviceOrientation == DeviceOrientation.landscapeLeft ||
+    //         currentDeviceOrientation == DeviceOrientation.landscapeRight)) {
+    //   // For front-facing cameras, the image buffer is rotated counterclockwise,
+    //   // so we determine the rotation needed to correct the camera preview with
+    //   // respect to the naturalOrientation of the device based on the inverse of
+    //   // naturalOrientation.
+    //   naturalDeviceOrientationDegrees += 180;
+    // }
+
+    print('naturalDeviceOrientationDegrees $naturalDeviceOrientationDegrees');
+    print('sensorOrientation $sensorOrientation');
 
     // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
     // for more context on this formula.
-    final double rotation = (sensorOrientation +
-            naturalDeviceOrientationDegrees * signForCameraDirection +
+    final double rotation = (sensorOrientation -
+            degreesForDeviceOrientation[currentDeviceOrientation]! * signForCameraDirection +
             360) %
         360;
-    int quarterTurnsToCorrectPreview = rotation ~/ 90;
 
-    if (naturalOrientation == DeviceOrientation.landscapeLeft ||
-        naturalOrientation == DeviceOrientation.landscapeRight) {
-      // We may need to correct the camera preview rotation if the device is
-      // naturally landscape-oriented.
-      quarterTurnsToCorrectPreview +=
-          (-naturalDeviceOrientationDegrees + 360) ~/ 4;
-      return RotatedBox(
-          quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
-    }
+  // TODO: camille try 4
+    int quarterTurnsToCorrectPreview = ((rotation ~/ 90) % 4) - previouslyAppliedRotation[currentDeviceOrientation]!;
+    
+    print('previouslyAppliedRotation[currentDeviceOrientation]! ${previouslyAppliedRotation[currentDeviceOrientation]!}');
+    print(' ((rotation ~/ 90) % 360) ${ ((rotation ~/ 90) % 4)}');
+    print('rotation $rotation');
+    print('quarterTurnsToCorrectPreview before landscape $quarterTurnsToCorrectPreview');
 
     return RotatedBox(
         quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
