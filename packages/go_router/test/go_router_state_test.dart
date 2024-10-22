@@ -251,8 +251,8 @@ void main() {
                   parentNavigatorKey: rootNavigatorKey,
                   builder: (
                     BuildContext context,
-                    GoRouterState state,
-                    StatefulNavigationShell navigationShell,
+                    ShellRouteState state,
+                    Widget child,
                   ) {
                     final String? routeName =
                         GoRouterState.of(context).topRoute?.name;
@@ -264,7 +264,7 @@ void main() {
                     return Column(
                       children: <Widget>[
                         Text(title),
-                        Expanded(child: navigationShell),
+                        Expanded(child: child),
                       ],
                     );
                   },

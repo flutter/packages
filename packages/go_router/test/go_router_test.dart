@@ -2590,9 +2590,8 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
           redirect: (BuildContext context, GoRouterState state) => '/dummy',
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            return navigationShell;
+          builder: (BuildContext context, ShellRouteState state, Widget child) {
+            return child;
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
@@ -3110,13 +3109,12 @@ void main() {
 
     testWidgets('StatefulShellRoute supports nested routes with params',
         (WidgetTester tester) async {
-      StatefulNavigationShell? routeState;
+      ShellRouteState? routeState;
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState = navigationShell;
-            return navigationShell;
+          builder: (BuildContext context, ShellRouteState state, Widget child) {
+            routeState = state;
+            return child;
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
@@ -3178,12 +3176,12 @@ void main() {
       expect(matches.pathParameters['fid'], fid);
       expect(matches.pathParameters['pid'], pid);
 
-      routeState?.goBranch(0);
+      router.restore(routeState!.navigatorLocation(0));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.byType(PersonScreen), findsNothing);
 
-      routeState?.goBranch(1);
+      router.restore(routeState!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.byType(PersonScreen), findsOneWidget);
@@ -3194,14 +3192,13 @@ void main() {
 
     testWidgets('StatefulShellRoute preserve extra when switching branch',
         (WidgetTester tester) async {
-      StatefulNavigationShell? routeState;
+      ShellRouteState? routeState;
       Object? latestExtra;
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState = navigationShell;
-            return navigationShell;
+          builder: (BuildContext context, ShellRouteState state, Widget child) {
+            routeState = state;
+            return child;
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
@@ -3228,12 +3225,12 @@ void main() {
       ];
       final Object expectedExtra = Object();
 
-      await createRouter(routes, tester,
+      final GoRouter router = await createRouter(routes, tester,
           initialLocation: '/b', initialExtra: expectedExtra);
       expect(latestExtra, expectedExtra);
-      routeState!.goBranch(0);
+      router.restore(routeState!.navigatorLocation(0));
       await tester.pumpAndSettle();
-      routeState!.goBranch(1);
+      router.restore(routeState!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(latestExtra, expectedExtra);
     });
@@ -3796,9 +3793,9 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-                  StatefulNavigationShell navigationShell) =>
-              navigationShell,
+          builder:
+              (BuildContext context, ShellRouteState state, Widget child) =>
+                  child,
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <GoRoute>[
               GoRoute(
@@ -3841,9 +3838,9 @@ void main() {
               const Text('Root'),
           routes: <RouteBase>[
             StatefulShellRoute.indexedStack(
-              builder: (BuildContext context, GoRouterState state,
-                      StatefulNavigationShell navigationShell) =>
-                  navigationShell,
+              builder:
+                  (BuildContext context, ShellRouteState state, Widget child) =>
+                      child,
               branches: <StatefulShellBranch>[
                 StatefulShellBranch(routes: <GoRoute>[
                   GoRoute(
@@ -3883,14 +3880,13 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
           GlobalKey<DummyStatefulWidgetState>();
-      StatefulNavigationShell? routeState;
+      ShellRouteState? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState = navigationShell;
-            return navigationShell;
+          builder: (BuildContext context, ShellRouteState state, Widget child) {
+            routeState = state;
+            return child;
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
@@ -3933,7 +3929,7 @@ void main() {
         ),
       ];
 
-      await createRouter(routes, tester,
+      final GoRouter router = await createRouter(routes, tester,
           initialLocation: '/a', navigatorKey: rootNavigatorKey);
       statefulWidgetKey.currentState?.increment();
       expect(find.text('Screen A'), findsOneWidget);
@@ -3941,21 +3937,21 @@ void main() {
       expect(find.text('Screen C'), findsNothing);
       expect(find.text('Screen D'), findsNothing);
 
-      routeState!.goBranch(1);
+      router.restore(routeState!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsOneWidget);
       expect(find.text('Screen C'), findsNothing);
       expect(find.text('Screen D'), findsNothing);
 
-      routeState!.goBranch(2);
+      router.restore(routeState!.navigatorLocation(2));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsNothing);
       expect(find.text('Screen C'), findsOneWidget);
       expect(find.text('Screen D'), findsNothing);
 
-      routeState!.goBranch(3);
+      router.restore(routeState!.navigatorLocation(3));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsNothing);
@@ -3964,7 +3960,7 @@ void main() {
 
       expect(() {
         // Verify that navigation to unknown index fails
-        routeState!.goBranch(4);
+        router.restore(routeState!.navigatorLocation(4));
       }, throwsA(isA<Error>()));
     });
 
@@ -3975,14 +3971,13 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
           GlobalKey<DummyStatefulWidgetState>();
-      StatefulNavigationShell? routeState;
+      ShellRouteState? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState = navigationShell;
-            return navigationShell;
+          builder: (BuildContext context, ShellRouteState state, Widget child) {
+            routeState = state;
+            return child;
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <GoRoute>[
@@ -4020,13 +4015,13 @@ void main() {
       expect(find.text('Screen A Detail'), findsOneWidget);
       expect(find.text('Screen B'), findsNothing);
 
-      routeState!.goBranch(1);
+      router.restore(routeState!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen A Detail'), findsNothing);
       expect(find.text('Screen B'), findsOneWidget);
 
-      routeState!.goBranch(0);
+      router.restore(routeState!.navigatorLocation(0));
       await tester.pumpAndSettle();
       expect(statefulWidgetKey.currentState?.counter, equals(1));
 
@@ -4042,7 +4037,7 @@ void main() {
     testWidgets(
         'Navigates to correct nested navigation tree in StatefulShellRoute '
         'and maintains path parameters', (WidgetTester tester) async {
-      StatefulNavigationShell? routeState;
+      ShellRouteState? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         GoRoute(
@@ -4050,10 +4045,10 @@ void main() {
             builder: (_, __) => const Placeholder(),
             routes: <RouteBase>[
               StatefulShellRoute.indexedStack(
-                builder: (BuildContext context, GoRouterState state,
-                    StatefulNavigationShell navigationShell) {
-                  routeState = navigationShell;
-                  return navigationShell;
+                builder: (BuildContext context, ShellRouteState state,
+                    Widget child) {
+                  routeState = state;
+                  return child;
                 },
                 branches: <StatefulShellBranch>[
                   StatefulShellBranch(routes: <GoRoute>[
@@ -4075,10 +4070,11 @@ void main() {
             ])
       ];
 
-      await createRouter(routes, tester, initialLocation: '/123/a');
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/123/a');
       expect(find.text('a id is 123'), findsOneWidget);
 
-      routeState!.goBranch(1);
+      router.restore(routeState!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(find.text('b id is 123'), findsOneWidget);
     });
@@ -4089,23 +4085,22 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
           GlobalKey<DummyStatefulWidgetState>();
-      StatefulNavigationShell? routeState1;
-      StatefulNavigationShell? routeState2;
+      ShellRouteState? routeState1;
+      ShellRouteState? routeState2;
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState1 = navigationShell;
-            return navigationShell;
+          builder: (BuildContext context, ShellRouteState state, Widget child) {
+            routeState1 = state;
+            return child;
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <RouteBase>[
               StatefulShellRoute.indexedStack(
-                  builder: (BuildContext context, GoRouterState state,
-                      StatefulNavigationShell navigationShell) {
-                    routeState2 = navigationShell;
-                    return navigationShell;
+                  builder: (BuildContext context, ShellRouteState state,
+                      Widget child) {
+                    routeState2 = state;
+                    return child;
                   },
                   branches: <StatefulShellBranch>[
                     StatefulShellBranch(routes: <RouteBase>[
@@ -4153,27 +4148,27 @@ void main() {
         ),
       ];
 
-      await createRouter(routes, tester,
+      final GoRouter router = await createRouter(routes, tester,
           initialLocation: '/a/detailA', navigatorKey: rootNavigatorKey);
       statefulWidgetKey.currentState?.increment();
       expect(find.text('Screen A Detail'), findsOneWidget);
-      routeState2!.goBranch(1);
+      router.restore(routeState2!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(find.text('Screen B'), findsOneWidget);
 
-      routeState1!.goBranch(1);
+      router.restore(routeState1!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(find.text('Screen D'), findsOneWidget);
 
-      routeState1!.goBranch(0);
+      router.restore(routeState1!.navigatorLocation(0));
       await tester.pumpAndSettle();
       expect(find.text('Screen B'), findsOneWidget);
 
-      routeState2!.goBranch(2);
+      router.restore(routeState2!.navigatorLocation(2));
       await tester.pumpAndSettle();
       expect(find.text('Screen C'), findsOneWidget);
 
-      routeState2!.goBranch(0);
+      router.restore(routeState2!.navigatorLocation(0));
       await tester.pumpAndSettle();
       expect(find.text('Screen A Detail'), findsOneWidget);
       expect(statefulWidgetKey.currentState?.counter, equals(1));
@@ -4188,14 +4183,13 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<NavigatorState> sectionBNavigatorKey =
           GlobalKey<NavigatorState>();
-      StatefulNavigationShell? routeState;
+      ShellRouteState? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState = navigationShell;
-            return navigationShell;
+          builder: (BuildContext context, ShellRouteState state, Widget child) {
+            routeState = state;
+            return child;
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
@@ -4257,7 +4251,7 @@ void main() {
       expect(find.text('Screen B'), findsOneWidget);
       expect(find.text('Screen B Detail'), findsNothing);
 
-      routeState!.goBranch(0);
+      router.restore(routeState!.navigatorLocation(0));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen A Detail'), findsOneWidget);
@@ -4273,14 +4267,13 @@ void main() {
         'between branches in StatefulShellRoute', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
-      StatefulNavigationShell? routeState;
+      ShellRouteState? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState = navigationShell;
-            return navigationShell;
+          builder: (BuildContext context, ShellRouteState state, Widget child) {
+            routeState = state;
+            return child;
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <GoRoute>[
@@ -4310,12 +4303,12 @@ void main() {
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B - X'), findsOneWidget);
 
-      routeState!.goBranch(0);
+      router.restore(routeState!.navigatorLocation(0));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.text('Screen B - X'), findsNothing);
 
-      routeState!.goBranch(1);
+      router.restore(routeState!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B - X'), findsOneWidget);
@@ -4327,7 +4320,7 @@ void main() {
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
-      StatefulNavigationShell? routeState;
+      ShellRouteState? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         GoRoute(
@@ -4336,10 +4329,9 @@ void main() {
               Text('Common - ${state.extra}'),
         ),
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState = navigationShell;
-            return navigationShell;
+          builder: (BuildContext context, ShellRouteState state, Widget child) {
+            routeState = state;
+            return child;
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <GoRoute>[
@@ -4376,11 +4368,11 @@ void main() {
       expect(find.text('Screen B'), findsNothing);
       expect(find.text('Common - X'), findsOneWidget);
 
-      routeState!.goBranch(0);
+      router.restore(routeState!.navigatorLocation(0));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsOneWidget);
 
-      routeState!.goBranch(1);
+      router.restore(routeState!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsOneWidget);
@@ -4391,14 +4383,13 @@ void main() {
         'StatefulShellRoute', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
-      StatefulNavigationShell? routeState;
+      ShellRouteState? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState = navigationShell;
-            return navigationShell;
+          builder: (BuildContext context, ShellRouteState state, Widget child) {
+            routeState = state;
+            return child;
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <GoRoute>[
@@ -4448,7 +4439,7 @@ void main() {
       ];
 
       String redirectDestinationBranchB = '/b/details1';
-      await createRouter(
+      final GoRouter router = await createRouter(
         routes,
         tester,
         initialLocation: '/a',
@@ -4463,19 +4454,19 @@ void main() {
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.text('Screen B Detail'), findsNothing);
 
-      routeState!.goBranch(1);
+      router.restore(routeState!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B Detail1'), findsOneWidget);
 
-      routeState!.goBranch(2);
+      router.restore(routeState!.navigatorLocation(2));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B Detail1'), findsNothing);
       expect(find.text('Screen C2'), findsOneWidget);
 
       redirectDestinationBranchB = '/b/details2';
-      routeState!.goBranch(1);
+      router.restore(routeState!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B Detail2'), findsOneWidget);
@@ -4489,15 +4480,14 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<NavigatorState> nestedNavigatorKey =
           GlobalKey<NavigatorState>();
-      StatefulNavigationShell? routeState;
+      ShellRouteState? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         // First level shell
         StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState = navigationShell;
-            return navigationShell;
+          builder: (BuildContext context, ShellRouteState state, Widget child) {
+            routeState = state;
+            return child;
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <GoRoute>[
@@ -4510,9 +4500,9 @@ void main() {
             StatefulShellBranch(routes: <RouteBase>[
               // Second level / nested shell
               StatefulShellRoute.indexedStack(
-                builder: (BuildContext context, GoRouterState state,
-                        StatefulNavigationShell navigationShell) =>
-                    navigationShell,
+                builder: (BuildContext context, ShellRouteState state,
+                        Widget child) =>
+                    child,
                 branches: <StatefulShellBranch>[
                   StatefulShellBranch(routes: <GoRoute>[
                     GoRoute(
@@ -4559,7 +4549,7 @@ void main() {
           initialLocation: '/a', navigatorKey: rootNavigatorKey);
       expect(find.text('Screen A'), findsOneWidget);
 
-      routeState!.goBranch(1);
+      router.restore(routeState!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(find.text('Screen B1'), findsOneWidget);
 
@@ -4585,7 +4575,7 @@ void main() {
 
       // Switch to second branch, which should only contain 'Nested Modal'
       // (in the nested shell)
-      routeState!.goBranch(1);
+      router.restore(routeState!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B1'), findsNothing);
@@ -4724,7 +4714,7 @@ void main() {
             initialLocation: '/a',
             routes: <RouteBase>[
               StatefulShellRoute.indexedStack(
-                builder: mockStackedShellBuilder,
+                builder: mockStatefulShellBuilder,
                 branches: <StatefulShellBranch>[
                   StatefulShellBranch(routes: <GoRoute>[
                     GoRoute(
@@ -5145,16 +5135,16 @@ void main() {
           GlobalKey<DummyRestorableStatefulWidgetState>();
       final GlobalKey<DummyRestorableStatefulWidgetState> statefulWidgetKeyC =
           GlobalKey<DummyRestorableStatefulWidgetState>();
-      StatefulNavigationShell? routeState;
+      ShellRouteState? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
           restorationScopeId: 'shell',
-          pageBuilder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeState = navigationShell;
+          pageBuilder:
+              (BuildContext context, ShellRouteState state, Widget child) {
+            routeState = state;
             return MaterialPage<dynamic>(
-                restorationId: 'shellWidget', child: navigationShell);
+                restorationId: 'shellWidget', child: child);
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
@@ -5245,7 +5235,7 @@ void main() {
       statefulWidgetKeyC.currentState?.increment();
       expect(statefulWidgetKeyC.currentState?.counter, equals(1));
 
-      routeState!.goBranch(0);
+      router.restore(routeState!.navigatorLocation(0));
       await tester.pumpAndSettle();
       expect(find.text('Screen A Detail'), findsOneWidget);
 
@@ -5255,12 +5245,12 @@ void main() {
       expect(find.text('Screen A Detail'), findsOneWidget);
       expect(statefulWidgetKeyA.currentState?.counter, equals(1));
 
-      routeState!.goBranch(1);
+      router.restore(routeState!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(find.text('Screen B Detail'), findsOneWidget);
       expect(statefulWidgetKeyB.currentState?.counter, equals(1));
 
-      routeState!.goBranch(2);
+      router.restore(routeState!.navigatorLocation(2));
       await tester.pumpAndSettle();
       expect(find.text('Screen C Detail'), findsOneWidget);
       // State of branch C should not have been restored
@@ -5276,17 +5266,17 @@ void main() {
           GlobalKey<DummyRestorableStatefulWidgetState>();
       final GlobalKey<DummyRestorableStatefulWidgetState> statefulWidgetKeyB =
           GlobalKey<DummyRestorableStatefulWidgetState>();
-      StatefulNavigationShell? routeStateRoot;
-      StatefulNavigationShell? routeStateNested;
+      ShellRouteState? routeStateRoot;
+      ShellRouteState? routeStateNested;
 
       final List<RouteBase> routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
           restorationScopeId: 'shell',
-          pageBuilder: (BuildContext context, GoRouterState state,
-              StatefulNavigationShell navigationShell) {
-            routeStateRoot = navigationShell;
+          pageBuilder:
+              (BuildContext context, ShellRouteState state, Widget child) {
+            routeStateRoot = state;
             return MaterialPage<dynamic>(
-                restorationId: 'shellWidget', child: navigationShell);
+                restorationId: 'shellWidget', child: child);
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
@@ -5317,12 +5307,11 @@ void main() {
                 routes: <RouteBase>[
                   StatefulShellRoute.indexedStack(
                       restorationScopeId: 'branchB-nested-shell',
-                      pageBuilder: (BuildContext context, GoRouterState state,
-                          StatefulNavigationShell navigationShell) {
-                        routeStateNested = navigationShell;
+                      pageBuilder: (BuildContext context, ShellRouteState state,
+                          Widget child) {
+                        routeStateNested = state;
                         return MaterialPage<dynamic>(
-                            restorationId: 'shellWidget-nested',
-                            child: navigationShell);
+                            restorationId: 'shellWidget-nested', child: child);
                       },
                       branches: <StatefulShellBranch>[
                         StatefulShellBranch(
@@ -5372,7 +5361,7 @@ void main() {
       statefulWidgetKeyA.currentState?.increment();
       expect(statefulWidgetKeyA.currentState?.counter, equals(1));
 
-      routeStateRoot!.goBranch(1);
+      router.restore(routeStateRoot!.navigatorLocation(1));
       await tester.pumpAndSettle();
 
       router.go('/b/detailB');
@@ -5380,7 +5369,7 @@ void main() {
       statefulWidgetKeyB.currentState?.increment();
       expect(statefulWidgetKeyB.currentState?.counter, equals(1));
 
-      routeStateRoot!.goBranch(0);
+      router.restore(routeStateRoot!.navigatorLocation(0));
       await tester.pumpAndSettle();
       expect(find.text('Screen A Detail'), findsOneWidget);
       expect(find.text('Screen B'), findsNothing);
@@ -5394,16 +5383,16 @@ void main() {
       expect(find.text('Screen B Pushed Detail'), findsNothing);
       expect(statefulWidgetKeyA.currentState?.counter, equals(1));
 
-      routeStateRoot!.goBranch(1);
+      router.restore(routeStateRoot!.navigatorLocation(1));
       await tester.pumpAndSettle();
       expect(find.text('Screen A Detail'), findsNothing);
       expect(find.text('Screen B'), findsNothing);
       expect(find.text('Screen B Detail'), findsOneWidget);
       expect(statefulWidgetKeyB.currentState?.counter, equals(1));
 
-      routeStateNested!.goBranch(1);
+      router.restore(routeStateNested!.navigatorLocation(1));
       await tester.pumpAndSettle();
-      routeStateNested!.goBranch(0);
+      router.restore(routeStateNested!.navigatorLocation(0));
       await tester.pumpAndSettle();
 
       expect(find.text('Screen B Detail'), findsOneWidget);

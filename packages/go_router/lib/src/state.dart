@@ -9,7 +9,6 @@ import 'configuration.dart';
 import 'match.dart';
 import 'misc/errors.dart';
 import 'route.dart';
-import 'router.dart';
 
 /// The route state during routing.
 ///
@@ -168,6 +167,13 @@ class GoRouterState {
   String? locationForRoute(RouteBase route) =>
       _configuration.locationForRoute(route);
 
+  /// Finds the routes that matched the given URL.
+  RouteMatchList findMatch(Uri uri, {Object? extra}) =>
+      _configuration.findMatch(
+        uri,
+        extra: extra,
+      );
+
   @override
   bool operator ==(Object other) {
     return other is GoRouterState &&
@@ -199,6 +205,7 @@ class GoRouterState {
 /// The route state of a [ShellRouteBase] (i.e. [ShellRoute] or
 /// [StatefulShellRoute]) during routing.
 class ShellRouteState extends GoRouterState {
+  /// Constructs a [ShellRouteState].
   const ShellRouteState(
     super._configuration, {
     required super.uri,
@@ -216,19 +223,27 @@ class ShellRouteState extends GoRouterState {
     required this.routeMatchList,
   });
 
+  /// The [Navigator] key to be used for the nested navigation associated with
+  /// [shellRoute].
   final GlobalKey<NavigatorState> navigatorKey;
+
+  /// The associated [ShellRouteBase] for this state.
   final ShellRouteBase shellRoute;
+
+  /// The route match list representing the current location within the
+  /// associated shell route.
   final RouteMatchList routeMatchList;
 
-  /// Gets the index of the [Navigator] or [StatefulShellBranch] in the
+  /// Get the index of the [Navigator] or [StatefulShellBranch] in the
   /// associated shell route.
+  ///
+  /// See also: [ShellRouteBase.indexOfNavigatorKey].
   int get navigatorIndex => shellRoute.indexOfNavigatorKey(navigatorKey);
 
-  void restoreNavigator(BuildContext context, int navigatorIndex) {
-    final RouteMatchList routeMatchList =
-        shellRoute.restoreNavigatorLocation(navigatorIndex, _configuration);
-    GoRouter.of(context).restore(routeMatchList);
-  }
+  /// Get the location ([RouteMatchList]) associated with the current state
+  /// of the [Navigator] at the specified index, if any.
+  RouteMatchList navigatorLocation(int navigatorIndex) =>
+      shellRoute.locationOfNavigator(this, navigatorIndex);
 
   /// Gets the [ShellRouteState] from context.
   static ShellRouteState of(BuildContext context, {String? name}) {

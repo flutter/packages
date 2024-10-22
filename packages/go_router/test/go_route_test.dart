@@ -119,11 +119,11 @@ void main() {
             routes: <RouteBase>[
               StatefulShellRoute.indexedStack(
                 parentNavigatorKey: rootNavigatorKey,
-                builder: (_, __, StatefulNavigationShell navigationShell) {
+                builder: (_, __, Widget child) {
                   return Column(
                     children: <Widget>[
                       const Text('Screen D'),
-                      Expanded(child: navigationShell),
+                      Expanded(child: child),
                     ],
                   );
                 },

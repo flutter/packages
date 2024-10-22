@@ -151,12 +151,12 @@ class _StatefulShellRouteDataBuilder extends StatefulShellRouteData {
   @override
   Widget builder(
     BuildContext context,
-    GoRouterState state,
-    StatefulNavigationShell navigator,
+    ShellRouteState state,
+    Widget child,
   ) =>
       SizedBox(
         key: const Key('builder'),
-        child: navigator,
+        child: child,
       );
 }
 
@@ -181,13 +181,13 @@ class _StatefulShellRouteDataPageBuilder extends StatefulShellRouteData {
   @override
   Page<void> pageBuilder(
     BuildContext context,
-    GoRouterState state,
-    StatefulNavigationShell navigator,
+    ShellRouteState state,
+    Widget child,
   ) =>
       MaterialPage<void>(
         child: SizedBox(
           key: const Key('page-builder'),
-          child: navigator,
+          child: child,
         ),
       );
 }

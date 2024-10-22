@@ -66,7 +66,7 @@ Future<GoRouter> createGoRouterWithStatefulShellRoute(
                     builder: (_, __) => const DummyStatefulWidget()),
               ]),
         ]),
-      ], builder: mockStackedShellBuilder),
+      ], builder: mockStatefulShellBuilder),
     ],
   );
   addTearDown(router.dispose);

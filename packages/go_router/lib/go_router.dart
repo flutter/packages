@@ -16,7 +16,7 @@ export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
 export 'src/pages/custom_transition_page.dart';
 export 'src/parser.dart';
-export 'src/route.dart' hide StatefulShellRestoreStateRedirect;
+export 'src/route.dart';
 export 'src/route_data.dart' hide NoOpPage;
 export 'src/router.dart';
 export 'src/state.dart' hide GoRouterStateRegistry, GoRouterStateRegistryScope;

@@ -391,15 +391,17 @@ class TabbedRootScreen extends StatefulWidget {
 
 class _TabbedRootScreenState extends State<TabbedRootScreen>
     with SingleTickerProviderStateMixin {
+  ShellRouteState get _shellState => widget.shellState;
+
   late final TabController _tabController = TabController(
       length: widget.children.length,
       vsync: this,
-      initialIndex: widget.shellState.navigatorIndex);
+      initialIndex: _shellState.navigatorIndex);
 
   @override
   void didUpdateWidget(covariant TabbedRootScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _tabController.index = widget.shellState.navigatorIndex;
+    _tabController.index = _shellState.navigatorIndex;
   }
 
   @override
@@ -424,7 +426,7 @@ class _TabbedRootScreenState extends State<TabbedRootScreen>
   }
 
   void _onTabTap(BuildContext context, int index) {
-    widget.shellState.restoreNavigator(context, index);
+    context.restore(_shellState.navigatorLocation(index));
   }
 }
 

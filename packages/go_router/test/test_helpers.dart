@@ -359,9 +359,8 @@ GoRouterPageBuilder createPageBuilder(
     (BuildContext context, GoRouterState state) =>
         MaterialPage<dynamic>(restorationId: restorationId, child: child);
 
-DeprecatedStatefulShellRouteBuilder mockStackedShellBuilder =
-    (BuildContext context, GoRouterState state,
-        StatefulNavigationShell navigationShell) {
+ShellRouteBuilder mockStatefulShellBuilder =
+    (BuildContext context, ShellRouteState state, Widget navigationShell) {
   return navigationShell;
 };
 

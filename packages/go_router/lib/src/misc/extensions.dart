@@ -4,6 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 
+import '../match.dart';
 import '../router.dart';
 
 /// Dart extension to add navigation function to a BuildContext object, e.g.
@@ -23,6 +24,10 @@ extension GoRouterHelper on BuildContext {
   /// Navigate to a location.
   void go(String location, {Object? extra}) =>
       GoRouter.of(this).go(location, extra: extra);
+
+  /// Restore the RouteMatchList
+  void restore(RouteMatchList matchList) =>
+      GoRouter.of(this).restore(matchList);
 
   /// Navigate to a named route.
   void goNamed(

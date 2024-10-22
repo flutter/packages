@@ -27,29 +27,15 @@ typedef GoRouterWidgetBuilder = Widget Function(
   GoRouterState state,
 );
 
-/// The widget builder for [ShellRoute].
+/// The widget builder for [ShellRouteBase].
 typedef ShellRouteBuilder = Widget Function(
-  BuildContext context,
-  GoRouterState state,
-  Widget child,
-);
-
-/// The page builder for [ShellRoute].
-typedef ShellRoutePageBuilder = Page<dynamic> Function(
-  BuildContext context,
-  GoRouterState state,
-  Widget child,
-);
-
-/// The widget builder for [StatefulShellRoute].
-typedef StatefulShellRouteBuilder = Widget Function(
   BuildContext context,
   ShellRouteState state,
   Widget child,
 );
 
-/// The page builder for [StatefulShellRoute].
-typedef StatefulShellRoutePageBuilder = Page<dynamic> Function(
+/// The page builder for [ShellRouteBase].
+typedef ShellRoutePageBuilder = Page<dynamic> Function(
   BuildContext context,
   ShellRouteState state,
   Widget child,
@@ -502,14 +488,19 @@ abstract class ShellRouteBase extends RouteBase {
   GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute);
 
   /// Returns the index of the [Navigator] key within the list of navigators
-  /// managed by this shell route, or -1 if the key is not found.
+  /// managed by this shell route,
+  ///
+  /// If this shell route does not support multiple navigators, this method
+  /// will return 0 if the navigator key matches the navigator key of this
+  /// route. If no matching navigator key is found, -1 will be returned.
   int indexOfNavigatorKey(GlobalKey<NavigatorState> navigatorKey);
 
-  // TODO: Maybe, for consistency
-  //GlobalKey<NavigatorState>? navigatorKey(int navigatorIndex);
-
-  RouteMatchList restoreNavigatorLocation(
-      int navigatorIndex, RouteConfiguration configuration);
+  /// Returns the location ([RouteMatchList]) associated with the current state
+  /// of the [Navigator] at the specified index, if any.
+  ///
+  /// Returns [RouteMatchList.empty] if a location cannot be determined (e.g.
+  /// if this is not supported by this shell route implementation).
+  RouteMatchList locationOfNavigator(ShellRouteState state, int navigatorIndex);
 }
 
 /// A route that displays a UI shell around the matching child route.
@@ -690,10 +681,9 @@ class ShellRoute extends ShellRouteBase {
       navigatorKey == this.navigatorKey ? 0 : -1;
 
   @override
-  RouteMatchList restoreNavigatorLocation(
-          int navigatorIndex, RouteConfiguration configuration) =>
-      throw UnimplementedError(
-          'ShellRoute does not support restoration of navigator location.');
+  RouteMatchList locationOfNavigator(
+          ShellRouteState state, int navigatorIndex) =>
+      RouteMatchList.empty;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -808,8 +798,8 @@ class StatefulShellRoute extends ShellRouteBase {
     String? shellRedirectPath,
     required List<StatefulShellBranch> branches,
     GoRouterRedirect? redirect,
-    StatefulShellRouteBuilder? builder,
-    StatefulShellRoutePageBuilder? pageBuilder,
+    ShellRouteBuilder? builder,
+    ShellRoutePageBuilder? pageBuilder,
     required ShellNavigationContainerBuilder navigatorContainerBuilder,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     String? restorationScopeId,
@@ -842,8 +832,8 @@ class StatefulShellRoute extends ShellRouteBase {
     String? shellRedirectPath,
     required List<StatefulShellBranch> branches,
     GoRouterRedirect? redirect,
-    StatefulShellRouteBuilder? builder,
-    StatefulShellRoutePageBuilder? pageBuilder,
+    ShellRouteBuilder? builder,
+    ShellRoutePageBuilder? pageBuilder,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     String? restorationScopeId,
     GlobalKey<StatefulNavigationShellState>? key,
@@ -865,7 +855,7 @@ class StatefulShellRoute extends ShellRouteBase {
     this.shellRedirectPath,
     required this.branches,
     super.redirect,
-    StatefulShellRouteBuilder? builder,
+    ShellRouteBuilder? builder,
     this.pageBuilder,
     required this.navigatorContainerBuilder,
     super.parentNavigatorKey,
@@ -888,33 +878,29 @@ class StatefulShellRoute extends ShellRouteBase {
 
   /// The widget builder for a stateful shell route.
   ///
-  /// Similar to [GoRoute.builder], but with an additional
-  /// [StatefulNavigationShell] parameter. StatefulNavigationShell is a Widget
-  /// responsible for managing the nested navigation for the
+  /// Similar to [GoRoute.builder], but with an additional child parameter. This
+  /// child parameter is the Widget managing the nested navigation for the
   /// matching sub-routes. Typically, a shell route builds its shell around this
-  /// Widget. StatefulNavigationShell can also be used to access information
-  /// about which branch is active, and also to navigate to a different branch
-  /// (using [StatefulNavigationShell.goBranch]).
+  /// Widget.
   ///
-  /// Custom implementations may choose to ignore the child parameter passed to
-  /// the builder function, and instead use [StatefulNavigationShell] to
-  /// create a custom container for the branch Navigators.
-  final StatefulShellRouteBuilder? builder;
+  /// The state parameter of this function ([ShellRouteState]) can also be used
+  /// to access information about which branch is active (see
+  /// [ShellRouteState.navigatorIndex]), and also to navigate to a different
+  /// branch (using [ShellRouteState.restoreNavigator]).
+  final ShellRouteBuilder? builder;
 
   /// The page builder for a stateful shell route.
   ///
-  /// Similar to [GoRoute.pageBuilder], but with an additional
-  /// [StatefulNavigationShell] parameter. StatefulNavigationShell is a Widget
-  /// responsible for managing the nested navigation for the
+  /// Similar to [GoRoute.pageBuilder], but with an additional child parameter.
+  /// This child parameter is the Widget managing the nested navigation for the
   /// matching sub-routes. Typically, a shell route builds its shell around this
-  /// Widget. StatefulNavigationShell can also be used to access information
-  /// about which branch is active, and also to navigate to a different branch
-  /// (using [StatefulNavigationShell.goBranch]).
+  /// Widget.
   ///
-  /// Custom implementations may choose to ignore the child parameter passed to
-  /// the builder function, and instead use [StatefulNavigationShell] to
-  /// create a custom container for the branch Navigators.
-  final StatefulShellRoutePageBuilder? pageBuilder;
+  /// The state parameter of this function ([ShellRouteState]) can also be used
+  /// to access information about which branch is active (see
+  /// [ShellRouteState.navigatorIndex]), and also to navigate to a different
+  /// branch (using [ShellRouteState.restoreNavigator]).
+  final ShellRoutePageBuilder? pageBuilder;
 
   /// The builder for the branch Navigator container.
   ///
@@ -974,26 +960,24 @@ class StatefulShellRoute extends ShellRouteBase {
       branches.indexWhere(
           (StatefulShellBranch branch) => branch.navigatorKey == navigatorKey);
 
-  /// Get the initial location for the branch at the given index.
-  ///
-  /// See also [StatefulShellBranch.initialLocation]).
-  String initialBranchLocation(GoRouterState state, int branchIndex) =>
-      branches[branchIndex]
-          ._effectiveInitialBranchLocation(state.locationForRoute);
-
   @override
-  RouteMatchList restoreNavigatorLocation(
-      int navigatorIndex, RouteConfiguration configuration) {
+  RouteMatchList locationOfNavigator(GoRouterState state, int navigatorIndex) {
     final RouteMatchList? matchList =
         key.currentState?._matchListForBranch(navigatorIndex);
     if (matchList != null && matchList.isNotEmpty) {
       return matchList;
     } else {
-      final String initialLocation = branches[navigatorIndex]
-          ._effectiveInitialBranchLocation(configuration.locationForRoute);
-      return configuration.findMatch(Uri.parse(initialLocation));
+      final String initialLocation =
+          branches[navigatorIndex]._effectiveInitialBranchLocation(state);
+      return state.findMatch(Uri.parse(initialLocation));
     }
   }
+
+  /// Get the initial location for the branch at the given index.
+  ///
+  /// See also [StatefulShellBranch.initialLocation]).
+  String initialBranchLocation(ShellRouteState state, int branchIndex) =>
+      branches[branchIndex]._effectiveInitialBranchLocation(state);
 
   Iterable<GlobalKey<NavigatorState>> get _navigatorKeys =>
       branches.map((StatefulShellBranch b) => b.navigatorKey);
@@ -1030,8 +1014,8 @@ class StatefulShellRoute extends ShellRouteBase {
           MatchListRedirectRoute(
               path: '$shellRoutePath/$i',
               matchListRedirect: (_, __) => _restoreState(shellStateKey, i),
-              redirect: (BuildContext context, GoRouterState state) => branch
-                  ._effectiveInitialBranchLocation(state.locationForRoute)),
+              redirect: (BuildContext context, GoRouterState state) =>
+                  branch._effectiveInitialBranchLocation(state)),
         );
         if (branch.name != null) {
           branchRoutes.insert(
@@ -1040,8 +1024,8 @@ class StatefulShellRoute extends ShellRouteBase {
                 path: '$shellRoutePath/${branch.name!}',
                 name: branch.name!,
                 matchListRedirect: (_, __) => _restoreState(shellStateKey, i),
-                redirect: (BuildContext context, GoRouterState state) => branch
-                    ._effectiveInitialBranchLocation(state.locationForRoute)),
+                redirect: (BuildContext context, GoRouterState state) =>
+                    branch._effectiveInitialBranchLocation(state)),
           );
         }
       }
@@ -1174,8 +1158,7 @@ class StatefulShellBranch {
   GoRoute? get defaultRoute =>
       RouteBase.routesRecursively(routes).whereType<GoRoute>().firstOrNull;
 
-  String _effectiveInitialBranchLocation(
-      String? Function(RouteBase) locationForRoute) {
+  String _effectiveInitialBranchLocation(GoRouterState state) {
     if (initialLocation != null) {
       return initialLocation!;
     } else {
@@ -1185,10 +1168,8 @@ class StatefulShellBranch {
       final List<String> parameters = <String>[];
       patternToRegExp(route.path, parameters);
       assert(parameters.isEmpty);
-      return locationForRoute(route)!;
-      // TODO(tolo): Unsure what the original purpose of below was, but it seems odd to involve the current routerState.pathParameters when determining the initial location.
-      // return patternToPath(
-      //     fullPath, shellRouteContext.routerState.pathParameters);
+      final String fullPath = state.locationForRoute(route)!;
+      return patternToPath(fullPath, state.pathParameters);
     }
   }
 }
@@ -1201,7 +1182,7 @@ typedef ShellNavigationContainerBuilder = Widget Function(
 /// Widget for managing the state of a [StatefulShellRoute].
 ///
 /// Normally, this widget is not used directly, but is instead created
-/// internally by StatefulShellRoute.
+/// internally by [StatefulShellRoute].
 class StatefulNavigationShell extends StatefulWidget {
   /// Constructs an [_StatefulNavigationShell].
   StatefulNavigationShell._({
@@ -1244,6 +1225,14 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 
   @override
   String? get restorationId => _route.restorationScopeId;
+
+  // TODO: Reset of navigation state has been requested (and was in the original
+  // PR), but possibly this should be done in a separate PR.
+  void resetBranch(int branchIndex) {
+    final StatefulShellBranch branch = _route.branches[branchIndex];
+    _branchNavigators.remove(branch.navigatorKey);
+    _branchLocation(branch, false).value = RouteMatchList.empty;
+  }
 
   /// Generates a derived restoration ID for the branch location property,
   /// falling back to the identity hash code of the branch to ensure an ID is
@@ -1319,11 +1308,6 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
           widget._navigatorBuilder(branch.observers, branch.restorationScopeId);
     }
   }
-
-  /// The index of the currently active [StatefulShellBranch].
-  ///
-  /// Corresponds to the index in the branches field of [StatefulShellRoute].
-  //int get currentIndex => widget._routeState.navigatorIndex;
 
   @override
   void initState() {

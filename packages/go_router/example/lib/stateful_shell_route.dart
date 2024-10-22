@@ -203,9 +203,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
     // navigating to the initial location when tapping the item that is
     // already active.
     if (index == shellState.navigatorIndex) {
-      final String initialLocation =
-          _shellRoute.initialBranchLocation(shellState, index);
-      GoRouter.of(context).go(initialLocation);
+      context.go(_shellRoute.initialBranchLocation(shellState, index));
     } else {
       return switch (index) {
         1 => GoRouter.of(context).goNamed('branchB'),

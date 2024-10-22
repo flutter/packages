@@ -351,9 +351,9 @@ void main() {
         routes: <RouteBase>[
           StatefulShellRoute.indexedStack(
             restorationScopeId: 'shell',
-            builder: (BuildContext context, GoRouterState state,
-                    StatefulNavigationShell navigationShell) =>
-                _HomeScreen(child: navigationShell),
+            builder:
+                (BuildContext context, ShellRouteState state, Widget child) =>
+                    _HomeScreen(child: child),
             branches: <StatefulShellBranch>[
               StatefulShellBranch(
                 navigatorKey: shellNavigatorKey,
