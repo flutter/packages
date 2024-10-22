@@ -1,3 +1,7 @@
+## 0.10.9+16
+
+* Updates annotations lib to 1.9.0.
+
 ## 0.10.9+15
 
 * Converts Dart to native platform calls to Pigeon.
