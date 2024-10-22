@@ -141,4 +141,8 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
   override fun getPigeonApiUniversalAdId(): PigeonApiUniversalAdId {
     return UniversalAdIdProxyApi(this)
   }
+
+  override fun getPigeonApiAd(): PigeonApiAd {
+    return AdProxyApi(this)
+  }
 }
