@@ -1,3 +1,8 @@
+## 2.6.3
+
+* Adds possibility to play videos at more than 30 FPS.
+* Fixes playing state not updating in some paths.
+
 ## 2.6.2
 
 * Updates Pigeon for non-nullable collection type support.
