@@ -72,11 +72,11 @@ class CameraPreview extends StatelessWidget {
   }
 
   DeviceOrientation _getApplicableOrientation() {
-    print(controller.value.isRecordingVideo
+    print('CAMILLE GETAPPLICABLE: ${controller.value.isRecordingVideo
         ? controller.value.recordingOrientation!
         : (controller.value.previewPauseOrientation ??
             controller.value.lockedCaptureOrientation ??
-            controller.value.deviceOrientation));
+            controller.value.deviceOrientation)}');
     return controller.value.isRecordingVideo
         ? controller.value.recordingOrientation!
         : (controller.value.previewPauseOrientation ??

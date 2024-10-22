@@ -884,11 +884,22 @@ class AndroidCameraCameraX extends CameraPlatform {
     };
     int naturalDeviceOrientationDegrees =
         degreesForDeviceOrientation[naturalOrientation]!;
+
+    final int signForCameraDirection = cameraIsFrontFacing ? 1 : -1;
+
+            // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
+    // for more context on this formula.
+    final double rotation = (sensorOrientation -
+            degreesForDeviceOrientation[currentDeviceOrientation]! * signForCameraDirection +
+            360) %
+        360;
     
     print('naturalOrientation $naturalOrientation');
     print('naturalDeviceOrientationDegrees $naturalDeviceOrientationDegrees');
     print('isPreviewPreTransformed $isPreviewPreTransformed');
+    print('rotation $rotation');
     print(' -degreesForDeviceOrientation[currentDeviceOrientation]! ${ -degreesForDeviceOrientation[currentDeviceOrientation]!}');
+    print('-degreesForDeviceOrientation[currentDeviceOrientation]! ~/ 90) % 4 ${(-degreesForDeviceOrientation[currentDeviceOrientation]! ~/ 90) % 4}');
 
     if (isPreviewPreTransformed) {
       // CAMILLE: here
@@ -899,7 +910,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Fix for the rotation of the camera preview not backed by a SurfaceTexture
     // with respect to the naturalOrientation of the device:
 
-    final int signForCameraDirection = cameraIsFrontFacing ? 1 : -1;
 
     print('signForCameraDirection $signForCameraDirection');
     print('currentDeviceOrientation $currentDeviceOrientation');
@@ -917,12 +927,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     print('naturalDeviceOrientationDegrees $naturalDeviceOrientationDegrees');
     print('sensorOrientation $sensorOrientation');
 
-    // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
-    // for more context on this formula.
-    final double rotation = (sensorOrientation -
-            degreesForDeviceOrientation[currentDeviceOrientation]! * signForCameraDirection +
-            360) %
-        360;
+
 
   // TODO: camille try 4
     int quarterTurnsToCorrectPreview = ((rotation ~/ 90) % 4) - previouslyAppliedRotation[currentDeviceOrientation]!;
