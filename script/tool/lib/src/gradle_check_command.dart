@@ -216,9 +216,11 @@ buildscript {
 apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
 ''';
 
-  // GP stands for the gradle plugin method of flutter tooling inclusion.
+  /// String printed as a valid example of settings.gradle repository
+  /// configuration that enables artifact hub env variable.
+  /// GP stands for the gradle plugin method of flutter tooling inclusion.
   @visibleForTesting
-  static String exampleRootSettingsArtifactHubStringGP = '''
+  static String exampleSettingsArtifactHubStringGP = '''
   // See $artifactHubDocumentationString for more info.
   pluginManagement {
     def flutterSdkPath = {
