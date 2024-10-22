@@ -1264,6 +1264,7 @@ class SendEvents: StreamEventsStreamHandler {
     }
   }
 }
+
 class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
   func pigeonApiProxyApiTestClass(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiProxyApiTestClass
