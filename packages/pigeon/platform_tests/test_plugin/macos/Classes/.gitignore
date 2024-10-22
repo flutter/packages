@@ -7,3 +7,4 @@
 !ProxyApiTests.gen.swift
 # Contains the class declartions for testing ProxyApis.
 !ProxyApiTestClass.swift
+!EventChannelTests.gen.swift
