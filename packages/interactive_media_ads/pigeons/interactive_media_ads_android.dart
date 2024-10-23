@@ -556,7 +556,13 @@ abstract class FrameLayout extends ViewGroup {
   ),
 )
 abstract class ViewGroup extends View {
+  /// Adds a child view.
   void addView(View view);
+
+  /// Called by a ViewGroup subclass to remove child views from itself, when it
+  /// must first know its size on screen before it can calculate how many child
+  /// views it will render.
+  void removeView(View view);
 }
 
 /// Displays a video file.
@@ -833,4 +839,175 @@ abstract class AdsRenderingSettings {
 
   /// Sets the ad UI elements to be rendered by the IMA SDK.
   void setUiElements(List<UiElement> uiElements);
+}
+
+/// Represents the progress within this ad break.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdProgressInfo.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdProgressInfo',
+  ),
+)
+abstract class AdProgressInfo {
+  /// Total ad break duration (in seconds).
+  late final double adBreakDuration;
+
+  /// Total ad period duration (in seconds).
+  late final double adPeriodDuration;
+
+  /// The position of current ad within the ad break, starting with 1.
+  late final int adPosition;
+
+  /// Current time within the ad (in seconds).
+  late final double currentTime;
+
+  /// Duration of current ad (in seconds).
+  late final double duration;
+
+  /// The total number of ads in this ad break.
+  late final int totalAds;
+}
+
+/// An object that holds data corresponding to the companion Ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAd.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.CompanionAd',
+  ),
+)
+abstract class CompanionAd {
+  /// The API needed to execute this ad, or null if unavailable.
+  late final String? apiFramework;
+
+  /// The height of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  late final int height;
+
+  /// The URL for the static resource of this companion.
+  late final String resourceValue;
+
+  /// The width of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  late final int width;
+}
+
+/// This object exposes information about the universal ad ID.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/UniversalAdId.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.UniversalAdId',
+  ),
+)
+abstract class UniversalAdId {
+  /// Returns the ad ID registry associated with the ad ID value.
+  ///
+  /// Returns "unknown" if the registry is not known.
+  late final String adIdRegistry;
+
+  /// Returns the universal ad ID value.
+  ///
+  /// Returns "unknown" if the value is not known.
+  late final String adIdValue;
+}
+
+/// An object that holds data corresponding to the main Ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/Ad.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.Ad',
+  ),
+)
+abstract class Ad {
+  /// The ad ID as specified in the VAST response.
+  late final String adId;
+
+  /// The pod metadata object.
+  late final AdPodInfo adPodInfo;
+
+  /// The ad system as specified in the VAST response.
+  late final String adSystem;
+
+  /// The IDs of the ads' creatives, starting with the first wrapper ad.
+  late final List<String> adWrapperCreativeIds;
+
+  /// The wrapper ad IDs as specified in the VAST response.
+  late final List<String> adWrapperIds;
+
+  /// The wrapper ad systems as specified in the VAST response.
+  late final List<String> adWrapperSystems;
+
+  /// The advertiser name as defined by the serving party.
+  late final String advertiserName;
+
+  /// The companions for the current ad while using DAI.
+  ///
+  /// Returns an empty list in any other scenario.
+  late final List<CompanionAd> companionAds;
+
+  /// The content type of the currently selected creative, or null if no
+  /// creative is selected or the content type is unavailable.
+  late final String? contentType;
+
+  /// The ISCI (Industry Standard Commercial Identifier) code for an ad.
+  late final String creativeAdId;
+
+  /// The ID of the selected creative for the ad,
+  late final String creativeId;
+
+  /// The first deal ID present in the wrapper chain for the current ad,
+  /// starting from the top.
+  late final String dealId;
+
+  /// The description of this ad from the VAST response.
+  late final String? description;
+
+  /// The duration of the ad in seconds, -1 if not available.
+  late final double duration;
+
+  /// The height of the selected creative if non-linear, else returns 0.
+  late final int height;
+
+  /// The number of seconds of playback before the ad becomes skippable.
+  late final double skipTimeOffset;
+
+  /// The URL associated with the survey for the given ad.
+  late final String? surveyUrl;
+
+  /// The title of this ad from the VAST response.
+  late final String? title;
+
+  /// The custom parameters associated with the ad at the time of ad
+  /// trafficking.
+  late final String traffickingParameters;
+
+  /// Te set of ad UI elements rendered by the IMA SDK for this ad.
+  late final List<UiElement> uiElements;
+
+  /// The list of all universal ad IDs for this ad.
+  late final List<UniversalAdId> universalAdIds;
+
+  /// The VAST bitrate in Kbps of the selected creative.
+  late final int vastMediaBitrate;
+
+  /// The VAST media height in pixels of the selected creative.
+  late final int vastMediaHeight;
+
+  /// The VAST media width in pixels of the selected creative.
+  late final int vastMediaWidth;
+
+  /// The width of the selected creative if non-linear, else returns 0.
+  late final int width;
+
+  /// Indicates whether the ad’s current mode of operation is linear or
+  /// non-linear.
+  late final bool isLinear;
+
+  /// Indicates whether the ad can be skipped by the user.
+  late final bool isSkippable;
 }

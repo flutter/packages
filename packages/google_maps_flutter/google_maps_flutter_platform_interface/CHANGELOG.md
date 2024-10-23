@@ -1,3 +1,16 @@
+## 2.9.5
+
+* Converts `BitmapDescriptor` to typesafe structures.
+
+## 2.9.4
+
+* Converts `PatternItem` to typesafe structure.
+* Converts `Cap` to typesafe structure.
+
+## 2.9.3
+
+* Corrects an incorrect comment in polyline.dart file.
+
 ## 2.9.2
 
 * Corrects JSON tag for `CameraUpdateNewLatLngBounds`.

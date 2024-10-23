@@ -570,14 +570,14 @@ class MockAdsManager extends _i1.Mock implements _i2.AdsManager {
       ) as _i6.Future<void>);
 
   @override
-  _i6.Future<List<double?>> getAdCuePoints() => (super.noSuchMethod(
+  _i6.Future<List<double>> getAdCuePoints() => (super.noSuchMethod(
         Invocation.method(
           #getAdCuePoints,
           [],
         ),
-        returnValue: _i6.Future<List<double?>>.value(<double?>[]),
-        returnValueForMissingStub: _i6.Future<List<double?>>.value(<double?>[]),
-      ) as _i6.Future<List<double?>>);
+        returnValue: _i6.Future<List<double>>.value(<double>[]),
+        returnValueForMissingStub: _i6.Future<List<double>>.value(<double>[]),
+      ) as _i6.Future<List<double>>);
 
   @override
   _i6.Future<void> resume() => (super.noSuchMethod(
@@ -895,6 +895,16 @@ class MockFrameLayout extends _i1.Mock implements _i2.FrameLayout {
   _i6.Future<void> addView(_i2.View? view) => (super.noSuchMethod(
         Invocation.method(
           #addView,
+          [view],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> removeView(_i2.View? view) => (super.noSuchMethod(
+        Invocation.method(
+          #removeView,
           [view],
         ),
         returnValue: _i6.Future<void>.value(),
