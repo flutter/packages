@@ -200,6 +200,40 @@ ${includeArtifactHub ? GradleCheckCommand.exampleRootSettingsArtifactHubString :
 ''');
   }
 
+  /// Writes a fake android/build.gradle file for an example [package] with the
+  /// given options.
+  void writeFakeExampleSettingsGradle(
+      RepositoryPackage package, {
+        bool includeArtifactHub = true,
+      }) {
+    final File settingsGradle = package
+        .platformDirectory(FlutterPlatform.android)
+        .childFile('settings.gradle');
+    settingsGradle.createSync(recursive: true);
+
+    settingsGradle.writeAsStringSync('''
+pluginManagement {
+  def flutterSdkPath = {
+    def properties = new Properties()
+    file("local.properties").withInputStream { properties.load(it) }
+    def flutterSdkPath = properties.getProperty("flutter.sdk")
+    assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+    return flutterSdkPath
+  }()
+
+  includeBuild("\$flutterSdkPath/packages/flutter_tools/gradle")
+
+  repositories {
+    google()
+    mavenCentral()
+    gradlePluginPortal()
+  }
+}
+${includeArtifactHub ? GradleCheckCommand.exampleSettingsArtifactHubStringGP : GradleCheckCommand.exampleSettingsWithoutArtifactHubStringGP}
+include ":app"
+''');
+  }
+
   /// Writes a fake android/app/build.gradle file for an example [package] with
   /// the given options.
   void writeFakeExampleAppBuildGradle(
@@ -269,6 +303,31 @@ dependencies {
     writeFakeExampleAppBuildGradle(package,
         includeNamespace: includeNamespace, commentNamespace: commentNamespace);
     writeFakeExampleTopLevelSettingsGradle(
+      package,
+      includeArtifactHub: includeSettingsArtifactHub,
+    );
+  }
+
+  void writeFakeExampleBuildGradleGP(
+      RepositoryPackage package, {
+        required String pluginName,
+        bool includeNamespace = true,
+        bool commentNamespace = false,
+        bool warningsConfigured = true,
+        String? kotlinVersion,
+        bool includeBuildArtifactHub = true,
+        bool includeSettingsArtifactHub = true,
+      }) {
+    writeFakeExampleTopLevelBuildGradle(
+      package,
+      pluginName: pluginName,
+      warningsConfigured: warningsConfigured,
+      kotlinVersion: kotlinVersion,
+      includeArtifactHub: includeBuildArtifactHub,
+    );
+    writeFakeExampleAppBuildGradle(package,
+        includeNamespace: includeNamespace, commentNamespace: commentNamespace);
+    writeFakeExampleSettingsGradle(
       package,
       includeArtifactHub: includeSettingsArtifactHub,
     );
@@ -787,6 +846,43 @@ dependencies {
       expect(
         output,
         isNot(contains(GradleCheckCommand.exampleRootGradleArtifactHubString)),
+      );
+      expect(
+        output,
+        isNot(contains(GradleCheckCommand.exampleSettingsArtifactHubStringGP)),
+      );
+    });
+
+    test('contains declarative method of applying gradle plugins', () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package =
+      createFakePackage('a_package', packagesDir);
+      writeFakePluginBuildGradle(package, includeLanguageVersion: true);
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradleGP(example,
+          pluginName: packageName,
+          // ignore: avoid_redundant_argument_values
+          includeBuildArtifactHub: true,
+          includeSettingsArtifactHub: false);
+      writeFakeManifest(example, isApp: true);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['gradle-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(GradleCheckCommand.exampleSettingsArtifactHubStringGP),
+        ]),
+      );
+      expect(
+        output,
+        isNot(contains(GradleCheckCommand.exampleRootSettingsArtifactHubString)),
       );
     });
   });

@@ -221,30 +221,24 @@ apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
   /// GP stands for the gradle plugin method of flutter tooling inclusion.
   @visibleForTesting
   static String exampleSettingsArtifactHubStringGP = '''
-  // See $artifactHubDocumentationString for more info.
-  pluginManagement {
-    def flutterSdkPath = {
-        def properties = new Properties()
-        file("local.properties").withInputStream { properties.load(it) }
-        def flutterSdkPath = properties.getProperty("flutter.sdk")
-        assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
-        return flutterSdkPath
-    }()
-
-    includeBuild("\$flutterSdkPath/packages/flutter_tools/gradle")
-
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
+// See $artifactHubDocumentationString for more info.
 plugins {
     id "dev.flutter.flutter-plugin-loader" version "1.0.0"
     // ...other plugins
     id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.1"
 }
-include ":app"
+  ''';
+
+  /// String printed as a valid example of settings.gradle repository
+  /// configuration without the artifact hub env variable.
+  /// GP stands for the gradle plugin method of flutter tooling inclusion.
+  @visibleForTesting
+  static String exampleSettingsWithoutArtifactHubStringGP = '''
+// See $artifactHubDocumentationString for more info.
+plugins {
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    // ...other plugins
+}
   ''';
 
   /// Validates that [gradleLines] reads and uses a artifiact hub repository
@@ -275,11 +269,14 @@ include ":app"
     final bool validArtifactConfiguration = documentationPresent &&
         ((artifactRegistryDefined && artifactRegistryPluginApplied) || artifactRegistryPluginAppliedGP);
 
-    if (!validArtifactConfiguration) {
+    if (!validArtifactConfiguration && !artifactRegistryPluginAppliedGP) {
+      printError('Failed Artifact Hub validation. Include the following in '
+          'example root settings.gradle:\n$exampleSettingsArtifactHubStringGP');
+    }
+    if (!validArtifactConfiguration && !(artifactRegistryDefined && artifactRegistryPluginApplied)) {
       printError('Failed Artifact Hub validation. Include the following in '
           'example root settings.gradle:\n$exampleRootSettingsArtifactHubString');
     }
-
     return validArtifactConfiguration;
   }
 
