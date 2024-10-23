@@ -167,7 +167,7 @@ abstract class RouteBase with Diagnosticable {
   /// the GoRoute constructor.
   ///
   /// For example:
-  /// ```
+  /// ```dart
   /// final GoRouter _router = GoRouter(
   ///   routes: <GoRoute>[
   ///     GoRoute(
@@ -186,7 +186,7 @@ abstract class RouteBase with Diagnosticable {
   /// redirect takes priority over sub-route's.
   ///
   /// For example:
-  /// ```
+  /// ```dart
   /// final GoRouter _router = GoRouter(
   ///   routes: <GoRoute>[
   ///     GoRoute(
