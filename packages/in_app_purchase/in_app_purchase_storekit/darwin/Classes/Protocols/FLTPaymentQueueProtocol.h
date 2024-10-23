@@ -13,8 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) SKStorefront *storefront API_AVAILABLE(ios(13.0));
 
 /// A list of SKPaymentTransactions, which each represents a single transaction
-@property(nonatomic, strong) NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(
-    ios(3.0), macos(10.7));
+@property(nonatomic, strong)
+    NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(ios(3.0), macos(10.7));
 
 /// An object that provides information needed to complete transactions.
 @property(nonatomic, weak, nullable) id<SKPaymentQueueDelegate> delegate API_AVAILABLE(
@@ -44,15 +44,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Call this method to have StoreKit present a sheet enabling the user to redeem codes provided by
 /// your app. Only for iOS.
-- (void)presentCodeRedemptionSheet API_AVAILABLE(ios(14.0))
-    API_UNAVAILABLE(tvos, macos, watchos);
+- (void)presentCodeRedemptionSheet API_AVAILABLE(ios(14.0))API_UNAVAILABLE(tvos, macos, watchos);
 
 /// If StoreKit has called your SKPaymentQueueDelegate's "paymentQueueShouldShowPriceConsent:"
 /// method and you returned NO, you can use this method to show the price consent UI at a later time
 /// that is more appropriate for your app. If there is no pending price consent, this method will do
 /// nothing.
-- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4))
-    API_UNAVAILABLE(tvos, macos, watchos);
+- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4))API_UNAVAILABLE(tvos, macos, watchos);
 
 @end
 
