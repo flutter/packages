@@ -559,7 +559,7 @@ void _errorOnSealedClass(List<Error> errors, String generator, Root root) {
 
 void _errorOnInheritedClass(List<Error> errors, String generator, Root root) {
   if (root.classes.any(
-    (Class element) => element.isSealed,
+    (Class element) => element.superClass != null,
   )) {
     errors.add(
         Error(message: '$generator does not support inheritance in classes'));
@@ -1509,9 +1509,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       containsEventChannel: containsEventChannel,
     );
 
-    final List<Error> validateErrors = _validateAst(completeRoot, source);
     final List<Error> totalErrors = List<Error>.from(_errors);
-    totalErrors.addAll(validateErrors);
 
     for (final MapEntry<TypeDeclaration, List<int>> element
         in referencedTypes.entries) {
@@ -1568,6 +1566,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         api.interfaces = newInterfaceSet;
       }
     }
+    final List<Error> validateErrors = _validateAst(completeRoot, source);
+    totalErrors.addAll(validateErrors);
 
     return ParseResults(
       root: totalErrors.isEmpty
@@ -1725,6 +1725,14 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     _storeCurrentClass();
 
     if (node.abstractKeyword != null) {
+      if (node.metadata.length > 2 ||
+          (node.metadata.length > 1 &&
+              !_hasMetadata(node.metadata, 'ConfigurePigeon'))) {
+        _errors.add(Error(
+            message:
+                'API "${node.name.lexeme}" can only have one API annotation but contains: ${node.metadata}',
+            lineNumber: _calculateLineNumber(source, node.offset)));
+      }
       if (_hasMetadata(node.metadata, 'HostApi')) {
         final dart_ast.Annotation hostApi = node.metadata.firstWhere(
             (dart_ast.Annotation element) => element.name.name == 'HostApi');

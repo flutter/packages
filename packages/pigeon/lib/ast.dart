@@ -741,7 +741,7 @@ class Class extends Node {
 
   @override
   String toString() {
-    return '(Class name:$name fields:$fields documentationComments:$documentationComments)';
+    return '(Class name:$name fields:$fields superClass:$superClassName children:$children isSealed:$isSealed isReferenced:$isReferenced documentationComments:$documentationComments)';
   }
 }
 
