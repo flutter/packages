@@ -1,3 +1,7 @@
+## 2.7.16
+
+* Modifies `can pause` integration test to account for asynchronous pausing.
+
 ## 2.7.15
 
 * Changes the rotation correction calculation for Android API 29+ to use
