@@ -2840,6 +2840,57 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     final UnusedClass unused = UnusedClass();
     expect(unused, unused);
   });
+
+  /// Event Channels
+
+  const List<TargetGenerator> eventChannelSupported = <TargetGenerator>[
+    TargetGenerator.kotlin,
+    TargetGenerator.swift
+  ];
+  testWidgets('event channel sends continuous ints', (_) async {
+    final Stream<int> events = streamInts();
+    final List<int> listEvents = await events.toList();
+    for (final int value in listEvents) {
+      expect(listEvents[value], value);
+    }
+  }, skip: !eventChannelSupported.contains(targetGenerator));
+
+  testWidgets('event channel handles extended sealed classes', (_) async {
+    int count = 0;
+    final Stream<EventChannelDataBase> events = streamEvents();
+    events.listen((EventChannelDataBase event) {
+      switch (event) {
+        case IntEvent():
+          expect(event.value, 1);
+          expect(count, 0);
+          count++;
+        case StringEvent():
+          expect(event.value, 'string');
+          expect(count, 1);
+          count++;
+        case BoolEvent():
+          expect(event.value, false);
+          expect(count, 2);
+          count++;
+        case DoubleEvent():
+          expect(event.value, 3.14);
+          expect(count, 3);
+          count++;
+        case ObjectsEvent():
+          expect(event.value, true);
+          expect(count, 4);
+          count++;
+        case EnumEvent():
+          expect(event.value, EventEnum.fortyTwo);
+          expect(count, 5);
+          count++;
+        case ClassEvent():
+          expect(event.value.aNullableInt, 0);
+          expect(count, 6);
+          count++;
+      }
+    });
+  }, skip: !eventChannelSupported.contains(targetGenerator));
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {

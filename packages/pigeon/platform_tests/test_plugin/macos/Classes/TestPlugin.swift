@@ -30,6 +30,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
+
+    StreamIntsStreamHandler.register(with: binaryMessenger, wrapper: SendInts())
+    StreamEventsStreamHandler.register(with: binaryMessenger, wrapper: SendEvents())
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -1211,6 +1214,54 @@ public class TestPluginWithSuffix: HostSmallApi {
     completion(.success(Void()))
   }
 
+}
+
+class SendInts: StreamIntsStreamHandler {
+  var timerActive = false
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
+    var count: Int64 = 0
+    if !timerActive {
+      timerActive = true
+      Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
+        sink.success(count)
+        count += 1
+        if count >= 5 {
+          sink.endOfStream()
+        }
+      }
+    }
+  }
+}
+
+class SendEvents: StreamEventsStreamHandler {
+  var timerActive = false
+  var eventList: [EventChannelDataBase] =
+    [
+      IntEvent(value: 1),
+      StringEvent(value: "string"),
+      BoolEvent(value: false),
+      DoubleEvent(value: 3.14),
+      ObjectsEvent(value: true),
+      EnumEvent(value: EventEnum.fortyTwo),
+      ClassEvent(value: EventAllNullableTypes(aNullableInt: 0)),
+    ]
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<EventChannelDataBase>)
+  {
+    var count = 0
+    if !timerActive {
+      timerActive = true
+      Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
+        if count >= self.eventList.count {
+          sink.endOfStream()
+        } else {
+          sink.success(self.eventList[count])
+          count += 1
+        }
+      }
+    }
+  }
 }
 
 class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
