@@ -1,3 +1,7 @@
+## 0.8.12+17
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.0.
+
 ## 0.8.12+16
 
 * Updates Pigeon for non-nullable collection type support.
