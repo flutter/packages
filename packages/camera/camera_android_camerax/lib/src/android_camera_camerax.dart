@@ -893,6 +893,9 @@ class AndroidCameraCameraX extends CameraPlatform {
             degreesForDeviceOrientation[currentDeviceOrientation]! * signForCameraDirection +
             360) %
         360;
+            int rotation2 = ((rotation ~/ 90) % 4) - previouslyAppliedRotation[currentDeviceOrientation]!;
+
+    // TODO: camille figure out how to factor in sensor without the rest because i think thats the issue. also retest pixel phone.
     
     print('naturalOrientation $naturalOrientation');
     print('naturalDeviceOrientationDegrees $naturalDeviceOrientationDegrees');
@@ -904,7 +907,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (isPreviewPreTransformed) {
       // CAMILLE: here
     return RotatedBox(
-        quarterTurns:( -degreesForDeviceOrientation[currentDeviceOrientation]! ~/ 90) % 4, child: cameraPreview);    
+        quarterTurns:rotation2 - ((-degreesForDeviceOrientation[currentDeviceOrientation]! ~/ 90) % 4), child: cameraPreview);    
     }
 
     // Fix for the rotation of the camera preview not backed by a SurfaceTexture
