@@ -33,6 +33,15 @@ void main() {
         expect(params.iFrame.style.height, '100%');
         expect(params.iFrame.style.border, 'none');
       });
+
+      test('sets <iframe> attribute credentialless', () {
+        // TODO(cup): Figure out how to instantiate web.Attr.
+        final WebWebViewControllerCreationParams params =
+            WebWebViewControllerCreationParams(attributes: const <web.Attr>[]);
+
+        expect(params.iFrame.attributes.getNamedItem('credentialless')!.value,
+            'true');
+      });
     });
 
     group('loadHtmlString', () {

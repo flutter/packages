@@ -18,10 +18,13 @@ import 'http_request_factory.dart';
 @immutable
 class WebWebViewControllerCreationParams
     extends PlatformWebViewControllerCreationParams {
-  /// Creates a new [AndroidWebViewControllerCreationParams] instance.
+  /// Creates a new [WebWebViewControllerCreationParams] instance.
   WebWebViewControllerCreationParams({
     @visibleForTesting this.httpRequestFactory = const HttpRequestFactory(),
-  }) : super();
+    Iterable<web.Attr> attributes = const <web.Attr>{},
+  }) : super() {
+    attributes.forEach(iFrame.setAttributeNode);
+  }
 
   /// Creates a [WebWebViewControllerCreationParams] instance based on [PlatformWebViewControllerCreationParams].
   WebWebViewControllerCreationParams.fromPlatformWebViewControllerCreationParams(
@@ -30,7 +33,8 @@ class WebWebViewControllerCreationParams
     PlatformWebViewControllerCreationParams params, {
     @visibleForTesting
     HttpRequestFactory httpRequestFactory = const HttpRequestFactory(),
-  }) : this(httpRequestFactory: httpRequestFactory);
+    Iterable<web.Attr> attributes = const <web.Attr>{},
+  }) : this(httpRequestFactory: httpRequestFactory, attributes: attributes);
 
   static int _nextIFrameId = 0;
 
