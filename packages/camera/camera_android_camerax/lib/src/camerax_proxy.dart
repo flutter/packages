@@ -348,7 +348,9 @@ class CameraXProxy {
   }
 
   static Future<DeviceOrientation> _getUiOrientation() async {
-    return DeviceOrientationManager.getUiOrientation();
+    DeviceOrientation deviceOrientation = await DeviceOrientationManager.getUiOrientation();
+    print('Camille 4 device orientation: $deviceOrientation');
+    return deviceOrientation;
   }
 
   static Future<int> _getSensorOrientation(

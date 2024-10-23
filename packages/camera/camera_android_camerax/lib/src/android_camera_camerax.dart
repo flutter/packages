@@ -407,9 +407,17 @@ class AndroidCameraCameraX extends CameraPlatform {
           .then((int value) => sensorOrientation = value),
       proxy
           .getUiOrientation()
-          .then((DeviceOrientation value) => naturalOrientation ??= value),
+          .then((DeviceOrientation value) => naturalOrientation ??= value)
+          .then((DeviceOrientation value) => currentDeviceOrientation = value),
     ]);
-    currentDeviceOrientation = naturalOrientation;
+    final int sensorOrientationForFun = await proxy
+          .getSensorOrientation(camera2CameraInfo);
+    sensorOrientation = sensorOrientationForFun;
+    final DeviceOrientation deviceOrientationForFun = await proxy.getUiOrientation();
+    naturalOrientation = deviceOrientationForFun;
+    currentDeviceOrientation = deviceOrientationForFun;
+    print('NEW NEW NEW CAMILLE: $deviceOrientationForFun');
+    print('NEW CAMILLE: current device orientation set to $currentDeviceOrientation');
     _subscriptionForDeviceOrientationChanges = onDeviceOrientationChanged()
         .listen((DeviceOrientationChangedEvent event) {
           print('CAMILLE: ORIENTATION CHANGED!!!!!');

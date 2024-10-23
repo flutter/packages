@@ -148,12 +148,14 @@ public class DeviceOrientationManager {
     switch (orientation) {
       case Configuration.ORIENTATION_PORTRAIT:
         if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90) {
+          Log.e("CAMILLE 3", "something has gone very wrong???????");
           return PlatformChannel.DeviceOrientation.PORTRAIT_UP;
         } else {
           return PlatformChannel.DeviceOrientation.PORTRAIT_DOWN;
         }
       case Configuration.ORIENTATION_LANDSCAPE:
         if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90) {
+          Log.e("CAMILLE 3", "we are ok and something weird is happening");
           return PlatformChannel.DeviceOrientation.LANDSCAPE_LEFT;
         } else {
           return PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT;
