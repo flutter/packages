@@ -1,3 +1,7 @@
+## 0.3.18+4
+
+* Removes unneeded platform availability annotations.
+
 ## 0.3.18+3
 
 * Updates Pigeon for non-nullable collection type support.
