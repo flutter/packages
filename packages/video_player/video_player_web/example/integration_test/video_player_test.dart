@@ -47,7 +47,7 @@ void main() {
       
       expect(video.muted, isTrue, reason: 'muted attribute should be true');
       // If the volume is set to zero, tapping the unmute button may not restore the audio as expected.
-      expect(video.volume, greaterThan(0), 
+      expect(video.volume, greaterThan(0),
           reason: 'Volume should not be set to zero when muted');
 
       player.setVolume(0.5);
