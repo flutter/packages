@@ -11,13 +11,12 @@ final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 final GlobalKey<NavigatorState> _tabANavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'tabANav');
-
 final GlobalKey<NavigatorState> _tabBNavigatorKey =
-GlobalKey<NavigatorState>(debugLabel: 'tabBNav');
+    GlobalKey<NavigatorState>(debugLabel: 'tabBNav');
 final GlobalKey<NavigatorState> _tabB1NavigatorKey =
-GlobalKey<NavigatorState>(debugLabel: 'tabB1Nav');
+    GlobalKey<NavigatorState>(debugLabel: 'tabB1Nav');
 final GlobalKey<NavigatorState> _tabB2NavigatorKey =
-GlobalKey<NavigatorState>(debugLabel: 'tabB2Nav');
+    GlobalKey<NavigatorState>(debugLabel: 'tabB2Nav');
 
 @visibleForTesting
 // ignore: public_member_api_docs
