@@ -99,8 +99,6 @@ void main() {
     final Duration pausedDuration = await player.getPosition(textureId);
     await tester.pumpAndSettle(_playDuration);
 
-    // TODO(camsim99): Implement reliable way to tell when pausing completes
-    // to check for exact pausedDuration.
     expect(await player.getPosition(textureId), pausedDuration);
     await player.dispose(textureId);
   });
