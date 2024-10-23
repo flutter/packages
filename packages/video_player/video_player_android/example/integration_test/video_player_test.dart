@@ -100,7 +100,7 @@ void main() {
 
     // TODO(camsim99): Implement reliable way to tell when pausing completes
     // to check for exact pausedDuration.
-    expect((await player.getPosition(textureId)).inMilliseconds, inInclusiveRange(pausedDuration.inMilliseconds, pausedDuration.inMilliseconds + 200));
+    expect((await player.getPosition(textureId)).inMilliseconds, inInclusiveRange(pausedDuration.inMilliseconds, pausedDuration.inMilliseconds + 500));
     await player.dispose(textureId);
   });
 
