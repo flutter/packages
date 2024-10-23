@@ -914,8 +914,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     if (isPreviewPreTransformed) {
       // CAMILLE: here
-    return RotatedBox(
-        quarterTurns:rotation2 - ((-degreesForDeviceOrientation[currentDeviceOrientation]! ~/ 90) % 4), child: cameraPreview);    
+    return cameraPreview;  
     }
 
     // Fix for the rotation of the camera preview not backed by a SurfaceTexture
@@ -924,21 +923,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     print('signForCameraDirection $signForCameraDirection');
     print('currentDeviceOrientation $currentDeviceOrientation');
-
-    // if (signForCameraDirection == 1 &&
-    //     (currentDeviceOrientation == DeviceOrientation.landscapeLeft ||
-    //         currentDeviceOrientation == DeviceOrientation.landscapeRight)) {
-    //   // For front-facing cameras, the image buffer is rotated counterclockwise,
-    //   // so we determine the rotation needed to correct the camera preview with
-    //   // respect to the naturalOrientation of the device based on the inverse of
-    //   // naturalOrientation.
-    //   naturalDeviceOrientationDegrees += 180;
-    // }
-
     print('naturalDeviceOrientationDegrees $naturalDeviceOrientationDegrees');
     print('sensorOrientation $sensorOrientation');
-
-
 
   // TODO: camille try 4
     int quarterTurnsToCorrectPreview = ((rotation ~/ 90) % 4) - previouslyAppliedRotation[currentDeviceOrientation]!;
