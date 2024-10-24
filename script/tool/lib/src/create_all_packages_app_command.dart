@@ -219,22 +219,45 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         .childDirectory('app')
         .childFile('build.gradle.kts');
 
+    // Ensure that there is a dependencies section, so the dependencies addition
+    // below will work.
+    final String content = gradleFile.readAsStringSync();
+    if (!content.contains('\ndependencies {')) {
+      gradleFile.writeAsStringSync('''
+$content
+dependencies {}
+''');
+    }
+
     const String lifecycleDependency =
-        '    id("androidx.lifecycle:lifecycle-runtime") version "2.2.0-rc01"';
+        '    implementation("androidx.lifecycle:lifecycle-runtime:2.2.0-rc01")';
 
     _adjustFile(
       gradleFile,
       replacements: <String, List<String>>{
+        // minSdkVersion 21 is required by camera_android.
         'compileSdk': <String>['compileSdk = 34'],
       },
       additions: <String, List<String>>{
         'defaultConfig {': <String>['        multiDexEnabled = true'],
       },
       regexReplacements: <RegExp, List<String>>{
-        RegExp(r'^plugins\s+{$'): <String>[
-          'plugins {',
+        // Tests for https://github.com/flutter/flutter/issues/43383
+        // Handling of 'dependencies' is more complex since it hasn't been very
+        // stable across template versions.
+        // - Handle an empty, collapsed dependencies section.
+        RegExp(r'^dependencies\s+{\s*}$'): <String>[
+          'dependencies {',
+          lifecycleDependency,
+          '}',
+        ],
+        // - Handle a normal dependencies section.
+        RegExp(r'^dependencies\s+{$'): <String>[
+          'dependencies {',
           lifecycleDependency,
         ],
+        // - See below for handling of the case where there is no dependencies
+        // section.
       },
     );
   }
