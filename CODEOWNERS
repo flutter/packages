@@ -28,6 +28,7 @@ packages/local_auth/**                                   @stuartmorgan
 packages/metrics_center/**                               @christopherfujino
 packages/multicast_dns/**                                @jmagman
 packages/palette_generator/**                            @gspencergoog
+packages/path_parsing/**                                 @domesticmouse
 packages/path_provider/**                                @stuartmorgan
 packages/pigeon/**                                       @tarrinneal
 packages/platform/**                                     @stuartmorgan
