@@ -1,5 +1,6 @@
 ## NEXT
 
+* Require `web: ^1.0.0`.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 2.3.2

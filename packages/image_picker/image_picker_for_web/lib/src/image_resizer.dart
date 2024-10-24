@@ -8,7 +8,6 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
-import 'package:web/helpers.dart';
 import 'package:web/web.dart' as web;
 
 import 'image_resizer_utils.dart';
