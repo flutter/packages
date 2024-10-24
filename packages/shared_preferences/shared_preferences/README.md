@@ -11,7 +11,7 @@ returning, so this plugin must not be used for storing critical data.
 
 Supported data types are `int`, `double`, `bool`, `String` and `List<String>`.
 
-|             | Android | iOS   | Linux | macOS  | Web | Windows     |
+| Platform    | Android | iOS   | Linux | macOS  | Web | Windows     |
 |-------------|---------|-------|-------|--------|-----|-------------|
 | **Support** | SDK 16+ | 12.0+ | Any   | 10.14+ | Any | Any         |
 
