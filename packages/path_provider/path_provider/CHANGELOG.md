@@ -1,6 +1,5 @@
 ## NEXT
 
-* Updates example app Android compileSdkVersion to 35 and to include flutter as a declarative dependency.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 2.1.4
