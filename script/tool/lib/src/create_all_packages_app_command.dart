@@ -217,7 +217,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     final File gradleFile = app
         .platformDirectory(FlutterPlatform.android)
         .childDirectory('app')
-        .childFile('build.gradle');
+        .childFile('build.gradle.kts');
 
     // Ensure that there is a dependencies section, so the dependencies addition
     // below will work.
