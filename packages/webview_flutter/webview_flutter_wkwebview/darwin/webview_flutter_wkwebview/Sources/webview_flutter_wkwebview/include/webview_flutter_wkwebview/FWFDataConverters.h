@@ -207,4 +207,11 @@ extern NSURLCredentialPersistence
 FWFNativeNSURLCredentialPersistenceFromFWFNSUrlCredentialPersistence(
     FWFNSUrlCredentialPersistence value);
 
+/// Converts an SecTrustResultType to an FWFSslErrorTypeData.
+///
+/// @param value The object containing information to create an FWFSslErrorTypeData.
+///
+/// @return A FWFSslErrorTypeData or -1 if data could not be converted.
+extern FWFSslErrorTypeData FWFSslErrorTypeDataFromSecTrustResult(SecTrustResultType value);
+
 NS_ASSUME_NONNULL_END

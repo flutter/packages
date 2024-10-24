@@ -1145,7 +1145,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           NSUrlSessionAuthChallengeDisposition disposition,
           NSUrlCredential? credential,
         ) completionHandler,
-      ) {
+      ) async {
         if (challenge.protectionSpace.authenticationMethod ==
                 NSUrlAuthenticationMethod.httpBasic ||
             challenge.protectionSpace.authenticationMethod ==
@@ -1181,6 +1181,42 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
             );
             return;
           }
+        } else if (challenge.protectionSpace.authenticationMethod ==
+            NSUrlAuthenticationMethod.serverTrust) {
+          final FutureOr<SslErrorDecision> Function(SslError)? callback =
+              weakThis.target?._onSslError;
+          if (callback != null) {
+            final sslErrorDecision = await callback(
+              SslError(
+                host: challenge.protectionSpace.host!,
+                scheme: challenge.protectionSpace.protocol!,
+                port: challenge.protectionSpace.port!,
+                errorType: challenge.protectionSpace.sslErrorType,
+                certificate: SslCertificate(
+                  issuedBy: null,
+                  issuedTo: null,
+                  validNotAfterDate: null,
+                  validNotBeforeDate: null,
+                  x509CertificateDer:
+                      challenge.protectionSpace.x509CertificateDer,
+                ),
+              ),
+            );
+
+            if (sslErrorDecision == SslErrorDecision.proceed) {
+              completionHandler(
+                NSUrlSessionAuthChallengeDisposition.useCredential,
+                null,
+              );
+            } else if (sslErrorDecision == SslErrorDecision.cancel) {
+              completionHandler(
+                NSUrlSessionAuthChallengeDisposition
+                    .cancelAuthenticationChallenge,
+                null,
+              );
+            }
+            return;
+          }
         }
 
         completionHandler(
@@ -1202,6 +1238,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   NavigationRequestCallback? _onNavigationRequest;
   UrlChangeCallback? _onUrlChange;
   HttpAuthRequestCallback? _onHttpAuthRequest;
+  SslErrorCallback? _onSslError;
 
   @override
   Future<void> setOnPageFinished(PageEventCallback onPageFinished) async {
@@ -1247,6 +1284,11 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
     HttpAuthRequestCallback onHttpAuthRequest,
   ) async {
     _onHttpAuthRequest = onHttpAuthRequest;
+  }
+
+  @override
+  Future<void> setOnSslError(SslErrorCallback onSslError) async {
+    _onSslError = onSslError;
   }
 }
 

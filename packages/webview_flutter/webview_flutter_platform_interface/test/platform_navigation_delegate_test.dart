@@ -155,6 +155,20 @@ void main() {
       throwsUnimplementedError,
     );
   });
+
+  test(
+      'Default implementation of setOnSslError should throw unimplemented error',
+      () {
+    final PlatformNavigationDelegate callbackDelegate =
+        ExtendsPlatformNavigationDelegate(
+            const PlatformNavigationDelegateCreationParams());
+
+    expect(
+      () => callbackDelegate
+          .setOnSslError((SslError sslError) => SslErrorDecision.proceed),
+      throwsUnimplementedError,
+    );
+  });
 }
 
 class MockWebViewPlatformWithMixin extends MockWebViewPlatform
