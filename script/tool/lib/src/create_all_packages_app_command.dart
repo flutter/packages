@@ -235,7 +235,6 @@ dependencies {}
     _adjustFile(
       gradleFile,
       replacements: <String, List<String>>{
-        // minSdkVersion 21 is required by camera_android.
         'compileSdk': <String>['compileSdk = 34'],
       },
       additions: <String, List<String>>{
