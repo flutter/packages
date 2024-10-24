@@ -11,9 +11,9 @@ returning, so this plugin must not be used for storing critical data.
 
 Supported data types are `int`, `double`, `bool`, `String` and `List<String>`.
 
-|             | Android | iOS   | Linux | macOS  | Web | Windows     |
-|-------------|---------|-------|-------|--------|-----|-------------|
-| **Support** | SDK 16+ | 12.0+ | Any   | 10.14+ | Any | Any         |
+| **Platform** | Android | iOS   | Linux | macOS  | Web | Windows     |
+|--------------|---------|-------|-------|--------|-----|-------------|
+| **Support**  | SDK 16+ | 12.0+ | Any   | 10.14+ | Any | Any         |
 
 ## Usage
 
@@ -122,10 +122,10 @@ await asyncPrefs.clear(allowList: <String>{'action', 'repeat'});
 ```dart
 final SharedPreferencesWithCache prefsWithCache =
     await SharedPreferencesWithCache.create(
-  cacheOptions: const SharedPreferencesWithCacheOptions(
-    // When an allowlist is included, any keys that aren't included cannot be used.
-    allowList: <String>{'repeat', 'action'},
-  ),
+      cacheOptions: const SharedPreferencesWithCacheOptions(
+      // When an allowlist is included, any keys that aren't included cannot be used.
+      allowList: <String>{'repeat', 'action'},
+    ),
 );
 
 await prefsWithCache.setBool('repeat', true);
