@@ -1,3 +1,7 @@
+## 2.6.3
+
+* Fixes playback speed resetting.
+
 ## 2.6.2
 
 * Updates Pigeon for non-nullable collection type support.
