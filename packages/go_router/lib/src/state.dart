@@ -237,13 +237,22 @@ class ShellRouteState extends GoRouterState {
   /// Get the index of the [Navigator] or [StatefulShellBranch] in the
   /// associated shell route.
   ///
-  /// See also: [ShellRouteBase.indexOfNavigatorKey].
+  /// See also: [ShellRouteBase.indexStatefulShellBranchOfNavigatorKey].
   int get navigatorIndex => shellRoute.indexOfNavigatorKey(navigatorKey);
 
   /// Get the location ([RouteMatchList]) associated with the current state
   /// of the [Navigator] at the specified index, if any.
+  ///
+  /// See also: [ShellRouteBase.locationOfNavigator].
   RouteMatchList navigatorLocation(int navigatorIndex) =>
       shellRoute.locationOfNavigator(this, navigatorIndex);
+
+  /// Resets the location of the [Navigator] at the specified index to its
+  /// initial location, if supported.
+  ///
+  /// See also: [ShellRouteBase.resetLocationOfNavigator].
+  void resetNavigatorLocation(int navigatorIndex) =>
+      shellRoute.resetLocationOfNavigator(this, navigatorIndex);
 
   /// Gets the [ShellRouteState] from context.
   static ShellRouteState of(BuildContext context, {String? name}) {

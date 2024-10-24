@@ -445,7 +445,7 @@ class GoRoute extends RouteBase {
 /// as [ShellRoute] and [StatefulShellRoute].
 abstract class ShellRouteBase extends RouteBase {
   /// Constructs a [ShellRouteBase].
-  const ShellRouteBase._({
+  const ShellRouteBase({
     super.redirect,
     this.name,
     required super.routes,
@@ -455,7 +455,8 @@ abstract class ShellRouteBase extends RouteBase {
   /// The name of the shell route.
   final String? name;
 
-  static void _debugCheckSubRouteParentNavigatorKeys(
+  /// Helper method to validate the configuration of nested navigators.
+  static void debugCheckSubRouteParentNavigatorKeys(
       List<RouteBase> subRoutes, GlobalKey<NavigatorState> navigatorKey) {
     for (final RouteBase route in subRoutes) {
       assert(
@@ -465,7 +466,7 @@ abstract class ShellRouteBase extends RouteBase {
       if (route is GoRoute && route.redirectOnly) {
         // This route does not produce a page, need to check its sub-routes
         // instead.
-        _debugCheckSubRouteParentNavigatorKeys(route.routes, navigatorKey);
+        debugCheckSubRouteParentNavigatorKeys(route.routes, navigatorKey);
       }
     }
   }
@@ -484,6 +485,9 @@ abstract class ShellRouteBase extends RouteBase {
   Page<dynamic>? buildPage(BuildContext context, ShellRouteState state,
       NavigatorBuilder navigatorBuilder);
 
+  /// Returns the keys for all the [Navigator]s managed by this shell route.
+  List<GlobalKey<NavigatorState>> get nestedNavigatorKeys;
+
   /// Returns the key for the [Navigator] that is to be used for the specified
   /// immediate sub-route of this shell route.
   GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute);
@@ -494,14 +498,33 @@ abstract class ShellRouteBase extends RouteBase {
   /// If this shell route does not support multiple navigators, this method
   /// will return 0 if the navigator key matches the navigator key of this
   /// route. If no matching navigator key is found, -1 will be returned.
-  int indexOfNavigatorKey(GlobalKey<NavigatorState> navigatorKey);
+  int indexOfNavigatorKey(GlobalKey<NavigatorState> navigatorKey) =>
+      nestedNavigatorKeys.indexOf(navigatorKey);
 
   /// Returns the location ([RouteMatchList]) associated with the current state
   /// of the [Navigator] at the specified index, if any.
   ///
   /// Returns [RouteMatchList.empty] if a location cannot be determined (e.g.
   /// if this is not supported by this shell route implementation).
-  RouteMatchList locationOfNavigator(ShellRouteState state, int navigatorIndex);
+  ///
+  /// This implementation always [RouteMatchList.empty]. Custom shell route
+  /// implementations that support multiple nested navigators should override
+  /// this method to return current location of the Navigator at the specified
+  /// index.
+  RouteMatchList locationOfNavigator(
+          ShellRouteState state, int navigatorIndex) =>
+      RouteMatchList.empty;
+
+  /// Resets the location of the [Navigator] at the specified index to its
+  /// initial location, if supported.
+  ///
+  /// This implementation does nothing. Custom shell route implementations that
+  /// support multiple nested navigators should override this method to reset
+  /// the location of the Navigator at the specified index.
+  void resetLocationOfNavigator(ShellRouteState state, int navigatorIndex) {}
+
+  /// Debugging method to validate the configuration of nested navigators.
+  void debugValidateNestedNavigators(RouteConfiguration configuration);
 }
 
 /// A route that displays a UI shell around the matching child route.
@@ -611,10 +634,9 @@ class ShellRoute extends ShellRouteBase {
     GlobalKey<NavigatorState>? navigatorKey,
     this.restorationScopeId,
   })  : assert(routes.isNotEmpty),
-        navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
-        super._() {
+        navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>() {
     assert(() {
-      ShellRouteBase._debugCheckSubRouteParentNavigatorKeys(
+      ShellRouteBase.debugCheckSubRouteParentNavigatorKeys(
           routes, this.navigatorKey);
       return true;
     }());
@@ -672,19 +694,14 @@ class ShellRoute extends ShellRouteBase {
   final String? restorationScopeId;
 
   @override
+  List<GlobalKey<NavigatorState>> get nestedNavigatorKeys =>
+      <GlobalKey<NavigatorState>>[navigatorKey];
+
+  @override
   GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute) {
     assert(routes.contains(subRoute));
     return navigatorKey;
   }
-
-  @override
-  int indexOfNavigatorKey(GlobalKey<NavigatorState> navigatorKey) =>
-      navigatorKey == this.navigatorKey ? 0 : -1;
-
-  @override
-  RouteMatchList locationOfNavigator(
-          ShellRouteState state, int navigatorIndex) =>
-      RouteMatchList.empty;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -692,6 +709,9 @@ class ShellRoute extends ShellRouteBase {
     properties.add(DiagnosticsProperty<GlobalKey<NavigatorState>>(
         'navigatorKey', navigatorKey));
   }
+
+  @override
+  void debugValidateNestedNavigators(RouteConfiguration configuration) {}
 }
 
 // TODO(tolo): Consider moving StatefulShellRoute to a separate file.
@@ -841,7 +861,7 @@ class StatefulShellRoute extends ShellRouteBase {
         assert(_debugValidateParentNavigatorKeys(branches)),
         assert(_debugValidateRestorationScopeIds(restorationScopeId, branches)),
         builder = builder ?? (pageBuilder == null ? _defaultBuilder : null),
-        super._(routes: _routes(branches));
+        super(routes: _routes(branches));
 
   /// Restoration ID to save and restore the state of the navigator, including
   /// its history.
@@ -915,17 +935,16 @@ class StatefulShellRoute extends ShellRouteBase {
   }
 
   @override
+  List<GlobalKey<NavigatorState>> get nestedNavigatorKeys =>
+      branches.map((StatefulShellBranch b) => b.navigatorKey).toList();
+
+  @override
   GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute) {
     final StatefulShellBranch? branch = branches.firstWhereOrNull(
         (StatefulShellBranch e) => e.routes.contains(subRoute));
     assert(branch != null);
     return branch!.navigatorKey;
   }
-
-  @override
-  int indexOfNavigatorKey(GlobalKey<NavigatorState> navigatorKey) =>
-      branches.indexWhere(
-          (StatefulShellBranch branch) => branch.navigatorKey == navigatorKey);
 
   @override
   RouteMatchList locationOfNavigator(GoRouterState state, int navigatorIndex) {
@@ -940,7 +959,14 @@ class StatefulShellRoute extends ShellRouteBase {
     }
   }
 
-  static ShellRouteState? stateForKey(
+  @override
+  void resetLocationOfNavigator(ShellRouteState state, int navigatorIndex) {
+    key.currentState?._resetMatchListForBranch(navigatorIndex);
+  }
+
+  /// Finds the [ShellRouteState] for the given [GlobalKey], associated with a
+  /// [StatefulShellRoute].
+  static ShellRouteState? shellRouteStateForKey(
           GlobalKey<StatefulNavigationShellState> key) =>
       key.currentState?._routeState;
 
@@ -1008,6 +1034,46 @@ class StatefulShellRoute extends ShellRouteBase {
   }
 
   @override
+  void debugValidateNestedNavigators(RouteConfiguration configuration) {
+    for (final StatefulShellBranch branch in branches) {
+      if (branch.initialLocation == null) {
+        // Recursively search for the first GoRoute descendant. Will
+        // throw assertion error if not found.
+        final GoRoute? route = branch.defaultRoute;
+        final String? initialLocation =
+            route != null ? configuration.locationForRoute(route) : null;
+        assert(
+            initialLocation != null,
+            'The default location of a StatefulShellBranch must be '
+            'derivable from GoRoute descendant');
+        assert(
+            route!.pathParameters.isEmpty,
+            'The default location of a StatefulShellBranch cannot be '
+            'a parameterized route');
+      } else {
+        final RouteMatchList matchList =
+            configuration.findMatch(Uri.parse(branch.initialLocation!));
+        assert(
+            !matchList.isError,
+            'initialLocation (${matchList.uri}) of StatefulShellBranch must '
+            'be a valid location');
+        final List<RouteBase> matchRoutes = matchList.routes;
+        final int shellIndex = matchRoutes.indexOf(this);
+        bool matchFound = false;
+        if (shellIndex >= 0 && (shellIndex + 1) < matchRoutes.length) {
+          final RouteBase branchRoot = matchRoutes[shellIndex + 1];
+          matchFound = branch.routes.contains(branchRoot);
+        }
+        assert(
+            matchFound,
+            'The initialLocation (${branch.initialLocation}) of '
+            'StatefulShellBranch must match a descendant route of the '
+            'branch');
+      }
+    }
+  }
+
+  @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<Iterable<GlobalKey<NavigatorState>>>(
@@ -1041,7 +1107,7 @@ class StatefulShellBranch {
     this.observers,
   }) : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>() {
     assert(() {
-      ShellRouteBase._debugCheckSubRouteParentNavigatorKeys(
+      ShellRouteBase.debugCheckSubRouteParentNavigatorKeys(
           routes, this.navigatorKey);
       return true;
     }());
@@ -1176,6 +1242,12 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   RouteMatchList? _matchListForBranch(int index) {
     assert(index >= 0 && index < _route.branches.length);
     return _branchLocations[_route.branches[index]]?.value;
+  }
+
+  void _resetMatchListForBranch(int index) {
+    final StatefulShellBranch branch = _route.branches[index];
+    _branchNavigators.remove(branch.navigatorKey);
+    _branchLocation(branch, false).value = RouteMatchList.empty;
   }
 
   /// Creates a new RouteMatchList that is scoped to the Navigators of the

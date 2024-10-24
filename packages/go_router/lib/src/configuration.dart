@@ -84,27 +84,42 @@ class RouteConfiguration {
             ],
           );
         }
-      } else if (route is ShellRoute) {
-        _debugCheckParentNavigatorKeys(
-          route.routes,
-          <GlobalKey<NavigatorState>>[...allowedKeys..add(route.navigatorKey)],
-        );
-      } else if (route is StatefulShellRoute) {
-        for (final StatefulShellBranch branch in route.branches) {
+      } else if (route is ShellRouteBase) {
+        for (final GlobalKey<NavigatorState> key in route.nestedNavigatorKeys) {
           assert(
-              !allowedKeys.contains(branch.navigatorKey),
-              'StatefulShellBranch must not reuse an ancestor navigatorKey '
-              '(${branch.navigatorKey})');
-
+              !allowedKeys.contains(key),
+              'Shell route must not reuse an ancestor navigatorKey '
+              '(${key})');
+        }
+        for (final RouteBase subRoute in route.routes) {
+          final GlobalKey<NavigatorState> key =
+              route.navigatorKeyForSubRoute(subRoute);
           _debugCheckParentNavigatorKeys(
-            branch.routes,
-            <GlobalKey<NavigatorState>>[
-              ...allowedKeys,
-              branch.navigatorKey,
-            ],
+            [subRoute],
+            <GlobalKey<NavigatorState>>[...allowedKeys, key],
           );
         }
+        // _debugCheckParentNavigatorKeys(
+        //   route.routes,
+        //   <GlobalKey<NavigatorState>>[...allowedKeys..add(route.navigatorKey)],
+        // );
       }
+      // else if (route is StatefulShellRoute) {
+      //   for (final StatefulShellBranch branch in route.branches) {
+      //     assert(
+      //         !allowedKeys.contains(branch.navigatorKey),
+      //         'StatefulShellBranch must not reuse an ancestor navigatorKey '
+      //         '(${branch.navigatorKey})');
+      //
+      //     _debugCheckParentNavigatorKeys(
+      //       branch.routes,
+      //       <GlobalKey<NavigatorState>>[
+      //         ...allowedKeys,
+      //         branch.navigatorKey,
+      //       ],
+      //     );
+      //   }
+      // }
     }
     return true;
   }
@@ -133,43 +148,8 @@ class RouteConfiguration {
   // points to a descendant route of the route branch.
   bool _debugCheckStatefulShellBranchDefaultLocations(List<RouteBase> routes) {
     for (final RouteBase route in routes) {
-      if (route is StatefulShellRoute) {
-        for (final StatefulShellBranch branch in route.branches) {
-          if (branch.initialLocation == null) {
-            // Recursively search for the first GoRoute descendant. Will
-            // throw assertion error if not found.
-            final GoRoute? route = branch.defaultRoute;
-            final String? initialLocation =
-                route != null ? locationForRoute(route) : null;
-            assert(
-                initialLocation != null,
-                'The default location of a StatefulShellBranch must be '
-                'derivable from GoRoute descendant');
-            assert(
-                route!.pathParameters.isEmpty,
-                'The default location of a StatefulShellBranch cannot be '
-                'a parameterized route');
-          } else {
-            final RouteMatchList matchList =
-                findMatch(Uri.parse(branch.initialLocation!));
-            assert(
-                !matchList.isError,
-                'initialLocation (${matchList.uri}) of StatefulShellBranch must '
-                'be a valid location');
-            final List<RouteBase> matchRoutes = matchList.routes;
-            final int shellIndex = matchRoutes.indexOf(route);
-            bool matchFound = false;
-            if (shellIndex >= 0 && (shellIndex + 1) < matchRoutes.length) {
-              final RouteBase branchRoot = matchRoutes[shellIndex + 1];
-              matchFound = branch.routes.contains(branchRoot);
-            }
-            assert(
-                matchFound,
-                'The initialLocation (${branch.initialLocation}) of '
-                'StatefulShellBranch must match a descendant route of the '
-                'branch');
-          }
-        }
+      if (route is ShellRouteBase) {
+        route.debugValidateNestedNavigators(this);
       }
       _debugCheckStatefulShellBranchDefaultLocations(route.routes);
     }
