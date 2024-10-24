@@ -138,6 +138,11 @@
     - any-glob-to-any-file:
       - packages/palette_generator/**/*
 
+'p: path_parsing':
+  - changed-files:
+    - any-glob-to-any-file:
+      - third_party/packages/path_parsing/**/*
+
 'p: path_provider':
   - changed-files:
     - any-glob-to-any-file:
