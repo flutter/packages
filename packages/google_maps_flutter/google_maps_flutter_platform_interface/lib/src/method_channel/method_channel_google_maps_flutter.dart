@@ -556,6 +556,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
       'circlesToAdd': serializeCircleSet(mapObjects.circles),
       'heatmapsToAdd': serializeHeatmapSet(mapObjects.heatmaps),
       'tileOverlaysToAdd': serializeTileOverlaySet(mapObjects.tileOverlays),
+      'markerType': widgetConfiguration.markerType.index,
     };
 
     if (defaultTargetPlatform == TargetPlatform.android) {
@@ -647,13 +648,16 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     Set<ClusterManager> clusterManagers = const <ClusterManager>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
+    MarkerType markerType = MarkerType.marker,
   }) {
     return _buildView(
       creationId,
       onPlatformViewCreated,
       widgetConfiguration: MapWidgetConfiguration(
-          initialCameraPosition: initialCameraPosition,
-          textDirection: textDirection),
+        initialCameraPosition: initialCameraPosition,
+        textDirection: textDirection,
+        markerType: markerType,
+      ),
       mapObjects: MapObjects(
           markers: markers,
           polygons: polygons,
@@ -678,6 +682,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     Set<ClusterManager> clusterManagers = const <ClusterManager>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
+    MarkerType markerType = MarkerType.marker,
   }) {
     return buildViewWithTextDirection(
       creationId,
@@ -692,6 +697,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
       clusterManagers: clusterManagers,
       gestureRecognizers: gestureRecognizers,
       mapOptions: mapOptions,
+      markerType: markerType,
     );
   }
 }

@@ -121,6 +121,21 @@ the `GoogleMap`'s `onMapCreated` callback.
 The `GoogleMap` widget should be used within a widget with a bounded size. Using it
 in an unbounded widget will cause the application to throw a Flutter exception.
 
+### Advanced Markers
+
+[Advanced Markers](https://developers.google.com/maps/documentation/javascript/advanced-markers/overview) are map markers that offer extra customization options. [Map Id](https://developers.google.com/maps/documentation/get-map-id) is required in order to use Advanced Markers:
+
+
+<?code-excerpt "readme_sample_advanced_markers.dart (AdvancedMarkersSample)"?>
+```dart
+body: GoogleMap(
+  // Set your Map Id
+  mapId: 'my-map-id',
+
+  // Let map know that you're using Advanced Markers
+  markerType: MarkerType.advancedMarker,
+```
+
 ### Sample Usage
 
 <?code-excerpt "readme_sample.dart (MapSample)"?>

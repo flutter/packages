@@ -77,6 +77,7 @@ void main() {
             widgetConfiguration: const MapWidgetConfiguration(
               initialCameraPosition: CameraPosition(target: LatLng(0.0, 0.0)),
               textDirection: TextDirection.ltr,
+              markerType: MarkerType.marker,
             ),
           ),
           isA<Text>(),
@@ -121,6 +122,16 @@ void main() {
         expect(await platform.getStyleError(mapId: 0), null);
       },
     );
+
+    test(
+      'default implementation of isAdvancedMarkersAvailable throws Unimplemented Error',
+      () async {
+        final GoogleMapsFlutterPlatform platform =
+            BuildViewGoogleMapsFlutterPlatform();
+        expect(() => platform.isAdvancedMarkersAvailable(mapId: 0),
+            throwsUnimplementedError);
+      },
+    );
   });
 }
 
@@ -148,6 +159,7 @@ class BuildViewGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers =
         const <Factory<OneSequenceGestureRecognizer>>{},
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
+    MarkerType markerType = MarkerType.marker,
   }) {
     return const Text('');
   }

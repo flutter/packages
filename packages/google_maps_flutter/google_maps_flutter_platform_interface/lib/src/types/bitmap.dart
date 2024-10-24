@@ -4,6 +4,7 @@
 
 import 'dart:async' show Future;
 import 'dart:typed_data' show Uint8List;
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import 'package:flutter/material.dart'
@@ -15,6 +16,8 @@ import 'package:flutter/material.dart'
         Size,
         createLocalImageConfiguration;
 import 'package:flutter/services.dart' show AssetBundle;
+
+import 'glyph.dart';
 
 /// Type of bitmap scaling to use on BitmapDescriptor creation.
 enum MapBitmapScaling {
@@ -52,6 +55,8 @@ const double _naturalPixelRatio = 1.0;
 /// a default marker icon.
 /// Use the [BitmapDescriptor.defaultMarkerWithHue] to create a
 /// [BitmapDescriptor] for a default marker icon with a hue value.
+/// Use the [BitmapDescriptor.pinConfig] to create a custom icon for
+/// [AdvancedMarker].
 abstract class BitmapDescriptor {
   const BitmapDescriptor._();
 
@@ -208,6 +213,9 @@ abstract class BitmapDescriptor {
   /// Creates a BitmapDescriptor that refers to a colorization of the default
   /// marker image. For convenience, there is a predefined set of hue values.
   /// See e.g. [hueYellow].
+  ///
+  /// Doesn't work with [AdvancedMarker]s, [BitmapDescriptor.pinConfig] should
+  /// be used instead.
   static BitmapDescriptor defaultMarkerWithHue(double hue) {
     assert(0.0 <= hue && hue < 360.0);
     return DefaultMarker(hue: hue);
@@ -327,6 +335,30 @@ abstract class BitmapDescriptor {
       width: width,
       height: height,
       bitmapScaling: bitmapScaling,
+    );
+  }
+
+  /// Creates a [BitmapDescriptor] from a pin configuration.
+  ///
+  /// This methods helps customizing default marker pins. Works with
+  /// [AdvancedMarker]s.
+  ///
+  /// [backgroundColor] is the color of the pin's background.
+  /// [borderColor] is the color of the pin's border.
+  /// [glyph] is the pin's glyph to be displayed on the pin.
+  ///
+  /// See [PinConfig] for more information on the parameters.
+  ///
+  /// Returns a new [PinConfig] instance.
+  static BitmapDescriptor pinConfig({
+    Color? backgroundColor,
+    Color? borderColor,
+    Glyph? glyph,
+  }) {
+    return PinConfig(
+      backgroundColor: backgroundColor,
+      borderColor: borderColor,
+      glyph: glyph,
     );
   }
 
@@ -951,6 +983,96 @@ class BytesMapBitmap extends MapBitmap {
           'imagePixelRatio': imagePixelRatio,
           if (width != null) 'width': width,
           if (height != null) 'height': height,
+        }
+      ];
+}
+
+/// Represents a [BitmapDescriptor] that is created from a pin configuration.
+/// Can only be used with [AdvancedMarker]s.
+///
+/// The [backgroundColor] and [borderColor] are used to define the color of the
+/// standard pin marker.
+///
+/// The [glyph] parameter is used to define the glyph that is displayed on the
+/// pin marker (default glyph is a circle).
+///
+/// The following example demonstrates how to change colors of the default map
+/// pin to white and blue:
+///
+/// ```dart
+/// PinConfig(
+///   backgroundColor: Colors.blue,
+///   borderColor: Colors.white,
+///   glyph: Glyph.color(Colors.blue)
+/// )
+/// ```
+///
+/// The following example demonstrates how to customize a marker pin by showing
+/// a short text on the pin:
+///
+/// ```dart
+/// PinConfig(
+///   backgroundColor: Colors.blue,
+///   glyph: Glyph.text('Pin', Colors.white)
+/// )
+/// ```
+///
+/// The following example demonstrates how to customize a marker pin by showing
+/// a custom image on the pin:
+///
+/// ```dart
+/// PinConfig(
+///   glyph: Glyph.bitmapDescriptor(
+///     BitmapDescriptor.asset(
+///       ImageConfiguration(size: Size(12, 12)),
+///       'assets/cat.png'
+///    )
+/// )
+/// ```
+///
+class PinConfig extends BitmapDescriptor {
+  /// Constructs a [PinConfig] that is created from a pin configuration.
+  ///
+  /// The [backgroundColor] and [borderColor] are used to define the color of
+  /// the standard pin marker.
+  ///
+  /// The [glyph] parameter is used to define the glyph that is displayed on the
+  /// pin marker.
+  const PinConfig({
+    this.backgroundColor,
+    this.borderColor,
+    this.glyph,
+  })  : assert(
+          backgroundColor != null || borderColor != null || glyph != null,
+          'Cannot create PinConfig with all parameters being null.',
+        ),
+        super._();
+
+  /// The type of the MapBitmap object, used for the JSON serialization.
+  static const String type = 'pinConfig';
+
+  /// The background color of the pin
+  final Color? backgroundColor;
+
+  /// The border color of the pin
+  final Color? borderColor;
+
+  /// The glyph that is displayed on the pin marker
+  final Glyph? glyph;
+
+  @override
+  Object toJson() => <Object>[
+        type,
+        <String, Object?>{
+          if (backgroundColor != null)
+            'backgroundColor': backgroundColor?.value,
+          if (borderColor != null) 'borderColor': borderColor?.value,
+          if (glyph?.text != null) 'glyphText': glyph?.text,
+          if (glyph?.textColor != null)
+            'glyphTextColor': glyph?.textColor?.value,
+          if (glyph?.color != null) 'glyphColor': glyph?.color?.value,
+          if (glyph?.bitmapDescriptor != null)
+            'glyphBitmapDescriptor': glyph?.bitmapDescriptor?.toJson(),
         }
       ];
 }

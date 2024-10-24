@@ -101,7 +101,7 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   // See updateMapConfiguration for why this is not using configuration.style.
   options.styles = styles;
 
-  options.mapId = configuration.cloudMapId;
+  options.mapId = configuration.mapId ?? configuration.cloudMapId;
 
   return options;
 }
@@ -193,7 +193,7 @@ LatLng gmLatLngToLatLng(gmaps.LatLng latLng) {
 }
 
 /// Converts a [gmaps.LatLngBounds] into a [LatLngBounds].
-LatLngBounds gmLatLngBoundsTolatLngBounds(gmaps.LatLngBounds latLngBounds) {
+LatLngBounds gmLatLngBoundsToLatLngBounds(gmaps.LatLngBounds latLngBounds) {
   return LatLngBounds(
     southwest: gmLatLngToLatLng(latLngBounds.southWest),
     northeast: gmLatLngToLatLng(latLngBounds.northEast),
@@ -272,19 +272,45 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
   // and the marker.infoWindow.anchor property.
 }
 
-// Attempts to extract a [gmaps.Size] from `iconConfig[sizeIndex]`.
+/// Attempts to extract a [gmaps.Size] from `iconConfig[sizeIndex]`.
 gmaps.Size? _gmSizeFromIconConfig(List<Object?> iconConfig, int sizeIndex) {
-  gmaps.Size? size;
+  final Size? size = _sizeFromIconConfig(iconConfig, sizeIndex);
+  return size != null ? gmaps.Size(size.width, size.height) : null;
+}
+
+/// Attempts to extract a [Size] from `iconConfig[sizeIndex]`.
+Size? _sizeFromIconConfig(List<Object?> iconConfig, int sizeIndex) {
+  Size? size;
   if (iconConfig.length >= sizeIndex + 1) {
     final List<Object?>? rawIconSize = iconConfig[sizeIndex] as List<Object?>?;
     if (rawIconSize != null) {
-      size = gmaps.Size(
+      size = Size(
         rawIconSize[0]! as double,
         rawIconSize[1]! as double,
       );
     }
   }
   return size;
+}
+
+/// Sets the size and style of the [icon] element
+void _setIconStyle({
+  required web.Element icon,
+  required Size? size,
+  required double? opacity,
+  required bool? isVisible,
+}) {
+  icon.setAttribute(
+    'style',
+    <String>[
+      if (size != null) ...<String>[
+        'width: ${size.width}px;',
+        'height: ${size.height}px;',
+      ],
+      if (opacity != null) 'opacity: $opacity;',
+      if (isVisible != null) 'visibility: ${isVisible ? 'visible' : 'hidden'};',
+    ].join(' '),
+  );
 }
 
 /// Sets the size of the Google Maps icon.
@@ -370,6 +396,130 @@ void _cleanUpBitmapConversionCaches() {
   _bitmapBlobUrlCache.clear();
 }
 
+/// Converts a [BitmapDescriptor] into a [Node] that can be used as Advanced
+/// Marker icon
+Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
+  BitmapDescriptor bitmapDescriptor, {
+  required double? opacity,
+  required bool isVisible,
+}) async {
+  if (bitmapDescriptor is PinConfig) {
+    final gmaps.PinElementOptions options = gmaps.PinElementOptions()
+      ..background = bitmapDescriptor.backgroundColor != null
+          ? _getCssColor(bitmapDescriptor.backgroundColor!)
+          : null
+      ..borderColor = bitmapDescriptor.borderColor != null
+          ? _getCssColor(bitmapDescriptor.borderColor!)
+          : null
+      ..glyphColor = bitmapDescriptor.glyph?.color != null
+          ? _getCssColor(bitmapDescriptor.glyph!.color!)
+          : null;
+
+    final Glyph? glyph = bitmapDescriptor.glyph;
+    if (glyph != null) {
+      if (glyph.text != null) {
+        // Set glyph text and text color
+        final web.Element element = document.createElement('p');
+        element.innerHTML = glyph.text!.toJS;
+        if (glyph.textColor != null) {
+          element.setAttribute(
+            'style',
+            'color: ${_getCssColor(bitmapDescriptor.glyph!.textColor!)}',
+          );
+        }
+
+        options.glyph = element;
+      } else if (glyph.bitmapDescriptor != null) {
+        // Create glyph from bitmap
+        final Node? glyphBitmap = await _advancedMarkerIconFromBitmapDescriptor(
+          glyph.bitmapDescriptor!,
+          // Always opaque, opacity is handled by the parent marker
+          opacity: 1.0,
+          // Always visible, as the visibility is handled by the parent marker
+          isVisible: true,
+        );
+        options.glyph = glyphBitmap;
+      }
+    }
+
+    final gmaps.PinElement pinElement = gmaps.PinElement(options);
+    final HTMLElement htmlElement = pinElement.element;
+    htmlElement.style
+      ..visibility = isVisible ? 'visible' : 'hidden'
+      ..opacity = opacity?.toString() ?? '1.0';
+    return htmlElement;
+  }
+
+  if (bitmapDescriptor is MapBitmap) {
+    final String url = switch (bitmapDescriptor) {
+      (final BytesMapBitmap bytesMapBitmap) =>
+        _bitmapBlobUrlCache.putIfAbsent(bytesMapBitmap.byteData.hashCode, () {
+          final Blob blob =
+              Blob(<JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS);
+          return URL.createObjectURL(blob as JSObject);
+        }),
+      (final AssetMapBitmap assetMapBitmap) =>
+        ui_web.assetManager.getAssetUrl(assetMapBitmap.assetName),
+      _ => throw UnimplementedError(),
+    };
+
+    final web.Element icon = document.createElement('img')
+      ..setAttribute('src', url);
+
+    final Size? size = switch (bitmapDescriptor.bitmapScaling) {
+      MapBitmapScaling.auto => await _getBitmapSize(bitmapDescriptor, url),
+      MapBitmapScaling.none => null,
+    };
+    _setIconStyle(
+        icon: icon, size: size, opacity: opacity, isVisible: isVisible);
+
+    return icon;
+  }
+
+  // The following code is for the deprecated BitmapDescriptor.fromBytes
+  // and BitmapDescriptor.fromAssetImage.
+  final List<Object?> iconConfig = bitmapDescriptor.toJson() as List<Object?>;
+  if (iconConfig[0] == 'fromAssetImage') {
+    assert(iconConfig.length >= 2);
+    // iconConfig[2] contains the DPIs of the screen, but that information is
+    // already encoded in the iconConfig[1]
+    final web.Element icon = document.createElement('img')
+      ..setAttribute(
+        'src',
+        ui_web.assetManager.getAssetUrl(iconConfig[1]! as String),
+      );
+
+    final Size? size = _sizeFromIconConfig(iconConfig, 3);
+    _setIconStyle(
+        icon: icon, size: size, opacity: opacity, isVisible: isVisible);
+    return icon;
+  } else if (iconConfig[0] == 'fromBytes') {
+    // Grab the bytes, and put them into a blob
+    final List<int> bytes = iconConfig[1]! as List<int>;
+    // Create a Blob from bytes, but let the browser figure out the encoding
+    final Blob blob;
+
+    assert(
+      bytes is Uint8List,
+      'The bytes for a BitmapDescriptor icon must be a Uint8List',
+    );
+
+    // TODO(ditman): Improve this conversion
+    // See https://github.com/dart-lang/web/issues/180
+    blob = Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
+
+    final web.Element icon = document.createElement('img')
+      ..setAttribute('src', URL.createObjectURL(blob as JSObject));
+
+    final Size? size = _sizeFromIconConfig(iconConfig, 2);
+    _setIconStyle(
+        size: size, icon: icon, opacity: opacity, isVisible: isVisible);
+    return icon;
+  }
+
+  return null;
+}
+
 // Converts a [BitmapDescriptor] into a [gmaps.Icon] that can be used in Markers.
 Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
     BitmapDescriptor bitmapDescriptor) async {
@@ -399,6 +549,7 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
       case MapBitmapScaling.none:
         break;
     }
+
     return icon;
   }
 
@@ -447,21 +598,44 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
 
 // Computes the options for a new [gmaps.Marker] from an incoming set of options
 // [marker], and the existing marker registered with the map: [currentMarker].
-Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
+Future<O> _markerOptionsFromMarker<T, O>(
   Marker marker,
-  gmaps.Marker? currentMarker,
+  T? currentMarker,
 ) async {
-  return gmaps.MarkerOptions()
-    ..position = gmaps.LatLng(
-      marker.position.latitude,
-      marker.position.longitude,
-    )
-    ..title = sanitizeHtml(marker.infoWindow.title ?? '')
-    ..zIndex = marker.zIndex
-    ..visible = marker.visible
-    ..opacity = marker.alpha
-    ..draggable = marker.draggable
-    ..icon = await _gmIconFromBitmapDescriptor(marker.icon);
+  if (marker is AdvancedMarker) {
+    final gmaps.AdvancedMarkerElementOptions options =
+        gmaps.AdvancedMarkerElementOptions()
+          ..collisionBehavior = _markerCollisionBehaviorToGmCollisionBehavior(
+            marker.collisionBehavior,
+          )
+          ..content = await _advancedMarkerIconFromBitmapDescriptor(
+            marker.icon,
+            opacity: marker.alpha,
+            isVisible: marker.visible,
+          )
+          ..position = gmaps.LatLng(
+            marker.position.latitude,
+            marker.position.longitude,
+          )
+          ..title = sanitizeHtml(marker.infoWindow.title ?? '')
+          ..zIndex = marker.zIndex
+          ..gmpDraggable = marker.draggable;
+    return options as O;
+  } else {
+    final gmaps.MarkerOptions options = gmaps.MarkerOptions()
+      ..position = gmaps.LatLng(
+        marker.position.latitude,
+        marker.position.longitude,
+      )
+      ..icon = await _gmIconFromBitmapDescriptor(marker.icon)
+      ..title = sanitizeHtml(marker.infoWindow.title ?? '')
+      ..zIndex = marker.zIndex
+      ..visible = marker.visible
+      ..opacity = marker.alpha
+      ..draggable = marker.draggable;
+    return options as O;
+  }
+
   // TODO(ditman): Compute anchor properly, otherwise infowindows attach to the wrong spot.
   // Flat and Rotation are not supported directly on the web.
 }
@@ -705,4 +879,16 @@ gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
       gmaps.Point((x / scale) + bottomLeft.x, (y / scale) + topRight.y);
 
   return projection.fromPointToLatLng(point)!;
+}
+
+gmaps.CollisionBehavior _markerCollisionBehaviorToGmCollisionBehavior(
+  MarkerCollisionBehavior markerCollisionBehavior,
+) {
+  return switch (markerCollisionBehavior) {
+    MarkerCollisionBehavior.required => gmaps.CollisionBehavior.REQUIRED,
+    MarkerCollisionBehavior.optionalAndHidesLowerPriority =>
+      gmaps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
+    MarkerCollisionBehavior.requiredAndHidesOptional =>
+      gmaps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL,
+  };
 }
