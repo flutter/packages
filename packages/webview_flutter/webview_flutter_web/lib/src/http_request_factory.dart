@@ -38,24 +38,22 @@ class HttpRequestFactory {
   /// /// If `Access-Control-Expose-Headers` has not been set to true, only a subset of all the response headers will be returned when calling [getAllResponseHeaders].
   ///
   /// The following is equivalent to the [getString] sample above:
-  /// ```dart
-  /// var name = Uri.encodeQueryComponent('John');
-  /// var id = Uri.encodeQueryComponent('42');
-  /// HttpRequest.request('users.json?name=$name&id=$id')
-  ///   .then((HttpRequest resp) {
-  ///     // Do something with the response.
-  /// });
-  /// ```
+  ///
+  ///     var name = Uri.encodeQueryComponent('John');
+  ///     var id = Uri.encodeQueryComponent('42');
+  ///     HttpRequest.request('users.json?name=$name&id=$id')
+  ///       .then((HttpRequest resp) {
+  ///         // Do something with the response.
+  ///     });
   ///
   /// Here's an example of submitting an entire form with [FormData].
-  /// ```dart
-  /// var myForm = querySelector('form#myForm');
-  /// var data = new FormData(myForm);
-  /// HttpRequest.request('/submit', method: 'POST', sendData: data)
-  ///   .then((HttpRequest resp) {
-  ///     // Do something with the response.
-  /// });
-  /// ```
+  ///
+  ///     var myForm = querySelector('form#myForm');
+  ///     var data = new FormData(myForm);
+  ///     HttpRequest.request('/submit', method: 'POST', sendData: data)
+  ///       .then((HttpRequest resp) {
+  ///         // Do something with the response.
+  ///     });
   ///
   /// Requests for `file://` URIs are only supported by Chrome extensions
   /// with appropriate permissions in their manifest. Requests to file:// URIs
