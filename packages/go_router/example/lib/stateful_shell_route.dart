@@ -63,6 +63,8 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                 ],
               ),
             ],
+            // To enable preloading of the initial locations of branches, pass
+            // 'true' for the parameter `preload` (false is default).
           ),
           // #enddocregion configuration-branches
 

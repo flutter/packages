@@ -1,3 +1,7 @@
+## 14.4.0
+
+- Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
+
 ## 14.3.0
 
 - Added missing implementation for the routerNeglect parameter in GoRouter.
