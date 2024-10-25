@@ -1,3 +1,7 @@
+## 14.3.0+1
+
+- Added `missing_code_block_language_in_doc_comment` lint.
+
 ## 14.3.0
 
 - Added missing implementation for the routerNeglect parameter in GoRouter.
