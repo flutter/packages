@@ -253,62 +253,6 @@ void main() {
           ]));
     });
 
-    test('zips xcresult', () async {
-      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1), <String>['xcodebuild']),
-      ];
-
-      final FileSystem fileSystem = MemoryFileSystem();
-      final Directory directory = fileSystem.currentDirectory;
-      final int exitCode = await xcode.runXcodeBuild(
-        directory,
-        'ios',
-        workspace: 'A.xcworkspace',
-        scheme: 'AScheme',
-        platform: MockPlatform()
-          ..environment = <String, String>{'FLUTTER_LOGS_DIR': '/path/to/logs'},
-      );
-
-      final String expectedResultBundlePath = fileSystem.systemTempDirectory
-          .childDirectory('flutter_xcresult.rand0')
-          .childDirectory('result')
-          .path;
-
-      expect(exitCode, 1);
-      expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall(
-              'xcrun',
-              <String>[
-                'xcodebuild',
-                'build',
-                '-workspace',
-                'A.xcworkspace',
-                '-scheme',
-                'AScheme',
-                '-resultBundlePath',
-                expectedResultBundlePath
-              ],
-              directory.path,
-            ),
-            ProcessCall(
-              'zip',
-              <String>[
-                'xcodebuild',
-                'build',
-                '-workspace',
-                'A.xcworkspace',
-                '-scheme',
-                'AScheme',
-                '-resultBundlePath',
-                expectedResultBundlePath
-              ],
-              directory.path,
-            ),
-          ]));
-    });
-
     test('sets CODE_SIGN_ENTITLEMENTS for macos tests', () async {
       final FileSystem fileSystem = MemoryFileSystem();
       final Directory directory = fileSystem.currentDirectory;
