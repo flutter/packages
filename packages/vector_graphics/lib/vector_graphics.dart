@@ -5,9 +5,9 @@
 export 'src/vector_graphics.dart'
     show
         AssetBytesLoader,
+        BytesLoader,
         NetworkBytesLoader,
         PictureInfo,
-        BytesLoader,
         VectorGraphic,
         VectorGraphicUtilities,
         vg;

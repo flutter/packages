@@ -1,3 +1,9 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics_compiler/src/svg/numbers.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
@@ -49,7 +55,7 @@ void main() {
         40.0,
         TextDecoration.none,
         TextDecorationStyle.solid,
-        Color(0xff000000),
+        Color.opaqueBlack,
       ),
       TextConfig(
         'Tōkyū Railways route map',
@@ -59,7 +65,7 @@ void main() {
         22.0,
         TextDecoration.none,
         TextDecorationStyle.solid,
-        Color(0xff000000),
+        Color.opaqueBlack,
       ),
     ]);
     expect(instructions.textPositions, <TextPosition>[
@@ -78,7 +84,7 @@ void main() {
       Paint(
         blendMode: BlendMode.srcOver,
         stroke: Stroke(color: Color(0xffff0000)),
-        fill: Fill(color: Color(0xff000000)),
+        fill: Fill(color: Color.opaqueBlack),
       ),
     ]);
     expect(instructions.paths, <Path>[
@@ -133,7 +139,7 @@ void main() {
         11.0,
         TextDecoration.none,
         TextDecorationStyle.solid,
-        Color(0xff000000),
+        Color.opaqueBlack,
       ),
       TextConfig(
         '3',
@@ -143,7 +149,7 @@ void main() {
         11.0,
         TextDecoration.none,
         TextDecorationStyle.solid,
-        Color(0xff000000),
+        Color.opaqueBlack,
       ),
       TextConfig(
         '1',
@@ -153,7 +159,7 @@ void main() {
         11.0,
         TextDecoration.none,
         TextDecorationStyle.solid,
-        Color(0xff000000),
+        Color.opaqueBlack,
       ),
     ]);
   });
@@ -218,7 +224,7 @@ void main() {
         14.0,
         TextDecoration.none,
         TextDecorationStyle.solid,
-        Color(0xff000000),
+        Color.opaqueBlack,
       ),
       TextConfig(
         ' u',
@@ -228,7 +234,7 @@ void main() {
         10.0,
         TextDecoration.none,
         TextDecorationStyle.solid,
-        Color(0xff000000),
+        Color.opaqueBlack,
       ),
       TextConfig(
         ' )',
@@ -238,7 +244,7 @@ void main() {
         14.0,
         TextDecoration.none,
         TextDecorationStyle.solid,
-        Color(0xff000000),
+        Color.opaqueBlack,
       ),
     ]);
   });
@@ -272,7 +278,7 @@ void main() {
           16.0,
           TextDecoration.none,
           TextDecorationStyle.solid,
-          Color(0xff000000),
+          Color.opaqueBlack,
         ),
         TextConfig(
           'more text.',
@@ -282,7 +288,7 @@ void main() {
           16.0,
           TextDecoration.none,
           TextDecorationStyle.solid,
-          Color(0xff000000),
+          Color.opaqueBlack,
         ),
         TextConfig(
           'Even more text',
@@ -292,7 +298,7 @@ void main() {
           16.0,
           TextDecoration.none,
           TextDecorationStyle.solid,
-          Color(0xff000000),
+          Color.opaqueBlack,
         ),
         TextConfig(
           'text everywhere',
@@ -302,7 +308,7 @@ void main() {
           16.0,
           TextDecoration.none,
           TextDecorationStyle.solid,
-          Color(0xff000000),
+          Color.opaqueBlack,
         ),
         TextConfig(
           'so many lines',
@@ -312,7 +318,7 @@ void main() {
           16.0,
           TextDecoration.none,
           TextDecorationStyle.solid,
-          Color(0xff000000),
+          Color.opaqueBlack,
         ),
       ],
     );
@@ -361,7 +367,7 @@ void main() {
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x0a000000))),
       // The paint for the path drawn in the saveLayer - must not be the same as
       // the saveLayer otherwise the path will be drawn almost completely transparent.
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff000000))),
+      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color.opaqueBlack)),
     ]);
     expect(instructions.commands, const <DrawCommand>[
       DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
@@ -451,7 +457,7 @@ void main() {
       const <Paint>[
         Paint(
           blendMode: BlendMode.srcOver,
-          stroke: Stroke(color: Color(0xff000000), width: 12.0),
+          stroke: Stroke(color: Color.opaqueBlack, width: 12.0),
         ),
         Paint(
           blendMode: BlendMode.srcOver,
@@ -578,7 +584,7 @@ void main() {
         10.0,
         TextDecoration.none,
         TextDecorationStyle.solid,
-        Color(0xff000000),
+        Color.opaqueBlack,
       ),
       TextConfig(
         'Text anchor middle',
@@ -588,7 +594,7 @@ void main() {
         10.0,
         TextDecoration.none,
         TextDecorationStyle.solid,
-        Color(0xff000000),
+        Color.opaqueBlack,
       ),
       TextConfig(
         'Text anchor end',
@@ -598,7 +604,7 @@ void main() {
         10.0,
         TextDecoration.none,
         TextDecorationStyle.solid,
-        Color(0xff000000),
+        Color.opaqueBlack,
       )
     ]);
   });
@@ -680,7 +686,7 @@ void main() {
 
     expect(instructions.paints, const <Paint>[
       Paint(fill: Fill(color: Color(0xffff0000))),
-      Paint(stroke: Stroke(color: Color(0xff000000), width: 2.0)),
+      Paint(stroke: Stroke(color: Color.opaqueBlack, width: 2.0)),
     ]);
 
     expect(instructions.paths, <Path>[
@@ -707,7 +713,7 @@ void main() {
 
     expect(instructions.paints, const <Paint>[
       Paint(fill: Fill(color: Color(0xffff0000))),
-      Paint(stroke: Stroke(color: Color(0xff000000), width: 2.0)),
+      Paint(stroke: Stroke(color: Color.opaqueBlack, width: 2.0)),
     ]);
 
     expect(instructions.paths, <Path>[
@@ -812,7 +818,7 @@ void main() {
     expect(
       instructions.paints.single,
       const Paint(
-        stroke: Stroke(color: Color(0xff000000)),
+        stroke: Stroke(color: Color.opaqueBlack),
         fill: Fill(
           color: Color(0xffffffff),
           shader: RadialGradient(
@@ -858,7 +864,7 @@ void main() {
           color: Color(0xffffffff),
           shader: RadialGradient(
             id: 'url(#paint0_radial)',
-            center: Point(0.0, 0.0),
+            center: Point.zero,
             radius: 1.0,
             colors: <Color>[Color(0xcc47e9ff), Color(0x00414cbe)],
             offsets: <double>[0.0, 1.0],
@@ -925,7 +931,10 @@ void main() {
                 .translated(-250, -250),
           ),
     );
-  });
+  },
+      // Currently skipped because the double values in Point are tested for
+      // exact equality, which makes this test fragile to host platform.
+      skip: Platform.isWindows);
 
   test('Opaque blend mode gets a save layer', () {
     const String svg = '''
@@ -941,7 +950,7 @@ void main() {
     );
     expect(instructions.paints, const <Paint>[
       Paint(fill: Fill(color: Color(0xffff0000))),
-      Paint(blendMode: BlendMode.screen, fill: Fill(color: Color(0xff000000))),
+      Paint(blendMode: BlendMode.screen, fill: Fill(color: Color.opaqueBlack)),
       Paint(blendMode: BlendMode.screen, fill: Fill(color: Color(0xff008000))),
     ]);
     expect(instructions.commands, const <DrawCommand>[
@@ -1296,7 +1305,7 @@ void main() {
 
     expect(instructions.paints, const <Paint>[
       Paint(
-        fill: Fill(color: Color(0xff000000)),
+        fill: Fill(color: Color.opaqueBlack),
       ),
     ]);
 
@@ -1370,7 +1379,8 @@ void main() {
   });
 
   test('Parses text with pattern as fill', () {
-    const String textWithPattern = '''<svg width="600" height="400">
+    const String textWithPattern = '''
+<svg width="600" height="400">
     <defs>
           <pattern id="textPattern" x="7" y="7" width="10" height="10" patternUnits="userSpaceOnUse">
                   <rect x="5" y="5" width="5" height="5" fill= "#876fc1" />
@@ -1403,7 +1413,7 @@ void main() {
           200.0,
           TextDecoration.none,
           TextDecorationStyle.solid,
-          Color(0xff000000),
+          Color.opaqueBlack,
         )
       ],
     );
@@ -1942,46 +1952,46 @@ void main() {
 
 const List<Paint> ghostScriptTigerPaints = <Paint>[
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.303691181256463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.303691181256463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.303691181256463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.303691181256463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.303691181256463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.303691181256463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.303691181256463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.303691181256463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.303691181256463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.303691181256463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.303691181256463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.303691181256463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.303691181256463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.303691181256463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.303691181256463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.303691181256463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.303691181256463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.303691181256463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.303691181256463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.303691181256463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.303691181256463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.303691181256463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.303691181256463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.303691181256463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000)),
+      stroke: Stroke(color: Color.opaqueBlack),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000)),
+      stroke: Stroke(color: Color.opaqueBlack),
       fill: Fill(color: Color(0xffcc7226))),
   Paint(fill: Fill(color: Color(0xffcc7226))),
   Paint(fill: Fill(color: Color(0xffe87f3a))),
@@ -2009,63 +2019,63 @@ const List<Paint> ghostScriptTigerPaints = <Paint>[
   Paint(fill: Fill(color: Color(0xffb23259))),
   Paint(fill: Fill(color: Color(0xffa5264c))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000)),
+      stroke: Stroke(color: Color.opaqueBlack),
       fill: Fill(color: Color(0xffff727f))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(fill: Fill(color: Color(0xffcc3f4c))),
   Paint(stroke: Stroke(color: Color(0xffa51926), width: 3.5312926)),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(stroke: Stroke(color: Color(0xffa5264c), width: 3.5312926)),
   Paint(stroke: Stroke(color: Color(0xffa5264c), width: 3.5312926)),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(stroke: Stroke(color: Color(0xffa5264c), width: 3.5312926)),
   Paint(stroke: Stroke(color: Color(0xffa5264c), width: 3.5312926)),
   Paint(fill: Fill(color: Color(0xffb2b2b2))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(fill: Fill()),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.88282315),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.88282315),
       fill: Fill(color: Color(0xffffffcc))),
   Paint(fill: Fill(color: Color(0xffe5e5b2))),
   Paint(fill: Fill(color: Color(0xffe5e5b2))),
@@ -2166,28 +2176,28 @@ const List<Paint> ghostScriptTigerPaints = <Paint>[
   Paint(fill: Fill()),
   Paint(fill: Fill()),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(fill: Fill(color: Color(0xffcccccc))),
   Paint(fill: Fill()),
@@ -2201,90 +2211,90 @@ const List<Paint> ghostScriptTigerPaints = <Paint>[
   Paint(fill: Fill()),
   Paint(fill: Fill()),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(fill: Fill()),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
   Paint(
-      stroke: Stroke(color: Color(0xff000000), width: 0.17656463),
+      stroke: Stroke(color: Color.opaqueBlack, width: 0.17656463),
       fill: Fill(color: Color(0xffffffff))),
-  Paint(fill: Fill()),
-  Paint(fill: Fill()),
   Paint(fill: Fill()),
   Paint(fill: Fill()),
   Paint(fill: Fill()),
   Paint(fill: Fill()),
+  Paint(fill: Fill()),
+  Paint(fill: Fill()),
   Paint(fill: Fill(color: Color(0xffcccccc))),
   Paint(fill: Fill(color: Color(0xffcccccc))),
   Paint(fill: Fill(color: Color(0xffcccccc))),
@@ -2307,10 +2317,10 @@ const List<Paint> ghostScriptTigerPaints = <Paint>[
   Paint(fill: Fill(color: Color(0xffcccccc))),
   Paint(fill: Fill(color: Color(0xffcccccc))),
   Paint(fill: Fill(color: Color(0xffcccccc))),
-  Paint(stroke: Stroke(color: Color(0xff000000))),
-  Paint(stroke: Stroke(color: Color(0xff000000))),
-  Paint(stroke: Stroke(color: Color(0xff000000))),
-  Paint(stroke: Stroke(color: Color(0xff000000)))
+  Paint(stroke: Stroke(color: Color.opaqueBlack)),
+  Paint(stroke: Stroke(color: Color.opaqueBlack)),
+  Paint(stroke: Stroke(color: Color.opaqueBlack)),
+  Paint(stroke: Stroke(color: Color.opaqueBlack))
 ];
 
 final List<Path> ghostScriptTigerPaths = <Path>[

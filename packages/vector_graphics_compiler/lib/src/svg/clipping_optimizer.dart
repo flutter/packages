@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'node.dart';
-import 'visitor.dart';
-import 'masking_optimizer.dart';
 import '../../vector_graphics_compiler.dart';
+import 'masking_optimizer.dart';
+import 'node.dart';
 import 'path_ops.dart' as path_ops;
+import 'visitor.dart';
 
 class _Result {
   _Result(this.node);
@@ -53,12 +53,14 @@ class ClippingOptimizer extends Visitor<_Result, Node>
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitEmptyNode(Node node, void data) {
-    final _Result _result = _Result(node);
-    return _result;
+    final _Result result = _Result(node);
+    return result;
   }
 
   /// Visits applies optimizer to all children of ResolvedClipNode.
+  // ignore: library_private_types_in_public_api
   _Result visitChildren(Node node, _Result data) {
     if (node is ResolvedClipNode) {
       data = node.child.accept(this, data);
@@ -67,14 +69,15 @@ class ClippingOptimizer extends Visitor<_Result, Node>
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitParentNode(ParentNode parentNode, Node data) {
     final List<Node> newChildren = <Node>[];
     bool deleteClipNode = true;
 
-    for (Node child in parentNode.children) {
+    for (final Node child in parentNode.children) {
       final _Result childResult = child.accept(this, parentNode);
       newChildren.add(childResult.node);
-      if (childResult.deleteClipNode == false) {
+      if (!childResult.deleteClipNode) {
         deleteClipNode = false;
       }
     }
@@ -82,41 +85,45 @@ class ClippingOptimizer extends Visitor<_Result, Node>
     final ParentNode newParentNode = ParentNode(parentNode.attributes,
         precalculatedTransform: parentNode.transform, children: newChildren);
 
-    final _Result _result = _Result(newParentNode);
+    final _Result result = _Result(newParentNode);
 
-    _result.deleteClipNode = deleteClipNode;
-    return _result;
+    result.deleteClipNode = deleteClipNode;
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitMaskNode(MaskNode maskNode, Node data) {
-    final _Result _result = _Result(maskNode);
-    return _result;
+    final _Result result = _Result(maskNode);
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitPathNode(PathNode pathNode, Node data) {
-    final _Result _result = _Result(pathNode);
-    return _result;
+    final _Result result = _Result(pathNode);
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedMaskNode(ResolvedMaskNode maskNode, void data) {
     final _Result childResult = maskNode.child.accept(this, maskNode);
     final ResolvedMaskNode newMaskNode = ResolvedMaskNode(
         child: childResult.node,
         mask: maskNode.mask,
         blendMode: maskNode.blendMode);
-    final _Result _result = _Result(newMaskNode);
-    _result.children.add(childResult.node);
-    _result.childCount = 1;
+    final _Result result = _Result(newMaskNode);
+    result.children.add(childResult.node);
+    result.childCount = 1;
 
-    return _result;
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedClipNode(ResolvedClipNode clipNode, Node data) {
-    _Result _result = _Result(clipNode);
+    _Result result = _Result(clipNode);
 
     Path? singleClipPath;
     if (clipNode.clips.length == 1) {
@@ -128,85 +135,90 @@ class ClippingOptimizer extends Visitor<_Result, Node>
       final _Result childResult = clipNode.child.accept(this, clipNode);
       clipsToApply.removeLast();
 
-      if (childResult.deleteClipNode == true) {
-        _result = _Result(childResult.node);
+      if (childResult.deleteClipNode) {
+        result = _Result(childResult.node);
       } else {
         final ResolvedClipNode newClipNode =
             ResolvedClipNode(child: childResult.node, clips: clipNode.clips);
-        _result = _Result(newClipNode);
+        result = _Result(newClipNode);
       }
     } else {
       final _Result childResult = clipNode.child.accept(this, clipNode);
       final ResolvedClipNode newClipNode =
           ResolvedClipNode(child: childResult.node, clips: clipNode.clips);
-      _result = _Result(newClipNode);
+      result = _Result(newClipNode);
     }
-    return _result;
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedPath(ResolvedPathNode pathNode, Node data) {
-    _Result _result = _Result(pathNode);
+    _Result result = _Result(pathNode);
     bool hasStrokeWidth = false;
     bool deleteClipNode = true;
 
     if (pathNode.paint.stroke?.width != null) {
       hasStrokeWidth = true;
-      _result.deleteClipNode = false;
+      result.deleteClipNode = false;
     }
 
     if (clipsToApply.isNotEmpty && !hasStrokeWidth) {
       ResolvedPathNode newPathNode = pathNode;
-      for (Path clipPath in clipsToApply) {
+      for (final Path clipPath in clipsToApply) {
         final ResolvedPathNode intersection = applyClip(newPathNode, clipPath);
         if (intersection.path.commands.isNotEmpty) {
           newPathNode = intersection;
         } else {
-          _result = _Result(pathNode);
-          _result.deleteClipNode = false;
+          result = _Result(pathNode);
+          result.deleteClipNode = false;
           deleteClipNode = false;
           break;
         }
       }
-      _result = _Result(newPathNode);
-      _result.deleteClipNode = deleteClipNode;
+      result = _Result(newPathNode);
+      result.deleteClipNode = deleteClipNode;
     }
-    return _result;
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedText(ResolvedTextNode textNode, Node data) {
-    final _Result _result = _Result(textNode);
-    return _result;
+    final _Result result = _Result(textNode);
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedVerticesNode(
       ResolvedVerticesNode verticesNode, Node data) {
-    final _Result _result = _Result(verticesNode);
-    return _result;
+    final _Result result = _Result(verticesNode);
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitSaveLayerNode(SaveLayerNode layerNode, Node data) {
     final List<Node> newChildren = <Node>[];
-    for (Node child in layerNode.children) {
+    for (final Node child in layerNode.children) {
       final _Result childResult = child.accept(this, layerNode);
       newChildren.add(childResult.node);
     }
     final SaveLayerNode newLayerNode = SaveLayerNode(layerNode.attributes,
         paint: layerNode.paint, children: newChildren);
 
-    final _Result _result = _Result(newLayerNode);
-    _result.children = newChildren;
-    _result.childCount = newChildren.length;
-    return _result;
+    final _Result result = _Result(newLayerNode);
+    result.children = newChildren;
+    result.childCount = newChildren.length;
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitViewportNode(ViewportNode viewportNode, void data) {
     final List<Node> children = <Node>[];
-    for (Node child in viewportNode.children) {
+    for (final Node child in viewportNode.children) {
       final _Result childNode = child.accept(this, viewportNode);
       children.add(childNode.node);
     }
@@ -219,33 +231,36 @@ class ClippingOptimizer extends Visitor<_Result, Node>
       children: children,
     );
 
-    final _Result _result = _Result(node);
-    _result.children = children;
-    _result.childCount = children.length;
-    return _result;
+    final _Result result = _Result(node);
+    result.children = children;
+    result.childCount = children.length;
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedImageNode(
       ResolvedImageNode resolvedImageNode, Node data) {
-    final _Result _result = _Result(resolvedImageNode);
-    _result.deleteClipNode = false;
-    return _result;
+    final _Result result = _Result(resolvedImageNode);
+    result.deleteClipNode = false;
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedPatternNode(ResolvedPatternNode patternNode, Node data) {
     return _Result(patternNode);
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedTextPositionNode(
       ResolvedTextPositionNode textPositionNode, void data) {
     return _Result(
       ResolvedTextPositionNode(
         textPositionNode.textPosition,
         <Node>[
-          for (Node child in textPositionNode.children)
+          for (final Node child in textPositionNode.children)
             child.accept(this, data).node
         ],
       ),

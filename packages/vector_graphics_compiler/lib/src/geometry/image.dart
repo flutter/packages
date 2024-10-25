@@ -4,9 +4,8 @@
 
 import 'dart:typed_data';
 
-import 'matrix.dart';
-
 import 'basic_types.dart';
+import 'matrix.dart';
 
 /// The encoded image data and its format.
 class ImageData {

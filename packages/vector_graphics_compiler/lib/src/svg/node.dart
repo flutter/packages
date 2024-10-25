@@ -112,13 +112,12 @@ class ViewportNode extends ParentNode {
   ///
   /// See [ViewportNode].
   ViewportNode(
-    SvgAttributes attributes, {
+    super.attributes, {
     required this.width,
     required this.height,
     required AffineMatrix transform,
     super.children,
   }) : super(
-          attributes,
           precalculatedTransform: transform,
         );
 
@@ -306,10 +305,10 @@ class TextPositionNode extends ParentNode {
 class SaveLayerNode extends ParentNode {
   /// Create a new [SaveLayerNode]
   SaveLayerNode(
-    SvgAttributes attributes, {
+    super.attributes, {
     required this.paint,
     super.children,
-  }) : super(attributes, precalculatedTransform: AffineMatrix.identity);
+  }) : super(precalculatedTransform: AffineMatrix.identity);
 
   /// The paint to apply to the saved layer.
   final Paint paint;
@@ -467,10 +466,10 @@ class DeferredNode extends AttributedNode {
   /// Creates a new deferred node with [attributes] that will call [resolver]
   /// with [refId] when visited.
   DeferredNode(
-    SvgAttributes attributes, {
+    super.attributes, {
     required this.refId,
     required this.resolver,
-  }) : super(attributes);
+  });
 
   /// The reference id to pass to [resolver].
   final String refId;

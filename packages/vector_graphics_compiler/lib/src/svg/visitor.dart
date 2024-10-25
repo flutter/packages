@@ -143,7 +143,7 @@ class CommandBuilderVisitor extends Visitor<void, void>
 
   @override
   void visitParentNode(ParentNode parentNode, void data) {
-    for (Node child in parentNode.children) {
+    for (final Node child in parentNode.children) {
       child.accept(this, data);
     }
   }
@@ -199,7 +199,7 @@ class CommandBuilderVisitor extends Visitor<void, void>
   void visitViewportNode(ViewportNode viewportNode, void data) {
     _width = viewportNode.width;
     _height = viewportNode.height;
-    for (Node child in viewportNode.children) {
+    for (final Node child in viewportNode.children) {
       child.accept(this, data);
     }
   }
@@ -207,7 +207,7 @@ class CommandBuilderVisitor extends Visitor<void, void>
   @override
   void visitSaveLayerNode(SaveLayerNode layerNode, void data) {
     _builder.addSaveLayer(layerNode.paint);
-    for (Node child in layerNode.children) {
+    for (final Node child in layerNode.children) {
       child.accept(this, data);
     }
     _builder.restore();

@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'node.dart';
 import '_tessellator_unsupported.dart'
     if (dart.library.ffi) '_tessellator_ffi.dart' as impl;
+import 'node.dart';
 import 'visitor.dart';
 
 /// Whether or not tesselation should be used.

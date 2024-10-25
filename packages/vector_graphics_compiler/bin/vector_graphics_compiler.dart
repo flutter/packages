@@ -2,14 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:path/path.dart' as p;
 import 'package:vector_graphics_compiler/src/svg/colors.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 import 'util/isolate_processor.dart';
-import 'package:path/path.dart' as p;
 
 final ArgParser argParser = ArgParser()
   ..addOption(

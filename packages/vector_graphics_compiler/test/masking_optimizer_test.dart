@@ -3,9 +3,10 @@
 // found in the LICENSE file.
 
 import 'dart:core';
+
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vector_graphics_compiler/src/svg/node.dart';
 import 'package:vector_graphics_compiler/src/svg/masking_optimizer.dart';
+import 'package:vector_graphics_compiler/src/svg/node.dart';
 import 'package:vector_graphics_compiler/src/svg/parser.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
@@ -30,8 +31,8 @@ void main() {
 
   test('Only remove MaskNode if the mask is described by a singular PathNode',
       () {
-    final Node node = parseAndResolve(
-        '''<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    final Node node = parseAndResolve('''
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <mask id="a" maskUnits="userSpaceOnUse" x="3" y="7" width="18" height="11">
     <path fill-rule="evenodd" clip-rule="evenodd" d="M15.094 17.092a.882.882 0 01-.623-1.503l2.656-2.66H4.28a.883.883 0 010-1.765h12.846L14.47 8.503a.88.88 0 011.245-1.245l4.611 4.611a.252.252 0 010 .354l-4.611 4.611a.876.876 0 01-.622.258z" fill="#fff" />
   </mask>

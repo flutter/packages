@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
-
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 void main() {
   test('Color tests', () {
@@ -27,7 +26,7 @@ void main() {
   test('LinearGradient can be converted to local coordinates', () {
     const LinearGradient gradient = LinearGradient(
       id: 'test',
-      from: Point(0, 0),
+      from: Point.zero,
       to: Point(1, 1),
       colors: <Color>[Color.opaqueBlack, Color(0xFFABCDEF)],
       tileMode: TileMode.mirror,
@@ -47,7 +46,7 @@ void main() {
   test('LinearGradient applied bounds with userSpaceOnUse', () {
     const LinearGradient gradient = LinearGradient(
       id: 'test',
-      from: Point(0, 0),
+      from: Point.zero,
       to: Point(1, 1),
       colors: <Color>[Color.opaqueBlack, Color(0xFFABCDEF)],
       tileMode: TileMode.mirror,
@@ -61,14 +60,14 @@ void main() {
       AffineMatrix.identity,
     );
 
-    expect(transformed.from, const Point(0, 0));
+    expect(transformed.from, Point.zero);
     expect(transformed.to, const Point(1, 1));
   });
 
   test('LinearGradient applied bounds with userSpaceOnUse and transformed', () {
     final LinearGradient gradient = LinearGradient(
       id: 'test',
-      from: const Point(0, 0),
+      from: Point.zero,
       to: const Point(1, 1),
       colors: const <Color>[Color.opaqueBlack, Color(0xFFABCDEF)],
       tileMode: TileMode.mirror,
@@ -82,7 +81,7 @@ void main() {
       AffineMatrix.identity,
     );
 
-    expect(transformed.from, const Point(0, 0));
+    expect(transformed.from, Point.zero);
     expect(transformed.to, const Point(2, 2));
   });
 

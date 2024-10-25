@@ -4,10 +4,9 @@
 
 import 'dart:math' as math;
 
+import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics_compiler/src/svg/parsers.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
-
-import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 void main() {

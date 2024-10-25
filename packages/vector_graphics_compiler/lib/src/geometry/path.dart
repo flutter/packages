@@ -7,9 +7,9 @@ import 'dart:math' as math;
 import 'package:meta/meta.dart';
 import 'package:path_parsing/path_parsing.dart';
 
+import '../util.dart';
 import 'basic_types.dart';
 import 'matrix.dart';
-import '../util.dart';
 
 // This is a magic number used by impeller for radius approximation:
 // https://github.com/flutter/impeller/blob/a2478aa4939a9a08c6c3810f72e0db42e7383a07/geometry/path_builder.cc#L9
@@ -239,7 +239,7 @@ class CubicToCommand extends PathCommand {
     // Lower values end up getting the end points wrong when dashing a path.
     const double tolerance = 1 / 2 * 3;
 
-    double _compute(
+    double compute(
       Point p1,
       Point cp1,
       Point cp2,
@@ -250,14 +250,14 @@ class CubicToCommand extends PathCommand {
       if (Point.distance(cp1, Point.lerp(p1, p2, 1 / 3)) > tolerance ||
           Point.distance(cp2, Point.lerp(p1, p2, 2 / 3)) > tolerance) {
         final List<Point> points = subdivide(p1, cp1, cp2, p2, .5);
-        distance = _compute(
+        distance = compute(
           points[0],
           points[1],
           points[2],
           points[3],
           distance,
         );
-        distance = _compute(
+        distance = compute(
           points[3],
           points[4],
           points[5],
@@ -271,7 +271,7 @@ class CubicToCommand extends PathCommand {
       return distance;
     }
 
-    return _compute(start, Point(x1, y1), Point(x2, y2), Point(x3, y3), 0);
+    return compute(start, Point(x1, y1), Point(x2, y2), Point(x3, y3), 0);
   }
 
   @override
@@ -594,17 +594,15 @@ class Path {
           smallestY = math.min(move.y, smallestY);
           largestX = math.max(move.x, largestX);
           largestY = math.max(move.y, largestY);
-          break;
         case PathCommandType.line:
           final LineToCommand move = command as LineToCommand;
           smallestX = math.min(move.x, smallestX);
           smallestY = math.min(move.y, smallestY);
           largestX = math.max(move.x, largestX);
           largestY = math.max(move.y, largestY);
-          break;
         case PathCommandType.cubic:
           final CubicToCommand cubic = command as CubicToCommand;
-          for (List<double> pair in <List<double>>[
+          for (final List<double> pair in <List<double>>[
             <double>[cubic.x1, cubic.y1],
             <double>[cubic.x2, cubic.y2],
             <double>[cubic.x3, cubic.y3],
@@ -614,7 +612,6 @@ class Path {
             largestX = math.max(pair[0], largestX);
             largestY = math.max(pair[1], largestY);
           }
-          break;
         case PathCommandType.close:
           break;
       }
@@ -658,7 +655,7 @@ Path parseSvgPathData(String svg, [PathFillType? type]) {
   final SvgPathStringSource parser = SvgPathStringSource(svg);
   final PathBuilder pathBuilder = PathBuilder(type);
   final SvgPathNormalizer normalizer = SvgPathNormalizer();
-  for (PathSegmentData seg in parser.parseSegments()) {
+  for (final PathSegmentData seg in parser.parseSegments()) {
     normalizer.emitSegment(seg, pathBuilder);
   }
   return pathBuilder.toPath();
@@ -770,18 +767,14 @@ class _PathDasher {
           currentPoint = Point(move.x, move.y);
           currentSubpathPoint = currentPoint;
           _dashedCommands.add(command);
-          break;
         case PathCommandType.line:
           final LineToCommand line = command as LineToCommand;
           _dashLineTo(Point(line.x, line.y));
-          break;
         case PathCommandType.cubic:
           _dashCubicTo(command as CubicToCommand);
-          break;
         case PathCommandType.close:
           _dashLineTo(currentSubpathPoint);
           currentPoint = currentSubpathPoint;
-          break;
       }
     }
     return Path(commands: _dashedCommands, fillType: path.fillType);

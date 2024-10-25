@@ -4,12 +4,12 @@
 
 import 'dart:math';
 
-import 'node.dart';
 import '../geometry/matrix.dart';
 import '../geometry/path.dart';
+import 'node.dart';
 import 'numbers.dart';
 
-const String _transformCommandAtom = ' *,?([^(]+)\\(([^)]*)\\)';
+const String _transformCommandAtom = r' *,?([^(]+)\(([^)]*)\)';
 final RegExp _transformValidator = RegExp('^($_transformCommandAtom)*\$');
 final RegExp _transformCommand = RegExp(_transformCommandAtom);
 
@@ -69,7 +69,7 @@ AffineMatrix? parseTransform(String? transform) {
   final Iterable<Match> matches =
       _transformCommand.allMatches(transform).toList().reversed;
   AffineMatrix result = AffineMatrix.identity;
-  for (Match m in matches) {
+  for (final Match m in matches) {
     final String command = m.group(1)!.trim();
     final List<double> params = _parseTransformParams(m.group(2)!.trim());
 
@@ -188,7 +188,7 @@ double? parsePatternUnitToDouble(String rawValue, String mode,
   } else if (rawValue.startsWith('0.')) {
     value = (double.parse(rawValue)) * viewBoxValue!;
   } else if (rawValue.isNotEmpty) {
-    value = (double.parse(rawValue));
+    value = double.parse(rawValue);
   }
   return value;
 }

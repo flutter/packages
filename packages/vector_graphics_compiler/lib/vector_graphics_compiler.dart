@@ -5,33 +5,33 @@
 import 'dart:typed_data';
 
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
-import 'src/geometry/pattern.dart';
-import 'src/geometry/matrix.dart';
+
 import 'src/geometry/image.dart';
-import 'src/geometry/vertices.dart';
+import 'src/geometry/matrix.dart';
 import 'src/geometry/path.dart';
+import 'src/geometry/pattern.dart';
+import 'src/geometry/vertices.dart';
 import 'src/paint.dart';
 import 'src/svg/color_mapper.dart';
-import 'src/svg/theme.dart';
 import 'src/svg/parser.dart';
+import 'src/svg/theme.dart';
 import 'src/vector_instructions.dart';
 
+export 'src/_initialize_path_ops_io.dart'
+    if (dart.library.html) 'src/_initialize_path_ops_web.dart';
+export 'src/_initialize_tessellator_io.dart'
+    if (dart.library.html) 'src/_initialize_tessellator_web.dart';
 export 'src/geometry/basic_types.dart';
 export 'src/geometry/matrix.dart';
 export 'src/geometry/path.dart';
 export 'src/geometry/vertices.dart';
 export 'src/paint.dart';
 export 'src/svg/color_mapper.dart';
-export 'src/svg/theme.dart';
-export 'src/svg/resolver.dart';
-export 'src/vector_instructions.dart';
-export 'src/svg/tessellator.dart' show initializeLibTesselator;
 export 'src/svg/path_ops.dart' show initializeLibPathOps;
-
-export 'src/_initialize_tessellator_io.dart'
-    if (dart.library.html) 'src/_initialize_tessellator_web.dart';
-export 'src/_initialize_path_ops_io.dart'
-    if (dart.library.html) 'src/_initialize_path_ops_web.dart';
+export 'src/svg/resolver.dart';
+export 'src/svg/tessellator.dart' show initializeLibTesselator;
+export 'src/svg/theme.dart';
+export 'src/vector_instructions.dart';
 
 /// Parses an SVG string into a [VectorInstructions] object, with all optional
 /// optimizers disabled.
@@ -101,7 +101,7 @@ void _encodeShader(
       toX: shader.to.x,
       toY: shader.to.y,
       colors: Int32List.fromList(
-          <int>[for (Color color in shader.colors!) color.value]),
+          <int>[for (final Color color in shader.colors!) color.value]),
       offsets: Float32List.fromList(shader.offsets!),
       tileMode: shader.tileMode!.index,
     );
@@ -114,7 +114,7 @@ void _encodeShader(
       focalX: shader.focalPoint?.x,
       focalY: shader.focalPoint?.y,
       colors: Int32List.fromList(
-          <int>[for (Color color in shader.colors!) color.value]),
+          <int>[for (final Color color in shader.colors!) color.value]),
       offsets: Float32List.fromList(shader.offsets!),
       tileMode: shader.tileMode!.index,
       transform: _encodeMatrix(shader.transform),
@@ -220,12 +220,10 @@ Uint8List _encodeInstructions(
           final MoveToCommand move = command as MoveToCommand;
           controlPointTypes.add(ControlPointTypes.moveTo);
           controlPoints.addAll(<double>[move.x, move.y]);
-          break;
         case PathCommandType.line:
           final LineToCommand line = command as LineToCommand;
           controlPointTypes.add(ControlPointTypes.lineTo);
           controlPoints.addAll(<double>[line.x, line.y]);
-          break;
         case PathCommandType.cubic:
           final CubicToCommand cubic = command as CubicToCommand;
           controlPointTypes.add(ControlPointTypes.cubicTo);
@@ -237,10 +235,8 @@ Uint8List _encodeInstructions(
             cubic.x3,
             cubic.y3,
           ]);
-          break;
         case PathCommandType.close:
           controlPointTypes.add(ControlPointTypes.close);
-          break;
       }
     }
     final int id = codec.writePath(
@@ -299,26 +295,20 @@ Uint8List _encodeInstructions(
             command.patternId,
           );
         }
-        break;
       case DrawCommandType.vertices:
         final IndexedVertices vertices =
             instructions.vertices[command.objectId!];
         final int fillId = fillIds[command.paintId]!;
         codec.writeDrawVertices(
             buffer, vertices.vertices, vertices.indices, fillId);
-        break;
       case DrawCommandType.saveLayer:
         codec.writeSaveLayer(buffer, fillIds[command.paintId]!);
-        break;
       case DrawCommandType.restore:
         codec.writeRestoreLayer(buffer);
-        break;
       case DrawCommandType.clip:
         codec.writeClipPath(buffer, pathIds[command.objectId]!);
-        break;
       case DrawCommandType.mask:
         codec.writeMask(buffer);
-        break;
 
       case DrawCommandType.pattern:
         final PatternData patternData =
@@ -331,11 +321,9 @@ Uint8List _encodeInstructions(
           patternData.height,
           patternData.transform.toMatrix4(),
         );
-        break;
 
       case DrawCommandType.textPosition:
         codec.writeUpdateTextPosition(buffer, command.objectId!);
-        break;
 
       case DrawCommandType.text:
         codec.writeDrawText(
@@ -345,7 +333,6 @@ Uint8List _encodeInstructions(
           strokeIds[command.paintId],
           command.patternId,
         );
-        break;
 
       case DrawCommandType.image:
         final DrawImageData drawImageData =

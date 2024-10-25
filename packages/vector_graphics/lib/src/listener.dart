@@ -9,11 +9,11 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart'
     show
-        imageCache,
-        ImageStreamCompleter,
-        OneFrameImageStreamCompleter,
         ImageInfo,
-        ImageStreamListener;
+        ImageStreamCompleter,
+        ImageStreamListener,
+        OneFrameImageStreamCompleter,
+        imageCache;
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 import 'loader.dart';
@@ -301,7 +301,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onDrawPath(int pathId, int? paintId, int? patternId) async {
+  Future<void> onDrawPath(int pathId, int? paintId, int? patternId) async {
     final Path path = _paths[pathId];
     Paint? paint;
     if (paintId != null) {
@@ -463,6 +463,9 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   /// Creates ImageShader for active pattern.
+  // TODO(stuartmorgan): Fix this violation, which predates enabling the lint
+  //  to catch it.
+  // ignore: library_private_types_in_public_api
   void onPatternFinished(_PatternConfig? currentPattern,
       PictureRecorder? patternRecorder, Canvas canvas) {
     final FlutterVectorGraphicsListener patternListener =
@@ -639,7 +642,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onDrawText(
+  Future<void> onDrawText(
     int textId,
     int? fillId,
     int? strokeId,
@@ -650,7 +653,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     final double dy = _textPositionY;
     double paragraphWidth = 0;
 
-    void _draw(int paintId) {
+    void draw(int paintId) {
       final Paint paint = _paints[paintId];
       if (patternId != null) {
         paint.shader = _patterns[patternId]!.shader;
@@ -695,10 +698,10 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     }
 
     if (fillId != null) {
-      _draw(fillId);
+      draw(fillId);
     }
     if (strokeId != null) {
-      _draw(strokeId);
+      draw(strokeId);
     }
     _accumulatedTextPositionX = dx + paragraphWidth;
   }

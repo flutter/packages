@@ -23,7 +23,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   Node visitClipNode(ClipNode clipNode, AffineMatrix data) {
     final AffineMatrix childTransform = clipNode.concatTransform(data);
     final List<Path> transformedClips = <Path>[
-      for (Path clip in clipNode.resolver(clipNode.clipId))
+      for (final Path clip in clipNode.resolver(clipNode.clipId))
         clip.transformed(childTransform)
     ];
     if (transformedClips.isEmpty) {
@@ -64,7 +64,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
         SvgAttributes.empty,
         precalculatedTransform: AffineMatrix.identity,
         children: <Node>[
-          for (Node child in parentNode.children)
+          for (final Node child in parentNode.children)
             child
                 .applyAttributes(parentNode.attributes)
                 .accept(this, nextTransform),
@@ -75,7 +75,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
         SvgAttributes.empty,
         paint: saveLayerPaint,
         children: <Node>[
-          for (Node child in parentNode.children)
+          for (final Node child in parentNode.children)
             child
                 .applyAttributes(parentNode.attributes.forSaveLayer())
                 .accept(this, nextTransform),
@@ -140,7 +140,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     return ResolvedTextPositionNode(
       textPositionNode.computeTextPosition(_bounds, data),
       <Node>[
-        for (Node child in textPositionNode.children)
+        for (final Node child in textPositionNode.children)
           child
               .applyAttributes(textPositionNode.attributes)
               .accept(this, nextTransform),
@@ -172,7 +172,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       height: viewportNode.height,
       transform: AffineMatrix.identity,
       children: <Node>[
-        for (Node child in viewportNode.children)
+        for (final Node child in viewportNode.children)
           child
               .applyAttributes(viewportNode.attributes)
               .accept(this, transform),

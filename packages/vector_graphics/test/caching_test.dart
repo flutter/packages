@@ -307,25 +307,6 @@ class TestAssetBundle extends Fake implements AssetBundle {
   }
 }
 
-class TestBytesLoader extends BytesLoader {
-  const TestBytesLoader(this.data);
-
-  final ByteData data;
-
-  @override
-  Future<ByteData> loadBytes(BuildContext? context) async {
-    return data;
-  }
-
-  @override
-  int get hashCode => data.hashCode;
-
-  @override
-  bool operator ==(Object other) {
-    return other is TestBytesLoader && other.data == data;
-  }
-}
-
 class ControlledAssetBytesLoader extends AssetBytesLoader {
   ControlledAssetBytesLoader(super.assetName);
 

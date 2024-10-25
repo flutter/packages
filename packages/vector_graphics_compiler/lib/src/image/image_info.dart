@@ -135,11 +135,9 @@ class GifImageSizeData extends ImageSizeData {
 ///
 /// This library does not support JPEG2000 images.
 class JpegImageSizeData extends ImageSizeData {
-  JpegImageSizeData._({required int width, required int height})
+  JpegImageSizeData._({required super.width, required super.height})
       : super(
           format: ImageFormat.jpeg,
-          width: width,
-          height: height,
         );
 
   factory JpegImageSizeData._fromBytes(ByteData data) {

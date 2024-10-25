@@ -7,12 +7,11 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 import 'html_render_vector_graphics.dart';
-import 'loader.dart';
 import 'listener.dart';
+import 'loader.dart';
 import 'render_object_selection.dart';
 import 'render_vector_graphic.dart';
 

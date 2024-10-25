@@ -8,13 +8,12 @@ import 'dart:typed_data';
 
 import '../geometry/path.dart';
 import '../geometry/vertices.dart';
-import 'parser.dart';
-import 'resolver.dart';
-
 import '../paint.dart';
 import 'node.dart';
-import 'visitor.dart';
+import 'parser.dart';
+import 'resolver.dart';
 import 'tessellator.dart' as api;
+import 'visitor.dart';
 
 // TODO(dnfield): Figure out where to put this.
 // https://github.com/flutter/flutter/issues/99563
@@ -46,7 +45,7 @@ class Tessellator extends Visitor<Node, void>
   @override
   Node visitParentNode(ParentNode parentNode, void data) {
     return ParentNode(SvgAttributes.empty, children: <Node>[
-      for (Node child in parentNode.children) child.accept(this, data)
+      for (final Node child in parentNode.children) child.accept(this, data)
     ]);
   }
 
@@ -73,7 +72,8 @@ class Tessellator extends Visitor<Node, void>
     return ResolvedTextPositionNode(
       textPositionNode.textPosition,
       <Node>[
-        for (Node child in textPositionNode.children) child.accept(this, data)
+        for (final Node child in textPositionNode.children)
+          child.accept(this, data)
       ],
     );
   }
@@ -94,11 +94,9 @@ class Tessellator extends Visitor<Node, void>
           case PathCommandType.move:
             final MoveToCommand move = command as MoveToCommand;
             builder.moveTo(move.x, move.y);
-            break;
           case PathCommandType.line:
             final LineToCommand line = command as LineToCommand;
             builder.lineTo(line.x, line.y);
-            break;
           case PathCommandType.cubic:
             final CubicToCommand cubic = command as CubicToCommand;
             builder.cubicTo(
@@ -109,10 +107,8 @@ class Tessellator extends Visitor<Node, void>
               cubic.x3,
               cubic.y3,
             );
-            break;
           case PathCommandType.close:
             builder.close();
-            break;
         }
       }
       final Float32List rawVertices = builder.tessellate(
@@ -156,7 +152,7 @@ class Tessellator extends Visitor<Node, void>
     return SaveLayerNode(SvgAttributes.empty,
         paint: layerNode.paint,
         children: <Node>[
-          for (Node child in layerNode.children) child.accept(this, data),
+          for (final Node child in layerNode.children) child.accept(this, data),
         ]);
   }
 
@@ -168,7 +164,8 @@ class Tessellator extends Visitor<Node, void>
       height: viewportNode.height,
       transform: viewportNode.transform,
       children: <Node>[
-        for (Node child in viewportNode.children) child.accept(this, data),
+        for (final Node child in viewportNode.children)
+          child.accept(this, data),
       ],
     );
   }
@@ -268,14 +265,14 @@ class VerticesBuilder {
   }
 }
 
-class _Vertices extends ffi.Struct {
+base class _Vertices extends ffi.Struct {
   external ffi.Pointer<ffi.Float> points;
 
   @ffi.Uint32()
   external int size;
 }
 
-class _PathBuilder extends ffi.Opaque {}
+base class _PathBuilder extends ffi.Opaque {}
 
 typedef _CreatePathBuilderType = ffi.Pointer<_PathBuilder> Function();
 typedef _create_path_builder_type = ffi.Pointer<_PathBuilder> Function();

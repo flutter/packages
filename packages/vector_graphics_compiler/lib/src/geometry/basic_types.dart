@@ -35,8 +35,8 @@ class Point {
 
   /// The distance between points [a] and [b].
   static double distance(Point a, Point b) {
-    final double x = (a.x - b.x);
-    final double y = (a.y - b.y);
+    final double x = a.x - b.x;
+    final double y = a.y - b.y;
     return math.sqrt((x * x) + (y * y));
   }
 

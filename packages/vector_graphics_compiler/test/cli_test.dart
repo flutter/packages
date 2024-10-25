@@ -6,9 +6,10 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as p;
+
 import '../bin/util/isolate_processor.dart';
 import '../bin/vector_graphics_compiler.dart' as cli;
-import 'package:path/path.dart' as p;
 
 void main() {
   final File output = File('test_data/example.vec');

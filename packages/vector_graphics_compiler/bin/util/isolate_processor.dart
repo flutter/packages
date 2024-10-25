@@ -2,13 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 
-import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'package:vector_graphics_compiler/src/debug_format.dart';
+import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 /// The isolate processor distributes SVG compilation across multiple isolates.
 class IsolateProcessor {
@@ -40,7 +42,7 @@ class IsolateProcessor {
     _current = 0;
     bool failure = false;
     await Future.wait(eagerError: true, <Future<void>>[
-      for (Pair pair in pairs)
+      for (final Pair pair in pairs)
         _process(
           pair,
           theme: theme,
@@ -118,7 +120,7 @@ class IsolateProcessor {
         File(pair.outputPath).writeAsBytesSync(bytes);
         if (dumpDebug) {
           final Uint8List debugBytes = dumpToDebugFormat(bytes);
-          File(pair.outputPath + '.debug').writeAsBytesSync(debugBytes);
+          File('${pair.outputPath}.debug').writeAsBytesSync(debugBytes);
         }
       });
       _current++;

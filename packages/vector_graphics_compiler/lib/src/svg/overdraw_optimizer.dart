@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'parser.dart';
-import 'node.dart';
-import 'visitor.dart';
 import '../../vector_graphics_compiler.dart';
 import 'masking_optimizer.dart';
+import 'node.dart';
+import 'parser.dart';
 import 'path_ops.dart' as path_ops;
+import 'visitor.dart';
 
 class _Result {
   _Result(this.node);
@@ -127,19 +127,21 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
 
   /// Determines if node is optimizable.
   bool isOptimizable(Node node) {
-    return (node is ResolvedPathNode &&
+    return node is ResolvedPathNode &&
         node.paint.stroke?.width == null &&
         node.paint.stroke?.color == null &&
-        node.paint.fill?.shader == null);
+        node.paint.fill?.shader == null;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitEmptyNode(Node node, void data) {
-    final _Result _result = _Result(node);
-    return _result;
+    final _Result result = _Result(node);
+    return result;
   }
 
   /// Visits applies optimizer to all children of ParentNode.
+  // ignore: library_private_types_in_public_api
   _Result visitChildren(Node node, _Result data) {
     if (node is ParentNode) {
       data = node.accept(this, data);
@@ -148,12 +150,13 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitParentNode(ParentNode parentNode, Node data) {
     int pathNodeCount = 0;
     final List<List<Node>> newChildList = <List<Node>>[];
     final List<Node> newChildren = <Node>[];
 
-    for (Node child in parentNode.children) {
+    for (final Node child in parentNode.children) {
       if (child is ResolvedPathNode) {
         pathNodeCount++;
       }
@@ -197,7 +200,7 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
                 /// Note: The "top" and "intersection" path nodes that
                 /// are returned will not be further optimized.
                 newChildList[lastPathNodeIndex] = resolveOpacityOverlap(
-                    (newChildList[lastPathNodeIndex].first as ResolvedPathNode),
+                    newChildList[lastPathNodeIndex].first as ResolvedPathNode,
                     child);
                 newChildList[index] = <Node>[];
                 lastPathNode = null;
@@ -215,7 +218,7 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
         index = 0;
 
         /// Here the 2-dimensional list of new children is flattened.
-        for (List<Node> child in newChildList) {
+        for (final List<Node> child in newChildList) {
           if (child.isNotEmpty) {
             if (child.first is ResolvedPathNode) {
               newChildren.addAll(child);
@@ -228,7 +231,7 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
         /// If there's less than 2 path nodes, the parent node's direct children
         /// cannot be optimized, but it may have grand children that can be optimized,
         /// so accept will be called on the children.
-        for (Node child in parentNode.children) {
+        for (final Node child in parentNode.children) {
           newChildren.add(child.accept(this, parentNode).node);
         }
       }
@@ -236,83 +239,93 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
       /// If group opacity is set, the parent nodes children cannot be optimized.
       return _Result(parentNode);
     }
-    final _Result _result = _Result(ParentNode(parentNode.attributes,
+    final _Result result = _Result(ParentNode(parentNode.attributes,
         children: newChildren, precalculatedTransform: parentNode.transform));
 
-    return _result;
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitMaskNode(MaskNode maskNode, Node data) {
     return _Result(maskNode);
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitPathNode(PathNode pathNode, Node data) {
     return _Result(pathNode);
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedMaskNode(ResolvedMaskNode maskNode, void data) {
     final _Result childResult = maskNode.child.accept(this, maskNode);
     final ResolvedMaskNode newMaskNode = ResolvedMaskNode(
         child: childResult.node,
         mask: maskNode.mask,
         blendMode: maskNode.blendMode);
-    final _Result _result = _Result(newMaskNode);
-    _result.children.add(childResult.node);
-    return _result;
+    final _Result result = _Result(newMaskNode);
+    result.children.add(childResult.node);
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedClipNode(ResolvedClipNode clipNode, Node data) {
     final _Result childResult = clipNode.child.accept(this, clipNode);
     final ResolvedClipNode newClipNode =
         ResolvedClipNode(clips: clipNode.clips, child: childResult.node);
-    final _Result _result = _Result(newClipNode);
-    _result.children.add(childResult.node);
+    final _Result result = _Result(newClipNode);
+    result.children.add(childResult.node);
 
-    return _result;
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedPath(ResolvedPathNode pathNode, Node data) {
     return _Result(pathNode);
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedText(ResolvedTextNode textNode, Node data) {
     return _Result(textNode);
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedVerticesNode(
       ResolvedVerticesNode verticesNode, Node data) {
     return _Result(verticesNode);
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitSaveLayerNode(SaveLayerNode layerNode, Node data) {
     final List<Node> newChildren = <Node>[];
-    for (Node child in layerNode.children) {
+    for (final Node child in layerNode.children) {
       final _Result childResult = child.accept(this, layerNode);
       newChildren.add(childResult.node);
     }
     final SaveLayerNode newLayerNode = SaveLayerNode(layerNode.attributes,
         paint: layerNode.paint, children: newChildren);
 
-    final _Result _result = _Result(newLayerNode);
-    _result.children.addAll(newChildren);
-    return _result;
+    final _Result result = _Result(newLayerNode);
+    result.children.addAll(newChildren);
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedImageNode(
       ResolvedImageNode resolvedImageNode, Node data) {
     return _Result(resolvedImageNode);
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitViewportNode(ViewportNode viewportNode, void data) {
     final List<Node> children = <Node>[];
 
@@ -330,24 +343,26 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
       children: children,
     );
 
-    final _Result _result = _Result(node);
-    _result.children.addAll(children);
-    return _result;
+    final _Result result = _Result(node);
+    result.children.addAll(children);
+    return result;
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedPatternNode(ResolvedPatternNode patternNode, Node data) {
     return _Result(patternNode);
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _Result visitResolvedTextPositionNode(
       ResolvedTextPositionNode textPositionNode, void data) {
     return _Result(
       ResolvedTextPositionNode(
         textPositionNode.textPosition,
         <Node>[
-          for (Node child in textPositionNode.children)
+          for (final Node child in textPositionNode.children)
             child.accept(this, data).node
         ],
       ),

@@ -3,10 +3,11 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vector_graphics_compiler/src/svg/node.dart';
 import 'package:vector_graphics_compiler/src/svg/clipping_optimizer.dart';
+import 'package:vector_graphics_compiler/src/svg/node.dart';
 import 'package:vector_graphics_compiler/src/svg/parser.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
+
 import 'test_svg_strings.dart';
 
 Node parseAndResolve(String source) {
@@ -36,8 +37,8 @@ void main() {
   });
 
   test('Only resolve ClipNode if .clips has one PathNode', () {
-    final Node node = parseAndResolve(
-        ''' <svg width="200px" height="200x" viewBox="0 0 200 200">
+    final Node node = parseAndResolve('''
+ <svg width="200px" height="200x" viewBox="0 0 200 200">
   <defs>
     <clipPath id="a">
       <rect x="0" y="0" width="200" height="100" />
@@ -59,7 +60,8 @@ void main() {
   test(
       "Don't resolve a ClipNode if one of the PathNodes it's applied to has stroke.width set",
       () async {
-    final Node node = parseAndResolve(''' <svg width="10" height="10">
+    final Node node = parseAndResolve('''
+ <svg width="10" height="10">
   <clipPath id="clip0">
     <path d="M2 3h7.9v2H1" />
   </clipPath>
@@ -77,8 +79,8 @@ void main() {
 
   test("Don't resolve ClipNode if intersection of Clip and Path is empty",
       () async {
-    final Node node = parseAndResolve(
-        '''<svg width="200px" height="200x" viewBox="0 0 200 200">
+    final Node node = parseAndResolve('''
+<svg width="200px" height="200x" viewBox="0 0 200 200">
   <defs>
     <clipPath id="a">
       <rect x="300" y="300" width="200" height="100" />

@@ -130,8 +130,8 @@ void main() {
     listener.onTextPosition(0, 10, 10, null, null, true, null);
     listener.onUpdateTextPosition(0);
     listener.onTextConfig('foo', null, 0, 0, 16, 0, 0, 0, 0);
-    listener.onDrawText(0, 0, null, null);
-    listener.onDrawText(0, 0, null, null);
+    await listener.onDrawText(0, 0, null, null);
+    await listener.onDrawText(0, 0, null, null);
 
     final Invocation drawParagraph0 = factory.fakeCanvases.last.invocations[0];
     final Invocation drawParagraph1 = factory.fakeCanvases.last.invocations[1];

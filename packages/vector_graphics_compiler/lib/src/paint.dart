@@ -167,10 +167,8 @@ class LinearGradient extends Gradient {
             .translated(bounds.left, bounds.top)
             .scaled(bounds.width, bounds.height)
             .multiplied(accumulatedTransform);
-        break;
       case GradientUnitMode.userSpaceOnUse:
         accumulatedTransform = transform.multiplied(accumulatedTransform);
-        break;
       case GradientUnitMode.transformed:
         break;
     }
@@ -310,10 +308,8 @@ class RadialGradient extends Gradient {
             .translated(bounds.left, bounds.top)
             .scaled(bounds.width, bounds.height)
             .multiplied(accumulatedTransform);
-        break;
       case GradientUnitMode.userSpaceOnUse:
         accumulatedTransform = transform.multiplied(accumulatedTransform);
-        break;
       case GradientUnitMode.transformed:
         break;
     }
@@ -1317,6 +1313,7 @@ class TextPosition {
 }
 
 /// Additional text specific configuration that is added to the encoding.
+@immutable
 class TextConfig {
   /// Create a new [TextStyle] object.
   const TextConfig(
@@ -1451,6 +1448,7 @@ enum TextDecorationStyle {
 /// A linear decoration to draw near the text.
 ///
 /// This matches the enum values defined in dart:ui.
+@immutable
 class TextDecoration {
   const TextDecoration._(this.mask);
 

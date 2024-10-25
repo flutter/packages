@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:vector_graphics_compiler/src/geometry/path.dart';
 
 const List<String> allSvgTestStrings = <String>[
@@ -1116,24 +1120,24 @@ const String opacityOverlap = '''
 </svg>
 ''';
 
-const String transparentOverSolid =
-    '''<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+const String transparentOverSolid = '''
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
  <g id="Layer_1">
   <rect  id="svg_1" height="126" width="623" y="240.5" x="88" fill="#ff0000"/>
   <rect  opacity="0.5" id="svg_10" height="502.00001" width="141" y="63.5" x="343" fill="#0000ff"/>
  </g>
 </svg>''';
 
-const String solidOverTrasnparent =
-    ''' <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+const String solidOverTrasnparent = '''
+ <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
  <g id="Layer_1">
   <rect opacity="0.5" id="svg_1" height="126" width="623" y="240.5" x="88" fill="#ff0000"/>
   <rect id="svg_10" height="502.00001" width="141" y="63.5" x="343" fill="#0000ff"/>
  </g>
 </svg>''';
 
-const String complexOpacityTest =
-    '''<svg width="12cm" height="3.5cm" viewBox="0 0 1200 350"
+const String complexOpacityTest = '''
+<svg width="12cm" height="3.5cm" viewBox="0 0 1200 350"
      xmlns="http://www.w3.org/2000/svg" version="1.1">
   <rect x="100" y="100" width="1000" height="150" fill="#0000ff"  />
   <circle cx="200" cy="100" r="50" fill="red" opacity="1"  />
@@ -1170,8 +1174,8 @@ const String alternatingPattern = '''
   <circle id="3" cx="190" cy="150" r="30" fill="url(#arrow)" stroke-width="20" stroke="none"/>
 </svg>''';
 
-const String starPatternCircles =
-    ''' <svg viewBox="0 0 230 100" xmlns="http://www.w3.org/2000/svg">
+const String starPatternCircles = '''
+ <svg viewBox="0 0 230 100" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <pattern id="star" viewBox="0,0,10,10" width="10%" height="10%">
       <polygon points="0,0 2,5 0,10 5,8 10,10 8,5 10,0 5,2" fill="red"/>

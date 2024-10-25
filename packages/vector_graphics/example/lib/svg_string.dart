@@ -37,7 +37,9 @@ void main() {
   runApp(const MyApp());
 }
 
+/// The main example app widget.
 class MyApp extends StatefulWidget {
+  /// Creates a new [MyApp].
   const MyApp({super.key});
 
   @override
@@ -115,13 +117,14 @@ class _MyAppState extends State<MyApp> {
           child: ListView(
             children: <Widget>[
               const SizedBox(height: 10),
-              _data == null
-                  ? const Placeholder()
-                  : VectorGraphic(
-                      loader: RawBytesLoader(
-                        _data!,
-                      ),
-                    ),
+              if (_data == null)
+                const Placeholder()
+              else
+                VectorGraphic(
+                  loader: RawBytesLoader(
+                    _data!,
+                  ),
+                ),
               const Divider(),
               Text('SVG size (compressed): $_svgLength ($_gzSvgLength). '
                   'VG size (compressed): $_vgLength ($_gzVgLength)'),
@@ -143,9 +146,12 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+/// A [BytesLoader] that passes on existing bytes.
 class RawBytesLoader extends BytesLoader {
+  /// Creates a [RawBytesLoader] that returns [data] directly.
   const RawBytesLoader(this.data);
 
+  /// The data to return.
   final ByteData data;
 
   @override

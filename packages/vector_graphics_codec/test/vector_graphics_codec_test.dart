@@ -4,13 +4,13 @@
 
 import 'dart:typed_data';
 
-import 'package:flutter_test/flutter_test.dart';
+import 'package:meta/meta.dart';
+import 'package:test/test.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
-const codec = VectorGraphicsCodec();
-const magicHeader = [98, 45, 136, 0, 1, 0, 0, 0];
-final mat4 =
-    Float64List.fromList([2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+const VectorGraphicsCodec codec = VectorGraphicsCodec();
+final Float64List mat4 = Float64List.fromList(
+    <double>[2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 
 void bufferContains(VectorGraphicsBuffer buffer, List<int> expectedBytes) {
   final Uint8List data = buffer.done().buffer.asUint8List();
@@ -19,16 +19,16 @@ void bufferContains(VectorGraphicsBuffer buffer, List<int> expectedBytes) {
 
 void main() {
   test('Messages begin with a magic number and version', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
 
-    bufferContains(buffer, [98, 45, 136, 0, 1]);
+    bufferContains(buffer, <int>[98, 45, 136, 0, 1]);
   });
 
   test('Messages without any contents cannot be decoded', () {
     expect(
         () => codec.decode(Uint8List(0).buffer.asByteData(), null),
         throwsA(isA<StateError>().having(
-            (se) => se.message,
+            (StateError se) => se.message,
             'message',
             contains(
                 'The provided data was not a vector_graphics binary asset.'))));
@@ -38,7 +38,7 @@ void main() {
     expect(
         () => codec.decode(Uint8List(6).buffer.asByteData(), null),
         throwsA(isA<StateError>().having(
-            (se) => se.message,
+            (StateError se) => se.message,
             'message',
             contains(
                 'The provided data was not a vector_graphics binary asset.'))));
@@ -55,16 +55,16 @@ void main() {
     expect(
         () => codec.decode(bytes.buffer.asByteData(), null),
         throwsA(isA<StateError>().having(
-            (se) => se.message,
+            (StateError se) => se.message,
             'message',
             contains(
                 'he provided data does not match the currently supported version.'))));
   });
 
   test('Basic message encode and decode with filled path', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
-    final int paintId = codec.writeFill(buffer, 23, 0, null);
+    final int paintId = codec.writeFill(buffer, 23, 0);
     final int pathId = codec.writePath(
       buffer,
       Uint8List.fromList(<int>[
@@ -79,7 +79,7 @@ void main() {
 
     codec.decode(buffer.done(), listener);
 
-    expect(listener.commands, [
+    expect(listener.commands, <Object>[
       OnPaintObject(
         color: 23,
         strokeCap: null,
@@ -101,7 +101,7 @@ void main() {
   });
 
   test('Basic message encode and decode with shaded path', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
     final int shaderId = codec.writeLinearGradient(
       buffer,
@@ -109,8 +109,8 @@ void main() {
       fromY: 0,
       toX: 1,
       toY: 1,
-      colors: Int32List.fromList([0, 1]),
-      offsets: Float32List.fromList([0, 1]),
+      colors: Int32List.fromList(<int>[0, 1]),
+      offsets: Float32List.fromList(<double>[0, 1]),
       tileMode: 1,
     );
     final int fillId = codec.writeFill(buffer, 23, 0, shaderId);
@@ -131,14 +131,14 @@ void main() {
 
     codec.decode(buffer.done(), listener);
 
-    expect(listener.commands, [
+    expect(listener.commands, <Object>[
       OnLinearGradient(
         fromX: 0,
         fromY: 0,
         toX: 1,
         toY: 1,
-        colors: Int32List.fromList([0, 1]),
-        offsets: Float32List.fromList([0, 1]),
+        colors: Int32List.fromList(<int>[0, 1]),
+        offsets: Float32List.fromList(<double>[0, 1]),
         tileMode: 1,
         id: shaderId,
       ),
@@ -175,12 +175,12 @@ void main() {
   });
 
   test('Basic message encode and decode with stroked vertex', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
     final int paintId = codec.writeStroke(buffer, 44, 1, 2, 3, 4.0, 6.0);
     codec.writeDrawVertices(
         buffer,
-        Float32List.fromList([
+        Float32List.fromList(<double>[
           0.0,
           2.0,
           3.0,
@@ -193,7 +193,7 @@ void main() {
 
     codec.decode(buffer.done(), listener);
 
-    expect(listener.commands, [
+    expect(listener.commands, <Object>[
       OnPaintObject(
         color: 44,
         strokeCap: 1,
@@ -205,7 +205,7 @@ void main() {
         id: paintId,
         shaderId: null,
       ),
-      OnDrawVertices([
+      OnDrawVertices(const <double>[
         0.0,
         2.0,
         3.0,
@@ -217,12 +217,12 @@ void main() {
   });
 
   test('Basic message encode and decode with stroked vertex and indexes', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
     final int paintId = codec.writeStroke(buffer, 44, 1, 2, 3, 4.0, 6.0);
     codec.writeDrawVertices(
       buffer,
-      Float32List.fromList([
+      Float32List.fromList(<double>[
         0.0,
         2.0,
         3.0,
@@ -230,7 +230,7 @@ void main() {
         2.0,
         4.0,
       ]),
-      Uint16List.fromList([
+      Uint16List.fromList(<int>[
         0,
         1,
         2,
@@ -243,7 +243,7 @@ void main() {
 
     codec.decode(buffer.done(), listener);
 
-    expect(listener.commands, [
+    expect(listener.commands, <Object>[
       OnPaintObject(
         color: 44,
         strokeCap: 1,
@@ -255,14 +255,14 @@ void main() {
         id: paintId,
         shaderId: null,
       ),
-      OnDrawVertices([
+      OnDrawVertices(const <double>[
         0.0,
         2.0,
         3.0,
         4.0,
         2.0,
         4.0,
-      ], [
+      ], const <int>[
         0,
         1,
         2,
@@ -274,7 +274,7 @@ void main() {
   });
 
   test('Can encode opacity/save/restore layers', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
     final int paintId = codec.writeFill(buffer, 0xAA000000, 0);
 
@@ -282,7 +282,7 @@ void main() {
     codec.writeRestoreLayer(buffer);
     codec.decode(buffer.done(), listener);
 
-    expect(listener.commands, [
+    expect(listener.commands, <Object>[
       OnPaintObject(
         color: 0xAA000000,
         strokeCap: null,
@@ -300,7 +300,7 @@ void main() {
   });
 
   test('Can encode a radial gradient', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
 
     final int shaderId = codec.writeRadialGradient(
@@ -310,23 +310,23 @@ void main() {
       radius: 5.0,
       focalX: 1.0,
       focalY: 1.0,
-      colors: Int32List.fromList([0xFFAABBAA]),
-      offsets: Float32List.fromList([2.2, 1.2]),
+      colors: Int32List.fromList(<int>[0xFFAABBAA]),
+      offsets: Float32List.fromList(<double>[2.2, 1.2]),
       tileMode: 0,
       transform: mat4,
     );
 
     codec.decode(buffer.done(), listener);
 
-    expect(listener.commands, [
+    expect(listener.commands, <OnRadialGradient>[
       OnRadialGradient(
         centerX: 2.0,
         centerY: 3.0,
         radius: 5.0,
         focalX: 1.0,
         focalY: 1.0,
-        colors: Int32List.fromList([0xFFAABBAA]),
-        offsets: Float32List.fromList([2.2, 1.2]),
+        colors: Int32List.fromList(<int>[0xFFAABBAA]),
+        offsets: Float32List.fromList(<double>[2.2, 1.2]),
         transform: mat4,
         tileMode: 0,
         id: shaderId,
@@ -335,7 +335,7 @@ void main() {
   });
 
   test('Can encode a radial gradient (no matrix)', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
 
     final int shaderId = codec.writeRadialGradient(
@@ -345,23 +345,23 @@ void main() {
       radius: 5.0,
       focalX: 1.0,
       focalY: 1.0,
-      colors: Int32List.fromList([0xFFAABBAA]),
-      offsets: Float32List.fromList([2.2, 1.2]),
+      colors: Int32List.fromList(<int>[0xFFAABBAA]),
+      offsets: Float32List.fromList(<double>[2.2, 1.2]),
       tileMode: 0,
       transform: null,
     );
 
     codec.decode(buffer.done(), listener);
 
-    expect(listener.commands, [
+    expect(listener.commands, <OnRadialGradient>[
       OnRadialGradient(
         centerX: 2.0,
         centerY: 3.0,
         radius: 5.0,
         focalX: 1.0,
         focalY: 1.0,
-        colors: Int32List.fromList([0xFFAABBAA]),
-        offsets: Float32List.fromList([2.2, 1.2]),
+        colors: Int32List.fromList(<int>[0xFFAABBAA]),
+        offsets: Float32List.fromList(<double>[2.2, 1.2]),
         transform: null,
         tileMode: 0,
         id: shaderId,
@@ -370,7 +370,7 @@ void main() {
   });
 
   test('Can encode a linear gradient', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
 
     final int shaderId = codec.writeLinearGradient(
@@ -379,21 +379,21 @@ void main() {
       fromY: 3.0,
       toX: 1.0,
       toY: 1.0,
-      colors: Int32List.fromList([0xFFAABBAA]),
-      offsets: Float32List.fromList([2.2, 1.2]),
+      colors: Int32List.fromList(<int>[0xFFAABBAA]),
+      offsets: Float32List.fromList(<double>[2.2, 1.2]),
       tileMode: 0,
     );
 
     codec.decode(buffer.done(), listener);
 
-    expect(listener.commands, [
+    expect(listener.commands, <OnLinearGradient>[
       OnLinearGradient(
         fromX: 2.0,
         fromY: 3.0,
         toX: 1.0,
         toY: 1.0,
-        colors: Int32List.fromList([0xFFAABBAA]),
-        offsets: Float32List.fromList([2.2, 1.2]),
+        colors: Int32List.fromList(<int>[0xFFAABBAA]),
+        offsets: Float32List.fromList(<double>[2.2, 1.2]),
         tileMode: 0,
         id: shaderId,
       ),
@@ -401,7 +401,7 @@ void main() {
   });
 
   test('Can encode clips', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
     final int pathId = codec.writePath(
       buffer,
@@ -419,7 +419,7 @@ void main() {
     codec.writeRestoreLayer(buffer);
     codec.decode(buffer.done(), listener);
 
-    expect(listener.commands, [
+    expect(listener.commands, <Object>[
       OnPathStart(pathId, 0),
       const OnPathLineTo(0, 10),
       const OnPathLineTo(20, 10),
@@ -432,32 +432,32 @@ void main() {
   });
 
   test('Can encode masks', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
     codec.writeMask(buffer);
     codec.decode(buffer.done(), listener);
-    expect(listener.commands, [const OnMask()]);
+    expect(listener.commands, <OnMask>[const OnMask()]);
   });
 
   test('Encodes a size', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
 
     codec.writeSize(buffer, 20, 30);
     codec.decode(buffer.done(), listener);
 
-    expect(listener.commands, [const OnSize(20, 30)]);
+    expect(listener.commands, <OnSize>[const OnSize(20, 30)]);
   });
 
   test('Only supports a single size', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
 
     codec.writeSize(buffer, 20, 30);
     expect(() => codec.writeSize(buffer, 1, 1), throwsStateError);
   });
 
   test('Encodes text', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
 
     final int paintId = codec.writeFill(buffer, 0xFFAABBAA, 0);
@@ -475,7 +475,7 @@ void main() {
     codec.writeDrawText(buffer, textId, paintId, null, null);
     codec.decode(buffer.done(), listener);
 
-    expect(listener.commands, [
+    expect(listener.commands, <Object>[
       OnPaintObject(
         color: 0xFFAABBAA,
         strokeCap: null,
@@ -493,7 +493,7 @@ void main() {
   });
 
   test('Encodes text with null font family', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
 
     final int paintId = codec.writeFill(buffer, 0xFFAABBAA, 0);
@@ -511,7 +511,7 @@ void main() {
     codec.writeDrawText(buffer, textId, paintId, null, null);
     codec.decode(buffer.done(), listener);
 
-    expect(listener.commands, [
+    expect(listener.commands, <Object>[
       OnPaintObject(
         color: 0xFFAABBAA,
         strokeCap: null,
@@ -529,7 +529,7 @@ void main() {
   });
 
   test('Encodes empty text', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
 
     final int paintId = codec.writeFill(buffer, 0xFFAABBAA, 0);
@@ -547,7 +547,7 @@ void main() {
     codec.writeDrawText(buffer, textId, paintId, null, null);
     codec.decode(buffer.done(), listener);
 
-    expect(listener.commands, [
+    expect(listener.commands, <Object>[
       OnPaintObject(
         color: 0xFFAABBAA,
         strokeCap: null,
@@ -564,58 +564,79 @@ void main() {
     ]);
   });
 
-  test('Encodes image data without transform', () {
-    final buffer = VectorGraphicsBuffer();
+  test('Encodes text position', () {
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
 
-    final id =
+    codec.writeTextPosition(buffer, 1, 2, 3, 4, true, mat4);
+
+    codec.decode(buffer.done(), listener);
+
+    expect(listener.commands, <Object>[
+      OnTextPosition(
+        id: 0,
+        x: 1,
+        y: 2,
+        dx: 3,
+        dy: 4,
+        reset: true,
+        transform: mat4,
+      ),
+    ]);
+  });
+
+  test('Encodes image data without transform', () {
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+    final TestListener listener = TestListener();
+
+    final int id =
         codec.writeImage(buffer, 0, Uint8List.fromList(<int>[0, 1, 3, 4, 5]));
     codec.writeDrawImage(buffer, id, 1, 2, 100, 100, null);
     final ByteData data = buffer.done();
     final DecodeResponse response = codec.decode(data, listener);
 
     expect(response.complete, false);
-    expect(listener.commands, [
-      OnImage(id, 0, [0, 1, 3, 4, 5]),
+    expect(listener.commands, <OnImage>[
+      OnImage(id, 0, const <int>[0, 1, 3, 4, 5]),
     ]);
 
     final DecodeResponse nextResponse =
         codec.decode(data, listener, response: response);
 
     expect(nextResponse.complete, true);
-    expect(listener.commands, [
-      OnImage(id, 0, [0, 1, 3, 4, 5]),
+    expect(listener.commands, <Object>[
+      OnImage(id, 0, const <int>[0, 1, 3, 4, 5]),
       OnDrawImage(id, 1, 2, 100, 100, null),
     ]);
   });
 
   test('Encodes image data with transform', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
 
-    final id =
+    final int id =
         codec.writeImage(buffer, 0, Uint8List.fromList(<int>[0, 1, 3, 4, 5]));
     codec.writeDrawImage(buffer, id, 1, 2, 100, 100, mat4);
     final ByteData data = buffer.done();
     final DecodeResponse response = codec.decode(data, listener);
 
     expect(response.complete, false);
-    expect(listener.commands, [
-      OnImage(id, 0, [0, 1, 3, 4, 5]),
+    expect(listener.commands, <OnImage>[
+      OnImage(id, 0, const <int>[0, 1, 3, 4, 5]),
     ]);
 
     final DecodeResponse nextResponse =
         codec.decode(data, listener, response: response);
 
     expect(nextResponse.complete, true);
-    expect(listener.commands, [
-      OnImage(id, 0, [0, 1, 3, 4, 5]),
+    expect(listener.commands, <Object>[
+      OnImage(id, 0, const <int>[0, 1, 3, 4, 5]),
       OnDrawImage(id, 1, 2, 100, 100, mat4),
     ]);
   });
 
   test('Encodes image data with various formats', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
 
     for (final int format in ImageFormatTypes.values) {
       expect(
@@ -627,10 +648,10 @@ void main() {
   });
 
   test('Basic message encode and decode with shaded path and image', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
 
-    final imageId =
+    final int imageId =
         codec.writeImage(buffer, 0, Uint8List.fromList(<int>[0, 1, 3, 4, 5]));
     final int shaderId = codec.writeLinearGradient(
       buffer,
@@ -638,8 +659,8 @@ void main() {
       fromY: 0,
       toX: 1,
       toY: 1,
-      colors: Int32List.fromList([0, 1]),
-      offsets: Float32List.fromList([0, 1]),
+      colors: Int32List.fromList(<int>[0, 1]),
+      offsets: Float32List.fromList(<double>[0, 1]),
       tileMode: 1,
     );
     final int fillId = codec.writeFill(buffer, 23, 0, shaderId);
@@ -664,19 +685,19 @@ void main() {
     DecodeResponse response = codec.decode(data, listener);
 
     expect(response.complete, false);
-    expect(listener.commands, [
+    expect(listener.commands, <Object>[
       OnImage(
         imageId,
         0,
-        <int>[0, 1, 3, 4, 5],
+        const <int>[0, 1, 3, 4, 5],
       ),
       OnLinearGradient(
         fromX: 0,
         fromY: 0,
         toX: 1,
         toY: 1,
-        colors: Int32List.fromList([0, 1]),
-        offsets: Float32List.fromList([0, 1]),
+        colors: Int32List.fromList(<int>[0, 1]),
+        offsets: Float32List.fromList(<double>[0, 1]),
         tileMode: 1,
         id: shaderId,
       ),
@@ -712,19 +733,19 @@ void main() {
     response = codec.decode(data, listener, response: response);
 
     expect(response.complete, true);
-    expect(listener.commands, [
+    expect(listener.commands, <Object>[
       OnImage(
         imageId,
         0,
-        <int>[0, 1, 3, 4, 5],
+        const <int>[0, 1, 3, 4, 5],
       ),
       OnLinearGradient(
         fromX: 0,
         fromY: 0,
         toX: 1,
         toY: 1,
-        colors: Int32List.fromList([0, 1]),
-        offsets: Float32List.fromList([0, 1]),
+        colors: Int32List.fromList(<int>[0, 1]),
+        offsets: Float32List.fromList(<double>[0, 1]),
         tileMode: 1,
         id: shaderId,
       ),
@@ -762,7 +783,7 @@ void main() {
   });
 
   test('Basic message encode and decode with half precision path', () {
-    final buffer = VectorGraphicsBuffer();
+    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();
 
     final int fillId = codec.writeFill(buffer, 23, 0);
@@ -784,10 +805,10 @@ void main() {
 
     final ByteData data = buffer.done();
 
-    DecodeResponse response = codec.decode(data, listener);
+    final DecodeResponse response = codec.decode(data, listener);
 
     expect(response.complete, true);
-    expect(listener.commands, [
+    expect(listener.commands, <Object>[
       OnPaintObject(
         color: 23,
         strokeCap: null,
@@ -1051,12 +1072,10 @@ class TestListener extends VectorGraphicsCodecListener {
       double height, Float64List transform) {
     commands.add(OnPatternStart(patternId, x, y, width, height, transform));
   }
-
-  void onPatternFinished() {
-    commands.add(const OnPatternFinished());
-  }
 }
 
+@immutable
+@immutable
 class OnTextPosition {
   const OnTextPosition({
     required this.id,
@@ -1075,12 +1094,37 @@ class OnTextPosition {
   final double? dy;
   final bool reset;
   final Float64List? transform;
+
+  @override
+  int get hashCode => Object.hash(
+        id,
+        x,
+        y,
+        dx,
+        dy,
+        reset,
+        Object.hashAll(transform ?? <Object?>[]),
+      );
+
+  @override
+  bool operator ==(Object other) {
+    return other is OnTextPosition &&
+        other.id == id &&
+        other.x == x &&
+        other.y == y &&
+        other.dx == dx &&
+        other.dy == dy &&
+        _listEquals(other.transform, transform);
+  }
 }
 
+@immutable
 class OnMask {
   const OnMask();
 }
 
+@immutable
+@immutable
 class OnLinearGradient {
   const OnLinearGradient({
     required this.fromX,
@@ -1109,7 +1153,7 @@ class OnLinearGradient {
         toX,
         toY,
         Object.hashAll(colors),
-        Object.hashAll(offsets ?? []),
+        Object.hashAll(offsets ?? <Object?>[]),
         tileMode,
         id,
       );
@@ -1141,6 +1185,7 @@ class OnLinearGradient {
   }
 }
 
+@immutable
 class OnRadialGradient {
   const OnRadialGradient({
     required this.centerX,
@@ -1174,8 +1219,8 @@ class OnRadialGradient {
         focalX,
         focalY,
         Object.hashAll(colors),
-        Object.hashAll(offsets ?? []),
-        Object.hashAll(transform ?? []),
+        Object.hashAll(offsets ?? <Object?>[]),
+        Object.hashAll(transform ?? <Object?>[]),
         tileMode,
         id,
       );
@@ -1196,6 +1241,7 @@ class OnRadialGradient {
   }
 }
 
+@immutable
 class OnSaveLayer {
   const OnSaveLayer(this.id);
 
@@ -1208,6 +1254,7 @@ class OnSaveLayer {
   bool operator ==(Object other) => other is OnSaveLayer && other.id == id;
 }
 
+@immutable
 class OnClipPath {
   const OnClipPath(this.id);
 
@@ -1220,10 +1267,12 @@ class OnClipPath {
   bool operator ==(Object other) => other is OnClipPath && other.id == id;
 }
 
+@immutable
 class OnRestoreLayer {
   const OnRestoreLayer();
 }
 
+@immutable
 class OnDrawPath {
   const OnDrawPath(this.pathId, this.paintId, this.patternId);
 
@@ -1245,6 +1294,7 @@ class OnDrawPath {
   String toString() => 'OnDrawPath($pathId, $paintId, $patternId)';
 }
 
+@immutable
 class OnDrawVertices {
   const OnDrawVertices(this.vertices, this.indices, this.paintId);
 
@@ -1253,8 +1303,8 @@ class OnDrawVertices {
   final int? paintId;
 
   @override
-  int get hashCode => Object.hash(
-      Object.hashAll(vertices), Object.hashAll(indices ?? []), paintId);
+  int get hashCode => Object.hash(Object.hashAll(vertices),
+      Object.hashAll(indices ?? <Object?>[]), paintId);
 
   @override
   bool operator ==(Object other) =>
@@ -1267,6 +1317,7 @@ class OnDrawVertices {
   String toString() => 'OnDrawVertices($vertices, $indices, $paintId)';
 }
 
+@immutable
 class OnPaintObject {
   const OnPaintObject({
     required this.color,
@@ -1314,6 +1365,7 @@ class OnPaintObject {
       'paintStyle: $paintStyle, id: $id, shaderId: $shaderId)';
 }
 
+@immutable
 class OnPathClose {
   const OnPathClose();
 
@@ -1327,6 +1379,7 @@ class OnPathClose {
   String toString() => 'OnPathClose';
 }
 
+@immutable
 class OnPathCubicTo {
   const OnPathCubicTo(this.x1, this.y1, this.x2, this.y2, this.x3, this.y3);
 
@@ -1354,6 +1407,7 @@ class OnPathCubicTo {
   String toString() => 'OnPathCubicTo($x1, $y1, $x2, $y2, $x3, $y3)';
 }
 
+@immutable
 class OnPathFinished {
   const OnPathFinished();
 
@@ -1367,6 +1421,7 @@ class OnPathFinished {
   String toString() => 'OnPathFinished';
 }
 
+@immutable
 class OnPathLineTo {
   const OnPathLineTo(this.x, this.y);
 
@@ -1384,6 +1439,7 @@ class OnPathLineTo {
   String toString() => 'OnPathLineTo($x, $y)';
 }
 
+@immutable
 class OnPathMoveTo {
   const OnPathMoveTo(this.x, this.y);
 
@@ -1401,6 +1457,7 @@ class OnPathMoveTo {
   String toString() => 'OnPathMoveTo($x, $y)';
 }
 
+@immutable
 class OnPathStart {
   const OnPathStart(this.id, this.fillType);
 
@@ -1418,6 +1475,7 @@ class OnPathStart {
   String toString() => 'OnPathStart($id, $fillType)';
 }
 
+@immutable
 class OnSize {
   const OnSize(this.width, this.height);
 
@@ -1435,6 +1493,7 @@ class OnSize {
   String toString() => 'OnSize($width, $height)';
 }
 
+@immutable
 class OnTextConfig {
   const OnTextConfig(
     this.text,
@@ -1489,6 +1548,7 @@ class OnTextConfig {
       'OnTextConfig($text, $fontSize, $fontFamily, $fontWeight, $decoration, $decorationStyle, $decorationColor, $id)';
 }
 
+@immutable
 class OnDrawText {
   const OnDrawText(this.textId, this.fillId, this.strokeId, this.patternId);
 
@@ -1512,6 +1572,7 @@ class OnDrawText {
   String toString() => 'OnDrawText($textId, $fillId, $strokeId, $patternId)';
 }
 
+@immutable
 class OnImage {
   const OnImage(this.id, this.format, this.data, {this.onError});
 
@@ -1535,6 +1596,7 @@ class OnImage {
   String toString() => 'OnImage($id, $format, data:${data.length} bytes)';
 }
 
+@immutable
 class OnDrawImage {
   const OnDrawImage(
       this.id, this.x, this.y, this.width, this.height, this.transform);
@@ -1548,7 +1610,7 @@ class OnDrawImage {
 
   @override
   int get hashCode => Object.hash(
-      id, x, y, width, height, Object.hashAll(transform ?? const []));
+      id, x, y, width, height, Object.hashAll(transform ?? const <Object?>[]));
 
   @override
   bool operator ==(Object other) {
@@ -1565,6 +1627,7 @@ class OnDrawImage {
   String toString() => 'OnDrawImage($id, $x, $y, $width, $height, $transform)';
 }
 
+@immutable
 class OnPatternStart {
   const OnPatternStart(
       this.patternId, this.x, this.y, this.width, this.height, this.transform);
@@ -1595,19 +1658,6 @@ class OnPatternStart {
       'OnPatternStart($patternId, $x, $y, $width, $height, $transform)';
 }
 
-class OnPatternFinished {
-  const OnPatternFinished();
-
-  @override
-  int get hashCode => 55678;
-
-  @override
-  bool operator ==(Object other) => other is OnPathFinished;
-
-  @override
-  String toString() => 'OnPatternFinished';
-}
-
 bool _listEquals<E>(List<E>? left, List<E>? right) {
   if (left == null && right == null) {
     return true;
@@ -1626,6 +1676,7 @@ bool _listEquals<E>(List<E>? left, List<E>? right) {
   return true;
 }
 
+@immutable
 class OnUpdateTextPosition {
   const OnUpdateTextPosition(this.id);
 

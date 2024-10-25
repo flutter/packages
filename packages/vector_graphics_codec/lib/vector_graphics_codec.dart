@@ -2,10 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:typed_data';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'src/fp16.dart' as fp16;
+
+// TODO(stuartmorgan): Fix the lack of documentation, and remove this. See
+//  https://github.com/flutter/flutter/issues/157616
+// ignore_for_file: public_member_api_docs
 
 /// enumeration of the types of control points accepted by [VectorGraphicsCodec.writePath].
 abstract class ControlPointTypes {
@@ -79,6 +83,9 @@ abstract class ImageFormatTypes {
 }
 
 class DecodeResponse {
+  // TODO(stuartmorgan): Fix this use of a private type in public API (likely
+  //  the constructor should be private).
+  // ignore: library_private_types_in_public_api
   const DecodeResponse(this.complete, this._buffer);
 
   final bool complete;
@@ -742,8 +749,8 @@ class VectorGraphicsCodec {
   }
 
   Uint16List _encodeToHalfPrecision(Float32List list) {
-    var output = Uint16List(list.length);
-    ByteData buffer = ByteData(8);
+    final Uint16List output = Uint16List(list.length);
+    final ByteData buffer = ByteData(8);
     for (int i = 0; i < list.length; i++) {
       buffer.setFloat32(0, list[i]);
       fp16.toHalf(buffer);
@@ -753,8 +760,8 @@ class VectorGraphicsCodec {
   }
 
   Float32List _decodeFromHalfPrecision(Uint16List list) {
-    var output = Float32List(list.length);
-    ByteData buffer = ByteData(8);
+    final Float32List output = Float32List(list.length);
+    final ByteData buffer = ByteData(8);
     for (int i = 0; i < list.length; i++) {
       buffer.setUint16(0, list[i]);
       output[i] = fp16.toDouble(buffer);
@@ -916,7 +923,7 @@ class VectorGraphicsCodec {
     final double dx = buffer.getFloat32();
     final double dy = buffer.getFloat32();
 
-    final bool reset = buffer.getUint8() == 0 ? false : true;
+    final bool reset = buffer.getUint8() != 0;
     final Float64List? transform = buffer.getTransform();
 
     listener?.onTextPosition(
@@ -1483,7 +1490,9 @@ class _ReadBuffer {
 
   void _alignTo(int alignment) {
     final int mod = _position % alignment;
-    if (mod != 0) _position += alignment - mod;
+    if (mod != 0) {
+      _position += alignment - mod;
+    }
   }
 
   Float64List? getTransform() {

@@ -4,6 +4,8 @@
 
 // This Render Object is not used by the HTML renderer.
 @TestOn('!chrome')
+library;
+
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -12,9 +14,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics/src/listener.dart';
 import 'package:vector_graphics/src/render_vector_graphic.dart';
+import 'package:vector_graphics/vector_graphics.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
-
-import 'caching_test.dart';
 
 void main() {
   late PictureInfo pictureInfo;
@@ -533,8 +534,27 @@ class FixedOpacityAnimation extends Animation<double> {
   double value = 1.0;
 
   void notifyListeners() {
-    for (ui.VoidCallback listener in _listeners) {
+    for (final ui.VoidCallback listener in _listeners) {
       listener();
     }
+  }
+}
+
+class TestBytesLoader extends BytesLoader {
+  const TestBytesLoader(this.data);
+
+  final ByteData data;
+
+  @override
+  Future<ByteData> loadBytes(BuildContext? context) async {
+    return data;
+  }
+
+  @override
+  int get hashCode => data.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return other is TestBytesLoader && other.data == data;
   }
 }

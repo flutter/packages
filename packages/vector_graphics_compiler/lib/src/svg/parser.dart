@@ -1,14 +1,20 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// ignore_for_file: avoid_print
+
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
-import 'package:vector_graphics_compiler/src/image/image_info.dart';
 import 'package:xml/xml_events.dart';
 
 import '../geometry/basic_types.dart';
 import '../geometry/matrix.dart';
 import '../geometry/path.dart';
+import '../image/image_info.dart';
 import '../paint.dart';
 import '../vector_instructions.dart';
 import 'clipping_optimizer.dart';
@@ -16,8 +22,8 @@ import 'color_mapper.dart';
 import 'colors.dart';
 import 'masking_optimizer.dart';
 import 'node.dart';
-import 'numbers.dart' hide parseDoubleWithUnits;
 import 'numbers.dart' as numbers show parseDoubleWithUnits;
+import 'numbers.dart' hide parseDoubleWithUnits;
 import 'overdraw_optimizer.dart';
 import 'parsers.dart';
 import 'path_ops.dart' as path_ops;
@@ -95,7 +101,7 @@ class _Elements {
   }
 
   static void g(SvgParser parserState, bool warningsAsErrors) {
-    if (parserState._currentStartElement?.isSelfClosing == true) {
+    if (parserState._currentStartElement?.isSelfClosing ?? false) {
       return;
     }
     final ParentNode parent = parserState.currentGroup!;
@@ -116,7 +122,7 @@ class _Elements {
   }
 
   static void textOrTspan(SvgParser parserState, bool warningsAsErrors) {
-    if (parserState._currentStartElement?.isSelfClosing == true) {
+    if (parserState._currentStartElement?.isSelfClosing ?? false) {
       return;
     }
     final ParentNode parent = parserState.currentGroup!;
@@ -246,7 +252,7 @@ class _Elements {
     List<Color> colors,
     List<double> offsets,
   ) {
-    for (XmlEvent event in parserState._readSubtree()) {
+    for (final XmlEvent event in parserState._readSubtree()) {
       if (event is XmlEndElementEvent) {
         continue;
       }
@@ -375,7 +381,7 @@ class _Elements {
   static void clipPath(SvgParser parserState, bool warningsAsErrors) {
     final String id = parserState.buildUrlIri();
     final List<Node> pathNodes = <Node>[];
-    for (XmlEvent event in parserState._readSubtree()) {
+    for (final XmlEvent event in parserState._readSubtree()) {
       if (event is XmlEndElementEvent) {
         continue;
       }
@@ -761,7 +767,7 @@ class SvgParser {
           _parentDrawables.last.name == 'tspan');
 
   void _parseTree() {
-    for (XmlEvent event in _readSubtree()) {
+    for (final XmlEvent event in _readSubtree()) {
       if (event is XmlStartElementEvent) {
         if (startElement(event)) {
           continue;
@@ -809,7 +815,7 @@ class SvgParser {
 
     // The order of these matters. The overdraw optimizer can do its best if
     // masks and unnecessary clips have been eliminated.
-    if (enableMaskingOptimizer == true) {
+    if (enableMaskingOptimizer) {
       if (path_ops.isPathOpsInitialized) {
         newRoot = maskingOptimizer.apply(newRoot);
       } else {
@@ -817,7 +823,7 @@ class SvgParser {
       }
     }
 
-    if (enableClippingOptimizer == true) {
+    if (enableClippingOptimizer) {
       if (path_ops.isPathOpsInitialized) {
         newRoot = clippingOptimizer.apply(newRoot);
       } else {
@@ -825,7 +831,7 @@ class SvgParser {
       }
     }
 
-    if (enableOverdrawOptimizer == true) {
+    if (enableOverdrawOptimizer) {
       if (path_ops.isPathOpsInitialized) {
         newRoot = overdrawOptimizer.apply(newRoot);
       } else {
@@ -1340,7 +1346,7 @@ class SvgParser {
     }
     // Do not use _currentAttributes, since they may not be up to date when this
     // is called.
-    return _colorMapper!.substitute(
+    return _colorMapper.substitute(
       id,
       _currentStartElement!.localName,
       attributeName,
@@ -1525,7 +1531,7 @@ class SvgParser {
     final String? rawStrokeOpacity = attributeMap['stroke-opacity'];
     double? opacity;
     if (rawStrokeOpacity != null) {
-      opacity = parseDouble(rawStrokeOpacity)!.clamp(0.0, 1.0).toDouble();
+      opacity = parseDouble(rawStrokeOpacity)!.clamp(0.0, 1.0);
     }
     if (uniformOpacity != null) {
       if (opacity == null) {
@@ -1557,7 +1563,7 @@ class SvgParser {
     Color? strokeColor;
     String? shaderId;
     bool? hasPattern;
-    if (rawStroke?.startsWith('url') == true) {
+    if (rawStroke?.startsWith('url') ?? false) {
       shaderId = rawStroke;
       strokeColor = const Color(0xFFFFFFFF);
       if (patternIds.contains(rawStroke)) {
@@ -1597,7 +1603,7 @@ class SvgParser {
     final String? rawFillOpacity = attributeMap['fill-opacity'];
     double? opacity;
     if (rawFillOpacity != null) {
-      opacity = parseDouble(rawFillOpacity)!.clamp(0.0, 1.0).toDouble();
+      opacity = parseDouble(rawFillOpacity)!.clamp(0.0, 1.0);
     }
     if (uniformOpacity != null) {
       if (opacity == null) {
@@ -1647,7 +1653,7 @@ class SvgParser {
   }) {
     final String? id = attributeMap['id'];
     final double? opacity =
-        parseDouble(attributeMap['opacity'])?.clamp(0.0, 1.0).toDouble();
+        parseDouble(attributeMap['opacity'])?.clamp(0.0, 1.0);
     final Color? color =
         parseColor(attributeMap['color'], attributeName: 'color', id: id) ??
             currentColor;
@@ -1751,9 +1757,7 @@ class _Resolver {
       }
     }
 
-    for (final Node node in nodes) {
-      extractPathsFromNode(node);
-    }
+    nodes.forEach(extractPathsFromNode);
 
     return pathBuilders
         .map((PathBuilder builder) => builder.toPath())
@@ -2275,7 +2279,7 @@ class SvgStrokeAttributes {
       return null;
     }
 
-    if (hasPattern == true) {
+    if (hasPattern ?? false) {
       return Stroke(
         join: join,
         cap: cap,
@@ -2290,7 +2294,7 @@ class SvgStrokeAttributes {
 
     Gradient? shader;
     if (shaderId != null) {
-      shader = _definitions!
+      shader = _definitions
           .getGradient<Gradient>(shaderId!)
           ?.applyBounds(shaderBounds, transform);
       if (shader == null) {
@@ -2376,7 +2380,7 @@ class SvgFillAttributes {
     if (resolvedColor == null) {
       return null;
     }
-    if (hasPattern == true) {
+    if (hasPattern ?? false) {
       return Fill(color: resolvedColor);
     }
 
@@ -2385,7 +2389,7 @@ class SvgFillAttributes {
     }
     Gradient? shader;
     if (shaderId != null) {
-      shader = _definitions!
+      shader = _definitions
           .getGradient<Gradient>(shaderId!)
           ?.applyBounds(shaderBounds, transform);
       if (shader == null) {

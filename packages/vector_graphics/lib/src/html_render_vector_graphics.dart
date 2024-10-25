@@ -8,8 +8,8 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
-import 'listener.dart';
 import 'debug.dart';
+import 'listener.dart';
 
 /// A render object which draws a vector graphic instance as a picture
 /// for HTML compatibility.

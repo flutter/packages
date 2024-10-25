@@ -15,7 +15,7 @@ const Map<String, Color> namedColors = <String, Color>{
   'azure': Color.fromARGB(255, 240, 255, 255),
   'beige': Color.fromARGB(255, 245, 245, 220),
   'bisque': Color.fromARGB(255, 255, 228, 196),
-  'black': Color.fromARGB(255, 0, 0, 0),
+  'black': Color.opaqueBlack,
   'blanchedalmond': Color.fromARGB(255, 255, 235, 205),
   'blue': Color.fromARGB(255, 0, 0, 255),
   'blueviolet': Color.fromARGB(255, 138, 43, 226),

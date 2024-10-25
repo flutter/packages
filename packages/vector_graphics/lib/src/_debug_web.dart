@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 /// Don't skip rasterization on web platform debug mode.
-// TODO: determine how this will be enabled/disabled.
+// TODO(jonahwilliams): determine how this will be enabled/disabled.
 bool get debugSkipRaster {
   return false;
 }

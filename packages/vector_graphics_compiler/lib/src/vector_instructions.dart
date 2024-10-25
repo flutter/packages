@@ -3,13 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:meta/meta.dart';
-import 'geometry/pattern.dart';
-import 'geometry/image.dart';
-import 'package:vector_graphics_compiler/src/util.dart';
 
+import 'geometry/image.dart';
 import 'geometry/path.dart';
+import 'geometry/pattern.dart';
 import 'geometry/vertices.dart';
 import 'paint.dart';
+import 'util.dart';
 
 /// An immutable collection of vector instructions, with [width] and [height]
 /// specifying the viewport coordinates.

@@ -4,9 +4,9 @@
 
 import 'dart:developer';
 
-import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:vector_graphics/vector_graphics.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
@@ -14,7 +14,9 @@ void main() {
   runApp(const MyApp());
 }
 
+/// The main example app widget.
 class MyApp extends StatelessWidget {
+  /// Creates a new [MyApp].
   const MyApp({super.key});
 
   @override
@@ -37,14 +39,17 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// A [BytesLoader] that converts a network URL into encoded SVG data.
 class NetworkSvgLoader extends BytesLoader {
+  /// Creates a [NetworkSvgLoader] that loads an SVG from [url].
   const NetworkSvgLoader(this.url);
 
+  /// The SVG URL.
   final String url;
 
   @override
   Future<ByteData> loadBytes(BuildContext? context) async {
-    return await compute((String svgUrl) async {
+    return compute((String svgUrl) async {
       final http.Response request = await http.get(Uri.parse(svgUrl));
       final TimelineTask task = TimelineTask()..start('encodeSvg');
       final Uint8List compiledBytes = encodeSvg(

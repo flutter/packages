@@ -2,11 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'resolver.dart';
-
 import 'node.dart';
-import 'visitor.dart';
+import 'resolver.dart';
 import 'tessellator.dart' as api;
+import 'visitor.dart';
 
 /// Whether or not tesselation should be used.
 bool get isTesselatorInitialized => false;

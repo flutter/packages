@@ -4,9 +4,8 @@
 
 import 'dart:typed_data';
 
-import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
-
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 void main() {
   test('Vertices.fromFloat32List', () {

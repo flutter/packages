@@ -336,14 +336,10 @@ class TestListener extends VectorGraphicsCodecListener {
 
   @override
   void onTextPosition(int textPositionId, double? x, double? y, double? dx,
-      double? dy, bool reset, Float64List? transform) {
-    // TODO: implement onTextPosition
-  }
+      double? dy, bool reset, Float64List? transform) {}
 
   @override
-  void onUpdateTextPosition(int textPositionId) {
-    // TODO: implement onUpdateTextPosition
-  }
+  void onUpdateTextPosition(int textPositionId) {}
 
   @override
   void onDrawPath(int pathId, int? paintId, int? patternId) {
@@ -552,16 +548,14 @@ class TestListener extends VectorGraphicsCodecListener {
       double height, Float64List transform) {
     commands.add(OnPatternStart(patternId, x, y, width, height, transform));
   }
-
-  void onPatternFinished() {
-    commands.add(const OnPatternFinished());
-  }
 }
 
+@immutable
 class OnMask {
   const OnMask();
 }
 
+@immutable
 class OnLinearGradient {
   const OnLinearGradient({
     required this.fromX,
@@ -622,6 +616,7 @@ class OnLinearGradient {
   }
 }
 
+@immutable
 class OnRadialGradient {
   const OnRadialGradient({
     required this.centerX,
@@ -677,6 +672,7 @@ class OnRadialGradient {
   }
 }
 
+@immutable
 class OnSaveLayer {
   const OnSaveLayer(this.id);
 
@@ -689,6 +685,7 @@ class OnSaveLayer {
   bool operator ==(Object other) => other is OnSaveLayer && other.id == id;
 }
 
+@immutable
 class OnClipPath {
   const OnClipPath(this.id);
 
@@ -701,10 +698,12 @@ class OnClipPath {
   bool operator ==(Object other) => other is OnClipPath && other.id == id;
 }
 
+@immutable
 class OnRestoreLayer {
   const OnRestoreLayer();
 }
 
+@immutable
 class OnDrawPath {
   const OnDrawPath(this.pathId, this.paintId, this.patternId);
 
@@ -726,6 +725,7 @@ class OnDrawPath {
   String toString() => 'OnDrawPath($pathId, $paintId, $patternId)';
 }
 
+@immutable
 class OnDrawVertices {
   const OnDrawVertices(this.vertices, this.indices, this.paintId);
 
@@ -748,6 +748,7 @@ class OnDrawVertices {
   String toString() => 'OnDrawVertices($vertices, $indices, $paintId)';
 }
 
+@immutable
 class OnPaintObject {
   const OnPaintObject({
     required this.color,
@@ -795,6 +796,7 @@ class OnPaintObject {
       'paintStyle: $paintStyle, id: $id, shaderId: $shaderId)';
 }
 
+@immutable
 class OnPathClose {
   const OnPathClose();
 
@@ -808,6 +810,7 @@ class OnPathClose {
   String toString() => 'OnPathClose';
 }
 
+@immutable
 class OnPathCubicTo {
   const OnPathCubicTo(this.x1, this.y1, this.x2, this.y2, this.x3, this.y3);
 
@@ -835,6 +838,7 @@ class OnPathCubicTo {
   String toString() => 'OnPathCubicTo($x1, $y1, $x2, $y2, $x3, $y3)';
 }
 
+@immutable
 class OnPathFinished {
   const OnPathFinished();
 
@@ -848,6 +852,7 @@ class OnPathFinished {
   String toString() => 'OnPathFinished';
 }
 
+@immutable
 class OnPathLineTo {
   const OnPathLineTo(this.x, this.y);
 
@@ -865,6 +870,7 @@ class OnPathLineTo {
   String toString() => 'OnPathLineTo($x, $y)';
 }
 
+@immutable
 class OnPathMoveTo {
   const OnPathMoveTo(this.x, this.y);
 
@@ -882,6 +888,7 @@ class OnPathMoveTo {
   String toString() => 'OnPathMoveTo($x, $y)';
 }
 
+@immutable
 class OnPathStart {
   const OnPathStart(this.id, this.fillType);
 
@@ -899,6 +906,7 @@ class OnPathStart {
   String toString() => 'OnPathStart($id, $fillType)';
 }
 
+@immutable
 class OnSize {
   const OnSize(this.width, this.height);
 
@@ -916,6 +924,7 @@ class OnSize {
   String toString() => 'OnSize($width, $height)';
 }
 
+@immutable
 class OnTextConfig {
   const OnTextConfig(
     this.text,
@@ -970,6 +979,7 @@ class OnTextConfig {
       'OnTextConfig($text, (anchor: $xAnchorMultiplier), $fontSize, $fontFamily, $fontWeight, $decoration, $decorationStyle, $decorationColor, $id)';
 }
 
+@immutable
 class OnDrawText {
   const OnDrawText(this.textId, this.fillId, this.strokeId, this.patternId);
 
@@ -993,6 +1003,7 @@ class OnDrawText {
   String toString() => 'OnDrawText($textId, $fillId, $strokeId, $patternId)';
 }
 
+@immutable
 class OnImage {
   const OnImage(this.id, this.format, this.data, {this.onError});
 
@@ -1016,6 +1027,7 @@ class OnImage {
   String toString() => 'OnImage($id, $format, data:${data.length} bytes)';
 }
 
+@immutable
 class OnDrawImage {
   const OnDrawImage(
     this.id,
@@ -1051,6 +1063,7 @@ class OnDrawImage {
   String toString() => 'OnDrawImage($id, $x, $y, $width, $height, $transform)';
 }
 
+@immutable
 class OnPatternStart {
   const OnPatternStart(
       this.patternId, this.x, this.y, this.width, this.height, this.transform);
@@ -1079,19 +1092,6 @@ class OnPatternStart {
   @override
   String toString() =>
       'OnPatternStart($patternId, $x, $y, $width, $height, $transform)';
-}
-
-class OnPatternFinished {
-  const OnPatternFinished();
-
-  @override
-  int get hashCode => 55678;
-
-  @override
-  bool operator ==(Object other) => other is OnPathFinished;
-
-  @override
-  String toString() => 'OnPatternFinished';
 }
 
 bool _listEquals<E>(List<E>? left, List<E>? right) {

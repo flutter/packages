@@ -612,7 +612,8 @@ Please move them to dev_dependencies.
       if (constraint is VersionRange &&
           constraint.min != null &&
           constraint.max != null &&
-          constraint.min == constraint.max) {
+          constraint.includeMin &&
+          constraint.includeMax) {
         return true;
       }
     }

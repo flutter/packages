@@ -4,11 +4,11 @@
 
 import 'dart:typed_data';
 
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:vector_graphics_codec/src/fp16.dart';
 
 double convert(double value) {
-  var byteData = ByteData(8);
+  final ByteData byteData = ByteData(8);
   byteData.setFloat32(0, value);
   toHalf(byteData);
   return toDouble(byteData);
@@ -16,19 +16,19 @@ double convert(double value) {
 
 void main() {
   test('fp16 positive values', () {
-    var missed = <List<double>>[];
+    final List<List<double>> missed = <List<double>>[];
 
     /// Validate that all numbers between [min] and [max] can be converted within [tolerance].
     void checkRange(
         {required double min, required double max, required double tolerance}) {
-      var byteData = ByteData(8);
-      for (var i = min; i < max; i += 1) {
+      final ByteData byteData = ByteData(8);
+      for (double i = min; i < max; i += 1) {
         byteData.setFloat32(0, i);
         toHalf(byteData);
 
-        var result = toDouble(byteData);
+        final double result = toDouble(byteData);
         if ((result - i).abs() > tolerance) {
-          missed.add([i, result]);
+          missed.add(<double>[i, result]);
         }
       }
     }

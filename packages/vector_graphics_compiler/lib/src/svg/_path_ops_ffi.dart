@@ -62,10 +62,8 @@ class Path implements PathProxy {
       switch (verb) {
         case PathVerb.moveTo:
           proxy.moveTo(points[index++], points[index++]);
-          break;
         case PathVerb.lineTo:
           proxy.lineTo(points[index++], points[index++]);
-          break;
         case PathVerb.quadTo:
           // TODO(dnfield): Avoid degree elevation?
           // The binary format only supports cubics. Skia might have
@@ -80,7 +78,6 @@ class Path implements PathProxy {
             points[index++],
             points[index++],
           );
-          break;
         case PathVerb.cubicTo:
           proxy.cubicTo(
             points[index++],
@@ -90,10 +87,8 @@ class Path implements PathProxy {
             points[index++],
             points[index++],
           );
-          break;
         case PathVerb.close:
           proxy.close();
-          break;
       }
     }
     assert(index == points.length);
@@ -216,9 +211,9 @@ void initializeLibPathOps(String path) {
   _isPathOpsInitialized = true;
 }
 
-class _SkPath extends ffi.Opaque {}
+base class _SkPath extends ffi.Opaque {}
 
-class _PathData extends ffi.Struct {
+base class _PathData extends ffi.Struct {
   external ffi.Pointer<ffi.Uint8> verbs;
 
   @ffi.Size()

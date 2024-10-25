@@ -93,7 +93,7 @@ void main() {
     expect(find.byType(SizedBox), findsNWidgets(2));
 
     final SizedBox sizedBox =
-        (find.byType(SizedBox).evaluate().first.widget as SizedBox);
+        find.byType(SizedBox).evaluate().first.widget as SizedBox;
 
     expect(sizedBox.width, 100);
     expect(sizedBox.height, 100);
@@ -113,7 +113,7 @@ void main() {
     expect(find.byType(SizedBox), findsNWidgets(2));
 
     final SizedBox sizedBox =
-        (find.byType(SizedBox).evaluate().first.widget as SizedBox);
+        find.byType(SizedBox).evaluate().first.widget as SizedBox;
 
     expect(sizedBox.width, 100);
     expect(sizedBox.height, 100);
@@ -133,7 +133,7 @@ void main() {
     expect(find.byType(SizedBox), findsNWidgets(2));
 
     final SizedBox sizedBox =
-        (find.byType(SizedBox).evaluate().first.widget as SizedBox);
+        find.byType(SizedBox).evaluate().first.widget as SizedBox;
 
     expect(sizedBox.width, 60);
     expect(sizedBox.height, 100);
@@ -152,7 +152,7 @@ void main() {
     expect(find.byType(FittedBox), findsOneWidget);
 
     final FittedBox fittedBox =
-        (find.byType(FittedBox).evaluate().first.widget as FittedBox);
+        find.byType(FittedBox).evaluate().first.widget as FittedBox;
 
     expect(fittedBox.fit, BoxFit.fitHeight);
     expect(fittedBox.alignment, Alignment.centerLeft);
@@ -171,7 +171,7 @@ void main() {
       expect(find.byType(FittedBox), findsOneWidget);
 
       final FittedBox fittedBox =
-          (find.byType(FittedBox).evaluate().first.widget as FittedBox);
+          find.byType(FittedBox).evaluate().first.widget as FittedBox;
 
       expect(fittedBox.clipBehavior, Clip.hardEdge);
     });
@@ -188,7 +188,7 @@ void main() {
       expect(find.byType(FittedBox), findsOneWidget);
 
       final FittedBox fittedBox =
-          (find.byType(FittedBox).evaluate().first.widget as FittedBox);
+          find.byType(FittedBox).evaluate().first.widget as FittedBox;
 
       expect(fittedBox.clipBehavior, Clip.none);
     });
@@ -207,7 +207,7 @@ void main() {
     expect(find.byType(SizedBox), findsNWidgets(2));
 
     final SizedBox sizedBox =
-        (find.byType(SizedBox).evaluate().last.widget as SizedBox);
+        find.byType(SizedBox).evaluate().last.widget as SizedBox;
 
     expect(sizedBox.width, 100);
     expect(sizedBox.height, 200);
@@ -492,7 +492,7 @@ void main() {
 
     late final VectorGraphicsDecodeException exception;
     try {
-      await vg.loadPicture(loader, key.currentContext!);
+      await vg.loadPicture(loader, key.currentContext);
     } on VectorGraphicsDecodeException catch (e) {
       exception = e;
     }
@@ -685,7 +685,7 @@ class DelayedBytesLoader extends BytesLoader {
 
   @override
   Future<ByteData> loadBytes(BuildContext? context) async {
-    return await data;
+    return data;
   }
 
   @override

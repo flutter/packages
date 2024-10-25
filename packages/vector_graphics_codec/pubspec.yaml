@@ -1,15 +1,19 @@
 name: vector_graphics_codec
-description: An encoding library for `package:vector_graphics`
-version: 1.1.11+1
-homepage: https://github.com/dnfield/vector_graphics
+description: An encoding library for the binary format used in `package:vector_graphics`
+repository: https://github.com/flutter/packages/tree/main/packages/vector_graphics_codec
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+vector_graphics%22
+# See https://github.com/flutter/flutter/issues/157626 before publishing a new
+# version.
+version: 1.1.12
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: ^3.4.0
 
 dev_dependencies:
-  flutter_lints: ^1.0.0
   flutter_test:
     sdk: flutter
+  meta: ^1.15.0
+  test: ^1.25.0
 
 platforms:
   android:
@@ -18,3 +22,7 @@ platforms:
   macos:
   web:
   windows:
+
+topics:
+  - svg
+  - vector-graphics

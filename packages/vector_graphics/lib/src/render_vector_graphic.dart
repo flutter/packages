@@ -8,8 +8,8 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
-import 'listener.dart';
 import 'debug.dart';
+import 'listener.dart';
 
 /// The cache key for a rasterized vector graphic.
 @immutable
@@ -305,7 +305,7 @@ class RenderVectorGraphic extends RenderBox {
     // bilinear interpolation.
     final Paint colorPaint = Paint()..filterQuality = ui.FilterQuality.low;
     if (colorFilter != null) {
-      colorPaint.colorFilter = colorFilter!;
+      colorPaint.colorFilter = colorFilter;
     }
     colorPaint.color = Color.fromRGBO(0, 0, 0, _opacityValue);
     final Rect src = ui.Rect.fromLTWH(
@@ -430,7 +430,7 @@ class RenderPictureVectorGraphic extends RenderBox {
 
     final Paint colorPaint = Paint();
     if (colorFilter != null) {
-      colorPaint.colorFilter = colorFilter!;
+      colorPaint.colorFilter = colorFilter;
     }
     colorPaint.color = Color.fromRGBO(0, 0, 0, _opacityValue);
     final int saveCount = context.canvas.getSaveCount();
