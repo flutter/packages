@@ -5,14 +5,14 @@
 
 This repo is a companion repo to the main [flutter repo](
 https://github.com/flutter/flutter). It contains the source code for Flutter
-first-party packages (i.e., packages developed by the core Flutter team).
+first-party packages (i.e. packages developed by the core Flutter team).
 Check the [`packages`](./packages) directory to see all packages.
 
 These packages are also available on [pub](https://pub.dev/flutter/packages).
 
 ## Issues
 
-Please file any issues, bugs, or feature requests in the [main flutter
+For any issues, bugs, or feature requests related to this repository, please submit them in the [main flutter
 repo](https://github.com/flutter/flutter/issues/new/choose).
 Issues pertaining to this repository are [labeled
 "package"](https://github.com/flutter/flutter/issues?q=is%3Aopen+is%3Aissue+label%3Apackage).
