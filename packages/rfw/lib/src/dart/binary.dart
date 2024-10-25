@@ -115,6 +115,9 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///
 ///   For example, the string "Hello" would be encoded as:
 ///
+// TODO(kallentu): Remove ignore and fix when stable is bumped.
+// https://github.com/flutter/flutter/issues/157620
+// ignore: missing_code_block_language_in_doc_comment
 ///       05 00 00 00 00 00 00 00  48 65 6C 6C 6F
 ///
 /// * Lists are encoded as an integer length, followed by that many values
@@ -124,6 +127,9 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///   followed by the value (tagged lists). For example, a list of integers with
 ///   the values 1 and 2 in that order would be encoded as:
 ///
+// TODO(kallentu): Remove ignore and fix when stable is bumped.
+// https://github.com/flutter/flutter/issues/157620
+// ignore: missing_code_block_language_in_doc_comment
 ///       02 00 00 00 00 00 00 00  01 00 00 00 00 00 00 00
 ///       02 00 00 00 00 00 00 00
 ///
@@ -131,6 +137,9 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///   would be encoded as follows; 0x04 is the tag for "String" (the full list
 ///   of tags is described below):
 ///
+// TODO(kallentu): Remove ignore and fix when stable is bumped.
+// https://github.com/flutter/flutter/issues/157620
+// ignore: missing_code_block_language_in_doc_comment
 ///       01 00 00 00 00 00 00 00  04 05 00 00 00 00 00 00
 ///       00 48 65 6C 6C 6F
 ///
@@ -147,6 +156,9 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///   strings, so they are untagged) is encoded as follows (0x02 is the tag for
 ///   integers):
 ///
+// TODO(kallentu): Remove ignore and fix when stable is bumped.
+// https://github.com/flutter/flutter/issues/157620
+// ignore: missing_code_block_language_in_doc_comment
 ///       01 00 00 00 00 00 00 00  01 00 00 00 00 00 00 00
 ///       61 02 0F 00 00 00 00 00  00 00
 ///
@@ -159,6 +171,9 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///   one of the subparts of the imported library name. For example, `import
 ///   a.b` is encoded as:
 ///
+// TODO(kallentu): Remove ignore and fix when stable is bumped.
+// https://github.com/flutter/flutter/issues/157620
+// ignore: missing_code_block_language_in_doc_comment
 ///       02 00 00 00 00 00 00 00  01 00 00 00 00 00 00 00
 ///       61 01 00 00 00 00 00 00  00 62
 ///
@@ -230,6 +245,9 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///
 ///   ...is encoded as follows (including the tag for the switch itself):
 ///
+// TODO(kallentu): Remove ignore and fix when stable is bumped.
+// https://github.com/flutter/flutter/issues/157620
+// ignore: missing_code_block_language_in_doc_comment
 ///       0F 0A 01 00 00 00 00 00  00 00 61 03 00 00 00 00
 ///       00 00 00 02 00 00 00 00  00 00 00 00 04 01 00 00
 ///       00 00 00 00 00 7A 02 01  00 00 00 00 00 00 00 04

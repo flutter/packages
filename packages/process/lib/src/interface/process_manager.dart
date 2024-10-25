@@ -57,6 +57,9 @@ abstract class ProcessManager {
   /// The following code uses `start` to grep for `main` in the
   /// file `test.dart` on Linux.
   ///
+  // TODO(kallentu): Remove ignore and fix when stable is bumped.
+  // https://github.com/flutter/flutter/issues/157620
+  // ignore: missing_code_block_language_in_doc_comment
   ///     ProcessManager mgr = new LocalProcessManager();
   ///     mgr.start(['grep', '-i', 'main', 'test.dart']).then((process) {
   ///       stdout.addStream(process.stdout);
@@ -130,6 +133,9 @@ abstract class ProcessManager {
   /// The following code uses `run` to grep for `main` in the
   /// file `test.dart` on Linux.
   ///
+  // TODO(kallentu): Remove ignore and fix when stable is bumped.
+  // https://github.com/flutter/flutter/issues/157620
+  // ignore: missing_code_block_language_in_doc_comment
   ///     ProcessManager mgr = new LocalProcessManager();
   ///     mgr.run('grep', ['-i', 'main', 'test.dart']).then((result) {
   ///       stdout.write(result.stdout);
