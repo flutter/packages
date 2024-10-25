@@ -1,3 +1,7 @@
+## 3.16.0+1
+
+* Added `missing_code_block_language_in_doc_comment` lint.
+
 ## 3.16.0
 
 * Supports NTLM for authentication.
