@@ -360,7 +360,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       child = _buildRichText(
         TextSpan(
           style: _isInBlockquote
-              ? _inlines.last.style!.merge(styleSheet.blockquote!)
+              ? _inlines.last.style!.merge(styleSheet.blockquote)
               : _inlines.last.style,
           text: trimText(text.text),
           recognizer: _linkHandlers.isNotEmpty ? _linkHandlers.last : null,
