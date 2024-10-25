@@ -122,11 +122,11 @@ await asyncPrefs.clear(allowList: <String>{'action', 'repeat'});
 ```dart
 final SharedPreferencesWithCache prefsWithCache =
     await SharedPreferencesWithCache.create(
-      cacheOptions: const SharedPreferencesWithCacheOptions(
-      // When an allowlist is included, any keys that aren't included cannot be used.
-      allowList: <String>{'repeat', 'action'},
-    ),
-  );
+  cacheOptions: const SharedPreferencesWithCacheOptions(
+    // When an allowlist is included, any keys that aren't included cannot be used.
+    allowList: <String>{'repeat', 'action'},
+  ),
+);
 
 await prefsWithCache.setBool('repeat', true);
 await prefsWithCache.setString('action', 'Start');
