@@ -191,6 +191,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testSeekToWhilePausedStartsDisplayLinkTemporarily {
+  XCTFail(@"Failing to test xcresult upload");
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistrar> *registrar =
