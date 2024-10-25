@@ -1,4 +1,4 @@
-## 3.1.0+1
+## 3.1.1
 
 * Added `missing_code_block_language_in_doc_comment` lint.
 

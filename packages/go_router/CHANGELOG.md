@@ -1,4 +1,4 @@
-## 14.3.0+1
+## 14.3.1
 
 - Added `missing_code_block_language_in_doc_comment` lint.
 

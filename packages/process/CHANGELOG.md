@@ -1,4 +1,4 @@
-## 5.0.2+1
+## 5.0.3
 
 * Added `missing_code_block_language_in_doc_comment` lint.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
