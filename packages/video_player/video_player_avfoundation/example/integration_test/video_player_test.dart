@@ -133,8 +133,7 @@ void main() {
       await controller.play();
       await tester.pumpAndSettle(_playDuration);
 
-      // test xcresult upload
-      expect(await controller.position, lessThan(Duration.zero));
+      expect(await controller.position, greaterThan(Duration.zero));
     });
   });
 
