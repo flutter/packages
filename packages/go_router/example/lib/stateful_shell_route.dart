@@ -152,9 +152,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
   /// The navigation shell and container for the branch Navigators.
   final Widget child;
 
-  StatefulShellRoute get _shellRoute =>
-      shellState.shellRoute as StatefulShellRoute;
-
   // #docregion configuration-custom-shell
   @override
   Widget build(BuildContext context) {

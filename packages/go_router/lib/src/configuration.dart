@@ -89,37 +89,17 @@ class RouteConfiguration {
           assert(
               !allowedKeys.contains(key),
               'Shell route must not reuse an ancestor navigatorKey '
-              '(${key})');
+              '($key)');
         }
         for (final RouteBase subRoute in route.routes) {
           final GlobalKey<NavigatorState> key =
               route.navigatorKeyForSubRoute(subRoute);
           _debugCheckParentNavigatorKeys(
-            [subRoute],
+            <RouteBase>[subRoute],
             <GlobalKey<NavigatorState>>[...allowedKeys, key],
           );
         }
-        // _debugCheckParentNavigatorKeys(
-        //   route.routes,
-        //   <GlobalKey<NavigatorState>>[...allowedKeys..add(route.navigatorKey)],
-        // );
       }
-      // else if (route is StatefulShellRoute) {
-      //   for (final StatefulShellBranch branch in route.branches) {
-      //     assert(
-      //         !allowedKeys.contains(branch.navigatorKey),
-      //         'StatefulShellBranch must not reuse an ancestor navigatorKey '
-      //         '(${branch.navigatorKey})');
-      //
-      //     _debugCheckParentNavigatorKeys(
-      //       branch.routes,
-      //       <GlobalKey<NavigatorState>>[
-      //         ...allowedKeys,
-      //         branch.navigatorKey,
-      //       ],
-      //     );
-      //   }
-      // }
     }
     return true;
   }

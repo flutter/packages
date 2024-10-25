@@ -854,8 +854,9 @@ class StatefulShellRoute extends ShellRouteBase {
     required this.navigatorContainerBuilder,
     super.parentNavigatorKey,
     this.restorationScopeId,
-    required this.key,
-  })  : assert(branches.isNotEmpty),
+    required GlobalKey<StatefulNavigationShellState> key,
+  })  : _shellStateKey = key,
+        assert(branches.isNotEmpty),
         assert(_debugUniqueNavigatorKeys(branches).length == branches.length,
             'Navigator keys must be unique'),
         assert(_debugValidateParentNavigatorKeys(branches)),
@@ -912,7 +913,7 @@ class StatefulShellRoute extends ShellRouteBase {
   /// [StatefulShellBranch.navigatorKey].
   final List<StatefulShellBranch> branches;
 
-  final GlobalKey<StatefulNavigationShellState> key;
+  final GlobalKey<StatefulNavigationShellState> _shellStateKey;
 
   @override
   Widget? buildWidget(BuildContext context, ShellRouteState state,
@@ -949,7 +950,7 @@ class StatefulShellRoute extends ShellRouteBase {
   @override
   RouteMatchList locationOfNavigator(GoRouterState state, int navigatorIndex) {
     final RouteMatchList? matchList =
-        key.currentState?._matchListForBranch(navigatorIndex);
+        _shellStateKey.currentState?._matchListForBranch(navigatorIndex);
     if (matchList != null && matchList.isNotEmpty) {
       return matchList;
     } else {
@@ -961,7 +962,7 @@ class StatefulShellRoute extends ShellRouteBase {
 
   @override
   void resetLocationOfNavigator(ShellRouteState state, int navigatorIndex) {
-    key.currentState?._resetMatchListForBranch(navigatorIndex);
+    _shellStateKey.currentState?._resetMatchListForBranch(navigatorIndex);
   }
 
   /// Finds the [ShellRouteState] for the given [GlobalKey], associated with a
@@ -1185,7 +1186,8 @@ class StatefulNavigationShell extends StatefulWidget {
         _containerBuilder = containerBuilder,
         assert(routeState.shellRoute is StatefulShellRoute),
         _router = router,
-        super(key: (routeState.shellRoute as StatefulShellRoute).key);
+        super(
+            key: (routeState.shellRoute as StatefulShellRoute)._shellStateKey);
 
   final ShellRouteState _routeState;
   final NavigatorBuilder _navigatorBuilder;
