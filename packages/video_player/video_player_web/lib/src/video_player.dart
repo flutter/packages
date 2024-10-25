@@ -8,7 +8,6 @@ import 'dart:js_interop';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
-import 'package:web/helpers.dart';
 import 'package:web/web.dart' as web;
 
 import 'duration_utils.dart';
