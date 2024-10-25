@@ -735,11 +735,11 @@ class ShellRoute extends ShellRouteBase {
 ///
 /// Like [ShellRoute], either a [builder] or a [pageBuilder] must be provided
 /// when creating a StatefulShellRoute. However, these builders differ slightly
-/// in that they accept a [StatefulNavigationShell] parameter instead of a
+/// in that they accept a [_StatefulNavigationShell] parameter instead of a
 /// child Widget. The StatefulNavigationShell can be used to access information
 /// about the state of the route, as well as to switch the active branch (i.e.
 /// restoring the navigation stack of another branch). The latter is
-/// accomplished by using the method [StatefulNavigationShell.goBranch], for
+/// accomplished by using the method [_StatefulNavigationShell.goBranch], for
 /// example:
 ///
 /// ```
@@ -801,7 +801,7 @@ class StatefulShellRoute extends ShellRouteBase {
     required ShellNavigationContainerBuilder navigatorContainerBuilder,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     String? restorationScopeId,
-    GlobalKey<StatefulNavigationShellState>? key,
+    GlobalKey? key,
   }) : this._(
           name: name,
           branches: branches,
@@ -811,7 +811,7 @@ class StatefulShellRoute extends ShellRouteBase {
           parentNavigatorKey: parentNavigatorKey,
           restorationScopeId: restorationScopeId,
           navigatorContainerBuilder: navigatorContainerBuilder,
-          key: key ?? GlobalKey<StatefulNavigationShellState>(),
+          key: key ?? GlobalKey(),
         );
 
   /// Constructs a StatefulShellRoute that uses an [IndexedStack] for its
@@ -832,7 +832,7 @@ class StatefulShellRoute extends ShellRouteBase {
     ShellRoutePageBuilder? pageBuilder,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     String? restorationScopeId,
-    GlobalKey<StatefulNavigationShellState>? key,
+    GlobalKey<State<StatefulWidget>>? key,
   }) : this._(
           name: name,
           branches: branches,
@@ -842,7 +842,7 @@ class StatefulShellRoute extends ShellRouteBase {
           parentNavigatorKey: parentNavigatorKey,
           restorationScopeId: restorationScopeId,
           navigatorContainerBuilder: _indexedStackContainerBuilder,
-          key: key ?? GlobalKey<StatefulNavigationShellState>(),
+          key: key ?? GlobalKey(),
         );
 
   StatefulShellRoute._({
@@ -854,7 +854,7 @@ class StatefulShellRoute extends ShellRouteBase {
     required this.navigatorContainerBuilder,
     super.parentNavigatorKey,
     this.restorationScopeId,
-    required GlobalKey<StatefulNavigationShellState> key,
+    required GlobalKey key,
   })  : _shellStateKey = key,
         assert(branches.isNotEmpty),
         assert(_debugUniqueNavigatorKeys(branches).length == branches.length,
@@ -913,7 +913,10 @@ class StatefulShellRoute extends ShellRouteBase {
   /// [StatefulShellBranch.navigatorKey].
   final List<StatefulShellBranch> branches;
 
-  final GlobalKey<StatefulNavigationShellState> _shellStateKey;
+  final GlobalKey _shellStateKey;
+
+  _StatefulNavigationShellState? get _shellState =>
+      _shellStateKey.currentState as _StatefulNavigationShellState?;
 
   @override
   Widget? buildWidget(BuildContext context, ShellRouteState state,
@@ -950,7 +953,7 @@ class StatefulShellRoute extends ShellRouteBase {
   @override
   RouteMatchList locationOfNavigator(GoRouterState state, int navigatorIndex) {
     final RouteMatchList? matchList =
-        _shellStateKey.currentState?._matchListForBranch(navigatorIndex);
+        _shellState?._matchListForBranch(navigatorIndex);
     if (matchList != null && matchList.isNotEmpty) {
       return matchList;
     } else {
@@ -962,14 +965,14 @@ class StatefulShellRoute extends ShellRouteBase {
 
   @override
   void resetLocationOfNavigator(ShellRouteState state, int navigatorIndex) {
-    _shellStateKey.currentState?._resetMatchListForBranch(navigatorIndex);
+    _shellState?._resetMatchListForBranch(navigatorIndex);
   }
 
   /// Finds the [ShellRouteState] for the given [GlobalKey], associated with a
   /// [StatefulShellRoute].
   static ShellRouteState? shellRouteStateForKey(
-          GlobalKey<StatefulNavigationShellState> key) =>
-      key.currentState?._routeState;
+          GlobalKey key) =>
+      (key.currentState as _StatefulNavigationShellState?)?._routeState;
 
   /// Get the initial location for the branch at the given index.
   ///
@@ -980,9 +983,9 @@ class StatefulShellRoute extends ShellRouteBase {
   Iterable<GlobalKey<NavigatorState>> get _navigatorKeys =>
       branches.map((StatefulShellBranch b) => b.navigatorKey);
 
-  StatefulNavigationShell _createShell(BuildContext context,
+  _StatefulNavigationShell _createShell(BuildContext context,
           ShellRouteState state, NavigatorBuilder navigatorBuilder) =>
-      StatefulNavigationShell._(
+      _StatefulNavigationShell._(
           routeState: state,
           navigatorBuilder: navigatorBuilder,
           router: GoRouter.of(context),
@@ -1089,7 +1092,7 @@ class StatefulShellRoute extends ShellRouteBase {
 /// sub-routes ([routes]), however sometimes it may be convenient to also
 /// provide a [initialLocation]. The value of this parameter is used when
 /// loading the branch for the first time (for instance when switching branch
-/// using the goBranch method in [StatefulNavigationShell]).
+/// using the goBranch method in [_StatefulNavigationShell]).
 ///
 /// A separate [Navigator] will be built for each StatefulShellBranch in a
 /// [StatefulShellRoute], and the routes of this branch will be placed onto that
@@ -1174,9 +1177,9 @@ typedef ShellNavigationContainerBuilder = Widget Function(
 ///
 /// Normally, this widget is not used directly, but is instead created
 /// internally by [StatefulShellRoute].
-class StatefulNavigationShell extends StatefulWidget {
+class _StatefulNavigationShell extends StatefulWidget {
   /// Constructs an [_StatefulNavigationShell].
-  StatefulNavigationShell._({
+  _StatefulNavigationShell._({
     required ShellRouteState routeState,
     required NavigatorBuilder navigatorBuilder,
     required GoRouter router,
@@ -1198,11 +1201,11 @@ class StatefulNavigationShell extends StatefulWidget {
   final ShellNavigationContainerBuilder _containerBuilder;
 
   @override
-  State<StatefulWidget> createState() => StatefulNavigationShellState();
+  State<StatefulWidget> createState() => _StatefulNavigationShellState();
 }
 
-/// State for [StatefulNavigationShell], and consequently [StatefulShellRoute].
-class StatefulNavigationShellState extends State<StatefulNavigationShell>
+/// State for [_StatefulNavigationShell], and consequently [StatefulShellRoute].
+class _StatefulNavigationShellState extends State<_StatefulNavigationShell>
     with RestorationMixin {
   final Map<Key, Widget> _branchNavigators = <Key, Widget>{};
 
@@ -1319,7 +1322,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   }
 
   @override
-  void didUpdateWidget(covariant StatefulNavigationShell oldWidget) {
+  void didUpdateWidget(covariant _StatefulNavigationShell oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateCurrentBranchStateFromWidget();
   }

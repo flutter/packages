@@ -12,6 +12,7 @@ final GlobalKey<NavigatorState> _tabANavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'tabANav');
 final GlobalKey<NavigatorState> _tabBNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'tabBNav');
+final GlobalKey _shellKey = GlobalKey(debugLabel: 'shellKey');
 
 // This example demonstrates how to setup nested navigation using a
 // BottomNavigationBar, where each bar item uses its own persistent navigator,
@@ -35,6 +36,9 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     initialLocation: '/a',
     routes: <RouteBase>[
       StatefulShellRoute(
+        // To ensure state is maintained even when route configurations is
+        // reloaded, provide a global key to the ShellRoute.
+        key: _shellKey,
         name: 'rootShell',
         // This nested StatefulShellRoute demonstrates the use of a custom
         // container for the branch Navigators, using the
@@ -174,9 +178,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
   /// ([AnimatedBranchContainer]).
   final List<Widget> children;
 
-  StatefulShellRoute get _shellRoute =>
-      shellState.shellRoute as StatefulShellRoute;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -199,22 +200,16 @@ class ScaffoldWithNavBar extends StatelessWidget {
     );
   }
 
+  /// Navigate to the current location of the branch at the provided index when
+  /// tapping an item in the BottomNavigationBar.
   void _onTap(BuildContext context, int index) {
     // A common pattern when using bottom navigation bars is to support
     // navigating to the initial location when tapping the item that is
     // already active.
     if (index == shellState.navigatorIndex) {
-      final String initialLocation =
-          _shellRoute.initialBranchLocation(shellState, index);
-      GoRouter.of(context).go(initialLocation);
-    } else {
-      return switch (index) {
-        1 => GoRouter.of(context).goNamed('branchB'),
-        _ => GoRouter.of(context).goNamed('branchA'),
-      };
-      // It is also possible to navigate to the branch by index like this:
-      //GoRouter.of(context).go('/rootShell/$index');
+      shellState.resetNavigatorLocation(index);
     }
+    context.restore(shellState.navigatorLocation(index));
   }
 }
 
