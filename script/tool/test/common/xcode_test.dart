@@ -165,6 +165,7 @@ void main() {
         'ios',
         workspace: 'A.xcworkspace',
         scheme: 'AScheme',
+        platform: MockPlatform(),
       );
 
       expect(exitCode, 0);
@@ -193,6 +194,7 @@ void main() {
           workspace: 'A.xcworkspace',
           scheme: 'AScheme',
           configuration: 'Debug',
+          platform: MockPlatform(),
           extraFlags: <String>['-a', '-b', 'c=d']);
 
       expect(exitCode, 0);
@@ -230,6 +232,7 @@ void main() {
         'ios',
         workspace: 'A.xcworkspace',
         scheme: 'AScheme',
+        platform: MockPlatform(),
       );
 
       expect(exitCode, 1);
@@ -264,6 +267,7 @@ void main() {
         'macos',
         workspace: 'A.xcworkspace',
         scheme: 'AScheme',
+        platform: MockPlatform(),
         actions: <String>['test'],
       );
 
