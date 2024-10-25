@@ -1,11 +1,8 @@
-## 2.3.3
-
-* Update README.
-
 ## 2.3.2
 
 * Removes outdated testing information from README.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Update README.
 
 ## 2.3.1
 
