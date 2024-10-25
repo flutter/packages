@@ -4,7 +4,7 @@
 [![Flutter CI Status](https://flutter-dashboard.appspot.com/api/public/build-status-badge?repo=packages)](https://flutter-dashboard.appspot.com/#/build?repo=packages)
 
 This repo is a companion repo to the main [flutter repo](
-https://github.com/flutter/flutter). It contains the source code for Flutter's
+https://github.com/flutter/flutter). It contains the source code for Flutter
 first-party packages (i.e., packages developed by the core Flutter team).
 Check the [`packages`](./packages) directory to see all packages.
 
