@@ -1,3 +1,7 @@
+## 2.9.3
+
+* Updates minimum Android implementation version for better Java compatibility
+
 ## 2.9.2
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
