@@ -1,3 +1,104 @@
+## 2.7.16
+
+* Updates internal Pigeon API to use newer features.
+
+## 2.7.15
+
+* Changes the rotation correction calculation for Android API 29+ to use
+  the one that is reported by the video's format instead of the unapplied
+  rotation degrees that Exoplayer does not report on Android API 21+.
+* Changes the rotation correction calculation for Android APIs 21-28 to 0
+  because the Impeller backend used on those API versions correctly rotates
+  the video being played automatically.
+
+## 2.7.14
+
+* Removes SSL workaround for API 19, which is no longer supported.
+
+## 2.7.13
+
+* When `AndroidVideoPlayer` attempts to operate on a `textureId` that is not
+  active (i.e. it was previously disposed or never created), the resulting
+  platform exception is more informative than a "NullPointerException".
+
+## 2.7.12
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/156451) where
+  additional harmless but annoying warnings in the form of native stack traces
+  would be printed when the app was backgrounded. There may be additional
+  warnings that are not yet fixed, but this should address the
+  most common case.
+
+## 2.7.11
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/156158) where a
+  harmless but annoying warning in the form of a native stack trace would be
+  printed when a previously disposed video player received a trim memory event
+  (i.e. by backgrounding).
+
+## 2.7.10
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/156158) where
+  disposing a video player (including implicitly by switching tabs or views
+  in a running app) would cause native stack traces.
+
+## 2.7.9
+
+* Updates Java compatibility version to 11.
+
+## 2.7.8
+
+* Updates Pigeon for non-nullable collection type support.
+
+## 2.7.7
+
+* Removes the flag to treat warnings as errors in client builds.
+
+## 2.7.6
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/154602) where
+  resuming a video player would cause a `Bad state: Future already completed`.
+
+## 2.7.5
+
+* Add a deprecation suppression in advance of a new `SurfaceProducer` API.
+
+## 2.7.4
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/154559) where
+  resuming (or using a plugin like `share_plus` that implicitly resumes the
+  activity where) a video player would cause a `DecoderInitializationException`.
+
+## 2.7.3
+
+* Updates Media3-ExoPlayer to 1.4.1.
+
+## 2.7.2
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+* Re-adds Impeller support.
+
+## 2.7.1
+
+* Revert Impeller support.
+
+## 2.7.0
+
+* Re-adds [support for Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
+
+## 2.6.0
+
+* Adds RTSP support.
+
+## 2.5.4
+
+* Updates Media3-ExoPlayer to 1.4.0.
+
+## 2.5.3
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 2.5.2
 
 * Updates Android Gradle plugin to 8.5.0.

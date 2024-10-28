@@ -1,3 +1,28 @@
+## 3.1.0
+
+* Add `flutter_frame.total_time`, `flutter_frame.build_time`, and `flutter_frame.raster_time`
+metrics to benchmark results. These values are derived from the Flutter `FrameTiming` API.
+* Expose a new library `metrics.dart` that contains definitions for the benchmark metrics.
+* Add p50, p90, and p95 metrics for benchmark scores.
+
+## 3.0.0
+
+* **Breaking change:** removed the `initialPage` parameter from the `serveWebBenchmark`
+method and `runBenchmarks` method. Replaced this parameter with `benchmarkPath`, which
+allows for passing the combined value of the URL path segments, fragment, and query parameters.
+* Restructure the `testing/test_app` to make the example benchmarks easier to follow.
+
+## 2.0.2
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Updates benchmark server to serve the app as `crossOriginIsolated`. This
+allows us access to high precision timers and allows wasm benchmarks to run
+properly as well.
+
+## 2.0.1
+
+* Adds support for `web: ^1.0.0`.
+
 ## 2.0.0
 
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.

@@ -1,3 +1,28 @@
+## 2.2.13
+
+* Updates annotations lib to 1.9.0.
+
+## 2.2.12
+
+* Updates Pigeon for non-nullable collection type support.
+
+## 2.2.11
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 2.2.10
+
+* Updates annotations lib to 1.8.2.
+
+## 2.2.9
+
+* Updates annotations lib to 1.8.1.
+
+## 2.2.8
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 2.2.7
 
 * Updates AGP version to 8.5.0.

@@ -118,11 +118,9 @@
     return nil;
   }
   NSMutableDictionary *map = [[NSMutableDictionary alloc] init];
-  [map setObject:[locale objectForKey:NSLocaleCurrencySymbol] ?: [NSNull null]
-          forKey:@"currencySymbol"];
-  [map setObject:[locale objectForKey:NSLocaleCurrencyCode] ?: [NSNull null]
-          forKey:@"currencyCode"];
-  [map setObject:[locale objectForKey:NSLocaleCountryCode] ?: [NSNull null] forKey:@"countryCode"];
+  [map setObject:locale.currencySymbol ?: [NSNull null] forKey:@"currencySymbol"];
+  [map setObject:locale.currencyCode ?: [NSNull null] forKey:@"currencyCode"];
+  [map setObject:locale.countryCode ?: [NSNull null] forKey:@"countryCode"];
   return map;
 }
 
@@ -293,12 +291,12 @@
   return discount;
 }
 
-+ (nullable SKPaymentTransactionMessage *)convertTransactionToPigeon:
++ (nullable FIASKPaymentTransactionMessage *)convertTransactionToPigeon:
     (nullable SKPaymentTransaction *)transaction API_AVAILABLE(ios(12.2)) {
   if (!transaction) {
     return nil;
   }
-  SKPaymentTransactionMessage *msg = [SKPaymentTransactionMessage
+  return [FIASKPaymentTransactionMessage
             makeWithPayment:[self convertPaymentToPigeon:transaction.payment]
            transactionState:[self convertTransactionStateToPigeon:transaction.transactionState]
         originalTransaction:transaction.originalTransaction
@@ -308,10 +306,9 @@
                                                                timeIntervalSince1970]]
       transactionIdentifier:transaction.transactionIdentifier
                       error:[self convertSKErrorToPigeon:transaction.error]];
-  return msg;
 }
 
-+ (nullable SKErrorMessage *)convertSKErrorToPigeon:(nullable NSError *)error {
++ (nullable FIASKErrorMessage *)convertSKErrorToPigeon:(nullable NSError *)error {
   if (!error) {
     return nil;
   }
@@ -322,34 +319,31 @@
     userInfo[key] = [FIAObjectTranslator encodeNSErrorUserInfo:value];
   }
 
-  SKErrorMessage *msg = [SKErrorMessage makeWithCode:error.code
-                                              domain:error.domain
-                                            userInfo:userInfo];
-  return msg;
+  return [FIASKErrorMessage makeWithCode:error.code domain:error.domain userInfo:userInfo];
 }
 
-+ (SKPaymentTransactionStateMessage)convertTransactionStateToPigeon:
++ (FIASKPaymentTransactionStateMessage)convertTransactionStateToPigeon:
     (SKPaymentTransactionState)state {
   switch (state) {
     case SKPaymentTransactionStatePurchasing:
-      return SKPaymentTransactionStateMessagePurchasing;
+      return FIASKPaymentTransactionStateMessagePurchasing;
     case SKPaymentTransactionStatePurchased:
-      return SKPaymentTransactionStateMessagePurchased;
+      return FIASKPaymentTransactionStateMessagePurchased;
     case SKPaymentTransactionStateFailed:
-      return SKPaymentTransactionStateMessageFailed;
+      return FIASKPaymentTransactionStateMessageFailed;
     case SKPaymentTransactionStateRestored:
-      return SKPaymentTransactionStateMessageRestored;
+      return FIASKPaymentTransactionStateMessageRestored;
     case SKPaymentTransactionStateDeferred:
-      return SKPaymentTransactionStateMessageDeferred;
+      return FIASKPaymentTransactionStateMessageDeferred;
   }
 }
 
-+ (nullable SKPaymentMessage *)convertPaymentToPigeon:(nullable SKPayment *)payment
++ (nullable FIASKPaymentMessage *)convertPaymentToPigeon:(nullable SKPayment *)payment
     API_AVAILABLE(ios(12.2)) {
   if (!payment) {
     return nil;
   }
-  SKPaymentMessage *msg = [SKPaymentMessage
+  return [FIASKPaymentMessage
        makeWithProductIdentifier:payment.productIdentifier
              applicationUsername:payment.applicationUsername
                      requestData:[[NSString alloc] initWithData:payment.requestData
@@ -357,92 +351,85 @@
                         quantity:payment.quantity
       simulatesAskToBuyInSandbox:payment.simulatesAskToBuyInSandbox
                  paymentDiscount:[self convertPaymentDiscountToPigeon:payment.paymentDiscount]];
-  return msg;
 }
 
-+ (nullable SKPaymentDiscountMessage *)convertPaymentDiscountToPigeon:
++ (nullable FIASKPaymentDiscountMessage *)convertPaymentDiscountToPigeon:
     (nullable SKPaymentDiscount *)discount API_AVAILABLE(ios(12.2)) {
   if (!discount) {
     return nil;
   }
-  SKPaymentDiscountMessage *msg =
-      [SKPaymentDiscountMessage makeWithIdentifier:discount.identifier
-                                     keyIdentifier:discount.keyIdentifier
-                                             nonce:[discount.nonce UUIDString]
-                                         signature:discount.signature
-                                         timestamp:[discount.timestamp intValue]];
-
-  return msg;
+  return [FIASKPaymentDiscountMessage makeWithIdentifier:discount.identifier
+                                           keyIdentifier:discount.keyIdentifier
+                                                   nonce:[discount.nonce UUIDString]
+                                               signature:discount.signature
+                                               timestamp:[discount.timestamp intValue]];
 }
 
-+ (nullable SKStorefrontMessage *)convertStorefrontToPigeon:(nullable SKStorefront *)storefront
++ (nullable FIASKStorefrontMessage *)convertStorefrontToPigeon:(nullable SKStorefront *)storefront
     API_AVAILABLE(ios(13.0)) {
   if (!storefront) {
     return nil;
   }
-  SKStorefrontMessage *msg = [SKStorefrontMessage makeWithCountryCode:storefront.countryCode
-                                                           identifier:storefront.identifier];
-  return msg;
+  return [FIASKStorefrontMessage makeWithCountryCode:storefront.countryCode
+                                          identifier:storefront.identifier];
 }
 
-+ (nullable SKProductSubscriptionPeriodMessage *)convertSKProductSubscriptionPeriodToPigeon:
++ (nullable FIASKProductSubscriptionPeriodMessage *)convertSKProductSubscriptionPeriodToPigeon:
     (nullable SKProductSubscriptionPeriod *)period API_AVAILABLE(ios(12.2)) {
   if (!period) {
     return nil;
   }
 
-  SKSubscriptionPeriodUnitMessage unit;
+  FIASKSubscriptionPeriodUnitMessage unit;
   switch (period.unit) {
     case SKProductPeriodUnitDay:
-      unit = SKSubscriptionPeriodUnitMessageDay;
+      unit = FIASKSubscriptionPeriodUnitMessageDay;
       break;
     case SKProductPeriodUnitWeek:
-      unit = SKSubscriptionPeriodUnitMessageWeek;
+      unit = FIASKSubscriptionPeriodUnitMessageWeek;
       break;
     case SKProductPeriodUnitMonth:
-      unit = SKSubscriptionPeriodUnitMessageMonth;
+      unit = FIASKSubscriptionPeriodUnitMessageMonth;
       break;
     case SKProductPeriodUnitYear:
-      unit = SKSubscriptionPeriodUnitMessageYear;
+      unit = FIASKSubscriptionPeriodUnitMessageYear;
       break;
   }
 
-  SKProductSubscriptionPeriodMessage *msg =
-      [SKProductSubscriptionPeriodMessage makeWithNumberOfUnits:period.numberOfUnits unit:unit];
-
-  return msg;
+  return [FIASKProductSubscriptionPeriodMessage makeWithNumberOfUnits:period.numberOfUnits
+                                                                 unit:unit];
 }
 
-+ (nullable SKProductDiscountMessage *)convertProductDiscountToPigeon:
++ (nullable FIASKProductDiscountMessage *)convertProductDiscountToPigeon:
     (nullable SKProductDiscount *)productDiscount API_AVAILABLE(ios(12.2)) {
   if (!productDiscount) {
     return nil;
   }
 
-  SKProductDiscountPaymentModeMessage paymentMode;
+  FIASKProductDiscountPaymentModeMessage paymentMode;
   switch (productDiscount.paymentMode) {
     case SKProductDiscountPaymentModeFreeTrial:
-      paymentMode = SKProductDiscountPaymentModeMessageFreeTrial;
+      paymentMode = FIASKProductDiscountPaymentModeMessageFreeTrial;
       break;
     case SKProductDiscountPaymentModePayAsYouGo:
-      paymentMode = SKProductDiscountPaymentModeMessagePayAsYouGo;
+      paymentMode = FIASKProductDiscountPaymentModeMessagePayAsYouGo;
       break;
     case SKProductDiscountPaymentModePayUpFront:
-      paymentMode = SKProductDiscountPaymentModeMessagePayUpFront;
+      paymentMode = FIASKProductDiscountPaymentModeMessagePayUpFront;
       break;
   }
 
-  SKProductDiscountTypeMessage type;
+  FIASKProductDiscountTypeMessage type;
   switch (productDiscount.type) {
     case SKProductDiscountTypeIntroductory:
-      type = SKProductDiscountTypeMessageIntroductory;
+      type = FIASKProductDiscountTypeMessageIntroductory;
       break;
     case SKProductDiscountTypeSubscription:
-      type = SKProductDiscountTypeMessageSubscription;
+      type = FIASKProductDiscountTypeMessageSubscription;
       break;
   }
 
-  SKProductDiscountMessage *msg = [SKProductDiscountMessage
+  return [FIASKProductDiscountMessage
            makeWithPrice:productDiscount.price.description
              priceLocale:[self convertNSLocaleToPigeon:productDiscount.priceLocale]
          numberOfPeriods:productDiscount.numberOfPeriods
@@ -451,37 +438,33 @@
                                                                               .subscriptionPeriod]
               identifier:productDiscount.identifier
                     type:type];
-
-  return msg;
 }
 
-+ (nullable SKPriceLocaleMessage *)convertNSLocaleToPigeon:(nullable NSLocale *)locale
++ (nullable FIASKPriceLocaleMessage *)convertNSLocaleToPigeon:(nullable NSLocale *)locale
     API_AVAILABLE(ios(12.2)) {
   if (!locale) {
     return nil;
   }
-  SKPriceLocaleMessage *msg = [SKPriceLocaleMessage makeWithCurrencySymbol:locale.currencySymbol
-                                                              currencyCode:locale.currencyCode
-                                                               countryCode:locale.countryCode];
-
-  return msg;
+  return [FIASKPriceLocaleMessage makeWithCurrencySymbol:locale.currencySymbol
+                                            currencyCode:locale.currencyCode
+                                             countryCode:locale.countryCode];
 }
 
-+ (nullable SKProductMessage *)convertProductToPigeon:(nullable SKProduct *)product
++ (nullable FIASKProductMessage *)convertProductToPigeon:(nullable SKProduct *)product
     API_AVAILABLE(ios(12.2)) {
   if (!product) {
     return nil;
   }
 
   NSArray<SKProductDiscount *> *skProductDiscounts = product.discounts;
-  NSMutableArray<SKProductDiscountMessage *> *pigeonProductDiscounts =
+  NSMutableArray<FIASKProductDiscountMessage *> *pigeonProductDiscounts =
       [NSMutableArray arrayWithCapacity:skProductDiscounts.count];
 
   for (SKProductDiscount *productDiscount in skProductDiscounts) {
     [pigeonProductDiscounts addObject:[self convertProductDiscountToPigeon:productDiscount]];
   };
 
-  SKProductMessage *msg = [SKProductMessage
+  return [FIASKProductMessage
         makeWithProductIdentifier:product.productIdentifier
                    localizedTitle:product.localizedTitle
              localizedDescription:product.localizedDescription
@@ -492,27 +475,24 @@
                    [self convertSKProductSubscriptionPeriodToPigeon:product.subscriptionPeriod]
                 introductoryPrice:[self convertProductDiscountToPigeon:product.introductoryPrice]
                         discounts:pigeonProductDiscounts];
-
-  return msg;
 }
 
-+ (nullable SKProductsResponseMessage *)convertProductsResponseToPigeon:
++ (nullable FIASKProductsResponseMessage *)convertProductsResponseToPigeon:
     (nullable SKProductsResponse *)productsResponse API_AVAILABLE(ios(12.2)) {
   if (!productsResponse) {
     return nil;
   }
   NSArray<SKProduct *> *skProducts = productsResponse.products;
-  NSMutableArray<SKProductMessage *> *pigeonProducts =
+  NSMutableArray<FIASKProductMessage *> *pigeonProducts =
       [NSMutableArray arrayWithCapacity:skProducts.count];
 
   for (SKProduct *product in skProducts) {
     [pigeonProducts addObject:[self convertProductToPigeon:product]];
   };
 
-  SKProductsResponseMessage *msg =
-      [SKProductsResponseMessage makeWithProducts:pigeonProducts
-                        invalidProductIdentifiers:productsResponse.invalidProductIdentifiers];
-  return msg;
+  return [FIASKProductsResponseMessage
+               makeWithProducts:pigeonProducts
+      invalidProductIdentifiers:productsResponse.invalidProductIdentifiers ?: @[]];
 }
 
 @end

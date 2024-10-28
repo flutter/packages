@@ -18,13 +18,16 @@
 		C4667AA10A6BC70CE9A5007C /* libPods-RunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AB9CD9DD098BDAB3D5053EE5 /* libPods-RunnerTests.a */; };
 		E680BD031412EB2D02C9190B /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 21CE6E615CF661FC0E18FB0A /* libPods-Runner.a */; };
 		F22BF91C2BC9B40B00713878 /* SwiftStubs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22BF91B2BC9B40B00713878 /* SwiftStubs.swift */; };
+		F22FD7A22CB080AE0006F28F /* StoreKit2TranslatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22FD7A12CB080AE0006F28F /* StoreKit2TranslatorTests.swift */; };
+		F24C45E22C409D42000C6C72 /* InAppPurchasePluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24C45E12C409D41000C6C72 /* InAppPurchasePluginTests.swift */; };
+		F276940B2C47268700277144 /* ProductRequestHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F276940A2C47268700277144 /* ProductRequestHandlerTests.swift */; };
+		F27694112C49BF6F00277144 /* FIAPPaymentQueueDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694102C49BF6F00277144 /* FIAPPaymentQueueDeleteTests.swift */; };
+		F27694172C49DBCA00277144 /* FIATransactionCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694162C49DBCA00277144 /* FIATransactionCacheTests.swift */; };
+		F2858EE82C76A4230063A092 /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = F6E5D5F926131C4800C68BED /* Configuration.storekit */; };
 		F295AD3A2C1256DD0067C78A /* Stubs.m in Sources */ = {isa = PBXBuildFile; fileRef = F295AD392C1256DD0067C78A /* Stubs.m */; };
-		F295AD412C1256F50067C78A /* FIAPPaymentQueueDeleteTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F295AD3B2C1256F50067C78A /* FIAPPaymentQueueDeleteTests.m */; };
-		F295AD422C1256F50067C78A /* InAppPurchasePluginTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F295AD3C2C1256F50067C78A /* InAppPurchasePluginTests.m */; };
-		F295AD432C1256F50067C78A /* ProductRequestHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F295AD3D2C1256F50067C78A /* ProductRequestHandlerTests.m */; };
-		F295AD442C1256F50067C78A /* FIATransactionCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F295AD3E2C1256F50067C78A /* FIATransactionCacheTests.m */; };
-		F295AD452C1256F50067C78A /* PaymentQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F295AD3F2C1256F50067C78A /* PaymentQueueTests.m */; };
-		F295AD462C1256F50067C78A /* TranslatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F295AD402C1256F50067C78A /* TranslatorTests.m */; };
+		F2D127492CB4A76D005FA2E5 /* InAppPurchaseStoreKit2PluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D127482CB4A76D005FA2E5 /* InAppPurchaseStoreKit2PluginTests.swift */; };
+		F2D5271A2C50627500C137C7 /* PaymentQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D527192C50627500C137C7 /* PaymentQueueTests.swift */; };
+		F2D5272A2C583C4A00C137C7 /* TranslatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D527292C583C4A00C137C7 /* TranslatorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,14 +78,16 @@
 		CC9E5595B2B9B9B90632DA75 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		F22BF91A2BC9B40B00713878 /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		F22BF91B2BC9B40B00713878 /* SwiftStubs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftStubs.swift; sourceTree = "<group>"; };
+		F22FD7A12CB080AE0006F28F /* StoreKit2TranslatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StoreKit2TranslatorTests.swift; path = ../shared/RunnerTests/StoreKit2TranslatorTests.swift; sourceTree = SOURCE_ROOT; };
+		F24C45E12C409D41000C6C72 /* InAppPurchasePluginTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InAppPurchasePluginTests.swift; path = ../../shared/RunnerTests/InAppPurchasePluginTests.swift; sourceTree = "<group>"; };
+		F276940A2C47268700277144 /* ProductRequestHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProductRequestHandlerTests.swift; path = ../../shared/RunnerTests/ProductRequestHandlerTests.swift; sourceTree = "<group>"; };
+		F27694102C49BF6F00277144 /* FIAPPaymentQueueDeleteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FIAPPaymentQueueDeleteTests.swift; path = ../../shared/RunnerTests/FIAPPaymentQueueDeleteTests.swift; sourceTree = "<group>"; };
+		F27694162C49DBCA00277144 /* FIATransactionCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FIATransactionCacheTests.swift; path = ../../shared/RunnerTests/FIATransactionCacheTests.swift; sourceTree = "<group>"; };
 		F295AD362C1251300067C78A /* Stubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stubs.h; path = ../../shared/RunnerTests/Stubs.h; sourceTree = "<group>"; };
 		F295AD392C1256DD0067C78A /* Stubs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Stubs.m; path = ../../shared/RunnerTests/Stubs.m; sourceTree = "<group>"; };
-		F295AD3B2C1256F50067C78A /* FIAPPaymentQueueDeleteTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FIAPPaymentQueueDeleteTests.m; path = ../../shared/RunnerTests/FIAPPaymentQueueDeleteTests.m; sourceTree = "<group>"; };
-		F295AD3C2C1256F50067C78A /* InAppPurchasePluginTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InAppPurchasePluginTests.m; path = ../../shared/RunnerTests/InAppPurchasePluginTests.m; sourceTree = "<group>"; };
-		F295AD3D2C1256F50067C78A /* ProductRequestHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProductRequestHandlerTests.m; path = ../../shared/RunnerTests/ProductRequestHandlerTests.m; sourceTree = "<group>"; };
-		F295AD3E2C1256F50067C78A /* FIATransactionCacheTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FIATransactionCacheTests.m; path = ../../shared/RunnerTests/FIATransactionCacheTests.m; sourceTree = "<group>"; };
-		F295AD3F2C1256F50067C78A /* PaymentQueueTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PaymentQueueTests.m; path = ../../shared/RunnerTests/PaymentQueueTests.m; sourceTree = "<group>"; };
-		F295AD402C1256F50067C78A /* TranslatorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TranslatorTests.m; path = ../../shared/RunnerTests/TranslatorTests.m; sourceTree = "<group>"; };
+		F2D127482CB4A76D005FA2E5 /* InAppPurchaseStoreKit2PluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InAppPurchaseStoreKit2PluginTests.swift; path = ../shared/RunnerTests/InAppPurchaseStoreKit2PluginTests.swift; sourceTree = SOURCE_ROOT; };
+		F2D527192C50627500C137C7 /* PaymentQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PaymentQueueTests.swift; path = ../../shared/RunnerTests/PaymentQueueTests.swift; sourceTree = "<group>"; };
+		F2D527292C583C4A00C137C7 /* TranslatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TranslatorTests.swift; path = ../../shared/RunnerTests/TranslatorTests.swift; sourceTree = "<group>"; };
 		F6E5D5F926131C4800C68BED /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -186,12 +191,14 @@
 		A59001A521E69658004A3E5E /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				F295AD3B2C1256F50067C78A /* FIAPPaymentQueueDeleteTests.m */,
-				F295AD3E2C1256F50067C78A /* FIATransactionCacheTests.m */,
-				F295AD3C2C1256F50067C78A /* InAppPurchasePluginTests.m */,
-				F295AD3F2C1256F50067C78A /* PaymentQueueTests.m */,
-				F295AD3D2C1256F50067C78A /* ProductRequestHandlerTests.m */,
-				F295AD402C1256F50067C78A /* TranslatorTests.m */,
+				F2D127482CB4A76D005FA2E5 /* InAppPurchaseStoreKit2PluginTests.swift */,
+				F22FD7A12CB080AE0006F28F /* StoreKit2TranslatorTests.swift */,
+				F2D527292C583C4A00C137C7 /* TranslatorTests.swift */,
+				F2D527192C50627500C137C7 /* PaymentQueueTests.swift */,
+				F27694162C49DBCA00277144 /* FIATransactionCacheTests.swift */,
+				F27694102C49BF6F00277144 /* FIAPPaymentQueueDeleteTests.swift */,
+				F24C45E12C409D41000C6C72 /* InAppPurchasePluginTests.swift */,
+				F276940A2C47268700277144 /* ProductRequestHandlerTests.swift */,
 				F295AD392C1256DD0067C78A /* Stubs.m */,
 				F295AD362C1251300067C78A /* Stubs.h */,
 				F22BF91B2BC9B40B00713878 /* SwiftStubs.swift */,
@@ -304,6 +311,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2858EE82C76A4230063A092 /* Configuration.storekit in Resources */,
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
@@ -392,7 +400,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
 		};
 		9AF65E7BDC9361CB3944EE9C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -433,14 +441,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F295AD432C1256F50067C78A /* ProductRequestHandlerTests.m in Sources */,
+				F2D5271A2C50627500C137C7 /* PaymentQueueTests.swift in Sources */,
+				F24C45E22C409D42000C6C72 /* InAppPurchasePluginTests.swift in Sources */,
 				F22BF91C2BC9B40B00713878 /* SwiftStubs.swift in Sources */,
-				F295AD412C1256F50067C78A /* FIAPPaymentQueueDeleteTests.m in Sources */,
-				F295AD452C1256F50067C78A /* PaymentQueueTests.m in Sources */,
-				F295AD442C1256F50067C78A /* FIATransactionCacheTests.m in Sources */,
-				F295AD462C1256F50067C78A /* TranslatorTests.m in Sources */,
-				F295AD422C1256F50067C78A /* InAppPurchasePluginTests.m in Sources */,
+				F22FD7A22CB080AE0006F28F /* StoreKit2TranslatorTests.swift in Sources */,
+				F276940B2C47268700277144 /* ProductRequestHandlerTests.swift in Sources */,
 				F295AD3A2C1256DD0067C78A /* Stubs.m in Sources */,
+				F2D5272A2C583C4A00C137C7 /* TranslatorTests.swift in Sources */,
+				F27694172C49DBCA00277144 /* FIATransactionCacheTests.swift in Sources */,
+				F2D127492CB4A76D005FA2E5 /* InAppPurchaseStoreKit2PluginTests.swift in Sources */,
+				F27694112C49BF6F00277144 /* FIAPPaymentQueueDeleteTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

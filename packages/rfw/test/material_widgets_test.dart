@@ -9,6 +9,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rfw/formats.dart' show parseLibraryFile;
 import 'package:rfw/rfw.dart';
 
+import 'tolerant_comparator.dart'
+    if (dart.library.js_interop) 'tolerant_comparator_web.dart';
 import 'utils.dart';
 
 void main() {
@@ -21,6 +23,13 @@ void main() {
       ..update(coreName, createCoreWidgets())
       ..update(materialName, createMaterialWidgets());
   }
+
+  setUpAll(() {
+    setUpTolerantComparator(
+      testPath: 'test/material_widget_test.dart',
+      precisionTolerance: 0.00002,
+    );
+  });
 
   testWidgets('Material widgets', (WidgetTester tester) async {
     final Runtime runtime = setupRuntime();
@@ -194,7 +203,9 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.scaffold.png'),
-      skip: !runGoldens,
+      // TODO(louisehsu): Unskip once golden file is updated. See
+      // https://github.com/flutter/flutter/issues/151995
+      skip: !runGoldens || true,
     );
 
     await tester.tap(find.byType(DropdownButton<Object>).first);
@@ -202,7 +213,9 @@ void main() {
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('goldens/material_test.dropdown.png'),
-      skip: !runGoldens,
+      // TODO(louisehsu): Unskip once golden file is updated. See
+      // https://github.com/flutter/flutter/issues/151995
+      skip: !runGoldens || true,
     );
     // Tap on the second item.
     await tester.tap(find.text('bar'));
@@ -289,7 +302,9 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.button_bar_properties.png'),
-      skip: !runGoldens,
+      // TODO(louisehsu): Unskip once golden file is updated. See
+      // https://github.com/flutter/flutter/issues/151995
+      skip: !runGoldens || true,
     );
 
     // Update the surface size for ButtonBar to overflow.
@@ -361,7 +376,9 @@ void main() {
       find.byType(RemoteWidget),
       matchesGoldenFile(
           'goldens/material_test.overflow_bar_resembles_button_bar.png'),
-      skip: !runGoldens,
+      // TODO(louisehsu): Unskip once golden file is updated. See
+      // https://github.com/flutter/flutter/issues/151995
+      skip: !runGoldens || true,
     );
   });
 
@@ -436,7 +453,9 @@ void main() {
       find.byType(RemoteWidget),
       matchesGoldenFile(
           'goldens/material_test.overflow_bar_properties.overflow.png'),
-      skip: !runGoldens,
+      // TODO(louisehsu): Unskip once golden file is updated. See
+      // https://github.com/flutter/flutter/issues/151995
+      skip: !runGoldens || true,
     );
   });
 
@@ -566,7 +585,9 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.material_properties.png'),
-      skip: !runGoldens,
+      // TODO(louisehsu): Unskip once golden file is updated. See
+      // https://github.com/flutter/flutter/issues/151995
+      skip: !runGoldens || true,
     );
 
     runtime.update(testName, parseLibraryFile('''

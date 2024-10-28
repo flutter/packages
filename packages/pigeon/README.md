@@ -17,6 +17,7 @@ Currently pigeon supports generating:
 * Kotlin and Java code for Android
 * Swift and Objective-C code for iOS and macOS
 * C++ code for Windows
+* GObject code for Linux
 
 ### Supported Datatypes
 
@@ -85,7 +86,7 @@ to the api to allow for multiple instances to be created and operate in parallel
 1) Make a ".dart" file outside of your "lib" directory for defining the
    communication interface.
 1) Run pigeon on your ".dart" file to generate the required Dart and
-   host-language code: `flutter pub get` then `flutter pub run pigeon`
+   host-language code: `flutter pub get` then `dart run pigeon`
    with suitable arguments. [Example](./example/README.md#Invocation).
 1) Add the generated Dart code to `./lib` for compilation.
 1) Implement the host-language code and add it to your build (see below).
@@ -135,6 +136,13 @@ to the api to allow for multiple instances to be created and operate in parallel
    (e.g. `macos/Runner.xcworkspace` or `.podspec`).
 1) Implement the generated protocol for handling the calls on macOS, set it up
    as the handler for the messages.
+
+### Flutter calling into Linux steps
+
+1) Add the generated GObject code to your `./linux` directory for compilation, and
+   to your `linux/CMakeLists.txt` file.
+1) Implement the generated protocol for handling the calls on Linux, set it up
+   as the vtable for the API object.
 
 ### Calling into Flutter from the host platform
 

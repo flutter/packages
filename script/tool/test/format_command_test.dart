@@ -814,6 +814,25 @@ void main() {
               'https://github.com/flutter/packages/blob/main/script/tool/README.md#format-code'),
           contains('patch -p1 <<DONE'),
         ]));
+
+    // Ensure that both packages and third_party/packages are checked.
+    final Directory thirdPartyDir = packagesDir.parent
+        .childDirectory('third_party')
+        .childDirectory('packages');
+    expect(
+        processRunner.recordedCalls,
+        containsAllInOrder(<ProcessCall>[
+          ProcessCall(
+            'git',
+            <String>[
+              'ls-files',
+              '--modified',
+              packagesDir.path,
+              thirdPartyDir.path
+            ],
+            packagesDir.parent.path,
+          ),
+        ]));
   });
 
   test('fails if git ls-files fails', () async {

@@ -49,7 +49,7 @@ TEST(Camera, InitCameraCreatesCaptureController) {
 
   EXPECT_TRUE(camera->GetCaptureController() == nullptr);
 
-  PlatformMediaSettings media_settings(PlatformResolutionPreset::max, false);
+  PlatformMediaSettings media_settings(PlatformResolutionPreset::kMax, false);
 
   // Init camera with mock capture controller factory
   bool result = camera->InitCamera(
@@ -81,7 +81,7 @@ TEST(Camera, InitCameraReportsFailure) {
 
   EXPECT_TRUE(camera->GetCaptureController() == nullptr);
 
-  PlatformMediaSettings media_settings(PlatformResolutionPreset::max, false);
+  PlatformMediaSettings media_settings(PlatformResolutionPreset::kMax, false);
 
   // Init camera with mock capture controller factory
   bool result = camera->InitCamera(

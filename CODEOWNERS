@@ -45,6 +45,8 @@ packages/web_benchmarks/**                               @yjbanov
 packages/webview_flutter/**                              @bparrishMines
 packages/xdg_directories/**                              @stuartmorgan
 third_party/packages/cupertino_icons/**                  @MitchellGoodwin
+third_party/packages/cupertino_icons/test/goldens/**     @LongCatIsLooong
+third_party/packages/path_parsing/**                     @domesticmouse
 
 # Plugin platform implementation rules. These should stay last, since the last
 # matching entry takes precedence.
@@ -62,9 +64,8 @@ packages/video_player/video_player_web/**                @ditman
 packages/webview_flutter/webview_flutter_web/**          @ditman
 
 # - Android
-# TODO(matanlurey): Remove @matanlurey after https://github.com/flutter/flutter/issues/151018.
-packages/camera/camera_android/**                        @camsim99 @matanlurey
-packages/camera/camera_android_camerax/**                @camsim99 @matanlurey
+packages/camera/camera_android/**                        @camsim99
+packages/camera/camera_android_camerax/**                @camsim99
 packages/espresso/**                                     @reidbaker
 packages/file_selector/file_selector_android/**          @gmackall
 packages/flutter_plugin_android_lifecycle/**             @reidbaker

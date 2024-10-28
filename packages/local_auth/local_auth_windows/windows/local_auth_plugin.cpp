@@ -45,7 +45,7 @@ namespace local_auth_windows {
 class UserConsentVerifierImpl : public UserConsentVerifier {
  public:
   explicit UserConsentVerifierImpl(std::function<HWND()> window_provider)
-      : get_root_window_(std::move(window_provider)){};
+      : get_root_window_(std::move(window_provider)) {}
   virtual ~UserConsentVerifierImpl() = default;
 
   // Calls the native Windows API to get the user's consent

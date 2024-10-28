@@ -199,7 +199,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     setLogging(enabled: debugLogDiagnostics);
     WidgetsFlutterBinding.ensureInitialized();
 
-    navigatorKey ??= GlobalKey<NavigatorState>();
+    navigatorKey ??= GlobalKey<NavigatorState>(debugLabel: 'root');
 
     _routingConfig.addListener(_handleRoutingConfigChanged);
     configuration = RouteConfiguration(
@@ -230,6 +230,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       initialLocation: _effectiveInitialLocation(initialLocation),
       initialExtra: initialExtra,
       refreshListenable: refreshListenable,
+      routerNeglect: routerNeglect,
     );
 
     routerDelegate = GoRouterDelegate(

@@ -1,0 +1,6 @@
+# TODO(stuartmorgan): Remove this, so that review will show the effects of
+# changes on generated files, once https://github.com/flutter/flutter/issues/115168
+# is done.
+*.gen.h
+*.gen.cc
+!core_tests.gen*

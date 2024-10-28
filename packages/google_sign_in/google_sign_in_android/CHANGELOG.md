@@ -1,3 +1,28 @@
+## 6.1.33
+
+* Updates Pigeon for non-nullable collection type support.
+
+## 6.1.32
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 6.1.31
+
+* Bumps `com.google.guava:guava` from `32.0.1` to `33.3.1`.
+
+## 6.1.30
+
+* Temporarily downgrades Guava from version 33.3.0 to 32.0.1 to fix an R8 related error.
+
+## 6.1.29
+
+* Updates Guava to version 33.3.0.
+
+## 6.1.28
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 6.1.27
 
 * Updates AGP version to 8.5.0.

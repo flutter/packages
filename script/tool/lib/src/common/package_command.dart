@@ -230,6 +230,11 @@ abstract class PackageCommand extends Command<void> {
     return (argResults![key] as bool?) ?? false;
   }
 
+  /// Convenience accessor for boolean arguments.
+  bool? getNullableBoolArg(String key) {
+    return argResults![key] as bool?;
+  }
+
   /// Convenience accessor for String arguments.
   String getStringArg(String key) {
     return (argResults![key] as String?) ?? '';

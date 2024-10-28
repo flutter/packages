@@ -1,6 +1,7 @@
-## NEXT
+## 3.2.1
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Adds privacy manifest.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 3.2.0
 

@@ -45,7 +45,6 @@ class MapUiBodyState extends State<MapUiBody> {
   bool _isMapCreated = false;
   final bool _isMoving = false;
   bool _compassEnabled = true;
-  bool _mapToolbarEnabled = true;
   CameraTargetBounds _cameraTargetBounds = CameraTargetBounds.unbounded;
   MinMaxZoomPreference _minMaxZoomPreference = MinMaxZoomPreference.unbounded;
   MapType _mapType = MapType.normal;
@@ -78,17 +77,6 @@ class MapUiBodyState extends State<MapUiBody> {
       onPressed: () {
         setState(() {
           _compassEnabled = !_compassEnabled;
-        });
-      },
-    );
-  }
-
-  Widget _mapToolbarToggler() {
-    return TextButton(
-      child: Text('${_mapToolbarEnabled ? 'disable' : 'enable'} map toolbar'),
-      onPressed: () {
-        setState(() {
-          _mapToolbarEnabled = !_mapToolbarEnabled;
         });
       },
     );
@@ -265,7 +253,6 @@ class MapUiBodyState extends State<MapUiBody> {
       onMapCreated: onMapCreated,
       initialCameraPosition: _kInitialPosition,
       compassEnabled: _compassEnabled,
-      mapToolbarEnabled: _mapToolbarEnabled,
       cameraTargetBounds: _cameraTargetBounds,
       minMaxZoomPreference: _minMaxZoomPreference,
       mapType: _mapType,
@@ -308,7 +295,6 @@ class MapUiBodyState extends State<MapUiBody> {
               Text('camera tilt: ${_position.tilt}'),
               Text(_isMoving ? '(Camera moving)' : '(Camera idle)'),
               _compassToggler(),
-              _mapToolbarToggler(),
               _latLngBoundsToggler(),
               _mapTypeCycler(),
               _zoomBoundsToggler(),

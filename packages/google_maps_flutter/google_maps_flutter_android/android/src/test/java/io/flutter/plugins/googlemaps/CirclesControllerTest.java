@@ -15,10 +15,7 @@ import com.google.android.gms.internal.maps.zzl;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -50,27 +47,25 @@ public class CirclesControllerTest {
     controller.setGoogleMap(mockGoogleMap);
 
     final String id = "a_circle";
-    final Map<String, Object> circleJson = new HashMap<>();
-    circleJson.put("circleId", id);
-    circleJson.put("consumeTapEvents", false);
-    circleJson.put("fillColor", 0);
-    circleJson.put("center", Arrays.asList(0.0, 0.0));
-    circleJson.put("radius", 1.0);
-    circleJson.put("strokeColor", 0);
-    circleJson.put("strokeWidth", 1.0);
-    circleJson.put("visible", true);
-    circleJson.put("zIndex", 0);
 
-    controller.addCircles(
-        Collections.singletonList(
-            new Messages.PlatformCircle.Builder().setJson(circleJson).build()));
+    final Messages.PlatformCircle.Builder builder = new Messages.PlatformCircle.Builder();
+    builder
+        .setCircleId(id)
+        .setConsumeTapEvents(false)
+        .setFillColor(0L)
+        .setCenter(new Messages.PlatformLatLng.Builder().setLatitude(0.0).setLongitude(0.0).build())
+        .setRadius(1.0)
+        .setStrokeColor(0L)
+        .setStrokeWidth(1L)
+        .setVisible(true)
+        .setZIndex(0.0);
+
+    controller.addCircles(Collections.singletonList(builder.build()));
     // There should be exactly one circle.
     Assert.assertEquals(1, controller.circleIdToController.size());
 
-    circleJson.put("consumeTapEvents", true);
-    controller.changeCircles(
-        Collections.singletonList(
-            new Messages.PlatformCircle.Builder().setJson(circleJson).build()));
+    builder.setConsumeTapEvents(true);
+    controller.changeCircles(Collections.singletonList(builder.build()));
     // There should still only be one circle, and it should be updated.
     Assert.assertEquals(1, controller.circleIdToController.size());
     verify(circle, times(1)).setClickable(true);

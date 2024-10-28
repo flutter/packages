@@ -45,6 +45,7 @@ base class PlatformAdDisplayContainerCreationParams {
   const PlatformAdDisplayContainerCreationParams({
     this.key,
     required this.onContainerAdded,
+    this.layoutDirection = TextDirection.ltr,
   });
 
   /// Controls how one widget replaces another widget in the tree.
@@ -56,6 +57,9 @@ base class PlatformAdDisplayContainerCreationParams {
   /// Invoked when the View that contains the ad has been added to the platform
   /// view hierarchy.
   final void Function(PlatformAdDisplayContainer container) onContainerAdded;
+
+  /// The layout direction to use for the embedded AdDisplayContainer.
+  final TextDirection layoutDirection;
 }
 
 /// The interface for a platform implementation for a container in which to

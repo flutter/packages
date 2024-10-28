@@ -4,8 +4,8 @@ publish_to: 'none'
 version: 1.0.0
 
 environment:
-  sdk: ^3.2.0
-  flutter: ">=3.16.0"
+  sdk: ^3.3.0
+  flutter: ">=3.19.0"
 
 dependencies:
   flutter:
@@ -18,7 +18,7 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ..
   image_picker_platform_interface: ^2.8.0
-  mime: ^1.0.4
+  mime: ^2.0.0
   video_player: ^2.1.4
 
 dev_dependencies:

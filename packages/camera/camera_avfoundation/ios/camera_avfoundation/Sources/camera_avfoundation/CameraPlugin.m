@@ -416,6 +416,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   __weak typeof(self) weakSelf = self;
   dispatch_async(self.captureSessionQueue, ^{
     [weakSelf.camera close];
+    weakSelf.camera = nil;
     completion(nil);
   });
 }

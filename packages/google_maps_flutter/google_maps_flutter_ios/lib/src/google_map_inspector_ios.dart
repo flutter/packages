@@ -5,7 +5,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
+import 'google_maps_flutter_ios.dart';
 import 'messages.g.dart';
+import 'serialization.dart';
 
 /// An Android of implementation of [GoogleMapsInspectorPlatform].
 @visibleForTesting
@@ -74,6 +76,34 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   }
 
   @override
+  bool supportsGettingHeatmapInfo() => true;
+
+  @override
+  Future<Heatmap?> getHeatmapInfo(HeatmapId heatmapId,
+      {required int mapId}) async {
+    final PlatformHeatmap? heatmapInfo =
+        await _inspectorProvider(mapId)!.getHeatmapInfo(heatmapId.value);
+    if (heatmapInfo == null) {
+      return null;
+    }
+
+    final Map<String, Object?> json =
+        (heatmapInfo.json as Map<Object?, Object?>).cast<String, Object?>();
+    return Heatmap(
+      heatmapId: heatmapId,
+      data: (json['data']! as List<Object?>)
+          .map(deserializeWeightedLatLng)
+          .whereType<WeightedLatLng>()
+          .toList(),
+      gradient: deserializeHeatmapGradient(json['gradient']),
+      opacity: json['opacity']! as double,
+      radius: HeatmapRadius.fromPixels(json['radius']! as int),
+      minimumZoomIntensity: json['minimumZoomIntensity']! as int,
+      maximumZoomIntensity: json['maximumZoomIntensity']! as int,
+    );
+  }
+
+  @override
   Future<bool> isCompassEnabled({required int mapId}) async {
     return _inspectorProvider(mapId)!.isCompassEnabled();
   }
@@ -98,5 +128,17 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   @override
   Future<bool> isTrafficEnabled({required int mapId}) async {
     return _inspectorProvider(mapId)!.isTrafficEnabled();
+  }
+
+  @override
+  Future<List<Cluster>> getClusters({
+    required int mapId,
+    required ClusterManagerId clusterManagerId,
+  }) async {
+    return (await _inspectorProvider(mapId)!
+            .getClusters(clusterManagerId.value))
+        .map((PlatformCluster cluster) =>
+            GoogleMapsFlutterIOS.clusterFromPlatformCluster(cluster))
+        .toList();
   }
 }

@@ -130,7 +130,7 @@ class MockCameraFactory : public CameraFactory {
 class MockCamera : public Camera {
  public:
   MockCamera(const std::string& device_id)
-      : device_id_(device_id), Camera(device_id){};
+      : device_id_(device_id), Camera(device_id) {}
 
   ~MockCamera() = default;
 
@@ -217,7 +217,7 @@ class MockCamera : public Camera {
 
 class MockCaptureControllerFactory : public CaptureControllerFactory {
  public:
-  MockCaptureControllerFactory(){};
+  MockCaptureControllerFactory() {}
   virtual ~MockCaptureControllerFactory() = default;
 
   // Disallow copy and move.
@@ -248,6 +248,11 @@ class MockCaptureController : public CaptureController {
   MOCK_METHOD(void, PausePreview, (), (override));
   MOCK_METHOD(void, StartRecord, (const std::string& file_path), (override));
   MOCK_METHOD(void, StopRecord, (), (override));
+  MOCK_METHOD(
+      void, StartImageStream,
+      (std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink),
+      (override));
+  MOCK_METHOD(void, StopImageStream, (), (override));
   MOCK_METHOD(void, TakePicture, (const std::string& file_path), (override));
 };
 
@@ -258,14 +263,14 @@ class MockCameraPlugin : public CameraPlugin {
  public:
   MockCameraPlugin(flutter::TextureRegistrar* texture_registrar,
                    flutter::BinaryMessenger* messenger)
-      : CameraPlugin(texture_registrar, messenger){};
+      : CameraPlugin(texture_registrar, messenger) {}
 
   // Creates a plugin instance with the given CameraFactory instance.
   // Exists for unit testing with mock implementations.
   MockCameraPlugin(flutter::TextureRegistrar* texture_registrar,
                    flutter::BinaryMessenger* messenger,
                    std::unique_ptr<CameraFactory> camera_factory)
-      : CameraPlugin(texture_registrar, messenger, std::move(camera_factory)){};
+      : CameraPlugin(texture_registrar, messenger, std::move(camera_factory)) {}
 
   ~MockCameraPlugin() = default;
 
@@ -285,7 +290,7 @@ class MockCameraPlugin : public CameraPlugin {
 
 class MockCaptureSource : public IMFCaptureSource {
  public:
-  MockCaptureSource(){};
+  MockCaptureSource() {}
   ~MockCaptureSource() = default;
 
   // IUnknown
@@ -352,7 +357,7 @@ class MockCaptureSource : public IMFCaptureSource {
 // Uses IMFMediaSourceEx which has SetD3DManager method.
 class MockMediaSource : public IMFMediaSourceEx {
  public:
-  MockMediaSource(){};
+  MockMediaSource() {}
   ~MockMediaSource() = default;
 
   // IUnknown
@@ -848,7 +853,7 @@ class FakeMediaType : public FakeIMFAttributesBase<IMFMediaType> {
       : major_type_(major_type),
         sub_type_(sub_type),
         width_(width),
-        height_(height){};
+        height_(height) {}
 
   // IMFAttributes
   HRESULT GetUINT64(REFGUID key, UINT64* value) override {
@@ -1021,6 +1026,9 @@ class MockCaptureEngine : public IMFCaptureEngine {
   MOCK_METHOD(HRESULT, StartPreview, ());
   MOCK_METHOD(HRESULT, StopPreview, ());
   MOCK_METHOD(HRESULT, StartRecord, ());
+  MOCK_METHOD(HRESULT, StartImageStream, ());
+  MOCK_METHOD(HRESULT, StopImageStream, ());
+
   MOCK_METHOD(HRESULT, StopRecord,
               (BOOL finalize, BOOL flushUnprocessedSamples));
   MOCK_METHOD(HRESULT, TakePhoto, ());
@@ -1067,6 +1075,17 @@ class MockCaptureEngine : public IMFCaptureEngine {
   ComPtr<IMFMediaSource> audioSource_;
   volatile ULONG ref_ = 0;
   bool initialized_ = false;
+};
+// Mock class for flutter::EventSink<flutter::EncodableValue>
+class MockEventSink : public flutter::EventSink<flutter::EncodableValue> {
+ public:
+  MOCK_METHOD(void, SuccessInternal, (const flutter::EncodableValue* event),
+              (override));
+  MOCK_METHOD(void, ErrorInternal,
+              (const std::string& error_code, const std::string& error_message,
+               const flutter::EncodableValue* error_details),
+              (override));
+  MOCK_METHOD(void, EndOfStreamInternal, (), (override));
 };
 
 #define MOCK_DEVICE_ID "mock_device_id"

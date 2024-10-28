@@ -13,8 +13,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-API_AVAILABLE(ios(13))
-API_UNAVAILABLE(tvos, macos, watchos)
+API_AVAILABLE(ios(13), macos(10.15))
+API_UNAVAILABLE(tvos, watchos)
 @interface FIAPPaymentQueueDelegate : NSObject <SKPaymentQueueDelegate>
 - (id)initWithMethodChannel:(id<FLTMethodChannelProtocol>)methodChannel;
 @end

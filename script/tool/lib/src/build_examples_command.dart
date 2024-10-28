@@ -61,7 +61,7 @@ class BuildExamplesCommand extends PackageLoopingCommand {
       defaultsTo: '',
       help: 'Enables the given Dart SDK experiments.',
     );
-    argParser.addFlag(_swiftPackageManagerFlag);
+    argParser.addFlag(_swiftPackageManagerFlag, defaultsTo: null);
   }
 
   // Maps the switch this command uses to identify a platform to information
@@ -115,13 +115,22 @@ class BuildExamplesCommand extends PackageLoopingCommand {
       'single key "$_pluginToolsConfigGlobalKey" containing a list of build '
       'arguments.';
 
-  /// Returns true if `--swift-package-manager` flag was passed along with
-  /// either `--ios` or `--macos`.
-  bool get usingSwiftPackageManager {
+  /// Returns whether the Swift Package Manager feature should be enabled,
+  /// disabled, or left to the release channel's default value.
+  bool? get _swiftPackageManagerFeatureConfig {
     final List<String> platformFlags = _platforms.keys.toList();
-    return getBoolArg(_swiftPackageManagerFlag) &&
-        (platformFlags.contains(platformIOS) ||
-            platformFlags.contains(platformMacOS));
+    if (!platformFlags.contains(platformIOS) &&
+        !platformFlags.contains(platformMacOS)) {
+      return null;
+    }
+
+    // TODO(loic-sharma): Allow enabling on stable once Swift Package Manager
+    // feature is available on stable.
+    if (platform.environment['CHANNEL'] != 'master') {
+      return null;
+    }
+
+    return getNullableBoolArg(_swiftPackageManagerFlag);
   }
 
   @override
@@ -135,15 +144,21 @@ class BuildExamplesCommand extends PackageLoopingCommand {
       throw ToolExit(_exitNoPlatformFlags);
     }
 
-    // TODO(vashworth): Enable on stable once Swift Package Manager feature is
-    // available on stable.
-    if (usingSwiftPackageManager &&
-        platform.environment['CHANNEL'] != 'stable') {
-      await processRunner.runAndStream(
-        flutterCommand,
-        <String>['config', '--enable-swift-package-manager'],
-        exitOnError: true,
-      );
+    switch (_swiftPackageManagerFeatureConfig) {
+      case true:
+        await processRunner.runAndStream(
+          flutterCommand,
+          <String>['config', '--enable-swift-package-manager'],
+          exitOnError: true,
+        );
+      case false:
+        await processRunner.runAndStream(
+          flutterCommand,
+          <String>['config', '--no-enable-swift-package-manager'],
+          exitOnError: true,
+        );
+      case null:
+        break;
     }
   }
 

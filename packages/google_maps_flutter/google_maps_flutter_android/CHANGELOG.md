@@ -1,3 +1,61 @@
+## 2.14.10
+
+* Adds 'PlatformBitmap' type.
+* Updates type unsafe implementations.
+
+## 2.14.9
+
+* Adds `PlatformCap` for `PlatformPolyline.startCap` and `endCap`.
+
+## 2.14.8
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 2.14.7
+
+* Adds `PlatformPatternItem` pigeon class to convert `PlatformPolyline.pattern`.
+
+## 2.14.6
+
+* Converts 'PlatformCameraUpdate' to pigeon.
+
+## 2.14.5
+
+* Converts `JointType` to enum.
+
+## 2.14.4
+
+* Converts 'PlatformTileOverlay' to pigeon.
+
+## 2.14.3
+
+* Converts `PlatformPolygon` and `PlatformPolyline` to pigeon.
+
+## 2.14.2
+
+* Bumps `com.android.tools.build:gradle` from 7.3.1 to 8.5.1.
+
+## 2.14.1
+
+* Converts `PlatformCircle` and `PlatformMarker` to pigeon.
+
+## 2.14.0
+
+* Updates map configuration and platform view creation parameters to use Pigeon.
+
+## 2.13.0
+
+* Adds support for heatmap layers.
+
+## 2.12.2
+
+* Updates the example app to use TLHC mode, per current package guidance.
+
+## 2.12.1
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 2.12.0
 
 * Converts Java->Dart calls to Pigeon.

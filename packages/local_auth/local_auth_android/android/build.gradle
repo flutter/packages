@@ -22,10 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    // Conditional for compatibility with AGP <4.2.
-    if (project.android.hasProperty("namespace")) {
-        namespace 'io.flutter.plugins.localauth'
-    }
+    namespace 'io.flutter.plugins.localauth'
     compileSdk 34
 
     defaultConfig {
@@ -34,14 +31,14 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     lintOptions {
         checkAllWarnings true
         warningsAsErrors true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
+        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 
 
@@ -68,7 +65,4 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
-    // TODO(camsim99): org.jetbrains.kotlin:kotlin-bom artifact purpose is to align kotlin stdlib and related code versions.
-    // This should be removed when https://github.com/flutter/flutter/issues/125062 is fixed.
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.10"))
 }

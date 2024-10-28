@@ -46,27 +46,15 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   late final RouteBuilder builder;
 
   /// Set to true to disable creating history entries on the web.
+  // TODO(tolo): This field is obsolete and should be removed in the next major
+  // version.
   final bool routerNeglect;
 
   final RouteConfiguration _configuration;
 
   @override
   Future<bool> popRoute() async {
-    NavigatorState? state = navigatorKey.currentState;
-    if (state == null) {
-      return false;
-    }
-    if (!state.canPop()) {
-      state = null;
-    }
-    RouteMatchBase walker = currentConfiguration.matches.last;
-    while (walker is ShellRouteMatch) {
-      if (walker.navigatorKey.currentState?.canPop() ?? false) {
-        state = walker.navigatorKey.currentState;
-      }
-      walker = walker.matches.last;
-    }
-    assert(walker is RouteMatch);
+    final NavigatorState? state = _findCurrentNavigator();
     if (state != null) {
       return state.maybePop();
     }
@@ -75,7 +63,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     if (lastRoute.onExit != null && navigatorKey.currentContext != null) {
       return !(await lastRoute.onExit!(
         navigatorKey.currentContext!,
-        walker.buildState(_configuration, currentConfiguration),
+        currentConfiguration.last
+            .buildState(_configuration, currentConfiguration),
       ));
     }
     return false;
@@ -98,21 +87,33 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   /// Pops the top-most route.
   void pop<T extends Object?>([T? result]) {
+    final NavigatorState? state = _findCurrentNavigator();
+    if (state == null) {
+      throw GoError('There is nothing to pop');
+    }
+    state.pop(result);
+  }
+
+  NavigatorState? _findCurrentNavigator() {
     NavigatorState? state;
     if (navigatorKey.currentState?.canPop() ?? false) {
       state = navigatorKey.currentState;
     }
     RouteMatchBase walker = currentConfiguration.matches.last;
     while (walker is ShellRouteMatch) {
-      if (walker.navigatorKey.currentState?.canPop() ?? false) {
+      final NavigatorState potentialCandidate =
+          walker.navigatorKey.currentState!;
+      if (!ModalRoute.of(potentialCandidate.context)!.isCurrent) {
+        // There is a pageless route on top of the shell route. it needs to be
+        // popped first.
+        break;
+      }
+      if (potentialCandidate.canPop()) {
         state = walker.navigatorKey.currentState;
       }
       walker = walker.matches.last;
     }
-    if (state == null) {
-      throw GoError('There is nothing to pop');
-    }
-    state.pop(result);
+    return state;
   }
 
   void _debugAssertMatchListNotEmpty() {

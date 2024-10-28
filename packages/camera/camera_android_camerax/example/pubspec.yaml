@@ -3,8 +3,8 @@ description: Demonstrates how to use the camera_android_camerax plugin.
 publish_to: 'none'
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.5.0
+  flutter: ">=3.24.0"
 
 dependencies:
   camera_android_camerax:
@@ -20,7 +20,7 @@ dependencies:
   video_player: ^2.7.0
 
 dev_dependencies:
-  espresso: ^0.2.0
+  espresso: ^0.4.0
   flutter_test:
     sdk: flutter
   integration_test:

@@ -4,10 +4,22 @@
 
 package io.flutter.plugins.googlemaps;
 
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_HYBRID;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_DATA_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_COLORS_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_START_POINTS_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_ID_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_MAX_INTENSITY_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_OPACITY_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_RADIUS_KEY;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import android.content.res.AssetManager;
@@ -17,16 +29,21 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
 import android.util.Base64;
+import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.clustering.algo.StaticCluster;
+import com.google.maps.android.geometry.Point;
+import com.google.maps.android.heatmaps.Gradient;
+import com.google.maps.android.heatmaps.WeightedLatLng;
+import com.google.maps.android.projection.SphericalMercatorProjection;
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper;
 import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.junit.After;
@@ -40,7 +57,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(minSdk = Build.VERSION_CODES.P)
+@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 public class ConvertTest {
   @Mock private AssetManager assetManager;
 
@@ -50,10 +67,12 @@ public class ConvertTest {
 
   @Mock private FlutterInjectorWrapper flutterInjectorWrapper;
 
+  @Mock private GoogleMapOptionsSink optionsSink;
+
   AutoCloseable mockCloseable;
 
   // A 1x1 pixel (#8080ff) PNG image encoded in base64
-  private String base64Image = generateBase64Image();
+  private final String base64Image = generateBase64Image();
 
   @Before
   public void before() {
@@ -66,15 +85,12 @@ public class ConvertTest {
   }
 
   @Test
-  public void ConvertToPointsConvertsThePointsWithFullPrecision() {
+  public void ConvertPointsFromPigeonConvertsThePointsWithFullPrecision() {
     double latitude = 43.03725568057;
     double longitude = -87.90466904649;
-    ArrayList<Double> point = new ArrayList<Double>();
-    point.add(latitude);
-    point.add(longitude);
-    ArrayList<ArrayList<Double>> pointsList = new ArrayList<>();
-    pointsList.add(point);
-    List<LatLng> latLngs = Convert.toPoints(pointsList);
+    Messages.PlatformLatLng platLng =
+        new Messages.PlatformLatLng.Builder().setLatitude(latitude).setLongitude(longitude).build();
+    List<LatLng> latLngs = Convert.pointsFromPigeon(Collections.singletonList(platLng));
     LatLng latLng = latLngs.get(0);
     Assert.assertEquals(latitude, latLng.latitude, 1e-15);
     Assert.assertEquals(longitude, latLng.longitude, 1e-15);
@@ -123,26 +139,24 @@ public class ConvertTest {
   public void GetBitmapFromAssetAuto() throws Exception {
     String fakeAssetName = "fake_asset_name";
     String fakeAssetKey = "fake_asset_key";
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("assetName", fakeAssetName);
-    assetDetails.put("bitmapScaling", "auto");
-    assetDetails.put("width", 15.0f);
-    assetDetails.put("height", 15.0f);
-    assetDetails.put("imagePixelRatio", 2.0f);
 
     when(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey);
 
     when(assetManager.open(fakeAssetKey)).thenReturn(buildImageInputStream());
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    Messages.PlatformBitmapAssetMap bitmap =
+        new Messages.PlatformBitmapAssetMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+            .setWidth(15.0)
+            .setHeight(15.0)
+            .setImagePixelRatio(2.0)
+            .setAssetName(fakeAssetName)
+            .build();
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
-            assetDetails,
-            assetManager,
-            1.0f,
-            bitmapDescriptorFactoryWrapper,
-            flutterInjectorWrapper);
+            bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -152,25 +166,22 @@ public class ConvertTest {
     String fakeAssetName = "fake_asset_name";
     String fakeAssetKey = "fake_asset_key";
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("assetName", fakeAssetName);
-    assetDetails.put("bitmapScaling", "auto");
-    assetDetails.put("width", 15.0f);
-    assetDetails.put("imagePixelRatio", 2.0f);
-
     when(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey);
 
     when(assetManager.open(fakeAssetKey)).thenReturn(buildImageInputStream());
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    Messages.PlatformBitmapAssetMap bitmap =
+        new Messages.PlatformBitmapAssetMap.Builder()
+            .setAssetName(fakeAssetName)
+            .setWidth(15.0)
+            .setImagePixelRatio(2.0)
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+            .build();
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
-            assetDetails,
-            assetManager,
-            1.0f,
-            bitmapDescriptorFactoryWrapper,
-            flutterInjectorWrapper);
+            bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -180,25 +191,22 @@ public class ConvertTest {
     String fakeAssetName = "fake_asset_name";
     String fakeAssetKey = "fake_asset_key";
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("assetName", fakeAssetName);
-    assetDetails.put("bitmapScaling", "auto");
-    assetDetails.put("height", 15.0f);
-    assetDetails.put("imagePixelRatio", 2.0f);
-
     when(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey);
 
     when(assetManager.open(fakeAssetKey)).thenReturn(buildImageInputStream());
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    Messages.PlatformBitmapAssetMap bitmap =
+        new Messages.PlatformBitmapAssetMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+            .setHeight(15.0)
+            .setImagePixelRatio(2.0)
+            .setAssetName(fakeAssetName)
+            .build();
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
-            assetDetails,
-            assetManager,
-            1.0f,
-            bitmapDescriptorFactoryWrapper,
-            flutterInjectorWrapper);
+            bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -208,11 +216,6 @@ public class ConvertTest {
     String fakeAssetName = "fake_asset_name";
     String fakeAssetKey = "fake_asset_key";
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("assetName", fakeAssetName);
-    assetDetails.put("bitmapScaling", "noScaling");
-    assetDetails.put("imagePixelRatio", 2.0f);
-
     when(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey);
 
     when(assetManager.open(fakeAssetKey)).thenReturn(buildImageInputStream());
@@ -220,102 +223,110 @@ public class ConvertTest {
     when(bitmapDescriptorFactoryWrapper.fromAsset(any())).thenReturn(mockBitmapDescriptor);
 
     verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any());
+    Messages.PlatformBitmapAssetMap bitmap =
+        new Messages.PlatformBitmapAssetMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
+            .setImagePixelRatio(2.0)
+            .setAssetName(fakeAssetName)
+            .build();
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
-            assetDetails,
-            assetManager,
-            1.0f,
-            bitmapDescriptorFactoryWrapper,
-            flutterInjectorWrapper);
+            bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
 
   @Test
-  public void GetBitmapFromBytesAuto() throws Exception {
+  public void GetBitmapFromBytesAuto() {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
-
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("byteData", bmpData);
-    assetDetails.put("bitmapScaling", "auto");
-    assetDetails.put("imagePixelRatio", 2.0f);
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
 
+    Messages.PlatformBitmapBytesMap bitmap =
+        new Messages.PlatformBitmapBytesMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+            .setImagePixelRatio(2.0)
+            .setByteData(bmpData)
+            .build();
+
     BitmapDescriptor result =
-        Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+        Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
 
   @Test
-  public void GetBitmapFromBytesAutoAndWidth() throws Exception {
+  public void GetBitmapFromBytesAutoAndWidth() {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("byteData", bmpData);
-    assetDetails.put("bitmapScaling", "auto");
-    assetDetails.put("imagePixelRatio", 2.0f);
-    assetDetails.put("width", 15.0f);
-
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    Messages.PlatformBitmapBytesMap bitmap =
+        new Messages.PlatformBitmapBytesMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+            .setImagePixelRatio(2.0)
+            .setByteData(bmpData)
+            .setWidth(15.0)
+            .build();
 
     BitmapDescriptor result =
-        Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+        Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
 
   @Test
-  public void GetBitmapFromBytesAutoAndHeight() throws Exception {
+  public void GetBitmapFromBytesAutoAndHeight() {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("byteData", bmpData);
-    assetDetails.put("bitmapScaling", "auto");
-    assetDetails.put("imagePixelRatio", 2.0f);
-    assetDetails.put("height", 15.0f);
-
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    Messages.PlatformBitmapBytesMap bitmap =
+        new Messages.PlatformBitmapBytesMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+            .setImagePixelRatio(2.0)
+            .setByteData(bmpData)
+            .setHeight(15.0)
+            .build();
 
     BitmapDescriptor result =
-        Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+        Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
 
   @Test
-  public void GetBitmapFromBytesNoScaling() throws Exception {
+  public void GetBitmapFromBytesNoScaling() {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("byteData", bmpData);
-    assetDetails.put("bitmapScaling", "noScaling");
-    assetDetails.put("imagePixelRatio", 2.0f);
-
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    Messages.PlatformBitmapBytesMap bitmap =
+        new Messages.PlatformBitmapBytesMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
+            .setImagePixelRatio(2.0)
+            .setByteData(bmpData)
+            .build();
 
     BitmapDescriptor result =
-        Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+        Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
 
   @Test(expected = IllegalArgumentException.class) // Expecting an IllegalArgumentException
-  public void GetBitmapFromBytesThrowsErrorIfInvalidImageData() throws Exception {
+  public void GetBitmapFromBytesThrowsErrorIfInvalidImageData() {
     String invalidBase64Image = "not valid image data";
     byte[] bmpData = Base64.decode(invalidBase64Image, Base64.DEFAULT);
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("byteData", bmpData);
-    assetDetails.put("bitmapScaling", "noScaling");
-    assetDetails.put("imagePixelRatio", 2.0f);
-
     verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any());
+    Messages.PlatformBitmapBytesMap bitmap =
+        new Messages.PlatformBitmapBytesMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
+            .setImagePixelRatio(2.0)
+            .setByteData(bmpData)
+            .build();
 
     try {
-      Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+      Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
     } catch (IllegalArgumentException e) {
       Assert.assertEquals(e.getMessage(), "Unable to interpret bytes as a valid image.");
       throw e; // rethrow the exception
@@ -324,13 +335,342 @@ public class ConvertTest {
     fail("Expected an IllegalArgumentException to be thrown");
   }
 
+  @Test
+  public void interpretMapConfiguration_handlesNulls() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verifyNoInteractions(optionsSink);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesCompassEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setCompassEnabled(false).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setCompassEnabled(false);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesMapToolbarEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setMapToolbarEnabled(true).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setMapToolbarEnabled(true);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesRotateGesturesEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setRotateGesturesEnabled(false).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setRotateGesturesEnabled(false);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesScrollGesturesEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setScrollGesturesEnabled(true).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setScrollGesturesEnabled(true);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesTiltGesturesEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setTiltGesturesEnabled(false).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setTiltGesturesEnabled(false);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesTrackCameraPosition() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setTrackCameraPosition(true).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setTrackCameraPosition(true);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesZoomControlsEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setZoomControlsEnabled(false).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setZoomControlsEnabled(false);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesZoomGesturesEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setZoomGesturesEnabled(true).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setZoomGesturesEnabled(true);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesMyLocationEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setMyLocationEnabled(false).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setMyLocationEnabled(false);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesMyLocationButtonEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setMyLocationButtonEnabled(true).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setMyLocationButtonEnabled(true);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesIndoorViewEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setIndoorViewEnabled(false).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setIndoorEnabled(false);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesTrafficEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setTrafficEnabled(true).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setTrafficEnabled(true);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesBuildingsEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setBuildingsEnabled(false).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setBuildingsEnabled(false);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesLiteModeEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setLiteModeEnabled(true).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setLiteModeEnabled(true);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesStyle() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setStyle("foo").build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setMapStyle("foo");
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesUnboundedCameraTargetBounds() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder()
+            .setCameraTargetBounds(new Messages.PlatformCameraTargetBounds.Builder().build())
+            .build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setCameraTargetBounds(null);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesBoundedCameraTargetBounds() {
+    LatLngBounds bounds = new LatLngBounds(new LatLng(10, 20), new LatLng(30, 40));
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder()
+            .setCameraTargetBounds(
+                new Messages.PlatformCameraTargetBounds.Builder()
+                    .setBounds(
+                        new Messages.PlatformLatLngBounds.Builder()
+                            .setSouthwest(
+                                new Messages.PlatformLatLng.Builder()
+                                    .setLatitude(bounds.southwest.latitude)
+                                    .setLongitude(bounds.southwest.longitude)
+                                    .build())
+                            .setNortheast(
+                                new Messages.PlatformLatLng.Builder()
+                                    .setLatitude(bounds.northeast.latitude)
+                                    .setLongitude(bounds.northeast.longitude)
+                                    .build())
+                            .build())
+                    .build())
+            .build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setCameraTargetBounds(bounds);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesMapType() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder()
+            .setMapType(Messages.PlatformMapType.HYBRID)
+            .build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setMapType(MAP_TYPE_HYBRID);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesPadding() {
+    final double top = 1.0;
+    final double bottom = 2.0;
+    final double left = 3.0;
+    final double right = 4.0;
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder()
+            .setPadding(
+                new Messages.PlatformEdgeInsets.Builder()
+                    .setTop(top)
+                    .setBottom(bottom)
+                    .setLeft(left)
+                    .setRight(right)
+                    .build())
+            .build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1))
+        .setPadding((float) top, (float) left, (float) bottom, (float) right);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesMinMaxZoomPreference() {
+    final double min = 1.0;
+    final double max = 2.0;
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder()
+            .setMinMaxZoomPreference(
+                new Messages.PlatformZoomRange.Builder().setMin(min).setMax(max).build())
+            .build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setMinMaxZoomPreference((float) min, (float) max);
+  }
+
+  private static final SphericalMercatorProjection sProjection = new SphericalMercatorProjection(1);
+
+  @Test()
+  public void ConvertToWeightedLatLngReturnsCorrectData() {
+    final double intensity = 3.3;
+    final Object data = List.of(List.of(1.1, 2.2), intensity);
+    final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
+
+    final WeightedLatLng result = Convert.toWeightedLatLng(data);
+
+    Assert.assertEquals(point.x, result.getPoint().x, 0);
+    Assert.assertEquals(point.y, result.getPoint().y, 0);
+    Assert.assertEquals(intensity, result.getIntensity(), 0);
+  }
+
+  @Test()
+  public void ConvertToWeightedDataReturnsCorrectData() {
+    final double intensity = 3.3;
+    final List<Object> data = List.of(List.of(List.of(1.1, 2.2), intensity));
+    final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
+
+    final List<WeightedLatLng> result = Convert.toWeightedData(data);
+
+    Assert.assertEquals(1, result.size());
+    Assert.assertEquals(point.x, result.get(0).getPoint().x, 0);
+    Assert.assertEquals(point.y, result.get(0).getPoint().y, 0);
+    Assert.assertEquals(intensity, result.get(0).getIntensity(), 0);
+  }
+
+  @Test()
+  public void ConvertToGradientReturnsCorrectData() {
+    final int color1 = 0;
+    final int color2 = 1;
+    final int color3 = 2;
+    final List<Object> colorData = List.of(color1, color2, color3);
+    final double startPoint1 = 0.0;
+    final double startPoint2 = 1.0;
+    final double startPoint3 = 2.0;
+    List<Object> startPointData = List.of(startPoint1, startPoint2, startPoint3);
+    final int colorMapSize = 3;
+    final Map<String, Object> data =
+        Map.of(
+            HEATMAP_GRADIENT_COLORS_KEY, colorData,
+            HEATMAP_GRADIENT_START_POINTS_KEY, startPointData,
+            HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY, colorMapSize);
+
+    final Gradient result = Convert.toGradient(data);
+
+    Assert.assertEquals(3, result.mColors.length);
+    Assert.assertEquals(color1, result.mColors[0]);
+    Assert.assertEquals(color2, result.mColors[1]);
+    Assert.assertEquals(color3, result.mColors[2]);
+    Assert.assertEquals(3, result.mStartPoints.length);
+    Assert.assertEquals(startPoint1, result.mStartPoints[0], 0);
+    Assert.assertEquals(startPoint2, result.mStartPoints[1], 0);
+    Assert.assertEquals(startPoint3, result.mStartPoints[2], 0);
+    Assert.assertEquals(colorMapSize, result.mColorMapSize);
+  }
+
+  @Test()
+  public void ConvertInterpretHeatmapOptionsReturnsCorrectData() {
+    final double intensity = 3.3;
+    final List<Object> dataData = List.of(List.of(List.of(1.1, 2.2), intensity));
+    final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
+
+    final int color1 = 0;
+    final int color2 = 1;
+    final int color3 = 2;
+    final List<Object> colorData = List.of(color1, color2, color3);
+    final double startPoint1 = 0.0;
+    final double startPoint2 = 1.0;
+    final double startPoint3 = 2.0;
+    List<Object> startPointData = List.of(startPoint1, startPoint2, startPoint3);
+    final int colorMapSize = 3;
+    final Map<String, ?> gradientData =
+        Map.of(
+            HEATMAP_GRADIENT_COLORS_KEY, colorData,
+            HEATMAP_GRADIENT_START_POINTS_KEY, startPointData,
+            HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY, colorMapSize);
+
+    final double maxIntensity = 4.4;
+    final double opacity = 5.5;
+    final int radius = 6;
+    final String idData = "heatmap_1";
+
+    final Map<String, Object> data =
+        Map.of(
+            HEATMAP_DATA_KEY,
+            dataData,
+            HEATMAP_GRADIENT_KEY,
+            gradientData,
+            HEATMAP_MAX_INTENSITY_KEY,
+            maxIntensity,
+            HEATMAP_OPACITY_KEY,
+            opacity,
+            HEATMAP_RADIUS_KEY,
+            radius,
+            HEATMAP_ID_KEY,
+            idData);
+
+    final MockHeatmapBuilder builder = new MockHeatmapBuilder();
+    final String id = Convert.interpretHeatmapOptions(data, builder);
+
+    Assert.assertEquals(1, builder.getWeightedData().size());
+    Assert.assertEquals(point.x, builder.getWeightedData().get(0).getPoint().x, 0);
+    Assert.assertEquals(point.y, builder.getWeightedData().get(0).getPoint().y, 0);
+    Assert.assertEquals(intensity, builder.getWeightedData().get(0).getIntensity(), 0);
+    Assert.assertEquals(3, builder.getGradient().mColors.length);
+    Assert.assertEquals(color1, builder.getGradient().mColors[0]);
+    Assert.assertEquals(color2, builder.getGradient().mColors[1]);
+    Assert.assertEquals(color3, builder.getGradient().mColors[2]);
+    Assert.assertEquals(3, builder.getGradient().mStartPoints.length);
+    Assert.assertEquals(startPoint1, builder.getGradient().mStartPoints[0], 0);
+    Assert.assertEquals(startPoint2, builder.getGradient().mStartPoints[1], 0);
+    Assert.assertEquals(startPoint3, builder.getGradient().mStartPoints[2], 0);
+    Assert.assertEquals(colorMapSize, builder.getGradient().mColorMapSize);
+    Assert.assertEquals(maxIntensity, builder.getMaxIntensity(), 0);
+    Assert.assertEquals(opacity, builder.getOpacity(), 0);
+    Assert.assertEquals(radius, builder.getRadius());
+    Assert.assertEquals(idData, id);
+  }
+
   private InputStream buildImageInputStream() {
     Bitmap fakeBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     fakeBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
     byte[] byteArray = byteArrayOutputStream.toByteArray();
-    InputStream fakeStream = new ByteArrayInputStream(byteArray);
-    return fakeStream;
+    return new ByteArrayInputStream(byteArray);
   }
 
   // Helper method to generate 1x1 pixel base64 encoded png test image
@@ -351,8 +691,59 @@ public class ConvertTest {
     byte[] pngBytes = outputStream.toByteArray();
 
     // Encode the PNG bytes as a base64 string
-    String base64Image = Base64.encodeToString(pngBytes, Base64.DEFAULT);
+    return Base64.encodeToString(pngBytes, Base64.DEFAULT);
+  }
+}
 
-    return base64Image;
+class MockHeatmapBuilder implements HeatmapOptionsSink {
+  private List<WeightedLatLng> weightedData;
+  private Gradient gradient;
+  private double maxIntensity;
+  private double opacity;
+  private int radius;
+
+  public List<WeightedLatLng> getWeightedData() {
+    return weightedData;
+  }
+
+  public Gradient getGradient() {
+    return gradient;
+  }
+
+  public double getMaxIntensity() {
+    return maxIntensity;
+  }
+
+  public double getOpacity() {
+    return opacity;
+  }
+
+  public int getRadius() {
+    return radius;
+  }
+
+  @Override
+  public void setWeightedData(@NonNull List<WeightedLatLng> weightedData) {
+    this.weightedData = weightedData;
+  }
+
+  @Override
+  public void setGradient(@NonNull Gradient gradient) {
+    this.gradient = gradient;
+  }
+
+  @Override
+  public void setMaxIntensity(double maxIntensity) {
+    this.maxIntensity = maxIntensity;
+  }
+
+  @Override
+  public void setOpacity(double opacity) {
+    this.opacity = opacity;
+  }
+
+  @Override
+  public void setRadius(int radius) {
+    this.radius = radius;
   }
 }

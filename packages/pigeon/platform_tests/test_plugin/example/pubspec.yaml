@@ -3,7 +3,7 @@ description: Pigeon test harness for primary plugin languages.
 publish_to: 'none'
 
 environment:
-  sdk: ^3.2.0
+  sdk: ^3.3.0
 
 dependencies:
   flutter:

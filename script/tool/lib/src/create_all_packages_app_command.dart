@@ -217,7 +217,13 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     final File gradleFile = app
         .platformDirectory(FlutterPlatform.android)
         .childDirectory('app')
-        .childFile('build.gradle');
+        .listSync()
+        .whereType<File>()
+        .firstWhere(
+          (File file) => file.basename.startsWith('build.gradle'),
+        );
+
+    final bool gradleFileIsKotlin = gradleFile.basename.endsWith('kts');
 
     // Ensure that there is a dependencies section, so the dependencies addition
     // below will work.
@@ -229,18 +235,28 @@ dependencies {}
 ''');
     }
 
-    const String lifecycleDependency =
-        "    implementation 'androidx.lifecycle:lifecycle-runtime:2.2.0-rc01'";
+    final String lifecycleDependency = gradleFileIsKotlin
+        ? '    implementation("androidx.lifecycle:lifecycle-runtime:2.2.0-rc01")'
+        : "    implementation 'androidx.lifecycle:lifecycle-runtime:2.2.0-rc01'";
 
     _adjustFile(
       gradleFile,
       replacements: <String, List<String>>{
-        // minSdkVersion 21 is required by camera_android.
-        'minSdkVersion': <String>['minSdkVersion 21'],
-        'compileSdkVersion': <String>['compileSdk 34'],
+        if (gradleFileIsKotlin)
+          'compileSdk': <String>['compileSdk = 34']
+        else ...<String, List<String>>{
+          // minSdkVersion 21 is required by camera_android.
+          'minSdkVersion': <String>['minSdkVersion 21'],
+          'compileSdkVersion': <String>['compileSdk 34'],
+        }
       },
       additions: <String, List<String>>{
-        'defaultConfig {': <String>['        multiDexEnabled true'],
+        'defaultConfig {': <String>[
+          if (gradleFileIsKotlin)
+            '        multiDexEnabled = true'
+          else
+            '        multiDexEnabled true'
+        ],
       },
       regexReplacements: <RegExp, List<String>>{
         // Tests for https://github.com/flutter/flutter/issues/43383

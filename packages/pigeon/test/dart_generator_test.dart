@@ -167,7 +167,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, contains('Future<int> add(int x, int y)'));
-    expect(code, contains('await __pigeon_channel.send(<Object?>[x, y])'));
+    expect(code, contains('await pigeonVar_channel.send(<Object?>[x, y])'));
   });
 
   test('flutter multiple args', () {
@@ -573,7 +573,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('enum Foo {'));
     expect(code, contains('Future<void> bar(Foo? foo) async'));
-    expect(code, contains('__pigeon_channel.send(<Object?>[foo])'));
+    expect(code, contains('pigeonVar_channel.send(<Object?>[foo])'));
   });
 
   test('flutter non-nullable enum argument with enum class', () {
@@ -664,7 +664,7 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, matches('__pigeon_channel.send[(]null[)]'));
+    expect(code, matches('pigeonVar_channel.send[(]null[)]'));
   });
 
   test('mock dart handler', () {
@@ -953,7 +953,7 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, matches('__pigeon_channel.send[(]null[)]'));
+    expect(code, matches('pigeonVar_channel.send[(]null[)]'));
   });
 
   Iterable<String> makeIterable(String string) sync* {
@@ -1142,7 +1142,7 @@ void main() {
     expect(
         code,
         contains(
-            'return (__pigeon_replyList[0] as List<Object?>?)!.cast<int?>();'));
+            'return (pigeonVar_replyList[0] as List<Object?>?)!.cast<int?>();'));
   });
 
   test('flutter generics argument non void return', () {
@@ -1217,7 +1217,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
-    expect(code, contains('return (__pigeon_replyList[0] as int?);'));
+    expect(code, contains('return (pigeonVar_replyList[0] as int?);'));
   });
 
   test('return nullable collection host', () {
@@ -1252,7 +1252,7 @@ void main() {
     expect(
         code,
         contains(
-            'return (__pigeon_replyList[0] as List<Object?>?)?.cast<int?>();'));
+            'return (pigeonVar_replyList[0] as List<Object?>?)?.cast<int?>();'));
   });
 
   test('return nullable async host', () {
@@ -1283,7 +1283,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
-    expect(code, contains('return (__pigeon_replyList[0] as int?);'));
+    expect(code, contains('return (pigeonVar_replyList[0] as int?);'));
   });
 
   test('return nullable flutter', () {
@@ -1732,7 +1732,7 @@ name: foobar
     );
     final String code = sink.toString();
     expect(
-        code, contains('throw _createConnectionError(__pigeon_channelName);'));
+        code, contains('throw _createConnectionError(pigeonVar_channelName);'));
     expect(
         code,
         contains(
@@ -1770,5 +1770,36 @@ name: foobar
     );
     final String mainCode = mainCodeSink.toString();
     expect(mainCode, contains('List<Object?> wrapResponse('));
+  });
+
+  test('writes custom int codec without custom types', () {
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(name: 'Api', methods: <Method>[
+          Method(
+              name: 'doit',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
+              parameters: <Parameter>[])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const DartGenerator generator = DartGenerator();
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('if (value is int) {'));
+    expect(code, contains('buffer.putUint8(4);'));
+    expect(code, contains('buffer.putInt64(value);'));
   });
 }

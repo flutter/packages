@@ -32,6 +32,8 @@ const DocumentCommentSpecification _docCommentSpec =
 /// The custom codec used for all pigeon APIs.
 const String _pigeonCodec = '_PigeonCodec';
 
+const String _overflowClassName = '_PigeonCodecOverflow';
+
 /// Options that control how Dart code will be generated.
 class DartOptions {
   /// Constructor for DartOptions.
@@ -283,59 +285,96 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
+    void writeEncodeLogic(EnumeratedType customType) {
+      indent.writeScoped('else if (value is ${customType.name}) {', '}', () {
+        if (customType.enumeration < maximumCodecFieldKey) {
+          indent.writeln('buffer.putUint8(${customType.enumeration});');
+          if (customType.type == CustomTypes.customClass) {
+            indent.writeln('writeValue(buffer, value.encode());');
+          } else if (customType.type == CustomTypes.customEnum) {
+            indent.writeln('writeValue(buffer, value.index);');
+          }
+        } else {
+          final String encodeString = customType.type == CustomTypes.customClass
+              ? '.encode()'
+              : '.index';
+          indent.writeln(
+              'final $_overflowClassName wrap = $_overflowClassName(type: ${customType.enumeration - maximumCodecFieldKey}, wrapped: value$encodeString);');
+          indent.writeln('buffer.putUint8($maximumCodecFieldKey);');
+          indent.writeln('writeValue(buffer, wrap.encode());');
+        }
+      }, addTrailingNewline: false);
+    }
+
+    void writeDecodeLogic(EnumeratedType customType) {
+      indent.writeln('case ${customType.enumeration}: ');
+      indent.nest(1, () {
+        if (customType.type == CustomTypes.customClass) {
+          if (customType.enumeration == maximumCodecFieldKey) {
+            indent.writeln(
+                'final ${customType.name} wrapper = ${customType.name}.decode(readValue(buffer)!);');
+            indent.writeln('return wrapper.unwrap();');
+          } else {
+            indent.writeln(
+                'return ${customType.name}.decode(readValue(buffer)!);');
+          }
+        } else if (customType.type == CustomTypes.customEnum) {
+          indent.writeln('final int? value = readValue(buffer) as int?;');
+          indent.writeln(
+              'return value == null ? null : ${customType.name}.values[value];');
+        }
+      });
+    }
+
+    final EnumeratedType overflowClass = EnumeratedType(
+        _overflowClassName, maximumCodecFieldKey, CustomTypes.customClass);
+
     indent.newln();
-    final Iterable<EnumeratedType> enumeratedTypes = getEnumeratedTypes(root);
+    final List<EnumeratedType> enumeratedTypes =
+        getEnumeratedTypes(root).toList();
+    if (root.requiresOverflowClass) {
+      _writeCodecOverflowUtilities(indent, enumeratedTypes);
+    }
     indent.newln();
     indent.write('class $_pigeonCodec extends StandardMessageCodec');
     indent.addScoped(' {', '}', () {
       indent.writeln('const $_pigeonCodec();');
-      if (enumeratedTypes.isNotEmpty) {
-        indent.writeln('@override');
-        indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
-        indent.addScoped('{', '}', () {
-          enumerate(enumeratedTypes,
-              (int index, final EnumeratedType customType) {
-            indent.writeScoped('if (value is ${customType.name}) {', '} else ',
-                () {
-              indent.writeln('buffer.putUint8(${customType.enumeration});');
-              if (customType.type == CustomTypes.customClass) {
-                indent.writeln('writeValue(buffer, value.encode());');
-              } else if (customType.type == CustomTypes.customEnum) {
-                indent.writeln('writeValue(buffer, value.index);');
-              }
-            }, addTrailingNewline: false);
-          });
-          indent.addScoped('{', '}', () {
-            indent.writeln('super.writeValue(buffer, value);');
-          });
+      indent.writeln('@override');
+      indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
+      indent.addScoped('{', '}', () {
+        indent.writeScoped('if (value is int) {', '}', () {
+          indent.writeln('buffer.putUint8(4);');
+          indent.writeln('buffer.putInt64(value);');
+        }, addTrailingNewline: false);
+
+        enumerate(enumeratedTypes,
+            (int index, final EnumeratedType customType) {
+          writeEncodeLogic(customType);
         });
-        indent.newln();
-        indent.writeln('@override');
-        indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
+        indent.addScoped(' else {', '}', () {
+          indent.writeln('super.writeValue(buffer, value);');
+        });
+      });
+      indent.newln();
+      indent.writeln('@override');
+      indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
+      indent.addScoped('{', '}', () {
+        indent.write('switch (type) ');
         indent.addScoped('{', '}', () {
-          indent.write('switch (type) ');
-          indent.addScoped('{', '}', () {
-            for (final EnumeratedType customType in enumeratedTypes) {
-              indent.writeln('case ${customType.enumeration}: ');
-              indent.nest(1, () {
-                if (customType.type == CustomTypes.customClass) {
-                  indent.writeln(
-                      'return ${customType.name}.decode(readValue(buffer)!);');
-                } else if (customType.type == CustomTypes.customEnum) {
-                  indent
-                      .writeln('final int? value = readValue(buffer) as int?;');
-                  indent.writeln(
-                      'return value == null ? null : ${customType.name}.values[value];');
-                }
-              });
+          for (final EnumeratedType customType in enumeratedTypes) {
+            if (customType.enumeration < maximumCodecFieldKey) {
+              writeDecodeLogic(customType);
             }
-            indent.writeln('default:');
-            indent.nest(1, () {
-              indent.writeln('return super.readValueOfType(type, buffer);');
-            });
+          }
+          if (root.requiresOverflowClass) {
+            writeDecodeLogic(overflowClass);
+          }
+          indent.writeln('default:');
+          indent.nest(1, () {
+            indent.writeln('return super.readValueOfType(type, buffer);');
           });
         });
-      }
+      });
     });
   }
 
@@ -498,8 +537,6 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     Indent indent, {
     required String dartPackageName,
   }) {
-    const String apiName = '${instanceManagerClassName}Api';
-
     final cb.Parameter binaryMessengerParameter = cb.Parameter(
       (cb.ParameterBuilder builder) => builder
         ..name = 'binaryMessenger'
@@ -514,23 +551,18 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         ..modifier = cb.FieldModifier.final$,
     );
 
-    final String removeStrongReferenceName = makeChannelNameWithStrings(
-      apiName: apiName,
-      methodName: 'removeStrongReference',
-      dartPackageName: dartPackageName,
-    );
-
     final cb.Class instanceManagerApi = cb.Class(
       (cb.ClassBuilder builder) => builder
-        ..name = '_$apiName'
+        ..name = dartInstanceManagerApiClassName
         ..docs.add(
-          '/// Generated API for managing the Dart and native `$instanceManagerClassName`s.',
+          '/// Generated API for managing the Dart and native `$dartInstanceManagerClassName`s.',
         )
         ..constructors.add(
           cb.Constructor(
             (cb.ConstructorBuilder builder) {
               builder
-                ..docs.add('/// Constructor for [_$apiName].')
+                ..docs.add(
+                    '/// Constructor for [$dartInstanceManagerApiClassName].')
                 ..optionalParameters.add(binaryMessengerParameter)
                 ..initializers.add(
                   cb.Code(
@@ -550,7 +582,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                   ..type = cb.refer('MessageCodec<Object?>')
                   ..static = true
                   ..modifier = cb.FieldModifier.constant
-                  ..assignment = const cb.Code('StandardMessageCodec()');
+                  ..assignment = const cb.Code('$_pigeonCodec()');
               },
             )
           ],
@@ -575,7 +607,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                     (cb.ParameterBuilder builder) => builder
                       ..name = 'instanceManager'
                       ..named = true
-                      ..type = cb.refer('$instanceManagerClassName?'),
+                      ..type = cb.refer('$dartInstanceManagerClassName?'),
                   ),
                 ])
                 ..body = cb.Block.of(
@@ -595,7 +627,9 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                           )
                         ],
                         returnType: const TypeDeclaration.voidDeclaration(),
-                        channelName: removeStrongReferenceName,
+                        channelName: makeRemoveStrongReferenceChannelName(
+                          dartPackageName,
+                        ),
                         isMockHandler: false,
                         isAsynchronous: false,
                         nullHandlerExpression:
@@ -605,7 +639,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                           Iterable<Parameter> parameters,
                           Iterable<String> safeArgumentNames,
                         ) {
-                          return '(instanceManager ?? $instanceManagerClassName.instance).remove(${safeArgumentNames.single})';
+                          return '(instanceManager ?? $dartInstanceManagerClassName.instance).remove(${safeArgumentNames.single})';
                         },
                       );
                       builder.statements.add(
@@ -638,7 +672,8 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                       _writeHostMethodMessageCall(
                         Indent(messageCallSink),
                         addSuffixVariable: false,
-                        channelName: removeStrongReferenceName,
+                        channelName: makeRemoveStrongReferenceChannelName(
+                            dartPackageName),
                         parameters: <Parameter>[
                           Parameter(
                             name: 'identifier',
@@ -664,7 +699,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                   ..returns = cb.refer('Future<void>')
                   ..modifier = cb.MethodModifier.async
                   ..docs.addAll(<String>[
-                    '/// Clear the native `$instanceManagerClassName`.',
+                    '/// Clear the native `$dartInstanceManagerClassName`.',
                     '///',
                     '/// This is typically called after a hot restart.',
                   ])
@@ -674,11 +709,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                       _writeHostMethodMessageCall(
                         Indent(messageCallSink),
                         addSuffixVariable: false,
-                        channelName: makeChannelNameWithStrings(
-                          apiName: apiName,
-                          methodName: 'clear',
-                          dartPackageName: dartPackageName,
-                        ),
+                        channelName: makeClearChannelName(dartPackageName),
                         parameters: <Parameter>[],
                         returnType: const TypeDeclaration.voidDeclaration(),
                       );
@@ -720,7 +751,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 
     // Each API has a private codec instance used by every host method,
     // constructor, or non-static field.
-    final String codecInstanceName = '${varNamePrefix}codec${api.name}';
+    final String codecInstanceName = '_${varNamePrefix}codec${api.name}';
 
     // AST class used by code_builder to generate the code.
     final cb.Class proxyApi = cb.Class(
@@ -953,6 +984,52 @@ PlatformException _createConnectionError(String channelName) {
 \t\tmessage: 'Unable to establish connection on channel: "\$channelName".',
 \t);
 }''');
+  }
+
+  void _writeCodecOverflowUtilities(Indent indent, List<EnumeratedType> types) {
+    indent.newln();
+    indent.writeln('// ignore: camel_case_types');
+    indent.writeScoped('class $_overflowClassName {', '}', () {
+      indent.format('''
+$_overflowClassName({required this.type, required this.wrapped});
+
+int type;
+Object? wrapped;
+
+Object encode() {
+  return <Object?>[type, wrapped];
+}
+
+static $_overflowClassName decode(Object result) {
+  result as List<Object?>;
+  return $_overflowClassName(
+    type: result[0]! as int,
+    wrapped: result[1],
+  );
+}
+''');
+      indent.writeScoped('Object? unwrap() {', '}', () {
+        indent.format('''
+if (wrapped == null) {
+  return null;
+}
+''');
+        indent.writeScoped('switch (type) {', '}', () {
+          for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
+            indent.writeScoped('case ${i - totalCustomCodecKeysAllowed}:', '',
+                () {
+              if (types[i].type == CustomTypes.customClass) {
+                indent.writeln('return ${types[i].name}.decode(wrapped!);');
+              } else if (types[i].type == CustomTypes.customEnum) {
+                indent.writeln(
+                    'return ${types[i].name}.values[wrapped! as int];');
+              }
+            });
+          }
+        });
+        indent.writeln('return null;');
+      });
+    });
   }
 
   void _writeHostMethod(
@@ -1341,7 +1418,7 @@ if (${varNamePrefix}replyList == null) {
           '/// Constructs [$apiName] without creating the associated native object.',
           '///',
           '/// This should only be used by subclasses created by this library or to',
-          '/// create copies for an [$instanceManagerClassName].',
+          '/// create copies for an [$dartInstanceManagerClassName].',
         ])
         ..annotations.add(cb.refer('protected'))
         ..optionalParameters.addAll(<cb.Parameter>[
@@ -1448,7 +1525,7 @@ if (${varNamePrefix}replyList == null) {
                 ');',
                 '```',
                 '',
-                'Alternatively, [$instanceManagerClassName.removeWeakReference] can be used to',
+                'Alternatively, [$dartInstanceManagerClassName.removeWeakReference] can be used to',
                 'release the associated Native object manually.',
               ],
             ],
@@ -1594,7 +1671,7 @@ if (${varNamePrefix}replyList == null) {
             (cb.ParameterBuilder builder) => builder
               ..name = _instanceManagerVarName
               ..named = true
-              ..type = cb.refer('$instanceManagerClassName?'),
+              ..type = cb.refer('$dartInstanceManagerClassName?'),
           ),
           if (hasCallbackConstructor)
             cb.Parameter(
@@ -1645,7 +1722,7 @@ if (${varNamePrefix}replyList == null) {
         ..body = cb.Block.of(<cb.Code>[
           if (hasAnyMessageHandlers) ...<cb.Code>[
             cb.Code(
-              'final $codecName $_pigeonChannelCodec = $codecName($_instanceManagerVarName ?? $instanceManagerClassName.instance);',
+              'final $codecName $_pigeonChannelCodec = $codecName($_instanceManagerVarName ?? $dartInstanceManagerClassName.instance);',
             ),
             const cb.Code(
               'final BinaryMessenger? binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
@@ -1693,7 +1770,7 @@ if (${varNamePrefix}replyList == null) {
                       return '${parameter.name}: $safeArgName,\n';
                     },
                   ).skip(1).join();
-                  return '($_instanceManagerVarName ?? $instanceManagerClassName.instance)\n'
+                  return '($_instanceManagerVarName ?? $dartInstanceManagerClassName.instance)\n'
                       '    .addHostCreatedInstance(\n'
                       '  $methodName?.call(${safeArgumentNames.skip(1).join(',')}) ??\n'
                       '      $apiName.${classMemberNamePrefix}detached('
@@ -1812,8 +1889,8 @@ if (${varNamePrefix}replyList == null) {
                   if (!field.isStatic) ...<cb.Code>[
                     cb.Code(
                       'final $type $instanceName = $type.${classMemberNamePrefix}detached(\n'
-                      '  pigeon_binaryMessenger: pigeon_binaryMessenger,\n'
-                      '  pigeon_instanceManager: pigeon_instanceManager,\n'
+                      '  ${classMemberNamePrefix}binaryMessenger: ${classMemberNamePrefix}binaryMessenger,\n'
+                      '  ${classMemberNamePrefix}instanceManager: ${classMemberNamePrefix}instanceManager,\n'
                       ');',
                     ),
                     cb.Code('final $codecName $_pigeonChannelCodec =\n'
@@ -1829,13 +1906,13 @@ if (${varNamePrefix}replyList == null) {
                       'final $type $instanceName = $type.${classMemberNamePrefix}detached();',
                     ),
                     cb.Code(
-                      'final $codecName $_pigeonChannelCodec = $codecName($instanceManagerClassName.instance);',
+                      'final $codecName $_pigeonChannelCodec = $codecName($dartInstanceManagerClassName.instance);',
                     ),
                     const cb.Code(
                       'final BinaryMessenger ${varNamePrefix}binaryMessenger = ServicesBinding.instance.defaultBinaryMessenger;',
                     ),
                     const cb.Code(
-                      'final int $identifierInstanceName = $instanceManagerClassName.instance.addDartCreatedInstance($instanceName);',
+                      'final int $identifierInstanceName = $dartInstanceManagerClassName.instance.addDartCreatedInstance($instanceName);',
                     ),
                   ],
                   const cb.Code('() async {'),
@@ -1896,7 +1973,7 @@ if (${varNamePrefix}replyList == null) {
               cb.Parameter(
                 (cb.ParameterBuilder builder) => builder
                   ..name = _instanceManagerVarName
-                  ..type = cb.refer('$instanceManagerClassName?'),
+                  ..type = cb.refer('$dartInstanceManagerClassName?'),
               ),
             ],
           ])
@@ -1930,7 +2007,7 @@ if (${varNamePrefix}replyList == null) {
                       '    $codecInstanceName;')
                 else
                   cb.Code(
-                    'final $codecName $_pigeonChannelCodec = $codecName($_instanceManagerVarName ?? $instanceManagerClassName.instance);',
+                    'final $codecName $_pigeonChannelCodec = $codecName($_instanceManagerVarName ?? $dartInstanceManagerClassName.instance);',
                   ),
                 const cb.Code(
                   'final BinaryMessenger? ${varNamePrefix}binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
@@ -2080,8 +2157,8 @@ String _getMethodParameterSignature(Iterable<Parameter> parameters) {
 String _flattenTypeArguments(List<TypeDeclaration> args) {
   return args
       .map<String>((TypeDeclaration arg) => arg.typeArguments.isEmpty
-          ? '${arg.baseName}?'
-          : '${arg.baseName}<${_flattenTypeArguments(arg.typeArguments)}>?')
+          ? '${arg.baseName}${arg.isNullable ? '?' : ''}'
+          : '${arg.baseName}<${_flattenTypeArguments(arg.typeArguments)}>${arg.isNullable ? '?' : ''}')
       .join(', ');
 }
 
@@ -2091,11 +2168,11 @@ String _addGenericTypes(TypeDeclaration type) {
   final List<TypeDeclaration> typeArguments = type.typeArguments;
   switch (type.baseName) {
     case 'List':
-      return (typeArguments.isEmpty)
+      return typeArguments.isEmpty
           ? 'List<Object?>'
           : 'List<${_flattenTypeArguments(typeArguments)}>';
     case 'Map':
-      return (typeArguments.isEmpty)
+      return typeArguments.isEmpty
           ? 'Map<Object?, Object?>'
           : 'Map<${_flattenTypeArguments(typeArguments)}>';
     default:

@@ -19,6 +19,7 @@ class _ExampleFlutterApi implements MessageFlutterApi {
 // #enddocregion main-dart-flutter
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
 // #docregion main-dart-flutter
   MessageFlutterApi.setUp(_ExampleFlutterApi());
 // #enddocregion main-dart-flutter
@@ -72,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<bool> sendMessage(String messageText) {
     final MessageData message = MessageData(
       code: Code.one,
-      data: <String?, String?>{'header': 'this is a header'},
+      data: <String, String>{'header': 'this is a header'},
       description: 'uri text',
     );
     try {
