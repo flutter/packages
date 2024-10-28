@@ -57,7 +57,7 @@ class _ApiLogger implements TestHostImagePickerApi {
   }
 
   @override
-  Future<List<String?>> pickMultiImage(
+  Future<List<String>> pickMultiImage(
     MaxSize maxSize,
     int? imageQuality,
     bool requestFullMetadata,
@@ -70,11 +70,11 @@ class _ApiLogger implements TestHostImagePickerApi {
       'requestFullMetadata': requestFullMetadata,
       'limit': limit,
     }));
-    return returnValue as List<String?>;
+    return returnValue as List<String>;
   }
 
   @override
-  Future<List<String?>> pickMedia(
+  Future<List<String>> pickMedia(
       MediaSelectionOptions mediaSelectionOptions) async {
     calls.add(_LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
       'maxWidth': mediaSelectionOptions.maxSize.width,
@@ -84,7 +84,7 @@ class _ApiLogger implements TestHostImagePickerApi {
       'allowMultiple': mediaSelectionOptions.allowMultiple,
       'limit': mediaSelectionOptions.limit,
     }));
-    return returnValue as List<String?>;
+    return returnValue as List<String>;
   }
 
   @override
@@ -107,7 +107,7 @@ void main() {
 
   setUp(() {
     log = _ApiLogger();
-    TestHostImagePickerApi.setup(log);
+    TestHostImagePickerApi.setUp(log);
   });
 
   test('registration', () async {

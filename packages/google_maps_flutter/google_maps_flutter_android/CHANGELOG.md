@@ -1,3 +1,8 @@
+## 2.14.10
+
+* Adds 'PlatformBitmap' type.
+* Updates type unsafe implementations.
+
 ## 2.14.9
 
 * Adds `PlatformCap` for `PlatformPolyline.startCap` and `endCap`.

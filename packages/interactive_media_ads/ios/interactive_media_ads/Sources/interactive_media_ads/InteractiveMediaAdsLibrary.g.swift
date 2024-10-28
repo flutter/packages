@@ -445,6 +445,10 @@ protocol InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
   func pigeonApiIMAFriendlyObstruction(
     _ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   ) -> PigeonApiIMAFriendlyObstruction
+  /// An implementation of [PigeonApiIMACompanionAd] used to add a new Dart instance of
+  /// `IMACompanionAd` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiIMACompanionAd(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMACompanionAd
 }
 
 extension InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
@@ -769,8 +773,20 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         return
       }
 
-      if let instance = value as? NSObject {
-        pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar).pigeonNewInstance(
+      if let instance = value as? IMAFriendlyObstruction {
+        pigeonRegistrar.apiDelegate.pigeonApiIMAFriendlyObstruction(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
+        return
+      }
+
+      if let instance = value as? IMACompanionAd {
+        pigeonRegistrar.apiDelegate.pigeonApiIMACompanionAd(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
         super.writeByte(128)
@@ -780,11 +796,10 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         return
       }
 
-      if let instance = value as? IMAFriendlyObstruction {
-        pigeonRegistrar.apiDelegate.pigeonApiIMAFriendlyObstruction(pigeonRegistrar)
-          .pigeonNewInstance(
-            pigeonInstance: instance
-          ) { _ in }
+      if let instance = value as? NSObject {
+        pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar).pigeonNewInstance(
+          pigeonInstance: instance
+        ) { _ in }
         super.writeByte(128)
         super.writeValue(
           pigeonRegistrar.instanceManager.identifierWithStrongReference(
@@ -3156,6 +3171,11 @@ protocol PigeonApiProtocolIMAFriendlyObstruction {
 final class PigeonApiIMAFriendlyObstruction: PigeonApiProtocolIMAFriendlyObstruction {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAFriendlyObstruction
+  ///An implementation of [NSObject] used to access callback methods
+  var pigeonApiNSObject: PigeonApiNSObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAFriendlyObstruction
@@ -3229,6 +3249,89 @@ final class PigeonApiIMAFriendlyObstruction: PigeonApiProtocolIMAFriendlyObstruc
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg, viewArg, purposeArg, detailedReasonArg] as [Any?]) {
       response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+}
+protocol PigeonApiDelegateIMACompanionAd {
+  /// The value for the resource of this companion.
+  func resourceValue(pigeonApi: PigeonApiIMACompanionAd, pigeonInstance: IMACompanionAd) throws
+    -> String?
+  /// The API needed to execute this ad, or nil if unavailable.
+  func apiFramework(pigeonApi: PigeonApiIMACompanionAd, pigeonInstance: IMACompanionAd) throws
+    -> String?
+  /// The width of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  func width(pigeonApi: PigeonApiIMACompanionAd, pigeonInstance: IMACompanionAd) throws -> Int64
+  /// The height of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  func height(pigeonApi: PigeonApiIMACompanionAd, pigeonInstance: IMACompanionAd) throws -> Int64
+}
+
+protocol PigeonApiProtocolIMACompanionAd {
+}
+
+final class PigeonApiIMACompanionAd: PigeonApiProtocolIMACompanionAd {
+  unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  let pigeonDelegate: PigeonApiDelegateIMACompanionAd
+  ///An implementation of [NSObject] used to access callback methods
+  var pigeonApiNSObject: PigeonApiNSObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
+  }
+
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMACompanionAd
+  ) {
+    self.pigeonRegistrar = pigeonRegistrar
+    self.pigeonDelegate = delegate
+  }
+  ///Creates a Dart instance of IMACompanionAd and attaches it to [pigeonInstance].
+  func pigeonNewInstance(
+    pigeonInstance: IMACompanionAd, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
+    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+      completion(.success(Void()))
+      return
+    }
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
+    let resourceValueArg = try! pigeonDelegate.resourceValue(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
+    let apiFrameworkArg = try! pigeonDelegate.apiFramework(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
+    let widthArg = try! pigeonDelegate.width(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let heightArg = try! pigeonDelegate.height(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.IMACompanionAd.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(
+      [pigeonIdentifierArg, resourceValueArg, apiFrameworkArg, widthArg, heightArg] as [Any?]
+    ) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return

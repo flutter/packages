@@ -829,7 +829,7 @@ Future<void> main() async {
       unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
       unawaited(
         delegate.setOnNavigationRequest((NavigationRequest navigationRequest) {
-          return (navigationRequest.url.contains('youtube.com'))
+          return navigationRequest.url.contains('youtube.com')
               ? NavigationDecision.prevent
               : NavigationDecision.navigate;
         }),
@@ -1086,7 +1086,7 @@ Future<void> main() async {
       unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
       unawaited(delegate
           .setOnNavigationRequest((NavigationRequest navigationRequest) {
-        return (navigationRequest.url.contains('youtube.com'))
+        return navigationRequest.url.contains('youtube.com')
             ? NavigationDecision.prevent
             : NavigationDecision.navigate;
       }));

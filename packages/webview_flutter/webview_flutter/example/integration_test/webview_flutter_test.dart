@@ -584,7 +584,7 @@ Future<void> main() async {
       await controller.setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) => pageLoaded.complete(),
         onNavigationRequest: (NavigationRequest navigationRequest) {
-          return (navigationRequest.url.contains('youtube.com'))
+          return navigationRequest.url.contains('youtube.com')
               ? NavigationDecision.prevent
               : NavigationDecision.navigate;
         },
@@ -654,7 +654,7 @@ Future<void> main() async {
       await controller.setNavigationDelegate(NavigationDelegate(
           onPageFinished: (_) => pageLoaded.complete(),
           onNavigationRequest: (NavigationRequest navigationRequest) {
-            return (navigationRequest.url.contains('youtube.com'))
+            return navigationRequest.url.contains('youtube.com')
                 ? NavigationDecision.prevent
                 : NavigationDecision.navigate;
           }));
