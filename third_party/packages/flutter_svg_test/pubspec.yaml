@@ -1,0 +1,21 @@
+name: flutter_svg_test
+description: A testing library which makes it easy to test flutter svg . Built to be used with the flutter svg package.
+repository: https://github.com/dnfield/flutter_svg/tree/master/packages/flutter_svg_test
+issue_tracker: https://github.com/dnfield/flutter_svg/issues
+version: 1.0.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_svg: ^2.0.10
+  flutter_test:
+    sdk: flutter
+
+dev_dependencies:
+  http: ^1.0.0
+
+environment:
+  sdk: '>=2.19.0-0 <4.0.0'
+  flutter: ">=3.7.0-0"
+
+

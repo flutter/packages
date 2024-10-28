@@ -1,0 +1,39 @@
+name: flutter_svg_example
+description: An SVG samnple app.
+homepage: https://github.com/dnfield/flutter_svg
+publish_to: none
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_driver:
+    sdk: flutter
+  flutter_svg:
+    path: ../
+
+dev_dependencies:
+  flutter_lints: ^2.0.1
+
+# The following section is specific to Flutter.
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/w3samples/
+    - assets/deborah_ufw/
+    - assets/simple/
+    - assets/wikimedia/
+    - assets/android_vd/
+
+environment:
+  sdk: '>=2.17.0-0 <3.0.0'
+  flutter: ">=3.4.0-34.1.pre"
+
+# dependency_overrides:
+#   vector_graphics_codec:
+#     path: ../../../../vector_graphics/packages/vector_graphics_codec
+#   vector_graphics_compiler:
+#     path: ../../../../vector_graphics/packages/vector_graphics_compiler
+#   vector_graphics:
+#     path: ../../../../vector_graphics/packages/vector_graphics
