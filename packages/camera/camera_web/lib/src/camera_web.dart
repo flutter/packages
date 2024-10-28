@@ -640,7 +640,7 @@ class CameraPlugin extends CameraPlatform {
   }) {
     try {
       return getCamera(cameraId).cameraFrameStream(options: options);
-    } on html.DomException catch (e) {
+    } on web.DOMException catch (e) {
       throw PlatformException(code: e.name, message: e.message);
     } on CameraWebException catch (e) {
       _addCameraErrorEvent(e);

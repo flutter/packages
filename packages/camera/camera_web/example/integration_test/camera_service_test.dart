@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-import 'dart:html';
-import 'dart:js_util' as js_util;
 // ignore_for_file: only_throw_errors
 
 import 'dart:async';
@@ -919,7 +916,10 @@ void main() {
         'otherwise false',
         (WidgetTester widgetTester) async {
           when(
-            () => jsUtil.hasProperty(window, 'OffscreenCanvas'),
+            () => jsUtil.hasProperty(
+              window,
+              'OffscreenCanvas'.toJS,
+            ),
           ).thenReturn(true);
           final bool hasOffScreenCanvas =
               cameraService.hasPropertyOffScreenCanvas();
@@ -928,7 +928,10 @@ void main() {
             true,
           );
           when(
-            () => jsUtil.hasProperty(window, 'OffscreenCanvas'),
+            () => jsUtil.hasProperty(
+              window,
+              'OffscreenCanvas'.toJS,
+            ),
           ).thenReturn(false);
           final bool hasNotOffScreenCanvas =
               cameraService.hasPropertyOffScreenCanvas();
@@ -944,11 +947,12 @@ void main() {
         (WidgetTester widgetTester) async {
           const Size size = Size(10, 10);
           final Completer<void> completer = Completer<void>();
-          final VideoElement videoElement = getVideoElementWithBlankStream(size)
-            ..onLoadedMetadata.listen((_) {
-              completer.complete();
-            })
-            ..load();
+          final web.VideoElement videoElement =
+              getVideoElementWithBlankStream(size)
+                ..onLoadedMetadata.listen((_) {
+                  completer.complete();
+                })
+                ..load();
           await completer.future;
           final CameraImageData cameraImageData = cameraService.takeFrame(
             videoElement,

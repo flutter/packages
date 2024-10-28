@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:js_interop';
 import 'dart:ui';
 import 'dart:ui_web' as ui_web;
-
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web/web.dart' as web;
@@ -648,6 +647,10 @@ class Camera {
   final StreamController<CameraImageData> _cameraFrameStreamController =
       StreamController<CameraImageData>.broadcast();
 
+  // TODO(replace): introduced fps in
+  /// [CameraImageStreamOptions]
+  final int cameraStreamFPS = 30;
+
   /// Returns a stream of camera frames.
   ///
   /// To stop listening to new animation frames close all listening streams.
@@ -655,7 +658,10 @@ class Camera {
     CameraImageStreamOptions? options,
   }) {
     _cameraFrameStreamController.onListen = () {
-      _triggerAnimationFramesLoop(_addCameraImageDataEvent);
+      _triggerAnimationFramesLoop(
+        _addCameraImageDataEvent,
+        fps: cameraStreamFPS,
+      );
     };
 
     return _cameraFrameStreamController.stream;
@@ -663,15 +669,40 @@ class Camera {
 
   /// Triggers animation frames in a loop as long as
   /// [_cameraFrameStreamController.hasListener] and executes the callback
-  void _triggerAnimationFramesLoop(VoidCallback callback) {
-    Future<void> triggerNextAnimationFrame() async {
-      while (_cameraFrameStreamController.hasListener) {
-        await window!.animationFrame;
-        callback();
+  void _triggerAnimationFramesLoop(
+    VoidCallback action, {
+    required int fps,
+  }) {
+    Completer<void> completer = Completer<void>();
+    completer.complete();
+
+    void onAnimate(num _) {
+      if (!_cameraFrameStreamController.hasListener) {
+        return;
       }
+
+      if (!completer.isCompleted) {
+        // Schedule the next frame
+        window.requestAnimationFrame(onAnimate.toJS);
+        return;
+      }
+
+      // Perform the action task
+      action();
+
+      // Reset the completer and set up a delay
+      completer = Completer<void>();
+      Future<void>.delayed(
+        Duration(milliseconds: 1000 ~/ fps),
+      ).then((_) {
+        completer.complete();
+        // Schedule the next frame after the delay
+        window.requestAnimationFrame(onAnimate.toJS);
+      });
     }
 
-    triggerNextAnimationFrame();
+    // Start the animation loop
+    window.requestAnimationFrame(onAnimate.toJS);
   }
 
   /// Used to trigger add event of camera image data in camera frame stream

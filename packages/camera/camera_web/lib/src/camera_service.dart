@@ -367,18 +367,18 @@ class CameraService {
 
   ///Used to check if browser has OffscreenCanvas capability
   bool hasPropertyOffScreenCanvas() {
-    return jsUtil.hasProperty(window!, 'OffscreenCanvas');
+    return jsUtil.hasProperty(window, 'OffscreenCanvas'.toJS);
   }
 
   ///Used in [takeFrame] if [canUseOffscreenCanvas] is false
-  html.CanvasElement? _canvasElement;
+  web.CanvasElement? _canvasElement;
 
   ///Used in [takeFrame] if [canUseOffscreenCanvas] is false
-  html.OffscreenCanvas? _offscreenCanvas;
+  web.OffscreenCanvas? _offscreenCanvas;
 
   ///Returns frame at a specific time using video element
   CameraImageData takeFrame(
-    html.VideoElement videoElement, {
+    web.VideoElement videoElement, {
     bool canUseOffscreenCanvas = false,
   }) {
     final int width = videoElement.videoWidth;
@@ -388,28 +388,40 @@ class CameraService {
         'Computed dimensions are zero: width=$width, height=$height',
       );
     }
-    late html.ImageData imageData;
+    late web.ImageData imageData;
     if (canUseOffscreenCanvas) {
       if (_offscreenCanvas == null ||
           _offscreenCanvas!.width != width ||
           _offscreenCanvas!.height != height) {
-        _offscreenCanvas = html.OffscreenCanvas(width, height);
+        _offscreenCanvas = web.OffscreenCanvas(width, height);
       }
-      final html.OffscreenCanvasRenderingContext2D context = _offscreenCanvas!
-          .getContext('2d')! as html.OffscreenCanvasRenderingContext2D;
+      final web.OffscreenCanvasRenderingContext2D context =
+          _offscreenCanvas!.getContext(
+        '2d',
+        <String, dynamic>{'willReadFrequently': true}.toJSBox,
+      )! as web.OffscreenCanvasRenderingContext2D;
       context.drawImage(videoElement, 0, 0);
       imageData = context.getImageData(0, 0, width, height);
     } else {
       if (_canvasElement == null ||
           _canvasElement!.width != width ||
           _canvasElement!.height != height) {
-        _canvasElement = html.CanvasElement(width: width, height: height);
+        _canvasElement = web.CanvasElement()
+          ..height = height
+          ..width = width;
       }
-      final html.CanvasRenderingContext2D context = _canvasElement!.context2D;
-      context.drawImageScaled(videoElement, 0, 0, width, height);
+      final web.CanvasRenderingContext2D context = _canvasElement!.context2D;
+
+      context.drawImageScaled(
+        videoElement,
+        0,
+        0,
+        width.toDouble(),
+        height.toDouble(),
+      );
       imageData = context.getImageData(0, 0, width, height);
     }
-    final ByteBuffer byteBuffer = imageData.data.buffer;
+    final ByteBuffer byteBuffer = imageData.data.toDart.buffer;
 
     return CameraImageData(
       format: const CameraImageFormat(
