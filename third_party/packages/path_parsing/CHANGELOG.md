@@ -1,3 +1,7 @@
+## 1.0.3
+
+* Updates README.md.
+
 ## 1.0.2
 
 * Transfers the package source from https://github.com/google/process.dart to
