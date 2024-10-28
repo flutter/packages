@@ -21,15 +21,15 @@ void main() {
   });
 
   test('Singleton instance', () {
-    final AdSense instance1 = AdSense();
-    final AdSense instance2 = AdSense();
+    final AdSense instance1 = AdSense.instance;
+    final AdSense instance2 = AdSense.instance;
     expect(instance1, same(instance2));
   });
 
   test('Repeated initialization throws error', () {
-    AdSense().initialize('test-client');
+    AdSense.instance.initialize('test-client');
     expect(
-        () => AdSense().initialize('test-client'), throwsA(isA<StateError>()));
+        () => AdSense.instance.initialize('test-client'), throwsA(isA<StateError>()));
   });
 
   test('Initialization adds AdSense snippet to index.html', () {
@@ -38,7 +38,7 @@ void main() {
         'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-$testClient';
 
     // When
-    AdSense().initialize(testClient);
+    AdSense.instance.initialize(testClient);
 
     // Then
     final web.HTMLScriptElement injected =
@@ -51,8 +51,8 @@ void main() {
   testWidgets('AdUnitWidget is created (not checking rendering)',
       (WidgetTester tester) async {
     // When
-    AdSense().initialize(testClient);
-    final Widget adUnitWidget = AdSense().adUnit(adSlot: testSlot);
+        AdSense.instance.initialize(testClient);
+    final Widget adUnitWidget = AdSense.instance.adUnit(adSlot: testSlot);
     await tester.pumpWidget(adUnitWidget);
     expect(find.byWidget(adUnitWidget), findsOneWidget);
 
@@ -72,10 +72,10 @@ void main() {
     const String widgetClient = 'client2';
 
     // When
-    AdSense().initialize(initClient);
+    AdSense.instance.initialize(initClient);
     final AdUnitWidget adUnitWidget1 =
-        AdSense().adUnit(adSlot: testSlot, adClient: widgetClient);
-    final AdUnitWidget adUnitWidget2 = AdSense().adUnit(adSlot: testSlot);
+    AdSense.instance.adUnit(adSlot: testSlot, adClient: widgetClient);
+    final AdUnitWidget adUnitWidget2 = AdSense.instance.adUnit(adSlot: testSlot);
 
     // Then
     expect(adUnitWidget1.adClient, widgetClient);

@@ -20,7 +20,7 @@ To start displaying ads, initialize the AdSense with your [client/publisher ID](
 import 'package:google_adsense/google_adsense.dart';
 
 void main() {
-  Adsense().initialize('your_ad_client_id');
+  AdSense.instance.initialize('your_ad_client_id');
   runApp(const MyApp());
 }
 
@@ -29,7 +29,7 @@ You are all set to start displaying [Auto ads](https://support.google.com/adsens
 #### Display AdUnitWidget
 <?code-excerpt "example/lib/main.dart (adUnit)"?>
 ```dart
-Adsense().adUnit(
+AdSense.instance.adUnit(
     adSlot: 'your_ad_slot_id',
     isAdTest: true,
     adUnitParams: <String, dynamic>{

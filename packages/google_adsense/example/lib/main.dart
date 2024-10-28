@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_adsense/google_adsense.dart';
 
 void main() {
-  Adsense().initialize('your_ad_client_id');
+  AdSense.instance.initialize('your_ad_client_id');
   runApp(const MyApp());
 }
 
@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'You have pushed the button this many times:',
             ),
             // #docregion adUnit
-            Adsense().adUnit(
+            AdSense.instance.adUnit(
                 adSlot: 'your_ad_slot_id',
                 isAdTest: true,
                 adUnitParams: <String, dynamic>{

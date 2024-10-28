@@ -15,7 +15,7 @@ void main() {
     });
 
     test('AdSense is exported', () {
-      expect(Adsense, isNotNull);
+      expect(AdSense, isNotNull);
     });
   });
 }

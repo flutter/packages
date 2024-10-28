@@ -8,14 +8,14 @@ import 'ad_unit_widget_web.dart';
 
 /// Main class to work with the library
 class AdSense {
+  // Internal constructor
+  AdSense._internal();
+
   /// Returns a singleton instance of Adsense library public interface
-  factory AdSense() => _instance ?? AdSense._internal();
+  static AdSense get instance => _instance;
 
-  AdSense._internal() {
-    _instance = this;
-  }
-
-  static AdSense? _instance = AdSense._internal();
+  // Singleton property
+  static AdSense _instance = AdSense._internal();
   bool _isInitialized = false;
   String _adClient = '';
   static const String _url =
@@ -61,6 +61,6 @@ class AdSense {
 
   /// Only for use in tests
   static void resetForTesting() {
-    _instance = null;
+    _instance = AdSense._internal();
   }
 }

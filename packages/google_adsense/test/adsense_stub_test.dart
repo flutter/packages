@@ -10,15 +10,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_adsense/src/adsense_stub.dart';
 
 void main() {
-  late Adsense adsense;
+  late AdSense adsense;
 
   setUp(() {
-    adsense = Adsense();
+    adsense = AdSense.instance;
   });
 
   test('Singleton instance', () {
-    final Adsense instance1 = Adsense();
-    final Adsense instance2 = Adsense();
+    final AdSense instance1 = AdSense.instance;
+    final AdSense instance2 = AdSense.instance;
     expect(instance1, same(instance2));
   });
 

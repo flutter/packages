@@ -6,14 +6,14 @@ import 'ad_unit_widget.dart';
 
 /// Main class to work with the library
 class AdSense {
+  // Internal constructor
+  AdSense._internal();
+
   /// Returns a singleton instance of Adsense library public interface
-  factory AdSense() => _instance ?? AdSense._internal();
+  static AdSense get instance => _instance;
 
-  AdSense._internal() {
-    _instance = this;
-  }
-
-  static AdSense? _instance = AdSense._internal();
+  // Singleton property
+  static AdSense _instance = AdSense._internal();
 
   /// Initialization API. Should be called ASAP, ideally in the main method of your app.
   void initialize(String adClient) {
@@ -32,6 +32,6 @@ class AdSense {
 
   /// Only for use in tests
   static void resetForTesting() {
-    _instance = null;
+    _instance = AdSense._internal();
   }
 }

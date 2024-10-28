@@ -19,7 +19,7 @@ void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
-    Adsense.resetForTesting();
+    AdSense.resetForTesting();
   });
 
   group('adWidget', () {
@@ -28,8 +28,8 @@ void main() async {
       // When
       // TODO(sokoloff06): Mock server response as ./test_ad.html
 
-      Adsense().initialize(testClient);
-      final Widget adUnitWidget = Adsense().adUnit(adSlot: testSlot);
+          AdSense.instance.initialize(testClient);
+      final Widget adUnitWidget = AdSense.instance.adUnit(adSlot: testSlot);
       await tester.pumpWidget(adUnitWidget);
       await tester.pumpWidget(
           adUnitWidget); // TODO(sokoloff06): Why only works when pumping twice?
