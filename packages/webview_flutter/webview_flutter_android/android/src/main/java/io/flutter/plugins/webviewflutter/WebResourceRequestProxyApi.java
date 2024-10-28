@@ -12,7 +12,6 @@ import androidx.annotation.RequiresApi;
 import java.util.Collections;
 import java.util.Map;
 
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class WebResourceRequestProxyApi extends PigeonApiWebResourceRequest {
   public WebResourceRequestProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
