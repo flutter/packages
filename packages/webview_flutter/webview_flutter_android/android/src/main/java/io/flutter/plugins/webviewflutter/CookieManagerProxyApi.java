@@ -45,37 +45,12 @@ public class CookieManagerProxyApi extends PigeonApiCookieManager {
   public void removeAllCookies(
       @NonNull CookieManager pigeon_instance,
       @NonNull Function1<? super Result<Boolean>, Unit> callback) {
-    if (getPigeonRegistrar().sdkIsAtLeast(Build.VERSION_CODES.LOLLIPOP)) {
-      pigeon_instance.removeAllCookies(aBoolean -> ResultCompat.success(aBoolean, callback));
-    } else {
-      removeCookiesPreL(pigeon_instance);
-    }
+    pigeon_instance.removeAllCookies(aBoolean -> ResultCompat.success(aBoolean, callback));
   }
 
   @Override
   public void setAcceptThirdPartyCookies(
       @NonNull CookieManager pigeon_instance, @NonNull WebView webView, boolean accept) {
-    if (getPigeonRegistrar().sdkIsAtLeast(Build.VERSION_CODES.LOLLIPOP)) {
-      pigeon_instance.setAcceptThirdPartyCookies(webView, accept);
-    } else {
-      throw new UnsupportedOperationException(
-          "`setAcceptThirdPartyCookies` is unsupported on versions below `Build.VERSION_CODES.LOLLIPOP`.");
-    }
-  }
-
-  /**
-   * Removes all cookies from the given cookie manager, using the deprecated (pre-Lollipop)
-   * implementation.
-   *
-   * @param cookieManager The cookie manager to clear all cookies from.
-   * @return Whether any cookies were removed.
-   */
-  @SuppressWarnings("deprecation")
-  private boolean removeCookiesPreL(CookieManager cookieManager) {
-    final boolean hasCookies = cookieManager.hasCookies();
-    if (hasCookies) {
-      cookieManager.removeAllCookie();
-    }
-    return hasCookies;
+    pigeon_instance.setAcceptThirdPartyCookies(webView, accept);
   }
 }
