@@ -876,63 +876,40 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     final Widget cameraPreview = Texture(textureId: cameraId);
-    final Map<DeviceOrientation, int> degreesForDeviceOrientation =
+    final Map<DeviceOrientation, int> degreesForDeviceOrientation = // this seems to be counterclockwise
         <DeviceOrientation, int>{
       DeviceOrientation.portraitUp: 0,
       DeviceOrientation.landscapeRight: 90,
       DeviceOrientation.portraitDown: 180,
       DeviceOrientation.landscapeLeft: 270,
     };
-        final Map<DeviceOrientation, int> previouslyAppliedRotation =
+    
+    final Map<DeviceOrientation, int> pluginAppliedRotation =
         <DeviceOrientation, int>{
       DeviceOrientation.portraitUp: 0,
-      DeviceOrientation.landscapeRight: 1,
+      DeviceOrientation.landscapeRight: 1, 
       DeviceOrientation.portraitDown: 2,
       DeviceOrientation.landscapeLeft: 3,
     };
-    int naturalDeviceOrientationDegrees =
-        degreesForDeviceOrientation[naturalOrientation]!;
+
+    if (isPreviewPreTransformed) {
+      print('Android is < 29');
+      return cameraPreview;
+    }
 
     final int signForCameraDirection = cameraIsFrontFacing ? 1 : -1;
-
-            // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
+    // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
     // for more context on this formula.
-    final double rotation = (sensorOrientation -
+    final double rotationCorrection = (sensorOrientation -
             degreesForDeviceOrientation[currentDeviceOrientation]! * signForCameraDirection +
             360) %
         360;
-            int rotation2 = ((rotation ~/ 90) % 4) - previouslyAppliedRotation[currentDeviceOrientation]!;
-
-    // TODO: camille figure out how to factor in sensor without the rest because i think thats the issue. also retest pixel phone.
-    
-    print('naturalOrientation $naturalOrientation');
-    print('naturalDeviceOrientationDegrees $naturalDeviceOrientationDegrees');
-    print('isPreviewPreTransformed $isPreviewPreTransformed');
-    print('rotation $rotation');
-    print(' -degreesForDeviceOrientation[currentDeviceOrientation]! ${ -degreesForDeviceOrientation[currentDeviceOrientation]!}');
-    print('-degreesForDeviceOrientation[currentDeviceOrientation]! ~/ 90) % 4 ${(-degreesForDeviceOrientation[currentDeviceOrientation]! ~/ 90) % 4}');
-
-    if (isPreviewPreTransformed) {
-      // CAMILLE: here
-    return cameraPreview;  
-    }
 
     // Fix for the rotation of the camera preview not backed by a SurfaceTexture
     // with respect to the naturalOrientation of the device:
-
-
-    print('signForCameraDirection $signForCameraDirection');
-    print('currentDeviceOrientation $currentDeviceOrientation');
-    print('naturalDeviceOrientationDegrees $naturalDeviceOrientationDegrees');
-    print('sensorOrientation $sensorOrientation');
-
-  // TODO: camille try 4
-    int quarterTurnsToCorrectPreview = ((rotation ~/ 90) % 4) - previouslyAppliedRotation[currentDeviceOrientation]!;
-    
-    print('previouslyAppliedRotation[currentDeviceOrientation]! ${previouslyAppliedRotation[currentDeviceOrientation]!}');
-    print(' ((rotation ~/ 90) % 360) ${ ((rotation ~/ 90) % 4)}');
-    print('rotation $rotation');
-    print('quarterTurnsToCorrectPreview before landscape $quarterTurnsToCorrectPreview');
+    final int rotationCorrectionQuarterTurns = (rotationCorrection ~/ 90) % 4;
+    final int rotationAppliedByPlugin = pluginAppliedRotation[currentDeviceOrientation]!;
+    final int quarterTurnsToCorrectPreview =  rotationCorrectionQuarterTurns - rotationAppliedByPlugin;
 
     return RotatedBox(
         quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
