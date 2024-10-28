@@ -314,7 +314,7 @@ public class WebViewTest {
   //
   // ```
   // val instance: Any? = getInstance(identifier)
-  // if (instance is WebViewPlatformView) {
+  // if (instance is WebViewProxyApi.WebViewPlatformView) {
   //   instance.destroy()
   // }
   // ```
