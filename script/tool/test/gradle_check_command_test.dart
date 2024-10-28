@@ -211,6 +211,17 @@ ${includeArtifactHub ? GradleCheckCommand.exampleRootSettingsArtifactHubString :
         .childFile('settings.gradle');
     settingsGradle.createSync(recursive: true);
 
+    /// String printed as a valid example of settings.gradle repository
+    /// configuration without the artifact hub env variable.
+    /// GP stands for the gradle plugin method of flutter tooling inclusion.
+    const String exampleSettingsWithoutArtifactHubStringGP = '''
+// See ${GradleCheckCommand.artifactHubDocumentationString} for more info.
+plugins {
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    // ...other plugins
+}
+  ''';
+
     settingsGradle.writeAsStringSync('''
 pluginManagement {
   def flutterSdkPath = {
@@ -229,7 +240,7 @@ pluginManagement {
     gradlePluginPortal()
   }
 }
-${includeArtifactHub ? GradleCheckCommand.exampleSettingsArtifactHubStringGP : GradleCheckCommand.exampleSettingsWithoutArtifactHubStringGP}
+${includeArtifactHub ? GradleCheckCommand.exampleSettingsArtifactHubStringGP : exampleSettingsWithoutArtifactHubStringGP}
 include ":app"
 ''');
   }

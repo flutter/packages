@@ -229,18 +229,6 @@ plugins {
 }
   ''';
 
-  /// String printed as a valid example of settings.gradle repository
-  /// configuration without the artifact hub env variable.
-  /// GP stands for the gradle plugin method of flutter tooling inclusion.
-  @visibleForTesting
-  static String exampleSettingsWithoutArtifactHubStringGP = '''
-// See $artifactHubDocumentationString for more info.
-plugins {
-    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
-    // ...other plugins
-}
-  ''';
-
   /// Validates that [gradleLines] reads and uses a artifiact hub repository
   /// when ARTIFACT_HUB_REPOSITORY is set.
   ///
