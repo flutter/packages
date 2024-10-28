@@ -187,7 +187,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   }
 
   @override
-  List<SKPaymentTransactionMessage?> transactions() {
+  List<SKPaymentTransactionMessage> transactions() {
     throw UnimplementedError();
   }
 
@@ -316,7 +316,7 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   }
 
   @override
-  Future<List<SK2ProductMessage?>> products(List<String?> identifiers) {
+  Future<List<SK2ProductMessage>> products(List<String?> identifiers) {
     if (queryProductException != null) {
       throw queryProductException!;
     }
@@ -327,12 +327,12 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
         products.add(validProducts[productID]!);
       }
     }
-    final List<SK2ProductMessage?> result = <SK2ProductMessage?>[];
+    final List<SK2ProductMessage> result = <SK2ProductMessage>[];
     for (final SK2Product p in products) {
       result.add(p.convertToPigeon());
     }
 
-    return Future<List<SK2ProductMessage?>>.value(result);
+    return Future<List<SK2ProductMessage>>.value(result);
   }
 
   @override
@@ -352,8 +352,8 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   }
 
   @override
-  Future<List<SK2TransactionMessage?>> transactions() {
-    return Future<List<SK2TransactionMessage?>>.value(<SK2TransactionMessage?>[
+  Future<List<SK2TransactionMessage>> transactions() {
+    return Future<List<SK2TransactionMessage>>.value(<SK2TransactionMessage>[
       SK2TransactionMessage(
           id: 123,
           originalId: 123,

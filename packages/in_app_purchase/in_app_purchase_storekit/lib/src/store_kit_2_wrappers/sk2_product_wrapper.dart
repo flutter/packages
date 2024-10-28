@@ -148,11 +148,7 @@ extension on SK2SubscriptionInfoMessage {
   SK2SubscriptionInfo convertFromPigeon() {
     return SK2SubscriptionInfo(
         subscriptionGroupID: subscriptionGroupID,
-        // Note that promotionalOffers should NOT be nullable, but is only declared
-        // so because of pigeon cannot handle non null lists.
-        // There should be NO NULLS.
         promotionalOffers: promotionalOffers
-            .whereType<SK2SubscriptionOfferMessage>()
             .map((SK2SubscriptionOfferMessage offer) =>
                 offer.convertFromPigeon())
             .toList(),
