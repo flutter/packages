@@ -55,7 +55,6 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
             + ", Stacktrace: Log.getStackTraceString(exception)");
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   @NonNull
   @Override
   public PigeonApiWebResourceRequest getPigeonApiWebResourceRequest() {
@@ -93,7 +92,6 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
     return new CookieManagerProxyApi(this);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   @NonNull
   @Override
   public PigeonApiWebResourceResponse getPigeonApiWebResourceResponse() {
@@ -148,14 +146,12 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
     return new WebStorageProxyApi(this);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   @NonNull
   @Override
   public PigeonApiFileChooserParams getPigeonApiFileChooserParams() {
     return new FileChooserParamsProxyApi(this);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   @NonNull
   @Override
   public PigeonApiPermissionRequest getPigeonApiPermissionRequest() {
