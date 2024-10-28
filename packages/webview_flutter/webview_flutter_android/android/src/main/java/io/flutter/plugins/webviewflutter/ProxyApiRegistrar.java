@@ -52,7 +52,8 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
         exception.getClass().getSimpleName()
             + ", Message: "
             + exception.getMessage()
-            + ", Stacktrace: Log.getStackTraceString(exception)");
+            + ", Stacktrace: "
+            + Log.getStackTraceString(exception));
   }
 
   @NonNull

@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import android.os.Build;
 import android.webkit.CookieManager;
 import android.webkit.WebView;
 import androidx.annotation.NonNull;
