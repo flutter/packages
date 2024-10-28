@@ -17,19 +17,19 @@ void main() {
   const String testSlot = 'test_slot';
 
   setUp(() {
-    Adsense.resetForTesting();
+    AdSense.resetForTesting();
   });
 
   test('Singleton instance', () {
-    final Adsense instance1 = Adsense();
-    final Adsense instance2 = Adsense();
+    final AdSense instance1 = AdSense();
+    final AdSense instance2 = AdSense();
     expect(instance1, same(instance2));
   });
 
   test('Repeated initialization throws error', () {
-    Adsense().initialize('test-client');
+    AdSense().initialize('test-client');
     expect(
-        () => Adsense().initialize('test-client'), throwsA(isA<StateError>()));
+        () => AdSense().initialize('test-client'), throwsA(isA<StateError>()));
   });
 
   test('Initialization adds AdSense snippet to index.html', () {
@@ -38,7 +38,7 @@ void main() {
         'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-$testClient';
 
     // When
-    Adsense().initialize(testClient);
+    AdSense().initialize(testClient);
 
     // Then
     final web.HTMLScriptElement injected =
@@ -51,8 +51,8 @@ void main() {
   testWidgets('AdUnitWidget is created (not checking rendering)',
       (WidgetTester tester) async {
     // When
-    Adsense().initialize(testClient);
-    final Widget adUnitWidget = Adsense().adUnit(adSlot: testSlot);
+    AdSense().initialize(testClient);
+    final Widget adUnitWidget = AdSense().adUnit(adSlot: testSlot);
     await tester.pumpWidget(adUnitWidget);
     expect(find.byWidget(adUnitWidget), findsOneWidget);
 
@@ -72,10 +72,10 @@ void main() {
     const String widgetClient = 'client2';
 
     // When
-    Adsense().initialize(initClient);
+    AdSense().initialize(initClient);
     final AdUnitWidget adUnitWidget1 =
-        Adsense().adUnit(adSlot: testSlot, adClient: widgetClient);
-    final AdUnitWidget adUnitWidget2 = Adsense().adUnit(adSlot: testSlot);
+        AdSense().adUnit(adSlot: testSlot, adClient: widgetClient);
+    final AdUnitWidget adUnitWidget2 = AdSense().adUnit(adSlot: testSlot);
 
     // Then
     expect(adUnitWidget1.adClient, widgetClient);

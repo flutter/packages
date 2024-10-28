@@ -5,15 +5,15 @@
 import 'ad_unit_widget.dart';
 
 /// Main class to work with the library
-class Adsense {
+class AdSense {
   /// Returns a singleton instance of Adsense library public interface
-  factory Adsense() => _instance ?? Adsense._internal();
+  factory AdSense() => _instance ?? AdSense._internal();
 
-  Adsense._internal() {
+  AdSense._internal() {
     _instance = this;
   }
 
-  static Adsense? _instance = Adsense._internal();
+  static AdSense? _instance = AdSense._internal();
 
   /// Initialization API. Should be called ASAP, ideally in the main method of your app.
   void initialize(String adClient) {

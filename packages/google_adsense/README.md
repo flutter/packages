@@ -1,20 +1,20 @@
 # google_adsense
 [Google AdSense](https://adsense.google.com/intl/en_us/start/) plugin for Flutter Web
 
-Generally integration with AdSense requires:
-
-1. Adding an [AdSense code](https://support.google.com/adsense/answer/9274634?hl=en&ref_topic=28893&sjid=9002959242386336076-EU) usually in between the `<head></head>` tag to connect your site with AdSense account. Allows using **Auto ads**
-2.  Adding [ad unit code](https://support.google.com/adsense/answer/9274025?sjid=9002959242386336076-EU) in between the `<body><body/>` tags of your pages where you want ad to appear. Ad unit code snippet is unique per **ad unit** that you need to create in your AdSense account first. You might have several ad units added to your website
-
-Since Flutter apps are not rendered as traditional HTML pages and there is no easy way to access final DOM tree from Dart, this plugin provides an `AdUnitWidget` that you can configure and place in the desired location in your app UI
-
+This package initializes AdSense on your website and provides an `AdUnitWidget` that can be configured and placed in the desired location in your Flutter web app UI, without having to directly modify the HTML markup of the app directly.
 
 ## Installation
 run `flutter pub add google_adsense`
 
 ## Usage
+
+#### Setup your AdSense account
+1. [Make sure your site's pages are ready for AdSense](https://support.google.com/adsense/answer/7299563?hl=en&sjid=5790642343077592212-EU&visit_id=638657100661171978-1373860041&ref_topic=1319756&rd=1)
+2. [Create your AdSense account](https://support.google.com/adsense/answer/10162?hl=en&sjid=5790642343077592212-EU&visit_id=638657100661171978-1373860041&ref_topic=1250103&rd=1)
+3. (Optionally) To use `AdUnitWidget`, create [ad units](https://support.google.com/adsense/answer/9183549?hl=en&ref_topic=9183242&sjid=5790642343077592212-EU) in your AdSense account
+
 #### Initialize AdSense
-Before displaying ads, initialize the AdSense with your ad client ID.
+To start displaying ads, initialize the AdSense with your [client/publisher ID](https://support.google.com/adsense/answer/105516?hl=en&sjid=5790642343077592212-EU) (only use numbers).
 <?code-excerpt "example/lib/main.dart (init)"?>
 ```dart
 import 'package:google_adsense/google_adsense.dart';
@@ -25,6 +25,7 @@ void main() {
 }
 
 ```
+You are all set to start displaying [Auto ads](https://support.google.com/adsense/answer/9261805?hl=en)!
 #### Display AdUnitWidget
 <?code-excerpt "example/lib/main.dart (adUnit)"?>
 ```dart

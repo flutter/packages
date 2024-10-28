@@ -7,15 +7,15 @@ import 'ad_unit_widget.dart';
 import 'ad_unit_widget_web.dart';
 
 /// Main class to work with the library
-class Adsense {
+class AdSense {
   /// Returns a singleton instance of Adsense library public interface
-  factory Adsense() => _instance ?? Adsense._internal();
+  factory AdSense() => _instance ?? AdSense._internal();
 
-  Adsense._internal() {
+  AdSense._internal() {
     _instance = this;
   }
 
-  static Adsense? _instance = Adsense._internal();
+  static AdSense? _instance = AdSense._internal();
   bool _isInitialized = false;
   String _adClient = '';
   static const String _url =
@@ -25,7 +25,7 @@ class Adsense {
   /// Throws [StateError] if called more than once
   void initialize(String adClient) {
     if (_isInitialized) {
-      throw StateError('Adsense was already initialized, skipping');
+      throw StateError('AdSense was already initialized, skipping');
     }
     _adClient = adClient;
     _addMasterScript(_adClient);
