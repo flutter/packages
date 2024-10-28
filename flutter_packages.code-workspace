@@ -8,9 +8,20 @@
     },
     {
       "path": "./packages/camera/camera_avfoundation"
+    },
+    {
+      "path": "./packages/camera/camera_avfoundation"
     }
   ],
   "settings": {
-    "editor.quickSuggestions": false
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    },
+    "files.associations": {
+      "MLTable": "yaml",
+      "cstring": "cpp"
+    }
   }
 }
