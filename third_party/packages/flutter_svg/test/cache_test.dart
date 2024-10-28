@@ -20,7 +20,7 @@ void main() {
     cache.clear();
     expect(cache.count, 0);
     // Not bothering to check result since it's from the same completer.
-    cache.putIfAbsent(1, () => completer.future);
+    unawaited(cache.putIfAbsent(1, () => completer.future));
     expect(cache.count, 0);
     await null;
     expect(cache.count, 1);
@@ -41,36 +41,29 @@ void main() {
 
     expect(cache.count, 0);
 
-    cache.putIfAbsent(1, () => completerA.future);
-    await null;
+    await cache.putIfAbsent(1, () => completerA.future);
     expect(cache.count, 1);
 
-    cache.putIfAbsent(2, () => completerB.future);
-    await null;
+    await cache.putIfAbsent(2, () => completerB.future);
     expect(cache.count, 2);
 
-    cache.putIfAbsent(3, () => completerC.future);
-    await null;
+    await cache.putIfAbsent(3, () => completerC.future);
     expect(cache.count, 2);
 
     expect(cache.evict(1), false);
     expect(cache.evict(2), true);
     expect(cache.evict(3), true);
 
-    cache.putIfAbsent(1, () => completerA.future);
-    await null;
+    await cache.putIfAbsent(1, () => completerA.future);
     expect(cache.count, 1);
 
-    cache.putIfAbsent(2, () => completerB.future);
-    await null;
+    await cache.putIfAbsent(2, () => completerB.future);
     expect(cache.count, 2);
 
-    cache.putIfAbsent(1, () => completerA.future);
-    await null;
+    await cache.putIfAbsent(1, () => completerA.future);
     expect(cache.count, 2);
 
-    cache.putIfAbsent(3, () => completerC.future);
-    await null;
+    await cache.putIfAbsent(3, () => completerC.future);
     expect(cache.count, 2);
 
     expect(cache.evict(1), true);
@@ -90,19 +83,19 @@ void main() {
 
     expect(cache.count, 0);
 
-    cache.putIfAbsent(1, () => completerA);
+    unawaited(cache.putIfAbsent(1, () => completerA));
     expect(cache.count, 1);
 
-    cache.putIfAbsent(2, () => completerB);
+    unawaited(cache.putIfAbsent(2, () => completerB));
     expect(cache.count, 2);
 
-    cache.putIfAbsent(2, () => completerB);
+    unawaited(cache.putIfAbsent(2, () => completerB));
     expect(cache.count, 2);
 
-    cache.putIfAbsent(3, () => completerC);
+    unawaited(cache.putIfAbsent(3, () => completerC));
     expect(cache.count, 2);
 
-    cache.putIfAbsent(2, () => completerB);
+    unawaited(cache.putIfAbsent(2, () => completerB));
     expect(cache.count, 2);
   });
 
@@ -115,8 +108,8 @@ void main() {
 
     expect(cache.count, 0);
 
-    cache.putIfAbsent(1, () => completerA.future);
-    cache.putIfAbsent(2, () => completerB.future);
+    unawaited(cache.putIfAbsent(1, () => completerA.future));
+    unawaited(cache.putIfAbsent(2, () => completerB.future));
     completerA.complete(ByteData(1));
     completerB.complete(ByteData(1));
 
@@ -124,7 +117,7 @@ void main() {
     await null;
     expect(cache.count, 2);
 
-    cache.putIfAbsent(3, () => completerC.future);
+    unawaited(cache.putIfAbsent(3, () => completerC.future));
     expect(cache.count, 2);
 
     completerC.complete(ByteData(1));

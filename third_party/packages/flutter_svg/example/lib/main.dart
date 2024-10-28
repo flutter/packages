@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+/// The SVG to display in the example.
 const String svgString = '''
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 166 202">
   <defs>

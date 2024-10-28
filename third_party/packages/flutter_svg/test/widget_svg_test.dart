@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 
 class _TolerantComparator extends LocalFileComparator {
-  _TolerantComparator(Uri testFile) : super(testFile);
+  _TolerantComparator(super.testFile);
 
   @override
   Future<bool> compare(Uint8List imageBytes, Uri golden) async {
@@ -21,10 +21,11 @@ class _TolerantComparator extends LocalFileComparator {
       if (result.diffPercent >= .06) {
         throw FlutterError(error);
       } else {
+        // ignore: avoid_print
         print(
             'Warning - golden differed less than .06% (${result.diffPercent}%), '
-            'ignoring failure but producing output');
-        print(error);
+            'ignoring failure but producing output\n'
+            '$error');
       }
     }
     return true;
@@ -44,8 +45,8 @@ void main() {
   setUpAll(() {
     final LocalFileComparator oldComparator =
         goldenFileComparator as LocalFileComparator;
-    final _TolerantComparator newComparator = _TolerantComparator(
-        Uri.parse(oldComparator.basedir.toString() + 'test'));
+    final _TolerantComparator newComparator =
+        _TolerantComparator(Uri.parse('${oldComparator.basedir}test'));
     expect(oldComparator.basedir, newComparator.basedir);
     goldenFileComparator = newComparator;
   });
@@ -160,7 +161,6 @@ void main() {
           child: Directionality(
             textDirection: TextDirection.ltr,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Expanded(
                   child: Container(
@@ -201,7 +201,6 @@ void main() {
           child: Directionality(
             textDirection: TextDirection.rtl,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Expanded(
                   child: Container(
@@ -385,7 +384,7 @@ void main() {
 
     expect(find.byType(Semantics), findsOneWidget);
     expect(find.bySemanticsLabel('Flutter Logo'), findsOneWidget);
-  }, semanticsEnabled: true);
+  });
 
   testWidgets('SvgPicture semantics - no label', (WidgetTester tester) async {
     await tester.pumpWidget(
@@ -404,7 +403,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(Semantics), findsOneWidget);
-  }, semanticsEnabled: true);
+  });
 
   testWidgets('SvgPicture semantics - exclude', (WidgetTester tester) async {
     await tester.pumpWidget(
@@ -424,7 +423,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(Semantics), findsNothing);
-  }, semanticsEnabled: true);
+  });
 
   testWidgets('SvgPicture colorFilter - flutter logo',
       (WidgetTester tester) async {
@@ -449,8 +448,8 @@ void main() {
   });
 
   testWidgets('SvgPicture colorFilter with text', (WidgetTester tester) async {
-    const String svgData =
-        '''<svg font-family="arial" font-size="14" height="160" width="88" xmlns="http://www.w3.org/2000/svg">
+    const String svgData = '''
+<svg font-family="arial" font-size="14" height="160" width="88" xmlns="http://www.w3.org/2000/svg">
   <g stroke="#000" stroke-linecap="round" stroke-width="2" stroke-opacity="1" fill-opacity="1" stroke-linejoin="miter">
     <g>
       <line x1="60" x2="88" y1="136" y2="136"/>
@@ -735,11 +734,12 @@ void main() {
     // is used on each iteration.
     for (final String key in images.keys) {
       final String image = images[key]!;
-      final String svgStr = '''<svg
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100">
-        <image width="100" height="100" href="data:image/png;base64,$image" />
-      </svg>''';
+      final String svgStr = '''
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100">
+  <image width="100" height="100" href="data:image/png;base64,$image" />
+</svg>''';
 
       // First try with SvgPicture.string
       await tester.pumpWidget(RepaintBoundary(

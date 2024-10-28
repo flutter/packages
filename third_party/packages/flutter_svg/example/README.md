@@ -1,11 +1,6 @@
 # example
 
-A new Flutter project.
-
-## Getting Started
-
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+An example of using `flutter_svg` to render an SVG image.
 
 ## Benchmarking
 

@@ -24,7 +24,7 @@ void main() {
 }
 
 class ColumnsAndRows extends StatelessWidget {
-  const ColumnsAndRows({Key? key}) : super(key: key);
+  const ColumnsAndRows({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -75,14 +75,14 @@ class ColumnsAndRows extends StatelessWidget {
 }
 
 class ImageWithText extends StatelessWidget {
-  const ImageWithText({Key? key}) : super(key: key);
+  const ImageWithText({super.key});
 
   @override
   Widget build(BuildContext context) {
     final Widget image = SvgPicture.string(circleSvg);
-    final Widget imageContainer = Container(
-      child: image,
+    final Widget imageContainer = ColoredBox(
       color: Colors.amber,
+      child: image,
     );
     const Widget text = Text('Hello');
     final Widget column = Column(

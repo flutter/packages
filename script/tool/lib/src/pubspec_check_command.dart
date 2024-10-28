@@ -569,8 +569,10 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       'test',
     };
     // Non-published packages like pigeon subpackages are allowed to violate
-    // the dev only dependencies rule.
-    if (pubspec.publishTo != 'none') {
+    // the dev only dependencies rule, as are packages that end in `_test` (as
+    // they are assumed to be intended to be used as dev_dependencies by
+    // clients).
+    if (pubspec.publishTo != 'none' && !pubspec.name.endsWith('_test')) {
       pubspec.dependencies.forEach((String name, Dependency dependency) {
         if (devOnlyDependencies.contains(name)) {
           misplacedDevDependencies.add(name);

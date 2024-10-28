@@ -10,7 +10,7 @@ import 'src/loaders.dart';
 import 'src/utilities/file.dart';
 
 export 'package:vector_graphics/vector_graphics.dart'
-    show BytesLoader, vg, VectorGraphicUtilities, PictureInfo;
+    show BytesLoader, PictureInfo, VectorGraphicUtilities, vg;
 
 export 'src/cache.dart';
 export 'src/default_theme.dart';
@@ -74,7 +74,7 @@ class SvgPicture extends StatelessWidget {
   /// If [excludeFromSemantics] is true, then [semanticsLabel] will be ignored.
   const SvgPicture(
     this.bytesLoader, {
-    Key? key,
+    super.key,
     this.width,
     this.height,
     this.fit = BoxFit.contain,
@@ -90,8 +90,8 @@ class SvgPicture extends StatelessWidget {
         'No code should use this parameter. It never was implemented properly. '
         'The SVG theme must be set on the bytesLoader.')
     SvgTheme? theme,
-    @deprecated bool cacheColorFilter = false,
-  }) : super(key: key);
+    @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
+  });
 
   /// Instantiates a widget that renders an SVG picture from an [AssetBundle].
   ///
@@ -171,7 +171,7 @@ class SvgPicture extends StatelessWidget {
   /// If [excludeFromSemantics] is true, then [semanticsLabel] will be ignored.
   SvgPicture.asset(
     String assetName, {
-    Key? key,
+    super.key,
     this.matchTextDirection = false,
     AssetBundle? bundle,
     String? package,
@@ -186,17 +186,17 @@ class SvgPicture extends StatelessWidget {
     this.clipBehavior = Clip.hardEdge,
     SvgTheme? theme,
     ui.ColorFilter? colorFilter,
-    @deprecated ui.Color? color,
-    @deprecated ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
-    @deprecated bool cacheColorFilter = false,
+    @Deprecated('Use colorFilter instead.') ui.Color? color,
+    @Deprecated('Use colorFilter instead.')
+    ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
+    @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
   })  : bytesLoader = SvgAssetLoader(
           assetName,
           packageName: package,
           assetBundle: bundle,
           theme: theme,
         ),
-        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode),
-        super(key: key);
+        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
   /// Creates a widget that displays an SVG obtained from the network.
   ///
@@ -232,7 +232,7 @@ class SvgPicture extends StatelessWidget {
   /// If [excludeFromSemantics] is true, then [semanticsLabel] will be ignored.
   SvgPicture.network(
     String url, {
-    Key? key,
+    super.key,
     Map<String, String>? headers,
     this.width,
     this.height,
@@ -242,12 +242,13 @@ class SvgPicture extends StatelessWidget {
     this.allowDrawingOutsideViewBox = false,
     this.placeholderBuilder,
     ui.ColorFilter? colorFilter,
-    @deprecated ui.Color? color,
-    @deprecated ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
+    @Deprecated('Use colorFilter instead.') ui.Color? color,
+    @Deprecated('Use colorFilter instead.')
+    ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
-    @deprecated bool cacheColorFilter = false,
+    @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     SvgTheme? theme,
     http.Client? httpClient,
   })  : bytesLoader = SvgNetworkLoader(
@@ -256,8 +257,7 @@ class SvgPicture extends StatelessWidget {
           theme: theme,
           httpClient: httpClient,
         ),
-        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode),
-        super(key: key);
+        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
   /// Creates a widget that displays an SVG obtained from a [File].
   ///
@@ -291,7 +291,7 @@ class SvgPicture extends StatelessWidget {
   /// If [excludeFromSemantics] is true, then [semanticsLabel] will be ignored.
   SvgPicture.file(
     File file, {
-    Key? key,
+    super.key,
     this.width,
     this.height,
     this.fit = BoxFit.contain,
@@ -300,16 +300,16 @@ class SvgPicture extends StatelessWidget {
     this.allowDrawingOutsideViewBox = false,
     this.placeholderBuilder,
     ui.ColorFilter? colorFilter,
-    @deprecated ui.Color? color,
-    @deprecated ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
+    @Deprecated('Use colorFilter instead.') ui.Color? color,
+    @Deprecated('Use colorFilter instead.')
+    ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
     SvgTheme? theme,
-    @deprecated bool cacheColorFilter = false,
+    @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
   })  : bytesLoader = SvgFileLoader(file, theme: theme),
-        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode),
-        super(key: key);
+        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
   /// Creates a widget that displays an SVG obtained from a [Uint8List].
   ///
@@ -340,7 +340,7 @@ class SvgPicture extends StatelessWidget {
   /// If [excludeFromSemantics] is true, then [semanticsLabel] will be ignored.
   SvgPicture.memory(
     Uint8List bytes, {
-    Key? key,
+    super.key,
     this.width,
     this.height,
     this.fit = BoxFit.contain,
@@ -349,16 +349,16 @@ class SvgPicture extends StatelessWidget {
     this.allowDrawingOutsideViewBox = false,
     this.placeholderBuilder,
     ui.ColorFilter? colorFilter,
-    @deprecated ui.Color? color,
-    @deprecated ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
+    @Deprecated('Use colorFilter instead.') ui.Color? color,
+    @Deprecated('Use colorFilter instead.')
+    ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
     SvgTheme? theme,
-    @deprecated bool cacheColorFilter = false,
+    @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
   })  : bytesLoader = SvgBytesLoader(bytes, theme: theme),
-        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode),
-        super(key: key);
+        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
   /// Creates a widget that displays an SVG obtained from a [String].
   ///
@@ -389,7 +389,7 @@ class SvgPicture extends StatelessWidget {
   /// If [excludeFromSemantics] is true, then [semanticsLabel] will be ignored.
   SvgPicture.string(
     String string, {
-    Key? key,
+    super.key,
     this.width,
     this.height,
     this.fit = BoxFit.contain,
@@ -398,16 +398,16 @@ class SvgPicture extends StatelessWidget {
     this.allowDrawingOutsideViewBox = false,
     this.placeholderBuilder,
     ui.ColorFilter? colorFilter,
-    @deprecated ui.Color? color,
-    @deprecated ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
+    @Deprecated('Use colorFilter instead.') ui.Color? color,
+    @Deprecated('Use colorFilter instead.')
+    ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
     SvgTheme? theme,
-    @deprecated bool cacheColorFilter = false,
+    @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
   })  : bytesLoader = SvgStringLoader(string, theme: theme),
-        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode),
-        super(key: key);
+        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
   static ColorFilter? _getColorFilter(
           ui.Color? color, ui.BlendMode colorBlendMode) =>

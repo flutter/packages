@@ -8,10 +8,10 @@ class DefaultSvgTheme extends InheritedTheme {
   /// Creates a default SVG theme for the given subtree
   /// using the provided [theme].
   const DefaultSvgTheme({
-    Key? key,
-    required Widget child,
+    super.key,
+    required super.child,
     required this.theme,
-  }) : super(key: key, child: child);
+  });
 
   /// The SVG theme to apply.
   final SvgTheme theme;

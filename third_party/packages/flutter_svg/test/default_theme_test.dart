@@ -7,7 +7,6 @@ void main() {
     testWidgets('changes propagate to SvgPicture', (WidgetTester tester) async {
       const SvgTheme svgTheme = SvgTheme(
         currentColor: Color(0xFF733821),
-        fontSize: 14.0,
         xHeight: 6.0,
       );
 
@@ -50,11 +49,10 @@ void main() {
     });
 
     testWidgets(
-        'currentColor from the widget\'s theme takes precedence over '
+        "currentColor from the widget's theme takes precedence over "
         'the theme from DefaultSvgTheme', (WidgetTester tester) async {
       const SvgTheme svgTheme = SvgTheme(
         currentColor: Color(0xFF733821),
-        fontSize: 14.0,
       );
 
       final SvgPicture svgPictureWidget = SvgPicture.string(
@@ -64,7 +62,6 @@ void main() {
 </svg>''',
         theme: const SvgTheme(
           currentColor: Color(0xFF05290E),
-          fontSize: 14.0,
         ),
       );
 
@@ -84,11 +81,9 @@ void main() {
     });
 
     testWidgets(
-        'fontSize from the widget\'s theme takes precedence over '
+        "fontSize from the widget's theme takes precedence over "
         'the theme from DefaultSvgTheme', (WidgetTester tester) async {
-      const SvgTheme svgTheme = SvgTheme(
-        fontSize: 14.0,
-      );
+      const SvgTheme svgTheme = SvgTheme();
 
       final SvgPicture svgPictureWidget = SvgPicture.string(
         '''
@@ -117,7 +112,7 @@ void main() {
 
     testWidgets(
         'fontSize defaults to 14 '
-        'if no widget\'s theme, DefaultSvgTheme or DefaultTextStyle is provided',
+        "if no widget's theme, DefaultSvgTheme or DefaultTextStyle is provided",
         (WidgetTester tester) async {
       final SvgPicture svgPictureWidget = SvgPicture.string(
         '''
@@ -138,10 +133,9 @@ void main() {
     });
 
     testWidgets(
-        'xHeight from the widget\'s theme takes precedence over '
+        "xHeight from the widget's theme takes precedence over "
         'the theme from DefaultSvgTheme', (WidgetTester tester) async {
       const SvgTheme svgTheme = SvgTheme(
-        fontSize: 14.0,
         xHeight: 6.5,
       );
 
@@ -172,7 +166,7 @@ void main() {
 
     testWidgets(
         'xHeight defaults to the font size divided by 2 (7.0) '
-        'if no widget\'s theme or DefaultSvgTheme is provided',
+        "if no widget's theme or DefaultSvgTheme is provided",
         (WidgetTester tester) async {
       final SvgPicture svgPictureWidget = SvgPicture.string(
         '''

@@ -46,6 +46,8 @@ packages/webview_flutter/**                              @bparrishMines
 packages/xdg_directories/**                              @stuartmorgan
 third_party/packages/cupertino_icons/**                  @MitchellGoodwin
 third_party/packages/cupertino_icons/test/goldens/**     @LongCatIsLooong
+third_party/packages/flutter_svg/**                      @domesticmouse
+third_party/packages/flutter_svg_test/**                 @domesticmouse
 third_party/packages/path_parsing/**                     @domesticmouse
 
 # Plugin platform implementation rules. These should stay last, since the last

@@ -143,3 +143,12 @@ licensed under the Apache license.
 Please submit SVGs that can't render properly (e.g. that don't render here the
 way they do in chrome), as long as they're not using anything "probably out of
 scope" (above).
+
+## Commemoration
+
+This package was originally authored by
+[Dan Field](https://github.com/dnfield) and has been forked here
+from [dnfield/flutter_svg](https://github.com/dnfield/flutter_svg).
+Dan was a member of the Flutter team at Google from 2018 until his death
+in 2024. Dan’s impact and contributions to Flutter were immeasurable, and we
+honor his memory by continuing to publish and maintain this package.

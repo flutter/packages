@@ -73,7 +73,7 @@ class _MyApp extends StatelessWidget {
 }
 
 class _MyHomePage extends StatefulWidget {
-  const _MyHomePage({Key? key, required this.title}) : super(key: key);
+  const _MyHomePage({required this.title});
   final String title;
 
   @override
@@ -88,7 +88,7 @@ class _MyHomePageState extends State<_MyHomePage> {
   void initState() {
     super.initState();
     _dimension = 203.0;
-    for (String assetName in _assetNames) {
+    for (final String assetName in _assetNames) {
       _painters.add(
         SvgPicture.asset(assetName),
       );
@@ -110,7 +110,7 @@ class _MyHomePageState extends State<_MyHomePage> {
       );
     }
 
-    for (String uriName in uriNames) {
+    for (final String uriName in uriNames) {
       _painters.add(
         SvgPicture.network(
           uriName,
@@ -122,7 +122,8 @@ class _MyHomePageState extends State<_MyHomePage> {
       );
     }
     // Shows an example of an SVG image that will fetch a raster image from a URL.
-    _painters.add(SvgPicture.string('''<svg viewBox="0 0 200 200"
+    _painters.add(SvgPicture.string('''
+<svg viewBox="0 0 200 200"
   xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <image xlink:href="https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png" height="200" width="200"/>
 </svg>'''));

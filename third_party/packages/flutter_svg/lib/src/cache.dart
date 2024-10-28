@@ -64,7 +64,7 @@ class Cache {
   /// The arguments must not be null. The `loader` cannot return null.
   Future<ByteData> putIfAbsent(
     Object key,
-    Future<ByteData> loader(),
+    Future<ByteData> Function() loader,
   ) {
     assert(key != null); // ignore: unnecessary_null_comparison
     assert(loader != null); // ignore: unnecessary_null_comparison
