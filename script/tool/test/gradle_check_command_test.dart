@@ -174,6 +174,7 @@ ${warningsConfigured ? warningConfig : ''}
   void writeFakeExampleTopLevelSettingsGradle(
     RepositoryPackage package, {
     bool includeArtifactHub = true,
+    bool includeArtifactDocumentation = true,
   }) {
     final File settingsGradle = package
         .platformDirectory(FlutterPlatform.android)
@@ -196,6 +197,7 @@ plugins.each { name, path ->
     include ":\$name"
     project(":\$name").projectDir = pluginDirectory
 }
+${includeArtifactDocumentation ? '// See ${GradleCheckCommand.artifactHubDocumentationString} for more info.' : ''}
 ${includeArtifactHub ? GradleCheckCommand.exampleRootSettingsArtifactHubString : ''}
 ''');
   }
@@ -305,6 +307,7 @@ dependencies {
     String? kotlinVersion,
     bool includeBuildArtifactHub = true,
     bool includeSettingsArtifactHub = true,
+    bool includeSettingsDocumentationArtifactHub = true,
   }) {
     writeFakeExampleTopLevelBuildGradle(
       package,
@@ -318,6 +321,7 @@ dependencies {
     writeFakeExampleTopLevelSettingsGradle(
       package,
       includeArtifactHub: includeSettingsArtifactHub,
+      includeArtifactDocumentation: includeSettingsDocumentationArtifactHub,
     );
   }
 
@@ -330,7 +334,7 @@ dependencies {
         String? kotlinVersion,
         bool includeBuildArtifactHub = true,
         bool includeSettingsArtifactHub = true,
-        bool includeDocumentationArtifactHub = true,
+        bool includeSettingsDocumentationArtifactHub = true,
       }) {
     writeFakeExampleTopLevelBuildGradle(
       package,
@@ -344,7 +348,7 @@ dependencies {
     writeFakeExampleSettingsGradle(
       package,
       includeArtifactHub: includeSettingsArtifactHub,
-      includeArtifactDocumentation: includeDocumentationArtifactHub,
+      includeArtifactDocumentation: includeSettingsDocumentationArtifactHub,
     );
   }
 
@@ -751,6 +755,8 @@ dependencies {
         includeBuildArtifactHub: true,
         // ignore: avoid_redundant_argument_values
         includeSettingsArtifactHub: true,
+        // ignore: avoid_redundant_argument_values
+        includeSettingsDocumentationArtifactHub: true
       );
       writeFakeManifest(example, isApp: true);
 
@@ -877,7 +883,7 @@ dependencies {
           includeBuildArtifactHub: true,
           includeSettingsArtifactHub: false,
           // ignore: avoid_redundant_argument_values
-          includeDocumentationArtifactHub: true);
+          includeSettingsDocumentationArtifactHub: true);
       writeFakeManifest(example, isApp: true);
 
       Error? commandError;
@@ -912,7 +918,7 @@ dependencies {
           includeBuildArtifactHub: true,
           // ignore: avoid_redundant_argument_values
           includeSettingsArtifactHub: true,
-          includeDocumentationArtifactHub: false);
+          includeSettingsDocumentationArtifactHub: false);
       writeFakeManifest(example, isApp: true);
 
       Error? commandError;

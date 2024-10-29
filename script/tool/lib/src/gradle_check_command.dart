@@ -202,7 +202,6 @@ class GradleCheckCommand extends PackageLoopingCommand {
   /// configuration that enables artifact hub env variable.
   @visibleForTesting
   static String exampleRootSettingsArtifactHubString = '''
-// See $artifactHubDocumentationString for more info.
 buildscript {
   repositories {
     maven {
