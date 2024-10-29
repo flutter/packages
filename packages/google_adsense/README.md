@@ -32,9 +32,9 @@ You are all set to start displaying [Auto ads](https://support.google.com/adsens
 AdSense.instance.adUnit(
     adSlot: 'your_ad_slot_id',
     isAdTest: true,
-    adUnitParams: <String, dynamic>{
+    adUnitParams: <String, String>{
       AdUnitParams.AD_FORMAT: 'auto',
-      AdUnitParams.FULL_WIDTH_RESPONSIVE: true,
+      AdUnitParams.FULL_WIDTH_RESPONSIVE: 'true',
     },
     cssText:
         'border: 5px solid red; display: block; padding: 20px'),

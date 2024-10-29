@@ -20,7 +20,7 @@ class AdUnitWidgetWeb extends AdUnitWidget {
     required String adClient,
     required String adSlot,
     required bool isAdTest,
-    required Map<String, dynamic> additionalParams,
+    required Map<String, String> additionalParams,
     String? cssText,
     super.key,
   })  : _adClient = adClient,
@@ -48,7 +48,7 @@ class AdUnitWidgetWeb extends AdUnitWidget {
     if (_additionalParams.isNotEmpty) {
       for (final String key in _additionalParams.keys) {
         _insElement.dataset.setProperty(
-            key as JSString, _additionalParams[key].toString() as JSString);
+            key as JSString, _additionalParams[key] as JSString);
       }
     }
   }
