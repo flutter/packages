@@ -114,4 +114,11 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
   public String getUiOrientation() {
     return serializeDeviceOrientation(deviceOrientationManager.getUIOrientation());
   }
+
+  @Override
+  @NonNull
+  public Long getDeviceOrientation() {
+    // TODO(camsim99): do proper serialization/de-serialization.
+    return Long.valueOf(deviceOrientationManager.getDeviceOrientation());
+  }
 }

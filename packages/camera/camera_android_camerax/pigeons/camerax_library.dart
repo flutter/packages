@@ -279,6 +279,8 @@ abstract class DeviceOrientationManagerHostApi {
   int getDefaultDisplayRotation();
 
   String getUiOrientation();
+
+  int getDeviceOrientation();
 }
 
 @FlutterApi()

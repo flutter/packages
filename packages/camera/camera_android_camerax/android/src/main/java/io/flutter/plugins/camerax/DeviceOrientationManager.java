@@ -128,7 +128,7 @@ public class DeviceOrientationManager {
   @NonNull
   PlatformChannel.DeviceOrientation getUIOrientation() {
     final int rotation = getDefaultRotation();
-    final int orientation = activity.getResources().getConfiguration().orientation;
+    final int orientation = getDeviceOrientation();
     Log.e("CAMILLE DEFAULT ROTATION: ", Integer.toString(rotation));
     Log.e("CAMILLE 2", Integer.toString(orientation));
 
@@ -196,5 +196,9 @@ public class DeviceOrientationManager {
   @VisibleForTesting
   Display getDisplay() {
     return ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+  }
+
+  int getDeviceOrientation() {
+    return activity.getResources().getConfiguration().orientation;
   }
 }

@@ -895,6 +895,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       DeviceOrientation.landscapeLeft: 3,
     };
 
+    // TODO(camille): we should know if we are landscape by default if orientation is landscape and rotation is 0/180 or orientation is portrait and rotation is 90/270.
     if (isPreviewPreTransformed) {
       int rotationCorrectionForLandscapeDevices = 0;
       print('sensorOrientation $sensorOrientation');
