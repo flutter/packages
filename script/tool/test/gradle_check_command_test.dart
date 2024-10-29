@@ -205,6 +205,7 @@ ${includeArtifactHub ? GradleCheckCommand.exampleRootSettingsArtifactHubString :
   void writeFakeExampleSettingsGradle(
       RepositoryPackage package, {
         bool includeArtifactHub = true,
+        bool includeArtifactDocumentation = true,
       }) {
     final File settingsGradle = package
         .platformDirectory(FlutterPlatform.android)
@@ -215,7 +216,6 @@ ${includeArtifactHub ? GradleCheckCommand.exampleRootSettingsArtifactHubString :
     /// configuration without the artifact hub env variable.
     /// GP stands for the gradle plugin method of flutter tooling inclusion.
     const String exampleSettingsWithoutArtifactHubStringGP = '''
-// See ${GradleCheckCommand.artifactHubDocumentationString} for more info.
 plugins {
     id "dev.flutter.flutter-plugin-loader" version "1.0.0"
     // ...other plugins
@@ -240,6 +240,8 @@ pluginManagement {
     gradlePluginPortal()
   }
 }
+
+${includeArtifactDocumentation ? '// See ${GradleCheckCommand.artifactHubDocumentationString} for more info.' : ''}
 ${includeArtifactHub ? GradleCheckCommand.exampleSettingsArtifactHubStringGP : exampleSettingsWithoutArtifactHubStringGP}
 include ":app"
 ''');
@@ -328,6 +330,7 @@ dependencies {
         String? kotlinVersion,
         bool includeBuildArtifactHub = true,
         bool includeSettingsArtifactHub = true,
+        bool includeDocumentationArtifactHub = true,
       }) {
     writeFakeExampleTopLevelBuildGradle(
       package,
@@ -341,6 +344,7 @@ dependencies {
     writeFakeExampleSettingsGradle(
       package,
       includeArtifactHub: includeSettingsArtifactHub,
+      includeArtifactDocumentation: includeDocumentationArtifactHub,
     );
   }
 
@@ -858,13 +862,9 @@ dependencies {
         output,
         isNot(contains(GradleCheckCommand.exampleRootGradleArtifactHubString)),
       );
-      expect(
-        output,
-        isNot(contains(GradleCheckCommand.exampleSettingsArtifactHubStringGP)),
-      );
     });
 
-    test('contains declarative method of applying gradle plugins', () async {
+    test('prints error for declarative method of applying gradle plugins', () async {
       const String packageName = 'a_package';
       final RepositoryPackage package =
       createFakePackage('a_package', packagesDir);
@@ -875,7 +875,9 @@ dependencies {
           pluginName: packageName,
           // ignore: avoid_redundant_argument_values
           includeBuildArtifactHub: true,
-          includeSettingsArtifactHub: false);
+          includeSettingsArtifactHub: false,
+          // ignore: avoid_redundant_argument_values
+          includeDocumentationArtifactHub: true);
       writeFakeManifest(example, isApp: true);
 
       Error? commandError;
@@ -894,6 +896,37 @@ dependencies {
       expect(
         output,
         isNot(contains(GradleCheckCommand.exampleRootSettingsArtifactHubString)),
+      );
+    });
+
+    test('error message is printed when documentation link is missing', () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package =
+      createFakePackage('a_package', packagesDir);
+      writeFakePluginBuildGradle(package, includeLanguageVersion: true);
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradleGP(example,
+          pluginName: packageName,
+          // ignore: avoid_redundant_argument_values
+          includeBuildArtifactHub: true,
+          // ignore: avoid_redundant_argument_values
+          includeSettingsArtifactHub: true,
+          includeDocumentationArtifactHub: false);
+      writeFakeManifest(example, isApp: true);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['gradle-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(GradleCheckCommand.artifactHubDocumentationString),
+        ]),
       );
     });
   });

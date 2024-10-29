@@ -221,7 +221,6 @@ apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
   /// GP stands for the gradle plugin method of flutter tooling inclusion.
   @visibleForTesting
   static String exampleSettingsArtifactHubStringGP = '''
-// See $artifactHubDocumentationString for more info.
 plugins {
     id "dev.flutter.flutter-plugin-loader" version "1.0.0"
     // ...other plugins
@@ -243,6 +242,8 @@ plugins {
         r'apply.*plugin.*com\.google\.cloud\.artifactregistry\.gradle-plugin');
     final RegExp artifactRegistryPluginApplyRegexGP = RegExp(
         r'id.*com\.google\.cloud\.artifactregistry\.gradle-plugin.*version.*\b\d+\.\d+\.\d+\b');
+    final RegExp artifactRegistryPluginApplyDeclarativeRegex = RegExp(
+        r'\bpluginManagement\b');
 
 
     final bool documentationPresent = gradleLines
@@ -251,19 +252,30 @@ plugins {
         .any((String line) => artifactRegistryDefinitionRegex.hasMatch(line));
     final bool artifactRegistryPluginApplied = gradleLines
         .any((String line) => artifactRegistryPluginApplyRegex.hasMatch(line));
-    final bool artifactRegistryPluginAppliedGP = gradleLines
+    final bool declarativeArtifactRegistryApplied = gradleLines
         .any((String line) => artifactRegistryPluginApplyRegexGP.hasMatch(line));
+    final bool declarativePluginBlockApplied = gradleLines
+        .any((String line) => artifactRegistryPluginApplyDeclarativeRegex.hasMatch(line));
+
+    final bool imperativeArtifactRegistryApplied = artifactRegistryDefined && artifactRegistryPluginApplied;
 
     final bool validArtifactConfiguration = documentationPresent &&
-        ((artifactRegistryDefined && artifactRegistryPluginApplied) || artifactRegistryPluginAppliedGP);
+        (imperativeArtifactRegistryApplied || declarativeArtifactRegistryApplied);
 
-    if (!validArtifactConfiguration && !artifactRegistryPluginAppliedGP) {
-      printError('Failed Artifact Hub validation. Include the following in '
-          'example root settings.gradle:\n$exampleSettingsArtifactHubStringGP');
-    }
-    if (!validArtifactConfiguration && !(artifactRegistryDefined && artifactRegistryPluginApplied)) {
-      printError('Failed Artifact Hub validation. Include the following in '
-          'example root settings.gradle:\n$exampleRootSettingsArtifactHubString');
+    if (!validArtifactConfiguration) {
+      printError('Failed Artifact Hub validation.');
+      if (!documentationPresent) {
+        printError('The link to the Artifact Hub documentation is missing. Include the following in '
+            'example root settings.gradle:\n// See $artifactHubDocumentationString for more info.');
+      }
+      if (artifactRegistryDefined || artifactRegistryPluginApplied || !declarativePluginBlockApplied) {
+        printError('Include the following in '
+            'example root settings.gradle:\n$exampleRootSettingsArtifactHubString');
+      }
+      else if (!declarativeArtifactRegistryApplied){
+        printError('Include the following in '
+            'example root settings.gradle:\n$exampleSettingsArtifactHubStringGP');
+      }
     }
     return validArtifactConfiguration;
   }
