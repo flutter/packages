@@ -28,8 +28,8 @@ void main() {
 
   test('Repeated initialization throws error', () {
     AdSense.instance.initialize('test-client');
-    expect(
-        () => AdSense.instance.initialize('test-client'), throwsA(isA<StateError>()));
+    expect(() => AdSense.instance.initialize('test-client'),
+        throwsA(isA<StateError>()));
   });
 
   test('Initialization adds AdSense snippet to index.html', () {
@@ -51,7 +51,7 @@ void main() {
   testWidgets('AdUnitWidget is created (not checking rendering)',
       (WidgetTester tester) async {
     // When
-        AdSense.instance.initialize(testClient);
+    AdSense.instance.initialize(testClient);
     final Widget adUnitWidget = AdSense.instance.adUnit(adSlot: testSlot);
     await tester.pumpWidget(adUnitWidget);
     expect(find.byWidget(adUnitWidget), findsOneWidget);
@@ -74,8 +74,9 @@ void main() {
     // When
     AdSense.instance.initialize(initClient);
     final AdUnitWidget adUnitWidget1 =
-    AdSense.instance.adUnit(adSlot: testSlot, adClient: widgetClient);
-    final AdUnitWidget adUnitWidget2 = AdSense.instance.adUnit(adSlot: testSlot);
+        AdSense.instance.adUnit(adSlot: testSlot, adClient: widgetClient);
+    final AdUnitWidget adUnitWidget2 =
+        AdSense.instance.adUnit(adSlot: testSlot);
 
     // Then
     expect(adUnitWidget1.adClient, widgetClient);
