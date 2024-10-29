@@ -129,6 +129,7 @@ public class DeviceOrientationManager {
   PlatformChannel.DeviceOrientation getUIOrientation() {
     final int rotation = getDefaultRotation();
     final int orientation = activity.getResources().getConfiguration().orientation;
+    Log.e("CAMILLE DEFAULT ROTATION: ", Integer.toString(rotation));
     Log.e("CAMILLE 2", Integer.toString(orientation));
 
     // switch (rotation) {

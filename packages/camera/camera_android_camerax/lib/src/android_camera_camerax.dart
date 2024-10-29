@@ -410,17 +410,19 @@ class AndroidCameraCameraX extends CameraPlatform {
           .then((DeviceOrientation value) => naturalOrientation ??= value)
           .then((DeviceOrientation value) => currentDeviceOrientation = value),
     ]);
-    final int sensorOrientationForFun = await proxy
-          .getSensorOrientation(camera2CameraInfo);
+    final int sensorOrientationForFun =
+        await proxy.getSensorOrientation(camera2CameraInfo);
     sensorOrientation = sensorOrientationForFun;
-    final DeviceOrientation deviceOrientationForFun = await proxy.getUiOrientation();
+    final DeviceOrientation deviceOrientationForFun =
+        await proxy.getUiOrientation();
     naturalOrientation = deviceOrientationForFun;
     currentDeviceOrientation = deviceOrientationForFun;
     print('NEW NEW NEW CAMILLE: $deviceOrientationForFun');
-    print('NEW CAMILLE: current device orientation set to $currentDeviceOrientation');
+    print(
+        'NEW CAMILLE: current device orientation set to $currentDeviceOrientation');
     _subscriptionForDeviceOrientationChanges = onDeviceOrientationChanged()
         .listen((DeviceOrientationChangedEvent event) {
-          print('CAMILLE: ORIENTATION CHANGED!!!!!');
+      print('CAMILLE: ORIENTATION CHANGED!!!!!');
       currentDeviceOrientation = event.orientation;
     });
 
@@ -876,40 +878,70 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     final Widget cameraPreview = Texture(textureId: cameraId);
-    final Map<DeviceOrientation, int> degreesForDeviceOrientation = // this seems to be counterclockwise
+    final Map<DeviceOrientation, int>
+        degreesForDeviceOrientation = // this seems to be counterclockwise
         <DeviceOrientation, int>{
       DeviceOrientation.portraitUp: 0,
       DeviceOrientation.landscapeRight: 90,
       DeviceOrientation.portraitDown: 180,
       DeviceOrientation.landscapeLeft: 270,
     };
-    
+
     final Map<DeviceOrientation, int> pluginAppliedRotation =
         <DeviceOrientation, int>{
       DeviceOrientation.portraitUp: 0,
-      DeviceOrientation.landscapeRight: 1, 
+      DeviceOrientation.landscapeRight: 1,
       DeviceOrientation.portraitDown: 2,
       DeviceOrientation.landscapeLeft: 3,
     };
 
     if (isPreviewPreTransformed) {
+      int rotationCorrectionForLandscapeDevices = 0;
+      print('sensorOrientation $sensorOrientation');
       print('Android is < 29');
-      return cameraPreview;
+      print(
+          'pluginAppliedRotation[currentDeviceOrientation]! ${pluginAppliedRotation[currentDeviceOrientation]!}');
+      ///////////// back camera
+      // landscape left, 3, need 0 from there, need -3 CC/1 C
+      // portrait down, 2, need 1 from there, need -1 CC/3 C
+      // landscape right, 1, need 2 from there, need -3 CC/1 C
+      // portrait up, 0, need 3 from there, need -1 CC/ 3 C
+      //////////// front camera
+      // landscape left, 3, need 1 from there, need -2 CC/2 C
+      // portrait down, 2, need 1 from there, need -1 CC/3 C
+      // landscape right,1, need 1 from there, need 0
+      // portait up, 0, need 1 from there, need -3C/1 C
+      int frontCameraCorrection =
+          1 - pluginAppliedRotation[currentDeviceOrientation]!;
+      if (currentDeviceOrientation == DeviceOrientation.landscapeLeft ||
+          currentDeviceOrientation == DeviceOrientation.landscapeRight) {
+        rotationCorrectionForLandscapeDevices =
+            cameraIsFrontFacing ? frontCameraCorrection : 1;
+      } else {
+        rotationCorrectionForLandscapeDevices =
+            cameraIsFrontFacing ? frontCameraCorrection : 3;
+      }
+      return RotatedBox(
+          quarterTurns: rotationCorrectionForLandscapeDevices,
+          child: cameraPreview);
     }
 
     final int signForCameraDirection = cameraIsFrontFacing ? 1 : -1;
     // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
     // for more context on this formula.
     final double rotationCorrection = (sensorOrientation -
-            degreesForDeviceOrientation[currentDeviceOrientation]! * signForCameraDirection +
+            degreesForDeviceOrientation[currentDeviceOrientation]! *
+                signForCameraDirection +
             360) %
         360;
 
     // Fix for the rotation of the camera preview not backed by a SurfaceTexture
     // with respect to the naturalOrientation of the device:
     final int rotationCorrectionQuarterTurns = (rotationCorrection ~/ 90) % 4;
-    final int rotationAppliedByPlugin = pluginAppliedRotation[currentDeviceOrientation]!;
-    final int quarterTurnsToCorrectPreview =  rotationCorrectionQuarterTurns - rotationAppliedByPlugin;
+    final int rotationAppliedByPlugin =
+        pluginAppliedRotation[currentDeviceOrientation]!;
+    final int quarterTurnsToCorrectPreview =
+        rotationCorrectionQuarterTurns - rotationAppliedByPlugin;
 
     return RotatedBox(
         quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
