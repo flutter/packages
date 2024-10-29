@@ -33,22 +33,19 @@ class AdUnitWidgetWeb extends AdUnitWidget {
     if (cssText != null && cssText.isNotEmpty) {
       _insElement.style.cssText = cssText;
     }
-    final Map<String, String> dataAttrs =
-        Map<String, String>.of(<String, String>{
+    final Map<String, String> dataAttrs = <String, String>{
       AdUnitParams.AD_CLIENT: 'ca-pub-$_adClient',
-      'adSlot': _adSlot,
-    });
+      AdUnitParams.AD_SLOT: _adSlot,
+    };
     if (_isAdTest) {
       dataAttrs.addAll(<String, String>{_AD_TEST_KEY: 'on'});
     }
     for (final String key in dataAttrs.keys) {
-      _insElement.dataset
-          .setProperty(key as JSString, dataAttrs[key]! as JSString);
+      _insElement.dataset.setProperty(key.toJS, dataAttrs[key]!.toJS);
     }
     if (_additionalParams.isNotEmpty) {
       for (final String key in _additionalParams.keys) {
-        _insElement.dataset.setProperty(
-            key as JSString, _additionalParams[key] as JSString);
+        _insElement.dataset.setProperty(key.toJS, _additionalParams[key]!.toJS);
       }
     }
   }
@@ -68,8 +65,8 @@ class AdUnitWidgetWeb extends AdUnitWidget {
   final bool _isAdTest;
 
   @override
-  Map<String, dynamic> get additionalParams => _additionalParams;
-  final Map<String, dynamic> _additionalParams;
+  Map<String, String> get additionalParams => _additionalParams;
+  final Map<String, String> _additionalParams;
 
   final web.HTMLElement _insElement =
       web.document.createElement('ins') as web.HTMLElement;
@@ -117,11 +114,10 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
           // First time resized since attached to DOM -> attachment callback from Flutter docs by David
           if (!(target as web.HTMLElement)
               .dataset
-              .getProperty('attached' as JSString)
+              .getProperty('attached'.toJS)
               .isDefinedAndNotNull) {
             onElementAttached(target);
-            target.dataset
-                .setProperty('attached' as JSString, true as JSBoolean);
+            target.dataset.setProperty('attached'.toJS, true.toJS);
             observer.disconnect();
           }
         }
@@ -153,8 +149,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
             widget._insElement,
             web.MutationObserverInit(
                 attributes: true,
-                attributeFilter:
-                    <String>['data-ad-status'].jsify()! as JSArray<JSString>));
+                attributeFilter: <JSString>['data-ad-status'.toJS].toJS));
   }
 
   void onElementAttached(web.HTMLElement element) {
@@ -164,7 +159,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
 
   bool isLoaded(web.HTMLElement target) {
     final bool isLoaded =
-        target.dataset.getProperty('adStatus' as JSString).isDefinedAndNotNull;
+        target.dataset.getProperty('adStatus'.toJS).isDefinedAndNotNull;
     if (isLoaded) {
       log('Ad is loaded');
     } else {
@@ -174,7 +169,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
   }
 
   bool isFilled(web.HTMLElement target) {
-    final JSAny? adStatus = target.dataset.getProperty('adStatus' as JSString);
+    final JSAny? adStatus = target.dataset.getProperty('adStatus'.toJS);
     switch (adStatus) {
       case 'filled':
         {

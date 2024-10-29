@@ -19,5 +19,5 @@ abstract class AdUnitWidget extends StatefulWidget {
   bool get isAdTest;
 
   /// Set of required/recommended params depend on ad unit formats. See [AdUnitParams] for some of the most popular ones and links to documentation.
-  Map<String, dynamic> get additionalParams;
+  Map<String, String> get additionalParams;
 }

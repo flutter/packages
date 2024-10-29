@@ -25,6 +25,6 @@ extension AdsByGoogleExtension on AdsByGoogle {
 
   /// Convenience method for invoking push() with an empty object
   void loadAds() {
-    push(<String, String>{}.jsify() as JSObject?);
+    push(<String, String>{}.toJSBox);
   }
 }

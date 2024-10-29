@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'ad_unit_widget.dart';
+import 'package:flutter/foundation.dart';
+import '../google_adsense.dart';
 
 /// Main class to work with the library
 class AdSense {
@@ -21,10 +22,18 @@ class AdSense {
   }
 
   /// Returns a configurable [AdUnitWidget]
+  ///
+  /// `adSlot`: see [AdUnitParams.AD_SLOT]
+  ///
+  /// `adClient`: see [AdUnitParams.AD_CLIENT]
+  ///
+  /// `isAdTest`: testing environment flag, should be set to `false` in production
+  ///
+  /// `adUnitParams`: see [AdUnitParams] for the non-extensive list of some possible keys.
   AdUnitWidget adUnit(
       {required String adSlot,
       String adClient = '',
-      bool isAdTest = false,
+      bool isAdTest = kDebugMode,
       Map<String, String> adUnitParams = const <String, String>{},
       String? cssText}) {
     throw UnsupportedError('Only supported on web');

@@ -28,7 +28,7 @@ void main() async {
       // When
       // TODO(sokoloff06): Mock server response as ./test_ad.html
 
-          AdSense.instance.initialize(testClient);
+      AdSense.instance.initialize(testClient);
       final Widget adUnitWidget = AdSense.instance.adUnit(adSlot: testSlot);
       await tester.pumpWidget(adUnitWidget);
       await tester.pumpWidget(

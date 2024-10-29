@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// Contains adUnitParams keys constants for convenience and documentation
+/// Contains some of the possible adUnitParams keys constants for convenience and documentation
 class AdUnitParams {
-  /// /// (Optional) Can be provided in adUnitParams. If not provided, value passed on initialization will be used
+  /// (Optional) Can be provided in adUnitParams. If not provided, value passed on initialization will be used
   /// @value Numeric String
   static const String AD_CLIENT = 'adClient';
 
-  /// Required parameter passed as a named argument to adUnitParams
+  /// Required parameter passed as a named argument to adUnitParams. Can be taken from the ad unit HTML snippet under data-ad-slot parameter
   /// @value Numeric String
   static const String AD_SLOT = 'adSlot';
 

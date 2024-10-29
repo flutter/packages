@@ -51,6 +51,6 @@ void main() {
                 {required String adSlot,
                 String adClient,
                 bool isAdTest,
-                Map<String, dynamic> adUnitParams})>());
+                Map<String, String> adUnitParams})>());
   });
 }
