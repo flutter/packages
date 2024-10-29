@@ -1,5 +1,7 @@
-## NEXT
+## 0.2.6
 
+* Reverts streaming frame support, as the implementation was incorrect and never
+  exposed.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.2.5
