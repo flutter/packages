@@ -55,6 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final NavigationRailThemeData navRailTheme =
         Theme.of(context).navigationRailTheme;
+    final BottomNavigationBarThemeData navBarTheme =
+        Theme.of(context).bottomNavigationBarTheme;
 
     // Define the children to display within the body.
     final List<Widget> children = List<Widget>.generate(10, (int index) {
@@ -353,6 +355,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   selectedNavigation = newIndex;
                 });
               },
+              selectedIconTheme: navBarTheme.selectedIconTheme,
+              unselectedIconTheme: navBarTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navBarTheme.selectedLabelStyle,
+              unSelectedLabelTextStyle: navBarTheme.unselectedLabelStyle,
             ),
           )
         },

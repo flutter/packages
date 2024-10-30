@@ -571,6 +571,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
   Widget build(BuildContext context) {
     final NavigationRailThemeData navRailTheme =
         Theme.of(context).navigationRailTheme;
+    final BottomNavigationBarThemeData navBarTheme =
+        Theme.of(context).bottomNavigationBarTheme;
 
     final List<NavigationRailDestination> destinations = widget.destinations
         .map((NavigationDestination destination) =>
@@ -690,22 +692,27 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
             ),
           },
         ),
-        bottomNavigation:
-            !widget.drawerBreakpoint.isActive(context) || !widget.useDrawer
-                ? SlotLayout(
-                    config: <Breakpoint, SlotLayoutConfig>{
-                      widget.smallBreakpoint: SlotLayout.from(
-                        key: const Key('bottomNavigation'),
-                        builder: (_) =>
-                            AdaptiveScaffold.standardBottomNavigationBar(
-                          currentIndex: widget.selectedIndex,
-                          destinations: widget.destinations,
-                          onDestinationSelected: widget.onSelectedIndexChange,
-                        ),
-                      ),
-                    },
-                  )
-                : null,
+        bottomNavigation: !widget.drawerBreakpoint.isActive(context) ||
+                !widget.useDrawer
+            ? SlotLayout(
+                config: <Breakpoint, SlotLayoutConfig>{
+                  widget.smallBreakpoint: SlotLayout.from(
+                    key: const Key('bottomNavigation'),
+                    builder: (_) =>
+                        AdaptiveScaffold.standardBottomNavigationBar(
+                      currentIndex: widget.selectedIndex,
+                      destinations: widget.destinations,
+                      onDestinationSelected: widget.onSelectedIndexChange,
+                      selectedIconTheme: navBarTheme.selectedIconTheme,
+                      unselectedIconTheme: navBarTheme.unselectedIconTheme,
+                      selectedLabelTextStyle: navBarTheme.selectedLabelStyle,
+                      unSelectedLabelTextStyle:
+                          navBarTheme.unselectedLabelStyle,
+                    ),
+                  ),
+                },
+              )
+            : null,
         body: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig?>{
             Breakpoints.standard: SlotLayout.from(
