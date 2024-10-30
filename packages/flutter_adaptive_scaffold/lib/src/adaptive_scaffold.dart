@@ -399,8 +399,11 @@ class AdaptiveScaffold extends StatefulWidget {
   static Builder standardBottomNavigationBar({
     required List<NavigationDestination> destinations,
     int? currentIndex,
-    double iconSize = 24,
     ValueChanged<int>? onDestinationSelected,
+    IconThemeData? selectedIconTheme,
+    IconThemeData? unselectedIconTheme,
+    TextStyle? selectedLabelTextStyle,
+    TextStyle? unSelectedLabelTextStyle,
   }) {
     return Builder(
       builder: (BuildContext context) {
@@ -408,12 +411,18 @@ class AdaptiveScaffold extends StatefulWidget {
             NavigationBarTheme.of(context);
         return NavigationBarTheme(
           data: currentNavBarTheme.copyWith(
-            iconTheme: WidgetStateProperty.resolveWith(
+            iconTheme: WidgetStateProperty.resolveWith<IconThemeData?>(
               (Set<WidgetState> states) {
-                return currentNavBarTheme.iconTheme
-                        ?.resolve(states)
-                        ?.copyWith(size: iconSize) ??
-                    IconTheme.of(context).copyWith(size: iconSize);
+                return states.contains(WidgetState.selected)
+                    ? selectedIconTheme
+                    : unselectedIconTheme;
+              },
+            ),
+            labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>(
+              (Set<WidgetState> states) {
+                return states.contains(WidgetState.selected)
+                    ? selectedLabelTextStyle
+                    : unSelectedLabelTextStyle;
               },
             ),
           ),
