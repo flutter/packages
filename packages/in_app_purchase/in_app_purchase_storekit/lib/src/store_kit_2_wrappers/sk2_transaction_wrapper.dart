@@ -86,6 +86,12 @@ class SK2Transaction {
   static void stopListeningToTransactions() {
     _hostApi.stopListeningToTransactions();
   }
+
+  /// Restore previously completed purchases.
+  static Future<void> restorePurchases() async {
+    print("wrapper.dart");
+    await _hostApi.restorePurchases();
+  }
 }
 
 extension on SK2TransactionMessage {
@@ -127,8 +133,9 @@ class SK2TransactionObserverWrapper implements InAppPurchase2CallbackAPI {
   final StreamController<List<PurchaseDetails>> transactionsCreatedController;
 
   @override
-  void onTransactionsUpdated(SK2TransactionMessage newTransaction) {
-    transactionsCreatedController
-        .add(<PurchaseDetails>[newTransaction.convertToDetails()]);
+  void onTransactionsUpdated(List<SK2TransactionMessage> newTransactions) {
+    transactionsCreatedController.add(newTransactions
+        .map((SK2TransactionMessage e) => e.convertToDetails())
+        .toList());
   }
 }

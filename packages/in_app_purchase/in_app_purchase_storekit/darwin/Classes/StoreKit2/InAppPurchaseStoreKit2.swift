@@ -103,6 +103,30 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
+  func restorePurchases(completion: @escaping (Result<Void, any Error>) -> Void) {
+    Task { @MainActor in
+      do {
+        for await completedPurchase in Transaction.currentEntitlements {
+          switch completedPurchase {
+          case .verified(let purchase):
+            self.sendTransactionUpdate(
+              transaction: purchase, receipt: "\(completedPurchase.jwsRepresentation)")
+            print("hello")
+          case .unverified(_, _):
+            completion(
+              .failure(
+                PigeonError(
+                  code: "storekit2_restore_failed",
+                  message:
+                    "This purchase could not be restored.",
+                  details: "Receipt Data : \(completedPurchase.jwsRepresentation)")))
+          }
+        }
+        completion(.success(Void()))
+      }
+    }
+  }
+
   /// Wrapper method around StoreKit2's finish() method https://developer.apple.com/documentation/storekit/transaction/3749694-finish
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
     Task {
@@ -136,9 +160,10 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   }
 
   /// Sends an transaction back to Dart. Access these transactions with `purchaseStream`
-  func sendTransactionUpdate(transaction: Transaction) {
-    let transactionMessage = transaction.convertToPigeon()
-    transactionCallbackAPI?.onTransactionsUpdated(newTransaction: transactionMessage) { result in
+  private func sendTransactionUpdate(transaction: Transaction, receipt: String? = nil) {
+    let transactionMessage = transaction.convertToPigeon(receipt: receipt)
+    self.transactionCallbackAPI?.onTransactionsUpdated(newTransactions: [transactionMessage]) {
+      result in
       switch result {
       case .success: break
       case .failure(let error):
