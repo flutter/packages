@@ -1,3 +1,7 @@
+## 0.2.2+14
+
+* Adds internal wrapper for iOS native `IMACompanionAdSlot` and `IMACompanionDelegate`.
+
 ## 0.2.2+13
 
 * Adds internal wrapper for Android native `Ad`.
