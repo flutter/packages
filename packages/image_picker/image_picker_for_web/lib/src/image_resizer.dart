@@ -47,7 +47,6 @@ class ImageResizer {
         Completer<web.HTMLImageElement>();
     final web.HTMLImageElement imageElement = web.HTMLImageElement();
     imageElement
-      // ignore: unsafe_html
       ..src = blobUrl
       ..onLoad.listen((web.Event event) {
         imageLoadCompleter.complete(imageElement);
