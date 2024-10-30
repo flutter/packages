@@ -89,7 +89,6 @@ class SK2Transaction {
 
   /// Restore previously completed purchases.
   static Future<void> restorePurchases() async {
-    print("wrapper.dart");
     await _hostApi.restorePurchases();
   }
 }
