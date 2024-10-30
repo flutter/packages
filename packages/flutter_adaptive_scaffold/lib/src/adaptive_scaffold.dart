@@ -398,8 +398,10 @@ class AdaptiveScaffold extends StatefulWidget {
   /// a list of [NavigationDestination]s.
   static Builder standardBottomNavigationBar({
     required List<NavigationDestination> destinations,
+    double? height,
     int? currentIndex,
     ValueChanged<int>? onDestinationSelected,
+    Color? backgroundColor,
     IconThemeData? selectedIconTheme,
     IconThemeData? unselectedIconTheme,
     TextStyle? selectedLabelTextStyle,
@@ -411,6 +413,7 @@ class AdaptiveScaffold extends StatefulWidget {
             NavigationBarTheme.of(context);
         return NavigationBarTheme(
           data: currentNavBarTheme.copyWith(
+            backgroundColor: backgroundColor,
             iconTheme: WidgetStateProperty.resolveWith<IconThemeData?>(
               (Set<WidgetState> states) {
                 return states.contains(WidgetState.selected)
@@ -429,6 +432,7 @@ class AdaptiveScaffold extends StatefulWidget {
           child: MediaQuery(
             data: MediaQuery.of(context).removePadding(removeTop: true),
             child: NavigationBar(
+              height: height,
               selectedIndex: currentIndex ?? 0,
               destinations: destinations,
               onDestinationSelected: onDestinationSelected,
