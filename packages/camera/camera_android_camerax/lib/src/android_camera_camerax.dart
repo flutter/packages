@@ -251,11 +251,14 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The camera sensor orientation.
   @visibleForTesting
-  late int sensorOrientation;
+  late int sensorOrientation; //TODO: rename sensor orientation degrees
 
   /// The current orientation of the device.
   @visibleForTesting
   DeviceOrientation? currentDeviceOrientation;
+
+  int? deviceOrientationDegrees;
+  int? deviceOrientation;
 
   /// Subscription for listening to changes in device orientation.
   StreamSubscription<DeviceOrientationChangedEvent>?
@@ -420,6 +423,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     print('NEW NEW NEW CAMILLE: $deviceOrientationForFun');
     print(
         'NEW CAMILLE: current device orientation set to $currentDeviceOrientation');
+
+    deviceOrientationDegrees = await proxy.getDefaultDisplayRotation();
+    deviceOrientation = await proxy.getDeviceOrientation();
+
     _subscriptionForDeviceOrientationChanges = onDeviceOrientationChanged()
         .listen((DeviceOrientationChangedEvent event) {
       print('CAMILLE: ORIENTATION CHANGED!!!!!');
@@ -930,8 +937,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     final int signForCameraDirection = cameraIsFrontFacing ? 1 : -1;
     // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
     // for more context on this formula.
+    // final double rotationCorrection = (sensorOrientation -
+    //         degreesForDeviceOrientation[currentDeviceOrientation]! *
+    //             signForCameraDirection +
+    //         360) %
+    //     360;
+
     final double rotationCorrection = (sensorOrientation -
-            degreesForDeviceOrientation[currentDeviceOrientation]! *
+            // this actually needs to respond to changes in device rotation: sigh.
+            _getRotationFromSurfaceRotationConstant(deviceOrientationDegrees!) *
                 signForCameraDirection +
             360) %
         360;
@@ -1368,6 +1382,22 @@ class AndroidCameraCameraX extends CameraPlatform {
         return Surface.rotation180;
       case DeviceOrientation.landscapeRight:
         return Surface.rotation270;
+    }
+  }
+
+  int _getRotationFromSurfaceRotationConstant(int surfaceRotationConstant) {
+    switch (surfaceRotationConstant) {
+      case Surface.rotation0:
+        return 0;
+      case Surface.rotation90:
+        return 90;
+      case Surface.rotation180:
+        return 180;
+      case Surface.rotation270:
+        return 270;
+      default:
+        // TODO: throw exception
+        return 0;
     }
   }
 

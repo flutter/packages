@@ -37,6 +37,7 @@ public class DeviceOrientationManager {
   private final int sensorOrientation;
   private final DeviceOrientationChangeCallback deviceOrientationChangeCallback;
   private PlatformChannel.DeviceOrientation lastOrientation;
+  private int lastRotation;
   private BroadcastReceiver broadcastReceiver;
 
   DeviceOrientationManager(
@@ -93,9 +94,17 @@ public class DeviceOrientationManager {
    */
   @VisibleForTesting
   void handleUIOrientationChange() {
-    PlatformChannel.DeviceOrientation orientation = getUIOrientation();
+    PlatformChannel.DeviceOrientation orientation = getUIOrientation(); // TODO: fix this
     handleOrientationChange(orientation, lastOrientation, deviceOrientationChangeCallback);
     lastOrientation = orientation;
+  }
+
+  void handleDeviceRotationChange() {
+    final int rotation = getDefaultRotation();
+    if (!rotation.equals(newRotation)) {
+      callback.onChange(newOrientation);
+    }
+    lastRotation = rotation;
   }
 
   /**
