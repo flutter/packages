@@ -332,9 +332,9 @@ dependencies {
     bool commentNamespace = false,
     bool warningsConfigured = true,
     String? kotlinVersion,
-    bool includeBuildArtifactHub = true,
-    bool includeSettingsArtifactHub = true,
-    bool includeSettingsDocumentationArtifactHub = true,
+    required bool includeBuildArtifactHub,
+    required bool includeSettingsArtifactHub,
+    required bool includeSettingsDocumentationArtifactHub,
   }) {
     writeFakeExampleTopLevelBuildGradle(
       package,
@@ -878,10 +878,8 @@ dependencies {
       final RepositoryPackage example = package.getExamples().first;
       writeFakeExampleBuildGradleGP(example,
           pluginName: packageName,
-          // ignore: avoid_redundant_argument_values
           includeBuildArtifactHub: true,
           includeSettingsArtifactHub: false,
-          // ignore: avoid_redundant_argument_values
           includeSettingsDocumentationArtifactHub: true);
       writeFakeManifest(example, isApp: true);
 
@@ -915,9 +913,7 @@ dependencies {
       final RepositoryPackage example = package.getExamples().first;
       writeFakeExampleBuildGradleGP(example,
           pluginName: packageName,
-          // ignore: avoid_redundant_argument_values
           includeBuildArtifactHub: true,
-          // ignore: avoid_redundant_argument_values
           includeSettingsArtifactHub: true,
           includeSettingsDocumentationArtifactHub: false);
       writeFakeManifest(example, isApp: true);
