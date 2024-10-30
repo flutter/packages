@@ -111,7 +111,6 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           case .verified(let purchase):
             self.sendTransactionUpdate(
               transaction: purchase, receipt: "\(completedPurchase.jwsRepresentation)")
-            print("hello")
           case .unverified(_, _):
             completion(
               .failure(
