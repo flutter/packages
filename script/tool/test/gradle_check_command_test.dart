@@ -205,10 +205,10 @@ ${includeArtifactHub ? GradleCheckCommand.exampleRootSettingsArtifactHubString :
   /// Writes a fake android/build.gradle file for an example [package] with the
   /// given options.
   void writeFakeExampleSettingsGradle(
-      RepositoryPackage package, {
-        bool includeArtifactHub = true,
-        bool includeArtifactDocumentation = true,
-      }) {
+    RepositoryPackage package, {
+    bool includeArtifactHub = true,
+    bool includeArtifactDocumentation = true,
+  }) {
     final File settingsGradle = package
         .platformDirectory(FlutterPlatform.android)
         .childFile('settings.gradle');
@@ -326,16 +326,16 @@ dependencies {
   }
 
   void writeFakeExampleBuildGradleGP(
-      RepositoryPackage package, {
-        required String pluginName,
-        bool includeNamespace = true,
-        bool commentNamespace = false,
-        bool warningsConfigured = true,
-        String? kotlinVersion,
-        bool includeBuildArtifactHub = true,
-        bool includeSettingsArtifactHub = true,
-        bool includeSettingsDocumentationArtifactHub = true,
-      }) {
+    RepositoryPackage package, {
+    required String pluginName,
+    bool includeNamespace = true,
+    bool commentNamespace = false,
+    bool warningsConfigured = true,
+    String? kotlinVersion,
+    bool includeBuildArtifactHub = true,
+    bool includeSettingsArtifactHub = true,
+    bool includeSettingsDocumentationArtifactHub = true,
+  }) {
     writeFakeExampleTopLevelBuildGradle(
       package,
       pluginName: pluginName,
@@ -748,16 +748,14 @@ dependencies {
       writeFakePluginBuildGradle(package, includeLanguageVersion: true);
       writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
-      writeFakeExampleBuildGradles(
-        example,
-        pluginName: packageName,
-        // ignore: avoid_redundant_argument_values
-        includeBuildArtifactHub: true,
-        // ignore: avoid_redundant_argument_values
-        includeSettingsArtifactHub: true,
-        // ignore: avoid_redundant_argument_values
-        includeSettingsDocumentationArtifactHub: true
-      );
+      writeFakeExampleBuildGradles(example,
+          pluginName: packageName,
+          // ignore: avoid_redundant_argument_values
+          includeBuildArtifactHub: true,
+          // ignore: avoid_redundant_argument_values
+          includeSettingsArtifactHub: true,
+          // ignore: avoid_redundant_argument_values
+          includeSettingsDocumentationArtifactHub: true);
       writeFakeManifest(example, isApp: true);
 
       final List<String> output =
@@ -870,10 +868,11 @@ dependencies {
       );
     });
 
-    test('prints error for declarative method of applying gradle plugins', () async {
+    test('prints error for declarative method of applying gradle plugins',
+        () async {
       const String packageName = 'a_package';
       final RepositoryPackage package =
-      createFakePackage('a_package', packagesDir);
+          createFakePackage('a_package', packagesDir);
       writeFakePluginBuildGradle(package, includeLanguageVersion: true);
       writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
@@ -901,14 +900,16 @@ dependencies {
       );
       expect(
         output,
-        isNot(contains(GradleCheckCommand.exampleRootSettingsArtifactHubString)),
+        isNot(
+            contains(GradleCheckCommand.exampleRootSettingsArtifactHubString)),
       );
     });
 
-    test('error message is printed when documentation link is missing', () async {
+    test('error message is printed when documentation link is missing',
+        () async {
       const String packageName = 'a_package';
       final RepositoryPackage package =
-      createFakePackage('a_package', packagesDir);
+          createFakePackage('a_package', packagesDir);
       writeFakePluginBuildGradle(package, includeLanguageVersion: true);
       writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
