@@ -56,7 +56,7 @@ android {
 }
 
 dependencies {
-    api "androidx.core:core:1.13.1"
+    api "androidx.core:core:1.15.0"
     api "androidx.biometric:biometric:1.1.0"
     api "androidx.fragment:fragment:1.6.2"
     testImplementation 'junit:junit:4.13.2'
