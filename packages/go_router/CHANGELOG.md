@@ -1,3 +1,7 @@
+## 14.4.0
+
+- Adds `popUntil` method to pop multiple routes from a predicate.
+
 ## 14.3.0
 
 - Added missing implementation for the routerNeglect parameter in GoRouter.
@@ -8,7 +12,7 @@
 
 ## 14.2.8
 
-- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView. 
+- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView.
 
 ## 14.2.7
 
