@@ -1,4 +1,4 @@
-# 4.0.0
+## 4.0.0
 
 * Bumps androidx.webkit:webkit from 1.12.0 to 1.12.1.
 * **Breaking Change** Bumps Android `minSdkVersion` from 19 to 21.
