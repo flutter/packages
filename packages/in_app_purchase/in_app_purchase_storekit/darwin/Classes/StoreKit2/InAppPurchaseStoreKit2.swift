@@ -103,7 +103,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
-  func restorePurchases(completion: @escaping (Result<Void, any Error>) -> Void) {
+  func restorePurchases(completion: @escaping (Result<Void, Error>) -> Void) {
     Task {
       @MainActor in
       do {
