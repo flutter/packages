@@ -6,6 +6,12 @@
 
 ## Explicit allowances
 
+# Temporary allowance to allow importing packages in parallel; remove once
+# https://github.com/flutter/packages/pull/7941 has landed.
+- vector_graphics
+- vector_graphics_codec
+- vector_graphics_compiler
+
 # Owned by individual Flutter Team members.
 # Ideally we would not do this, since there's no clear plan for what
 # would happen if the individuals left the Flutter Team, and the

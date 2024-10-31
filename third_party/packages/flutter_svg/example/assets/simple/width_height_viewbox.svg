@@ -1,0 +1,15 @@
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>Close</title>
+    <desc>Created with Sketch.</desc>
+
+    <defs></defs>
+    <g id="03.-Agenda" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="square">
+        <g id="Filter" transform="translate(-338.000000, -22.000000)" stroke="#1A1A1A" stroke-width="4">
+            <g id="Close" transform="translate(347.000000, 31.000000) rotate(-45.000000) translate(-347.000000, -31.000000) translate(339.000000, 23.000000)">
+                <path d="M0,8 L16,8" id="Line-2"></path>
+                <path d="M8,0 L8,16" id="Line-2"></path>
+            </g>
+        </g>
+    </g>
+</svg>
