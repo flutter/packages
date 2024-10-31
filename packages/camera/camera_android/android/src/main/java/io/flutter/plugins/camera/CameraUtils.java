@@ -70,15 +70,6 @@ public final class CameraUtils {
     String[] cameraNames = cameraManager.getCameraIdList();
     List<Messages.PlatformCameraDescription> cameras = new ArrayList<>();
     for (String cameraName : cameraNames) {
-      int cameraId;
-      try {
-        cameraId = Integer.parseInt(cameraName, 10);
-      } catch (NumberFormatException e) {
-        cameraId = -1;
-      }
-      if (cameraId < 0) {
-        continue;
-      }
 
       CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraName);
       int sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
