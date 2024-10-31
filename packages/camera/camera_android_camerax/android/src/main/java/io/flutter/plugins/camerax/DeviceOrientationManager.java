@@ -24,7 +24,7 @@ import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientat
 public class DeviceOrientationManager {
 
   interface DeviceOrientationChangeCallback {
-    void onChange(DeviceOrientation newOrientation);
+    void onChange(DeviceOrientation newOrientation, int newRotation);
   }
 
   private static final IntentFilter orientationIntentFilter =
@@ -92,7 +92,8 @@ public class DeviceOrientationManager {
   @VisibleForTesting
   void handleUIOrientationChange() {
     PlatformChannel.DeviceOrientation orientation = getUIOrientation();
-    handleOrientationChange(orientation, lastOrientation, deviceOrientationChangeCallback);
+    int rotation = getDefaultRotation();
+    handleOrientationChange(orientation, lastOrientation, rotation, deviceOrientationChangeCallback);
     lastOrientation = orientation;
   }
 
@@ -107,9 +108,10 @@ public class DeviceOrientationManager {
   static void handleOrientationChange(
       DeviceOrientation newOrientation,
       DeviceOrientation previousOrientation,
+      int newRotation,
       DeviceOrientationChangeCallback callback) {
     if (!newOrientation.equals(previousOrientation)) {
-      callback.onChange(newOrientation);
+      callback.onChange(newOrientation, newRotation);
     }
   }
 
@@ -175,5 +177,9 @@ public class DeviceOrientationManager {
   @VisibleForTesting
   Display getDisplay() {
     return ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+  }
+
+  int getDeviceOrientation() {
+    return activity.getResources().getConfiguration().orientation;
   }
 }

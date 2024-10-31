@@ -44,14 +44,15 @@ class CameraPreview extends StatelessWidget {
   }
 
   Widget _wrapInRotatedBox({required Widget child}) {
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
-      return child;
-    }
+    return child;
+    // if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+    //   return child;
+    // }
 
-    return RotatedBox(
-      quarterTurns: _getQuarterTurns(),
-      child: child,
-    );
+    // return RotatedBox(
+    //   quarterTurns: _getQuarterTurns(),
+    //   child: child,
+    // );
   }
 
   bool _isLandscape() {

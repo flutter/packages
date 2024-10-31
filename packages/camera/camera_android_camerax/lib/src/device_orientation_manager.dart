@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
+import 'surface.dart';
 
 // Ignoring lint indicating this class only contains static members
 // as this class is a wrapper for various Android system services.
@@ -25,6 +26,10 @@ class DeviceOrientationManager {
   static final StreamController<DeviceOrientationChangedEvent>
       deviceOrientationChangedStreamController =
       StreamController<DeviceOrientationChangedEvent>.broadcast();
+
+  static final StreamController<int>
+      defaultDisplayRotationChangedStreamController =
+      StreamController<int>.broadcast();
 
   /// Requests that [deviceOrientationChangedStreamController] start
   /// emitting values for any change in device orientation.
@@ -77,6 +82,13 @@ class DeviceOrientationManager {
     return deserializeDeviceOrientation(await api.getUiOrientation());
   }
 
+  /// ... in terms of one of the [Configuration] orientation constants.
+  static Future<int> getDeviceOrientation({BinaryMessenger? binaryMessenger}) {
+    final DeviceOrientationManagerHostApi api =
+        DeviceOrientationManagerHostApi(binaryMessenger: binaryMessenger);
+    return api.getDeviceOrientation();
+  }
+
   /// Serializes [DeviceOrientation] into a [String].
   static String serializeDeviceOrientation(DeviceOrientation orientation) {
     switch (orientation) {
@@ -122,10 +134,14 @@ class DeviceOrientationManagerFlutterApiImpl
   /// `DeviceOrientationManager.startListeningForDeviceOrientationChange(...)` was called
   /// to start listening for device orientation updates.
   @override
-  void onDeviceOrientationChanged(String orientation) {
-    final DeviceOrientation deviceOrientation =
-        DeviceOrientationManager.deserializeDeviceOrientation(orientation);
+  void onDeviceOrientationChanged(DeviceOrientationInfo deviceOrientationInfo) {
+    final DeviceOrientation uiOrientation =
+        DeviceOrientationManager.deserializeDeviceOrientation(
+            deviceOrientationInfo.uiOrientation);
     DeviceOrientationManager.deviceOrientationChangedStreamController
-        .add(DeviceOrientationChangedEvent(deviceOrientation));
+        .add(DeviceOrientationChangedEvent(uiOrientation));
+    DeviceOrientationManager.defaultDisplayRotationChangedStreamController.add(
+        Surface.getRotationDegrees(
+            deviceOrientationInfo.defaultDisplayRotation));
   }
 }

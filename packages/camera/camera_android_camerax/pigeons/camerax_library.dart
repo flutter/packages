@@ -174,6 +174,17 @@ enum CaptureRequestKeySupportedType {
   controlAeLock,
 }
 
+class DeviceOrientationInfo {
+  DeviceOrientationInfo({
+    required this.uiOrientation,
+    required this.defaultDisplayRotation,
+  });
+
+  String uiOrientation;
+
+  int defaultDisplayRotation;
+}
+
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
@@ -279,11 +290,13 @@ abstract class DeviceOrientationManagerHostApi {
   int getDefaultDisplayRotation();
 
   String getUiOrientation();
+
+  int getDeviceOrientation();
 }
 
 @FlutterApi()
 abstract class DeviceOrientationManagerFlutterApi {
-  void onDeviceOrientationChanged(String orientation);
+  void onDeviceOrientationChanged(DeviceOrientationInfo deviceOrientationInfo);
 }
 
 @HostApi(dartHostTestHandler: 'TestPreviewHostApi')

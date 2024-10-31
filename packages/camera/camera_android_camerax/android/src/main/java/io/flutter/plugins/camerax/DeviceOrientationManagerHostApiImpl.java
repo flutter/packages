@@ -12,6 +12,7 @@ import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientat
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.CameraPermissionsManager.PermissionsRegistry;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationManagerHostApi;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationInfo;
 
 public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationManagerHostApi {
   private final BinaryMessenger binaryMessenger;
@@ -38,6 +39,7 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
     this.activity = activity;
   }
 
+  // TODO(camsim99): Implement everything that I've done on the Dart side.
   /**
    * Starts listening for device orientation changes using an instance of a {@link
    * DeviceOrientationManager}.
@@ -58,9 +60,11 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
             activity,
             isFrontFacing,
             sensorOrientation.intValue(),
-            (DeviceOrientation newOrientation) -> {
+            // TODO(camsim99): Rework this so that it sends both device orientation and rotation.
+            (DeviceOrientation newOrientation, int newRotation) -> {
+              DeviceOrientationInfo deviceOrientationInfo = new DeviceOrientationInfo.Builder().setUiOrientation(serializeDeviceOrientation(newOrientation)).setDefaultDisplayRotation(Long.valueOf(newRotation)).build();
               deviceOrientationManagerFlutterApiImpl.sendDeviceOrientationChangedEvent(
-                  serializeDeviceOrientation(newOrientation), reply -> {});
+                  deviceOrientationInfo, reply -> {});
             });
     deviceOrientationManager.start();
   }
@@ -113,5 +117,11 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
   @NonNull
   public String getUiOrientation() {
     return serializeDeviceOrientation(deviceOrientationManager.getUIOrientation());
+  }
+
+  @Override
+  @NonNull
+  public Long getDeviceOrientation() {
+    return Long.valueOf(deviceOrientationManager.getDeviceOrientation());
   }
 }
