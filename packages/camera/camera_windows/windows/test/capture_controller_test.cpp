@@ -105,15 +105,6 @@ void MockAvailableMediaTypes(MockCaptureEngine* engine,
 
   EXPECT_CALL(
       *capture_source,
-      SetCurrentDeviceMediaType(
-          Eq((DWORD)
-                 MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW),
-          _))
-      .Times(1)
-      .WillOnce(Return(S_OK));
-
-  EXPECT_CALL(
-      *capture_source,
       GetAvailableDeviceMediaType(
           Eq((DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD),
           _, _))
@@ -161,6 +152,15 @@ void MockStartPreview(CaptureControllerImpl* capture_controller,
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
   MockAvailableMediaTypes(engine, capture_source.Get(), mock_preview_width,
                           mock_preview_height);
+
+  EXPECT_CALL(
+      *capture_source.Get(),
+      SetCurrentDeviceMediaType(
+          Eq((DWORD)
+                 MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW),
+          _))
+      .Times(1)
+      .WillOnce(Return(S_OK));
 
   EXPECT_CALL(*engine, StartPreview()).Times(1).WillOnce(Return(S_OK));
 

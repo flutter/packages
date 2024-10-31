@@ -467,26 +467,23 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypes() {
     return hr;
   }
 
+  return FindBaseMediaTypes(source.Get());
+}
+
+HRESULT CaptureControllerImpl::FindBaseMediaTypes(IMFCaptureSource* source) {
   // Find base media type for previewing.
   if (!FindBestMediaType(
           (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW,
-          source.Get(), base_preview_media_type_.GetAddressOf(),
+          source, base_preview_media_type_.GetAddressOf(),
           GetMaxPreviewHeight(), &preview_frame_width_,
           &preview_frame_height_)) {
     return E_FAIL;
   }
 
-  hr = source->SetCurrentDeviceMediaType(
-      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW,
-      base_preview_media_type_.Get());
-  if (FAILED(hr)) {
-    return hr;
-  }
-
   // Find base media type for record and photo capture.
   if (!FindBestMediaType(
           (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD,
-          source.Get(), base_capture_media_type_.GetAddressOf(), 0xffffffff,
+          source, base_capture_media_type_.GetAddressOf(), 0xffffffff,
           nullptr, nullptr)) {
     return E_FAIL;
   }
@@ -573,13 +570,28 @@ void CaptureControllerImpl::StartPreview() {
 
   HRESULT hr = S_OK;
 
+  ComPtr<IMFCaptureSource> source;
+  hr = capture_engine_->GetSource(&source);
+  if (FAILED(hr)) {
+    return OnPreviewStarted(GetCameraResult(hr),
+                            "Failed to initialize video preview");
+  }
+
   if (!base_preview_media_type_) {
     // Enumerates mediatypes and finds media type for video capture.
-    hr = FindBaseMediaTypes();
+    hr = FindBaseMediaTypes(source.Get());
     if (FAILED(hr)) {
       return OnPreviewStarted(GetCameraResult(hr),
                               "Failed to initialize video preview");
     }
+  }
+
+  hr = source->SetCurrentDeviceMediaType(
+      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW,
+      base_preview_media_type_.Get());
+  if (FAILED(hr)) {
+    return OnPreviewStarted(GetCameraResult(hr),
+                            "Failed to initialize video preview");
   }
 
   texture_handler_->UpdateTextureSize(preview_frame_width_,
