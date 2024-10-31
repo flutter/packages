@@ -104,7 +104,8 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   }
 
   func restorePurchases(completion: @escaping (Result<Void, any Error>) -> Void) {
-    Task { @MainActor in
+    Task {
+      @MainActor in
       do {
         for await completedPurchase in Transaction.currentEntitlements {
           switch completedPurchase {
