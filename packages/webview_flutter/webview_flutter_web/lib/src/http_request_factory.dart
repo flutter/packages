@@ -39,27 +39,25 @@ class HttpRequestFactory {
   ///
   /// The following is equivalent to the [getString] sample above:
   ///
-  // TODO(kallentu): Remove ignore and fix when stable is bumped.
-  // https://github.com/flutter/flutter/issues/157620
-  // ignore: missing_code_block_language_in_doc_comment
-  ///     var name = Uri.encodeQueryComponent('John');
-  ///     var id = Uri.encodeQueryComponent('42');
-  ///     HttpRequest.request('users.json?name=$name&id=$id')
-  ///       .then((HttpRequest resp) {
-  ///         // Do something with the response.
-  ///     });
+  /// ```dart
+  /// var name = Uri.encodeQueryComponent('John');
+  /// var id = Uri.encodeQueryComponent('42');
+  /// HttpRequest.request('users.json?name=$name&id=$id')
+  ///   .then((HttpRequest resp) {
+  ///     // Do something with the response.
+  /// });
+  /// ```
   ///
   /// Here's an example of submitting an entire form with [FormData].
   ///
-  // TODO(kallentu): Remove ignore and fix when stable is bumped.
-  // https://github.com/flutter/flutter/issues/157620
-  // ignore: missing_code_block_language_in_doc_comment
-  ///     var myForm = querySelector('form#myForm');
-  ///     var data = new FormData(myForm);
-  ///     HttpRequest.request('/submit', method: 'POST', sendData: data)
-  ///       .then((HttpRequest resp) {
-  ///         // Do something with the response.
-  ///     });
+  /// ```dart
+  /// var myForm = querySelector('form#myForm');
+  /// var data = new FormData(myForm);
+  /// HttpRequest.request('/submit', method: 'POST', sendData: data)
+  ///   .then((HttpRequest resp) {
+  ///     // Do something with the response.
+  /// });
+  /// ```
   ///
   /// Requests for `file://` URIs are only supported by Chrome extensions
   /// with appropriate permissions in their manifest. Requests to file:// URIs
