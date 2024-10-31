@@ -153,9 +153,9 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     return targets;
   }
 
-  /// If [pubspecFile] has any dependencies on packages in [localDependencies],
-  /// adds dependency_overrides entries to redirect them to the local version
-  /// using path-based dependencies.
+  /// If [pubspecFile] has any non-path dependencies on packages in
+  /// [localDependencies], adds dependency_overrides entries to redirect them to
+  /// the local version using path-based dependencies.
   ///
   /// Returns true if any overrides were added.
   ///
@@ -183,11 +183,13 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     final Pubspec pubspec = Pubspec.parse(pubspecContents);
     final Iterable<String> combinedDependencies = <String>[
       // Filter out any dependencies with version constraint that wouldn't allow
-      // the target if published.
+      // the target if published, and anything that is already path-based.
       ...<MapEntry<String, Dependency>>[
         ...pubspec.dependencies.entries,
         ...pubspec.devDependencies.entries,
       ]
+          .where((MapEntry<String, Dependency> element) =>
+              element.value is! PathDependency)
           .where((MapEntry<String, Dependency> element) =>
               allowsVersion(element.value, versions[element.key]))
           .map((MapEntry<String, Dependency> entry) => entry.key),
@@ -205,10 +207,10 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     }
 
     // Find the relative path to the common base.
-    final String commonBasePath = packagesDir.path;
+    final String repoRootPath = packagesDir.parent.path;
     final int packageDepth = path
-        .split(path.relative(package.directory.absolute.path,
-            from: commonBasePath))
+        .split(
+            path.relative(package.directory.absolute.path, from: repoRootPath))
         .length;
     final List<String> relativeBasePathComponents =
         List<String>.filled(packageDepth, '..');
@@ -223,9 +225,8 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     }
     for (final String packageName in packagesToOverride) {
       // Find the relative path from the common base to the local package.
-      final List<String> repoRelativePathComponents = path.split(path.relative(
-          localDependencies[packageName]!.path,
-          from: commonBasePath));
+      final List<String> repoRelativePathComponents = path.split(path
+          .relative(localDependencies[packageName]!.path, from: repoRootPath));
       editablePubspec.update(<String>[
         dependencyOverridesKey,
         packageName
@@ -301,7 +302,7 @@ $dependencyOverridesKey:
       if (!package.pubspecFile.existsSync()) {
         final String directoryName = p.posix.joinAll(path.split(path.relative(
             package.directory.absolute.path,
-            from: packagesDir.path)));
+            from: packagesDir.parent.path)));
         print('  Skipping $directoryName; deleted.');
         continue;
       }

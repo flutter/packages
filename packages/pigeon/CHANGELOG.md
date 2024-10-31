@@ -1,3 +1,7 @@
+## 22.6.0
+
+* [swift] Adds `includeErrorClass` to `SwiftOptions`.
+
 ## 22.5.0
 
 * [swift] Adds implementation for `@ProxyApi`.
@@ -217,8 +221,6 @@
     `myGeneratedClass.aBoolProperty = @NO` can silently set `aBoolProperty` to
     `YES`. Any data class or Flutter API interactions involving `bool`s should
     be carefully audited by hand when updating.
-
-
 
 ## 12.0.1
 
