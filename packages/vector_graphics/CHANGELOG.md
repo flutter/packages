@@ -1,3 +1,7 @@
+## 1.1.13
+
+* Fix execution on the web with WebAssembly.
+
 ## 1.1.12
 
 * Transfers the package source from https://github.com/dnfield/vector_graphics

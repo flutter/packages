@@ -2,4 +2,4 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-export '_debug_io.dart' if (dart.library.html) '_debug_web.dart';
+export '_debug_web.dart' if (dart.library.io) '_debug_io.dart';
