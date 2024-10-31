@@ -1,3 +1,12 @@
+## 0.4.0+3
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 0.4.0+2
+
+* Bumps `com.google.guava:guava` from `31.1` to `33.3.1`.
+
 ## 0.4.0+1
 
 * Updates lint checks to ignore NewerVersionAvailable.

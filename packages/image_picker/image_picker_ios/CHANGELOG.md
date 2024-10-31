@@ -1,5 +1,6 @@
-## NEXT
+## 0.8.12+1
 
+* Updates Pigeon for non-nullable collection type support.
 * Updates UI test photo element query for iOS 18.
 
 ## 0.8.12

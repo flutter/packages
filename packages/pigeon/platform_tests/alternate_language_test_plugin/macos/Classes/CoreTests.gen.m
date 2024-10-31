@@ -138,11 +138,14 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                      enumList:(NSArray<FLTAnEnumBox *> *)enumList
                    objectList:(NSArray<id> *)objectList
                      listList:(NSArray<NSArray<id> *> *)listList
+                      mapList:(NSArray<NSDictionary<id, id> *> *)mapList
                           map:(NSDictionary *)map
                     stringMap:(NSDictionary<NSString *, NSString *> *)stringMap
                        intMap:(NSDictionary<NSNumber *, NSNumber *> *)intMap
                       enumMap:(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
-                    objectMap:(NSDictionary<id, id> *)objectMap {
+                    objectMap:(NSDictionary<id, id> *)objectMap
+                      listMap:(NSDictionary<NSNumber *, NSArray<id> *> *)listMap
+                       mapMap:(NSDictionary<NSNumber *, NSDictionary<id, id> *> *)mapMap {
   FLTAllTypes *pigeonResult = [[FLTAllTypes alloc] init];
   pigeonResult.aBool = aBool;
   pigeonResult.anInt = anInt;
@@ -164,11 +167,14 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.enumList = enumList;
   pigeonResult.objectList = objectList;
   pigeonResult.listList = listList;
+  pigeonResult.mapList = mapList;
   pigeonResult.map = map;
   pigeonResult.stringMap = stringMap;
   pigeonResult.intMap = intMap;
   pigeonResult.enumMap = enumMap;
   pigeonResult.objectMap = objectMap;
+  pigeonResult.listMap = listMap;
+  pigeonResult.mapMap = mapMap;
   return pigeonResult;
 }
 + (FLTAllTypes *)fromList:(NSArray<id> *)list {
@@ -195,11 +201,14 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.enumList = GetNullableObjectAtIndex(list, 17);
   pigeonResult.objectList = GetNullableObjectAtIndex(list, 18);
   pigeonResult.listList = GetNullableObjectAtIndex(list, 19);
-  pigeonResult.map = GetNullableObjectAtIndex(list, 20);
-  pigeonResult.stringMap = GetNullableObjectAtIndex(list, 21);
-  pigeonResult.intMap = GetNullableObjectAtIndex(list, 22);
-  pigeonResult.enumMap = GetNullableObjectAtIndex(list, 23);
-  pigeonResult.objectMap = GetNullableObjectAtIndex(list, 24);
+  pigeonResult.mapList = GetNullableObjectAtIndex(list, 20);
+  pigeonResult.map = GetNullableObjectAtIndex(list, 21);
+  pigeonResult.stringMap = GetNullableObjectAtIndex(list, 22);
+  pigeonResult.intMap = GetNullableObjectAtIndex(list, 23);
+  pigeonResult.enumMap = GetNullableObjectAtIndex(list, 24);
+  pigeonResult.objectMap = GetNullableObjectAtIndex(list, 25);
+  pigeonResult.listMap = GetNullableObjectAtIndex(list, 26);
+  pigeonResult.mapMap = GetNullableObjectAtIndex(list, 27);
   return pigeonResult;
 }
 + (nullable FLTAllTypes *)nullableFromList:(NSArray<id> *)list {
@@ -227,11 +236,14 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.enumList ?: [NSNull null],
     self.objectList ?: [NSNull null],
     self.listList ?: [NSNull null],
+    self.mapList ?: [NSNull null],
     self.map ?: [NSNull null],
     self.stringMap ?: [NSNull null],
     self.intMap ?: [NSNull null],
     self.enumMap ?: [NSNull null],
     self.objectMap ?: [NSNull null],
+    self.listMap ?: [NSNull null],
+    self.mapMap ?: [NSNull null],
   ];
 }
 @end
@@ -259,12 +271,15 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                  enumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
                objectList:(nullable NSArray<id> *)objectList
                  listList:(nullable NSArray<NSArray<id> *> *)listList
+                  mapList:(nullable NSArray<NSDictionary<id, id> *> *)mapList
        recursiveClassList:(nullable NSArray<FLTAllNullableTypes *> *)recursiveClassList
                       map:(nullable NSDictionary *)map
                 stringMap:(nullable NSDictionary<NSString *, NSString *> *)stringMap
                    intMap:(nullable NSDictionary<NSNumber *, NSNumber *> *)intMap
                   enumMap:(nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
                 objectMap:(nullable NSDictionary<id, id> *)objectMap
+                  listMap:(nullable NSDictionary<NSNumber *, NSArray<id> *> *)listMap
+                   mapMap:(nullable NSDictionary<NSNumber *, NSDictionary<id, id> *> *)mapMap
         recursiveClassMap:
             (nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)recursiveClassMap {
   FLTAllNullableTypes *pigeonResult = [[FLTAllNullableTypes alloc] init];
@@ -289,12 +304,15 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.enumList = enumList;
   pigeonResult.objectList = objectList;
   pigeonResult.listList = listList;
+  pigeonResult.mapList = mapList;
   pigeonResult.recursiveClassList = recursiveClassList;
   pigeonResult.map = map;
   pigeonResult.stringMap = stringMap;
   pigeonResult.intMap = intMap;
   pigeonResult.enumMap = enumMap;
   pigeonResult.objectMap = objectMap;
+  pigeonResult.listMap = listMap;
+  pigeonResult.mapMap = mapMap;
   pigeonResult.recursiveClassMap = recursiveClassMap;
   return pigeonResult;
 }
@@ -321,13 +339,16 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.enumList = GetNullableObjectAtIndex(list, 18);
   pigeonResult.objectList = GetNullableObjectAtIndex(list, 19);
   pigeonResult.listList = GetNullableObjectAtIndex(list, 20);
-  pigeonResult.recursiveClassList = GetNullableObjectAtIndex(list, 21);
-  pigeonResult.map = GetNullableObjectAtIndex(list, 22);
-  pigeonResult.stringMap = GetNullableObjectAtIndex(list, 23);
-  pigeonResult.intMap = GetNullableObjectAtIndex(list, 24);
-  pigeonResult.enumMap = GetNullableObjectAtIndex(list, 25);
-  pigeonResult.objectMap = GetNullableObjectAtIndex(list, 26);
-  pigeonResult.recursiveClassMap = GetNullableObjectAtIndex(list, 27);
+  pigeonResult.mapList = GetNullableObjectAtIndex(list, 21);
+  pigeonResult.recursiveClassList = GetNullableObjectAtIndex(list, 22);
+  pigeonResult.map = GetNullableObjectAtIndex(list, 23);
+  pigeonResult.stringMap = GetNullableObjectAtIndex(list, 24);
+  pigeonResult.intMap = GetNullableObjectAtIndex(list, 25);
+  pigeonResult.enumMap = GetNullableObjectAtIndex(list, 26);
+  pigeonResult.objectMap = GetNullableObjectAtIndex(list, 27);
+  pigeonResult.listMap = GetNullableObjectAtIndex(list, 28);
+  pigeonResult.mapMap = GetNullableObjectAtIndex(list, 29);
+  pigeonResult.recursiveClassMap = GetNullableObjectAtIndex(list, 30);
   return pigeonResult;
 }
 + (nullable FLTAllNullableTypes *)nullableFromList:(NSArray<id> *)list {
@@ -356,44 +377,50 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.enumList ?: [NSNull null],
     self.objectList ?: [NSNull null],
     self.listList ?: [NSNull null],
+    self.mapList ?: [NSNull null],
     self.recursiveClassList ?: [NSNull null],
     self.map ?: [NSNull null],
     self.stringMap ?: [NSNull null],
     self.intMap ?: [NSNull null],
     self.enumMap ?: [NSNull null],
     self.objectMap ?: [NSNull null],
+    self.listMap ?: [NSNull null],
+    self.mapMap ?: [NSNull null],
     self.recursiveClassMap ?: [NSNull null],
   ];
 }
 @end
 
 @implementation FLTAllNullableTypesWithoutRecursion
-+ (instancetype)makeWithANullableBool:(nullable NSNumber *)aNullableBool
-                         aNullableInt:(nullable NSNumber *)aNullableInt
-                       aNullableInt64:(nullable NSNumber *)aNullableInt64
-                      aNullableDouble:(nullable NSNumber *)aNullableDouble
-                   aNullableByteArray:(nullable FlutterStandardTypedData *)aNullableByteArray
-                  aNullable4ByteArray:(nullable FlutterStandardTypedData *)aNullable4ByteArray
-                  aNullable8ByteArray:(nullable FlutterStandardTypedData *)aNullable8ByteArray
-                  aNullableFloatArray:(nullable FlutterStandardTypedData *)aNullableFloatArray
-                        aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
-                  anotherNullableEnum:(nullable FLTAnotherEnumBox *)anotherNullableEnum
-                      aNullableString:(nullable NSString *)aNullableString
-                      aNullableObject:(nullable id)aNullableObject
-                                 list:(nullable NSArray<id> *)list
-                           stringList:(nullable NSArray<NSString *> *)stringList
-                              intList:(nullable NSArray<NSNumber *> *)intList
-                           doubleList:(nullable NSArray<NSNumber *> *)doubleList
-                             boolList:(nullable NSArray<NSNumber *> *)boolList
-                             enumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
-                           objectList:(nullable NSArray<id> *)objectList
-                             listList:(nullable NSArray<NSArray<id> *> *)listList
-                                  map:(nullable NSDictionary *)map
-                            stringMap:(nullable NSDictionary<NSString *, NSString *> *)stringMap
-                               intMap:(nullable NSDictionary<NSNumber *, NSNumber *> *)intMap
-                              enumMap:
-                                  (nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
-                            objectMap:(nullable NSDictionary<id, id> *)objectMap {
++ (instancetype)
+    makeWithANullableBool:(nullable NSNumber *)aNullableBool
+             aNullableInt:(nullable NSNumber *)aNullableInt
+           aNullableInt64:(nullable NSNumber *)aNullableInt64
+          aNullableDouble:(nullable NSNumber *)aNullableDouble
+       aNullableByteArray:(nullable FlutterStandardTypedData *)aNullableByteArray
+      aNullable4ByteArray:(nullable FlutterStandardTypedData *)aNullable4ByteArray
+      aNullable8ByteArray:(nullable FlutterStandardTypedData *)aNullable8ByteArray
+      aNullableFloatArray:(nullable FlutterStandardTypedData *)aNullableFloatArray
+            aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
+      anotherNullableEnum:(nullable FLTAnotherEnumBox *)anotherNullableEnum
+          aNullableString:(nullable NSString *)aNullableString
+          aNullableObject:(nullable id)aNullableObject
+                     list:(nullable NSArray<id> *)list
+               stringList:(nullable NSArray<NSString *> *)stringList
+                  intList:(nullable NSArray<NSNumber *> *)intList
+               doubleList:(nullable NSArray<NSNumber *> *)doubleList
+                 boolList:(nullable NSArray<NSNumber *> *)boolList
+                 enumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
+               objectList:(nullable NSArray<id> *)objectList
+                 listList:(nullable NSArray<NSArray<id> *> *)listList
+                  mapList:(nullable NSArray<NSDictionary<id, id> *> *)mapList
+                      map:(nullable NSDictionary *)map
+                stringMap:(nullable NSDictionary<NSString *, NSString *> *)stringMap
+                   intMap:(nullable NSDictionary<NSNumber *, NSNumber *> *)intMap
+                  enumMap:(nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                objectMap:(nullable NSDictionary<id, id> *)objectMap
+                  listMap:(nullable NSDictionary<NSNumber *, NSArray<id> *> *)listMap
+                   mapMap:(nullable NSDictionary<NSNumber *, NSDictionary<id, id> *> *)mapMap {
   FLTAllNullableTypesWithoutRecursion *pigeonResult =
       [[FLTAllNullableTypesWithoutRecursion alloc] init];
   pigeonResult.aNullableBool = aNullableBool;
@@ -416,11 +443,14 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.enumList = enumList;
   pigeonResult.objectList = objectList;
   pigeonResult.listList = listList;
+  pigeonResult.mapList = mapList;
   pigeonResult.map = map;
   pigeonResult.stringMap = stringMap;
   pigeonResult.intMap = intMap;
   pigeonResult.enumMap = enumMap;
   pigeonResult.objectMap = objectMap;
+  pigeonResult.listMap = listMap;
+  pigeonResult.mapMap = mapMap;
   return pigeonResult;
 }
 + (FLTAllNullableTypesWithoutRecursion *)fromList:(NSArray<id> *)list {
@@ -446,11 +476,14 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.enumList = GetNullableObjectAtIndex(list, 17);
   pigeonResult.objectList = GetNullableObjectAtIndex(list, 18);
   pigeonResult.listList = GetNullableObjectAtIndex(list, 19);
-  pigeonResult.map = GetNullableObjectAtIndex(list, 20);
-  pigeonResult.stringMap = GetNullableObjectAtIndex(list, 21);
-  pigeonResult.intMap = GetNullableObjectAtIndex(list, 22);
-  pigeonResult.enumMap = GetNullableObjectAtIndex(list, 23);
-  pigeonResult.objectMap = GetNullableObjectAtIndex(list, 24);
+  pigeonResult.mapList = GetNullableObjectAtIndex(list, 20);
+  pigeonResult.map = GetNullableObjectAtIndex(list, 21);
+  pigeonResult.stringMap = GetNullableObjectAtIndex(list, 22);
+  pigeonResult.intMap = GetNullableObjectAtIndex(list, 23);
+  pigeonResult.enumMap = GetNullableObjectAtIndex(list, 24);
+  pigeonResult.objectMap = GetNullableObjectAtIndex(list, 25);
+  pigeonResult.listMap = GetNullableObjectAtIndex(list, 26);
+  pigeonResult.mapMap = GetNullableObjectAtIndex(list, 27);
   return pigeonResult;
 }
 + (nullable FLTAllNullableTypesWithoutRecursion *)nullableFromList:(NSArray<id> *)list {
@@ -478,11 +511,14 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.enumList ?: [NSNull null],
     self.objectList ?: [NSNull null],
     self.listList ?: [NSNull null],
+    self.mapList ?: [NSNull null],
     self.map ?: [NSNull null],
     self.stringMap ?: [NSNull null],
     self.intMap ?: [NSNull null],
     self.enumMap ?: [NSNull null],
     self.objectMap ?: [NSNull null],
+    self.listMap ?: [NSNull null],
+    self.mapMap ?: [NSNull null],
   ];
 }
 @end

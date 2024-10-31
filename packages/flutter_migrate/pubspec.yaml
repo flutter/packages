@@ -21,6 +21,6 @@ dependencies:
 
 dev_dependencies:
   collection: ^1.16.0
-  file_testing: 3.0.0
+  file_testing: ^3.0.0
   lints: ^2.0.0
   test: ^1.16.0

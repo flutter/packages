@@ -1,6 +1,18 @@
+## 14.4.0
+
+- Adds current state getter on `GoRouter` that returns the current `GoRouterState`.
+
+## 14.3.0
+
+- Adds missing implementation for the routerNeglect parameter in GoRouter.
+
+## 14.2.9
+
+- Relaxes route path requirements. Both root and child routes can now start with or without '/'.
+
 ## 14.2.8
 
-- Add current state getter on `GoRouter` that returns the current `GoRouterState`.
+- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView. 
 
 ## 14.2.7
 

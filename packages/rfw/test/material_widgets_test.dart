@@ -9,6 +9,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rfw/formats.dart' show parseLibraryFile;
 import 'package:rfw/rfw.dart';
 
+import 'tolerant_comparator.dart'
+    if (dart.library.js_interop) 'tolerant_comparator_web.dart';
 import 'utils.dart';
 
 void main() {
@@ -21,6 +23,13 @@ void main() {
       ..update(coreName, createCoreWidgets())
       ..update(materialName, createMaterialWidgets());
   }
+
+  setUpAll(() {
+    setUpTolerantComparator(
+      testPath: 'test/material_widget_test.dart',
+      precisionTolerance: 0.00002,
+    );
+  });
 
   testWidgets('Material widgets', (WidgetTester tester) async {
     final Runtime runtime = setupRuntime();

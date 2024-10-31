@@ -230,6 +230,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       initialLocation: _effectiveInitialLocation(initialLocation),
       initialExtra: initialExtra,
       refreshListenable: refreshListenable,
+      routerNeglect: routerNeglect,
     );
 
     routerDelegate = GoRouterDelegate(

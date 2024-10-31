@@ -11,7 +11,7 @@ import StoreKit
   import FlutterMacOS
 #endif
 
-public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
+public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
   private let receiptManager: FIAPReceiptManager
   private var productsCache: NSMutableDictionary = [:]
   private var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
@@ -27,6 +27,21 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   // This property is optional, as it requires self to exist to be initialized.
   public var paymentQueueHandler: FLTPaymentQueueHandlerProtocol?
 
+  // This should be an Task, but Task is on available >= iOS 13
+  private var _updateListenerTask: Any?
+
+  @available(iOS 13.0, *)
+  var updateListenerTask: Task<(), Never> {
+    return self._updateListenerTask as! Task<(), Never>
+  }
+
+  @available(iOS 13.0, *)
+  func setListenerTaskAsTask(task: Task<(), Never>) {
+    self._updateListenerTask = task
+  }
+
+  var transactionCallbackAPI: InAppPurchase2CallbackAPI? = nil
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
       let messenger = registrar.messenger()
@@ -40,7 +55,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     let instance = InAppPurchasePlugin(registrar: registrar)
     registrar.addMethodCallDelegate(instance, channel: channel)
     registrar.addApplicationDelegate(instance)
-    SetUpInAppPurchaseAPI(messenger, instance)
+    SetUpFIAInAppPurchaseAPI(messenger, instance)
     if #available(iOS 15.0, macOS 12.0, *) {
       InAppPurchase2APISetup.setUp(binaryMessenger: messenger, api: instance)
     }
@@ -93,6 +108,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       let messenger = registrar.messenger
     #endif
     setupTransactionObserverChannelIfNeeded(withMessenger: messenger)
+    self.transactionCallbackAPI = InAppPurchase2CallbackAPI(binaryMessenger: messenger)
   }
 
   // MARK: - Pigeon Functions
@@ -104,7 +120,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   }
 
   public func transactionsWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
-    -> [SKPaymentTransactionMessage]?
+    -> [FIASKPaymentTransactionMessage]?
   {
     return getPaymentQueueHandler()
       .getUnfinishedTransactions()
@@ -114,7 +130,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   }
 
   public func storefrontWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
-    -> SKStorefrontMessage?
+    -> FIASKStorefrontMessage?
   {
     if #available(iOS 13.0, *), let storefront = getPaymentQueueHandler().storefront {
       return FIAObjectTranslator.convertStorefront(toPigeon: storefront)
@@ -124,7 +140,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
 
   public func startProductRequestProductIdentifiers(
     _ productIdentifiers: [String],
-    completion: @escaping (SKProductsResponseMessage?, FlutterError?) -> Void
+    completion: @escaping (FIASKProductsResponseMessage?, FlutterError?) -> Void
   ) {
     let request = getProductRequest(withIdentifiers: Set(productIdentifiers))
     let handler = handlerFactory(request)

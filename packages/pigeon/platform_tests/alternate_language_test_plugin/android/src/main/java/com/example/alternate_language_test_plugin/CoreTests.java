@@ -426,6 +426,19 @@ public class CoreTests {
       this.listList = setterArg;
     }
 
+    private @NonNull List<Map<Object, Object>> mapList;
+
+    public @NonNull List<Map<Object, Object>> getMapList() {
+      return mapList;
+    }
+
+    public void setMapList(@NonNull List<Map<Object, Object>> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"mapList\" is null.");
+      }
+      this.mapList = setterArg;
+    }
+
     private @NonNull Map<Object, Object> map;
 
     public @NonNull Map<Object, Object> getMap() {
@@ -491,6 +504,32 @@ public class CoreTests {
       this.objectMap = setterArg;
     }
 
+    private @NonNull Map<Long, List<Object>> listMap;
+
+    public @NonNull Map<Long, List<Object>> getListMap() {
+      return listMap;
+    }
+
+    public void setListMap(@NonNull Map<Long, List<Object>> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"listMap\" is null.");
+      }
+      this.listMap = setterArg;
+    }
+
+    private @NonNull Map<Long, Map<Object, Object>> mapMap;
+
+    public @NonNull Map<Long, Map<Object, Object>> getMapMap() {
+      return mapMap;
+    }
+
+    public void setMapMap(@NonNull Map<Long, Map<Object, Object>> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"mapMap\" is null.");
+      }
+      this.mapMap = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     AllTypes() {}
 
@@ -523,11 +562,14 @@ public class CoreTests {
           && enumList.equals(that.enumList)
           && objectList.equals(that.objectList)
           && listList.equals(that.listList)
+          && mapList.equals(that.mapList)
           && map.equals(that.map)
           && stringMap.equals(that.stringMap)
           && intMap.equals(that.intMap)
           && enumMap.equals(that.enumMap)
-          && objectMap.equals(that.objectMap);
+          && objectMap.equals(that.objectMap)
+          && listMap.equals(that.listMap)
+          && mapMap.equals(that.mapMap);
     }
 
     @Override
@@ -550,11 +592,14 @@ public class CoreTests {
               enumList,
               objectList,
               listList,
+              mapList,
               map,
               stringMap,
               intMap,
               enumMap,
-              objectMap);
+              objectMap,
+              listMap,
+              mapMap);
       pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aByteArray);
       pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(a4ByteArray);
       pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(a8ByteArray);
@@ -724,6 +769,14 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable List<Map<Object, Object>> mapList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMapList(@NonNull List<Map<Object, Object>> setterArg) {
+        this.mapList = setterArg;
+        return this;
+      }
+
       private @Nullable Map<Object, Object> map;
 
       @CanIgnoreReturnValue
@@ -764,6 +817,22 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable Map<Long, List<Object>> listMap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setListMap(@NonNull Map<Long, List<Object>> setterArg) {
+        this.listMap = setterArg;
+        return this;
+      }
+
+      private @Nullable Map<Long, Map<Object, Object>> mapMap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMapMap(@NonNull Map<Long, Map<Object, Object>> setterArg) {
+        this.mapMap = setterArg;
+        return this;
+      }
+
       public @NonNull AllTypes build() {
         AllTypes pigeonReturn = new AllTypes();
         pigeonReturn.setABool(aBool);
@@ -786,18 +855,21 @@ public class CoreTests {
         pigeonReturn.setEnumList(enumList);
         pigeonReturn.setObjectList(objectList);
         pigeonReturn.setListList(listList);
+        pigeonReturn.setMapList(mapList);
         pigeonReturn.setMap(map);
         pigeonReturn.setStringMap(stringMap);
         pigeonReturn.setIntMap(intMap);
         pigeonReturn.setEnumMap(enumMap);
         pigeonReturn.setObjectMap(objectMap);
+        pigeonReturn.setListMap(listMap);
+        pigeonReturn.setMapMap(mapMap);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(25);
+      ArrayList<Object> toListResult = new ArrayList<>(28);
       toListResult.add(aBool);
       toListResult.add(anInt);
       toListResult.add(anInt64);
@@ -818,11 +890,14 @@ public class CoreTests {
       toListResult.add(enumList);
       toListResult.add(objectList);
       toListResult.add(listList);
+      toListResult.add(mapList);
       toListResult.add(map);
       toListResult.add(stringMap);
       toListResult.add(intMap);
       toListResult.add(enumMap);
       toListResult.add(objectMap);
+      toListResult.add(listMap);
+      toListResult.add(mapMap);
       return toListResult;
     }
 
@@ -868,16 +943,22 @@ public class CoreTests {
       pigeonResult.setObjectList((List<Object>) objectList);
       Object listList = pigeonVar_list.get(19);
       pigeonResult.setListList((List<List<Object>>) listList);
-      Object map = pigeonVar_list.get(20);
+      Object mapList = pigeonVar_list.get(20);
+      pigeonResult.setMapList((List<Map<Object, Object>>) mapList);
+      Object map = pigeonVar_list.get(21);
       pigeonResult.setMap((Map<Object, Object>) map);
-      Object stringMap = pigeonVar_list.get(21);
+      Object stringMap = pigeonVar_list.get(22);
       pigeonResult.setStringMap((Map<String, String>) stringMap);
-      Object intMap = pigeonVar_list.get(22);
+      Object intMap = pigeonVar_list.get(23);
       pigeonResult.setIntMap((Map<Long, Long>) intMap);
-      Object enumMap = pigeonVar_list.get(23);
+      Object enumMap = pigeonVar_list.get(24);
       pigeonResult.setEnumMap((Map<AnEnum, AnEnum>) enumMap);
-      Object objectMap = pigeonVar_list.get(24);
+      Object objectMap = pigeonVar_list.get(25);
       pigeonResult.setObjectMap((Map<Object, Object>) objectMap);
+      Object listMap = pigeonVar_list.get(26);
+      pigeonResult.setListMap((Map<Long, List<Object>>) listMap);
+      Object mapMap = pigeonVar_list.get(27);
+      pigeonResult.setMapMap((Map<Long, Map<Object, Object>>) mapMap);
       return pigeonResult;
     }
   }
@@ -1098,6 +1179,16 @@ public class CoreTests {
       this.listList = setterArg;
     }
 
+    private @Nullable List<Map<Object, Object>> mapList;
+
+    public @Nullable List<Map<Object, Object>> getMapList() {
+      return mapList;
+    }
+
+    public void setMapList(@Nullable List<Map<Object, Object>> setterArg) {
+      this.mapList = setterArg;
+    }
+
     private @Nullable List<AllNullableTypes> recursiveClassList;
 
     public @Nullable List<AllNullableTypes> getRecursiveClassList() {
@@ -1158,6 +1249,26 @@ public class CoreTests {
       this.objectMap = setterArg;
     }
 
+    private @Nullable Map<Long, List<Object>> listMap;
+
+    public @Nullable Map<Long, List<Object>> getListMap() {
+      return listMap;
+    }
+
+    public void setListMap(@Nullable Map<Long, List<Object>> setterArg) {
+      this.listMap = setterArg;
+    }
+
+    private @Nullable Map<Long, Map<Object, Object>> mapMap;
+
+    public @Nullable Map<Long, Map<Object, Object>> getMapMap() {
+      return mapMap;
+    }
+
+    public void setMapMap(@Nullable Map<Long, Map<Object, Object>> setterArg) {
+      this.mapMap = setterArg;
+    }
+
     private @Nullable Map<Long, AllNullableTypes> recursiveClassMap;
 
     public @Nullable Map<Long, AllNullableTypes> getRecursiveClassMap() {
@@ -1198,12 +1309,15 @@ public class CoreTests {
           && Objects.equals(enumList, that.enumList)
           && Objects.equals(objectList, that.objectList)
           && Objects.equals(listList, that.listList)
+          && Objects.equals(mapList, that.mapList)
           && Objects.equals(recursiveClassList, that.recursiveClassList)
           && Objects.equals(map, that.map)
           && Objects.equals(stringMap, that.stringMap)
           && Objects.equals(intMap, that.intMap)
           && Objects.equals(enumMap, that.enumMap)
           && Objects.equals(objectMap, that.objectMap)
+          && Objects.equals(listMap, that.listMap)
+          && Objects.equals(mapMap, that.mapMap)
           && Objects.equals(recursiveClassMap, that.recursiveClassMap);
     }
 
@@ -1228,12 +1342,15 @@ public class CoreTests {
               enumList,
               objectList,
               listList,
+              mapList,
               recursiveClassList,
               map,
               stringMap,
               intMap,
               enumMap,
               objectMap,
+              listMap,
+              mapMap,
               recursiveClassMap);
       pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullableByteArray);
       pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable4ByteArray);
@@ -1412,6 +1529,14 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable List<Map<Object, Object>> mapList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMapList(@Nullable List<Map<Object, Object>> setterArg) {
+        this.mapList = setterArg;
+        return this;
+      }
+
       private @Nullable List<AllNullableTypes> recursiveClassList;
 
       @CanIgnoreReturnValue
@@ -1460,6 +1585,22 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable Map<Long, List<Object>> listMap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setListMap(@Nullable Map<Long, List<Object>> setterArg) {
+        this.listMap = setterArg;
+        return this;
+      }
+
+      private @Nullable Map<Long, Map<Object, Object>> mapMap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMapMap(@Nullable Map<Long, Map<Object, Object>> setterArg) {
+        this.mapMap = setterArg;
+        return this;
+      }
+
       private @Nullable Map<Long, AllNullableTypes> recursiveClassMap;
 
       @CanIgnoreReturnValue
@@ -1492,12 +1633,15 @@ public class CoreTests {
         pigeonReturn.setEnumList(enumList);
         pigeonReturn.setObjectList(objectList);
         pigeonReturn.setListList(listList);
+        pigeonReturn.setMapList(mapList);
         pigeonReturn.setRecursiveClassList(recursiveClassList);
         pigeonReturn.setMap(map);
         pigeonReturn.setStringMap(stringMap);
         pigeonReturn.setIntMap(intMap);
         pigeonReturn.setEnumMap(enumMap);
         pigeonReturn.setObjectMap(objectMap);
+        pigeonReturn.setListMap(listMap);
+        pigeonReturn.setMapMap(mapMap);
         pigeonReturn.setRecursiveClassMap(recursiveClassMap);
         return pigeonReturn;
       }
@@ -1505,7 +1649,7 @@ public class CoreTests {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(28);
+      ArrayList<Object> toListResult = new ArrayList<>(31);
       toListResult.add(aNullableBool);
       toListResult.add(aNullableInt);
       toListResult.add(aNullableInt64);
@@ -1527,12 +1671,15 @@ public class CoreTests {
       toListResult.add(enumList);
       toListResult.add(objectList);
       toListResult.add(listList);
+      toListResult.add(mapList);
       toListResult.add(recursiveClassList);
       toListResult.add(map);
       toListResult.add(stringMap);
       toListResult.add(intMap);
       toListResult.add(enumMap);
       toListResult.add(objectMap);
+      toListResult.add(listMap);
+      toListResult.add(mapMap);
       toListResult.add(recursiveClassMap);
       return toListResult;
     }
@@ -1581,19 +1728,25 @@ public class CoreTests {
       pigeonResult.setObjectList((List<Object>) objectList);
       Object listList = pigeonVar_list.get(20);
       pigeonResult.setListList((List<List<Object>>) listList);
-      Object recursiveClassList = pigeonVar_list.get(21);
+      Object mapList = pigeonVar_list.get(21);
+      pigeonResult.setMapList((List<Map<Object, Object>>) mapList);
+      Object recursiveClassList = pigeonVar_list.get(22);
       pigeonResult.setRecursiveClassList((List<AllNullableTypes>) recursiveClassList);
-      Object map = pigeonVar_list.get(22);
+      Object map = pigeonVar_list.get(23);
       pigeonResult.setMap((Map<Object, Object>) map);
-      Object stringMap = pigeonVar_list.get(23);
+      Object stringMap = pigeonVar_list.get(24);
       pigeonResult.setStringMap((Map<String, String>) stringMap);
-      Object intMap = pigeonVar_list.get(24);
+      Object intMap = pigeonVar_list.get(25);
       pigeonResult.setIntMap((Map<Long, Long>) intMap);
-      Object enumMap = pigeonVar_list.get(25);
+      Object enumMap = pigeonVar_list.get(26);
       pigeonResult.setEnumMap((Map<AnEnum, AnEnum>) enumMap);
-      Object objectMap = pigeonVar_list.get(26);
+      Object objectMap = pigeonVar_list.get(27);
       pigeonResult.setObjectMap((Map<Object, Object>) objectMap);
-      Object recursiveClassMap = pigeonVar_list.get(27);
+      Object listMap = pigeonVar_list.get(28);
+      pigeonResult.setListMap((Map<Long, List<Object>>) listMap);
+      Object mapMap = pigeonVar_list.get(29);
+      pigeonResult.setMapMap((Map<Long, Map<Object, Object>>) mapMap);
+      Object recursiveClassMap = pigeonVar_list.get(30);
       pigeonResult.setRecursiveClassMap((Map<Long, AllNullableTypes>) recursiveClassMap);
       return pigeonResult;
     }
@@ -1806,6 +1959,16 @@ public class CoreTests {
       this.listList = setterArg;
     }
 
+    private @Nullable List<Map<Object, Object>> mapList;
+
+    public @Nullable List<Map<Object, Object>> getMapList() {
+      return mapList;
+    }
+
+    public void setMapList(@Nullable List<Map<Object, Object>> setterArg) {
+      this.mapList = setterArg;
+    }
+
     private @Nullable Map<Object, Object> map;
 
     public @Nullable Map<Object, Object> getMap() {
@@ -1856,6 +2019,26 @@ public class CoreTests {
       this.objectMap = setterArg;
     }
 
+    private @Nullable Map<Long, List<Object>> listMap;
+
+    public @Nullable Map<Long, List<Object>> getListMap() {
+      return listMap;
+    }
+
+    public void setListMap(@Nullable Map<Long, List<Object>> setterArg) {
+      this.listMap = setterArg;
+    }
+
+    private @Nullable Map<Long, Map<Object, Object>> mapMap;
+
+    public @Nullable Map<Long, Map<Object, Object>> getMapMap() {
+      return mapMap;
+    }
+
+    public void setMapMap(@Nullable Map<Long, Map<Object, Object>> setterArg) {
+      this.mapMap = setterArg;
+    }
+
     @Override
     public boolean equals(Object o) {
       if (this == o) {
@@ -1885,11 +2068,14 @@ public class CoreTests {
           && Objects.equals(enumList, that.enumList)
           && Objects.equals(objectList, that.objectList)
           && Objects.equals(listList, that.listList)
+          && Objects.equals(mapList, that.mapList)
           && Objects.equals(map, that.map)
           && Objects.equals(stringMap, that.stringMap)
           && Objects.equals(intMap, that.intMap)
           && Objects.equals(enumMap, that.enumMap)
-          && Objects.equals(objectMap, that.objectMap);
+          && Objects.equals(objectMap, that.objectMap)
+          && Objects.equals(listMap, that.listMap)
+          && Objects.equals(mapMap, that.mapMap);
     }
 
     @Override
@@ -1912,11 +2098,14 @@ public class CoreTests {
               enumList,
               objectList,
               listList,
+              mapList,
               map,
               stringMap,
               intMap,
               enumMap,
-              objectMap);
+              objectMap,
+              listMap,
+              mapMap);
       pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullableByteArray);
       pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable4ByteArray);
       pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable8ByteArray);
@@ -2086,6 +2275,14 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable List<Map<Object, Object>> mapList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMapList(@Nullable List<Map<Object, Object>> setterArg) {
+        this.mapList = setterArg;
+        return this;
+      }
+
       private @Nullable Map<Object, Object> map;
 
       @CanIgnoreReturnValue
@@ -2126,6 +2323,22 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable Map<Long, List<Object>> listMap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setListMap(@Nullable Map<Long, List<Object>> setterArg) {
+        this.listMap = setterArg;
+        return this;
+      }
+
+      private @Nullable Map<Long, Map<Object, Object>> mapMap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMapMap(@Nullable Map<Long, Map<Object, Object>> setterArg) {
+        this.mapMap = setterArg;
+        return this;
+      }
+
       public @NonNull AllNullableTypesWithoutRecursion build() {
         AllNullableTypesWithoutRecursion pigeonReturn = new AllNullableTypesWithoutRecursion();
         pigeonReturn.setANullableBool(aNullableBool);
@@ -2148,18 +2361,21 @@ public class CoreTests {
         pigeonReturn.setEnumList(enumList);
         pigeonReturn.setObjectList(objectList);
         pigeonReturn.setListList(listList);
+        pigeonReturn.setMapList(mapList);
         pigeonReturn.setMap(map);
         pigeonReturn.setStringMap(stringMap);
         pigeonReturn.setIntMap(intMap);
         pigeonReturn.setEnumMap(enumMap);
         pigeonReturn.setObjectMap(objectMap);
+        pigeonReturn.setListMap(listMap);
+        pigeonReturn.setMapMap(mapMap);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(25);
+      ArrayList<Object> toListResult = new ArrayList<>(28);
       toListResult.add(aNullableBool);
       toListResult.add(aNullableInt);
       toListResult.add(aNullableInt64);
@@ -2180,11 +2396,14 @@ public class CoreTests {
       toListResult.add(enumList);
       toListResult.add(objectList);
       toListResult.add(listList);
+      toListResult.add(mapList);
       toListResult.add(map);
       toListResult.add(stringMap);
       toListResult.add(intMap);
       toListResult.add(enumMap);
       toListResult.add(objectMap);
+      toListResult.add(listMap);
+      toListResult.add(mapMap);
       return toListResult;
     }
 
@@ -2231,16 +2450,22 @@ public class CoreTests {
       pigeonResult.setObjectList((List<Object>) objectList);
       Object listList = pigeonVar_list.get(19);
       pigeonResult.setListList((List<List<Object>>) listList);
-      Object map = pigeonVar_list.get(20);
+      Object mapList = pigeonVar_list.get(20);
+      pigeonResult.setMapList((List<Map<Object, Object>>) mapList);
+      Object map = pigeonVar_list.get(21);
       pigeonResult.setMap((Map<Object, Object>) map);
-      Object stringMap = pigeonVar_list.get(21);
+      Object stringMap = pigeonVar_list.get(22);
       pigeonResult.setStringMap((Map<String, String>) stringMap);
-      Object intMap = pigeonVar_list.get(22);
+      Object intMap = pigeonVar_list.get(23);
       pigeonResult.setIntMap((Map<Long, Long>) intMap);
-      Object enumMap = pigeonVar_list.get(23);
+      Object enumMap = pigeonVar_list.get(24);
       pigeonResult.setEnumMap((Map<AnEnum, AnEnum>) enumMap);
-      Object objectMap = pigeonVar_list.get(24);
+      Object objectMap = pigeonVar_list.get(25);
       pigeonResult.setObjectMap((Map<Object, Object>) objectMap);
+      Object listMap = pigeonVar_list.get(26);
+      pigeonResult.setListMap((Map<Long, List<Object>>) listMap);
+      Object mapMap = pigeonVar_list.get(27);
+      pigeonResult.setMapMap((Map<Long, Map<Object, Object>>) mapMap);
       return pigeonResult;
     }
   }

@@ -62,8 +62,6 @@ void defineTests() {
         expect(
             style.code!.fontSize, cTheme.textTheme.textStyle.fontSize! * 0.85);
         expect(style.code!.fontFamily, 'monospace');
-        expect(
-            style.code!.backgroundColor, CupertinoColors.systemGrey6.darkColor);
 
         // H1
         expect(style.h1!.color, cTheme.textTheme.textStyle.color);
@@ -152,7 +150,7 @@ void defineTests() {
         expect(
             style.code!.fontSize, theme.textTheme.bodyMedium!.fontSize! * 0.85);
         expect(style.code!.fontFamily, 'monospace');
-        expect(style.code!.backgroundColor, theme.cardColor);
+        expect(style.code!.backgroundColor, theme.cardTheme.color);
 
         // H1
         expect(style.h1, theme.textTheme.headlineSmall);

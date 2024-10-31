@@ -96,25 +96,6 @@ void main() {
       }, throwsA(isAssertionError));
     });
 
-    test('leading / on sub-route', () {
-      expect(() {
-        GoRouter(
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/',
-              builder: dummy,
-              routes: <GoRoute>[
-                GoRoute(
-                  path: '/foo',
-                  builder: dummy,
-                ),
-              ],
-            ),
-          ],
-        );
-      }, throwsA(isAssertionError));
-    });
-
     test('trailing / on sub-route', () {
       expect(() {
         GoRouter(
@@ -131,16 +112,6 @@ void main() {
             ),
           ],
         );
-      }, throwsA(isAssertionError));
-    });
-
-    testWidgets('lack of leading / on top-level route',
-        (WidgetTester tester) async {
-      await expectLater(() async {
-        final List<GoRoute> routes = <GoRoute>[
-          GoRoute(path: 'foo', builder: dummy),
-        ];
-        await createRouter(routes, tester);
       }, throwsA(isAssertionError));
     });
 
@@ -5573,6 +5544,94 @@ void main() {
     state = router.state;
     expect(state?.name, 'tulips');
     expect(state?.fullPath, '/tulips');
+  });
+
+  testWidgets('should allow route paths without leading /',
+      (WidgetTester tester) async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/', // root cannot be empty (existing assert)
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
+        routes: <RouteBase>[
+          GoRoute(
+            path: 'child-route',
+            builder: (BuildContext context, GoRouterState state) =>
+                const Text('/child-route'),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'grand-child-route',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('/grand-child-route'),
+              ),
+              GoRoute(
+                path: 'redirected-grand-child-route',
+                redirect: (BuildContext context, GoRouterState state) =>
+                    '/child-route',
+              ),
+            ],
+          )
+        ],
+      ),
+    ];
+
+    final GoRouter router = await createRouter(routes, tester,
+        initialLocation: '/child-route/grand-child-route');
+    RouteMatchList matches = router.routerDelegate.currentConfiguration;
+    expect(matches.matches, hasLength(3));
+    expect(matches.uri.toString(), '/child-route/grand-child-route');
+    expect(find.text('/grand-child-route'), findsOneWidget);
+
+    router.go('/child-route/redirected-grand-child-route');
+    await tester.pumpAndSettle();
+    matches = router.routerDelegate.currentConfiguration;
+    expect(matches.matches, hasLength(2));
+    expect(matches.uri.toString(), '/child-route');
+    expect(find.text('/child-route'), findsOneWidget);
+  });
+
+  testWidgets('should allow route paths with leading /',
+      (WidgetTester tester) async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/child-route',
+            builder: (BuildContext context, GoRouterState state) =>
+                const Text('/child-route'),
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/grand-child-route',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('/grand-child-route'),
+              ),
+              GoRoute(
+                path: '/redirected-grand-child-route',
+                redirect: (BuildContext context, GoRouterState state) =>
+                    '/child-route',
+              ),
+            ],
+          )
+        ],
+      ),
+    ];
+
+    final GoRouter router = await createRouter(routes, tester,
+        initialLocation: '/child-route/grand-child-route');
+    RouteMatchList matches = router.routerDelegate.currentConfiguration;
+    expect(matches.matches, hasLength(3));
+    expect(matches.uri.toString(), '/child-route/grand-child-route');
+    expect(find.text('/grand-child-route'), findsOneWidget);
+
+    router.go('/child-route/redirected-grand-child-route');
+    await tester.pumpAndSettle();
+    matches = router.routerDelegate.currentConfiguration;
+    expect(matches.matches, hasLength(2));
+    expect(matches.uri.toString(), '/child-route');
+    expect(find.text('/child-route'), findsOneWidget);
   });
 }
 

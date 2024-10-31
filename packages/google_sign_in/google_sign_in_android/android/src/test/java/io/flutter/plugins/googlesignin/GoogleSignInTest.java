@@ -41,7 +41,7 @@ public class GoogleSignInTest {
   @Mock Resources mockResources;
   @Mock Activity mockActivity;
   @Mock BinaryMessenger mockMessenger;
-  @Spy Messages.Result<Void> voidResult;
+  @Spy Messages.VoidResult voidResult;
   @Spy Messages.Result<Boolean> boolResult;
   @Spy Messages.Result<Messages.UserData> userDataResult;
   @Mock GoogleSignInWrapper mockGoogleSignIn;

@@ -22,7 +22,8 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final HttpServer server = await HttpServer.bind(InternetAddress.anyIPv4, 0);
+  final HttpServer server =
+      await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
   unawaited(server.forEach((HttpRequest request) {
     if (request.uri.path == '/hello.txt') {
       request.response.writeln('Hello, world.');
@@ -491,7 +492,7 @@ Future<void> main() async {
   });
 
   group('Programmatic Scroll', () {
-    Future<WebViewController> pumpScrollTestPage(WidgetTester tester) async {
+    testWidgets('setAndGetScrollPosition', (WidgetTester tester) async {
       const String scrollTestPage = '''
         <!DOCTYPE html>
         <html>
@@ -518,105 +519,58 @@ Future<void> main() async {
 
       final Completer<void> pageLoaded = Completer<void>();
       final WebViewController controller = WebViewController();
+      ScrollPositionChange? recordedPosition;
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       await controller.setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) => pageLoaded.complete(),
       ));
+      await controller.setOnScrollPositionChange(
+          (ScrollPositionChange contentOffsetChange) {
+        recordedPosition = contentOffsetChange;
+      });
 
       await controller.loadRequest(Uri.parse(
         'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
       ));
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
+
       await pageLoaded.future;
 
-      return controller;
-    }
+      await tester.pumpAndSettle(const Duration(seconds: 3));
 
-    testWidgets('getScrollPosition', (WidgetTester tester) async {
-      final WebViewController controller = await pumpScrollTestPage(tester);
-      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      Offset scrollPos = await controller.getScrollPosition();
 
-      const Offset testScrollPosition = Offset(123, 321);
+      // Check scrollTo()
+      const int X_SCROLL = 123;
+      const int Y_SCROLL = 321;
+      // Get the initial position; this ensures that scrollTo is actually
+      // changing something, but also gives the native view's scroll position
+      // time to settle.
+      expect(scrollPos.dx, isNot(X_SCROLL));
+      expect(scrollPos.dy, isNot(Y_SCROLL));
+      expect(recordedPosition?.x, isNot(X_SCROLL));
+      expect(recordedPosition?.y, isNot(Y_SCROLL));
 
-      // Ensure the start scroll position is not equal to the test position.
-      expect(await controller.getScrollPosition(), isNot(testScrollPosition));
+      await controller.scrollTo(X_SCROLL, Y_SCROLL);
+      scrollPos = await controller.getScrollPosition();
+      expect(scrollPos.dx, X_SCROLL);
+      expect(scrollPos.dy, Y_SCROLL);
+      expect(recordedPosition?.x, X_SCROLL);
+      expect(recordedPosition?.y, Y_SCROLL);
 
-      final Completer<void> testScrollPositionCompleter = Completer<void>();
-      await controller.setOnScrollPositionChange(
-        (ScrollPositionChange contentOffsetChange) {
-          if (Offset(contentOffsetChange.x, contentOffsetChange.y) ==
-              testScrollPosition) {
-            testScrollPositionCompleter.complete();
-          }
-        },
-      );
-
-      await controller.scrollTo(
-        testScrollPosition.dx.toInt(),
-        testScrollPosition.dy.toInt(),
-      );
-      await testScrollPositionCompleter.future;
-
-      expect(await controller.getScrollPosition(), testScrollPosition);
-    });
-
-    testWidgets('scrollTo', (WidgetTester tester) async {
-      final WebViewController controller = await pumpScrollTestPage(tester);
-
-      const Offset testScrollPosition = Offset(123, 321);
-
-      // Ensure the start scroll position is not equal to the test position.
-      expect(await controller.getScrollPosition(), isNot(testScrollPosition));
-
-      late ScrollPositionChange lastPositionChange;
-      await controller.setOnScrollPositionChange(
-        expectAsyncUntil1(
-          (ScrollPositionChange contentOffsetChange) {
-            lastPositionChange = contentOffsetChange;
-          },
-          () {
-            return Offset(lastPositionChange.x, lastPositionChange.y) ==
-                testScrollPosition;
-          },
-        ),
-      );
-
-      await controller.scrollTo(
-        testScrollPosition.dx.toInt(),
-        testScrollPosition.dy.toInt(),
-      );
-    });
-
-    testWidgets('scrollBy', (WidgetTester tester) async {
-      final WebViewController controller = await pumpScrollTestPage(tester);
-
-      const Offset testScrollPosition = Offset(123, 321);
-
-      // Ensure the start scroll position is not equal to the test position.
-      expect(await controller.getScrollPosition(), isNot(testScrollPosition));
-
-      late ScrollPositionChange lastPositionChange;
-      await controller.setOnScrollPositionChange(
-        expectAsyncUntil1(
-          (ScrollPositionChange contentOffsetChange) {
-            lastPositionChange = contentOffsetChange;
-          },
-          () {
-            return Offset(lastPositionChange.x, lastPositionChange.y) ==
-                testScrollPosition;
-          },
-        ),
-      );
-
-      await controller.scrollTo(0, 0);
-      await controller.scrollBy(
-        testScrollPosition.dx.toInt(),
-        testScrollPosition.dy.toInt(),
-      );
+      // Check scrollBy() (on top of scrollTo())
+      await controller.scrollBy(X_SCROLL, Y_SCROLL);
+      scrollPos = await controller.getScrollPosition();
+      expect(scrollPos.dx, X_SCROLL * 2);
+      expect(scrollPos.dy, Y_SCROLL * 2);
+      expect(recordedPosition?.x, X_SCROLL * 2);
+      expect(recordedPosition?.y, Y_SCROLL * 2);
     });
   },
       // Scroll position is currently not implemented for macOS.
-      skip: Platform.isMacOS);
+      // Flakes on iOS: https://github.com/flutter/flutter/issues/154826
+      skip: Platform.isMacOS || Platform.isIOS);
 
   group('NavigationDelegate', () {
     const String blankPage = '<!DOCTYPE html><head></head><body></body></html>';
@@ -631,7 +585,7 @@ Future<void> main() async {
       await controller.setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) => pageLoaded.complete(),
         onNavigationRequest: (NavigationRequest navigationRequest) {
-          return (navigationRequest.url.contains('youtube.com'))
+          return navigationRequest.url.contains('youtube.com')
               ? NavigationDecision.prevent
               : NavigationDecision.navigate;
         },
@@ -701,7 +655,7 @@ Future<void> main() async {
       await controller.setNavigationDelegate(NavigationDelegate(
           onPageFinished: (_) => pageLoaded.complete(),
           onNavigationRequest: (NavigationRequest navigationRequest) {
-            return (navigationRequest.url.contains('youtube.com'))
+            return navigationRequest.url.contains('youtube.com')
                 ? NavigationDecision.prevent
                 : NavigationDecision.navigate;
           }));

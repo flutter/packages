@@ -367,10 +367,21 @@ this command.
               'notAnnotation=io.flutter.plugins.DartIntegrationTest';
 
           print('Running integration tests...');
+          // Explicitly request all ABIs, as Flutter would if being called
+          // without a specific target (see
+          // https://github.com/flutter/flutter/pull/154476) to ensure it can
+          // run on any architecture emulator.
+          const List<String> abis = <String>[
+            'android-arm',
+            'android-arm64',
+            'android-x64',
+            'android-x86'
+          ];
           final int exitCode = await project.runCommand(
             'app:connectedAndroidTest',
             arguments: <String>[
               '-Pandroid.testInstrumentationRunnerArguments.$filter',
+              '-Ptarget-platform=${abis.join(',')}',
             ],
           );
           if (exitCode != 0) {

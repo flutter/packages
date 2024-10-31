@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:camera_android/src/messages.g.dart';
 import 'package:camera_android/src/utils.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
@@ -13,48 +14,46 @@ void main() {
         'Should return CameraLensDirection when valid value is supplied when parsing camera lens direction',
         () {
       expect(
-        parseCameraLensDirection('back'),
+        cameraLensDirectionFromPlatform(PlatformCameraLensDirection.back),
         CameraLensDirection.back,
       );
       expect(
-        parseCameraLensDirection('front'),
+        cameraLensDirectionFromPlatform(PlatformCameraLensDirection.front),
         CameraLensDirection.front,
       );
       expect(
-        parseCameraLensDirection('external'),
+        cameraLensDirectionFromPlatform(PlatformCameraLensDirection.external),
         CameraLensDirection.external,
       );
     });
 
-    test(
-        'Should throw ArgumentException when invalid value is supplied when parsing camera lens direction',
-        () {
+    test('deviceOrientationFromPlatform() should convert correctly', () {
       expect(
-        () => parseCameraLensDirection('test'),
-        throwsA(isArgumentError),
-      );
-    });
-
-    test('serializeDeviceOrientation() should serialize correctly', () {
-      expect(serializeDeviceOrientation(DeviceOrientation.portraitUp),
-          'portraitUp');
-      expect(serializeDeviceOrientation(DeviceOrientation.portraitDown),
-          'portraitDown');
-      expect(serializeDeviceOrientation(DeviceOrientation.landscapeRight),
-          'landscapeRight');
-      expect(serializeDeviceOrientation(DeviceOrientation.landscapeLeft),
-          'landscapeLeft');
-    });
-
-    test('deserializeDeviceOrientation() should deserialize correctly', () {
-      expect(deserializeDeviceOrientation('portraitUp'),
+          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitUp),
           DeviceOrientation.portraitUp);
-      expect(deserializeDeviceOrientation('portraitDown'),
+      expect(
+          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitDown),
           DeviceOrientation.portraitDown);
-      expect(deserializeDeviceOrientation('landscapeRight'),
+      expect(
+          deviceOrientationFromPlatform(
+              PlatformDeviceOrientation.landscapeRight),
           DeviceOrientation.landscapeRight);
-      expect(deserializeDeviceOrientation('landscapeLeft'),
+      expect(
+          deviceOrientationFromPlatform(
+              PlatformDeviceOrientation.landscapeLeft),
           DeviceOrientation.landscapeLeft);
+    });
+
+    test('exposureModeFromPlatform() should convert correctly', () {
+      expect(exposureModeFromPlatform(PlatformExposureMode.auto),
+          ExposureMode.auto);
+      expect(exposureModeFromPlatform(PlatformExposureMode.locked),
+          ExposureMode.locked);
+    });
+
+    test('focusModeFromPlatform() should convert correctly', () {
+      expect(focusModeFromPlatform(PlatformFocusMode.auto), FocusMode.auto);
+      expect(focusModeFromPlatform(PlatformFocusMode.locked), FocusMode.locked);
     });
   });
 }

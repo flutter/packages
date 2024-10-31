@@ -1,3 +1,67 @@
+## 0.2.2+14
+
+* Adds internal wrapper for iOS native `IMACompanionAdSlot` and `IMACompanionDelegate`.
+
+## 0.2.2+13
+
+* Adds internal wrapper for Android native `Ad`.
+
+## 0.2.2+12
+
+* Adds internal wrapper for iOS native `IMACompanionAd`.
+
+## 0.2.2+11
+
+* Adds internal wrapper for Android native `UniversalAdId`.
+
+## 0.2.2+10
+
+* Fixes bug where Android would show the last frame of the previous Ad before playing the current
+  one.
+
+## 0.2.2+9
+
+* Adds internal wrapper for Android native `CompanionAd`.
+
+## 0.2.2+8
+
+* Adds remaining methods for internal wrapper of the iOS native `IMAAdsRenderingSettings`.
+
+## 0.2.2+7
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 0.2.2+6
+
+* Bumps Android dependency `com.google.ads.interactivemedia.v3:interactivemedia` from `3.50.0` to
+  `3.35.1`.
+
+## 0.2.2+5
+
+* Changes the example app to initialize the `AdsLoader` in `onContainerAdded`.
+
+## 0.2.2+4
+
+* Adds internal wrapper for Android native `AdProgressInfo`.
+
+## 0.2.2+3
+
+* Adds internal wrapper for iOS native `IMAFriendlyObstruction`.
+
+## 0.2.2+2
+
+* Adds internal wrapper for Android native `AdsRenderingSettings`.
+
+## 0.2.2+1
+
+* Bumps Android dependency `com.google.ads.interactivemedia.v3:interactivemedia` from `3.34.0` to
+  `3.35.0`.
+
+## 0.2.2
+
+* Adds support for mid-roll ads. See `AdsRequest.contentProgressProvider`.
+
 ## 0.2.1
 
 * Adds internal wrapper for Android native `ContentProgressProvider`.

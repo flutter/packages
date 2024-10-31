@@ -74,11 +74,14 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                      enumList:(NSArray<FLTAnEnumBox *> *)enumList
                    objectList:(NSArray<id> *)objectList
                      listList:(NSArray<NSArray<id> *> *)listList
+                      mapList:(NSArray<NSDictionary<id, id> *> *)mapList
                           map:(NSDictionary *)map
                     stringMap:(NSDictionary<NSString *, NSString *> *)stringMap
                        intMap:(NSDictionary<NSNumber *, NSNumber *> *)intMap
                       enumMap:(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
-                    objectMap:(NSDictionary<id, id> *)objectMap;
+                    objectMap:(NSDictionary<id, id> *)objectMap
+                      listMap:(NSDictionary<NSNumber *, NSArray<id> *> *)listMap
+                       mapMap:(NSDictionary<NSNumber *, NSDictionary<id, id> *> *)mapMap;
 @property(nonatomic, assign) BOOL aBool;
 @property(nonatomic, assign) NSInteger anInt;
 @property(nonatomic, assign) NSInteger anInt64;
@@ -99,11 +102,14 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy) NSArray<FLTAnEnumBox *> *enumList;
 @property(nonatomic, copy) NSArray<id> *objectList;
 @property(nonatomic, copy) NSArray<NSArray<id> *> *listList;
+@property(nonatomic, copy) NSArray<NSDictionary<id, id> *> *mapList;
 @property(nonatomic, copy) NSDictionary *map;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *stringMap;
 @property(nonatomic, copy) NSDictionary<NSNumber *, NSNumber *> *intMap;
 @property(nonatomic, copy) NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *enumMap;
 @property(nonatomic, copy) NSDictionary<id, id> *objectMap;
+@property(nonatomic, copy) NSDictionary<NSNumber *, NSArray<id> *> *listMap;
+@property(nonatomic, copy) NSDictionary<NSNumber *, NSDictionary<id, id> *> *mapMap;
 @end
 
 /// A class containing all supported nullable types.
@@ -130,12 +136,15 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                  enumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
                objectList:(nullable NSArray<id> *)objectList
                  listList:(nullable NSArray<NSArray<id> *> *)listList
+                  mapList:(nullable NSArray<NSDictionary<id, id> *> *)mapList
        recursiveClassList:(nullable NSArray<FLTAllNullableTypes *> *)recursiveClassList
                       map:(nullable NSDictionary *)map
                 stringMap:(nullable NSDictionary<NSString *, NSString *> *)stringMap
                    intMap:(nullable NSDictionary<NSNumber *, NSNumber *> *)intMap
                   enumMap:(nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
                 objectMap:(nullable NSDictionary<id, id> *)objectMap
+                  listMap:(nullable NSDictionary<NSNumber *, NSArray<id> *> *)listMap
+                   mapMap:(nullable NSDictionary<NSNumber *, NSDictionary<id, id> *> *)mapMap
         recursiveClassMap:
             (nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)recursiveClassMap;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
@@ -159,12 +168,15 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy, nullable) NSArray<FLTAnEnumBox *> *enumList;
 @property(nonatomic, copy, nullable) NSArray<id> *objectList;
 @property(nonatomic, copy, nullable) NSArray<NSArray<id> *> *listList;
+@property(nonatomic, copy, nullable) NSArray<NSDictionary<id, id> *> *mapList;
 @property(nonatomic, copy, nullable) NSArray<FLTAllNullableTypes *> *recursiveClassList;
 @property(nonatomic, copy, nullable) NSDictionary *map;
 @property(nonatomic, copy, nullable) NSDictionary<NSString *, NSString *> *stringMap;
 @property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSNumber *> *intMap;
 @property(nonatomic, copy, nullable) NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *enumMap;
 @property(nonatomic, copy, nullable) NSDictionary<id, id> *objectMap;
+@property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSArray<id> *> *listMap;
+@property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSDictionary<id, id> *> *mapMap;
 @property(nonatomic, copy, nullable)
     NSDictionary<NSNumber *, FLTAllNullableTypes *> *recursiveClassMap;
 @end
@@ -173,32 +185,35 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 /// with nullable items, as the primary [AllNullableTypes] class is being used to
 /// test Swift classes.
 @interface FLTAllNullableTypesWithoutRecursion : NSObject
-+ (instancetype)makeWithANullableBool:(nullable NSNumber *)aNullableBool
-                         aNullableInt:(nullable NSNumber *)aNullableInt
-                       aNullableInt64:(nullable NSNumber *)aNullableInt64
-                      aNullableDouble:(nullable NSNumber *)aNullableDouble
-                   aNullableByteArray:(nullable FlutterStandardTypedData *)aNullableByteArray
-                  aNullable4ByteArray:(nullable FlutterStandardTypedData *)aNullable4ByteArray
-                  aNullable8ByteArray:(nullable FlutterStandardTypedData *)aNullable8ByteArray
-                  aNullableFloatArray:(nullable FlutterStandardTypedData *)aNullableFloatArray
-                        aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
-                  anotherNullableEnum:(nullable FLTAnotherEnumBox *)anotherNullableEnum
-                      aNullableString:(nullable NSString *)aNullableString
-                      aNullableObject:(nullable id)aNullableObject
-                                 list:(nullable NSArray<id> *)list
-                           stringList:(nullable NSArray<NSString *> *)stringList
-                              intList:(nullable NSArray<NSNumber *> *)intList
-                           doubleList:(nullable NSArray<NSNumber *> *)doubleList
-                             boolList:(nullable NSArray<NSNumber *> *)boolList
-                             enumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
-                           objectList:(nullable NSArray<id> *)objectList
-                             listList:(nullable NSArray<NSArray<id> *> *)listList
-                                  map:(nullable NSDictionary *)map
-                            stringMap:(nullable NSDictionary<NSString *, NSString *> *)stringMap
-                               intMap:(nullable NSDictionary<NSNumber *, NSNumber *> *)intMap
-                              enumMap:
-                                  (nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
-                            objectMap:(nullable NSDictionary<id, id> *)objectMap;
++ (instancetype)
+    makeWithANullableBool:(nullable NSNumber *)aNullableBool
+             aNullableInt:(nullable NSNumber *)aNullableInt
+           aNullableInt64:(nullable NSNumber *)aNullableInt64
+          aNullableDouble:(nullable NSNumber *)aNullableDouble
+       aNullableByteArray:(nullable FlutterStandardTypedData *)aNullableByteArray
+      aNullable4ByteArray:(nullable FlutterStandardTypedData *)aNullable4ByteArray
+      aNullable8ByteArray:(nullable FlutterStandardTypedData *)aNullable8ByteArray
+      aNullableFloatArray:(nullable FlutterStandardTypedData *)aNullableFloatArray
+            aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
+      anotherNullableEnum:(nullable FLTAnotherEnumBox *)anotherNullableEnum
+          aNullableString:(nullable NSString *)aNullableString
+          aNullableObject:(nullable id)aNullableObject
+                     list:(nullable NSArray<id> *)list
+               stringList:(nullable NSArray<NSString *> *)stringList
+                  intList:(nullable NSArray<NSNumber *> *)intList
+               doubleList:(nullable NSArray<NSNumber *> *)doubleList
+                 boolList:(nullable NSArray<NSNumber *> *)boolList
+                 enumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
+               objectList:(nullable NSArray<id> *)objectList
+                 listList:(nullable NSArray<NSArray<id> *> *)listList
+                  mapList:(nullable NSArray<NSDictionary<id, id> *> *)mapList
+                      map:(nullable NSDictionary *)map
+                stringMap:(nullable NSDictionary<NSString *, NSString *> *)stringMap
+                   intMap:(nullable NSDictionary<NSNumber *, NSNumber *> *)intMap
+                  enumMap:(nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
+                objectMap:(nullable NSDictionary<id, id> *)objectMap
+                  listMap:(nullable NSDictionary<NSNumber *, NSArray<id> *> *)listMap
+                   mapMap:(nullable NSDictionary<NSNumber *, NSDictionary<id, id> *> *)mapMap;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt64;
@@ -219,11 +234,14 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy, nullable) NSArray<FLTAnEnumBox *> *enumList;
 @property(nonatomic, copy, nullable) NSArray<id> *objectList;
 @property(nonatomic, copy, nullable) NSArray<NSArray<id> *> *listList;
+@property(nonatomic, copy, nullable) NSArray<NSDictionary<id, id> *> *mapList;
 @property(nonatomic, copy, nullable) NSDictionary *map;
 @property(nonatomic, copy, nullable) NSDictionary<NSString *, NSString *> *stringMap;
 @property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSNumber *> *intMap;
 @property(nonatomic, copy, nullable) NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *enumMap;
 @property(nonatomic, copy, nullable) NSDictionary<id, id> *objectMap;
+@property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSArray<id> *> *listMap;
+@property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSDictionary<id, id> *> *mapMap;
 @end
 
 /// A class for testing nested class handling.

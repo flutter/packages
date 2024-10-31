@@ -1,3 +1,7 @@
+## 3.16.0
+
+* Supports NTLM for authentication.
+
 ## 3.15.0
 
 * Adds macOS support.

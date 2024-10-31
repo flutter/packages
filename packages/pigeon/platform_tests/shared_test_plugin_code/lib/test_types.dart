@@ -13,6 +13,69 @@ const int biggerThanBigInt = 3000000000;
 const int regularInt = 42;
 const double doublePi = 3.14159;
 
+void compareComplexLists(List<dynamic>? listOne, List<dynamic>? listTwo) {
+  expect(listOne == null, listTwo == null);
+  if (listOne == null || listTwo == null) {
+    return;
+  }
+  expect(listOne.length, listTwo.length);
+  for (int i = 0; i < listOne.length; i++) {
+    if (listOne[i] is List) {
+      compareComplexLists(
+          listOne[i] as List<dynamic>, listTwo[i] as List<dynamic>);
+    } else if (listOne[i] is Map) {
+      compareComplexMaps(listOne[i] as Map<dynamic, dynamic>,
+          listTwo[i] as Map<dynamic, dynamic>);
+    } else if (listOne[i] is AllTypes) {
+      compareAllTypes(listOne[i] as AllTypes, listTwo[i] as AllTypes);
+    } else if (listOne[i] is AllNullableTypes) {
+      compareAllNullableTypes(
+          listOne[i] as AllNullableTypes, listTwo[i] as AllNullableTypes);
+    } else if (listOne[i] is AllNullableTypesWithoutRecursion) {
+      compareAllNullableTypesWithoutRecursion(
+          listOne[i] as AllNullableTypesWithoutRecursion,
+          listTwo[i] as AllNullableTypesWithoutRecursion);
+    } else if (listOne[i] is AllClassesWrapper) {
+      compareAllClassesWrapper(
+          listOne[i] as AllClassesWrapper, listTwo[i] as AllClassesWrapper);
+    } else {
+      expect(listOne[i], listTwo[i]);
+    }
+  }
+}
+
+void compareComplexMaps(
+    Map<dynamic, dynamic>? mapOne, Map<dynamic, dynamic>? mapTwo) {
+  expect(mapOne == null, mapTwo == null);
+  if (mapOne == null || mapTwo == null) {
+    return;
+  }
+  expect(mapOne.length, mapTwo.length);
+  for (final dynamic key in mapOne.keys) {
+    if (mapOne[key] is List) {
+      compareComplexLists(
+          mapOne[key] as List<dynamic>, mapTwo[key] as List<dynamic>);
+    } else if (mapOne[key] is Map) {
+      compareComplexMaps(mapOne[key] as Map<dynamic, dynamic>,
+          mapTwo[key] as Map<dynamic, dynamic>);
+    } else if (mapOne[key] is AllTypes) {
+      compareAllTypes(mapOne[key] as AllTypes, mapTwo[key] as AllTypes);
+    } else if (mapOne[key] is AllNullableTypes) {
+      compareAllNullableTypes(
+          mapOne[key] as AllNullableTypes, mapTwo[key] as AllNullableTypes);
+    } else if (mapOne[key] is AllNullableTypesWithoutRecursion) {
+      compareAllNullableTypesWithoutRecursion(
+          mapOne[key] as AllNullableTypesWithoutRecursion,
+          mapTwo[key] as AllNullableTypesWithoutRecursion);
+    } else if (mapOne[key] is AllClassesWrapper) {
+      compareAllClassesWrapper(
+          mapOne[key] as AllClassesWrapper, mapTwo[key] as AllClassesWrapper);
+    } else {
+      expect(mapOne[key], mapTwo[key]);
+    }
+  }
+}
+
 void compareAllNullableTypesWithoutRecursion(
     AllNullableTypesWithoutRecursion? allNullableTypesOne,
     AllNullableTypesWithoutRecursion? allNullableTypesTwo) {
@@ -39,29 +102,30 @@ void compareAllNullableTypesWithoutRecursion(
   expect(
       allNullableTypesOne.aNullableObject, allNullableTypesTwo.aNullableObject);
   expect(allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
-  expect(listEquals(allNullableTypesOne.list, allNullableTypesTwo.list), true);
-  expect(
-      listEquals(
-          allNullableTypesOne.stringList, allNullableTypesTwo.stringList),
-      true);
-  expect(listEquals(allNullableTypesOne.boolList, allNullableTypesTwo.boolList),
-      true);
-  expect(
-      listEquals(
-          allNullableTypesOne.doubleList, allNullableTypesTwo.doubleList),
-      true);
-  expect(listEquals(allNullableTypesOne.intList, allNullableTypesTwo.intList),
-      true);
-  expect(listEquals(allNullableTypesOne.enumList, allNullableTypesTwo.enumList),
-      true);
-  expect(mapEquals(allNullableTypesOne.map, allNullableTypesTwo.map), true);
-  expect(
-      mapEquals(allNullableTypesOne.stringMap, allNullableTypesTwo.stringMap),
-      true);
-  expect(
-      mapEquals(allNullableTypesOne.intMap, allNullableTypesTwo.intMap), true);
-  expect(mapEquals(allNullableTypesOne.enumMap, allNullableTypesTwo.enumMap),
-      true);
+  compareComplexLists(allNullableTypesOne.list, allNullableTypesTwo.list);
+  compareComplexLists(
+      allNullableTypesOne.stringList, allNullableTypesTwo.stringList);
+  compareComplexLists(
+      allNullableTypesOne.boolList, allNullableTypesTwo.boolList);
+  compareComplexLists(
+      allNullableTypesOne.doubleList, allNullableTypesTwo.doubleList);
+  compareComplexLists(allNullableTypesOne.intList, allNullableTypesTwo.intList);
+  compareComplexLists(
+      allNullableTypesOne.enumList, allNullableTypesTwo.enumList);
+  compareComplexLists(
+      allNullableTypesOne.objectList, allNullableTypesTwo.objectList);
+  compareComplexLists(
+      allNullableTypesOne.listList, allNullableTypesTwo.listList);
+  compareComplexLists(allNullableTypesOne.mapList, allNullableTypesTwo.mapList);
+  compareComplexMaps(allNullableTypesOne.map, allNullableTypesTwo.map);
+  compareComplexMaps(
+      allNullableTypesOne.stringMap, allNullableTypesTwo.stringMap);
+  compareComplexMaps(allNullableTypesOne.intMap, allNullableTypesTwo.intMap);
+  compareComplexMaps(allNullableTypesOne.enumMap, allNullableTypesTwo.enumMap);
+  compareComplexMaps(
+      allNullableTypesOne.objectMap, allNullableTypesTwo.objectMap);
+  compareComplexMaps(allNullableTypesOne.listMap, allNullableTypesTwo.listMap);
+  compareComplexMaps(allNullableTypesOne.mapMap, allNullableTypesTwo.mapMap);
 }
 
 void compareAllTypes(AllTypes? allTypesOne, AllTypes? allTypesTwo) {
@@ -80,16 +144,22 @@ void compareAllTypes(AllTypes? allTypesOne, AllTypes? allTypesTwo) {
   expect(allTypesOne.aFloatArray, allTypesTwo.aFloatArray);
   expect(allTypesOne.anEnum, allTypesTwo.anEnum);
   expect(allTypesOne.anObject, allTypesTwo.anObject);
-  expect(listEquals(allTypesOne.list, allTypesTwo.list), true);
-  expect(listEquals(allTypesOne.stringList, allTypesTwo.stringList), true);
-  expect(listEquals(allTypesOne.intList, allTypesTwo.intList), true);
-  expect(listEquals(allTypesOne.doubleList, allTypesTwo.doubleList), true);
-  expect(listEquals(allTypesOne.boolList, allTypesTwo.boolList), true);
-  expect(listEquals(allTypesOne.enumList, allTypesTwo.enumList), true);
-  expect(mapEquals(allTypesOne.map, allTypesTwo.map), true);
-  expect(mapEquals(allTypesOne.stringMap, allTypesTwo.stringMap), true);
-  expect(mapEquals(allTypesOne.intMap, allTypesTwo.intMap), true);
-  expect(mapEquals(allTypesOne.enumMap, allTypesTwo.enumMap), true);
+  compareComplexLists(allTypesOne.list, allTypesTwo.list);
+  compareComplexLists(allTypesOne.stringList, allTypesTwo.stringList);
+  compareComplexLists(allTypesOne.boolList, allTypesTwo.boolList);
+  compareComplexLists(allTypesOne.doubleList, allTypesTwo.doubleList);
+  compareComplexLists(allTypesOne.intList, allTypesTwo.intList);
+  compareComplexLists(allTypesOne.enumList, allTypesTwo.enumList);
+  compareComplexLists(allTypesOne.objectList, allTypesTwo.objectList);
+  compareComplexLists(allTypesOne.listList, allTypesTwo.listList);
+  compareComplexLists(allTypesOne.mapList, allTypesTwo.mapList);
+  compareComplexMaps(allTypesOne.map, allTypesTwo.map);
+  compareComplexMaps(allTypesOne.stringMap, allTypesTwo.stringMap);
+  compareComplexMaps(allTypesOne.intMap, allTypesTwo.intMap);
+  compareComplexMaps(allTypesOne.enumMap, allTypesTwo.enumMap);
+  compareComplexMaps(allTypesOne.objectMap, allTypesTwo.objectMap);
+  compareComplexMaps(allTypesOne.listMap, allTypesTwo.listMap);
+  compareComplexMaps(allTypesOne.mapMap, allTypesTwo.mapMap);
 }
 
 void compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
@@ -119,35 +189,34 @@ void compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
   expect(allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
   compareAllNullableTypes(allNullableTypesOne.allNullableTypes,
       allNullableTypesTwo.allNullableTypes);
-  expect(listEquals(allNullableTypesOne.list, allNullableTypesTwo.list), true);
-  expect(
-      listEquals(
-          allNullableTypesOne.stringList, allNullableTypesTwo.stringList),
-      true);
-  expect(listEquals(allNullableTypesOne.boolList, allNullableTypesTwo.boolList),
-      true);
-  expect(
-      listEquals(
-          allNullableTypesOne.doubleList, allNullableTypesTwo.doubleList),
-      true);
-  expect(listEquals(allNullableTypesOne.intList, allNullableTypesTwo.intList),
-      true);
-  expect(listEquals(allNullableTypesOne.enumList, allNullableTypesTwo.enumList),
-      true);
-  for (int i = 0;
-      i < (allNullableTypesOne.recursiveClassList?.length ?? 0);
-      i++) {
-    compareAllNullableTypes(allNullableTypesOne.recursiveClassList?[i],
-        allNullableTypesTwo.recursiveClassList?[i]);
-  }
-  expect(mapEquals(allNullableTypesOne.map, allNullableTypesTwo.map), true);
-  expect(
-      mapEquals(allNullableTypesOne.stringMap, allNullableTypesTwo.stringMap),
-      true);
-  expect(
-      mapEquals(allNullableTypesOne.intMap, allNullableTypesTwo.intMap), true);
-  expect(mapEquals(allNullableTypesOne.enumMap, allNullableTypesTwo.enumMap),
-      true);
+  compareComplexLists(allNullableTypesOne.list, allNullableTypesTwo.list);
+  compareComplexLists(
+      allNullableTypesOne.stringList, allNullableTypesTwo.stringList);
+  compareComplexLists(
+      allNullableTypesOne.boolList, allNullableTypesTwo.boolList);
+  compareComplexLists(
+      allNullableTypesOne.doubleList, allNullableTypesTwo.doubleList);
+  compareComplexLists(allNullableTypesOne.intList, allNullableTypesTwo.intList);
+  compareComplexLists(
+      allNullableTypesOne.enumList, allNullableTypesTwo.enumList);
+  compareComplexLists(
+      allNullableTypesOne.objectList, allNullableTypesTwo.objectList);
+  compareComplexLists(
+      allNullableTypesOne.listList, allNullableTypesTwo.listList);
+  compareComplexLists(allNullableTypesOne.recursiveClassList,
+      allNullableTypesTwo.recursiveClassList);
+  compareComplexLists(allNullableTypesOne.mapList, allNullableTypesTwo.mapList);
+  compareComplexMaps(allNullableTypesOne.map, allNullableTypesTwo.map);
+  compareComplexMaps(
+      allNullableTypesOne.stringMap, allNullableTypesTwo.stringMap);
+  compareComplexMaps(allNullableTypesOne.intMap, allNullableTypesTwo.intMap);
+  compareComplexMaps(allNullableTypesOne.enumMap, allNullableTypesTwo.enumMap);
+  compareComplexMaps(
+      allNullableTypesOne.objectMap, allNullableTypesTwo.objectMap);
+  compareComplexMaps(allNullableTypesOne.listMap, allNullableTypesTwo.listMap);
+  compareComplexMaps(allNullableTypesOne.mapMap, allNullableTypesTwo.mapMap);
+  compareComplexMaps(allNullableTypesOne.recursiveClassMap,
+      allNullableTypesTwo.recursiveClassMap);
 }
 
 void compareAllClassesWrapper(
@@ -168,35 +237,13 @@ void compareAllClassesWrapper(
   for (int i = 0; i < (wrapperOne.classList.length); i++) {
     compareAllTypes(wrapperOne.classList[i], wrapperTwo.classList[i]);
   }
-  if (wrapperOne.nullableClassList != null &&
-      wrapperTwo.nullableClassList != null) {
-    for (int i = 0; i < (wrapperOne.nullableClassList!.length); i++) {
-      compareAllNullableTypesWithoutRecursion(
-          wrapperOne.nullableClassList![i], wrapperTwo.nullableClassList![i]);
-    }
-  } else {
-    expect(wrapperOne.nullableClassList != null,
-        wrapperTwo.nullableClassList != null);
+
+  for (int i = 0; i < (wrapperOne.nullableClassList?.length ?? 0); i++) {
+    compareAllNullableTypesWithoutRecursion(
+        wrapperOne.nullableClassList![i], wrapperTwo.nullableClassList![i]);
   }
-  final Iterable<int?> wrapperOneKeys = wrapperOne.classMap.keys;
-  final Iterable<int?> wrapperTwoKeys = wrapperTwo.classMap.keys;
-  expect(wrapperOneKeys.length, wrapperTwoKeys.length);
-  for (final int? key in wrapperOneKeys) {
-    compareAllTypes(wrapperOne.classMap[key], wrapperTwo.classMap[key]);
-  }
-  if (wrapperOne.nullableClassMap != null &&
-      wrapperTwo.nullableClassMap != null) {
-    final Iterable<int?> wrapperOneKeys = wrapperOne.nullableClassMap!.keys;
-    final Iterable<int?> wrapperTwoKeys = wrapperTwo.nullableClassMap!.keys;
-    expect(wrapperOneKeys.length, wrapperTwoKeys.length);
-    for (final int? key in wrapperOneKeys) {
-      compareAllNullableTypesWithoutRecursion(
-          wrapperOne.nullableClassMap![key], wrapperTwo.nullableClassMap![key]);
-    }
-  } else {
-    expect(wrapperOne.nullableClassMap != null,
-        wrapperTwo.nullableClassMap != null);
-  }
+  compareComplexMaps(wrapperOne.classMap, wrapperTwo.classMap);
+  compareComplexMaps(wrapperOne.nullableClassMap, wrapperTwo.nullableClassMap);
 }
 
 final List<Object> nonNullList = <Object>[
@@ -477,11 +524,14 @@ final AllNullableTypesWithoutRecursion genericAllNullableTypesWithoutRecursion =
   enumList: enumList,
   objectList: list,
   listList: listList,
+  mapList: mapList,
   map: map,
   stringMap: stringMap,
   intMap: intMap,
   enumMap: enumMap,
   objectMap: map,
+  listMap: listMap,
+  mapMap: mapMap,
 );
 
 final List<AllNullableTypesWithoutRecursion?>
@@ -520,11 +570,16 @@ final AllTypes genericAllTypes = AllTypes(
   enumList: nonNullEnumList,
   objectList: nonNullList,
   listList: nonNullListList,
+  mapList: nonNullMapList,
   map: nonNullMap,
   stringMap: nonNullStringMap,
   intMap: nonNullIntMap,
+  // doubleMap: nonNullDoubleMap,
+  // boolMap: nonNullBoolMap,
   enumMap: nonNullEnumMap,
   objectMap: nonNullMap,
+  listMap: nonNullListMap,
+  mapMap: nonNullMapMap,
 );
 
 final List<AllTypes?> allTypesClassList = <AllTypes?>[
@@ -557,11 +612,14 @@ final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
   enumList: enumList,
   objectList: list,
   listList: listList,
+  mapList: mapList,
   map: map,
   stringMap: stringMap,
   intMap: intMap,
   enumMap: enumMap,
   objectMap: map,
+  listMap: listMap,
+  mapMap: mapMap,
 );
 
 final List<AllNullableTypes> nonNullAllNullableTypesList = <AllNullableTypes>[
@@ -609,12 +667,15 @@ final AllNullableTypes recursiveAllNullableTypes = AllNullableTypes(
   enumList: enumList,
   objectList: list,
   listList: listList,
+  mapList: mapList,
   recursiveClassList: allNullableTypesList,
   map: map,
   stringMap: stringMap,
   intMap: intMap,
   enumMap: enumMap,
   objectMap: map,
+  listMap: listMap,
+  mapMap: mapMap,
   recursiveClassMap: allNullableTypesMap,
 );
 

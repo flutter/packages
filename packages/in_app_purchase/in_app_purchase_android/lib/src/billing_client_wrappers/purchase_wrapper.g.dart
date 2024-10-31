@@ -9,7 +9,7 @@ part of 'purchase_wrapper.dart';
 PurchaseWrapper _$PurchaseWrapperFromJson(Map json) => PurchaseWrapper(
       orderId: json['orderId'] as String? ?? '',
       packageName: json['packageName'] as String? ?? '',
-      purchaseTime: json['purchaseTime'] as int? ?? 0,
+      purchaseTime: (json['purchaseTime'] as num?)?.toInt() ?? 0,
       purchaseToken: json['purchaseToken'] as String? ?? '',
       signature: json['signature'] as String? ?? '',
       products: (json['products'] as List<dynamic>?)
@@ -21,14 +21,14 @@ PurchaseWrapper _$PurchaseWrapperFromJson(Map json) => PurchaseWrapper(
       developerPayload: json['developerPayload'] as String?,
       isAcknowledged: json['isAcknowledged'] as bool? ?? false,
       purchaseState: const PurchaseStateConverter()
-          .fromJson(json['purchaseState'] as int?),
+          .fromJson((json['purchaseState'] as num?)?.toInt()),
       obfuscatedAccountId: json['obfuscatedAccountId'] as String?,
       obfuscatedProfileId: json['obfuscatedProfileId'] as String?,
     );
 
 PurchaseHistoryRecordWrapper _$PurchaseHistoryRecordWrapperFromJson(Map json) =>
     PurchaseHistoryRecordWrapper(
-      purchaseTime: json['purchaseTime'] as int? ?? 0,
+      purchaseTime: (json['purchaseTime'] as num?)?.toInt() ?? 0,
       purchaseToken: json['purchaseToken'] as String? ?? '',
       signature: json['signature'] as String? ?? '',
       products: (json['products'] as List<dynamic>?)
@@ -42,7 +42,7 @@ PurchaseHistoryRecordWrapper _$PurchaseHistoryRecordWrapperFromJson(Map json) =>
 PurchasesResultWrapper _$PurchasesResultWrapperFromJson(Map json) =>
     PurchasesResultWrapper(
       responseCode: const BillingResponseConverter()
-          .fromJson(json['responseCode'] as int?),
+          .fromJson((json['responseCode'] as num?)?.toInt()),
       billingResult:
           BillingResultWrapper.fromJson((json['billingResult'] as Map?)?.map(
         (k, e) => MapEntry(k as String, e),

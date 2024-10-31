@@ -11,6 +11,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  go_router: ^14.2.7
 
 dev_dependencies:
   flutter_lints: ^4.0.0

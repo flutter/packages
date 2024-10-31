@@ -436,14 +436,14 @@ class MockAdsManager extends _i1.Mock implements _i2.AdsManager {
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<List<double?>> getAdCuePoints() => (super.noSuchMethod(
+  _i4.Future<List<double>> getAdCuePoints() => (super.noSuchMethod(
         Invocation.method(
           #getAdCuePoints,
           [],
         ),
-        returnValue: _i4.Future<List<double?>>.value(<double?>[]),
-        returnValueForMissingStub: _i4.Future<List<double?>>.value(<double?>[]),
-      ) as _i4.Future<List<double?>>);
+        returnValue: _i4.Future<List<double>>.value(<double>[]),
+        returnValueForMissingStub: _i4.Future<List<double>>.value(<double>[]),
+      ) as _i4.Future<List<double>>);
 
   @override
   _i4.Future<void> resume() => (super.noSuchMethod(
