@@ -483,8 +483,8 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypes(IMFCaptureSource* source) {
   // Find base media type for record and photo capture.
   if (!FindBestMediaType(
           (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD,
-          source, base_capture_media_type_.GetAddressOf(), 0xffffffff,
-          nullptr, nullptr)) {
+          source, base_capture_media_type_.GetAddressOf(), 0xffffffff, nullptr,
+          nullptr)) {
     return E_FAIL;
   }
 
