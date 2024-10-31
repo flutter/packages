@@ -438,8 +438,7 @@ class _BlobDecoder {
         return DynamicList.generate(_readInt64(), (int index) => readNode());
       case _msMap:
         return _readMap(readNode)!;
-      default:
-        throw FormatException('Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding blob.');
+      default: throw FormatException('Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding blob.');
     }
   }
 
