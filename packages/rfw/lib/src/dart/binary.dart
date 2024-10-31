@@ -65,8 +65,7 @@ Uint8List encodeDataBlob(Object value) {
 ///    Remote Flutter Widgets binary library blobs.
 ///  * [parseDataFile], which parses the text variant of this format.
 Object decodeDataBlob(Uint8List bytes) {
-  final _BlobDecoder decoder = _BlobDecoder(
-      bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
+  final _BlobDecoder decoder = _BlobDecoder(bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
   decoder.expectSignature(dataBlobSignature);
   final Object result = decoder.readValue();
   if (!decoder.finished) {
@@ -277,13 +276,11 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///    Remote Flutter Widgets binary data blobs.
 ///  * [parseDataFile], which parses the text variant of this format.
 RemoteWidgetLibrary decodeLibraryBlob(Uint8List bytes) {
-  final _BlobDecoder decoder = _BlobDecoder(
-      bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
+  final _BlobDecoder decoder = _BlobDecoder(bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
   decoder.expectSignature(libraryBlobSignature);
   final RemoteWidgetLibrary result = decoder.readLibrary();
   if (!decoder.finished) {
-    throw const FormatException(
-        'Unexpected trailing bytes after constructors.');
+    throw const FormatException('Unexpected trailing bytes after constructors.');
   }
   return result;
 }
@@ -335,8 +332,7 @@ class _BlobDecoder {
 
   void _advance(String context, int length) {
     if (_cursor + length > bytes.lengthInBytes) {
-      throw FormatException(
-          'Could not read $context at offset $_cursor: unexpected end of file.');
+      throw FormatException('Could not read $context at offset $_cursor: unexpected end of file.');
     }
     _cursor += length;
   }
@@ -355,10 +351,8 @@ class _BlobDecoder {
     }
     // We use multiplication rather than bit shifts because << truncates to 32 bits when compiled to JS:
     // https://dart.dev/guides/language/numbers#bitwise-operations
-    final int a =
-        bytes.getUint32(byteOffset, _blobEndian); // dead code on VM target
-    final int b =
-        bytes.getInt32(byteOffset + 4, _blobEndian); // dead code on VM target
+    final int a = bytes.getUint32(byteOffset, _blobEndian); // dead code on VM target
+    final int b = bytes.getInt32(byteOffset + 4, _blobEndian); // dead code on VM target
     return a + (b * 0x100000000); // dead code on VM target
   }
 
@@ -372,8 +366,7 @@ class _BlobDecoder {
     final int length = _readInt64();
     final int byteOffset = _cursor;
     _advance('string', length);
-    return utf8.decode(
-        bytes.buffer.asUint8List(bytes.offsetInBytes + byteOffset, length));
+    return utf8.decode(bytes.buffer.asUint8List(bytes.offsetInBytes + byteOffset, length));
   }
 
   List<Object> _readPartList() {
@@ -385,14 +378,12 @@ class _BlobDecoder {
         case _msInt64:
           return _readInt64();
         default:
-          throw FormatException(
-              'Invalid reference type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding blob.');
+          throw FormatException('Invalid reference type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding blob.');
       }
     });
   }
 
-  Map<String, Object?>? _readMap(Object Function() readNode,
-      {bool nullIfEmpty = false}) {
+  Map<String, Object?>? _readMap(Object Function() readNode, { bool nullIfEmpty = false }) {
     final int count = _readInt64();
     if (count == 0 && nullIfEmpty) {
       return null;
@@ -448,8 +439,7 @@ class _BlobDecoder {
       case _msMap:
         return _readMap(readNode)!;
       default:
-        throw FormatException(
-            'Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding blob.');
+        throw FormatException('Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding blob.');
     }
   }
 
@@ -477,8 +467,7 @@ class _BlobDecoder {
       case _msSwitch:
         return _readSwitch();
       case _msSetState:
-        return SetStateHandler(
-            StateReference(_readPartList()), _readArgument());
+        return SetStateHandler(StateReference(_readPartList()), _readArgument());
       case _msWidgetBuilder:
         return _readWidgetBuilder();
       case _msWidgetBuilderArgReference:
@@ -502,8 +491,7 @@ class _BlobDecoder {
     final String argumentName = _readString();
     final int type = _readByte();
     if (type != _msWidget && type != _msSwitch) {
-      throw FormatException(
-          'Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding widget builder blob.');
+      throw FormatException('Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding widget builder blob.');
     }
     final BlobNode widget = type == _msWidget ? _readWidget() : _readSwitch();
     return WidgetBuilderDeclaration(argumentName, widget);
@@ -520,20 +508,17 @@ class _BlobDecoder {
       case _msWidget:
         root = _readWidget();
       default:
-        throw FormatException(
-            'Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding widget declaration root.');
+        throw FormatException('Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding widget declaration root.');
     }
     return WidgetDeclaration(name, initialState, root);
   }
 
   List<WidgetDeclaration> _readDeclarationList() {
-    return List<WidgetDeclaration>.generate(
-        _readInt64(), (int index) => _readDeclaration());
+    return List<WidgetDeclaration>.generate(_readInt64(), (int index) => _readDeclaration());
   }
 
   Import _readImport() {
-    return Import(LibraryName(
-        List<String>.generate(_readInt64(), (int index) => _readString())));
+    return Import(LibraryName(List<String>.generate(_readInt64(), (int index) => _readString())));
   }
 
   List<Import> _readImportList() {
@@ -556,9 +541,11 @@ class _BlobDecoder {
       }
     }
     if (!match) {
-      throw FormatException('File signature mismatch. '
-          'Expected ${signature.map<String>((int byte) => byte.toRadixString(16).toUpperCase().padLeft(2, "0")).join(" ")} '
-          'but found ${bytes.map<String>((int byte) => byte.toRadixString(16).toUpperCase().padLeft(2, "0")).join(" ")}.');
+      throw FormatException(
+        'File signature mismatch. '
+        'Expected ${signature.map<String>((int byte) => byte.toRadixString(16).toUpperCase().padLeft(2, "0")).join(" ")} '
+        'but found ${bytes.map<String>((int byte) => byte.toRadixString(16).toUpperCase().padLeft(2, "0")).join(" ")}.'
+      );
     }
   }
 }
@@ -574,11 +561,9 @@ class _BlobEncoder {
   _BlobEncoder();
 
   static final Uint8List _scratchOut = Uint8List(8);
-  static final ByteData _scratchIn = _scratchOut.buffer
-      .asByteData(_scratchOut.offsetInBytes, _scratchOut.lengthInBytes);
+  static final ByteData _scratchIn = _scratchOut.buffer.asByteData(_scratchOut.offsetInBytes, _scratchOut.lengthInBytes);
 
-  final BytesBuilder bytes =
-      BytesBuilder(); // copying builder -- we repeatedly add _scratchOut after changing it
+  final BytesBuilder bytes = BytesBuilder(); // copying builder -- we repeatedly add _scratchOut after changing it
 
   void _writeInt64(int value) {
     if (_has64Bits) {
@@ -586,15 +571,12 @@ class _BlobEncoder {
     } else {
       // We use division rather than bit shifts because >> truncates to 32 bits when compiled to JS:
       // https://dart.dev/guides/language/numbers#bitwise-operations
-      if (value >= 0) {
-        // dead code on VM target
+      if (value >= 0) { // dead code on VM target
         _scratchIn.setInt32(0, value, _blobEndian); // dead code on VM target
-        _scratchIn.setInt32(
-            4, value ~/ 0x100000000, _blobEndian); // dead code on VM target
+        _scratchIn.setInt32(4, value ~/ 0x100000000, _blobEndian); // dead code on VM target
       } else {
         _scratchIn.setInt32(0, value, _blobEndian); // dead code on VM target
-        _scratchIn.setInt32(4, -((-value) ~/ 0x100000000 + 1),
-            _blobEndian); // dead code on VM target
+        _scratchIn.setInt32(4, -((-value) ~/ 0x100000000 + 1), _blobEndian); // dead code on VM target
       }
     }
     bytes.add(_scratchOut);
@@ -622,8 +604,7 @@ class _BlobEncoder {
       bytes.addByte(_msString);
       _writeString(value);
     } else {
-      throw StateError(
-          'Unexpected type ${value.runtimeType} while encoding blob.');
+      throw StateError('Unexpected type ${value.runtimeType} while encoding blob.');
     }
   }
 
@@ -632,8 +613,7 @@ class _BlobEncoder {
       bytes.addByte(_msFalse);
     } else if (value == true) {
       bytes.addByte(_msTrue);
-    } else if (value is double && value is! int) {
-      // When compiled to JS, a Number can be both.
+    } else if (value is double && value is! int) { // When compiled to JS, a Number can be both.
       bytes.addByte(_msBinary64);
       _scratchIn.setFloat64(0, value, _blobEndian);
       bytes.add(_scratchOut);
