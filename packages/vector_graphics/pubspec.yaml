@@ -1,0 +1,36 @@
+name: vector_graphics
+description: A vector graphics rendering package for Flutter using a binary encoding.
+repository: https://github.com/flutter/packages/tree/main/packages/vector_graphics
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+vector_graphics%22
+# See https://github.com/flutter/flutter/issues/157626 before publishing a new
+# version.
+version: 1.1.12
+
+environment:
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.0.0
+  # See https://github.com/flutter/flutter/issues/157626
+  vector_graphics_codec: ">=1.1.11+1 <= 1.1.12"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  # See https://github.com/flutter/flutter/issues/157626
+  vector_graphics_compiler: ">=1.1.11+1 <= 1.1.12"
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
+
+topics:
+  - svg
+  - vector-graphics
