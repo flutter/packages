@@ -1,6 +1,7 @@
-## 1.0.4
+## 1.1.0
 
-* Deprecate utility functions `blendPoints` and `reflectedPoint`.
+* Deprecates top-level utility functions `blendPoints` and `reflectedPoint` and
+  some members in `PathSegmentData`.
 
 ## 1.0.3
 
