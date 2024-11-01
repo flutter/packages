@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:js_interop';
 import 'dart:ui';
 import 'dart:ui_web' as ui_web;
+
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web/web.dart' as web;
