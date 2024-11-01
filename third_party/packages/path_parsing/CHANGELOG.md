@@ -4,8 +4,8 @@
 
 ## 1.0.2
 
-* Transfers the package source from https://github.com/google/process.dart to
-  https://github.com/dnfield/dart_path_parsing.
+* Transfers the package source from https://github.com/dnfield/dart_path_parsing
+  to https://github.com/flutter/packages.
 
 ## 1.0.1
 
