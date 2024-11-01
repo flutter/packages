@@ -2,4 +2,3 @@ buildFlags:
   _pluginToolsConfigGlobalKey:
     - "--no-tree-shake-icons"
     - "--dart-define=buildmode=testing"
-    
