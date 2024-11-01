@@ -1,5 +1,6 @@
-## NEXT
+## 0.2.5+1
 
+* Updates C++ to Dart communication to use Pigeon.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.2.5
