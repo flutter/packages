@@ -30,6 +30,22 @@ class MarkerIconsBody extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => MarkerIconsBodyState();
+
+  /// Return the mapId to use for the GoogleMap
+  String? get mapId => null;
+
+  /// Create a marker to be displayed on the map
+  Marker createMarker(
+    MarkerId markerId,
+    LatLng position,
+    BitmapDescriptor icon,
+  ) {
+    return Marker(
+      markerId: markerId,
+      position: position,
+      icon: icon,
+    );
+  }
 }
 
 const LatLng _kMapCenter = LatLng(52.4478, -3.5402);
@@ -69,6 +85,10 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
               width: 350.0,
               height: 300.0,
               child: ExampleGoogleMap(
+                mapId: widget.mapId,
+                markerType: widget.mapId != null
+                    ? MarkerType.advancedMarker
+                    : MarkerType.marker,
                 initialCameraPosition: const CameraPosition(
                   target: _kMapCenter,
                   zoom: 7.0,
@@ -210,10 +230,10 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
     final LatLng position =
         LatLng(_kMapCenter.latitude - (index * 0.5), _kMapCenter.longitude - 1);
 
-    return Marker(
-      markerId: MarkerId('marker_asset_$index'),
-      position: position,
-      icon: _markerIconAsset!,
+    return widget.createMarker(
+      MarkerId('marker_asset_$index'),
+      position,
+      _markerIconAsset!,
     );
   }
 
@@ -221,10 +241,10 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
     final LatLng position =
         LatLng(_kMapCenter.latitude - (index * 0.5), _kMapCenter.longitude + 1);
 
-    return Marker(
-      markerId: MarkerId('marker_bytes_$index'),
-      position: position,
-      icon: _markerIconBytes!,
+    return widget.createMarker(
+      MarkerId('marker_bytes_$index'),
+      position,
+      _markerIconBytes!,
     );
   }
 

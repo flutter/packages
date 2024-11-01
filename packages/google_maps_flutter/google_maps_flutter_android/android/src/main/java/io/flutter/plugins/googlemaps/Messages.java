@@ -100,6 +100,18 @@ public class Messages {
     }
   }
 
+  public enum PlatformMarkerCollisionBehavior {
+    REQUIRED(0),
+    OPTIONAL_AND_HIDES_LOWER_PRIORITY(1),
+    REQUIRED_AND_HIDES_OPTIONAL(2);
+
+    final int index;
+
+    PlatformMarkerCollisionBehavior(final int index) {
+      this.index = index;
+    }
+  }
+
   /** Join types for polyline joints. */
   public enum PlatformJointType {
     MITERED(0),
@@ -140,6 +152,17 @@ public class Messages {
     final int index;
 
     PlatformPatternItemType(final int index) {
+      this.index = index;
+    }
+  }
+
+  public enum PlatformMarkerType {
+    MARKER(0),
+    ADVANCED_MARKER(1);
+
+    final int index;
+
+    PlatformMarkerType(final int index) {
       this.index = index;
     }
   }
@@ -1874,6 +1897,19 @@ public class Messages {
       this.clusterManagerId = setterArg;
     }
 
+    private @NonNull PlatformMarkerCollisionBehavior collisionBehavior;
+
+    public @NonNull PlatformMarkerCollisionBehavior getCollisionBehavior() {
+      return collisionBehavior;
+    }
+
+    public void setCollisionBehavior(@NonNull PlatformMarkerCollisionBehavior setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"collisionBehavior\" is null.");
+      }
+      this.collisionBehavior = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     PlatformMarker() {}
 
@@ -1898,7 +1934,8 @@ public class Messages {
           && visible.equals(that.visible)
           && zIndex.equals(that.zIndex)
           && markerId.equals(that.markerId)
-          && Objects.equals(clusterManagerId, that.clusterManagerId);
+          && Objects.equals(clusterManagerId, that.clusterManagerId)
+          && collisionBehavior.equals(that.collisionBehavior);
     }
 
     @Override
@@ -1916,7 +1953,8 @@ public class Messages {
           visible,
           zIndex,
           markerId,
-          clusterManagerId);
+          clusterManagerId,
+          collisionBehavior);
     }
 
     public static final class Builder {
@@ -2025,6 +2063,15 @@ public class Messages {
         return this;
       }
 
+      private @Nullable PlatformMarkerCollisionBehavior collisionBehavior;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setCollisionBehavior(
+          @NonNull PlatformMarkerCollisionBehavior setterArg) {
+        this.collisionBehavior = setterArg;
+        return this;
+      }
+
       public @NonNull PlatformMarker build() {
         PlatformMarker pigeonReturn = new PlatformMarker();
         pigeonReturn.setAlpha(alpha);
@@ -2040,13 +2087,14 @@ public class Messages {
         pigeonReturn.setZIndex(zIndex);
         pigeonReturn.setMarkerId(markerId);
         pigeonReturn.setClusterManagerId(clusterManagerId);
+        pigeonReturn.setCollisionBehavior(collisionBehavior);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(13);
+      ArrayList<Object> toListResult = new ArrayList<>(14);
       toListResult.add(alpha);
       toListResult.add(anchor);
       toListResult.add(consumeTapEvents);
@@ -2060,6 +2108,7 @@ public class Messages {
       toListResult.add(zIndex);
       toListResult.add(markerId);
       toListResult.add(clusterManagerId);
+      toListResult.add(collisionBehavior);
       return toListResult;
     }
 
@@ -2091,6 +2140,8 @@ public class Messages {
       pigeonResult.setMarkerId((String) markerId);
       Object clusterManagerId = pigeonVar_list.get(12);
       pigeonResult.setClusterManagerId((String) clusterManagerId);
+      Object collisionBehavior = pigeonVar_list.get(13);
+      pigeonResult.setCollisionBehavior((PlatformMarkerCollisionBehavior) collisionBehavior);
       return pigeonResult;
     }
   }
@@ -4000,6 +4051,19 @@ public class Messages {
       this.initialClusterManagers = setterArg;
     }
 
+    private @NonNull PlatformMarkerType markerType;
+
+    public @NonNull PlatformMarkerType getMarkerType() {
+      return markerType;
+    }
+
+    public void setMarkerType(@NonNull PlatformMarkerType setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"markerType\" is null.");
+      }
+      this.markerType = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     PlatformMapViewCreationParams() {}
 
@@ -4020,7 +4084,8 @@ public class Messages {
           && initialPolylines.equals(that.initialPolylines)
           && initialHeatmaps.equals(that.initialHeatmaps)
           && initialTileOverlays.equals(that.initialTileOverlays)
-          && initialClusterManagers.equals(that.initialClusterManagers);
+          && initialClusterManagers.equals(that.initialClusterManagers)
+          && markerType.equals(that.markerType);
     }
 
     @Override
@@ -4034,7 +4099,8 @@ public class Messages {
           initialPolylines,
           initialHeatmaps,
           initialTileOverlays,
-          initialClusterManagers);
+          initialClusterManagers,
+          markerType);
     }
 
     public static final class Builder {
@@ -4112,6 +4178,14 @@ public class Messages {
         return this;
       }
 
+      private @Nullable PlatformMarkerType markerType;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMarkerType(@NonNull PlatformMarkerType setterArg) {
+        this.markerType = setterArg;
+        return this;
+      }
+
       public @NonNull PlatformMapViewCreationParams build() {
         PlatformMapViewCreationParams pigeonReturn = new PlatformMapViewCreationParams();
         pigeonReturn.setInitialCameraPosition(initialCameraPosition);
@@ -4123,13 +4197,14 @@ public class Messages {
         pigeonReturn.setInitialHeatmaps(initialHeatmaps);
         pigeonReturn.setInitialTileOverlays(initialTileOverlays);
         pigeonReturn.setInitialClusterManagers(initialClusterManagers);
+        pigeonReturn.setMarkerType(markerType);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(9);
+      ArrayList<Object> toListResult = new ArrayList<>(10);
       toListResult.add(initialCameraPosition);
       toListResult.add(mapConfiguration);
       toListResult.add(initialCircles);
@@ -4139,6 +4214,7 @@ public class Messages {
       toListResult.add(initialHeatmaps);
       toListResult.add(initialTileOverlays);
       toListResult.add(initialClusterManagers);
+      toListResult.add(markerType);
       return toListResult;
     }
 
@@ -4163,6 +4239,8 @@ public class Messages {
       pigeonResult.setInitialTileOverlays((List<PlatformTileOverlay>) initialTileOverlays);
       Object initialClusterManagers = pigeonVar_list.get(8);
       pigeonResult.setInitialClusterManagers((List<PlatformClusterManager>) initialClusterManagers);
+      Object markerType = pigeonVar_list.get(9);
+      pigeonResult.setMarkerType((PlatformMarkerType) markerType);
       return pigeonResult;
     }
   }
@@ -4353,14 +4431,14 @@ public class Messages {
       this.liteModeEnabled = setterArg;
     }
 
-    private @Nullable String cloudMapId;
+    private @Nullable String mapId;
 
-    public @Nullable String getCloudMapId() {
-      return cloudMapId;
+    public @Nullable String getMapId() {
+      return mapId;
     }
 
-    public void setCloudMapId(@Nullable String setterArg) {
-      this.cloudMapId = setterArg;
+    public void setMapId(@Nullable String setterArg) {
+      this.mapId = setterArg;
     }
 
     private @Nullable String style;
@@ -4400,7 +4478,7 @@ public class Messages {
           && Objects.equals(trafficEnabled, that.trafficEnabled)
           && Objects.equals(buildingsEnabled, that.buildingsEnabled)
           && Objects.equals(liteModeEnabled, that.liteModeEnabled)
-          && Objects.equals(cloudMapId, that.cloudMapId)
+          && Objects.equals(mapId, that.mapId)
           && Objects.equals(style, that.style);
     }
 
@@ -4425,7 +4503,7 @@ public class Messages {
           trafficEnabled,
           buildingsEnabled,
           liteModeEnabled,
-          cloudMapId,
+          mapId,
           style);
     }
 
@@ -4576,11 +4654,11 @@ public class Messages {
         return this;
       }
 
-      private @Nullable String cloudMapId;
+      private @Nullable String mapId;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setCloudMapId(@Nullable String setterArg) {
-        this.cloudMapId = setterArg;
+      public @NonNull Builder setMapId(@Nullable String setterArg) {
+        this.mapId = setterArg;
         return this;
       }
 
@@ -4612,7 +4690,7 @@ public class Messages {
         pigeonReturn.setTrafficEnabled(trafficEnabled);
         pigeonReturn.setBuildingsEnabled(buildingsEnabled);
         pigeonReturn.setLiteModeEnabled(liteModeEnabled);
-        pigeonReturn.setCloudMapId(cloudMapId);
+        pigeonReturn.setMapId(mapId);
         pigeonReturn.setStyle(style);
         return pigeonReturn;
       }
@@ -4639,7 +4717,7 @@ public class Messages {
       toListResult.add(trafficEnabled);
       toListResult.add(buildingsEnabled);
       toListResult.add(liteModeEnabled);
-      toListResult.add(cloudMapId);
+      toListResult.add(mapId);
       toListResult.add(style);
       return toListResult;
     }
@@ -4682,8 +4760,8 @@ public class Messages {
       pigeonResult.setBuildingsEnabled((Boolean) buildingsEnabled);
       Object liteModeEnabled = pigeonVar_list.get(17);
       pigeonResult.setLiteModeEnabled((Boolean) liteModeEnabled);
-      Object cloudMapId = pigeonVar_list.get(18);
-      pigeonResult.setCloudMapId((String) cloudMapId);
+      Object mapId = pigeonVar_list.get(18);
+      pigeonResult.setMapId((String) mapId);
       Object style = pigeonVar_list.get(19);
       pigeonResult.setStyle((String) style);
       return pigeonResult;
@@ -5820,6 +5898,183 @@ public class Messages {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class PlatformBitmapPinConfig {
+    private @Nullable Long backgroundColor;
+
+    public @Nullable Long getBackgroundColor() {
+      return backgroundColor;
+    }
+
+    public void setBackgroundColor(@Nullable Long setterArg) {
+      this.backgroundColor = setterArg;
+    }
+
+    private @Nullable Long borderColor;
+
+    public @Nullable Long getBorderColor() {
+      return borderColor;
+    }
+
+    public void setBorderColor(@Nullable Long setterArg) {
+      this.borderColor = setterArg;
+    }
+
+    private @Nullable Long glyphColor;
+
+    public @Nullable Long getGlyphColor() {
+      return glyphColor;
+    }
+
+    public void setGlyphColor(@Nullable Long setterArg) {
+      this.glyphColor = setterArg;
+    }
+
+    private @Nullable PlatformBitmap glyphBitmap;
+
+    public @Nullable PlatformBitmap getGlyphBitmap() {
+      return glyphBitmap;
+    }
+
+    public void setGlyphBitmap(@Nullable PlatformBitmap setterArg) {
+      this.glyphBitmap = setterArg;
+    }
+
+    private @Nullable String glyphText;
+
+    public @Nullable String getGlyphText() {
+      return glyphText;
+    }
+
+    public void setGlyphText(@Nullable String setterArg) {
+      this.glyphText = setterArg;
+    }
+
+    private @Nullable Long glyphTextColor;
+
+    public @Nullable Long getGlyphTextColor() {
+      return glyphTextColor;
+    }
+
+    public void setGlyphTextColor(@Nullable Long setterArg) {
+      this.glyphTextColor = setterArg;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformBitmapPinConfig that = (PlatformBitmapPinConfig) o;
+      return Objects.equals(backgroundColor, that.backgroundColor)
+          && Objects.equals(borderColor, that.borderColor)
+          && Objects.equals(glyphColor, that.glyphColor)
+          && Objects.equals(glyphBitmap, that.glyphBitmap)
+          && Objects.equals(glyphText, that.glyphText)
+          && Objects.equals(glyphTextColor, that.glyphTextColor);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(
+          backgroundColor, borderColor, glyphColor, glyphBitmap, glyphText, glyphTextColor);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Long backgroundColor;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBackgroundColor(@Nullable Long setterArg) {
+        this.backgroundColor = setterArg;
+        return this;
+      }
+
+      private @Nullable Long borderColor;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBorderColor(@Nullable Long setterArg) {
+        this.borderColor = setterArg;
+        return this;
+      }
+
+      private @Nullable Long glyphColor;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setGlyphColor(@Nullable Long setterArg) {
+        this.glyphColor = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformBitmap glyphBitmap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setGlyphBitmap(@Nullable PlatformBitmap setterArg) {
+        this.glyphBitmap = setterArg;
+        return this;
+      }
+
+      private @Nullable String glyphText;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setGlyphText(@Nullable String setterArg) {
+        this.glyphText = setterArg;
+        return this;
+      }
+
+      private @Nullable Long glyphTextColor;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setGlyphTextColor(@Nullable Long setterArg) {
+        this.glyphTextColor = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformBitmapPinConfig build() {
+        PlatformBitmapPinConfig pigeonReturn = new PlatformBitmapPinConfig();
+        pigeonReturn.setBackgroundColor(backgroundColor);
+        pigeonReturn.setBorderColor(borderColor);
+        pigeonReturn.setGlyphColor(glyphColor);
+        pigeonReturn.setGlyphBitmap(glyphBitmap);
+        pigeonReturn.setGlyphText(glyphText);
+        pigeonReturn.setGlyphTextColor(glyphTextColor);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(6);
+      toListResult.add(backgroundColor);
+      toListResult.add(borderColor);
+      toListResult.add(glyphColor);
+      toListResult.add(glyphBitmap);
+      toListResult.add(glyphText);
+      toListResult.add(glyphTextColor);
+      return toListResult;
+    }
+
+    static @NonNull PlatformBitmapPinConfig fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      PlatformBitmapPinConfig pigeonResult = new PlatformBitmapPinConfig();
+      Object backgroundColor = pigeonVar_list.get(0);
+      pigeonResult.setBackgroundColor((Long) backgroundColor);
+      Object borderColor = pigeonVar_list.get(1);
+      pigeonResult.setBorderColor((Long) borderColor);
+      Object glyphColor = pigeonVar_list.get(2);
+      pigeonResult.setGlyphColor((Long) glyphColor);
+      Object glyphBitmap = pigeonVar_list.get(3);
+      pigeonResult.setGlyphBitmap((PlatformBitmap) glyphBitmap);
+      Object glyphText = pigeonVar_list.get(4);
+      pigeonResult.setGlyphText((String) glyphText);
+      Object glyphTextColor = pigeonVar_list.get(5);
+      pigeonResult.setGlyphTextColor((Long) glyphTextColor);
+      return pigeonResult;
+    }
+  }
+
   private static class PigeonCodec extends StandardMessageCodec {
     public static final PigeonCodec INSTANCE = new PigeonCodec();
 
@@ -5841,107 +6096,121 @@ public class Messages {
         case (byte) 131:
           {
             Object value = readValue(buffer);
-            return value == null ? null : PlatformJointType.values()[((Long) value).intValue()];
+            return value == null
+                ? null
+                : PlatformMarkerCollisionBehavior.values()[((Long) value).intValue()];
           }
         case (byte) 132:
           {
             Object value = readValue(buffer);
-            return value == null ? null : PlatformCapType.values()[((Long) value).intValue()];
+            return value == null ? null : PlatformJointType.values()[((Long) value).intValue()];
           }
         case (byte) 133:
           {
             Object value = readValue(buffer);
-            return value == null
-                ? null
-                : PlatformPatternItemType.values()[((Long) value).intValue()];
+            return value == null ? null : PlatformCapType.values()[((Long) value).intValue()];
           }
         case (byte) 134:
           {
             Object value = readValue(buffer);
             return value == null
                 ? null
-                : PlatformMapBitmapScaling.values()[((Long) value).intValue()];
+                : PlatformPatternItemType.values()[((Long) value).intValue()];
           }
         case (byte) 135:
-          return PlatformCameraPosition.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformMarkerType.values()[((Long) value).intValue()];
+          }
         case (byte) 136:
-          return PlatformCameraUpdate.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null
+                ? null
+                : PlatformMapBitmapScaling.values()[((Long) value).intValue()];
+          }
         case (byte) 137:
+          return PlatformCameraPosition.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 138:
+          return PlatformCameraUpdate.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 139:
           return PlatformCameraUpdateNewCameraPosition.fromList(
               (ArrayList<Object>) readValue(buffer));
-        case (byte) 138:
+        case (byte) 140:
           return PlatformCameraUpdateNewLatLng.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 139:
+        case (byte) 141:
           return PlatformCameraUpdateNewLatLngBounds.fromList(
               (ArrayList<Object>) readValue(buffer));
-        case (byte) 140:
-          return PlatformCameraUpdateNewLatLngZoom.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 141:
-          return PlatformCameraUpdateScrollBy.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 142:
-          return PlatformCameraUpdateZoomBy.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateNewLatLngZoom.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 143:
-          return PlatformCameraUpdateZoom.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateScrollBy.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 144:
-          return PlatformCameraUpdateZoomTo.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateZoomBy.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 145:
-          return PlatformCircle.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateZoom.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 146:
-          return PlatformHeatmap.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdateZoomTo.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 147:
-          return PlatformClusterManager.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCircle.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 148:
-          return PlatformDoublePair.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformHeatmap.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 149:
-          return PlatformInfoWindow.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformClusterManager.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 150:
-          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformDoublePair.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 151:
-          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformInfoWindow.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 152:
-          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 153:
-          return PlatformCap.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 154:
-          return PlatformPatternItem.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 155:
-          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCap.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 156:
-          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPatternItem.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 157:
-          return PlatformEdgeInsets.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 158:
-          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 159:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformEdgeInsets.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 160:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 161:
-          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 162:
-          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 163:
-          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 164:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 165:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 166:
-          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 167:
-          return PlatformBitmap.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 168:
-          return PlatformBitmapDefaultMarker.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 169:
-          return PlatformBitmapBytes.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBitmap.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 170:
-          return PlatformBitmapAsset.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBitmapDefaultMarker.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 171:
-          return PlatformBitmapAssetImage.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBitmapBytes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 172:
-          return PlatformBitmapAssetMap.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBitmapAsset.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 173:
+          return PlatformBitmapAssetImage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 174:
+          return PlatformBitmapAssetMap.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 175:
           return PlatformBitmapBytesMap.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 176:
+          return PlatformBitmapPinConfig.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -5955,135 +6224,144 @@ public class Messages {
       } else if (value instanceof PlatformRendererType) {
         stream.write(130);
         writeValue(stream, value == null ? null : ((PlatformRendererType) value).index);
-      } else if (value instanceof PlatformJointType) {
+      } else if (value instanceof PlatformMarkerCollisionBehavior) {
         stream.write(131);
+        writeValue(stream, value == null ? null : ((PlatformMarkerCollisionBehavior) value).index);
+      } else if (value instanceof PlatformJointType) {
+        stream.write(132);
         writeValue(stream, value == null ? null : ((PlatformJointType) value).index);
       } else if (value instanceof PlatformCapType) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, value == null ? null : ((PlatformCapType) value).index);
       } else if (value instanceof PlatformPatternItemType) {
-        stream.write(133);
-        writeValue(stream, value == null ? null : ((PlatformPatternItemType) value).index);
-      } else if (value instanceof PlatformMapBitmapScaling) {
         stream.write(134);
+        writeValue(stream, value == null ? null : ((PlatformPatternItemType) value).index);
+      } else if (value instanceof PlatformMarkerType) {
+        stream.write(135);
+        writeValue(stream, value == null ? null : ((PlatformMarkerType) value).index);
+      } else if (value instanceof PlatformMapBitmapScaling) {
+        stream.write(136);
         writeValue(stream, value == null ? null : ((PlatformMapBitmapScaling) value).index);
       } else if (value instanceof PlatformCameraPosition) {
-        stream.write(135);
+        stream.write(137);
         writeValue(stream, ((PlatformCameraPosition) value).toList());
       } else if (value instanceof PlatformCameraUpdate) {
-        stream.write(136);
+        stream.write(138);
         writeValue(stream, ((PlatformCameraUpdate) value).toList());
       } else if (value instanceof PlatformCameraUpdateNewCameraPosition) {
-        stream.write(137);
+        stream.write(139);
         writeValue(stream, ((PlatformCameraUpdateNewCameraPosition) value).toList());
       } else if (value instanceof PlatformCameraUpdateNewLatLng) {
-        stream.write(138);
+        stream.write(140);
         writeValue(stream, ((PlatformCameraUpdateNewLatLng) value).toList());
       } else if (value instanceof PlatformCameraUpdateNewLatLngBounds) {
-        stream.write(139);
+        stream.write(141);
         writeValue(stream, ((PlatformCameraUpdateNewLatLngBounds) value).toList());
       } else if (value instanceof PlatformCameraUpdateNewLatLngZoom) {
-        stream.write(140);
+        stream.write(142);
         writeValue(stream, ((PlatformCameraUpdateNewLatLngZoom) value).toList());
       } else if (value instanceof PlatformCameraUpdateScrollBy) {
-        stream.write(141);
+        stream.write(143);
         writeValue(stream, ((PlatformCameraUpdateScrollBy) value).toList());
       } else if (value instanceof PlatformCameraUpdateZoomBy) {
-        stream.write(142);
+        stream.write(144);
         writeValue(stream, ((PlatformCameraUpdateZoomBy) value).toList());
       } else if (value instanceof PlatformCameraUpdateZoom) {
-        stream.write(143);
+        stream.write(145);
         writeValue(stream, ((PlatformCameraUpdateZoom) value).toList());
       } else if (value instanceof PlatformCameraUpdateZoomTo) {
-        stream.write(144);
+        stream.write(146);
         writeValue(stream, ((PlatformCameraUpdateZoomTo) value).toList());
       } else if (value instanceof PlatformCircle) {
-        stream.write(145);
+        stream.write(147);
         writeValue(stream, ((PlatformCircle) value).toList());
       } else if (value instanceof PlatformHeatmap) {
-        stream.write(146);
+        stream.write(148);
         writeValue(stream, ((PlatformHeatmap) value).toList());
       } else if (value instanceof PlatformClusterManager) {
-        stream.write(147);
+        stream.write(149);
         writeValue(stream, ((PlatformClusterManager) value).toList());
       } else if (value instanceof PlatformDoublePair) {
-        stream.write(148);
+        stream.write(150);
         writeValue(stream, ((PlatformDoublePair) value).toList());
       } else if (value instanceof PlatformInfoWindow) {
-        stream.write(149);
+        stream.write(151);
         writeValue(stream, ((PlatformInfoWindow) value).toList());
       } else if (value instanceof PlatformMarker) {
-        stream.write(150);
+        stream.write(152);
         writeValue(stream, ((PlatformMarker) value).toList());
       } else if (value instanceof PlatformPolygon) {
-        stream.write(151);
+        stream.write(153);
         writeValue(stream, ((PlatformPolygon) value).toList());
       } else if (value instanceof PlatformPolyline) {
-        stream.write(152);
+        stream.write(154);
         writeValue(stream, ((PlatformPolyline) value).toList());
       } else if (value instanceof PlatformCap) {
-        stream.write(153);
+        stream.write(155);
         writeValue(stream, ((PlatformCap) value).toList());
       } else if (value instanceof PlatformPatternItem) {
-        stream.write(154);
+        stream.write(156);
         writeValue(stream, ((PlatformPatternItem) value).toList());
       } else if (value instanceof PlatformTile) {
-        stream.write(155);
+        stream.write(157);
         writeValue(stream, ((PlatformTile) value).toList());
       } else if (value instanceof PlatformTileOverlay) {
-        stream.write(156);
+        stream.write(158);
         writeValue(stream, ((PlatformTileOverlay) value).toList());
       } else if (value instanceof PlatformEdgeInsets) {
-        stream.write(157);
+        stream.write(159);
         writeValue(stream, ((PlatformEdgeInsets) value).toList());
       } else if (value instanceof PlatformLatLng) {
-        stream.write(158);
+        stream.write(160);
         writeValue(stream, ((PlatformLatLng) value).toList());
       } else if (value instanceof PlatformLatLngBounds) {
-        stream.write(159);
+        stream.write(161);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(160);
+        stream.write(162);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformCameraTargetBounds) {
-        stream.write(161);
+        stream.write(163);
         writeValue(stream, ((PlatformCameraTargetBounds) value).toList());
       } else if (value instanceof PlatformMapViewCreationParams) {
-        stream.write(162);
+        stream.write(164);
         writeValue(stream, ((PlatformMapViewCreationParams) value).toList());
       } else if (value instanceof PlatformMapConfiguration) {
-        stream.write(163);
+        stream.write(165);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(164);
+        stream.write(166);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(165);
+        stream.write(167);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(166);
+        stream.write(168);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else if (value instanceof PlatformBitmap) {
-        stream.write(167);
+        stream.write(169);
         writeValue(stream, ((PlatformBitmap) value).toList());
       } else if (value instanceof PlatformBitmapDefaultMarker) {
-        stream.write(168);
+        stream.write(170);
         writeValue(stream, ((PlatformBitmapDefaultMarker) value).toList());
       } else if (value instanceof PlatformBitmapBytes) {
-        stream.write(169);
+        stream.write(171);
         writeValue(stream, ((PlatformBitmapBytes) value).toList());
       } else if (value instanceof PlatformBitmapAsset) {
-        stream.write(170);
+        stream.write(172);
         writeValue(stream, ((PlatformBitmapAsset) value).toList());
       } else if (value instanceof PlatformBitmapAssetImage) {
-        stream.write(171);
+        stream.write(173);
         writeValue(stream, ((PlatformBitmapAssetImage) value).toList());
       } else if (value instanceof PlatformBitmapAssetMap) {
-        stream.write(172);
+        stream.write(174);
         writeValue(stream, ((PlatformBitmapAssetMap) value).toList());
       } else if (value instanceof PlatformBitmapBytesMap) {
-        stream.write(173);
+        stream.write(175);
         writeValue(stream, ((PlatformBitmapBytesMap) value).toList());
+      } else if (value instanceof PlatformBitmapPinConfig) {
+        stream.write(176);
+        writeValue(stream, ((PlatformBitmapPinConfig) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -6204,6 +6482,9 @@ public class Messages {
      */
     @NonNull
     Boolean didLastStyleSucceed();
+
+    @NonNull
+    Boolean isAdvancedMarkersAvailable();
     /** Clears the cache of tiles previously requseted from the tile provider. */
     void clearTileCache(@NonNull String tileOverlayId);
     /** Takes a snapshot of the map and returns its image data. */
@@ -6725,6 +7006,29 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   Boolean output = api.didLastStyleSucceed();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.isAdvancedMarkersAvailable"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                try {
+                  Boolean output = api.isAdvancedMarkersAvailable();
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);

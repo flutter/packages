@@ -80,7 +80,7 @@ class MapIdBodyState extends State<MapIdBody> {
           zoom: 7.0,
         ),
         key: _key,
-        cloudMapId: _mapId);
+        mapId: _mapId);
 
     final List<Widget> columnChildren = <Widget>[
       Padding(

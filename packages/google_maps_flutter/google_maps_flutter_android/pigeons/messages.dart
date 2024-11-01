@@ -184,6 +184,7 @@ class PlatformMarker {
     this.visible = true,
     this.zIndex = 0.0,
     this.clusterManagerId,
+    this.collisionBehavior = PlatformMarkerCollisionBehavior.required,
   });
 
   final double alpha;
@@ -200,6 +201,14 @@ class PlatformMarker {
   final double zIndex;
   final String markerId;
   final String? clusterManagerId;
+
+  final PlatformMarkerCollisionBehavior collisionBehavior;
+}
+
+enum PlatformMarkerCollisionBehavior {
+  required,
+  optionalAndHidesLowerPriority,
+  requiredAndHidesOptional,
 }
 
 /// Pigeon equivalent of the Polygon class.
@@ -410,6 +419,7 @@ class PlatformMapViewCreationParams {
     required this.initialHeatmaps,
     required this.initialTileOverlays,
     required this.initialClusterManagers,
+    required this.markerType,
   });
 
   final PlatformCameraPosition initialCameraPosition;
@@ -424,6 +434,12 @@ class PlatformMapViewCreationParams {
   final List<PlatformHeatmap?> initialHeatmaps;
   final List<PlatformTileOverlay?> initialTileOverlays;
   final List<PlatformClusterManager?> initialClusterManagers;
+  final PlatformMarkerType markerType;
+}
+
+enum PlatformMarkerType {
+  marker,
+  advancedMarker,
 }
 
 /// Pigeon equivalent of MapConfiguration.
@@ -447,7 +463,7 @@ class PlatformMapConfiguration {
     required this.trafficEnabled,
     required this.buildingsEnabled,
     required this.liteModeEnabled,
-    required this.cloudMapId,
+    required this.mapId,
     required this.style,
   });
 
@@ -469,7 +485,7 @@ class PlatformMapConfiguration {
   final bool? trafficEnabled;
   final bool? buildingsEnabled;
   final bool? liteModeEnabled;
-  final String? cloudMapId;
+  final String? mapId;
   final String? style;
 }
 
@@ -594,6 +610,25 @@ class PlatformBitmapBytesMap {
   final double? height;
 }
 
+class PlatformBitmapPinConfig {
+  PlatformBitmapPinConfig({
+    required this.backgroundColor,
+    required this.borderColor,
+    required this.glyphColor,
+    required this.glyphBitmap,
+    required this.glyphText,
+    required this.glyphTextColor,
+  });
+
+  final int? backgroundColor;
+  final int? borderColor;
+  final int? glyphColor;
+  final PlatformBitmap? glyphBitmap;
+
+  final String? glyphText;
+  final int? glyphTextColor;
+}
+
 /// Interface for non-test interactions with the native SDK.
 ///
 /// For test-only state queries, see [MapsInspectorApi].
@@ -700,6 +735,8 @@ abstract class MapsApi {
   /// This allows checking asynchronously for initial style failures, as there
   /// is no way to return failures from map initialization.
   bool didLastStyleSucceed();
+
+  bool isAdvancedMarkersAvailable();
 
   /// Clears the cache of tiles previously requseted from the tile provider.
   void clearTileCache(String tileOverlayId);

@@ -83,6 +83,7 @@ void main() {
           widgetConfiguration: const MapWidgetConfiguration(
             initialCameraPosition: initialCameraPosition,
             textDirection: TextDirection.ltr,
+            markerType: MarkerType.marker,
           ),
         );
 
@@ -121,6 +122,7 @@ void main() {
           widgetConfiguration: const MapWidgetConfiguration(
             initialCameraPosition: initialCameraPosition,
             textDirection: TextDirection.ltr,
+            markerType: MarkerType.marker,
           ),
         );
 
@@ -140,6 +142,7 @@ void main() {
           widgetConfiguration: const MapWidgetConfiguration(
             initialCameraPosition: initialCameraPosition,
             textDirection: TextDirection.ltr,
+            markerType: MarkerType.marker,
           ),
         );
 

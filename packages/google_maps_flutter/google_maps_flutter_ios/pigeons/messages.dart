@@ -207,6 +207,7 @@ class PlatformMapViewCreationParams {
     required this.initialHeatmaps,
     required this.initialTileOverlays,
     required this.initialClusterManagers,
+    required this.markerType,
   });
 
   final PlatformCameraPosition initialCameraPosition;
@@ -218,6 +219,12 @@ class PlatformMapViewCreationParams {
   final List<PlatformHeatmap> initialHeatmaps;
   final List<PlatformTileOverlay> initialTileOverlays;
   final List<PlatformClusterManager> initialClusterManagers;
+  final PlatformMarkerType markerType;
+}
+
+enum PlatformMarkerType {
+  marker,
+  advancedMarker,
 }
 
 /// Pigeon equivalent of MapConfiguration.
@@ -238,7 +245,7 @@ class PlatformMapConfiguration {
     required this.indoorViewEnabled,
     required this.trafficEnabled,
     required this.buildingsEnabled,
-    required this.cloudMapId,
+    required this.mapId,
     required this.style,
   });
 
@@ -257,7 +264,7 @@ class PlatformMapConfiguration {
   final bool? indoorViewEnabled;
   final bool? trafficEnabled;
   final bool? buildingsEnabled;
-  final String? cloudMapId;
+  final String? mapId;
   final String? style;
 }
 
@@ -402,6 +409,10 @@ abstract class MapsApi {
 
   /// Takes a snapshot of the map and returns its image data.
   Uint8List? takeSnapshot();
+
+  /// Returns true if the map supports advanced markers
+  @ObjCSelector('isAdvancedMarkersAvailable')
+  bool isAdvancedMarkersAvailable();
 }
 
 /// Interface for calls from the native SDK to Dart.

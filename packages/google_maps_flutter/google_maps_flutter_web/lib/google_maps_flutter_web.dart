@@ -20,6 +20,7 @@ import 'package:google_maps/google_maps_visualization.dart' as visualization;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:sanitize_html/sanitize_html.dart';
 import 'package:stream_transform/stream_transform.dart';
+import 'package:web/web.dart' as web;
 import 'package:web/web.dart';
 
 import 'src/dom_window_extension.dart';

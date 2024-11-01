@@ -456,6 +456,11 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         : _setStyleFailureMessage;
   }
 
+  @override
+  Future<bool> isAdvancedMarkersAvailable({required int mapId}) async {
+    return _hostApi(mapId).isAdvancedMarkersAvailable();
+  }
+
   /// Set [GoogleMapsFlutterPlatform] to use [AndroidViewSurface] to build the
   /// Google Maps widget.
   ///
@@ -504,6 +509,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     PlatformViewCreatedCallback onPlatformViewCreated, {
     required PlatformMapConfiguration mapConfiguration,
     required MapWidgetConfiguration widgetConfiguration,
+    required MarkerType markerType,
     MapObjects mapObjects = const MapObjects(),
   }) {
     final PlatformMapViewCreationParams creationParams =
@@ -527,6 +533,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       initialClusterManagers: mapObjects.clusterManagers
           .map(_platformClusterManagerFromClusterManager)
           .toList(),
+      markerType: _platformMarkerTypeFromMarkerType(markerType),
     );
 
     const String viewType = 'plugins.flutter.dev/google_maps_android';
@@ -591,6 +598,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       mapObjects: mapObjects,
       mapConfiguration:
           _platformMapConfigurationFromMapConfiguration(mapConfiguration),
+      markerType: widgetConfiguration.markerType,
     );
   }
 
@@ -608,13 +616,16 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     Set<ClusterManager> clusterManagers = const <ClusterManager>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
+    MarkerType markerType = MarkerType.marker,
   }) {
     return _buildView(
       creationId,
       onPlatformViewCreated,
       widgetConfiguration: MapWidgetConfiguration(
-          initialCameraPosition: initialCameraPosition,
-          textDirection: textDirection),
+        initialCameraPosition: initialCameraPosition,
+        textDirection: textDirection,
+        markerType: markerType,
+      ),
       mapObjects: MapObjects(
           markers: markers,
           polygons: polygons,
@@ -623,6 +634,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
           clusterManagers: clusterManagers,
           tileOverlays: tileOverlays),
       mapConfiguration: _platformMapConfigurationFromOptionsJson(mapOptions),
+      markerType: markerType,
     );
   }
 
@@ -639,6 +651,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     Set<ClusterManager> clusterManagers = const <ClusterManager>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
+    MarkerType markerType = MarkerType.marker,
   }) {
     return buildViewWithTextDirection(
       creationId,
@@ -653,6 +666,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       clusterManagers: clusterManagers,
       gestureRecognizers: gestureRecognizers,
       mapOptions: mapOptions,
+      markerType: markerType,
     );
   }
 
@@ -746,6 +760,11 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       zIndex: marker.zIndex,
       markerId: marker.markerId.value,
       clusterManagerId: marker.clusterManagerId?.value,
+      collisionBehavior: marker is AdvancedMarker
+          ? platformMarkerCollisionBehaviorFromMarkerCollisionBehavior(
+              marker.collisionBehavior,
+            )
+          : PlatformMarkerCollisionBehavior.required,
     );
   }
 
@@ -857,6 +876,13 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     }
   }
 
+  PlatformMarkerType _platformMarkerTypeFromMarkerType(MarkerType markerType) {
+    return switch (markerType) {
+      MarkerType.marker => PlatformMarkerType.marker,
+      MarkerType.advancedMarker => PlatformMarkerType.advancedMarker,
+    };
+  }
+
   /// Convert [MapBitmapScaling] from platform interface to [PlatformMapBitmapScaling] Pigeon.
   @visibleForTesting
   static PlatformMapBitmapScaling platformMapBitmapScalingFromScaling(
@@ -921,6 +947,21 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
                 imagePixelRatio: bytes.imagePixelRatio,
                 width: bytes.width,
                 height: bytes.height));
+      case final PinConfig pinConfig:
+        final BitmapDescriptor? glyphBitmapDescriptor =
+            pinConfig.glyph?.bitmapDescriptor;
+        return PlatformBitmap(
+          bitmap: PlatformBitmapPinConfig(
+            backgroundColor: pinConfig.backgroundColor?.value,
+            borderColor: pinConfig.borderColor?.value,
+            glyphColor: pinConfig.glyph?.color?.value,
+            glyphText: pinConfig.glyph?.text,
+            glyphTextColor: pinConfig.glyph?.textColor?.value,
+            glyphBitmap: glyphBitmapDescriptor != null
+                ? platformBitmapFromBitmapDescriptor(glyphBitmapDescriptor)
+                : null,
+          ),
+        );
       default:
         throw ArgumentError(
             'Unrecognized type of bitmap ${bitmap.runtimeType}', 'bitmap');
@@ -1185,7 +1226,7 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
     trafficEnabled: config.trafficEnabled,
     buildingsEnabled: config.buildingsEnabled,
     liteModeEnabled: config.liteModeEnabled,
-    cloudMapId: config.cloudMapId,
+    mapId: config.mapId ?? config.cloudMapId,
     style: config.style,
   );
 }
@@ -1226,7 +1267,7 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
     trafficEnabled: options['trafficEnabled'] as bool?,
     buildingsEnabled: options['buildingsEnabled'] as bool?,
     liteModeEnabled: options['liteModeEnabled'] as bool?,
-    cloudMapId: options['cloudMapId'] as String?,
+    mapId: options['mapId'] as String?,
     style: options['style'] as String?,
   );
 }
@@ -1337,6 +1378,23 @@ PlatformPatternItem platformPatternItemFromPatternItem(PatternItem item) {
   // switch as needing an update.
   // ignore: dead_code
   return PlatformPatternItem(type: PlatformPatternItemType.dot);
+}
+
+/// Converts a MarkerCollisionBehavior to Pigeon's
+/// PlatformMarkerCollisionBehavior
+@visibleForTesting
+PlatformMarkerCollisionBehavior
+    platformMarkerCollisionBehaviorFromMarkerCollisionBehavior(
+  MarkerCollisionBehavior markerCollisionBehavior,
+) {
+  switch (markerCollisionBehavior) {
+    case MarkerCollisionBehavior.required:
+      return PlatformMarkerCollisionBehavior.required;
+    case MarkerCollisionBehavior.optionalAndHidesLowerPriority:
+      return PlatformMarkerCollisionBehavior.optionalAndHidesLowerPriority;
+    case MarkerCollisionBehavior.requiredAndHidesOptional:
+      return PlatformMarkerCollisionBehavior.requiredAndHidesOptional;
+  }
 }
 
 /// Update specification for a set of [TileOverlay]s.

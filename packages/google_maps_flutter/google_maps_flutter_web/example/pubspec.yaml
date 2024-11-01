@@ -28,9 +28,20 @@ flutter:
   assets:
     - assets/
 
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
 dependency_overrides:
+
   # Override the google_maps_flutter dependency on google_maps_flutter_web.
   # TODO(ditman): Unwind the circular dependency. This will create problems
   # if we need to make a breaking change to google_maps_flutter_web.
+  google_maps_flutter:
+    path: ../../../google_maps_flutter/google_maps_flutter
+  google_maps_flutter_android:
+    path: ../../../google_maps_flutter/google_maps_flutter_android
+  google_maps_flutter_platform_interface:
+    path: ../../../google_maps_flutter/google_maps_flutter_platform_interface
   google_maps_flutter_web:
-    path: ../
+    path: ../../../google_maps_flutter/google_maps_flutter_web
+
