@@ -4,6 +4,8 @@ tasks:
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: tool unit tests
     script: .ci/scripts/plugin_tools_tests.sh
+  - name: tool format
+    script: .ci/scripts/plugin_tools_format.sh
   - name: format
     script: .ci/scripts/tool_runner.sh
     # Skip Swift formatting on Linux builders.
