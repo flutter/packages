@@ -1,3 +1,8 @@
+## 1.1.0
+
+* Deprecates top-level utility functions `blendPoints` and `reflectedPoint` and
+  some members in `PathSegmentData`.
+
 ## 1.0.3
 
 * Updates README.md.
