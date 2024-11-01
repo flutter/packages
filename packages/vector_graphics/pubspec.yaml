@@ -4,6 +4,7 @@ repository: https://github.com/flutter/packages/tree/main/packages/vector_graphi
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+vector_graphics%22
 # See https://github.com/flutter/flutter/issues/157626 before publishing a new
 # version.
+publish_to: none
 version: 1.1.13
 
 environment:
