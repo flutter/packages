@@ -1,3 +1,7 @@
+## 1.0.4
+
+* Deprecate utility functions `blendPoints` and `reflectedPoint`.
+
 ## 1.0.3
 
 * Updates README.md.

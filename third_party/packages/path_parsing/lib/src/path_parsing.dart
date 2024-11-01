@@ -411,6 +411,8 @@ class SvgPathStringSource {
   }
 }
 
+@Deprecated('Utility function that should not be public.')
+// TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157974
 _PathOffset reflectedPoint(
     _PathOffset reflectedIn, _PathOffset pointToReflect) {
   return _PathOffset(2 * reflectedIn.dx - pointToReflect.dx,
@@ -420,6 +422,8 @@ _PathOffset reflectedPoint(
 const double _kOneOverThree = 1.0 / 3.0;
 
 /// Blend the points with a ratio (1/3):(2/3).
+@Deprecated('Utility function that should not be public.')
+// TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157974
 _PathOffset blendPoints(_PathOffset p1, _PathOffset p2) {
   return _PathOffset((p1.dx + 2 * p2.dx) * _kOneOverThree,
       (p1.dy + 2 * p2.dy) * _kOneOverThree);
