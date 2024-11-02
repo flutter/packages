@@ -1,3 +1,7 @@
+## 1.1.15
+
+* Fixes an issue where empty tag could throw and broke SVG.
+
 ## 1.1.14
 
 * Makes the package WASM compatible.
