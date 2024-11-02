@@ -12,8 +12,7 @@ import 'theme.dart';
 /// which is stripped off when parsed to a `double`.
 ///
 /// Passing `null` will return `null`.
-double? parseDouble(String? rawDouble, {bool tryParse = false}) {
-  assert(tryParse != null); // ignore: unnecessary_null_comparison
+double? parseDouble(String? rawDouble) {
   if (rawDouble == null) {
     return null;
   }
@@ -26,10 +25,7 @@ double? parseDouble(String? rawDouble, {bool tryParse = false}) {
       .replaceFirst('pt', '')
       .trim();
 
-  if (tryParse) {
-    return double.tryParse(rawDouble);
-  }
-  return double.parse(rawDouble);
+  return double.tryParse(rawDouble);
 }
 
 /// Convert [degrees] to radians.
@@ -81,7 +77,6 @@ double? parseDoubleWithUnits(
   }
   final double? value = parseDouble(
     rawDouble,
-    tryParse: tryParse,
   );
 
   return value != null ? value * unit : null;
