@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+@JS()
+library;
+
 import 'dart:js_interop';
 
 /// Binding to the `adsbygoogle` JS global.
@@ -19,12 +22,12 @@ abstract class AdsByGoogle {}
 extension AdsByGoogleExtension on AdsByGoogle {
   /// Replacement of part of the adUnit code:
   /// <script>
-  // (adsbygoogle = window.adsbygoogle || []).push({});
-  // </script>
-  external void push(JSObject? params);
+  /// (adsbygoogle = window.adsbygoogle || []).push({});
+  /// </script>
+  external void push(JSObject params);
 
   /// Convenience method for invoking push() with an empty object
-  void loadAds() {
-    push(<String, String>{}.toJSBox);
+  void requestAd() {
+    push(JSObject());
   }
 }

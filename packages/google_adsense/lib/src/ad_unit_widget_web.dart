@@ -108,19 +108,12 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
     // Using Resize observer to detect element attached to DOM
     web.ResizeObserver((JSArray<web.ResizeObserverEntry> entries,
             web.ResizeObserver observer) {
-      for (final web.ResizeObserverEntry entry in entries.toDart) {
-        final web.Element target = entry.target;
-        if (target.isConnected) {
-          // First time resized since attached to DOM -> attachment callback from Flutter docs by David
-          if (!(target as web.HTMLElement)
-              .dataset
-              .getProperty('attached'.toJS)
-              .isDefinedAndNotNull) {
-            onElementAttached(target);
-            target.dataset.setProperty('attached'.toJS, true.toJS);
-            observer.disconnect();
-          }
-        }
+      // only check first one
+      final web.Element target = entries.toDart[0].target;
+      if (target.isConnected) {
+        // First time resized since attached to DOM -> attachment callback from Flutter docs by David
+          onElementAttached(target as web.HTMLElement);
+          observer.disconnect();
       }
     }.toJS)
         .observe(adUnitDiv);
@@ -154,7 +147,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
 
   void onElementAttached(web.HTMLElement element) {
     log('Element ${element.id} attached with style: height=${element.offsetHeight} and width=${element.offsetWidth}');
-    adsbygoogle.loadAds();
+    adsbygoogle.requestAd();
   }
 
   bool isLoaded(web.HTMLElement target) {

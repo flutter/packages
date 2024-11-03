@@ -57,8 +57,13 @@ class AdSense {
   }
 
   void _addMasterScript(String adClient) {
-    final web.HTMLScriptElement adsbygoogle = web.HTMLScriptElement();
-    adsbygoogle.innerText = 'adsbygoogle = window.adsbygoogle || [];';
+    JSObject adsbygoogle;
+    if (web.window.getProperty('adsbygoogle'.toJS).isUndefinedOrNull) {
+      adsbygoogle = JSArray<JSObject>();
+    } else {
+      adsbygoogle = web.window.getProperty('adsbygoogle'.toJS);
+    }
+    globalContext.setProperty('adsbygoogle'.toJS, adsbygoogle);
     final web.HTMLScriptElement script =
         web.document.createElement('script') as web.HTMLScriptElement
           ..async = true
