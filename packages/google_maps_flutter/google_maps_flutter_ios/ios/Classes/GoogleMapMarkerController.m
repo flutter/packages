@@ -148,7 +148,10 @@
     [self setVisible:[visible boolValue]];
   }
   NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
-  if (zIndex) {
+  NSNumber *zIndexInt = FGMGetValueOrNilFromDict(data, @"zIndexInt");
+  if (zIndexInt && [zIndexInt intValue] != 0) {
+    [self setZIndex:[zIndexInt intValue]];
+  } else if (zIndex) {
     [self setZIndex:[zIndex intValue]];
   }
 }

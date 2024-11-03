@@ -135,7 +135,7 @@ class Marker implements MapsObject<Marker> {
   /// * is positioned at 0, 0; [position] is `LatLng(0.0, 0.0)`
   /// * has an axis-aligned icon; [rotation] is 0.0
   /// * is visible; [visible] is true
-  /// * is placed at the base of the drawing order; [zIndex] is 0.0
+  /// * is placed at the base of the drawing order; [zIndexInt] is 0.0
   /// * reports [onTap] events
   /// * reports [onDragEnd] events
   const Marker({
@@ -150,7 +150,12 @@ class Marker implements MapsObject<Marker> {
     this.position = const LatLng(0.0, 0.0),
     this.rotation = 0.0,
     this.visible = true,
+    @Deprecated(
+      'Use zIndexInt instead. '
+      'Use of zIndex was deprecated as it gets truncated to int on iOS.',
+    )
     this.zIndex = 0.0,
+    this.zIndexInt = 0,
     this.clusterManagerId,
     this.onTap,
     this.onDrag,
@@ -219,7 +224,18 @@ class Marker implements MapsObject<Marker> {
   ///
   /// Overlays are drawn in order of z-index, so that lower values means drawn
   /// earlier, and thus appearing to be closer to the surface of the Earth.
+  @Deprecated(
+    'Use zIndexInt instead. '
+    'Use of zIndex was deprecated as it gets truncated to int on iOS.',
+  )
   final double zIndex;
+
+  /// The z-index of the marker, used to determine relative drawing order of
+  /// map overlays.
+  ///
+  /// Overlays are drawn in order of z-index, so that lower values means drawn
+  /// earlier, and thus appearing to be closer to the surface of the Earth.
+  final int zIndexInt;
 
   /// Callbacks to receive tap events for markers placed on this map.
   final VoidCallback? onTap;
@@ -246,7 +262,12 @@ class Marker implements MapsObject<Marker> {
     LatLng? positionParam,
     double? rotationParam,
     bool? visibleParam,
+    @Deprecated(
+      'Use zIndexIntParam instead. '
+      'Use of zIndex was deprecated as it gets truncated to int on iOS.',
+    )
     double? zIndexParam,
+    int? zIndexIntParam,
     VoidCallback? onTapParam,
     ValueChanged<LatLng>? onDragStartParam,
     ValueChanged<LatLng>? onDragParam,
@@ -266,6 +287,7 @@ class Marker implements MapsObject<Marker> {
       rotation: rotationParam ?? rotation,
       visible: visibleParam ?? visible,
       zIndex: zIndexParam ?? zIndex,
+      zIndexInt: zIndexIntParam ?? zIndexInt,
       onTap: onTapParam ?? onTap,
       onDragStart: onDragStartParam ?? onDragStart,
       onDrag: onDragParam ?? onDrag,
@@ -301,6 +323,7 @@ class Marker implements MapsObject<Marker> {
     addIfPresent('rotation', rotation);
     addIfPresent('visible', visible);
     addIfPresent('zIndex', zIndex);
+    addIfPresent('zIndexInt', zIndexInt);
     addIfPresent('clusterManagerId', clusterManagerId?.value);
     return json;
   }
@@ -326,6 +349,7 @@ class Marker implements MapsObject<Marker> {
         rotation == other.rotation &&
         visible == other.visible &&
         zIndex == other.zIndex &&
+        zIndexInt == other.zIndexInt &&
         clusterManagerId == other.clusterManagerId;
   }
 
@@ -337,7 +361,7 @@ class Marker implements MapsObject<Marker> {
     return 'Marker{markerId: $markerId, alpha: $alpha, anchor: $anchor, '
         'consumeTapEvents: $consumeTapEvents, draggable: $draggable, flat: $flat, '
         'icon: $icon, infoWindow: $infoWindow, position: $position, rotation: $rotation, '
-        'visible: $visible, zIndex: $zIndex, onTap: $onTap, onDragStart: $onDragStart, '
+        'visible: $visible, zIndex: $zIndex, zIndexInt:$zIndexInt onTap: $onTap, onDragStart: $onDragStart, '
         'onDrag: $onDrag, onDragEnd: $onDragEnd, clusterManagerId: $clusterManagerId}';
   }
 }
