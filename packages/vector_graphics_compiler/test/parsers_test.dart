@@ -172,6 +172,10 @@ void main() {
     expect(parseDoubleWithUnits('1pt', theme: const SvgTheme()), 1 + 1 / 3);
   });
 
+  test('"none" conversion', () {
+    expect(parseDoubleWithUnits('none', theme: const SvgTheme()), null);
+  });
+
   test('Parse a transform with scientific notation', () {
     expect(
       parseTransform('translate(9e-6,6.5e-4)'),

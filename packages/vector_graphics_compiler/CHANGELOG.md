@@ -1,3 +1,7 @@
+## 1.1.13
+
+* Fixes an issue when parse double with 'none' value
+
 ## 1.1.12
 
 * Transfers the package source from https://github.com/dnfield/vector_graphics
