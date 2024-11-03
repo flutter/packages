@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/src/path_utils.dart';
+import 'package:go_router/src/route_pattern.dart';
 
 void main() {
   test('patternToRegExp without path parameter', () async {

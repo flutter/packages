@@ -14,7 +14,7 @@ import 'package:meta/meta.dart';
 import 'configuration.dart';
 import 'logging.dart';
 import 'misc/errors.dart';
-import 'path_utils.dart';
+import 'route_pattern.dart';
 import 'route.dart';
 import 'state.dart';
 

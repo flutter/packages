@@ -11,7 +11,7 @@ import 'package:meta/meta.dart';
 
 import 'configuration.dart';
 import 'match.dart';
-import 'path_utils.dart';
+import 'route_pattern.dart';
 import 'router.dart';
 import 'state.dart';
 
@@ -261,7 +261,7 @@ class GoRoute extends RouteBase {
   /// - [path] and [name] cannot be empty strings.
   /// - One of either [builder] or [pageBuilder] must be provided.
   GoRoute({
-    required this.path,
+    required String path,
     this.name,
     this.builder,
     this.pageBuilder,
@@ -275,10 +275,8 @@ class GoRoute extends RouteBase {
             'builder, pageBuilder, or redirect must be provided'),
         assert(onExit == null || pageBuilder != null || builder != null,
             'if onExit is provided, one of pageBuilder or builder must be provided'),
-        super._() {
-    // cache the path regexp and parameters
-    _pathRE = patternToRegExp(path, pathParameters);
-  }
+        pattern = RoutePattern(path),
+        super._();
 
   /// Whether this [GoRoute] only redirects to another route.
   ///
@@ -347,7 +345,7 @@ class GoRoute extends RouteBase {
   ///
   /// See [Query parameters and path parameters](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/path_and_query_parameters.dart)
   /// to learn more about parameters.
-  final String path;
+  String get path => pattern.toString();
 
   /// A page builder for this route.
   ///
@@ -432,18 +430,15 @@ class GoRoute extends RouteBase {
 
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.
-  RegExpMatch? matchPatternAsPrefix(String loc) {
-    return _pathRE.matchAsPrefix('/$loc') as RegExpMatch? ??
-        _pathRE.matchAsPrefix(loc) as RegExpMatch?;
-  }
+  RegExpMatch? matchPatternAsPrefix(String path) => pattern.match(path);
 
   /// Extract the path parameters from a match.
   Map<String, String> extractPathParams(RegExpMatch match) =>
-      extractPathParameters(pathParameters, match);
+      pattern.extractPathParameters(match);
 
   /// The path parameters in this route.
   @internal
-  final List<String> pathParameters = <String>[];
+  List<String> get pathParameters => pattern.parameters;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -454,7 +449,7 @@ class GoRoute extends RouteBase {
         FlagProperty('redirect', value: redirectOnly, ifTrue: 'Redirect Only'));
   }
 
-  late final RegExp _pathRE;
+  final RoutePattern pattern;
 }
 
 /// Base class for classes that act as shells for sub-routes, such
@@ -1138,12 +1133,10 @@ class StatefulNavigationShell extends StatefulWidget {
       /// Recursively traverses the routes of the provided StackedShellBranch to
       /// find the first GoRoute, from which a full path will be derived.
       final GoRoute route = branch.defaultRoute!;
-      final List<String> parameters = <String>[];
-      patternToRegExp(route.path, parameters);
-      assert(parameters.isEmpty);
-      final String fullPath = _router.configuration.locationForRoute(route)!;
-      return patternToPath(
-          fullPath, shellRouteContext.routerState.pathParameters);
+      assert(route.pattern.parameters.isEmpty);
+      final RoutePattern fullPattern =
+          _router.configuration.buildRoutePatternFromRoot(route)!;
+      return fullPattern.toPath(shellRouteContext.routerState.pathParameters);
     }
   }
 

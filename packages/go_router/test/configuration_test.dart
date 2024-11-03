@@ -550,7 +550,7 @@ void main() {
 
         String? initialLocation(StatefulShellBranch branch) {
           final GoRoute? route = branch.defaultRoute;
-          return route != null ? config.locationForRoute(route) : null;
+          return route != null ? config.buildRoutePatternFromRoot(route) : null;
         }
 
         expect('/a', initialLocation(branchA));

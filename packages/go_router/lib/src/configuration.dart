@@ -7,11 +7,12 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import 'logging.dart';
 import 'match.dart';
 import 'misc/errors.dart';
-import 'path_utils.dart';
+import 'route_pattern.dart';
 import 'route.dart';
 import 'router.dart';
 import 'state.dart';
@@ -136,12 +137,13 @@ class RouteConfiguration {
             // Recursively search for the first GoRoute descendant. Will
             // throw assertion error if not found.
             final GoRoute? route = branch.defaultRoute;
-            final String? initialLocation =
-                route != null ? locationForRoute(route) : null;
+            final RoutePattern? fullPattern = route != null
+                ? buildRoutePatternFromRoot(route, rootRoutes: branch.routes)
+                : null;
             assert(
-                initialLocation != null,
+                fullPattern != null,
                 'The default location of a StatefulShellBranch must be '
-                'derivable from GoRoute descendant');
+                'a descendant of that branch');
             assert(
                 route!.pathParameters.isEmpty,
                 'The default location of a StatefulShellBranch cannot be '
@@ -196,8 +198,8 @@ class RouteConfiguration {
     assert(_debugCheckParentNavigatorKeys(
         routingTable.routes, <GlobalKey<NavigatorState>>[navigatorKey]));
     assert(_debugCheckStatefulShellBranchDefaultLocations(routingTable.routes));
-    _nameToPath.clear();
-    _cacheNameToPath('', routingTable.routes);
+    _routesByName.clear();
+    _cacheRoutesByName(routingTable.routes);
     log(debugKnownRoutes());
   }
 
@@ -246,7 +248,7 @@ class RouteConfiguration {
   ///    example.
   final Codec<Object?, Object?>? extraCodec;
 
-  final Map<String, String> _nameToPath = <String, String>{};
+  final Map<String, GoRoute> _routesByName = <String, GoRoute>{};
 
   /// Looks up the url location by a [GoRoute]'s name.
   String namedLocation(
@@ -261,20 +263,18 @@ class RouteConfiguration {
           '${queryParameters.isEmpty ? '' : ', queryParameters: $queryParameters'}');
       return true;
     }());
-    assert(_nameToPath.containsKey(name), 'unknown route name: $name');
-    final String path = _nameToPath[name]!;
+    assert(_routesByName.containsKey(name), 'unknown route name: $name');
+    final GoRoute route = _routesByName[name]!;
     assert(() {
-      // Check that all required params are present
-      final List<String> paramNames = <String>[];
-      patternToRegExp(path, paramNames);
-      for (final String paramName in paramNames) {
+      for (final String paramName in route.pattern.parameters) {
         assert(pathParameters.containsKey(paramName),
-            'missing param "$paramName" for $path');
+            'missing param "$paramName" for ${route.pattern}');
       }
 
       // Check that there are no extra params
       for (final String key in pathParameters.keys) {
-        assert(paramNames.contains(key), 'unknown param "$key" for $path');
+        assert(route.pattern.parameters.contains(key),
+            'unknown param "$key" for ${route.pattern}');
       }
       return true;
     }());
@@ -282,7 +282,7 @@ class RouteConfiguration {
       for (final MapEntry<String, String> param in pathParameters.entries)
         param.key: Uri.encodeComponent(param.value)
     };
-    final String location = patternToPath(path, encodedParams);
+    final String location = route.pattern.toPath(encodedParams);
     return Uri(
             path: location,
             queryParameters: queryParameters.isEmpty ? null : queryParameters)
@@ -500,12 +500,46 @@ class RouteConfiguration {
         .join(' => ');
   }
 
-  /// Get the location for the provided route.
-  ///
-  /// Builds the absolute path for the route, by concatenating the paths of the
-  /// route and all its ancestors.
-  String? locationForRoute(RouteBase route) =>
-      fullPathForRoute(route, '', _routingConfig.value.routes);
+  /// Concatenate a Route's pattern with all its ancestor pattern
+  @internal
+  RoutePattern? buildRoutePatternFromRoot(RouteBase route,
+      {List<RouteBase>? rootRoutes}) {
+    // if the root routes is not provided the top most routes are used
+    rootRoutes ??= _routingConfig.value.routes;
+    final List<RouteBase> sequence =
+        _findRouteSequence(routes: rootRoutes, target: route);
+
+    if (sequence.isEmpty) {
+      return null;
+    }
+
+    final RoutePattern result = sequence.whereType<GoRoute>().fold(
+        RoutePattern(''),
+        (RoutePattern prev, GoRoute next) => prev.concatenate(next.pattern));
+
+    return result;
+  }
+
+  // Returns the sequence of routes (including ancestors) that leads
+  // from a starting list of routes to a target route.
+  List<RouteBase> _findRouteSequence({
+    required List<RouteBase> routes,
+    required RouteBase target,
+  }) {
+    for (final RouteBase route in routes) {
+      if (route == target) {
+        return <RouteBase>[target];
+      }
+      final List<RouteBase> deeper =
+          _findRouteSequence(routes: route.routes, target: target);
+      if (deeper.isNotEmpty) {
+        if (route is GoRoute) {
+          return <RouteBase>[route, ...deeper];
+        }
+      }
+    }
+    return <RouteBase>[];
+  }
 
   @override
   String toString() {
@@ -521,36 +555,36 @@ class RouteConfiguration {
     final StringBuffer sb = StringBuffer();
     sb.writeln('Full paths for routes:');
     _debugFullPathsFor(
-        _routingConfig.value.routes, '', const <_DecorationType>[], sb);
+        _routingConfig.value.routes, const <_DecorationType>[], sb);
 
-    if (_nameToPath.isNotEmpty) {
+    if (_routesByName.isNotEmpty) {
       sb.writeln('known full paths for route names:');
-      for (final MapEntry<String, String> e in _nameToPath.entries) {
-        sb.writeln('  ${e.key} => ${e.value}');
+      for (final MapEntry<String, GoRoute> e in _routesByName.entries) {
+        sb.writeln('  ${e.key} => ${e.value.pattern}');
       }
     }
 
     return sb.toString();
   }
 
-  void _debugFullPathsFor(List<RouteBase> routes, String parentFullpath,
+  /// adds a line for every route with its full path
+  void _debugFullPathsFor(List<RouteBase> routes,
       List<_DecorationType> parentDecoration, StringBuffer sb) {
     for (final (int index, RouteBase route) in routes.indexed) {
       final List<_DecorationType> decoration =
           _getDecoration(parentDecoration, index, routes.length);
       final String decorationString =
           decoration.map((_DecorationType e) => e.toString()).join();
-      String path = parentFullpath;
       if (route is GoRoute) {
-        path = concatenatePaths(parentFullpath, route.path);
+        final RoutePattern? fullPattern = buildRoutePatternFromRoot(route);
         final String? screenName =
             route.builder?.runtimeType.toString().split('=> ').last;
-        sb.writeln('$decorationString$path '
+        sb.writeln('$decorationString$fullPattern '
             '${screenName == null ? '' : '($screenName)'}');
       } else if (route is ShellRouteBase) {
         sb.writeln('$decorationString (ShellRoute)');
       }
-      _debugFullPathsFor(route.routes, path, decoration, sb);
+      _debugFullPathsFor(route.routes, decoration, sb);
     }
   }
 
@@ -581,26 +615,23 @@ class RouteConfiguration {
     }
   }
 
-  void _cacheNameToPath(String parentFullPath, List<RouteBase> childRoutes) {
-    for (final RouteBase route in childRoutes) {
+  /// adds an entry in the _routesByName map for every route and their descendants.
+  void _cacheRoutesByName(List<RouteBase> routes) {
+    for (final RouteBase route in routes) {
       if (route is GoRoute) {
-        final String fullPath = concatenatePaths(parentFullPath, route.path);
-
         if (route.name != null) {
           final String name = route.name!;
-          assert(
-              !_nameToPath.containsKey(name),
-              'duplication fullpaths for name '
-              '"$name":${_nameToPath[name]}, $fullPath');
-          _nameToPath[name] = fullPath;
+          assert(!_routesByName.containsKey(name),
+              'duplication route name: $name');
+          _routesByName[name] = route;
         }
 
         if (route.routes.isNotEmpty) {
-          _cacheNameToPath(fullPath, route.routes);
+          _cacheRoutesByName(route.routes);
         }
       } else if (route is ShellRouteBase) {
         if (route.routes.isNotEmpty) {
-          _cacheNameToPath(parentFullPath, route.routes);
+          _cacheRoutesByName(route.routes);
         }
       }
     }
