@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 void main() {
@@ -24,6 +23,7 @@ void main() {
       expect(marker.rotation, equals(0.0));
       expect(marker.visible, equals(true));
       expect(marker.zIndex, equals(0.0));
+      expect(marker.zIndexInt, equals(0));
       expect(marker.onTap, equals(null));
       expect(marker.onDrag, equals(null));
       expect(marker.onDragStart, equals(null));
@@ -61,6 +61,7 @@ void main() {
         rotation: 100,
         visible: false,
         zIndex: 100,
+        zIndexInt: 100,
         onTap: () {},
         onDragStart: (LatLng latLng) {},
         onDrag: (LatLng latLng) {},
@@ -86,6 +87,7 @@ void main() {
         'rotation': 100.0,
         'visible': false,
         'zIndex': 100.0,
+        'zIndexInt': 100,
       });
     });
     test('clone', () {
