@@ -11,7 +11,7 @@ import 'package:meta/meta.dart';
 
 import 'configuration.dart';
 import 'match.dart';
-import 'route_pattern.dart';
+import 'route_path.dart';
 import 'router.dart';
 import 'state.dart';
 
@@ -275,7 +275,7 @@ class GoRoute extends RouteBase {
             'builder, pageBuilder, or redirect must be provided'),
         assert(onExit == null || pageBuilder != null || builder != null,
             'if onExit is provided, one of pageBuilder or builder must be provided'),
-        pattern = RoutePattern(path),
+        pattern = RoutePath(path),
         super._();
 
   /// Whether this [GoRoute] only redirects to another route.
@@ -449,7 +449,7 @@ class GoRoute extends RouteBase {
         FlagProperty('redirect', value: redirectOnly, ifTrue: 'Redirect Only'));
   }
 
-  final RoutePattern pattern;
+  final RoutePath pattern;
 }
 
 /// Base class for classes that act as shells for sub-routes, such
@@ -1134,9 +1134,10 @@ class StatefulNavigationShell extends StatefulWidget {
       /// find the first GoRoute, from which a full path will be derived.
       final GoRoute route = branch.defaultRoute!;
       assert(route.pattern.parameters.isEmpty);
-      final RoutePattern fullPattern =
+      final RoutePath fullPattern =
           _router.configuration.buildRoutePatternFromRoot(route)!;
-      return fullPattern.toPath(shellRouteContext.routerState.pathParameters);
+      return fullPattern
+          .toLocation(shellRouteContext.routerState.pathParameters);
     }
   }
 

@@ -14,7 +14,7 @@ import 'package:meta/meta.dart';
 import 'configuration.dart';
 import 'logging.dart';
 import 'misc/errors.dart';
-import 'route_pattern.dart';
+import 'route_path.dart';
 import 'route.dart';
 import 'state.dart';
 
@@ -214,7 +214,7 @@ abstract class RouteMatchBase with Diagnosticable {
     final Map<String, String> currentPathParameter =
         encodedParams.map<String, String>((String key, String value) =>
             MapEntry<String, String>(key, Uri.decodeComponent(value)));
-    final String pathLoc = patternToPath(route.path, encodedParams);
+    final String pathLoc = route.pattern.toLocation(encodedParams);
     final String newMatchedLocation =
         concatenatePaths(matchedLocation, pathLoc);
     final String newMatchedPath = concatenatePaths(matchedPath, route.path);

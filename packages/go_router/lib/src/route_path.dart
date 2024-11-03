@@ -3,34 +3,38 @@
 // found in the LICENSE file.
 
 /// Represents a route pattern such as '/books/:bookId'
-class RoutePattern {
-  static final RegExp _parameterRegExp =
-      RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
-  final String _pattern;
-  late final RegExp _patternRegExp;
-
-  /// the parameters presents in the pattern.
-  /// Such that RoutePattern('/users/:userId/books/:bookId')
-  /// will have as parameters ['userId', 'bookId']
-  late final List<String> parameters;
-
-  RoutePattern(this._pattern) {
+class RoutePath {
+  /// Constructs a [RoutePath] given a pattern such as '/books/:bookId'
+  RoutePath(this._pattern) {
     final ({RegExp regExp, List<String> parameters}) result =
         _buildRegExp(_pattern);
     _patternRegExp = result.regExp;
     parameters = result.parameters;
   }
 
-  RegExpMatch? match(String path) {
-    return _patternRegExp.matchAsPrefix(path) as RegExpMatch?;
+  static final RegExp _parameterRegExp =
+      RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
+
+  /// route pattern such as '/books/:bookId'
+  final String _pattern;
+  late final RegExp _patternRegExp;
+
+  /// The parameters presents in the pattern,
+  /// such that RoutePath('/users/:userId/books/:bookId')
+  /// will have as parameters ['userId', 'bookId']
+  late final List<String> parameters;
+
+  /// matches a location against this route path
+  RegExpMatch? match(String location) {
+    return _patternRegExp.matchAsPrefix(location) as RegExpMatch?;
   }
 
-  /// Constructs the full path by providing the path paramters
+  /// Constructs the full location by providing the path paramters
   ///
   /// Example:
   ///
-  /// RoutePattern('/books/:bookgId').toPath({'bookId': 3}) => /books/3
-  String toPath(Map<String, String> pathParameters) {
+  /// RoutePath('/books/:bookgId').toLocation({'bookId': 3}) => /books/3
+  String toLocation(Map<String, String> pathParameters) {
     final StringBuffer buffer = StringBuffer();
     int start = 0;
     for (final RegExpMatch match in _parameterRegExp.allMatches(_pattern)) {
@@ -56,13 +60,16 @@ class RoutePattern {
     };
   }
 
-  /// Concatenates two paths.
+  /// Concatenates two patterns.
   ///
-  /// e.g: pathA = /a, pathB = c/d,  concatenatePaths(pathA, pathB) = /a/c/d.
-  RoutePattern concatenate(RoutePattern next) {
-    final String nextPattern =
-        next._pattern.startsWith('/') ? next._pattern : '/${next._pattern}';
-    return RoutePattern(_pattern + nextPattern);
+  /// e.g: pathA = /a, pathB = /c/d, concatenatePaths(pathA, pathB) = /a/c/d.
+  /// or: pathA = a, pathB = c/d, concatenatePaths(pathA, pathB) = /a/c/d.
+  RoutePath concatenate(RoutePath next) {
+    final Iterable<String> segments = <String>[
+      ..._pattern.split('/'),
+      ...next._pattern.split('/')
+    ].where((String segment) => segment.isNotEmpty);
+    return RoutePath('/${segments.join('/')}');
   }
 
   /// Converts a [pattern] such as `/user/:id` into [RegExp].

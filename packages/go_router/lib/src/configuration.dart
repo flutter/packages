@@ -12,7 +12,7 @@ import 'package:meta/meta.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'misc/errors.dart';
-import 'route_pattern.dart';
+import 'route_path.dart';
 import 'route.dart';
 import 'router.dart';
 import 'state.dart';
@@ -137,7 +137,7 @@ class RouteConfiguration {
             // Recursively search for the first GoRoute descendant. Will
             // throw assertion error if not found.
             final GoRoute? route = branch.defaultRoute;
-            final RoutePattern? fullPattern = route != null
+            final RoutePath? fullPattern = route != null
                 ? buildRoutePatternFromRoot(route, rootRoutes: branch.routes)
                 : null;
             assert(
@@ -282,7 +282,7 @@ class RouteConfiguration {
       for (final MapEntry<String, String> param in pathParameters.entries)
         param.key: Uri.encodeComponent(param.value)
     };
-    final String location = route.pattern.toPath(encodedParams);
+    final String location = route.pattern.toLocation(encodedParams);
     return Uri(
             path: location,
             queryParameters: queryParameters.isEmpty ? null : queryParameters)
@@ -502,7 +502,7 @@ class RouteConfiguration {
 
   /// Concatenate a Route's pattern with all its ancestor pattern
   @internal
-  RoutePattern? buildRoutePatternFromRoot(RouteBase route,
+  RoutePath? buildRoutePatternFromRoot(RouteBase route,
       {List<RouteBase>? rootRoutes}) {
     // if the root routes is not provided the top most routes are used
     rootRoutes ??= _routingConfig.value.routes;
@@ -513,9 +513,8 @@ class RouteConfiguration {
       return null;
     }
 
-    final RoutePattern result = sequence.whereType<GoRoute>().fold(
-        RoutePattern(''),
-        (RoutePattern prev, GoRoute next) => prev.concatenate(next.pattern));
+    final RoutePath result = sequence.whereType<GoRoute>().fold(RoutePath(''),
+        (RoutePath prev, GoRoute next) => prev.concatenate(next.pattern));
 
     return result;
   }
@@ -576,7 +575,7 @@ class RouteConfiguration {
       final String decorationString =
           decoration.map((_DecorationType e) => e.toString()).join();
       if (route is GoRoute) {
-        final RoutePattern? fullPattern = buildRoutePatternFromRoot(route);
+        final RoutePath? fullPattern = buildRoutePatternFromRoot(route);
         final String? screenName =
             route.builder?.runtimeType.toString().split('=> ').last;
         sb.writeln('$decorationString$fullPattern '
