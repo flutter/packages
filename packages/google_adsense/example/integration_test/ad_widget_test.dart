@@ -4,7 +4,7 @@
 
 // TO run the test:
 // 1. Run chrome driver with --port=4444
-// 2. Run the test from example folder with: flutter drive -d web-server --web-port 7357 --browser-name chrome --driver test_driver/integration_test.dart --target integration_test/ad_widget_rendering_test.dart
+// 2. Run the test from example folder with: flutter drive -d web-server --web-port 7357 --browser-name chrome --driver test_driver/integration_test.dart --target integration_test/ad_widget_test.dart
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';

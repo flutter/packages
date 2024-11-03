@@ -47,4 +47,10 @@ void main() {
                 bool isAdTest,
                 Map<String, String> adUnitParams})>());
   });
+  test('Tell the user where to find the real tests', () {
+    print('---');
+    print('This package uses integration_test for its main tests.');
+    print('See `example/README.md` for more info.');
+    print('---');
+  });
 }
