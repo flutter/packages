@@ -430,10 +430,11 @@ void main() {
       final PlatformLatLng? latLng = encoded?[7] as PlatformLatLng?;
       expect(latLng?.latitude, object2new.position.latitude);
       expect(latLng?.longitude, object2new.position.longitude);
-      expect(encoded?.getRange(8, 13), <Object?>[
+      expect(encoded?.getRange(8, 14), <Object?>[
         object2new.rotation,
         object2new.visible,
         object2new.zIndex,
+        object2new.zIndexInt,
         object2new.markerId.value,
         object2new.clusterManagerId?.value,
       ]);
@@ -465,10 +466,11 @@ void main() {
       final PlatformLatLng? latLng = encoded?[7] as PlatformLatLng?;
       expect(latLng?.latitude, object3.position.latitude);
       expect(latLng?.longitude, object3.position.longitude);
-      expect(encoded?.getRange(8, 13), <Object?>[
+      expect(encoded?.getRange(8, 14), <Object?>[
         object3.rotation,
         object3.visible,
         object3.zIndex,
+        object3.zIndexInt,
         object3.markerId.value,
         object3.clusterManagerId?.value,
       ]);
