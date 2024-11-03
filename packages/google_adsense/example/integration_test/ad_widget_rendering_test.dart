@@ -43,7 +43,7 @@ void main() async {
           web.document.querySelector('flt-platform-view') as web.HTMLElement?;
       expect(platformView, isNotNull);
       final web.HTMLElement ins =
-          platformView!.getElementsByTagName('ins').item(0)! as web.HTMLElement;
+          platformView!.querySelector('ins')! as web.HTMLElement;
       expect(ins.style.display, 'block');
 
       // TODO(sokoloff06): Validate response is rendered

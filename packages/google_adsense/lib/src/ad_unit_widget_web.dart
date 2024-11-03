@@ -27,6 +27,7 @@ class AdUnitWidgetWeb extends AdUnitWidget {
         _adSlot = adSlot,
         _isAdTest = isAdTest,
         _additionalParams = additionalParams {
+
     _insElement
       ..className = 'adsbygoogle'
       ..style.display = 'block';
@@ -80,6 +81,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
   static int adUnitCounter = 0;
   double adHeight = 1.0;
   late web.HTMLElement adUnitDiv;
+  static final JSString _adStatusKey = 'adStatus'.toJS;
 
   @override
   bool get wantKeepAlive => true;
@@ -152,7 +154,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
 
   bool isLoaded(web.HTMLElement target) {
     final bool isLoaded =
-        target.dataset.getProperty('adStatus'.toJS).isDefinedAndNotNull;
+        target.dataset.getProperty(_adStatusKey).isDefinedAndNotNull;
     if (isLoaded) {
       log('Ad is loaded');
     } else {
@@ -162,7 +164,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
   }
 
   bool isFilled(web.HTMLElement target) {
-    final JSAny? adStatus = target.dataset.getProperty('adStatus'.toJS);
+    final JSAny? adStatus = target.dataset.getProperty(_adStatusKey);
     switch (adStatus) {
       case 'filled':
         {

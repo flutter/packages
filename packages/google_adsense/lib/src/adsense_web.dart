@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'package:flutter/foundation.dart';
 import 'package:web/web.dart' as web;
 import 'ad_unit_widget.dart';
@@ -69,8 +71,7 @@ class AdSense {
           ..async = true
           ..crossOrigin = 'anonymous';
     script.src = _url + adClient;
-    (web.document.head ?? web.document).appendChild(adsbygoogle);
-    (web.document.head ?? web.document).appendChild(script);
+    web.document.head!.appendChild(script);
   }
 
   /// Only for use in tests
