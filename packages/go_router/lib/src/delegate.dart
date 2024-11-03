@@ -46,6 +46,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   late final RouteBuilder builder;
 
   /// Set to true to disable creating history entries on the web.
+  // TODO(tolo): This field is obsolete and should be removed in the next major
+  // version.
   final bool routerNeglect;
 
   final RouteConfiguration _configuration;

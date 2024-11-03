@@ -397,6 +397,16 @@ class MockFrameLayout extends _i1.Mock implements _i2.FrameLayout {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> removeView(_i2.View? view) => (super.noSuchMethod(
+        Invocation.method(
+          #removeView,
+          [view],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
 }
 
 /// A class which mocks [MediaPlayer].

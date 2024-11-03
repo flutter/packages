@@ -30,14 +30,14 @@ class _Api implements TestPathProviderApi {
   String? getApplicationCachePath() => kApplicationCachePath;
 
   @override
-  List<String?> getExternalCachePaths() => <String>[kExternalCachePaths];
+  List<String> getExternalCachePaths() => <String>[kExternalCachePaths];
 
   @override
   String? getExternalStoragePath() => kExternalStoragePaths;
 
   @override
-  List<String?> getExternalStoragePaths(messages.StorageDirectory directory) {
-    return <String?>[if (returnsExternalStoragePaths) kExternalStoragePaths];
+  List<String> getExternalStoragePaths(messages.StorageDirectory directory) {
+    return <String>[if (returnsExternalStoragePaths) kExternalStoragePaths];
   }
 
   @override
@@ -52,7 +52,7 @@ void main() {
 
     setUp(() async {
       pathProvider = PathProviderAndroid();
-      TestPathProviderApi.setup(_Api());
+      TestPathProviderApi.setUp(_Api());
     });
 
     test('getTemporaryPath', () async {
@@ -90,7 +90,7 @@ void main() {
       expect(result.first, kExternalCachePaths);
     });
 
-    for (final StorageDirectory? type in <StorageDirectory?>[
+    for (final StorageDirectory? type in <StorageDirectory>[
       ...StorageDirectory.values
     ]) {
       test('getExternalStoragePaths (type: $type) android succeeds', () async {
@@ -110,7 +110,7 @@ void main() {
         'getDownloadsPath returns null, when getExternalStoragePaths returns '
         'an empty list', () async {
       final PathProviderAndroid pathProvider = PathProviderAndroid();
-      TestPathProviderApi.setup(_Api(returnsExternalStoragePaths: false));
+      TestPathProviderApi.setUp(_Api(returnsExternalStoragePaths: false));
       final String? path = await pathProvider.getDownloadsPath();
       expect(path, null);
     });

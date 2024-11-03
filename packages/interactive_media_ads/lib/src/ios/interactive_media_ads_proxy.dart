@@ -21,6 +21,10 @@ class InteractiveMediaAdsProxy {
     this.newIMAAdsLoaderDelegate = IMAAdsLoaderDelegate.new,
     this.newIMAAdsManagerDelegate = IMAAdsManagerDelegate.new,
     this.newIMAAdsRenderingSettings = IMAAdsRenderingSettings.new,
+    this.newIMAFriendlyObstruction = IMAFriendlyObstruction.new,
+    this.newIMACompanionAdSlot = IMACompanionAdSlot.new,
+    this.sizeIMACompanionAdSlot = IMACompanionAdSlot.size,
+    this.newIMACompanionDelegate = IMACompanionDelegate.new,
   });
 
   /// Constructs [IMAAdDisplayContainer].
@@ -72,4 +76,25 @@ class InteractiveMediaAdsProxy {
 
   /// Constructs [IMAAdsRenderingSettings].
   final IMAAdsRenderingSettings Function() newIMAAdsRenderingSettings;
+
+  /// Constructs [IMAFriendlyObstruction].
+  final IMAFriendlyObstruction Function({
+    required UIView view,
+    required FriendlyObstructionPurpose purpose,
+    String? detailedReason,
+  }) newIMAFriendlyObstruction;
+
+  /// Constructs [IMACompanionAdSlot].
+  final IMACompanionAdSlot Function({required UIView view})
+      newIMACompanionAdSlot;
+
+  /// Constructs [IMACompanionAdSlot].
+  final IMACompanionAdSlot Function({
+    required int width,
+    required int height,
+    required UIView view,
+  }) sizeIMACompanionAdSlot;
+
+  /// Constructs [IMACompanionDelegate].
+  final IMACompanionDelegate Function() newIMACompanionDelegate;
 }

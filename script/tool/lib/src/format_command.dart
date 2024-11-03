@@ -47,7 +47,7 @@ class FormatCommand extends PackageCommand {
     super.processRunner,
     super.platform,
   }) {
-    argParser.addFlag('fail-on-change', hide: true);
+    argParser.addFlag(_failonChangeArg, hide: true);
     argParser.addFlag(_dartArg, help: 'Format Dart files', defaultsTo: true);
     argParser.addFlag(_clangFormatArg,
         help: 'Format with "clang-format"', defaultsTo: true);
@@ -66,6 +66,7 @@ class FormatCommand extends PackageCommand {
 
   static const String _dartArg = 'dart';
   static const String _clangFormatArg = 'clang-format';
+  static const String _failonChangeArg = 'fail-on-change';
   static const String _kotlinArg = 'kotlin';
   static const String _javaArg = 'java';
   static const String _swiftArg = 'swift';
@@ -109,7 +110,7 @@ class FormatCommand extends PackageCommand {
       await _formatAndLintSwift(files);
     }
 
-    if (getBoolArg('fail-on-change')) {
+    if (getBoolArg(_failonChangeArg)) {
       final bool modified = await _didModifyAnything();
       if (modified) {
         throw ToolExit(exitCommandFoundErrors);
@@ -120,8 +121,13 @@ class FormatCommand extends PackageCommand {
   Future<bool> _didModifyAnything() async {
     final io.ProcessResult modifiedFiles = await processRunner.run(
       'git',
-      <String>['ls-files', '--modified'],
-      workingDir: packagesDir,
+      <String>[
+        'ls-files',
+        '--modified',
+        packagesDir.path,
+        thirdPartyPackagesDir.path
+      ],
+      workingDir: packagesDir.parent,
       logOnError: true,
     );
     if (modifiedFiles.exitCode != 0) {
@@ -146,8 +152,8 @@ class FormatCommand extends PackageCommand {
 
     final io.ProcessResult diff = await processRunner.run(
       'git',
-      <String>['diff'],
-      workingDir: packagesDir,
+      <String>['diff', packagesDir.path, thirdPartyPackagesDir.path],
+      workingDir: packagesDir.parent,
       logOnError: true,
     );
     if (diff.exitCode != 0) {

@@ -103,20 +103,14 @@ Map<String, String> extractPathParameters(
 
 /// Concatenates two paths.
 ///
-/// e.g: pathA = /a, pathB = c/d,  concatenatePaths(pathA, pathB) = /a/c/d.
+/// e.g: pathA = /a, pathB = /c/d, concatenatePaths(pathA, pathB) = /a/c/d.
+/// or: pathA = a, pathB = c/d, concatenatePaths(pathA, pathB) = /a/c/d.
 String concatenatePaths(String parentPath, String childPath) {
-  // at the root, just return the path
-  if (parentPath.isEmpty) {
-    assert(childPath.startsWith('/'));
-    assert(childPath == '/' || !childPath.endsWith('/'));
-    return childPath;
-  }
-
-  // not at the root, so append the parent path
-  assert(childPath.isNotEmpty);
-  assert(!childPath.startsWith('/'));
-  assert(!childPath.endsWith('/'));
-  return '${parentPath == '/' ? '' : parentPath}/$childPath';
+  final Iterable<String> segments = <String>[
+    ...parentPath.split('/'),
+    ...childPath.split('/')
+  ].where((String segment) => segment.isNotEmpty);
+  return '/${segments.join('/')}';
 }
 
 /// Concatenates two Uri. It will [concatenatePaths] the parent's and the child's paths, and take only the child's parameters.

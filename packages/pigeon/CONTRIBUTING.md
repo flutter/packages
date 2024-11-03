@@ -62,7 +62,7 @@ This is what the temporary generated code that the _PigeonIsolate_ executes
 looks like (see [State Diagram](#state-diagram)):
 
 ```dart
-import 'path/to/supplied/pigeon/file.dart'
+import 'path/to/supplied/pigeon/file.dart';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:pigeon/pigeon_lib.dart';

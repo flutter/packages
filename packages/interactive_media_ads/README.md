@@ -14,8 +14,6 @@ a separate video player positioned on top of the app's content video player.
 | **Support** | SDK 21+ | 12.0+ |
 
 **NOTE:**
-* The initial release for this package supports linear pre-roll video ads on iOS and Android
-  platforms.
 * Companion ads, Background Audio ads and Google Dynamic Ad Insertion methods are currently not
   supported.
 
@@ -95,7 +93,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   // ···
   // Whether the widget should be displaying the content video. The content
   // player is hidden while Ads are playing.
-  bool _shouldShowContentVideo = true;
+  bool _shouldShowContentVideo = false;
 
   // Controls the content video player.
   late final VideoPlayerController _contentVideoController;
@@ -126,6 +124,44 @@ for playing content.
 ```dart
 late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
   onContainerAdded: (AdDisplayContainer container) {
+    _adsLoader = AdsLoader(
+      container: container,
+      onAdsLoaded: (OnAdsLoadedData data) {
+        final AdsManager manager = data.manager;
+        _adsManager = data.manager;
+
+        manager.setAdsManagerDelegate(AdsManagerDelegate(
+          onAdEvent: (AdEvent event) {
+            debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
+            switch (event.type) {
+              case AdEventType.loaded:
+                manager.start();
+              case AdEventType.contentPauseRequested:
+                _pauseContent();
+              case AdEventType.contentResumeRequested:
+                _resumeContent();
+              case AdEventType.allAdsCompleted:
+                manager.destroy();
+                _adsManager = null;
+              case AdEventType.clicked:
+              case AdEventType.complete:
+              case _:
+            }
+          },
+          onAdErrorEvent: (AdErrorEvent event) {
+            debugPrint('AdErrorEvent: ${event.error.message}');
+            _resumeContent();
+          },
+        ));
+
+        manager.init();
+      },
+      onAdsLoadError: (AdsLoadErrorData data) {
+        debugPrint('OnAdsLoadError: ${data.error.message}');
+        _resumeContent();
+      },
+    );
+
     // Ads can't be requested until the `AdDisplayContainer` has been added to
     // the native View hierarchy.
     _requestAds(container);
@@ -211,44 +247,6 @@ Handle requesting ads and add event listeners to handle when content should be d
 <?code-excerpt "example/lib/main.dart (request_ads)"?>
 ```dart
 Future<void> _requestAds(AdDisplayContainer container) {
-  _adsLoader = AdsLoader(
-    container: container,
-    onAdsLoaded: (OnAdsLoadedData data) {
-      final AdsManager manager = data.manager;
-      _adsManager = data.manager;
-
-      manager.setAdsManagerDelegate(AdsManagerDelegate(
-        onAdEvent: (AdEvent event) {
-          debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
-          switch (event.type) {
-            case AdEventType.loaded:
-              manager.start();
-            case AdEventType.contentPauseRequested:
-              _pauseContent();
-            case AdEventType.contentResumeRequested:
-              _resumeContent();
-            case AdEventType.allAdsCompleted:
-              manager.destroy();
-              _adsManager = null;
-            case AdEventType.clicked:
-            case AdEventType.complete:
-            case _:
-          }
-        },
-        onAdErrorEvent: (AdErrorEvent event) {
-          debugPrint('AdErrorEvent: ${event.error.message}');
-          _resumeContent();
-        },
-      ));
-
-      manager.init();
-    },
-    onAdsLoadError: (AdsLoadErrorData data) {
-      debugPrint('OnAdsLoadError: ${data.error.message}');
-      _resumeContent();
-    },
-  );
-
   return _adsLoader.requestAds(AdsRequest(
     adTagUrl: _adTagUrl,
     contentProgressProvider: _contentProgressProvider,
