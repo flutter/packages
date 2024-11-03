@@ -9,16 +9,11 @@ import 'package:web/web.dart' as web;
 import 'ad_unit_widget.dart';
 import 'ad_unit_widget_web.dart';
 
+/// Returns a singleton instance of Adsense library public interface
+final AdSense adSense = AdSense();
+
 /// Main class to work with the library
 class AdSense {
-  // Internal constructor
-  AdSense._internal();
-
-  /// Returns a singleton instance of Adsense library public interface
-  static AdSense get instance => _instance;
-
-  // Singleton property
-  static AdSense _instance = AdSense._internal();
   bool _isInitialized = false;
   String _adClient = '';
   static const String _url =
@@ -72,10 +67,5 @@ class AdSense {
           ..crossOrigin = 'anonymous';
     script.src = _url + adClient;
     web.document.head!.appendChild(script);
-  }
-
-  /// Only for use in tests
-  static void resetForTesting() {
-    _instance = AdSense._internal();
   }
 }

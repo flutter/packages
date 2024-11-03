@@ -14,19 +14,19 @@ import 'package:web/web.dart' as web;
 
 const String testClient = 'test_client';
 const String testSlot = 'test_slot';
+late AdSense adsense;
 
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
-    AdSense.resetForTesting();
+    adsense = AdSense();
   });
 
   group('initialization', () {
     test('Repeated initialization throws error', () {
-      AdSense.instance.initialize('test-client');
-      expect(() => AdSense.instance.initialize('test-client'),
-          throwsA(isA<StateError>()));
+      adsense.initialize(testClient);
+      expect(() => adsense.initialize(testClient), throwsA(isA<StateError>()));
     });
 
     test('Initialization adds AdSense snippet to index.html', () {
@@ -35,7 +35,7 @@ void main() async {
           'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-$testClient';
 
       // When
-      AdSense.instance.initialize(testClient);
+      adsense.initialize(testClient);
 
       // Then
       final web.HTMLScriptElement injected =
@@ -52,8 +52,8 @@ void main() async {
       // When
       // TODO(sokoloff06): Mock server response as ./test_ad.html
 
-      AdSense.instance.initialize(testClient);
-      final Widget adUnitWidget = AdSense.instance.adUnit(adSlot: testSlot);
+      adsense.initialize(testClient);
+      final Widget adUnitWidget = adsense.adUnit(adSlot: testSlot);
       await tester.pumpWidget(adUnitWidget);
       await tester.pumpWidget(
           adUnitWidget); // TODO(sokoloff06): Why only works when pumping twice?
@@ -79,11 +79,10 @@ void main() async {
     const String widgetClient = 'client2';
 
     // When
-    AdSense.instance.initialize(initClient);
+    adsense.initialize(initClient);
     final AdUnitWidget adUnitWidget1 =
-        AdSense.instance.adUnit(adSlot: testSlot, adClient: widgetClient);
-    final AdUnitWidget adUnitWidget2 =
-        AdSense.instance.adUnit(adSlot: testSlot);
+        adsense.adUnit(adSlot: testSlot, adClient: widgetClient);
+    final AdUnitWidget adUnitWidget2 = adsense.adUnit(adSlot: testSlot);
 
     // Then
     expect(adUnitWidget1.adClient, widgetClient);

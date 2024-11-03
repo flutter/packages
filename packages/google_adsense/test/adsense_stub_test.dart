@@ -10,20 +10,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_adsense/src/adsense_stub.dart';
 
 void main() {
-  late AdSense adsense;
-
-  setUp(() {
-    adsense = AdSense.instance;
-  });
 
   test('initialize throws error', () {
-    expect(() => adsense.initialize('test-client'),
+    expect(() => adSense.initialize('test-client'),
         throwsA(isA<UnsupportedError>()));
   });
 
   test('adUnit throws error', () {
     expect(
-        () => adsense.adUnit(
+        () => adSense.adUnit(
               adSlot: 'test-slot',
               adClient: 'test-client',
               isAdTest: true,
@@ -33,13 +28,13 @@ void main() {
   });
 
   test('adUnit throws error with minimal parameters', () {
-    expect(() => adsense.adUnit(adSlot: 'test-slot'),
+    expect(() => adSense.adUnit(adSlot: 'test-slot'),
         throwsA(isA<UnsupportedError>()));
   });
 
   test('adUnit returns Widget type', () {
     expect(
-        adsense.adUnit,
+        adSense.adUnit,
         isA<
             Widget Function(
                 {required String adSlot,
