@@ -1,3 +1,7 @@
+## 2.9.6
+
+* Deprecate zIndex parameter in Marker and replace with zIndexInt.
+
 ## 2.9.5
 
 * Converts `BitmapDescriptor` to typesafe structures.
