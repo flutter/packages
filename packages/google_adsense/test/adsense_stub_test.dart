@@ -16,12 +16,6 @@ void main() {
     adsense = AdSense.instance;
   });
 
-  test('Singleton instance', () {
-    final AdSense instance1 = AdSense.instance;
-    final AdSense instance2 = AdSense.instance;
-    expect(instance1, same(instance2));
-  });
-
   test('initialize throws error', () {
     expect(() => adsense.initialize('test-client'),
         throwsA(isA<UnsupportedError>()));

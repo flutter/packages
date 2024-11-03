@@ -22,6 +22,30 @@ void main() async {
     AdSense.resetForTesting();
   });
 
+  group('initialization', () {
+    test('Repeated initialization throws error', () {
+      AdSense.instance.initialize('test-client');
+      expect(() => AdSense.instance.initialize('test-client'),
+          throwsA(isA<StateError>()));
+    });
+
+    test('Initialization adds AdSense snippet to index.html', () {
+      // Given
+      const String expectedScriptUrl =
+          'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-$testClient';
+
+      // When
+      AdSense.instance.initialize(testClient);
+
+      // Then
+      final web.HTMLScriptElement injected =
+          web.document.head!.lastChild! as web.HTMLScriptElement;
+      expect(injected.src, expectedScriptUrl);
+      expect(injected.crossOrigin, 'anonymous');
+      expect(injected.async, true);
+    });
+  });
+
   group('adWidget', () {
     testWidgets('AdUnitWidget is created and rendered',
         (WidgetTester tester) async {
@@ -48,5 +72,21 @@ void main() async {
 
       // TODO(sokoloff06): Validate response is rendered
     });
+  });
+  test('Widget-level client id overrides initialization client id', () {
+    // Given
+    const String initClient = 'client1';
+    const String widgetClient = 'client2';
+
+    // When
+    AdSense.instance.initialize(initClient);
+    final AdUnitWidget adUnitWidget1 =
+        AdSense.instance.adUnit(adSlot: testSlot, adClient: widgetClient);
+    final AdUnitWidget adUnitWidget2 =
+        AdSense.instance.adUnit(adSlot: testSlot);
+
+    // Then
+    expect(adUnitWidget1.adClient, widgetClient);
+    expect(adUnitWidget2.adClient, initClient);
   });
 }
