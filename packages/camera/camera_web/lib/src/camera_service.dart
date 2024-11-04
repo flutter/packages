@@ -398,7 +398,7 @@ class CameraService {
       final web.OffscreenCanvasRenderingContext2D context =
           _offscreenCanvas!.getContext(
         '2d',
-        <String, dynamic>{'willReadFrequently': true}.toJSBox,
+        <String, dynamic>{'willReadFrequently': true}.jsify(),
       )! as web.OffscreenCanvasRenderingContext2D;
       context.drawImage(videoElement, 0, 0);
       imageData = context.getImageData(0, 0, width, height);
