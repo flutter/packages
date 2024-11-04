@@ -55,7 +55,7 @@ final Map<BytesLoader, Completer<void>> _pendingDecodes =
 /// Decode a vector graphics binary asset into a [Picture].
 ///
 /// Throws a [StateError] if the data is invalid.
-Future<PictureInfo> decodeVectorGraphics(
+Future<PictureInfo?> decodeVectorGraphics(
   ByteData data, {
   required Locale? locale,
   required TextDirection? textDirection,

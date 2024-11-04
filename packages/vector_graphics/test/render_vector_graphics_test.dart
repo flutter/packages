@@ -18,7 +18,7 @@ import 'package:vector_graphics/vector_graphics.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 void main() {
-  late PictureInfo pictureInfo;
+  late PictureInfo? pictureInfo;
 
   tearDown(() {
     // Since we don't always explicitly dispose render objects in unit tests, manually clear
@@ -41,7 +41,7 @@ void main() {
 
   test('Rasterizes a picture to a draw image call', () async {
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -62,7 +62,7 @@ void main() {
 
   test('Multiple render objects with the same scale share a raster', () async {
     final RenderVectorGraphic renderVectorGraphicA = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -70,7 +70,7 @@ void main() {
       1.0,
     );
     final RenderVectorGraphic renderVectorGraphicB = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -91,7 +91,7 @@ void main() {
 
   test('disposing render object release raster', () async {
     final RenderVectorGraphic renderVectorGraphicA = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -99,7 +99,7 @@ void main() {
       1.0,
     );
     final RenderVectorGraphic renderVectorGraphicB = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -126,7 +126,7 @@ void main() {
       'Multiple render objects with the same scale share a raster, different load order',
       () async {
     final RenderVectorGraphic renderVectorGraphicA = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -134,7 +134,7 @@ void main() {
       1.0,
     );
     final RenderVectorGraphic renderVectorGraphicB = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -158,7 +158,7 @@ void main() {
 
   test('Changing color filter does not re-rasterize', () async {
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -185,7 +185,7 @@ void main() {
   test('Changing device pixel ratio does re-rasterize and dispose old raster',
       () async {
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -210,7 +210,7 @@ void main() {
 
   test('Changing scale does re-rasterize and dispose old raster', () async {
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -235,7 +235,7 @@ void main() {
 
   test('The raster size is increased by the inverse picture scale', () async {
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -254,7 +254,7 @@ void main() {
 
   test('The raster size is increased by the device pixel ratio', () async {
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       2.0,
@@ -273,7 +273,7 @@ void main() {
   test('The raster size is increased by the device pixel ratio and ratio',
       () async {
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       2.0,
@@ -292,7 +292,7 @@ void main() {
   test('Changing size asserts if it is different from the picture size',
       () async {
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -313,7 +313,7 @@ void main() {
   test('Does not rasterize a picture when fully transparent', () async {
     final FixedOpacityAnimation opacity = FixedOpacityAnimation(0.0);
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -339,7 +339,7 @@ void main() {
   test('paints partially opaque picture', () async {
     final FixedOpacityAnimation opacity = FixedOpacityAnimation(0.5);
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -355,7 +355,7 @@ void main() {
 
   test('Disposing render object disposes picture', () async {
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -376,7 +376,7 @@ void main() {
   test('Removes listeners on detach, dispose, adds then on attach', () async {
     final FixedOpacityAnimation opacity = FixedOpacityAnimation(0.5);
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       'test',
       null,
       1.0,
@@ -412,7 +412,7 @@ void main() {
 
   test('Color filter applies clip', () async {
     final RenderPictureVectorGraphic render = RenderPictureVectorGraphic(
-      pictureInfo,
+      pictureInfo!,
       const ui.ColorFilter.mode(Colors.green, ui.BlendMode.difference),
       null,
     );

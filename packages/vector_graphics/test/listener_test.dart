@@ -43,31 +43,31 @@ void main() {
   });
 
   test('decode without clip', () async {
-    final PictureInfo info = await decodeVectorGraphics(
+    final PictureInfo? info = await decodeVectorGraphics(
       vectorGraphicBuffer,
       locale: ui.PlatformDispatcher.instance.locale,
       textDirection: ui.TextDirection.ltr,
       clipViewbox: true,
       loader: const AssetBytesLoader('test'),
     );
-    final ui.Image image = info.picture.toImageSync(15, 15);
-    final Uint32List imageBytes =
-        (await image.toByteData())!.buffer.asUint32List();
+    expect(info, isNotNull);
+    final ui.Image image = info!.picture.toImageSync(15, 15);
+    final Uint32List imageBytes = (await image.toByteData())!.buffer.asUint32List();
     expect(imageBytes.first, 0xFF000000);
     expect(imageBytes.last, 0x00000000);
   }, skip: kIsWeb);
 
   test('decode with clip', () async {
-    final PictureInfo info = await decodeVectorGraphics(
+    final PictureInfo? info = await decodeVectorGraphics(
       vectorGraphicBuffer,
       locale: ui.PlatformDispatcher.instance.locale,
       textDirection: ui.TextDirection.ltr,
       clipViewbox: false,
       loader: const AssetBytesLoader('test'),
     );
-    final ui.Image image = info.picture.toImageSync(15, 15);
-    final Uint32List imageBytes =
-        (await image.toByteData())!.buffer.asUint32List();
+    expect(info, isNotNull);
+    final ui.Image image = info!.picture.toImageSync(15, 15);
+    final Uint32List imageBytes = (await image.toByteData())!.buffer.asUint32List();
     expect(imageBytes.first, 0xFF000000);
     expect(imageBytes.last, 0xFF000000);
   }, skip: kIsWeb);
