@@ -425,13 +425,13 @@ class CameraService {
 
     return CameraImageData(
       format: const CameraImageFormat(
-        ImageFormatGroup.jpeg,
-        raw: '',
+        ImageFormatGroup.unknown,
+        raw: 0,
       ),
       planes: <CameraImagePlane>[
         CameraImagePlane(
           bytes: byteBuffer.asUint8List(),
-          bytesPerRow: 0,
+          bytesPerRow: width * 4,
         ),
       ],
       height: height,
