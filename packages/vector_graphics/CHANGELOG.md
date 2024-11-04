@@ -1,3 +1,9 @@
+## 1.1.14 
+* handle error when parsing an invalid svg string.
+* handle error when download svg string from network.
+* handle error when read svg file from asset.
+* expose ErrorWidgetBuilder.
+
 ## 1.1.13
 
 * Fix execution on the web with WebAssembly.
