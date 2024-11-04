@@ -1,5 +1,8 @@
 ## 2.0.12
-* Error handling enhancement.
+* Adds error handling when parsing an invalid svg string.
+* Adds error handling when downloading svg string from network.
+* Adds error handling when reading svg file from asset.
+* Expose ErrorWidgetBuilder.
 
 ## 2.0.11
 
