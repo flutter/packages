@@ -1,3 +1,7 @@
+## 14.4.1
+
+- Adds `missing_code_block_language_in_doc_comment` lint.
+
 ## 14.4.0
 
 - Adds current state getter on `GoRouter` that returns the current `GoRouterState`.
