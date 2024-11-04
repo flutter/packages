@@ -49,7 +49,8 @@ class Camera {
     required CameraService cameraService,
     this.options = const CameraOptions(),
     this.recorderOptions = const (audioBitrate: null, videoBitrate: null),
-  }) : _cameraService = cameraService;
+  })  : _cameraService = cameraService,
+        canUseOffscreenCanvas = cameraService.hasPropertyOffScreenCanvas();
 
   /// The texture id used to register the camera view.
   final int textureId;
@@ -204,8 +205,6 @@ class Camera {
         onEndedController.add(defaultVideoTrack);
       });
     }
-
-    canUseOffscreenCanvas = _cameraService.hasPropertyOffScreenCanvas();
   }
 
   /// Starts the camera stream.
