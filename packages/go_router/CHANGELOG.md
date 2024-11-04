@@ -1,6 +1,10 @@
+## 14.4.0
+
+- Adds current state getter on `GoRouter` that returns the current `GoRouterState`.
+
 ## 14.3.0
 
-- Added missing implementation for the routerNeglect parameter in GoRouter.
+- Adds missing implementation for the routerNeglect parameter in GoRouter.
 
 ## 14.2.9
 
