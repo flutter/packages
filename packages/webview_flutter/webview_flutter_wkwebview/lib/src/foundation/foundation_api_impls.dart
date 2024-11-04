@@ -4,6 +4,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import '../common/instance_manager.dart';
 import '../common/web_kit.g.dart';
@@ -40,6 +41,25 @@ extension _NSKeyValueChangeKeyEnumDataConverter on NSKeyValueChangeKeyEnumData {
     return NSKeyValueChangeKey.values.firstWhere(
       (NSKeyValueChangeKey element) => element.name == value.name,
     );
+  }
+}
+
+extension _SslErrorTypeDataConverter on SslErrorTypeData {
+  SslErrorType toSslErrorType() {
+    switch (this) {
+      case SslErrorTypeData.unspecified:
+        return SslErrorType.unspecified;
+      case SslErrorTypeData.deny:
+        return SslErrorType.deny;
+      case SslErrorTypeData.recoverableTrustFailure:
+        return SslErrorType.recoverableTrustFailure;
+      case SslErrorTypeData.fatalTrustFailure:
+        return SslErrorType.fatalTrustFailure;
+      case SslErrorTypeData.otherError:
+        return SslErrorType.otherError;
+      case SslErrorTypeData.invalid:
+        return SslErrorType.invalid;
+    }
   }
 }
 
@@ -342,6 +362,30 @@ class NSUrlProtectionSpaceFlutterApiImpl
         host: host,
         realm: realm,
         authenticationMethod: authenticationMethod,
+        binaryMessenger: binaryMessenger,
+        instanceManager: instanceManager,
+      ),
+      identifier,
+    );
+  }
+
+  @override
+  void createWithServerTrust(
+    int identifier,
+    SslErrorTypeData? sslErrorType,
+    Uint8List? x509CertificateDer,
+    String? protocol,
+    String? host,
+    int port,
+  ) {
+    instanceManager.addHostCreatedInstance(
+      NSUrlProtectionSpace.detached(
+        protocol: protocol,
+        host: host,
+        port: port,
+        authenticationMethod: NSUrlAuthenticationMethod.serverTrust,
+        sslErrorType: sslErrorType?.toSslErrorType(),
+        x509CertificateDer: x509CertificateDer,
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
       ),

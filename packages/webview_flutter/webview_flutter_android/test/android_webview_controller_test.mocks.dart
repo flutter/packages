@@ -399,6 +399,17 @@ class MockAndroidNavigationDelegate extends _i1.Mock
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> setOnSslError(_i3.SslErrorCallback? onSslError) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnSslError,
+          [onSslError],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [AndroidWebViewController].
@@ -1149,6 +1160,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
     )? onReceivedRequestError,
     void Function(
       _i2.WebView,
+      _i2.SslErrorHandler,
+      _i3.SslError,
+    )? onReceivedSslError,
+    void Function(
+      _i2.WebView,
       _i2.WebResourceRequest,
     )? requestLoading,
     void Function(
@@ -1193,6 +1209,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
             _i2.WebResourceRequest,
             _i2.WebResourceError,
           )? onReceivedRequestError,
+          void Function(
+            _i2.WebView,
+            _i2.SslErrorHandler,
+            _i3.SslError,
+          )? onReceivedSslError,
           void Function(
             _i2.WebView,
             _i2.WebResourceRequest,
@@ -1244,6 +1265,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           )? onReceivedRequestError,
           void Function(
             _i2.WebView,
+            _i2.SslErrorHandler,
+            _i3.SslError,
+          )? onReceivedSslError,
+          void Function(
+            _i2.WebView,
             _i2.WebResourceRequest,
           )? requestLoading,
           void Function(
@@ -1291,6 +1317,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           _i2.WebResourceRequest,
           _i2.WebResourceError,
         )? onReceivedRequestError,
+        void Function(
+          _i2.WebView,
+          _i2.SslErrorHandler,
+          _i3.SslError,
+        )? onReceivedSslError,
         void Function(
           _i2.WebView,
           _i2.WebResourceRequest,

@@ -1,3 +1,7 @@
+## 4.1.0
+
+* Adds support for `onReceivedSslError` method to the `AndroidWebViewController`.
+
 ## 4.0.0
 
 * Bumps androidx.webkit:webkit from 1.12.0 to 1.12.1.

@@ -427,6 +427,54 @@ class AuthenticationChallengeResponse {
   late int? credentialIdentifier;
 }
 
+/// Defines the types of SSL errors
+enum SslErrorTypeData {
+  /// The user did not specify a trust setting
+  unspecified,
+
+  /// The user specified that the certificate should not be trusted
+  deny,
+
+  /// Trust is denied, but recovery may be possible
+  recoverableTrustFailure,
+
+  /// Trust is denied and no simple fix is available
+  fatalTrustFailure,
+
+  /// A value that indicates a failure other than trust evaluation
+  otherError,
+
+  /// An indication of an invalid setting or result
+  invalid,
+}
+
+/// Defines the parameters of a SSL error
+class SslErrorData {
+  /// Creates a [SslErrorData].
+  const SslErrorData({
+    required this.errorTypeData,
+    required this.protocol,
+    required this.host,
+    required this.port,
+    required this.x509CertificateDer,
+  });
+
+  /// The type of SSL error
+  final SslErrorTypeData errorTypeData;
+
+  ///The protocol of the url requesting trust
+  final String protocol;
+
+  ///The host of the url requesting trust
+  final String host;
+
+  /// The port of the url requesting trust
+  final int port;
+
+  /// The x509Certificate DER associated with the SSL error
+  final Uint8List? x509CertificateDer;
+}
+
 /// Mirror of WKWebsiteDataStore.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebsitedatastore?language=objc.
@@ -984,12 +1032,27 @@ abstract class NSUrlCredentialHostApi {
 @FlutterApi()
 abstract class NSUrlProtectionSpaceFlutterApi {
   /// Create a new Dart instance and add it to the `InstanceManager`.
-  @ObjCSelector('createWithIdentifier:host:realm:authenticationMethod:')
+  @ObjCSelector(
+    'createWithIdentifier:host:realm:authenticationMethod:',
+  )
   void create(
     int identifier,
     String? host,
     String? realm,
     String? authenticationMethod,
+  );
+
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  @ObjCSelector(
+    'createWithIdentifier:sslErrorTypeData:x509CertificateDer:protocol:host:port:',
+  )
+  void createWithServerTrust(
+    int identifier,
+    SslErrorTypeData? sslErrorTypeData,
+    Uint8List? x509CertificateDer,
+    String? protocol,
+    String? host,
+    int port,
   );
 }
 

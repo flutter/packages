@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
+
 import 'android_webview.dart' as android_webview;
 
 /// Handles constructing objects and calling static methods for the Android
@@ -95,6 +97,11 @@ class AndroidWebViewProxy {
       String host,
       String realm,
     )? onReceivedHttpAuthRequest,
+    void Function(
+      android_webview.WebView webView,
+      android_webview.SslErrorHandler handler,
+      SslError error,
+    )? onReceivedSslError,
   }) createAndroidWebViewClient;
 
   /// Constructs a [android_webview.FlutterAssetManager].

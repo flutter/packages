@@ -5,9 +5,11 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.graphics.Bitmap;
+import android.net.http.SslError;
 import android.os.Build;
 import android.view.KeyEvent;
 import android.webkit.HttpAuthHandler;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -116,6 +118,12 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     @Override
+    public void onReceivedSslError(
+        @NonNull WebView view, @NonNull SslErrorHandler handler, @NonNull SslError error) {
+      flutterApi.onReceivedSslError(this, view, handler, error, reply -> {});
+    }
+
+    @Override
     public void onUnhandledKeyEvent(@NonNull WebView view, @NonNull KeyEvent event) {
       // Deliberately empty. Occasionally the webview will mark events as having failed to be
       // handled even though they were handled. We don't want to propagate those as they're not
@@ -210,6 +218,15 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     public void onReceivedHttpAuthRequest(
         @NonNull WebView view, HttpAuthHandler handler, String host, String realm) {
       flutterApi.onReceivedHttpAuthRequest(this, view, handler, host, realm, reply -> {});
+    }
+
+    // Handles an SSL error
+    //
+    // This callback is invoked when the WebView encounters a website requiring HTTP authentication.
+    // [host] and [realm] are provided for matching against stored credentials, if any.
+    @Override
+    public void onReceivedSslError(@NonNull WebView view, SslErrorHandler handler, SslError error) {
+      flutterApi.onReceivedSslError(this, view, handler, error, reply -> {});
     }
 
     @Override

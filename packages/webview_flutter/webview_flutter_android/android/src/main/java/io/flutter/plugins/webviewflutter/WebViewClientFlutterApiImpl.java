@@ -5,8 +5,11 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.annotation.SuppressLint;
+import android.net.http.SslCertificate;
+import android.net.http.SslError;
 import android.os.Build;
 import android.webkit.HttpAuthHandler;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -17,7 +20,11 @@ import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewClientFlutterApi;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -77,6 +84,60 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
             .setStatusCode((long) response.getStatusCode());
 
     return responseData.build();
+  }
+
+  static GeneratedAndroidWebView.SslErrorData createSslErrorData(SslError error) {
+    final SslCertificate certificate = error.getCertificate();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
+    String notValidNotAfterIso8601Date = sdf.format(certificate.getValidNotAfterDate());
+    String notValidNotBeforeIso8601Date = sdf.format(certificate.getValidNotBeforeDate());
+
+    GeneratedAndroidWebView.SslCertificateData.Builder sslCertificateData =
+        new GeneratedAndroidWebView.SslCertificateData.Builder()
+            .setIssuedBy(certificate.getIssuedBy().toString())
+            .setIssuedTo(certificate.getIssuedTo().toString())
+            .setValidNotAfterIso8601Date(notValidNotAfterIso8601Date)
+            .setValidNotBeforeIso8601Date(notValidNotBeforeIso8601Date);
+
+    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      X509Certificate x509Certificate = error.getCertificate().getX509Certificate();
+      if (x509Certificate != null) {
+        try {
+          byte[] encoded = x509Certificate.getEncoded();
+          sslCertificateData.setX509CertificateDer(encoded);
+        } catch (CertificateEncodingException e) {
+          //Do nothing
+        }
+      }
+    }
+
+    GeneratedAndroidWebView.SslErrorData.Builder sslErrorData =
+        new GeneratedAndroidWebView.SslErrorData.Builder()
+            .setErrorTypeData(toSslErrorTypeData(error.getPrimaryError()))
+            .setCertificateData(sslCertificateData.build())
+            .setUrl(error.getUrl());
+
+    return sslErrorData.build();
+  }
+
+  static GeneratedAndroidWebView.SslErrorTypeData toSslErrorTypeData(int error) {
+    switch (error) {
+      case SslError.SSL_DATE_INVALID:
+        return GeneratedAndroidWebView.SslErrorTypeData.DATE_INVALID;
+      case SslError.SSL_EXPIRED:
+        return GeneratedAndroidWebView.SslErrorTypeData.EXPIRED;
+      case SslError.SSL_IDMISMATCH:
+        return GeneratedAndroidWebView.SslErrorTypeData.ID_MISMATCH;
+      case SslError.SSL_NOTYETVALID:
+        return GeneratedAndroidWebView.SslErrorTypeData.NOT_YET_VALID;
+      case SslError.SSL_UNTRUSTED:
+        return GeneratedAndroidWebView.SslErrorTypeData.UNTRUSTED;
+      case SslError.SSL_INVALID:
+        return GeneratedAndroidWebView.SslErrorTypeData.INVALID;
+    }
+
+    throw new IllegalStateException(
+        String.format("Could not find a SslErrorTypeData for SslError value: %d", error));
   }
 
   /**
@@ -273,6 +334,24 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(httpAuthHandler)),
         host,
         realm,
+        callback);
+  }
+
+  /** Passes arguments from {@link WebViewClient#onReceivedSslError} to Dart. */
+  public void onReceivedSslError(
+      @NonNull WebViewClient webViewClient,
+      @NonNull WebView webview,
+      @NonNull SslErrorHandler sslErrorHandler,
+      @NonNull SslError error,
+      @NonNull Reply<Void> callback) {
+    new SslErrorHandlerFlutterApiImpl(binaryMessenger, instanceManager)
+        .create(sslErrorHandler, reply -> {});
+
+    onReceivedSslError(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webViewClient)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webview)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(sslErrorHandler)),
+        createSslErrorData(error),
         callback);
   }
 

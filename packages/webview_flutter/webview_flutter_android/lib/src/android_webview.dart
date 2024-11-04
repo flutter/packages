@@ -1,12 +1,14 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show BinaryMessenger;
 
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_webview.g.dart';
 import 'android_webview_api_impls.dart';
@@ -782,6 +784,7 @@ class WebViewClient extends JavaObject {
     this.urlLoading,
     this.doUpdateVisitedHistory,
     this.onReceivedHttpAuthRequest,
+    this.onReceivedSslError,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -804,6 +807,7 @@ class WebViewClient extends JavaObject {
     this.urlLoading,
     this.doUpdateVisitedHistory,
     this.onReceivedHttpAuthRequest,
+    this.onReceivedSslError,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -969,6 +973,13 @@ class WebViewClient extends JavaObject {
     String realm,
   )? onReceivedHttpAuthRequest;
 
+  /// This callback is called when there's a SSL error
+  final void Function(
+    WebView webView,
+    SslErrorHandler handler,
+    SslError error,
+  )? onReceivedSslError;
+
   /// Sets the required synchronous return value for the Java method,
   /// `WebViewClient.shouldOverrideUrlLoading(...)`.
   ///
@@ -999,6 +1010,7 @@ class WebViewClient extends JavaObject {
       urlLoading: urlLoading,
       doUpdateVisitedHistory: doUpdateVisitedHistory,
       onReceivedHttpAuthRequest: onReceivedHttpAuthRequest,
+      onReceivedSslError: onReceivedSslError,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );
@@ -1673,5 +1685,33 @@ class HttpAuthHandler extends JavaObject {
   /// server for the current request.
   Future<bool> useHttpAuthUsernamePassword() {
     return api.useHttpAuthUsernamePasswordFromInstance(this);
+  }
+}
+
+/// Represents an SSL error.
+///
+/// Instances of this class are created by the [WebView] and passed to
+/// [WebViewClient.onReceivedSslError]. The host application must call
+/// either [SslErrorHandler.proceed] or [SslErrorHandler.cancel] to set the
+/// WebView's response to the request.
+class SslErrorHandler extends JavaObject {
+  /// Constructs a [SslErrorHandler].
+  SslErrorHandler({
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super.detached();
+
+  /// Pigeon Host Api implementation for [SslErrorHandler].
+  @visibleForTesting
+  static SslErrorHandlerHostApiImpl api = SslErrorHandlerHostApiImpl();
+
+  /// Instructs the WebView to cancel the SSL trust request.
+  Future<void> cancel() {
+    return api.cancelFromInstance(this);
+  }
+
+  /// Instructs the WebView to proceed with the request
+  Future<void> proceed() {
+    return api.proceedFromInstance(this);
   }
 }

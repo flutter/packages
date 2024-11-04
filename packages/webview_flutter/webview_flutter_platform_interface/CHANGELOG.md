@@ -1,5 +1,6 @@
-## NEXT
+## 2.11.0
 
+* Adds support for handling SSL errors. See `PlatformNavigationDelegate.setOnSslError`.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 2.10.0

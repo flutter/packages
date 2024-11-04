@@ -4,6 +4,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import '../common/instance_manager.dart';
 import '../common/weak_reference_utils.dart';
@@ -467,27 +468,51 @@ class NSUrlProtectionSpace extends NSObject {
   @protected
   NSUrlProtectionSpace.detached({
     required this.host,
-    required this.realm,
     required this.authenticationMethod,
+    this.protocol,
+    this.port,
+    this.realm,
+    this.sslErrorType,
+    this.x509CertificateDer,
     super.binaryMessenger,
     super.instanceManager,
-  }) : super.detached();
+  })  : assert((sslErrorType == null && x509CertificateDer == null) ||
+            authenticationMethod == NSUrlAuthenticationMethod.serverTrust),
+        super.detached();
+
+  /// The receiver’s protocol
+  final String? protocol;
 
   /// The receiver’s host.
   final String? host;
 
-  /// The receiver’s authentication realm.
+  /// The receiver’s port
+  final int? port;
+
+  /// The receiver’s realm
   final String? realm;
 
   /// The authentication method used by the receiver.
   final String? authenticationMethod;
 
+  /// The SSL error type (only applicable if the authentication method is server trust)
+  final SslErrorType? sslErrorType;
+
+  /// The SSL certificate DER (only applicable if the authentication method is server trust)
+  final Uint8List? x509CertificateDer;
+
   @override
   NSUrlProtectionSpace copy() {
     return NSUrlProtectionSpace.detached(
       host: host,
-      realm: realm,
       authenticationMethod: authenticationMethod,
+      protocol: protocol,
+      port: port,
+      realm: realm,
+      sslErrorType: sslErrorType,
+      x509CertificateDer: x509CertificateDer == null
+          ? null
+          : Uint8List.fromList(x509CertificateDer!.toList()),
     );
   }
 }
@@ -508,6 +533,9 @@ class NSUrlAuthenticationMethod {
 
   /// Use NTLM authentication for this protection space.
   static const String httpNtlm = 'NSURLAuthenticationMethodNTLM';
+
+  /// Use HTTP digest authentication for this protection space.
+  static const String serverTrust = 'NSURLAuthenticationMethodServerTrust';
 }
 
 /// A challenge from a server requiring authentication from the client.

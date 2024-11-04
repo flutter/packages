@@ -196,8 +196,7 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i5.Future<void>);
 
   @override
-  _i5.Future<void> loadRequest(_i3.LoadRequestParams? params) =>
-      (super.noSuchMethod(
+  _i5.Future<void> loadRequest(dynamic params) => (super.noSuchMethod(
         Invocation.method(
           #loadRequest,
           [params],

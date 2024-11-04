@@ -33,4 +33,23 @@
                         completion:completion];
   }
 }
+
+- (void)createWithInstance:(NSURLProtectionSpace *)instance
+                      sslErrorTypeDataBoxed:(nullable FWFSslErrorTypeDataBox *) sslErrorTypeDataBoxed
+        x509CertificateDer:(FlutterStandardTypedData *) x509CertificateDer
+                  protocol:(nullable NSString *)protocol
+                  host:(nullable NSString *)host
+                  port:(NSInteger)port
+                completion:(void (^)(FlutterError *_Nullable))completion {
+  if (![self.instanceManager containsInstance:instance]) {
+    [self.api createWithIdentifier:[self.instanceManager addHostCreatedInstance:instance]
+            sslErrorTypeData:sslErrorTypeDataBoxed
+      x509CertificateDer:x509CertificateDer
+                          protocol:protocol
+                             host:host
+                              port:port
+                        completion:completion];
+  }
+}
+
 @end
