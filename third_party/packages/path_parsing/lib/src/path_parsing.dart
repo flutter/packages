@@ -411,6 +411,8 @@ class SvgPathStringSource {
   }
 }
 
+@Deprecated('Utility function that should not be public.')
+// TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
 _PathOffset reflectedPoint(
     _PathOffset reflectedIn, _PathOffset pointToReflect) {
   return _PathOffset(2 * reflectedIn.dx - pointToReflect.dx,
@@ -420,6 +422,8 @@ _PathOffset reflectedPoint(
 const double _kOneOverThree = 1.0 / 3.0;
 
 /// Blend the points with a ratio (1/3):(2/3).
+@Deprecated('Utility function that should not be public.')
+// TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
 _PathOffset blendPoints(_PathOffset p1, _PathOffset p2) {
   return _PathOffset((p1.dx + 2 * p2.dx) * _kOneOverThree,
       (p1.dy + 2 * p2.dy) * _kOneOverThree);
@@ -447,6 +451,8 @@ class PathSegmentData {
         arcSweep = false,
         arcLarge = false;
 
+  @Deprecated('Utility member that should not be public.')
+  // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
   _PathOffset get arcRadii => point1;
 
   /// Angle in degrees.
@@ -471,8 +477,17 @@ class PathSegmentData {
   double get y2 => point2.dy;
 
   SvgPathSegType command;
+
+  @Deprecated('Utility member that should not be public.')
+  // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
   _PathOffset targetPoint = _PathOffset.zero;
+
+  @Deprecated('Utility member that should not be public.')
+  // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
   _PathOffset point1 = _PathOffset.zero;
+
+  @Deprecated('Utility member that should not be public.')
+  // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
   _PathOffset point2 = _PathOffset.zero;
   bool arcSweep;
   bool arcLarge;
