@@ -1,4 +1,4 @@
-## 2.13.3
+## 2.13.2
 
 * Deprecate zIndex parameter in Marker and replace with zIndexInt.
 
