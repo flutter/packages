@@ -677,14 +677,16 @@ class Camera {
     Completer<void> completer = Completer<void>();
     completer.complete();
 
+    int? animationFrameId;
+
     void onAnimate(num _) {
       if (!_cameraFrameStreamController.hasListener) {
         return;
       }
 
       if (!completer.isCompleted) {
-        // Schedule the next frame
-        window.requestAnimationFrame(onAnimate.toJS);
+        // Schedule the next frame and capture its ID
+        animationFrameId = window.requestAnimationFrame(onAnimate.toJS);
         return;
       }
 
@@ -697,13 +699,21 @@ class Camera {
         Duration(milliseconds: 1000 ~/ fps),
       ).then((_) {
         completer.complete();
-        // Schedule the next frame after the delay
-        window.requestAnimationFrame(onAnimate.toJS);
+        // Schedule the next frame after the delay and capture its ID
+        animationFrameId = window.requestAnimationFrame(onAnimate.toJS);
       });
     }
 
-    // Start the animation loop
-    window.requestAnimationFrame(onAnimate.toJS);
+    // Listen for the stream controller cancellation to stop the animation
+    _cameraFrameStreamController.onCancel = () {
+      if (animationFrameId != null) {
+        window.cancelAnimationFrame(animationFrameId!);
+        animationFrameId = null;
+      }
+    };
+
+    // Start the animation loop and capture the initial frame ID
+    animationFrameId = window.requestAnimationFrame(onAnimate.toJS);
   }
 
   /// Used to trigger add event of camera image data in camera frame stream
