@@ -78,3 +78,12 @@ abstract class CameraApi {
   @async
   void resumePreview(int cameraId);
 }
+
+@FlutterApi()
+abstract class CameraEventApi {
+  /// Called when the camera instance is closing on the native side.
+  void cameraClosing();
+
+  /// Called when a camera error occurs on the native side.
+  void error(String errorMessage);
+}
