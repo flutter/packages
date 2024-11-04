@@ -152,20 +152,29 @@ abstract class SvgLoader<T> extends BytesLoader {
     final SvgTheme theme = getTheme(context);
     return prepareMessage(context).then((T? message) {
       return compute((T? message) {
-        return vg
-            .encodeSvg(
-              xml: provideSvg(message),
-              theme: theme.toVgTheme(),
-              colorMapper: colorMapper == null
-                  ? null
-                  : _DelegateVgColorMapper(colorMapper!),
-              debugName: 'Svg loader',
-              enableClippingOptimizer: false,
-              enableMaskingOptimizer: false,
-              enableOverdrawOptimizer: false,
-            )
-            .buffer
-            .asByteData();
+        try {
+          debugPrint('SvgLoader._load.provideSvg: empty');
+          final String xml = provideSvg(message);
+          if (xml.isEmpty) {
+            return Future<ByteData>.value(ByteData(0));
+          } else {
+            return vg
+                .encodeSvg(
+                  xml: xml,
+                  theme: theme.toVgTheme(),
+                  colorMapper: colorMapper == null ? null : _DelegateVgColorMapper(colorMapper!),
+                  debugName: 'Svg loader',
+                  enableClippingOptimizer: false,
+                  enableMaskingOptimizer: false,
+                  enableOverdrawOptimizer: false,
+                )
+                .buffer
+                .asByteData();
+          }
+        } catch (e) {
+          debugPrint('SvgLoader._load.error: $e');
+          return Future<ByteData>.value(ByteData(0));
+        }
       }, message, debugLabel: 'Load Bytes');
     });
   }
@@ -373,15 +382,19 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
   }
 
   @override
-  Future<ByteData?> prepareMessage(BuildContext? context) {
-    return _resolveBundle(context).load(
-      packageName == null ? assetName : 'packages/$packageName/$assetName',
-    );
+  Future<ByteData?> prepareMessage(BuildContext? context) async {
+    try {
+      return await _resolveBundle(context).load(
+        packageName == null ? assetName : 'packages/$packageName/$assetName',
+      );
+    } catch (e) {
+      debugPrint('SvgAssetLoader.prepareMessage.error: $e');
+      return Future<ByteData?>.value();
+    }
   }
 
   @override
-  String provideSvg(ByteData? message) =>
-      utf8.decode(message!.buffer.asUint8List(), allowMalformed: true);
+  String provideSvg(ByteData? message) => utf8.decode(message!.buffer.asUint8List(), allowMalformed: true);
 
   @override
   SvgCacheKey cacheKey(BuildContext? context) {
@@ -437,13 +450,18 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
 
   @override
   Future<Uint8List?> prepareMessage(BuildContext? context) async {
-    final http.Client client = _httpClient ?? http.Client();
-    return (await client.get(Uri.parse(url), headers: headers)).bodyBytes;
+    try {
+      final http.Client client = _httpClient ?? http.Client();
+      final http.Response res = await client.get(Uri.parse(url), headers: headers);
+      return res.bodyBytes;
+    } catch (e) {
+      debugPrint('SvgNetworkLoader.prepareMessage.error: $e');
+      return null;
+    }
   }
 
   @override
-  String provideSvg(Uint8List? message) =>
-      utf8.decode(message!, allowMalformed: true);
+  String provideSvg(Uint8List? message) => message == null ? '' : utf8.decode(message, allowMalformed: true);
 
   @override
   int get hashCode => Object.hash(url, headers, theme, colorMapper);
