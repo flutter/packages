@@ -1,3 +1,8 @@
+## 0.2.6
+
+* Reverts streaming frame support, as the implementation was incorrect and never
+  exposed.
+
 ## 0.2.5+1
 
 * Updates C++ to Dart communication to use Pigeon.
