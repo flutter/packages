@@ -956,7 +956,6 @@ void main() {
           await completer.future;
           final CameraImageData cameraImageData = cameraService.takeFrame(
             videoElement,
-            canUseOffscreenCanvas: true,
           );
           expect(
             size,

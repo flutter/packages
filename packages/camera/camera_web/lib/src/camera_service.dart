@@ -378,9 +378,8 @@ class CameraService {
 
   ///Returns frame at a specific time using video element
   CameraImageData takeFrame(
-    web.VideoElement videoElement, {
-    bool canUseOffscreenCanvas = false,
-  }) {
+    web.VideoElement videoElement,
+  ) {
     final int width = videoElement.videoWidth;
     final int height = videoElement.videoHeight;
     if (width == 0 || height == 0) {
@@ -389,7 +388,7 @@ class CameraService {
       );
     }
     late web.ImageData imageData;
-    if (canUseOffscreenCanvas) {
+    if (hasPropertyOffScreenCanvas()) {
       if (_offscreenCanvas == null ||
           _offscreenCanvas!.width != width ||
           _offscreenCanvas!.height != height) {

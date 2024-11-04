@@ -709,10 +709,7 @@ class Camera {
 
   /// Used to trigger add event of camera image data in camera frame stream
   void _addCameraImageDataEvent() {
-    final CameraImageData image = _cameraService.takeFrame(
-      videoElement,
-      canUseOffscreenCanvas: canUseOffscreenCanvas,
-    );
+    final CameraImageData image = _cameraService.takeFrame(videoElement);
     _cameraFrameStreamController.add(image);
   }
 }

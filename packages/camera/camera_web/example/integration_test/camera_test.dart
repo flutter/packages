@@ -1723,10 +1723,7 @@ void main() {
           )..videoElement = videoElement;
 
           when(
-            () => cameraService.takeFrame(
-              videoElement,
-              canUseOffscreenCanvas: camera.canUseOffscreenCanvas,
-            ),
+            () => cameraService.takeFrame(videoElement),
           ).thenAnswer(
             (_) => CameraImageData(
               format: const CameraImageFormat(
