@@ -1,8 +1,8 @@
 ## 1.1.14 
-* handle error when parsing an invalid svg string.
-* handle error when download svg string from network.
-* handle error when read svg file from asset.
-* expose ErrorWidgetBuilder.
+* Adds error handling when parsing an invalid svg string.
+* Adds error handling when downloading svg string from network.
+* Adds error handling when reading svg file from asset.
+* Expose ErrorWidgetBuilder.
 
 ## 1.1.13
 
