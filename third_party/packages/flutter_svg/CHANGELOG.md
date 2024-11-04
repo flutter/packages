@@ -1,3 +1,7 @@
+## 2.0.12
+
+* Make the package WASM compatible
+
 ## 2.0.11
 
 * Transfers the package source from https://github.com/dnfield/flutter_svg
