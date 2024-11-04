@@ -356,8 +356,9 @@ class AndroidCameraCameraX extends CameraPlatform {
         cameraSelectorLensDirection == CameraSelector.lensFacingFront;
     cameraSelector = proxy.createCameraSelector(cameraSelectorLensDirection);
     // Start listening for device orientation changes preceding camera creation.
-    proxy.startListeningForDeviceOrientationChange(
-        cameraIsFrontFacing, cameraDescription.sensorOrientation);
+    proxy.startListeningForDeviceOrientationChange(cameraIsFrontFacing,
+        /* not acutally used */ cameraDescription.sensorOrientation);
+    // TODO(camsim99): remove sensorOrientation from device orientation manager.
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
     final ResolutionSelector? presetResolutionSelector =
@@ -892,19 +893,13 @@ class AndroidCameraCameraX extends CameraPlatform {
       DeviceOrientation.portraitDown: 2,
       DeviceOrientation.landscapeLeft: 3,
     };
-    final Map<DeviceOrientation, int> clockwiseDegreesForDeviceOrientation =
-        <DeviceOrientation, int>{
-      DeviceOrientation.portraitUp: 0,
-      DeviceOrientation.landscapeRight: 270,
-      DeviceOrientation.portraitDown: 180,
-      DeviceOrientation.landscapeLeft: 90,
-    };
 
     final int signForCameraDirection = cameraIsFrontFacing ? 1 : -1;
     int rotationCorrectionForLandscapeDevices = 0;
 
     if (isPreviewPreTransformed) {
-      // TODO(camsim99): Determine if I can figure out this correction in terms of the acutal device rotation.
+      // TODO(camsim99): I think I need to figure out this correction in terms of the acutal device rotation.
+      print(' >>>>>>>>>>>>>>>> $deviceIsNaturallyLandscape');
       if (deviceIsNaturallyLandscape) {
         if (cameraIsFrontFacing) {
           final int frontCameraCorrection =
@@ -929,47 +924,25 @@ class AndroidCameraCameraX extends CameraPlatform {
     //
     // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
     // for more context on this formula.
-    // TODO(camsim99): the difference between these two might be a counter clockwise versus clockwise thing.
-    print(
-        '>>>>>>>>>>>>>>>>>>>>>>>>>>>>> currentUiOrientation $currentUiOrientation');
-    print(
-        '>>>>>>>>>>>>>>>>>>>>>>>>>>>>> currentDefaultDisplayRotation $currentDefaultDisplayRotation');
-    print(
-        '>>>>>>>>>>>>>>>>>>>>>>>>>>>>> degreesForDeviceOrientation[currentDeviceOrientation]! ${pluginAppliedRotation[currentUiOrientation]! * 90}');
     final double rotationCorrection = (sensorOrientation -
             currentDefaultDisplayRotation! * signForCameraDirection +
             360) %
         360;
-    // print(
-    // '>>>>>>>>>>>>>>>>>>>>>>>>>>>>> rotationCorrection $rotationCorrection');
-    // TODO(camsim99): play around with this and try to diy calculate based on the explanation.
-    // final double rotationCorrection = (sensorOrientation -
-    //         (-pluginAppliedRotation[currentUiOrientation]! * 90) *
-    //             signForCameraDirection +
-    //         360) %
-    //     360;
     final int rotationCorrectionAsClockwiseQuarterTurns =
         (rotationCorrection ~/ 90) % 4;
-    // final int rotationCorrectionAsClockwiseQuarterTurns =
-    //     (((-rotationCorrection + 90) % 360) ~/ 90) % 4;
 
     // The plugin applies a rotation based on the UI orientation, so we deduct this additional correction
     // to get the expected preview rotation.
     final int clockwiseQuarterTurnsPreApplied =
         pluginAppliedRotation[currentUiOrientation]!;
-    // print(
-    // '>>>>>>>>>>>>>>>>>>>>>>>>>>>>> clockwiseQuarterTurnsPreApplied $clockwiseQuarterTurnsPreApplied');
     final int clockwiseQuarterTurnsToCorrectPreview =
         rotationCorrectionAsClockwiseQuarterTurns -
             clockwiseQuarterTurnsPreApplied;
 
     // TODO(camsim99): Determine if API > 29 landscape oriented devices need a correction as well.
-    print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> sensorOrientation $sensorOrientation');
-    // return RotatedBox(
-    //     quarterTurns: -pluginAppliedRotation[
-    //         currentUiOrientation]!, //clockwiseQuarterTurnsToCorrectPreview,
-    //     child: cameraPreview);
-    return cameraPreview;
+    return RotatedBox(
+        quarterTurns: clockwiseQuarterTurnsToCorrectPreview,
+        child: cameraPreview);
   }
 
   /// Captures an image and returns the file where it was saved.
