@@ -1,3 +1,9 @@
+## 1.1.15
+* Adds error handling when parsing an invalid svg string.
+* Adds error handling when downloading svg string from network.
+* Adds error handling when reading svg file from asset.
+* Expose ErrorWidgetBuilder.
+
 ## 1.1.14
 
 * Relaxes dependency constraint on vector_graphics_codec.
