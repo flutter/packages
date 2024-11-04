@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+   <defs>
+      <path id="block-outline" fill="none" stroke="red" d="M50,50 h100 v100 h-100 z" />
+   </defs>
+   <!-- This should not be filled with black. -->
+   <use href="#block-outline" />
+</svg>
