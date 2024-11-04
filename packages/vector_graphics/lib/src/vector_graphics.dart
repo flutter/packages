@@ -5,6 +5,7 @@
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
@@ -279,8 +280,7 @@ class _PictureData {
 
 @immutable
 class _PictureKey {
-  const _PictureKey(
-      this.cacheKey, this.locale, this.textDirection, this.clipViewbox);
+  const _PictureKey(this.cacheKey, this.locale, this.textDirection, this.clipViewbox);
 
   final Object cacheKey;
   final Locale? locale;
@@ -300,16 +300,14 @@ class _PictureKey {
 }
 
 class _VectorGraphicWidgetState extends State<VectorGraphic> {
-  _PictureData? _pictureInfo;
+  _PictureData? _pictureData;
   Object? _error;
   StackTrace? _stackTrace;
   Locale? locale;
   TextDirection? textDirection;
 
-  static final Map<_PictureKey, _PictureData> _livePictureCache =
-      <_PictureKey, _PictureData>{};
-  static final Map<_PictureKey, Future<_PictureData>> _pendingPictures =
-      <_PictureKey, Future<_PictureData>>{};
+  static final Map<_PictureKey, _PictureData?> _livePictureCache = <_PictureKey, _PictureData?>{};
+  static final Map<_PictureKey, Future<_PictureData?>> _pendingPictures = <_PictureKey, Future<_PictureData?>>{};
 
   @override
   void didChangeDependencies() {
@@ -329,8 +327,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
 
   @override
   void dispose() {
-    _maybeReleasePicture(_pictureInfo);
-    _pictureInfo = null;
+    _maybeReleasePicture(_pictureData);
+    _pictureData = null;
     super.dispose();
   }
 
@@ -345,29 +343,39 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
     }
   }
 
-  Future<_PictureData> _loadPicture(
-      BuildContext context, _PictureKey key, BytesLoader loader) {
+  Future<_PictureData?> _loadPicture(BuildContext context, _PictureKey key, BytesLoader loader) {
     if (_pendingPictures.containsKey(key)) {
       return _pendingPictures[key]!;
     }
-    final Future<_PictureData> result =
-        loader.loadBytes(context).then((ByteData data) {
-      return decodeVectorGraphics(
-        data,
-        locale: key.locale,
-        textDirection: key.textDirection,
-        clipViewbox: key.clipViewbox,
-        loader: loader,
-        onError: (Object error, StackTrace? stackTrace) {
-          return _handleError(
-            error,
-            stackTrace,
-          );
-        },
-      );
-    }).then((PictureInfo pictureInfo) {
-      return _PictureData(pictureInfo, 0, key);
+
+    final Future<_PictureData?> result = loader.loadBytes(context).then((ByteData data) async {
+      if (data.lengthInBytes == 0) {
+        debugPrint('_VectorGraphicWidgetState.decodeVectorGraphics: empty');
+        _handleError(const FormatException('Empty SVG xml content'), null);
+        return null;
+      } else {
+        return decodeVectorGraphics(data,
+            locale: key.locale,
+            textDirection: key.textDirection,
+            clipViewbox: key.clipViewbox,
+            loader: loader, onError: (Object error, StackTrace? stackTrace) {
+          debugPrintStack(
+              stackTrace: stackTrace, label: '_VectorGraphicWidgetState.decodeVectorGraphics.onError: $error');
+          _handleError(error, stackTrace);
+        });
+      }
+    }).onError((Object? error, StackTrace stackTrace) {
+      debugPrintStack(stackTrace: stackTrace, label: '_VectorGraphicWidgetState._loadPictureInfo.onError: $error');
+      _handleError(error ?? '', stackTrace);
+      return null;
+    }).then((PictureInfo? pictureInfo) {
+      if (pictureInfo == null) {
+        return null;
+      } else {
+        return _PictureData(pictureInfo, 0, key);
+      }
     });
+
     _pendingPictures[key] = result;
     result.whenComplete(() {
       _pendingPictures.remove(key);
@@ -376,6 +384,9 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   }
 
   void _handleError(Object error, StackTrace? stackTrace) {
+    if (!mounted) {
+      return;
+    }
     setState(() {
       _error = error;
       _stackTrace = stackTrace;
@@ -385,20 +396,22 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   void _loadAssetBytes() {
     // First check if we have an avilable picture and use this immediately.
     final Object loaderKey = widget.loader.cacheKey(context);
-    final _PictureKey key =
-        _PictureKey(loaderKey, locale, textDirection, widget.clipViewbox);
+    final _PictureKey key = _PictureKey(loaderKey, locale, textDirection, widget.clipViewbox);
     final _PictureData? data = _livePictureCache[key];
     if (data != null) {
       data.count += 1;
       setState(() {
-        _maybeReleasePicture(_pictureInfo);
-        _pictureInfo = data;
+        _maybeReleasePicture(_pictureData);
+        _pictureData = data;
       });
       return;
     }
     // If not, then check if there is a pending load.
     final BytesLoader loader = widget.loader;
-    _loadPicture(context, key, loader).then((_PictureData data) {
+    _loadPicture(context, key, loader).then((_PictureData? data) {
+      if (data == null) {
+        return;
+      }
       data.count += 1;
 
       // The widget may have changed, requesting a new vector graphic before
@@ -411,8 +424,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         _livePictureCache[key] = data;
       }
       setState(() {
-        _maybeReleasePicture(_pictureInfo);
-        _pictureInfo = data;
+        _maybeReleasePicture(_pictureData);
+        _pictureData = data;
       });
     });
   }
@@ -421,7 +434,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
 
   @override
   Widget build(BuildContext context) {
-    final PictureInfo? pictureInfo = _pictureInfo?.pictureInfo;
+    final PictureInfo? pictureInfo = _pictureData?.pictureInfo;
 
     Widget child;
     if (pictureInfo != null) {
@@ -452,14 +465,14 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       if (_webRenderObject) {
         child = _RawWebVectorGraphicWidget(
           pictureInfo: pictureInfo,
-          assetKey: _pictureInfo!.key,
+          assetKey: _pictureData!.key,
           colorFilter: widget.colorFilter,
           opacity: widget.opacity,
         );
       } else if (widget.strategy == RenderingStrategy.raster) {
         child = _RawVectorGraphicWidget(
           pictureInfo: pictureInfo,
-          assetKey: _pictureInfo!.key,
+          assetKey: _pictureData!.key,
           colorFilter: widget.colorFilter,
           opacity: widget.opacity,
           scale: scale,
@@ -467,7 +480,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       } else {
         child = _RawPictureVectorGraphicWidget(
           pictureInfo: pictureInfo,
-          assetKey: _pictureInfo!.key,
+          assetKey: _pictureData!.key,
           colorFilter: widget.colorFilter,
           opacity: widget.opacity,
         );
