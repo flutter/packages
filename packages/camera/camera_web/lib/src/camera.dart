@@ -668,33 +668,37 @@ class Camera {
     return _cameraFrameStreamController.stream;
   }
 
-  /// Triggers animation frames in a loop as long as
-  /// [_cameraFrameStreamController.hasListener] and executes the callback
+  /// Triggers animation frames in a loop at a specified FPS
+  /// as long as [animationFrameId] is not cancelled
   void _triggerAnimationFramesLoop(
     VoidCallback action, {
     required int fps,
   }) {
     int? animationFrameId;
-    final Duration frameDuration = Duration(milliseconds: 1000 ~/ fps);
+    num now, then = window.performance.now(), elapsed, fpsInterval = 1000 / fps;
 
-    void onAnimate(num _) {
-      if (!_cameraFrameStreamController.hasListener) {
-        return;
+    void onAnimate(num timestamp) {
+      // Schedule the next frame
+      animationFrameId = window.requestAnimationFrame(onAnimate.toJS);
+
+      // Calculate the elapsed time since the last frame
+      now = timestamp;
+      elapsed = now - then;
+
+      // If enough time has passed since the last frame
+      if (elapsed > fpsInterval) {
+        // Get ready for next frame
+        then = now - (elapsed % fpsInterval);
+
+        // Perform the action task
+        action();
       }
-
-      // Perform the action task
-      action();
-
-      // Schedule the next frame after the delay
-      Future<void>.delayed(frameDuration).then((_) {
-        animationFrameId = window.requestAnimationFrame(onAnimate.toJS);
-      });
     }
 
-    // Start the animation loop
+    // Initialize the animation loop
     animationFrameId = window.requestAnimationFrame(onAnimate.toJS);
 
-    // Stop the animation when the stream controller has no more listeners
+    // Listen for the stream controller cancellation to stop the animation
     _cameraFrameStreamController.onCancel = () {
       if (animationFrameId != null) {
         window.cancelAnimationFrame(animationFrameId!);
