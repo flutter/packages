@@ -1,4 +1,4 @@
-## 2.0.11+1
+## 2.0.12
 
 * Adds `missing_code_block_language_in_doc_comment` lint.
 
