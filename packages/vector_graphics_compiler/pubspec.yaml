@@ -15,7 +15,7 @@ dependencies:
   meta: ^1.7.0
   path: ^1.8.0
   path_parsing: ^1.0.1
-  vector_graphics_codec: "^1.1.11+1"
+  vector_graphics_codec: ^1.1.11+1
   # This uses an exact upper range because it is an external dependency (see
   # https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#dependencies
   # for more information), and this mitigates transitive risk exposure to

@@ -1,6 +1,6 @@
 ## 2.0.12
 
-* Relax the dependency constraints on vector_graphics, vector_graphics_codec,
+* Relaxes the dependency constraints on vector_graphics, vector_graphics_codec,
   and vector_graphics_compiler.
 
 ## 2.0.11

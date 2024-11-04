@@ -1,6 +1,6 @@
 ## 1.1.14
 
-* Relax dependency constraint on vector_graphics_codec.
+* Relaxes dependency constraint on vector_graphics_codec.
 
 ## 1.1.13
 
