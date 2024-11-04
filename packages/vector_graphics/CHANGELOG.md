@@ -1,7 +1,3 @@
-## 1.1.14
-
-* Makes the package WASM compatible.
-
 ## 1.1.13
 
 * Fix execution on the web with WebAssembly.
