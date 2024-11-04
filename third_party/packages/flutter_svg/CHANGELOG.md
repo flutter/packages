@@ -1,6 +1,6 @@
 ## 2.0.12
 
-* Make the package WASM compatible
+* Makes the package WASM compatible.
 
 ## 2.0.11
 
