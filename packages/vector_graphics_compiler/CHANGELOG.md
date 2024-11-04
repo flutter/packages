@@ -1,3 +1,7 @@
+## 1.1.13
+
+* Relax dependency constraint on vector_graphics_codec.
+
 ## 1.1.12
 
 * Transfers the package source from https://github.com/dnfield/vector_graphics
