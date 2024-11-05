@@ -1,7 +1,3 @@
-## 1.1.13
-
-* Makes the package WASM compatible.
-
 ## 1.1.12
 
 * Transfers the package source from https://github.com/dnfield/vector_graphics

@@ -18,9 +18,9 @@ import 'src/svg/theme.dart';
 import 'src/vector_instructions.dart';
 
 export 'src/_initialize_path_ops_io.dart'
-    if (dart.library.js_interop) 'src/_initialize_path_ops_web.dart';
+    if (dart.library.html) 'src/_initialize_path_ops_web.dart';
 export 'src/_initialize_tessellator_io.dart'
-    if (dart.library.js_interop) 'src/_initialize_tessellator_web.dart';
+    if (dart.library.html) 'src/_initialize_tessellator_web.dart';
 export 'src/geometry/basic_types.dart';
 export 'src/geometry/matrix.dart';
 export 'src/geometry/path.dart';
